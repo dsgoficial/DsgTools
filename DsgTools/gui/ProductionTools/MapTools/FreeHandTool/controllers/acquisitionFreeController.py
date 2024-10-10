@@ -20,6 +20,7 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 
 from builtins import range
 from builtins import object
+from typing import List, Set
 
 from qgis.PyQt import QtGui, QtCore
 from qgis.PyQt.QtWidgets import QMessageBox
@@ -30,9 +31,11 @@ from qgis.core import (
     QgsLineString,
     QgsVectorLayer,
     QgsWkbTypes,
-    QgsProject,
+    QgsGeometry,
     QgsMessageLog,
     Qgis,
+    QgsFeature,
+    QgsPointXY,
 )
 
 from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree import (
@@ -51,6 +54,7 @@ class AcquisitionFreeController(object):
         self.acquisitionFree = acquisitionFree
         self.iface = iface
         self.active = False
+        self.lastAddedFeatureId = None
 
     def setIface(self, iface):
         """
@@ -229,7 +233,7 @@ class AcquisitionFreeController(object):
             geom.transform(ct, core.QgsCoordinateTransform.ReverseTransform)
         return geom
 
-    def createFeature(self, geom):
+    def createFeature(self, geom, closeLine):
         # Método para criar feição
         # Parâmetro de entrada: geom (geometria adquirida)
         if not geom:
@@ -256,9 +260,9 @@ class AcquisitionFreeController(object):
             formSuppressOnLayer == core.QgsEditFormConfig.SuppressDefault
             and formSuppressOnSettings == "true"
         ):
-            self.addFeatureWithoutForm(layer, feature)
+            self.addFeatureWithoutForm(layer, feature, closeLine)
         else:
-            featureAdded = self.addFeatureWithForm(layer, feature)
+            featureAdded = self.addFeatureWithForm(layer, feature, closeLine)
         if featureAdded and core.QgsProject.instance().topologicalEditing():
             self.createTopology(feature)
 
@@ -334,27 +338,39 @@ class AcquisitionFreeController(object):
         )
         return core.QgsExpression(expression).evaluate(context)
 
-    def addFeatureWithForm(self, layer, feature):
+    def addFeatureWithForm(self, layer: QgsVectorLayer, feature, closeLine=False):
         # Método para adicionar a feição com formulário
         # Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
         layer.beginEditCommand("dsgtools freehand feature added")
         self.loadDefaultFields(layer, feature)
+        if closeLine:
+            layer.featureAdded.connect(self.featureAdded)
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
         attrDialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         attrDialog.setMode(int(gui.QgsAttributeForm.AddFeatureMode))
         res = attrDialog.exec_()
         if res == 0:
             layer.destroyEditCommand()
-        else:
-            layer.endEditCommand()
+            return res
+        if closeLine:
+            layer.featureAdded.disconnect(self.featureAdded)
+            self.closeLine(layer, feature, self.lastAddedFeatureId)
+        layer.endEditCommand()
         return res
 
-    def addFeatureWithoutForm(self, layer, feature):
+    def featureAdded(self, featureId):
+        self.lastAddedFeatureId = featureId
+
+    def addFeatureWithoutForm(self, layer, feature, closeLine=False):
         # Método para adicionar a feição sem formulário
         # Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
         layer.beginEditCommand("dsgtools freehand feature added")
         self.loadDefaultFields(layer, feature)
-        layer.addFeatures([feature])
+        featuresToAdd = {feature}
+        if closeLine:
+            newFeats = self.closeLine(layer, feature)
+            featuresToAdd = newFeats if newFeats is not None else featuresToAdd
+        layer.addFeatures(featuresToAdd)
         layer.removeSelection()
         layer.endEditCommand()
 
@@ -382,3 +398,116 @@ class AcquisitionFreeController(object):
             except TypeError:
                 pass
         self.setToolEnabled()
+
+    def closeLine(self, layer: QgsVectorLayer, feature: QgsFeature, fid=None):
+        if not layer:
+            iface.messageBar().pushMessage(
+                "Erro", "Selecione uma camada válida", level=Qgis.Warning, duration=5
+            )
+            return None
+        # if fid is None:
+        #     iface.messageBar().pushMessage(
+        #         "Erro", "Erro ao fechar linha (id invalido)", level=Qgis.Critical, duration=5
+        #     )
+        #     return
+        geom = feature.geometry()
+        new_geom = self.snapLastPointToFirstPoint(geom)
+        geometries = self.splitLineGeometry(new_geom)
+        if len(geometries) == 0:
+            iface.messageBar().pushMessage(
+                "Erro", "Linha não fechada", level=Qgis.Warning, duration=5
+            )
+            return None
+        geomsToAdd = geometries
+        if fid is not None:
+            updateGeom = geometries[0]
+            layer.changeGeometry(fid, updateGeom)
+            geomsToAdd = geometries[1:]
+        featuresToAdd = self.getFeaturesBasedOnAnother(layer, feature, geomsToAdd)
+        if fid is not None:
+            layer.addFeatures(featuresToAdd)
+        iface.messageBar().pushMessage(
+            "Executado",
+            f"Linha fechada",
+            level=Qgis.Success,
+            duration=3,
+        )
+        features = {feature}
+        features = features.union(featuresToAdd)
+        return features
+
+    def snapLastPointToFirstPoint(self, geometry: QgsGeometry) -> QgsGeometry:
+
+        if not geometry.wkbType() in (
+            QgsWkbTypes.LineString,
+            QgsWkbTypes.MultiLineString,
+        ):
+            return geometry
+        if geometry.isMultipart():
+            new_parts = []
+            for part in geometry.asMultiPolyline():
+                if len(part) > 1:
+                    new_part = part
+                    new_part.append(part[0])
+                    new_parts.append(new_part)
+                else:
+                    new_parts.append(part)
+            new_geometry = QgsGeometry.fromMultiPolylineXY(new_parts)
+            return new_geometry
+        line = geometry.asPolyline()
+        if len(line) < 2:
+            return geometry
+        new_line = line + [line[0]]
+        if isinstance(line[0], QgsPointXY):
+            new_geometry = QgsGeometry.fromPolylineXY(new_line)
+            return new_geometry
+        return QgsGeometry.fromPolyline(new_line)
+
+    def getFeaturesBasedOnAnother(self, layer, feature, geometries):
+        featsToAdd = set()
+        attrs = feature.attributes()
+        primary_key_indices = layer.primaryKeyAttributes()
+        for pk_index in primary_key_indices:
+            attrs[pk_index] = None
+        fields = feature.fields()
+        for newGeom in geometries:
+            new_feature = QgsFeature(fields)
+            new_feature.setGeometry(newGeom)
+            new_feature.setAttributes(attrs)
+            featsToAdd.add(new_feature)
+        return featsToAdd
+
+    def splitLineGeometry(self, geometry) -> List[QgsGeometry]:
+        geometries = []
+        if geometry.isNull() or geometry.isEmpty():
+            return [geometry]
+        if not geometry.wkbType() in (
+            QgsWkbTypes.LineString,
+            QgsWkbTypes.MultiLineString,
+        ):
+            return [geometry]
+        allPartsHaveLessThan3Vertices = True
+        isMulti = geometry.isMultipart()
+        multiline = geometry.asMultiPolyline() if isMulti else [geometry.asPolyline()]
+        transformGeom = (
+            lambda x: QgsGeometry.fromPolylineXY(x)
+            if isinstance(x[0], QgsPointXY)
+            else QgsGeometry.fromPolyline(x)
+        )
+        for line in multiline:
+            num_vertices = len(line)
+            if num_vertices < 3:
+                geometryToAdd = transformGeom(line)
+                geometries.append(geometryToAdd)
+                continue  # Ignora geometria com menos de 4 vértices
+            allPartsHaveLessThan3Vertices = False
+            mid_index = num_vertices // 2
+            first_half = line[: mid_index + 1]
+            second_half = line[mid_index:]
+            first_half_geometry = transformGeom(first_half)
+            second_half_geometry = transformGeom(second_half)
+            if isMulti:
+                first_half_geometry.convertToMultiType()
+                second_half_geometry.convertToMultiType()
+            geometries.extend([first_half_geometry, second_half_geometry])
+        return geometries if not allPartsHaveLessThan3Vertices else [geometry]

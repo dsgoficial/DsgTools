@@ -27,13 +27,14 @@ from qgis.core import (
     QgsDistanceArea,
     QgsCoordinateTransformContext,
     QgsProject,
+    QgsWkbTypes,
 )
 
 
 class AcquisitionFree(gui.QgsMapTool):
 
     # Sinal usado para enviar a geometria adquirida ao finalizar aquisição
-    acquisitionFinished = QtCore.pyqtSignal(QgsGeometry)
+    acquisitionFinished = QtCore.pyqtSignal(QgsGeometry, bool)
     reshapeLineCreated = QtCore.pyqtSignal(QgsGeometry)
 
     def __init__(self, iface):
@@ -75,6 +76,7 @@ class AcquisitionFree(gui.QgsMapTool):
         self.controlPressed = False
         self.measureAction = None
         self.tooltip = None
+        self.firstPoint = None
 
     def setCursor(self, cursor):
         # Método para definir cursor da ferramenta
@@ -203,6 +205,19 @@ class AcquisitionFree(gui.QgsMapTool):
         settings.endGroup()
         return int(undoPoints)
 
+    def getCloseLineTolerance(self):
+        # Método para obter as configurações da tool do QSettings
+        # Parâmetro de retorno: parameters (Todas os parâmetros do QSettings usado na ferramenta)
+        # return 0.001
+        settings = QtCore.QSettings()
+        settings.beginGroup("PythonPlugins/DsgTools/Options")
+        closeLineTolerancePx = settings.value("freeHandCloseLineTolerance")
+        settings.endGroup()
+        closeLineTolerance = self.canvas.mapUnitsPerPixel() * float(
+            closeLineTolerancePx
+        )
+        return float(closeLineTolerance)
+
     def removeVertice(self):
         # Método para remover vertices
         firstPoint = None
@@ -280,6 +295,7 @@ class AcquisitionFree(gui.QgsMapTool):
         layer = self.getCanvas().currentLayer()
         if layer:
             mapPoint = event.snapPoint()
+            self.firstPoint = mapPoint
             self.startRubberBand(mapPoint, layer)
 
     def startRubberBand(self, pointMap, layer):
@@ -320,7 +336,10 @@ class AcquisitionFree(gui.QgsMapTool):
             oldPoint = event.mapPoint()
             event.snapPoint()
             point = event.mapPoint()
-            self.createSnapCursor(point) if oldPoint != point else ""
+            closeLineTolerance = self.getCloseLineTolerance()
+            self.createSnapCursor(point) if oldPoint != point or self.closeToFirstPoint(
+                self.firstPoint, oldPoint, closeLineTolerance
+            ) else ""
             if self.getRubberBand() and self.getRubberBand().numberOfVertices() == 0:
                 self.getRubberBand().addPoint(point)
             elif self.getRubberBand():
@@ -328,6 +347,29 @@ class AcquisitionFree(gui.QgsMapTool):
         if self.getRubberBandToStopState():
             self.updateRubberBandToStopState(self.toMapCoordinates(event.pos()))
         self.showMeasureTooltip()
+
+    def isFirstPointCloseToLastPoint(self, geometry: QgsGeometry, tolerance):
+        # Método para verificar se o primeiro ponto é proximo do último ponto da linha
+        # Parâmetro de entrada: geometry ( QgsGeometry ), tolerance ( float )
+        if geometry.isNull() or geometry.isEmpty():
+            return False
+        if not geometry.wkbType() in (
+            QgsWkbTypes.LineString,
+            QgsWkbTypes.MultiLineString,
+        ):
+            return False
+        multiLine = (
+            geometry.asMultiPolyline()
+            if geometry.isMultipart()
+            else [geometry.asPolyline()]
+        )
+        line = multiLine[-1]
+        return self.closeToFirstPoint(line[0], line[-1], tolerance)
+
+    def closeToFirstPoint(self, firstPoint, point, tolerance):
+        if firstPoint is None or point is None:
+            return False
+        return point.distance(firstPoint) < tolerance
 
     def showMeasureTooltip(self):
         if self.measureAction is None or not self.measureAction.isChecked():
@@ -402,6 +444,7 @@ class AcquisitionFree(gui.QgsMapTool):
 
     def finishEdition(self, event):
         # Método para finalizar a aquisição
+        self.firstPoint = None
         if self.getRubberBand():
             event.snapPoint()
             self.getRubberBand().addPoint(event.mapPoint())
@@ -410,7 +453,12 @@ class AcquisitionFree(gui.QgsMapTool):
         if self.getRubberBand().numberOfVertices() > 2:
             geom = self.getRubberBand().asGeometry()
             if not self.controlPressed:
-                self.acquisitionFinished.emit(geom)
+                self.acquisitionFinished.emit(
+                    geom,
+                    self.isFirstPointCloseToLastPoint(
+                        geom, self.getCloseLineTolerance()
+                    ),
+                )
             else:
                 self.doReshape(geom)
         self.cancelEdition()
@@ -445,6 +493,11 @@ class AcquisitionFree(gui.QgsMapTool):
         self.setMeasureAction()
 
     def deactivate(self):
+        snapRubberBand = self.getSnapRubberBand()
+        if snapRubberBand:
+            snapRubberBand.reset(geometryType=core.QgsWkbTypes.PointGeometry)
+            snapRubberBand.hide()
+            self.setSnapRubberBand(None)
         QtWidgets.QApplication.restoreOverrideCursor()
         gui.QgsMapTool.deactivate(self)
         self.measureAction = None

@@ -87,6 +87,9 @@ class Options(QDialog, FORM_CLASS):
         undoPoints = self.undoQgsSpinBox.value()
         decimals = self.decimalQgsSpinBox.value()
         freeHandFinalSimplifyTolerance = self.finalToleranceQgsDoubleSpinBox.value()
+        freeHandCloseLineTolerance = (
+            self.freeHandCloseLineToleranceQgsDoubleSpinBox.value()
+        )
         return (
             freeHandTolerance,
             freeHandSmoothIterations,
@@ -98,6 +101,7 @@ class Options(QDialog, FORM_CLASS):
             undoPoints,
             decimals,
             freeHandFinalSimplifyTolerance,
+            freeHandCloseLineTolerance,
         )
 
     def loadParametersFromConfig(self):
@@ -115,6 +119,7 @@ class Options(QDialog, FORM_CLASS):
         freeHandFinalSimplifyTolerance = settings.value(
             "freeHandFinalSimplifyTolerance"
         )
+        freeHandCloseLineTolerance = settings.value("freeHandCloseLineTolerance")
         if valueList:
             valueList = valueList.split(";")
         settings.endGroup()
@@ -129,6 +134,7 @@ class Options(QDialog, FORM_CLASS):
             undoPoints,
             decimals,
             freeHandFinalSimplifyTolerance,
+            freeHandCloseLineTolerance,
         )
 
     def setInterfaceWithParametersFromConfig(self):
@@ -143,6 +149,7 @@ class Options(QDialog, FORM_CLASS):
             undoPoints,
             decimals,
             freeHandFinalSimplifyTolerance,
+            freeHandCloseLineTolerance,
         ) = self.loadParametersFromConfig()
         if freeHandTolerance:
             self.toleranceQgsDoubleSpinBox.setValue(float(freeHandTolerance))
@@ -168,6 +175,10 @@ class Options(QDialog, FORM_CLASS):
             self.finalToleranceQgsDoubleSpinBox.setValue(
                 float(freeHandFinalSimplifyTolerance)
             )
+        if freeHandCloseLineTolerance:
+            self.freeHandCloseLineToleranceQgsDoubleSpinBox.setValue(
+                float(freeHandCloseLineTolerance)
+            )
 
     def storeParametersInConfig(self):
         (
@@ -181,6 +192,7 @@ class Options(QDialog, FORM_CLASS):
             undoPoints,
             decimals,
             freeHandFinalSimplifyTolerance,
+            freeHandCloseLineTolerance,
         ) = self.getParameters()
         settings = QSettings()
         settings.beginGroup("PythonPlugins/DsgTools/Options")
@@ -196,6 +208,7 @@ class Options(QDialog, FORM_CLASS):
         settings.setValue(
             "freeHandFinalSimplifyTolerance", freeHandFinalSimplifyTolerance
         )
+        settings.setValue("freeHandCloseLineTolerance", freeHandCloseLineTolerance)
         settings.endGroup()
 
     @pyqtSlot()
@@ -227,6 +240,7 @@ class Options(QDialog, FORM_CLASS):
             undoPoints,
             decimals,
             freeHandFinalSimplifyTolerance,
+            freeHandCloseLineTolerance,
         ) = self.loadParametersFromConfig()
         if not (
             freeHandTolerance
@@ -237,6 +251,7 @@ class Options(QDialog, FORM_CLASS):
             and undoPoints
             and decimals is not None
             and freeHandFinalSimplifyTolerance is not None
+            and freeHandCloseLineTolerance is not None
         ):
             self.storeParametersInConfig()
 

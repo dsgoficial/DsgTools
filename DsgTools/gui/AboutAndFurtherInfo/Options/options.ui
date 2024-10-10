@@ -253,6 +253,26 @@
         </property>
        </widget>
       </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Closed Lines Tolerance (px)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QgsDoubleSpinBox" name="freeHandCloseLineToleranceQgsDoubleSpinBox">
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <double>100000000000.00</double>
+        </property>
+        <property name="value">
+         <double>10.000</double>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

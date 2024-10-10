@@ -39,7 +39,6 @@ from .LabelTogglingTool.labelTogglingTool import LabelTogglingTool
 from .ShortcutTool.shortcutTool import ShortcutTool
 from .AuxTools.filterTools import FilterTools
 from .AuxTools.otherTools import OtherTools
-from .AuxTools.closeLinesTool import CloseLinesTool
 from qgis.PyQt.QtCore import QObject
 
 
@@ -177,14 +176,6 @@ class MapToolsGuiManager(QObject):
             self.otherToolsStackButton,
             self.iconBasePath,
         )
-        self.closeLinesTool = CloseLinesTool(self.iface)
-        self.closeLinesTool.addTool(
-            self.manager,
-            self.closeLinesTool.closeSelectedLines,
-            self.parentMenu,
-            self.iconBasePath,
-        )
-        self.closeLinesTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
 
         # initiate tools signals
         self.initiateToolsSignals()
@@ -216,7 +207,6 @@ class MapToolsGuiManager(QObject):
             self.freeHandAcquisiton.acquisitionFreeController,
             self.freeHandReshape.acquisitionFreeController,
             self.measureTool,
-            self.closeLinesTool,
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.connect(tool.setToolEnabled)
@@ -251,7 +241,6 @@ class MapToolsGuiManager(QObject):
             self.freeHandAcquisiton.acquisitionFreeController,
             self.freeHandReshape.acquisitionFreeController,
             self.measureTool,
-            self.closeLinesTool,
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.disconnect(tool.setToolEnabled)

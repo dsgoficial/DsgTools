@@ -1,14 +1,14 @@
 # CHANGELOG
 
-## 4.15.5 - dev
+## 4.15.6 - dev
 
 Novas Funcionalidades:
 
-- Nova ferramenta para fechar linhas;
+-
 
 Melhorias:
 
--
+- Freehand fecha a linha caso ponto inicial e final estejam próximos (substitui ferramenta para fechar linhas da versão 4.15.5)
 
 Correção de bugs:
 
@@ -16,6 +16,7 @@ Correção de bugs:
 - Corrige nodata no processo de extrair pontos cotados;
 - Corrige rotina de construir o grid para edição;
 - Corrige bug no processo de identificar feições fechadas menores que a tolerância (Find Small Closed Lines Algorithm)
+- Corrige bug do rubberband do snap do freehand permanecer após alterar ferramenta
 
 ## 4.14.0 - 2024-06-20
 
