@@ -24,18 +24,20 @@
 import os
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessingParameterMultipleLayers,
     QgsProcessing,
     QgsProcessingAlgorithm,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
     QgsProcessingParameterNumber,
     QgsProcessingParameterString,
-    QgsWkbTypes,
     QgsProcessingParameterFeatureSink,
+    QgsProcessingMultiStepFeedback,
     QgsFeatureSink,
     QgsFeature,
+    QgsSpatialIndex,
+    QgsWkbTypes,
     QgsVectorLayer,
-    QgsProcessingMultiStepFeedback,
     QgsFeatureRequest,
 )
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -49,8 +51,17 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
     EXPRESSION = "EXPRESSION"
     SCALE = "SCALE"
     MIN_WATER_BODY_WIDTH = "MIN_WATER_BODY_WIDTH"
-    ISLAND = "ISLAND"
     MIN_WATER_BODY_AREA = "MIN_WATER_BODY_AREA"
+    ISLAND = "ISLAND"
+    MIN_ISLAND_AREA = "MIN_ISLAND_AREA"
+    DRAINAGE_SECTION = "DRAINAGE_SECTION"
+    DRAINAGE_FIELD = "DRAINAGE_FIELD"
+    DRAINAGE_FIELD_VALUE = "DRAINAGE_FIELD_VALUE"
+    MIN_DRAINAGE_SECTION_WIDTH = "MIN_DRAINAGE_SECTION_WIDTH"
+    GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
+    POINT_CONSTRAINT_LAYER_LIST = "POINT_CONSTRAINT_LAYER_LIST"
+    LINE_CONSTRAINT_LAYER_LIST = "LINE_CONSTRAINT_LAYER_LIST"
+    POLYGON_CONSTRAINT_LAYER_LIST = "POLYGON_CONSTRAINT_LAYER_LIST"
     OUTPUT_SMALL_WATER_BODY = "OUTPUT_SMALL_WATER_BODY"
     OUTPUT_SMALL_ISLAND = "OUTPUT_SMALL_ISLAND"
 
@@ -122,8 +133,88 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.ISLAND,
-                self.tr("Island Elemnat (polygon layer)"),
+                self.tr("Island (polygon layer)"),
                 [QgsProcessing.TypeVectorPolygon],
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.MIN_ISLAND_AREA,
+                self.tr("Minimum island area tolerance in square millimeters"),
+                QgsProcessingParameterNumber.Double,
+                minValue=0.1,
+                defaultValue=4,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.DRAINAGE_SECTION,
+                self.tr("Drainage section (line layer)"),
+                [QgsProcessing.TypeVectorLine],
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.DRAINAGE_FIELD,
+                self.tr('Select field from Drainage Section'),
+                parentLayerParameterName=self.DRAINAGE_SECTION,
+                type=QgsProcessingParameterField.Any
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.DRAINAGE_FIELD_VALUE,
+                self.tr('Value to set for field (outside polygon)'),
+                QgsProcessingParameterNumber.Integer,
+                defaultValue=1
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.MIN_DRAINAGE_SECTION_WIDTH,
+                self.tr("Drainage section width tolerance in millimeters"),
+                QgsProcessingParameterNumber.Double,
+                minValue=0.1,
+                defaultValue=10,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDS_LAYER,
+                self.tr("Reference layer"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.POINT_CONSTRAINT_LAYER_LIST,
+                self.tr("Point constraint Layers"),
+                QgsProcessing.TypeVectorPoint,
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.LINE_CONSTRAINT_LAYER_LIST,
+                self.tr("Line constraint Layers"),
+                QgsProcessing.TypeVectorLine,
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.POLYGON_CONSTRAINT_LAYER_LIST,
+                self.tr("Polygon constraint Layers"),
+                QgsProcessing.TypeVectorPolygon,
+                optional=True,
             )
         )
 
@@ -155,8 +246,18 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         min_water_body_width = self.parameterAsDouble(parameters, self.MIN_WATER_BODY_WIDTH, context)
         island_layer = self.parameterAsVectorLayer(parameters, self.ISLAND, context)
         min_water_body_area = self.parameterAsDouble(parameters, self.MIN_WATER_BODY_AREA, context)
+        min_island_area = self.parameterAsDouble(parameters, self.MIN_ISLAND_AREA, context)
+        drainage_section_layer = self.parameterAsVectorLayer(parameters, self.DRAINAGE_SECTION, context)
+        drainage_field = self.parameterAsString(parameters, 'DRAINAGE_FIELD', context)
+        drainage_field_value = self.parameterAsString(parameters, 'DRAINAGE_FIELD_VALUE', context)
+        min_drainage_section_width = self.parameterAsDouble(parameters, self.MIN_DRAINAGE_SECTION_WIDTH, context)
+        geographicBoundsLayer = self.parameterAsLayer(parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context)
+        pointLayerList = self.parameterAsLayerList(parameters, self.POINT_CONSTRAINT_LAYER_LIST, context)
+        lineLayerList = self.parameterAsLayerList(parameters, self.LINE_CONSTRAINT_LAYER_LIST, context)
+        polygonLayerList = self.parameterAsLayerList(parameters, self.POLYGON_CONSTRAINT_LAYER_LIST, context)
 
-        if water_body_layer is None or island_layer is None:
+        if water_body_layer is None or island_layer is None or drainage_section_layer is None:
+            feedback.reportError('Layers not defined correctly.')
             return {}
 
         water_body_fields = water_body_layer.fields()
@@ -173,7 +274,14 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             min_water_body_width_tolerance = (min_water_body_width * scale) / (10**5)
         else:
             min_water_body_width_tolerance = (min_water_body_width * scale)
+
         min_water_body_area_tolerance = (min_water_body_area * (scale ** 2))
+        min_island_area_tolerance = (min_island_area * (scale ** 2))
+
+        if drainage_section_layer.crs().isGeographic():
+            min_drainage_section_width_tolerance = (min_drainage_section_width * (scale)) / (10**5)
+        else:
+            min_drainage_section_width_tolerance = (min_drainage_section_width * (scale))
         
         if island_layer.crs().isGeographic():
             toleranceIsland = 1 / (10**5)
@@ -203,7 +311,8 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             onlySelected= False,
             feedback=multi_step_feedback,
         )
-        '''smallFeaturesLyr, localCache = localCache#filtrado
+        '''
+        smallFeaturesLyr, localCache = localCache#filtrado
         idsToRemove = [feat["featid"] for feat in smallFeaturesLyr.getFeatures()]
         if idsToRemove:
             water_body_layer.startEditing()
@@ -317,7 +426,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         feedback.pushInfo('Island filtering.')
         filtered_island = algRunner.runFilterExpression(
             inputLyr=localIslandCache,
-            expression=f"""$area >= {min_water_body_area_tolerance}""",
+            expression=f"""$area >= {min_island_area_tolerance}""",
             context=context,
             feedback=multi_step_feedback,
         )
@@ -335,7 +444,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         feedback.pushInfo('Finding Small Islands.')
         smallIsland = algRunner.runFilterExpression(
             inputLyr=localIslandCache,
-            expression=f"""$area < {min_water_body_area_tolerance}""",
+            expression=f"""$area < {min_island_area_tolerance}""",
             context=context,
             feedback=multi_step_feedback,
         )
@@ -350,6 +459,27 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         )
         point_island_fields = pointIsland.fields()
         feedback.pushInfo('Transformation done.')
+
+        drainage_section_layer.startEditing()
+        drainage_section_layer.beginEditCommand(self.tr('Drainage section field updating for features outside water body.'))
+        water_body_index = QgsSpatialIndex(water_body_layer.getFeatures())
+        for drainage_feature in drainage_section_layer.getFeatures():
+            drainage_geom = drainage_feature.geometry()
+            intersects = False
+            for water_body_id in water_body_index.intersects(drainage_geom.boundingBox()):
+                water_body_feature = water_body_layer.getFeature(water_body_id)
+                if water_body_feature.geometry().intersects(drainage_geom):
+                    intersects = True
+                    break
+            if not intersects:
+                drainage_feature.setAttribute(drainage_field, drainage_field_value)
+                drainage_section_layer.updateFeature(drainage_feature)
+        drainage_section_layer.endEditCommand()
+        feedback.pushInfo('Drainage section field updated for features outside water body.')
+
+        feedback.pushInfo('Editing Drainage sections.')
+        algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(inputLayer=drainage_section_layer, context=context, min_length=min_drainage_section_width_tolerance, bounds_layer=geographicBoundsLayer, spatial_partition=True, pointlyr_list=pointLayerList, linelyr_list=lineLayerList, polygonlyr_list=polygonLayerList, method = 0)
+        feedback.pushInfo('Drainage sections edition finished')
 
         feedback.pushInfo('Generating output layer.')
         for feat in filtered_holes.getFeatures():

@@ -2284,6 +2284,36 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+    
+    def runGeneralizeNetworkEdgesFromLengthAlgorithm(
+        self,
+        inputLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        min_length: float = 0.001,
+        bounds_layer: Optional[QgsVectorLayer] = None,
+        spatial_partition: Optional[bool] = False,
+        pointlyr_list: Optional[List[QgsRasterLayer]] = None,
+        linelyr_list: Optional[List[QgsRasterLayer]] = None,
+        polygonlyr_list: Optional[List[QgsRasterLayer]] = None,
+        method: Optional[int] = 0,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ): processing.run(
+            "dsgtools:generalizenetworkedgeswithlengthalgorithm",
+            {
+                "NETWORK_LAYER": inputLayer,
+                "MIN_LENGTH": min_length,
+                "GEOGRAPHIC_BOUNDS_LAYER": bounds_layer,
+                "GROUP_BY_SPATIAL_PARTITION": spatial_partition,
+                "POINT_CONSTRAINT_LAYER_LIST": pointlyr_list,
+                "LINE_CONSTRAINT_LAYER_LIST": linelyr_list,
+                "POLYGON_CONSTRAINT_LAYER_LIST": polygonlyr_list,
+                "METHOD": method,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
 
     def runGdalWarp(
         self,
