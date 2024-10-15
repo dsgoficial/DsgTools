@@ -62,7 +62,8 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
     POINT_CONSTRAINT_LAYER_LIST = "POINT_CONSTRAINT_LAYER_LIST"
     LINE_CONSTRAINT_LAYER_LIST = "LINE_CONSTRAINT_LAYER_LIST"
     POLYGON_CONSTRAINT_LAYER_LIST = "POLYGON_CONSTRAINT_LAYER_LIST"
-    OUTPUT_SMALL_WATER_BODY = "OUTPUT_SMALL_WATER_BODY"
+    OUTPUT_HOLE = "OUTPUT_HOLE"
+    OUTPUT_LINE = "OUTPUT_LINE"
     OUTPUT_SMALL_ISLAND = "OUTPUT_SMALL_ISLAND"
 
     def initAlgorithm(self, config=None):
@@ -220,9 +221,17 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT_SMALL_WATER_BODY,
+                self.OUTPUT_HOLE,
                 self.tr("Output Layer (Polygon)"),
                 type=QgsProcessing.TypeVectorPolygon
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT_LINE,
+                self.tr("Output Layer (Line)"),
+                type=QgsProcessing.TypeVectorLine
             )
         )
 
@@ -259,16 +268,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         if water_body_layer is None or island_layer is None or drainage_section_layer is None:
             feedback.reportError('Layers not defined correctly.')
             return {}
-
-        water_body_fields = water_body_layer.fields()
-        water_body_output_sink, waterbody_output_id = self.parameterAsSink(
-            parameters, self.OUTPUT_SMALL_WATER_BODY, context, water_body_fields, water_body_layer.wkbType(), water_body_layer.crs()
-        )
-        island_fields = island_layer.fields()
-        island_output_sink, island_output_id = self.parameterAsSink(
-            parameters, self.OUTPUT_SMALL_ISLAND, context, island_fields, QgsWkbTypes.Point, island_layer.crs()
-        )
-        dict_water_body_featid_feat = {feat.id():feat for feat in water_body_layer.getFeatures()}
 
         if water_body_layer.crs().isGeographic():
             min_water_body_width_tolerance = (min_water_body_width * scale) / (10**5)
@@ -379,20 +378,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             return {}
         feedback.pushInfo('Singlepart generated successfully.')
 
-        feedback.pushInfo('Taking the difference between original water body and the newest one...')
-        holes = algRunner.runDifference(localInputLayerCache, filtered_waterbodystretch, context=context, feedback=multi_step_feedback)
-        if not holes:
-            feedback.reportError('Difference was not possible to take.')
-            return {}
-        feedback.pushInfo('Difference successfully taken.')
-
-        feedback.pushInfo('Transforming multipart geometries into singlepart...')
-        singlepartholes = algRunner.runMultipartToSingleParts(holes, context=context, feedback=multi_step_feedback)
-        if not singlepartholes:
-            feedback.reportError('Singlepart was not generated.')
-            return {}
-        feedback.pushInfo('Singlepart generated successfully.')
-
         feedback.pushInfo('Filtering features')
         filtered_bodywater = algRunner.runFilterExpression(
             inputLyr=localBodyWaterCache,
@@ -400,16 +385,25 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             context=context,
             feedback=multi_step_feedback,
         )
-        filtered_holes = algRunner.runFilterExpression(
-            inputLyr=singlepartholes,
-            expression=f"""$area >= {min_water_body_area_tolerance}""",
-            context=context,
-            feedback=multi_step_feedback,
-        )
         feedback.pushInfo('Features filtered by area successfully.')
 
         unified_layer = algRunner.runMergeVectorLayers(
             [filtered_waterbodystretch,filtered_bodywater],
+            context=context,
+            feedback=multi_step_feedback,
+        )
+        
+        feedback.pushInfo('Finding holes on geometry...')
+        _, hole = algRunner.runDonutHoleExtractor(
+            inputLyr=unified_layer,
+            context=context,
+            feedback=multi_step_feedback,
+        )
+        feedback.pushInfo('Holes successfully saved...')
+
+        filtered_hole = algRunner.runFilterExpression(
+            inputLyr=hole,
+            expression=f"""$area < {min_water_body_area_tolerance}""",
             context=context,
             feedback=multi_step_feedback,
         )
@@ -457,7 +451,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             context=context,
             feedback=multi_step_feedback,
         )
-        point_island_fields = pointIsland.fields()
         feedback.pushInfo('Transformation done.')
 
         drainage_section_layer.startEditing()
@@ -481,15 +474,50 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(inputLayer=drainage_section_layer, context=context, min_length=min_drainage_section_width_tolerance, bounds_layer=geographicBoundsLayer, spatial_partition=True, pointlyr_list=pointLayerList, linelyr_list=lineLayerList, polygonlyr_list=polygonLayerList, method = 0)
         feedback.pushInfo('Drainage sections edition finished')
 
+        feedback.pushInfo('Finding Small Islands.')
+        drainage_inside_polygon = algRunner.runFilterExpression(
+            inputLyr=drainage_section_layer,
+            expression=f"""{drainage_field} != {drainage_field_value}""",
+            context=context,
+            feedback=multi_step_feedback,
+        )
+        feedback.pushInfo('Small Islands identified.')
+
+        
+        feedback.pushInfo('Eliminating secundary stretchs.')
+        drainage_poligonized = algRunner.runPolygonize(inputLyr=drainage_inside_polygon, context=context,feedback=multi_step_feedback, )
+        algRunner.runCreateSpatialIndex(inputLyr=drainage_poligonized, context=context, feedback=multi_step_feedback, is_child_algorithm=True)
+        drainage_poligonized_filtered = algRunner.runExtractByLocation(inputLyr=drainage_poligonized, intersectLyr=filtered_hole, predicate=[1], context=context,feedback=multi_step_feedback)
+        drainage_poligonized_autoincremet = algRunner.runAddAutoIncrementalField(inputLyr=drainage_poligonized_filtered, context=context,feedback=multi_step_feedback)
+        drainage_filtered_line = algRunner.runPolygonsToLines( inputLyr=drainage_poligonized_autoincremet, context=context,feedback=multi_step_feedback)
+        feedback.pushInfo('Secundary streths successfully eliminated.')
+        
+
         feedback.pushInfo('Generating output layer.')
-        for feat in filtered_holes.getFeatures():
-            newFeat = QgsFeature(water_body_fields)
-            geomFeatAdd = feat.geometry()
-            newFeat.setGeometry(geomFeatAdd)
-            water_body_feat = dict_water_body_featid_feat[feat["featid"]]
-            for field in water_body_fields:
-                newFeat.setAttribute(field.name(), water_body_feat[field.name()])
-            water_body_output_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+        filtered_hole_fields = filtered_hole.fields()
+        point_island_fields = pointIsland.fields()
+        hole_output_sink, hole_output_id = self.parameterAsSink(
+            parameters, self.OUTPUT_HOLE, context, filtered_hole_fields, QgsWkbTypes.Polygon, filtered_hole.crs()
+        )
+        line_output_sink, line_output_id = self.parameterAsSink(
+            parameters, self.OUTPUT_LINE, context, filtered_hole_fields, QgsWkbTypes.LineString, filtered_hole.crs()
+        )
+        island_fields = island_layer.fields()
+        island_output_sink, island_output_id = self.parameterAsSink(
+            parameters, self.OUTPUT_SMALL_ISLAND, context, island_fields, QgsWkbTypes.Point, island_layer.crs()
+        )
+        for feat in drainage_poligonized_autoincremet.getFeatures():
+            newPolygon = QgsFeature(drainage_poligonized_autoincremet.fields())
+            newPolygon.setGeometry(feat.geometry())
+            for field in feat.fields():
+                newPolygon.setAttribute(field.name(), feat[field.name()])
+            hole_output_sink.addFeature(newPolygon, QgsFeatureSink.FastInsert)
+        for feat in drainage_filtered_line.getFeatures():
+            newLine = QgsFeature(drainage_filtered_line.fields())
+            newLine.setGeometry(feat.geometry())
+            for field in feat.fields():
+                newLine.setAttribute(field.name(), feat[field.name()])
+            line_output_sink.addFeature(newLine, QgsFeatureSink.FastInsert)
         for feat in pointIsland.getFeatures():
             newPoint = QgsFeature(point_island_fields)
             newPoint.setGeometry(feat.geometry())
@@ -498,7 +526,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             island_output_sink.addFeature(newPoint, QgsFeatureSink.FastInsert)
 
         feedback.pushInfo('Returning output layer.')
-        return {self.OUTPUT_SMALL_WATER_BODY: waterbody_output_id, self.OUTPUT_SMALL_ISLAND: island_output_id}
+        return {self.OUTPUT_HOLE: hole_output_id, self.OUTPUT_SMALL_ISLAND: island_output_id, self.OUTPUT_LINE:line_output_id}
 
     def name(self):
         return "generalizewaterbodyalgorithm"
