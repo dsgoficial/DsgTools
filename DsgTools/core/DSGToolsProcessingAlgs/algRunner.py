@@ -1068,6 +1068,32 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+    
+    def runStatisticsByCategories(
+        self,
+        inputLyr,
+        context,
+        valuesFieldName=None,
+        categoriesFieldName=None,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        parameters = {
+            "INPUT": inputLyr,
+            "VALUES_FIELD_NAME":"" if valuesFieldName is None else valuesFieldName,
+            "CATEGORIES_FIELD_NAME": [] if categoriesFieldName is None else categoriesFieldName,
+            "OUTPUT": outputLyr,
+        }
+        output = processing.run(
+            "qgis:statisticsbycategories",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
 
     def runSplitLinesWithLines(
         self,

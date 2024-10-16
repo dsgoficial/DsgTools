@@ -57,11 +57,13 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
     DRAINAGE_SECTION = "DRAINAGE_SECTION"
     DRAINAGE_FIELD = "DRAINAGE_FIELD"
     DRAINAGE_FIELD_VALUE = "DRAINAGE_FIELD_VALUE"
+    DRAINAGE_FIELD_VALUE_SECUNDARY = "DRAINAGE_FIELD_VALUE_SECUNDARY"
     MIN_DRAINAGE_SECTION_WIDTH = "MIN_DRAINAGE_SECTION_WIDTH"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
     POINT_CONSTRAINT_LAYER_LIST = "POINT_CONSTRAINT_LAYER_LIST"
     LINE_CONSTRAINT_LAYER_LIST = "LINE_CONSTRAINT_LAYER_LIST"
     POLYGON_CONSTRAINT_LAYER_LIST = "POLYGON_CONSTRAINT_LAYER_LIST"
+    BARRAGE = "BARRAGE"
     OUTPUT_HOLE = "OUTPUT_HOLE"
     OUTPUT_LINE = "OUTPUT_LINE"
     OUTPUT_SMALL_ISLAND = "OUTPUT_SMALL_ISLAND"
@@ -77,23 +79,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
-        '''
-        self.addParameter(
-            QgsProcessingParameterMultipleLayers(
-                self.RIVERS_WITH_FLOW,
-                self.tr("Select rivers with flow (multiple line layers)"),
-                layerType=QgsProcessing.TypeVectorLine
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterMultipleLayers(
-                self.RIVERS_WITHOUT_FLOW,
-                self.tr("Select rivers without flow (multiple line layers)"),
-                layerType=QgsProcessing.TypeVectorLine
-            )
-        )
-        '''
         self.addParameter(
             QgsProcessingParameterString(
                 self.EXPRESSION,
@@ -101,7 +86,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 defaultValue="tipo in (1,2,9,10)",
             )
         )
-        
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.SCALE,
@@ -110,7 +94,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=50,
             )
         )
-
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MIN_WATER_BODY_WIDTH,
@@ -120,7 +103,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=0.8,
             )
         )
-
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MIN_WATER_BODY_AREA,
@@ -130,7 +112,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=4,
             )
         )
-
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.ISLAND,
@@ -138,7 +119,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
-
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MIN_ISLAND_AREA,
@@ -148,7 +128,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=4,
             )
         )
-
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.DRAINAGE_SECTION,
@@ -156,7 +135,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 [QgsProcessing.TypeVectorLine],
             )
         )
-
         self.addParameter(
             QgsProcessingParameterField(
                 self.DRAINAGE_FIELD,
@@ -165,16 +143,22 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 type=QgsProcessingParameterField.Any
             )
         )
-
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.DRAINAGE_FIELD_VALUE,
-                self.tr('Value to set for field (outside polygon)'),
+                self.tr('Value to set for outside polygon'),
                 QgsProcessingParameterNumber.Integer,
                 defaultValue=1
             )
         )
-
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.DRAINAGE_FIELD_VALUE_SECUNDARY,
+                self.tr('Value to set for secundary stretches'),
+                QgsProcessingParameterNumber.Integer,
+                defaultValue=3
+            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MIN_DRAINAGE_SECTION_WIDTH,
@@ -184,7 +168,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=10,
             )
         )
-
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS_LAYER,
@@ -218,7 +201,13 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 optional=True,
             )
         )
-
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.BARRAGE,
+                self.tr("Barrage (line layer)"),
+                [QgsProcessing.TypeVectorLine],
+            )
+        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT_HOLE,
@@ -226,7 +215,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 type=QgsProcessing.TypeVectorPolygon
             )
         )
-
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT_LINE,
@@ -234,7 +222,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 type=QgsProcessing.TypeVectorLine
             )
         )
-
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT_SMALL_ISLAND,
@@ -257,10 +244,12 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         min_water_body_area = self.parameterAsDouble(parameters, self.MIN_WATER_BODY_AREA, context)
         min_island_area = self.parameterAsDouble(parameters, self.MIN_ISLAND_AREA, context)
         drainage_section_layer = self.parameterAsVectorLayer(parameters, self.DRAINAGE_SECTION, context)
-        drainage_field = self.parameterAsString(parameters, 'DRAINAGE_FIELD', context)
-        drainage_field_value = self.parameterAsString(parameters, 'DRAINAGE_FIELD_VALUE', context)
+        drainage_field = self.parameterAsString(parameters, self.DRAINAGE_FIELD, context)
+        drainage_field_value = self.parameterAsString(parameters, self.DRAINAGE_FIELD_VALUE, context)
+        drainage_field_value_secundary = self.parameterAsString(parameters, self.DRAINAGE_FIELD_VALUE_SECUNDARY, context)
         min_drainage_section_width = self.parameterAsDouble(parameters, self.MIN_DRAINAGE_SECTION_WIDTH, context)
         geographicBoundsLayer = self.parameterAsLayer(parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context)
+        barrage_layer = self.parameterAsVectorLayer(parameters, self.BARRAGE, context)
         pointLayerList = self.parameterAsLayerList(parameters, self.POINT_CONSTRAINT_LAYER_LIST, context)
         lineLayerList = self.parameterAsLayerList(parameters, self.LINE_CONSTRAINT_LAYER_LIST, context)
         polygonLayerList = self.parameterAsLayerList(parameters, self.POLYGON_CONSTRAINT_LAYER_LIST, context)
@@ -275,7 +264,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             min_water_body_width_tolerance = (min_water_body_width * scale)
 
         min_water_body_area_tolerance = (min_water_body_area * (scale ** 2))
-        min_island_area_tolerance = (min_island_area * (scale ** 2))
+        min_island_area_tolerance = (min_island_area * (scale ** 2)) * 10 #Remover *10 depois
 
         if drainage_section_layer.crs().isGeographic():
             min_drainage_section_width_tolerance = (min_drainage_section_width * (scale)) / (10**5)
@@ -296,19 +285,20 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             water_body_layer,
             '@id',
             'featid',
-            context
+            fieldType=1,
+            context=context
         )
         localInputLayerCache = layerHandler.createAndPopulateUnifiedVectorLayer(
             [water_body_layer],
             geomType=water_body_layer.wkbType(),
             onlySelected= False,
-            feedback=multi_step_feedback,
+            feedback=multi_step_feedback
         )
         localIslandCache = layerHandler.createAndPopulateUnifiedVectorLayer(
             [island_layer],
             geomType=island_layer.wkbType(),
             onlySelected= False,
-            feedback=multi_step_feedback,
+            feedback=multi_step_feedback
         )
         '''
         smallFeaturesLyr, localCache = localCache#filtrado
@@ -325,7 +315,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             feedback=multi_step_feedback,
             outputLyr="memory:",
         ) 
-        riversIdsTuple = (str(int(river["featid"])) for river in rivers.getFeatures())
+        riversIdsTuple = (str(river["featid"]) for river in rivers.getFeatures())
         riversIdsStr = ','.join(riversIdsTuple)
         filterRiversIdsExpression = f'featid in ({riversIdsStr})'
 
@@ -472,26 +462,157 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
 
         feedback.pushInfo('Editing Drainage sections.')
         algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(inputLayer=drainage_section_layer, context=context, min_length=min_drainage_section_width_tolerance, bounds_layer=geographicBoundsLayer, spatial_partition=True, pointlyr_list=pointLayerList, linelyr_list=lineLayerList, polygonlyr_list=polygonLayerList, method = 0)
+        localDrainageCache = algRunner.runCreateFieldWithExpression(
+            drainage_section_layer,
+            '@id',
+            'featid',
+            fieldType=1,
+            context=context
+        )
         feedback.pushInfo('Drainage sections edition finished')
 
-        feedback.pushInfo('Finding Small Islands.')
+        feedback.pushInfo('Filtering Drainages.')
         drainage_inside_polygon = algRunner.runFilterExpression(
-            inputLyr=drainage_section_layer,
-            expression=f"""{drainage_field} != {drainage_field_value}""",
+            inputLyr=localDrainageCache,
+            expression=f""" "{drainage_field}" != {drainage_field_value}""",
             context=context,
             feedback=multi_step_feedback,
         )
-        feedback.pushInfo('Small Islands identified.')
+        feedback.pushInfo('Filtering done.')
 
         
         feedback.pushInfo('Eliminating secundary stretchs.')
-        drainage_poligonized = algRunner.runPolygonize(inputLyr=drainage_inside_polygon, context=context,feedback=multi_step_feedback, )
-        algRunner.runCreateSpatialIndex(inputLyr=drainage_poligonized, context=context, feedback=multi_step_feedback, is_child_algorithm=True)
-        drainage_poligonized_filtered = algRunner.runExtractByLocation(inputLyr=drainage_poligonized, intersectLyr=filtered_hole, predicate=[1], context=context,feedback=multi_step_feedback)
-        drainage_poligonized_autoincremet = algRunner.runAddAutoIncrementalField(inputLyr=drainage_poligonized_filtered, context=context,feedback=multi_step_feedback)
-        drainage_filtered_line = algRunner.runPolygonsToLines( inputLyr=drainage_poligonized_autoincremet, context=context,feedback=multi_step_feedback)
+        drainage_poligonized = algRunner.runPolygonize(
+            inputLyr=drainage_inside_polygon,
+            context=context,
+            feedback=multi_step_feedback
+        )
+        algRunner.runCreateSpatialIndex(
+            inputLyr=drainage_poligonized,
+            context=context,
+            feedback=multi_step_feedback
+        )
+        drainage_poligonized_filtered = algRunner.runExtractByLocation(
+            inputLyr=drainage_poligonized,
+            intersectLyr=filtered_hole,
+            predicate=[1],
+            context=context,
+            feedback=multi_step_feedback
+        )
+        drainage_poligonized_autoincremet = algRunner.runAddAutoIncrementalField(
+            inputLyr=drainage_poligonized_filtered,
+            fieldName="auto",
+            context=context,
+            feedback=multi_step_feedback
+        )
+        drainage_filtered_line = algRunner.runPolygonsToLines(
+            inputLyr=drainage_poligonized_autoincremet,
+            context=context,
+            feedback=multi_step_feedback
+        )
+        secondary_stretches_filtered = algRunner.runFilterExpression(
+            inputLyr=localDrainageCache,
+            expression=f""" "{drainage_field}" = {drainage_field_value_secundary}""",
+            context=context,
+            feedback=multi_step_feedback
+        )
+        algRunner.runCreateSpatialIndex(
+            inputLyr=secondary_stretches_filtered,
+            context=context,
+            feedback=multi_step_feedback
+        )
+        secondary_stretches_filtered_inside = algRunner.runJoinAttributesByLocation(
+            inputLyr=secondary_stretches_filtered,
+            joinLyr=drainage_filtered_line,
+            predicateList=[0],
+            discardNonMatching=True,
+            method = 0,
+            context=context,
+            feedback=multi_step_feedback
+        )
+        statistic = algRunner.runStatisticsByCategories(
+            inputLyr=secondary_stretches_filtered_inside,
+            categoriesFieldName=["auto"],
+            context=context,
+            feedback=multi_step_feedback
+        )
+        extract = algRunner.runFilterExpression(
+            inputLyr=statistic,
+            expression=f""" "count" = 1""",
+            context=context,
+            feedback=multi_step_feedback
+        )
+        attributesUnion = algRunner.runJoinAttributesTable(
+            layerA=secondary_stretches_filtered_inside,
+            fieldA="auto",
+            layerB=extract,
+            fieldB="auto",
+            method=0,
+            discardNonMatching=False,
+            context=context,
+            feedback=multi_step_feedback
+        )
         feedback.pushInfo('Secundary streths successfully eliminated.')
+        #auto nao null -> extractbyexpression -> saida 1 = auto nao null, saida 2 =auto null
+        # saida 1 -> metodo de check de exclusao -> extractbylocation disjoints com elemen_viario -> saida 3 (excluir por nao tocar)
+        # for na saida 3 para pegar ids (feat id??) e jogar no deleteFeatures
+        # saida 1 - saida 3 -> saida 4 (flag de secundario nao excluido por metodo de check de exlusao "secundario nao excluido por intersectar elemento viario")
+        # saida 2 -> flag por mais de um secundario formando ilha excluída
+        #idstodelete = []
+        # drainage_section_layer.deleteFeatures(idstodelete)
         
+        extract_not_null = algRunner.runFilterExpression(
+            inputLyr=attributesUnion,
+            expression=f""" "auto" IS NOT NULL""",
+            context=context,
+            feedback=multi_step_feedback
+        )
+        for lineLayer in lineLayerList:
+            extract_not_null_location = algRunner.runExtractByLocation(
+                inputLyr=extract_not_null,
+                intersectLyr=lineLayer,
+                predicate=[2],
+                context=context,
+                feedback=multi_step_feedback
+            )
+            if extract_not_null_location:
+                if 'combined_layer' not in locals():
+                    combined_layer = extract_not_null_location
+                else:
+                    combined_layer = algRunner.runMergeVectorLayers(
+                        inputList=[combined_layer, extract_not_null_location],
+                        context=context,
+                        feedback=multi_step_feedback
+                    )
+        idsToRemove = [feat["featid"] for feat in combined_layer.getFeatures()]
+        if idsToRemove:
+            drainage_section_layer.startEditing()
+            drainage_section_layer.beginEditCommand(self.tr('Removing secondary stretches from drainage section layer.'))
+            drainage_section_layer.deleteFeatures(idsToRemove)
+            drainage_section_layer.endEditCommand()
+        feedback.pushInfo('Secondary stretches removed from drainage section layer, excluding those intersecting with line constraints.')
+
+        feedback.pushInfo('Filtering barrage.')
+        localBarrageCache = layerHandler.createAndPopulateUnifiedVectorLayer(
+            [barrage_layer],
+            geomType=barrage_layer.wkbType(),
+            onlySelected= False,
+            feedback=multi_step_feedback
+        )
+        barrage_intersect = algRunner.runExtractByLocation(
+                inputLyr=localBarrageCache,
+                intersectLyr=water_body_layer,
+                predicate=[0],
+                context=context,
+                feedback=multi_step_feedback
+        )
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            [barrage_layer],
+            barrage_intersect,
+            feedback=multi_step_feedback,
+            onlySelected= False
+        )
+        feedback.pushInfo('All Barrages filtered.')
 
         feedback.pushInfo('Generating output layer.')
         filtered_hole_fields = filtered_hole.fields()
