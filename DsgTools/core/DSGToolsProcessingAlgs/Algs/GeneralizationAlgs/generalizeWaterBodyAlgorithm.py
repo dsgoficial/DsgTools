@@ -37,8 +37,6 @@ from qgis.core import (
     QgsFeature,
     QgsSpatialIndex,
     QgsWkbTypes,
-    QgsVectorLayer,
-    QgsFeatureRequest,
 )
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 import processing
@@ -46,8 +44,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
     WATER_BODY = "WATER_BODY"
-    #RIVERS_WITH_FLOW = "RIVERS_WITH_FLOW"
-    #RIVERS_WITHOUT_FLOW = "RIVERS_WITHOUT_FLOW"
     EXPRESSION = "EXPRESSION"
     SCALE = "SCALE"
     MIN_WATER_BODY_WIDTH = "MIN_WATER_BODY_WIDTH"
@@ -235,8 +231,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         Processing logic.
         """
         water_body_layer = self.parameterAsVectorLayer(parameters, self.WATER_BODY, context)
-        #river_with_flow = self.parameterAsLayerList(parameters, self.RIVERS_WITH_FLOW, context)
-        #river_no_flow = self.parameterAsLayerList(parameters, self.RIVERS_WITHOUT_FLOW, context)
         expression = self.parameterAsString(parameters, self.EXPRESSION, context)
         scale = self.parameterAsDouble(parameters, self.SCALE, context)
         min_water_body_width = self.parameterAsDouble(parameters, self.MIN_WATER_BODY_WIDTH, context)
@@ -319,7 +313,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         riversIdsStr = ','.join(riversIdsTuple)
         filterRiversIdsExpression = f'featid in ({riversIdsStr})'
 
-        localRiversCache, localBodyWaterCache = algRunner.runFilterExpressionWithFailOutput(
+        localRiversCache, localWaterCache = algRunner.runFilterExpressionWithFailOutput(
             inputLyr=localInputLayerCache,
             expression=filterRiversIdsExpression,
             context=context,
@@ -328,54 +322,51 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
 
         feedback.pushInfo('Applying dissolve...')
         dissolve = algRunner.runDissolve(localRiversCache, context=context, feedback=multi_step_feedback)
-        if not dissolve:
-            feedback.reportError('Error on dissolve process.')
-            return {}
         feedback.pushInfo('Dissolve successfully applied.')
 
         feedback.pushInfo('Applying negative buffer to remove thin parts...')
         buffer_neg = algRunner.runBuffer(dissolve, distance=-min_water_body_width_tolerance / 2.0, context=context, dissolve=True, feedback=multi_step_feedback)
-        if not buffer_neg:
-            feedback.reportError('Negative buffer was not generated correctly.')
-            return {}
         feedback.pushInfo('Negative buffer generated successfully.')
 
         feedback.pushInfo('Transforming multipart geometries into singlepart...')
         singlepart = algRunner.runMultipartToSingleParts(buffer_neg, context=context, feedback=multi_step_feedback)
-        if not singlepart:
-            feedback.reportError('singlepart was not generated.')
-            return {}
         feedback.pushInfo('Singlepart generated successfully.')
 
         feedback.pushInfo('Removing null geometries manually...')
         removenull = algRunner.runRemoveNull(singlepart, context=context, feedback=multi_step_feedback)
-        if not removenull:
-            feedback.reportError('Null geometries not removed.')
-            return {}
         feedback.pushInfo('Null geometries removed successfully.')
 
         feedback.pushInfo('Applying positive buffer to restore to initial state...')
         buffer_pos = algRunner.runBuffer(removenull, distance=min_water_body_width_tolerance / 2.0, context=context, dissolve=True, feedback=multi_step_feedback)
-        if not buffer_pos:
-            feedback.reportError('Positive buffer was not generated correctly.')
-            return {}
-        
-        feedback.pushInfo('Transforming multipart geometries into singlepart...')
+        feedback.pushInfo('Positive buffer generated successfully.')
+
         # single part pois resultado do buffer dissolvido é sempre multipart (pior para spatialIndex)
-        filtered_waterbodystretch = algRunner.runMultipartToSingleParts(buffer_pos, context=context, feedback=multi_step_feedback)
-        if not filtered_waterbodystretch:
-            feedback.reportError('Singlepart was not generated.')
-            return {}
+        feedback.pushInfo('Transforming multipart geometries into singlepart...')
+        buffer_pos_single = algRunner.runMultipartToSingleParts(buffer_pos, context=context, feedback=multi_step_feedback)
         feedback.pushInfo('Singlepart generated successfully.')
 
+        feedback.pushInfo('Applying difference between original and buffer')
+        difference_original = algRunner.runDifference(inputLyr=localRiversCache, overlayLyr=buffer_pos_single, context=context, feedback=multi_step_feedback)
+        feedback.pushInfo('Dfference generated successfully.')
+
         feedback.pushInfo('Filtering features')
+        filtered_difference = algRunner.runFilterExpression(
+            inputLyr=difference_original,
+            expression=f"""$area >= {min_water_body_area*15625}""",
+            context=context,
+            feedback=multi_step_feedback,
+        )
         filtered_bodywater = algRunner.runFilterExpression(
-            inputLyr=localBodyWaterCache,
+            inputLyr=localWaterCache,
             expression=f"""$area >= {min_water_body_area*15625}""",
             context=context,
             feedback=multi_step_feedback,
         )
         feedback.pushInfo('Features filtered by area successfully.')
+
+        feedback.pushInfo('Applying difference between original and holes filtered')
+        filtered_waterbodystretch = algRunner.runDifference(inputLyr=localRiversCache, overlayLyr=filtered_difference, context=context, feedback=multi_step_feedback)
+        feedback.pushInfo('Dfference generated successfully.')
 
         unified_layer = algRunner.runMergeVectorLayers(
             [filtered_waterbodystretch,filtered_bodywater],
@@ -627,8 +618,8 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         island_output_sink, island_output_id = self.parameterAsSink(
             parameters, self.OUTPUT_SMALL_ISLAND, context, island_fields, QgsWkbTypes.Point, island_layer.crs()
         )
-        for feat in drainage_poligonized_autoincremet.getFeatures():
-            newPolygon = QgsFeature(drainage_poligonized_autoincremet.fields())
+        for feat in difference_original.getFeatures():
+            newPolygon = QgsFeature(difference_original.fields())
             newPolygon.setGeometry(feat.geometry())
             for field in feat.fields():
                 newPolygon.setAttribute(field.name(), feat[field.name()])
