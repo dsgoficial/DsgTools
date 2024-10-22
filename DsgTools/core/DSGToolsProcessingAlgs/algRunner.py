@@ -2043,7 +2043,7 @@ class AlgRunner:
         context,
         method,
         fieldsToCopy=None,
-        discardNonMatching=False,
+        discardNonMatching=True,
         prefix=None,
         feedback=None,
         is_child_algorithm=False,
