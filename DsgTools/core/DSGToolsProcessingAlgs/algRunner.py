@@ -658,7 +658,7 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         is_child_algorithm=False,
-    ):
+    )->QgsVectorLayer:
         endCapStyle = 0 if endCapStyle is None else endCapStyle
         joinStyle = 0 if joinStyle is None else joinStyle
         segments = 5 if segments is None else segments
@@ -741,7 +741,7 @@ class AlgRunner:
         outputLyr=None,
         feedback=None,
         is_child_algorithm=False,
-    ):
+    )->QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr}
         output = processing.run(
@@ -1220,7 +1220,7 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         is_child_algorithm=False,
-    ):
+    ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:fieldcalculator",
@@ -2047,7 +2047,7 @@ class AlgRunner:
         prefix=None,
         feedback=None,
         is_child_algorithm=False,
-    ):
+    )->QgsVectorLayer:
         fieldsToCopy = [] if fieldsToCopy is None else fieldsToCopy
         prefix = "" if prefix is None else prefix
         output = processing.run(
@@ -2199,7 +2199,65 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-
+    def runDBScanClustering(
+        self,
+        inputLayer: QgsVectorLayer,
+        min_size: int,
+        tolerancia: float, 
+        context: QgsProcessingContext,
+        outputLyr = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsRasterLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:dbscanclustering",
+            {
+                "INPUT": inputLayer,
+                "MIN_SIZE": min_size,
+                "EPS": tolerancia,
+                "DBSCAN*": False,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output['OUTPUT']
+    def runSkeletonVoronoi(
+        self,
+        inputLayer: QgsVectorLayer,
+        smoothness: float,
+        thin: float,
+        context: QgsProcessingContext,
+        outputLyr = None, 
+        feedback: QgsFeedback = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsRasterLayer:
+        outputLyr = "TEMPORARY_OUTPUT:" if outputLyr is None else outputLyr
+        output = processing.run( "grass7:v.voronoi.skeleton",
+            {
+                'input':inputLayer,
+                'smoothness':smoothness,
+                'thin':thin,
+                '-a':False,
+                '-s':True,
+                '-l':False,
+                '-t':False,
+                'output':'TEMPORARY_OUTPUT',
+                'GRASS_REGION_PARAMETER':None,
+                'GRASS_SNAP_TOLERANCE_PARAMETER':-1,
+                'GRASS_MIN_AREA_PARAMETER':0.0001,
+                'GRASS_OUTPUT_TYPE_PARAMETER':0,
+                'GRASS_VECTOR_DSCO':'',
+                'GRASS_VECTOR_LCO':'',
+                'GRASS_VECTOR_EXPORT_NOCAT':False, 
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output['output']
     def runDSGToolsReclassifyGroupsOfPixels(
         self,
         inputRaster: QgsRasterLayer,
@@ -2423,3 +2481,4 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+

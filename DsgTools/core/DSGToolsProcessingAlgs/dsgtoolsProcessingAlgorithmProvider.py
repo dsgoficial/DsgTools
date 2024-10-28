@@ -101,6 +101,15 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractByDE9IM impo
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractElevationPoints import (
     ExtractElevationPoints,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeEdificationsAlgorithm import (
+    GeneralizeEdificationsAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeEdificationsAreaAlgorithm import (
+    GeneralizeEdificationsAreaAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeLandingStrip import (
+    GeneralizeLandingStripAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.line2Multiline import (
     Line2Multiline,
 )
@@ -692,6 +701,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyMissingPolygonLineIntersectionsOnLines(),
             BatchRasterPackagingForBDGEx(),
             GeneralizeWaterBodyAlgorithm(),
+            GeneralizeEdificationsAlgorithm(),
+            GeneralizeEdificationsAreaAlgorithm(),
+            GeneralizeLandingStripAlgorithm(),
         ]
         return algList
 
