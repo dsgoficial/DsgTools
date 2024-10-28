@@ -126,7 +126,7 @@ class AlgRunner:
         outputLyr=None,
         tolerance=1,
         is_child_algorithm=False,
-    ):
+    )->QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
             "INPUT": inputLyr,
@@ -638,6 +638,25 @@ class AlgRunner:
         parameters = {"INPUT": inputLayer, "OUTPUT": outputLyr}
         output = processing.run(
             "native:multiparttosingleparts",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+    
+    def runPromoteToMulti(
+        self,
+        inputLayer,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    )->QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        parameters = {"INPUT": inputLayer, "OUTPUT": outputLyr}
+        output = processing.run(
+            "native:promotetomulti",
             parameters,
             context=context,
             feedback=feedback,

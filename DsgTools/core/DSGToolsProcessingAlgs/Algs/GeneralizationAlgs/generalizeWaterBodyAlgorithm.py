@@ -1,46 +1,52 @@
 # -*- coding: utf-8 -*-
 """
-/***************************************************************************
+/***************************************************************************************************
  DsgTools
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2023-11-27
+        begin                : 2024-10-01
         git sha              : $Format:%H$
-        copyright            : (C) 2023 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba.philipe@eb.mil.br
- ***************************************************************************/
+        copyright            : (C) 2024 by Jaime Guilherme - Cartographic Engineer @ Brazilian Army
+        email                : jaime.breda@ime.eb.br
+ ***************************************************************************************************/
 
- /***************************************************************************
+ /***************************************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- ***************************************************************************/
+ ***************************************************************************************************/
 """
-
+# mudar o cabeçalho
+# short helpstring
+# setProgressText
+# indice espacial antes de operacoes geometricas
+# nao usar $area para ficar tudo no sistema da camada
+# nao deixar tamanho hardcoded
 import os
-from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import QCoreApplication, QVariant
 from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterField,
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterString,
+    QgsProcessingParameterExpression,
     QgsProcessingParameterFeatureSink,
     QgsProcessingMultiStepFeedback,
     QgsFeatureSink,
     QgsFeature,
     QgsSpatialIndex,
     QgsWkbTypes,
-    QgsFields
+    QgsField,
+    QgsFields,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterString,
 )
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-import processing
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
@@ -48,21 +54,21 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
     WATER_BODY = "WATER_BODY"
     EXPRESSION = "EXPRESSION"
     SCALE = "SCALE"
-    MIN_WATER_BODY_WIDTH = "MIN_WATER_BODY_WIDTH"
-    MIN_WATER_BODY_AREA = "MIN_WATER_BODY_AREA"
+    MIN_WATERBODY_WIDTH = "MIN_WATERBODY_WIDTH"
+    MIN_WATERBODY_AREA = "MIN_WATERBODY_AREA"
     ISLAND = "ISLAND"
     ISLAND_POINT = "ISLAND_POINT"
     MIN_ISLAND_AREA = "MIN_ISLAND_AREA"
-    DRAINAGE_SECTION = "DRAINAGE_SECTION"
+    DRAINAGE_LINES = "DRAINAGE_LINES"
     DRAINAGE_FIELD = "DRAINAGE_FIELD"
     DRAINAGE_FIELD_VALUE = "DRAINAGE_FIELD_VALUE"
     DRAINAGE_FIELD_VALUE_SECUNDARY = "DRAINAGE_FIELD_VALUE_SECUNDARY"
-    MIN_DRAINAGE_SECTION_WIDTH = "MIN_DRAINAGE_SECTION_WIDTH"
+    MIN_DRAINAGE_LINES_WIDTH = "MIN_DRAINAGE_LINES_WIDTH"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
     POINT_CONSTRAINT_LAYER_LIST = "POINT_CONSTRAINT_LAYER_LIST"
     LINE_CONSTRAINT_LAYER_LIST = "LINE_CONSTRAINT_LAYER_LIST"
     POLYGON_CONSTRAINT_LAYER_LIST = "POLYGON_CONSTRAINT_LAYER_LIST"
-    BARRAGE = "BARRAGE"
+    DAM = "DAM"
     OUTPUT_POLYGON = "OUTPUT_POLYGON"
 
     def initAlgorithm(self, config=None):
@@ -77,37 +83,35 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterString(
+            QgsProcessingParameterExpression(
                 self.EXPRESSION,
                 self.tr("Flow types expression"),
-                defaultValue="tipo in (1,2,9,10)",
+                parentLayerParameterName=self.WATER_BODY
             )
         )
         self.addParameter(
-            QgsProcessingParameterNumber(
+            QgsProcessingParameterDistance(
                 self.SCALE,
-                self.tr("Scale (e.g., 50 for 50k)"),
-                minValue=1,
-                defaultValue=50,
+                self.tr("Scale"),
+                parentParameterName=self.WATER_BODY,
+                minValue=0,
             )
         )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MIN_WATER_BODY_WIDTH,
-                self.tr("Minimum body water width tolerance in millimeters"),
-                QgsProcessingParameterNumber.Double,
-                minValue=0.1,
-                defaultValue=0.8,
-            )
+        param = QgsProcessingParameterDistance(
+            self.MIN_WATERBODY_WIDTH, self.tr("Minimum waterbody width tolerance"),
+            parentParameterName=self.WATER_BODY,
+            minValue=0,
         )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MIN_WATER_BODY_AREA,
-                self.tr("Minimum body water area tolerance in square millimeters"),
-                QgsProcessingParameterNumber.Double,
-                minValue=0.1,
-                defaultValue=4,
-            )
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        self.addParameter(param
+        )
+        param = QgsProcessingParameterDistance(
+            self.MIN_WATERBODY_AREA, self.tr("Minimum waterbody area tolerance"),
+            parentParameterName=self.WATER_BODY,
+            minValue=0,
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        self.addParameter(param
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
@@ -123,53 +127,47 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 [QgsProcessing.TypeVectorPoint],
             )
         )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MIN_ISLAND_AREA,
-                self.tr("Minimum island area tolerance in square millimeters"),
-                QgsProcessingParameterNumber.Double,
-                minValue=0.1,
-                defaultValue=4,
-            )
+        param = QgsProcessingParameterDistance(
+            self.MIN_ISLAND_AREA, self.tr("Minimum island area tolerance"),
+            parentParameterName=self.ISLAND,
+            minValue=0,
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        self.addParameter(param
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.DRAINAGE_SECTION,
-                self.tr("Drainage section (line layer)"),
+                self.DRAINAGE_LINES,
+                self.tr("Drainage lines"),
                 [QgsProcessing.TypeVectorLine],
             )
+        )
+        param = QgsProcessingParameterDistance(
+            self.MIN_DRAINAGE_LINES_WIDTH, self.tr("Minimum drainage line width tolerance"),
+            parentParameterName=self.DRAINAGE_LINES,
+            minValue=0,
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        self.addParameter(param
         )
         self.addParameter(
             QgsProcessingParameterField(
                 self.DRAINAGE_FIELD,
-                self.tr('Select field from Drainage Section'),
-                parentLayerParameterName=self.DRAINAGE_SECTION,
+                self.tr('Select field from Drainage Lines to classify outside polygons'),
+                parentLayerParameterName=self.DRAINAGE_LINES,
                 type=QgsProcessingParameterField.Any
             )
         )
         self.addParameter(
-            QgsProcessingParameterNumber(
+            QgsProcessingParameterString(
                 self.DRAINAGE_FIELD_VALUE,
-                self.tr('Value to set for outside polygon'),
-                QgsProcessingParameterNumber.Integer,
-                defaultValue=1
+                self.tr('Value for outside polygon'),
             )
         )
         self.addParameter(
-            QgsProcessingParameterNumber(
+            QgsProcessingParameterString(
                 self.DRAINAGE_FIELD_VALUE_SECUNDARY,
-                self.tr('Value to set for secundary stretches'),
-                QgsProcessingParameterNumber.Integer,
-                defaultValue=3
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MIN_DRAINAGE_SECTION_WIDTH,
-                self.tr("Drainage section width tolerance in millimeters"),
-                QgsProcessingParameterNumber.Double,
-                minValue=0.1,
-                defaultValue=10,
+                self.tr('Value for secundary drainage lines (inside polygons)'),
             )
         )
         self.addParameter(
@@ -180,11 +178,10 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 optional=True,
             )
         )
-
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.POINT_CONSTRAINT_LAYER_LIST,
-                self.tr("Point constraint Layers"),
+                self.tr("Point constraint layers"),
                 QgsProcessing.TypeVectorPoint,
                 optional=True,
             )
@@ -192,7 +189,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.LINE_CONSTRAINT_LAYER_LIST,
-                self.tr("Line constraint Layers"),
+                self.tr("Line constraint layers"),
                 QgsProcessing.TypeVectorLine,
                 optional=True,
             )
@@ -200,22 +197,22 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.POLYGON_CONSTRAINT_LAYER_LIST,
-                self.tr("Polygon constraint Layers"),
+                self.tr("Polygon constraint layers"),
                 QgsProcessing.TypeVectorPolygon,
                 optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.BARRAGE,
-                self.tr("Barrage (line layer)"),
+                self.DAM,
+                self.tr("Dam lines"),
                 [QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT_POLYGON,
-                self.tr("Output Line"),
+                self.tr("Output Removed Polygons"),
                 type=QgsProcessing.TypeVectorPolygon
             )
         )
@@ -224,233 +221,244 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         """
         Processing logic.
         """
+        
         water_body_layer = self.parameterAsVectorLayer(parameters, self.WATER_BODY, context)
-        expression = self.parameterAsString(parameters, self.EXPRESSION, context)
+        filterRiversExpression = self.parameterAsExpression(parameters, self.EXPRESSION, context)
         scale = self.parameterAsDouble(parameters, self.SCALE, context)
-        min_water_body_width = self.parameterAsDouble(parameters, self.MIN_WATER_BODY_WIDTH, context)
+        min_waterbody_width = self.parameterAsDouble(parameters, self.MIN_WATERBODY_WIDTH, context)
+        min_waterbody_area = self.parameterAsDouble(parameters, self.MIN_WATERBODY_AREA, context)
         island_layer = self.parameterAsVectorLayer(parameters, self.ISLAND, context)
         island_point_layer = self.parameterAsVectorLayer(parameters, self.ISLAND_POINT, context)
-        min_water_body_area = self.parameterAsDouble(parameters, self.MIN_WATER_BODY_AREA, context)
         min_island_area = self.parameterAsDouble(parameters, self.MIN_ISLAND_AREA, context)
-        drainage_section_layer = self.parameterAsVectorLayer(parameters, self.DRAINAGE_SECTION, context)
+        min_drainage_lines_width = self.parameterAsDouble(parameters, self.MIN_DRAINAGE_LINES_WIDTH, context)
+        drainage_lines_layer = self.parameterAsVectorLayer(parameters, self.DRAINAGE_LINES, context)
         drainage_field = self.parameterAsString(parameters, self.DRAINAGE_FIELD, context)
         drainage_field_value = self.parameterAsString(parameters, self.DRAINAGE_FIELD_VALUE, context)
         drainage_field_value_secundary = self.parameterAsString(parameters, self.DRAINAGE_FIELD_VALUE_SECUNDARY, context)
-        min_drainage_section_width = self.parameterAsDouble(parameters, self.MIN_DRAINAGE_SECTION_WIDTH, context)
         geographicBoundsLayer = self.parameterAsLayer(parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context)
-        barrage_layer = self.parameterAsVectorLayer(parameters, self.BARRAGE, context)
+        dam_layer = self.parameterAsVectorLayer(parameters, self.DAM, context)
         pointLayerList = self.parameterAsLayerList(parameters, self.POINT_CONSTRAINT_LAYER_LIST, context)
         lineLayerList = self.parameterAsLayerList(parameters, self.LINE_CONSTRAINT_LAYER_LIST, context)
         polygonLayerList = self.parameterAsLayerList(parameters, self.POLYGON_CONSTRAINT_LAYER_LIST, context)
 
-        if water_body_layer is None or island_layer is None or island_point_layer is None or drainage_section_layer is None:
+        if water_body_layer is None or island_layer is None or island_point_layer is None or drainage_lines_layer is None:
             feedback.reportError('Layers not defined correctly.')
             return {}
 
-        if water_body_layer.crs().isGeographic():
-            min_water_body_width_tolerance = (min_water_body_width * scale) / (10**5)
-        else:
-            min_water_body_width_tolerance = (min_water_body_width * scale)
-
-        min_water_body_area_tolerance = (min_water_body_area * (scale ** 2))
-        min_island_area_tolerance = (min_island_area * (scale ** 2)) * 10 #Remover *10 depois
-
-        if drainage_section_layer.crs().isGeographic():
-            min_drainage_section_width_tolerance = (min_drainage_section_width * (scale)) / (10**5)
-        else:
-            min_drainage_section_width_tolerance = (min_drainage_section_width * (scale))
-        
-        if island_layer.crs().isGeographic():
-            toleranceIsland = 1 / (10**5)
-        else:
-            toleranceIsland = 1
+        min_water_body_width_tolerance = min_waterbody_width*scale
+        min_water_body_area_tolerance = min_waterbody_area*(scale)**2
+        min_island_area_tolerance = min_island_area*(scale)**2
+        min_drainage_ines_width_tolerance = min_drainage_lines_width
 
         algRunner = AlgRunner()
         layerHandler = LayerHandler()
 
-        steps = 45
+        steps = 53
         multiStepFeedback = QgsProcessingMultiStepFeedback(steps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         localWaterBodyCache = algRunner.runCreateFieldWithExpression(
             water_body_layer,
-            '@id',
+            '$id',
             'featid',
             fieldType=1,
             context=context,
-            feedback=multiStepFeedback
         )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
         localInputLayerCache = layerHandler.createAndPopulateUnifiedVectorLayer(
             [water_body_layer],
             geomType=water_body_layer.wkbType(),
-            onlySelected= False,
-            feedback=multiStepFeedback
         )
         localIslandCache = layerHandler.createAndPopulateUnifiedVectorLayer(
             [island_layer],
             geomType=island_layer.wkbType(),
-            onlySelected= False,
-            feedback=multiStepFeedback
         )
         localBarrageCache = layerHandler.createAndPopulateUnifiedVectorLayer(
-            [barrage_layer],
-            geomType=barrage_layer.wkbType(),
-            onlySelected= False,
+            [dam_layer],
+            geomType=dam_layer.wkbType(),
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        # WATERBODY
+
+        multiStepFeedback.setProgressText(self.tr("Filtering flow types from water bodies."))
+        rivers= algRunner.runFilterExpression(
+            inputLyr=localWaterBodyCache,
+            expression=filterRiversExpression,
+            context=context,
+            feedback=multiStepFeedback,
+        ) 
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        riversIdsTuple = (str(river["featid"]) for river in rivers.getFeatures())
+        riversIdsStr = ','.join(riversIdsTuple)
+
+        multiStepFeedback.setProgressText(self.tr("Separating rivers from bodywaters."))
+        localRiversCache, localWaterCache = algRunner.runFilterExpressionWithFailOutput(
+            inputLyr=localInputLayerCache,
+            expression=f'featid in ({riversIdsStr})',
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Applying dissolve."))
+        dissolve = algRunner.runDissolve(localRiversCache,
+            context=context,
             feedback=multiStepFeedback
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
-        multiStepFeedback.setProgressText(self.tr("Filtering flow types from water bodies..."))
-        rivers= algRunner.runFilterExpression(
-            inputLyr=localWaterBodyCache,
-            expression=expression,
+        multiStepFeedback.setProgressText(self.tr("Applying negative buffer to remove thin parts."))
+        buffer_neg = algRunner.runBuffer(dissolve,
+            distance=-min_water_body_width_tolerance / 2.0,
             context=context,
-            feedback=multiStepFeedback,
-            outputLyr="memory:",
-        ) 
-        riversIdsTuple = (str(river["featid"]) for river in rivers.getFeatures())
-        riversIdsStr = ','.join(riversIdsTuple)
-        filterRiversIdsExpression = f'featid in ({riversIdsStr})'
-
-        localRiversCache, localWaterCache = algRunner.runFilterExpressionWithFailOutput(
-            inputLyr=localInputLayerCache,
-            expression=filterRiversIdsExpression,
-            context=context,
-            feedback=multiStepFeedback,
+            dissolve=True,
+            feedback=multiStepFeedback
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
-        multiStepFeedback.setProgressText(self.tr("Applying dissolve..."))
-        dissolve = algRunner.runDissolve(localRiversCache, context=context, feedback=multiStepFeedback)
-        multiStepFeedback.setProgressText(self.tr("Dissolve successfully applied."))
+        multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
+        singlepart = algRunner.runMultipartToSingleParts(buffer_neg,
+            context=context,
+            feedback=multiStepFeedback
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
-        multiStepFeedback.setProgressText(self.tr("Applying negative buffer to remove thin parts..."))
-        buffer_neg = algRunner.runBuffer(dissolve, distance=-min_water_body_width_tolerance / 2.0, context=context, dissolve=True, feedback=multiStepFeedback)
-        multiStepFeedback.setProgressText(self.tr("Negative buffer generated successfully."))
+        multiStepFeedback.setProgressText(self.tr("Removing null geometries."))
+        removenull = algRunner.runRemoveNull(singlepart,
+            context=context,
+            feedback=multiStepFeedback
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
-        multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart..."))
-        singlepart = algRunner.runMultipartToSingleParts(buffer_neg, context=context, feedback=multiStepFeedback)
-        multiStepFeedback.setProgressText(self.tr("Singlepart generated successfully."))
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Removing null geometries manually..."))
-        removenull = algRunner.runRemoveNull(singlepart, context=context, feedback=multiStepFeedback)
-        multiStepFeedback.setProgressText(self.tr("Null geometries removed successfully."))
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Applying positive buffer to restore to initial state..."))
-        buffer_pos = algRunner.runBuffer(removenull, distance=min_water_body_width_tolerance / 2.0, context=context, dissolve=True, feedback=multiStepFeedback)
-        multiStepFeedback.setProgressText(self.tr("Positive buffer generated successfully."))
+        multiStepFeedback.setProgressText(self.tr("Applying positive buffer."))
+        buffer_pos = algRunner.runBuffer(removenull,
+            distance=min_water_body_width_tolerance / 2.0,
+            context=context,
+            dissolve=True,
+            feedback=multiStepFeedback
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
         # single part pois resultado do buffer dissolvido é sempre multipart (pior para spatialIndex)
-        multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart..."))
-        buffer_pos_single = algRunner.runMultipartToSingleParts(buffer_pos, context=context, feedback=multiStepFeedback)
-        multiStepFeedback.setProgressText(self.tr("Singlepart generated successfully."))
+        multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
+        buffer_pos_single = algRunner.runMultipartToSingleParts(buffer_pos,
+            context=context,
+            feedback=multiStepFeedback
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
         multiStepFeedback.setProgressText(self.tr("Applying difference between original and buffer."))
-        difference_original = algRunner.runDifference(inputLyr=localRiversCache, overlayLyr=buffer_pos_single, context=context, feedback=multiStepFeedback)
-        multiStepFeedback.setProgressText(self.tr("Difference generated successfully."))
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        
-        multiStepFeedback.setProgressText(self.tr("Filtering features."))
-        filtered_difference = algRunner.runFilterExpression(
-            inputLyr=difference_original,
-            expression=f"""$area >= {min_water_body_area*15625}""",
+        difference_original = algRunner.runDifference(inputLyr=localRiversCache,
+            overlayLyr=buffer_pos_single,
             context=context,
-            feedback=multiStepFeedback,
+            feedback=multiStepFeedback
         )
-        filtered_bodywater = algRunner.runFilterExpression(
-            inputLyr=localWaterCache,
-            expression=f"""$area >= {min_water_body_area*15625}""",
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        multiStepFeedback.setProgressText(self.tr("Features filtered by area successfully."))
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        
-        multiStepFeedback.setProgressText(self.tr("Applying difference between original and holes filtered."))
-        waterbodystretch = algRunner.runDifference(inputLyr=localRiversCache, overlayLyr=filtered_difference, context=context, feedback=multiStepFeedback)
-        multiStepFeedback.setProgressText(self.tr("Difference generated successfully."))
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        
-        multiStepFeedback.setProgressText(self.tr("Filtering features."))
-        filtered_waterbodystretch = algRunner.runFilterExpression(
-            inputLyr=waterbodystretch,
-            expression=f"""$area >= {min_water_body_area*15625}""",
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        multiStepFeedback.setProgressText(self.tr("Features filtered by area successfully."))
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        
-        multiStepFeedback.setProgressText(self.tr("Merging features."))
-        unified_layer = algRunner.runMergeVectorLayers(
-            [filtered_waterbodystretch,filtered_bodywater],
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        multiStepFeedback.setProgressText(self.tr("Features successfully merged."))
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        
-        multiStepFeedback.setProgressText(self.tr("Finding holes on geometry."))
-        _, hole = algRunner.runDonutHoleExtractor(
-            inputLyr=unified_layer,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        multiStepFeedback.setProgressText(self.tr("Holes successfully saved."))
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
-        multiStepFeedback.setProgressText(self.tr("Filtering holes."))
-        filtered_hole = algRunner.runFilterExpression(
-            inputLyr=hole,
-            expression=f"""$area < {min_water_body_area_tolerance}""",
+        multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
+        new_singlepart = algRunner.runMultipartToSingleParts(difference_original,
             context=context,
-            feedback=multiStepFeedback,
+            feedback=multiStepFeedback
         )
-        multiStepFeedback.setProgressText(self.tr("Holes filtered."))
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
-        multiStepFeedback.setProgressText(self.tr("Editing water bodies."))
+        multiStepFeedback.setProgressText(self.tr("Removing small holes."))
+        filtered_difference = algRunner.runFilterExpression(
+            inputLyr=new_singlepart,
+            expression=f"""area($geometry) >= {min_water_body_area_tolerance} """,
+            context=context,
+            feedback=multiStepFeedback,
+        )        
+        multiStepFeedback.setProgressText(self.tr("Applying difference between original and holes filtered."))
+        waterbodystretch = algRunner.runDifference(inputLyr=localRiversCache, overlayLyr=filtered_difference, context=context, feedback=multiStepFeedback)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Merging features."))
+        unified_layer = algRunner.runMergeVectorLayers(
+            [waterbodystretch,localWaterCache],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
+        unified_single = algRunner.runMultipartToSingleParts(unified_layer,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Filtering waterbody."))
+        filtered_waterbody = algRunner.runFilterExpression(
+            inputLyr=unified_single,
+            expression=f"""area($geometry) >= {min_water_body_area_tolerance} """,
+            context=context,
+            feedback=multiStepFeedback,
+        ) 
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Finding holes on geometry."))
+        _, hole = algRunner.runDonutHoleExtractor(
+            inputLyr=filtered_waterbody,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Getting holes."))
+        filtered_hole = algRunner.runFilterExpression(
+            inputLyr=hole,
+            expression=f"""area($geometry) >= {min_water_body_area_tolerance}""",
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        
+        multiStepFeedback.setProgressText(self.tr("Editing waterbodies."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             [water_body_layer],
-            unified_layer,
+            filtered_waterbody,
             feedback=multiStepFeedback,
             onlySelected= False,
         )
-        multiStepFeedback.setProgressText(self.tr("Water bodies edition finished."))
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+
+        # ISLAND
         
         multiStepFeedback.setProgressText(self.tr("Filtering Island."))
         filtered_island = algRunner.runFilterExpression(
             inputLyr=localIslandCache,
-            expression=f"""$area >= {min_island_area_tolerance}""",
+            expression=f"""area($geometry) >= {min_island_area_tolerance}""",
             context=context,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.setProgressText(self.tr("Island filtered successfully."))
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Creating spatial index."))
+        algRunner.runCreateSpatialIndex(
+            inputLyr=filtered_island,
+            context=context,
+            feedback=multiStepFeedback
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
@@ -459,23 +467,22 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             [island_layer],
             filtered_island,
             feedback=multiStepFeedback,
-            onlySelected= False,
         )
-        multiStepFeedback.setProgressText(self.tr("Islands edition finished."))
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
         multiStepFeedback.setProgressText(self.tr("Transforming Small Islands into points."))
         smallIsland = algRunner.runFilterExpression(
             inputLyr=localIslandCache,
-            expression=f"""$area < {min_island_area_tolerance}""",
+            expression=f"""area($geometry) < {min_island_area_tolerance}""",
             context=context,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.setProgressText(self.tr("Points successfully generated."))
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        
+
+        toleranceIsland = 1 / (10**5) if island_layer.crs().isGeographic() else 1
+        multiStepFeedback.setProgressText(self.tr("Generating island points."))
         pointIsland = algRunner.runPoleOfInaccessibility(
             inputLyr=smallIsland,
             tolerance=toleranceIsland,
@@ -491,45 +498,123 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             newFeat = self.createNewFeature(island_point_layer.fields(), feat)
             island_point_layer.addFeature(newFeat)
         island_point_layer.endEditCommand()
-        multiStepFeedback.setProgressText(self.tr("Transformation done."))
 
         multiStepFeedback.setProgressText(self.tr("Obtaining empty spaces."))
-        waterbody_empty_space = algRunner.runDifference(inputLyr=localInputLayerCache, overlayLyr=unified_layer, context=context,feedback=multiStepFeedback)
-        island_empty_space = algRunner.runDifference(inputLyr=localIslandCache, overlayLyr=filtered_island, context=context,feedback=multiStepFeedback)
-        empty_spaces_merged = algRunner.runMergeVectorLayers(inputList=[waterbody_empty_space, island_empty_space], context=context, feedback=multiStepFeedback)
-        multiStepFeedback.setProgressText(self.tr("Empty spaces successfully obtained."))
+        waterbody_empty_space = algRunner.runDifference(
+            inputLyr=localInputLayerCache,
+            overlayLyr=filtered_waterbody,
+            context=context,
+            feedback=multiStepFeedback
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
-        drainage_section_layer.startEditing()
-        drainage_section_layer.beginEditCommand(self.tr('Drainage section field updating for features outside water body.'))
+        multiStepFeedback.setProgressText(self.tr("Creating spatial index."))
+        algRunner.runCreateSpatialIndex(
+            inputLyr=waterbody_empty_space,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Extracting waterbody from island."))
+        extracted_waterbody_to_island = algRunner.runExtractByLocation(
+            inputLyr=waterbody_empty_space,
+            intersectLyr=filtered_island,
+            predicate=[0],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Creating spatial index."))
+        algRunner.runCreateSpatialIndex(
+            inputLyr=extracted_waterbody_to_island,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Joining Attributes."))
+        joined_waterbody_to_island = algRunner.runJoinAttributesByLocation(
+            inputLyr=extracted_waterbody_to_island,
+            joinLyr=filtered_island,
+            predicateList=[0],
+            context=context,
+            method=0,
+            discardNonMatching=True,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Getting waterbodies empty spaces."))
+        filtered_waterbody_empty_space = algRunner.runDifference(
+            inputLyr=waterbody_empty_space,
+            overlayLyr=joined_waterbody_to_island,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Getting islands empty spaces."))
+        island_empty_space = algRunner.runDifference(
+            inputLyr=localIslandCache,
+            overlayLyr=filtered_island,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Merging features."))
+        empty_spaces_merged = algRunner.runMergeVectorLayers(
+            inputList=[filtered_waterbody_empty_space, island_empty_space],
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Empty spaces multipart to singlepart."))
+        empty_spaces = algRunner.runMultipartToSingleParts(empty_spaces_merged,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        # DRAINAGE LINE
+        
+        drainage_lines_layer.startEditing()
+        drainage_lines_layer.beginEditCommand(self.tr('Drainage lines field updating for features outside water body.'))
         water_body_index = QgsSpatialIndex(water_body_layer.getFeatures())
-        for drainage_feature in drainage_section_layer.getFeatures():
+        for drainage_feature in drainage_lines_layer.getFeatures():
             drainage_geom = drainage_feature.geometry()
-            intersects = False
+            contained = False
             for water_body_id in water_body_index.intersects(drainage_geom.boundingBox()):
                 water_body_feature = water_body_layer.getFeature(water_body_id)
-                if water_body_feature.geometry().intersects(drainage_geom):
-                    intersects = True
+                if water_body_feature.geometry().contains(drainage_geom):
+                    contained = True
                     break
-            if not intersects:
+            if not contained:
                 drainage_feature.setAttribute(drainage_field, drainage_field_value)
-                drainage_section_layer.updateFeature(drainage_feature)
-        drainage_section_layer.endEditCommand()
-        multiStepFeedback.setProgressText(self.tr("Drainage section field updated for features outside water body."))
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
+                drainage_lines_layer.updateFeature(drainage_feature)
+        drainage_lines_layer.endEditCommand()
         
         multiStepFeedback.setProgressText(self.tr("Editing Drainage sections."))
-        algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(inputLayer=drainage_section_layer, context=context, min_length=min_drainage_section_width_tolerance, bounds_layer=geographicBoundsLayer, spatial_partition=True, pointlyr_list=pointLayerList, linelyr_list=lineLayerList, polygonlyr_list=polygonLayerList, method = 0)
+        algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(inputLayer=drainage_lines_layer, context=context, min_length=min_drainage_ines_width_tolerance, bounds_layer=geographicBoundsLayer, spatial_partition=True, pointlyr_list=pointLayerList, linelyr_list=lineLayerList, polygonlyr_list=polygonLayerList, method = 0)
         localDrainageCache = algRunner.runCreateFieldWithExpression(
-            drainage_section_layer,
-            '@id',
+            drainage_lines_layer,
+            '$id',
             'featid',
             fieldType=1,
             context=context
         )
-        multiStepFeedback.setProgressText(self.tr("Drainage sections edition finished."))
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
@@ -540,11 +625,10 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.setProgressText(self.tr("Filtering done."))
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
-        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs."))
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: polygonizing."))
         drainage_poligonized = algRunner.runPolygonize(
             inputLyr=drainage_inside_polygon,
             context=context,
@@ -553,6 +637,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: creating spatial index."))
         algRunner.runCreateSpatialIndex(
             inputLyr=drainage_poligonized,
             context=context,
@@ -561,6 +646,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: extracting by location."))
         drainage_poligonized_filtered = algRunner.runExtractByLocation(
             inputLyr=drainage_poligonized,
             intersectLyr=filtered_hole,
@@ -571,6 +657,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: incrementing fields."))
         drainage_poligonized_autoincremet = algRunner.runAddAutoIncrementalField(
             inputLyr=drainage_poligonized_filtered,
             fieldName="auto",
@@ -580,6 +667,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: polygons to lines."))
         drainage_filtered_line = algRunner.runPolygonsToLines(
             inputLyr=drainage_poligonized_autoincremet,
             context=context,
@@ -588,6 +676,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: filtering by type of field."))
         secondary_stretches_filtered = algRunner.runFilterExpression(
             inputLyr=localDrainageCache,
             expression=f""" "{drainage_field}" = {drainage_field_value_secundary}""",
@@ -597,6 +686,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: creating spatial index."))
         algRunner.runCreateSpatialIndex(
             inputLyr=secondary_stretches_filtered,
             context=context,
@@ -605,6 +695,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: joining attributes by location."))
         secondary_stretches_filtered_inside = algRunner.runJoinAttributesByLocation(
             inputLyr=secondary_stretches_filtered,
             joinLyr=drainage_filtered_line,
@@ -617,6 +708,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: generating statistics by categories."))
         statistic = algRunner.runStatisticsByCategories(
             inputLyr=secondary_stretches_filtered_inside,
             categoriesFieldName=["auto"],
@@ -626,6 +718,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: filtering by field value."))
         extract = algRunner.runFilterExpression(
             inputLyr=statistic,
             expression=f""" "count" = 1""",
@@ -635,6 +728,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: joining attributes inside the table."))
         attributesUnion = algRunner.runJoinAttributesTable(
             layerA=secondary_stretches_filtered_inside,
             fieldA="auto",
@@ -643,19 +737,11 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             method=0,
             discardNonMatching=True,
             context=context,
-            feedback=multiStepFeedback
         )
-        multiStepFeedback.setProgressText(self.tr("Secundary streths successfully eliminated."))
-        #auto nao null -> extractbyexpression -> saida 1 = auto nao null, saida 2 =auto null
-        # saida 1 -> metodo de check de exclusao -> extractbylocation disjoints com elemen_viario -> saida 3 (excluir por nao tocar)
-        # for na saida 3 para pegar ids (feat id??) e jogar no deleteFeatures
-        # saida 1 - saida 3 -> saida 4 (flag de secundario nao excluido por metodo de check de exlusao "secundario nao excluido por intersectar elemento viario")
-        # saida 2 -> flag por mais de um secundario formando ilha excluída
-        #idstodelete = []
-        # drainage_section_layer.deleteFeatures(idstodelete)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Filtering by field."))
         extract_not_null = algRunner.runFilterExpression(
             inputLyr=attributesUnion,
             expression=f""" "auto" IS NOT NULL""",
@@ -665,6 +751,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Eliminating secundary stretchs: creating spatial index."))
         algRunner.runCreateSpatialIndex(
             inputLyr=extract_not_null,
             context=context,
@@ -695,16 +782,17 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         
         idsToRemove = [feat["featid"] for feat in combined_layer.getFeatures()]
         if idsToRemove:
-            drainage_section_layer.startEditing()
-            drainage_section_layer.beginEditCommand(self.tr('Removing secondary stretches from drainage section layer.'))
-            drainage_section_layer.deleteFeatures(idsToRemove)
-            drainage_section_layer.endEditCommand()
-        multiStepFeedback.setProgressText(self.tr("Secondary stretches removed from drainage section layer, excluding those intersecting with line constraints."))
+            drainage_lines_layer.startEditing()
+            drainage_lines_layer.beginEditCommand(self.tr('Removing secondary stretches from drainage lines layer.'))
+            drainage_lines_layer.deleteFeatures(idsToRemove)
+            drainage_lines_layer.endEditCommand()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
-        multiStepFeedback.setProgressText(self.tr("Filtering barrage."))
-        barrage_intersect = algRunner.runExtractByLocation(
+        # DAM
+
+        multiStepFeedback.setProgressText(self.tr("Filtering dam."))
+        dam_intersect = algRunner.runExtractByLocation(
                 inputLyr=localBarrageCache,
                 intersectLyr=water_body_layer,
                 predicate=[0],
@@ -714,25 +802,33 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
+        multiStepFeedback.setProgressText(self.tr("Updating dam layer."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            [barrage_layer],
-            barrage_intersect,
+            [dam_layer],
+            dam_intersect,
             feedback=multiStepFeedback,
             onlySelected= False
         )
-        multiStepFeedback.setProgressText(self.tr("All Barrages filtered."))
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         
         multiStepFeedback.setProgressText(self.tr("Generating output layer."))
-        polygon_fields = empty_spaces_merged.fields()
+        polygon_fields = QgsFields()
+        polygon_fields.append(QgsField("layer", QVariant.String))
+
         polygon_output_sink, polygon_output_id = self.parameterAsSink(
-            parameters, self.OUTPUT_POLYGON, context, polygon_fields, QgsWkbTypes.Polygon, empty_spaces_merged.crs()
+            parameters, self.OUTPUT_POLYGON, context, polygon_fields, QgsWkbTypes.Polygon, empty_spaces.crs()
         )
+        for feature in empty_spaces.getFeatures():
+            new_feature = QgsFeature(polygon_fields)
+            new_feature.setGeometry(feature.geometry())
+            new_feature.setAttribute("layer", feature["layer"])
+            polygon_output_sink.addFeature(new_feature, QgsFeatureSink.FastInsert)
+
         self.sink_dict = {
-            empty_spaces_merged.id(): polygon_output_sink,
+            empty_spaces.id(): polygon_output_sink,
         }
-        lyrList = [empty_spaces_merged]
+        lyrList = [empty_spaces]
         
         multiStepFeedback.setProgressText(self.tr("Adding to sink."))
         for lyr in lyrList:
@@ -781,6 +877,12 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
 
     def groupId(self):
         return "DSGTools - Generalization Algorithms"
+    
+    def shortHelpString(self):
+        return self.tr(
+            "Generaliza massas d'água, ilhas, trechos de drenagem e barragens.\nFlow types expression: Escolha os números relacionados aos rios que possuem fluxo na tabela de atributos. Exemplo: 'tipo in (1,2,9,10)'.\nScale: Escolha a escala desejada. Exemplo: '50' para 50k.\nMinimum waterbody width tolerance: Escolha o comprimento mínimo da massa d'água em graus. Exemplo: '0,000008' para 0,8mm.\nMinimum waterbody area tolerance: Escolha a área mínima da massa d'água em graus quadrados. Exemplo: '0,0000000004' para 4mm².\nMinimum island area tolerance: Escolha a área mínima da ilha em graus quadrados. Exemplo: '0,0000000004' para 4mm².\nMinimum drainage line width tolerance: Escolha o comprimento mínimo do trecho de drenagem em graus. Exemplo: '0,000008' para 0,8mm.\nSelect field from Drainage Lines to classify outside polygons: Escolha a coluna da tabela de atributos relacionada à situação da linha de drenagem dentro do polígono para alterá-la para fora do polígono.\nValue for outside polygon: Escolha ovalor númerico úmero relacionado à coluna escolhida anteriormente que se refere aos elementos fora do polígono.\nValue for secondary lines (inside polygons): Escolha o valor relacionado à coluna escolhida anteriormente que se refere aos elementos dentro dos polígonos (linhas de drenagem secundárias).\nReference layer: Escolha a camada de referência para o plugin Generalize Network Edges With Length.\nPoint constraint layers: Escolha as camadas relacionadas à restrição de pontos para o plugin Generalize Network Edges With Length.\nLine constraint layers: Escolha as camadas relacionadas à restrição de linhas para o plugin Generalize Network Edges With Length.\nPolygon constraint layers: Escolha as camadas relacionadas à restrição de polígonos para o plugin Generalize Network Edges With Length."
+        )
+
 
     def tr(self, string):
         return QCoreApplication.translate("GeneralizeWaterBodyAlgorithm", string)
