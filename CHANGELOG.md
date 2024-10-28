@@ -1,10 +1,12 @@
 # CHANGELOG
 
-## 4.15.3 - dev
+## 4.15.4 - dev
 
 Novas Funcionalidades:
 
--
+- Criação do algoritmo de generalização de edificações (ponto);
+- Criação do algoritmo de generalização de edificações (polígono);
+- criação do algoritmo de generalização de pistas de pouso;
 
 Melhorias:
 
