@@ -110,6 +110,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeEdif
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeLandingStrip import (
     GeneralizeLandingStripAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeRodowaysAlgorithm import (
+    GeneralizeHighwaysAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.line2Multiline import (
     Line2Multiline,
 )
@@ -704,6 +707,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             GeneralizeEdificationsAlgorithm(),
             GeneralizeEdificationsAreaAlgorithm(),
             GeneralizeLandingStripAlgorithm(),
+            GeneralizeHighwaysAlgorithm(),
         ]
         return algList
 

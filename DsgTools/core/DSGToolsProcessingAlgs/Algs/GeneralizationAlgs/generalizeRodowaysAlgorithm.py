@@ -27,7 +27,7 @@ from qgis.core import (
 )
 
 from ...algRunner import AlgRunner
-class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
+class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
     INPUT_POLYGON = "INPUT_POLYGON"
     INPUT_POINT = "INPUT_POINT"
     ESCALA = "ESCALA"
@@ -167,10 +167,10 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
         return {self.OUTPUTPOINT: pointSinkId, self.OUTPUTPOLYGON: polygonSinkId}
 
     def name(self):
-        return "generalizeedificationsalgorithm"
+        return "generalizehighwaysalgorithm"
 
     def displayName(self):
-        return self.tr("Generalizar Edificações")
+        return self.tr("Generalizar Rodovias")
 
     def group(self):
         return self.tr("Generalization Algorithms")
@@ -179,7 +179,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
         return "DSGTools - Generalization Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate("GeneralizeEdificationsAlgorithm", string)
+        return QCoreApplication.translate("GeneralizeHighwaysAlgorithm", string)
 
     def createInstance(self):
-        return GeneralizeEdificationsAlgorithm()
+        return GeneralizeHighwaysAlgorithm()
