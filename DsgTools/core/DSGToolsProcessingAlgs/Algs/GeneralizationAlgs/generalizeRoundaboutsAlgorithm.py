@@ -70,7 +70,7 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
         Implementação do processo com camadas de saída e atualização direta das camadas de entrada.
         """
         currentStep = 0
-        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(currentStep)
 
         algRunner = AlgRunner()
@@ -88,12 +88,8 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
             fields,
             QgsWkbTypes.Polygon,
             lineLayer.sourceCrs()
-        )
-        currentStep += 1
-        multiStepFeedback.setProgressText(self.tr("Calculando tamanhos"))    
+        )  
         areaminima = minArea * (escala**2)
-        currentStep += 1
-        multiStepFeedback.setProgressText(self.tr("Generalizando"))
 
         lineLayerWithID = algRunner.runCreateFieldWithExpression(lineLayer, '$id', 'featid', context)
         currentStep += 1
