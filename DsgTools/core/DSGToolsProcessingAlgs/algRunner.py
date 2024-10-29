@@ -2521,4 +2521,22 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
-
+        
+    def runOrientedBoundingBox(
+        self, 
+        inputLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: Optional[bool] = False,
+    ) -> QgsVectorLayer:
+        output = processing.run(
+            "qgis:orientedminimumboundingbox", 
+            {
+                "INPUT": inputLyr,
+                "OUTPUT":'TEMPORARY_OUTPUT'
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm, 
+        )
+        return output["OUTPUT"]
