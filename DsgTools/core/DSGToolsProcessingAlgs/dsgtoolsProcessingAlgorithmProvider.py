@@ -39,6 +39,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.findSmallClose
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeNetworkEdgesFromLengthAlgorithm import (
     GeneralizeNetworkEdgesWithLengthAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeWaterBodyAlgorithm import (
+    GeneralizeWaterBodyAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import (
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm,
 )
@@ -97,6 +100,21 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractByDE9IM impo
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractElevationPoints import (
     ExtractElevationPoints,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeEdificationsAlgorithm import (
+    GeneralizeEdificationsAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeEdificationsAreaAlgorithm import (
+    GeneralizeEdificationsAreaAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeLandingStrip import (
+    GeneralizeLandingStripAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeRoundaboutsAlgorithm import (
+    GeneralizeRoundaboutsAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeHighwaysAlgorithm import (
+    GeneralizeHighwaysAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.line2Multiline import (
     Line2Multiline,
@@ -688,6 +706,12 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyMissingPointsOnLineIntersections(),
             IdentifyMissingPolygonLineIntersectionsOnLines(),
             BatchRasterPackagingForBDGEx(),
+            GeneralizeWaterBodyAlgorithm(),
+            GeneralizeEdificationsAlgorithm(),
+            GeneralizeEdificationsAreaAlgorithm(),
+            GeneralizeLandingStripAlgorithm(),
+            GeneralizeRoundaboutsAlgorithm(),
+            GeneralizeHighwaysAlgorithm(),
         ]
         return algList
 

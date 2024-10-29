@@ -1,10 +1,14 @@
 # CHANGELOG
 
-## 4.15.5 - dev
+## 4.15.7 - dev
 
 Novas Funcionalidades:
 
 - Nova ferramenta para fechar linhas;
+- Criação do algoritmo de generalização de edificações (ponto);
+- Criação do algoritmo de generalização de edificações (polígono);
+- Criação do algoritmo de generalização de pistas de pouso;
+- Criação do algoritmo de generalização de massas d'água (polígono), ilhas (polígono), trechos de drenagem (linha) e barragens (linha);
 
 Melhorias:
 
