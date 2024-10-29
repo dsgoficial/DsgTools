@@ -14,7 +14,6 @@
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
     QgsFeature,
-    QgsGeometry,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterVectorLayer,
@@ -22,7 +21,6 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsProcessingParameterDistance,
     QgsWkbTypes,
-    QgsProcessingParameterMultipleLayers,
     QgsFeatureSink,
     QgsProcessingMultiStepFeedback,
 )
@@ -33,7 +31,7 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
     ESCALA = "ESCALA"
     AREA_MINIMA = "AREA_MINIMA"
     OUTPUT = "OUTPUT"
-    
+
     def initAlgorithm(self, config):
         """
         Parameter setting.
@@ -56,7 +54,14 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterDistance(
                 self.AREA_MINIMA,
                 self.tr("Área mínima para rotatórias na carta"),
-                parentParameterName=self.NETWORK_LAYER
+                parentParameterName=self.INPUT_LAYER
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT,
+                self.tr("Rotatórias"),
+                QgsProcessing.TypeVectorPolygon
             )
         )
         
@@ -65,44 +70,48 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
         Implementação do processo com camadas de saída e atualização direta das camadas de entrada.
         """
         currentStep = 0
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(currentStep)
 
         algRunner = AlgRunner()
 
-        lineLayer = self.parameterAsVectorLayer(parameters, self.NETWORK_LAYER, context)
-        lineLayerList = self.parameterAsLayerList(parameters, self.LINE_CONSTRAINT_LAYER_LIST, context)
-        pointLayerList = self.parameterAsLayerList(parameters, self.POINT_CONSTRAINT_LAYER_LIST, context)
-        polygonLayerList = self.parameterAsLayerList(parameters, self.POLYGON_CONSTRAINT_LAYER_LIST, context)
-
+        lineLayer = self.parameterAsVectorLayer(parameters, self.INPUT_LAYER, context)
+       
         escala = self.parameterAsDouble(parameters, self.ESCALA, context)
-        minLength = self.parameterAsDouble(parameters, self.MIN_LENGTH, context)
         minArea = self.parameterAsDouble(parameters, self.AREA_MINIMA, context)
-        geographicBoundsLayer = self.parameterAsLayer(parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context)
+        fields = lineLayer.fields()
+        
+        (sink, dest_id) = self.parameterAsSink(
+            parameters,
+            self.OUTPUT,
+            context,
+            fields,
+            QgsWkbTypes.Polygon,
+            lineLayer.sourceCrs()
+        )
+        currentStep += 1
         multiStepFeedback.setProgressText(self.tr("Calculando tamanhos"))    
         areaminima = minArea * (escala**2)
-        compMinimo = minLength * escala
-
+        currentStep += 1
         multiStepFeedback.setProgressText(self.tr("Generalizando"))
-        algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(inputLayer=lineLayer, context=context, min_length=compMinimo, bounds_layer=geographicBoundsLayer, spatial_partition=True, pointlyr_list=pointLayerList, linelyr_list=lineLayerList, polygonlyr_list=polygonLayerList, method = 0)
 
         lineLayerWithID = algRunner.runCreateFieldWithExpression(lineLayer, '$id', 'featid', context)
-        
+        currentStep += 1
+        multiStepFeedback.setProgressText(self.tr("Aplicando o polygonized"))  
         polygonized = algRunner.runPolygonize(lineLayerWithID, context, keepFields=True)
 
         areasPequenas = algRunner.runFilterExpression(polygonized, f'area($geometry) < {areaminima}', context)
-        idsAreasPequenas = []
-
+        currentStep += 1
+        multiStepFeedback.setProgressText(self.tr("Adicionando os polígonos de área pequena ao sink"))
         for feature in areasPequenas.getFeatures():
-            idsAreasPequenas.append(feature['featid'])
-
-        print(idsAreasPequenas)
+            feat = QgsFeature(feature)
+            sink.addFeature(feat, QgsFeatureSink.FastInsert)
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Retornando"))
         
-        return {}
+        return {self.OUTPUT: dest_id}
 
     def name(self):
         return "generalizeroundaboutsalgorithm"
@@ -119,5 +128,10 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
     def tr(self, string):
         return QCoreApplication.translate("GeneralizeRoundaboutsAlgorithm", string)
 
+    def shortHelpString(self):
+        return self.tr(
+            "Este processing recebe uma camada de linhas e retorna como output, os polígonos de área pequena limitados pelas linhas."
+        )
+    
     def createInstance(self):
         return GeneralizeRoundaboutsAlgorithm()
