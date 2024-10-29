@@ -42,6 +42,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeNetw
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeWaterBodyAlgorithm import (
     GeneralizeWaterBodyAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeContourLineAlgorithm import (
+    GeneralizeContourLineAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import (
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm,
 )
@@ -704,6 +707,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyMissingPolygonLineIntersectionsOnLines(),
             BatchRasterPackagingForBDGEx(),
             GeneralizeWaterBodyAlgorithm(),
+            GeneralizeContourLineAlgorithm(),
             GeneralizeEdificationsAlgorithm(),
             GeneralizeEdificationsAreaAlgorithm(),
             GeneralizeLandingStripAlgorithm(),

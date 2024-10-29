@@ -2418,6 +2418,27 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
 
+    def runFindSmallClosedLinesAlgorithm(
+        self,
+        inputLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        min_length: float = 0.001,
+        method: Optional[int] = 0,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ): processing.run(
+            "dsgtools:findsmallclosedlinesalgorithm",
+            {
+                "INPUT": inputLayer,
+                "MIN_LENGTH": min_length,
+                "METHOD": method,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+
+
     def runGdalWarp(
         self,
         rasterLayer: QgsRasterLayer,
