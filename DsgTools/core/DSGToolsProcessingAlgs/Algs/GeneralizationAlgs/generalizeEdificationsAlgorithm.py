@@ -317,7 +317,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
         return dictCluster
 
     def name(self):
-        return "generalizeedificationsareaalgorithm"
+        return "generalizeedificationsalgorithm"
 
     def displayName(self):
         return self.tr("Generalizar Edificações")
