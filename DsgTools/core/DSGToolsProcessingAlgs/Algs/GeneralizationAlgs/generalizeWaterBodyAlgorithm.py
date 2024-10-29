@@ -493,7 +493,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         
         island_point_layer.startEditing()
-        island_point_layer.beginEditCommand(self.tr('Updating Islant Point Layer.'))
+        island_point_layer.beginEditCommand(self.tr('Updating Island Point Layer.'))
         for feat in pointIsland.getFeatures():
             newFeat = self.createNewFeature(island_point_layer.fields(), feat)
             island_point_layer.addFeature(newFeat)
