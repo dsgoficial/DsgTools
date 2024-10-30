@@ -20,12 +20,6 @@
  *                                                                         *
  ***************************************************************************************************/
 """
-# mudar o cabeçalho
-# short helpstring
-# setProgressText
-# indice espacial antes de operacoes geometricas
-# nao usar $area para ficar tudo no sistema da camada
-# nao deixar tamanho hardcoded
 import os
 from PyQt5.QtCore import QCoreApplication, QVariant
 from qgis.core import (
