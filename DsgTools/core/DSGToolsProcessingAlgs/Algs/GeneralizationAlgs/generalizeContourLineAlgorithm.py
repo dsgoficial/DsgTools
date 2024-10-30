@@ -181,7 +181,7 @@ class GeneralizeContourLineAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Filtering by quota."))
         filteredContourLines = algRunner.runFilterExpression(
             inputLyr=cacheCountourLyr,
-            expression=f"""{quota_field} % {equidist} = 0""",
+            expression=f"""{quota_field} % {equidist} != 0""",
             context=context,
             feedback=multiStepFeedback,
         )
