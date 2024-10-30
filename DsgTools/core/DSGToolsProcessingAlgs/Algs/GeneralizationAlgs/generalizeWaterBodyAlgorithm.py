@@ -46,7 +46,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeUtil
 
 class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
     
-    WATER_BODY = "WATER_BODY"
+    WATERBODY = "WATERBODY"
     EXPRESSION = "EXPRESSION"
     SCALE = "SCALE"
     MIN_WATERBODY_WIDTH = "MIN_WATERBODY_WIDTH"
@@ -72,7 +72,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.WATER_BODY,
+                self.WATERBODY,
                 self.tr("Water body (polygon layer)"),
                 [QgsProcessing.TypeVectorPolygon],
             )
@@ -81,20 +81,20 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterExpression(
                 self.EXPRESSION,
                 self.tr("Flow types expression"),
-                parentLayerParameterName=self.WATER_BODY
+                parentLayerParameterName=self.WATERBODY
             )
         )
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.SCALE,
                 self.tr("Scale"),
-                parentParameterName=self.WATER_BODY,
+                parentParameterName=self.WATERBODY,
                 minValue=0,
             )
         )
         param = QgsProcessingParameterDistance(
             self.MIN_WATERBODY_WIDTH, self.tr("Minimum waterbody width tolerance"),
-            parentParameterName=self.WATER_BODY,
+            parentParameterName=self.WATERBODY,
             minValue=0,
         )
         param.setMetadata({"widget_wrapper": {"decimals": 10}})
@@ -102,7 +102,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         )
         param = QgsProcessingParameterDistance(
             self.MIN_WATERBODY_AREA, self.tr("Minimum waterbody area tolerance"),
-            parentParameterName=self.WATER_BODY,
+            parentParameterName=self.WATERBODY,
             minValue=0,
         )
         param.setMetadata({"widget_wrapper": {"decimals": 10}})
@@ -217,7 +217,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         Processing logic.
         """
         
-        water_body_layer = self.parameterAsVectorLayer(parameters, self.WATER_BODY, context)
+        waterbody_layer = self.parameterAsVectorLayer(parameters, self.WATERBODY, context)
         filterRiversExpression = self.parameterAsExpression(parameters, self.EXPRESSION, context)
         scale = self.parameterAsDouble(parameters, self.SCALE, context)
         min_waterbody_width = self.parameterAsDouble(parameters, self.MIN_WATERBODY_WIDTH, context)
@@ -236,12 +236,12 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         lineLayerList = self.parameterAsLayerList(parameters, self.LINE_CONSTRAINT_LAYER_LIST, context)
         polygonLayerList = self.parameterAsLayerList(parameters, self.POLYGON_CONSTRAINT_LAYER_LIST, context)
 
-        if water_body_layer is None or island_layer is None or island_point_layer is None or drainage_lines_layer is None:
+        if waterbody_layer is None or island_layer is None or island_point_layer is None or drainage_lines_layer is None:
             feedback.reportError('Layers not defined correctly.')
             return {}
 
-        min_water_body_width_tolerance = min_waterbody_width*scale
-        min_water_body_area_tolerance = min_waterbody_area*(scale)**2
+        min_waterbody_width_tolerance = min_waterbody_width*scale
+        min_waterbody_area_tolerance = min_waterbody_area*(scale)**2
         min_island_area_tolerance = min_island_area*(scale)**2
         min_drainage_ines_width_tolerance = min_drainage_lines_width
 
@@ -254,15 +254,15 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         localWaterBodyCache = algRunner.runCreateFieldWithExpression(
-            water_body_layer,
+            waterbody_layer,
             '$id',
             'featid',
             fieldType=1,
             context=context,
         )
         localInputLayerCache = layerHandler.createAndPopulateUnifiedVectorLayer(
-            [water_body_layer],
-            geomType=water_body_layer.wkbType(),
+            [waterbody_layer],
+            geomType=waterbody_layer.wkbType(),
         )
         localIslandCache = layerHandler.createAndPopulateUnifiedVectorLayer(
             [island_layer],
@@ -300,7 +300,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
 
         multiStepFeedback.setProgressText(self.tr("Applying strangle."))
-        waterbodystretch = generalizeUtils.runStrangle(layer=localRiversCache, length_tol=min_water_body_width_tolerance, area_tol=min_water_body_area_tolerance, context=context, feedback=multiStepFeedback)
+        waterbodystretch = generalizeUtils.runStrangle(layer=localRiversCache, length_tol=min_waterbody_width_tolerance, area_tol=min_waterbody_area_tolerance, context=context, feedback=multiStepFeedback)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
@@ -324,7 +324,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Filtering waterbody."))
         filtered_waterbody = algRunner.runFilterExpression(
             inputLyr=unified_single,
-            expression=f"""area($geometry) >= {min_water_body_area_tolerance} """,
+            expression=f"""area($geometry) >= {min_waterbody_area_tolerance} """,
             context=context,
             feedback=multiStepFeedback,
         ) 
@@ -343,7 +343,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Getting holes."))
         filtered_hole = algRunner.runFilterExpression(
             inputLyr=hole,
-            expression=f"""area($geometry) >= {min_water_body_area_tolerance}""",
+            expression=f"""area($geometry) >= {min_waterbody_area_tolerance}""",
             context=context,
             feedback=multiStepFeedback,
         )
@@ -352,7 +352,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         
         multiStepFeedback.setProgressText(self.tr("Editing waterbodies."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            [water_body_layer],
+            [waterbody_layer],
             filtered_waterbody,
             feedback=multiStepFeedback,
             onlySelected= False,
@@ -511,13 +511,13 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         
         drainage_lines_layer.startEditing()
         drainage_lines_layer.beginEditCommand(self.tr('Drainage lines field updating for features outside water body.'))
-        water_body_index = QgsSpatialIndex(water_body_layer.getFeatures())
+        waterbody_index = QgsSpatialIndex(waterbody_layer.getFeatures())
         for drainage_feature in drainage_lines_layer.getFeatures():
             drainage_geom = drainage_feature.geometry()
             contained = False
-            for water_body_id in water_body_index.intersects(drainage_geom.boundingBox()):
-                water_body_feature = water_body_layer.getFeature(water_body_id)
-                if water_body_feature.geometry().contains(drainage_geom):
+            for waterbody_id in waterbody_index.intersects(drainage_geom.boundingBox()):
+                waterbody_feature = waterbody_layer.getFeature(waterbody_id)
+                if waterbody_feature.geometry().contains(drainage_geom):
                     contained = True
                     break
             if not contained:
@@ -713,7 +713,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Filtering dam."))
         dam_intersect = algRunner.runExtractByLocation(
                 inputLyr=localBarrageCache,
-                intersectLyr=water_body_layer,
+                intersectLyr=waterbody_layer,
                 predicate=[0],
                 context=context,
                 feedback=multiStepFeedback
