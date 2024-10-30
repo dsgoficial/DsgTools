@@ -13,8 +13,6 @@
 """
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
-    QgsFeature,
-    QgsGeometry,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterVectorLayer,
@@ -31,12 +29,13 @@ from ...algRunner import AlgRunner
 class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
     NETWORK_LAYER = "NETWORK_LAYER"
     MIN_LENGTH = "MIN_LENGTH"
+    LAT_LENGTH = "LAT_LENGTH"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
     POINT_CONSTRAINT_LAYER_LIST = "POINT_CONSTRAINT_LAYER_LIST"
     LINE_CONSTRAINT_LAYER_LIST = "LINE_CONSTRAINT_LAYER_LIST"
     POLYGON_CONSTRAINT_LAYER_LIST = "POLYGON_CONSTRAINT_LAYER_LIST"
     ESCALA = "ESCALA"
-    AREA_MINIMA = "AREA_MINIMA"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -54,13 +53,6 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
                 self.ESCALA,
                 self.tr("Escala"),
                 type=QgsProcessingParameterNumber.Double
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.AREA_MINIMA,
-                self.tr("Área mínima para rotatórias na carta"),
-                parentParameterName=self.NETWORK_LAYER
             )
         )
         self.addParameter(
@@ -98,12 +90,29 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.MIN_LENGTH,
-                self.tr("Comprimento mínimo das estradas com pontas soltas"),
+                self.tr("Comprimento mínimo para o segmento paralelo ser eliminado"),
                 minValue=0,
                 defaultValue=0.001,
                 parentParameterName=self.NETWORK_LAYER
             )
         )
+        self.addParameter(
+            QgsProcessingParameterDistance(
+                self.LAT_LENGTH,
+                self.tr("Distância lateral mínima para o segmento ser eliminado"),
+                minValue=0,
+                defaultValue=0.001,
+                parentParameterName=self.NETWORK_LAYER
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT,
+                self.tr("Rodovias Paralelas"),
+                QgsProcessing.TypeVectorPolygon
+            )
+        )
+        
     def processAlgorithm(self, parameters, context, feedback):
         """
         Implementação do processo com camadas de saída e atualização direta das camadas de entrada.
@@ -118,35 +127,78 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         lineLayerList = self.parameterAsLayerList(parameters, self.LINE_CONSTRAINT_LAYER_LIST, context)
         pointLayerList = self.parameterAsLayerList(parameters, self.POINT_CONSTRAINT_LAYER_LIST, context)
         polygonLayerList = self.parameterAsLayerList(parameters, self.POLYGON_CONSTRAINT_LAYER_LIST, context)
-
+        
+        fields = lineLayer.fields()
+        (sink, dest_id) = self.parameterAsSink(
+            parameters,
+            self.OUTPUT,
+            context,
+            fields,
+            QgsWkbTypes.LineString,
+            lineLayer.sourceCrs()
+        )
+        
+        bufferDistance = self.parameterAsDouble(parameters, self.LAT_LENGTH, context)
         escala = self.parameterAsDouble(parameters, self.ESCALA, context)
         minLength = self.parameterAsDouble(parameters, self.MIN_LENGTH, context)
-        minArea = self.parameterAsDouble(parameters, self.AREA_MINIMA, context)
         geographicBoundsLayer = self.parameterAsLayer(parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context)
-        multiStepFeedback.setProgressText(self.tr("Calculando tamanhos"))    
-        areaminima = minArea * (escala**2)
+   
         compMinimo = minLength * escala
 
-        multiStepFeedback.setProgressText(self.tr("Generalizando"))
+        currentStep+=1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Retirando pontas soltas")) 
         algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(inputLayer=lineLayer, context=context, min_length=compMinimo, bounds_layer=geographicBoundsLayer, spatial_partition=True, pointlyr_list=pointLayerList, linelyr_list=lineLayerList, polygonlyr_list=polygonLayerList, method = 0)
-
-        lineLayerWithID = algRunner.runCreateFieldWithExpression(lineLayer, '$id', 'featid', context)
         
-        polygonized = algRunner.runPolygonize(lineLayerWithID, context, keepFields=True)
+        currentStep+=1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("criando ids")) 
+        lineLayerWithID = algRunner.runCreateFieldWithExpression(lineLayer, '$id', 'featid', context, fieldType=1)
+        
+        currentStep+=1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("criando buffers")) 
+        buffer = algRunner.runBuffer(lineLayerWithID, distance=bufferDistance, context=context, endCapStyle=1, joinStyle=1, segments=5, mitterLimit=2)
 
-        areasPequenas = algRunner.runFilterExpression(polygonized, f'area($geometry) < {areaminima}', context)
-        idsAreasPequenas = []
+        currentStep+=1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("calculando interseções")) 
+        intersection = algRunner.runIntersection(buffer, context, overlayLyr=buffer)
 
-        for feature in areasPequenas.getFeatures():
-            idsAreasPequenas.append(feature['featid'])
+        currentStep+=1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("filtrando feições")) 
+        extracted = algRunner.runFilterExpression(intersection, 'featid!=featid_2', context)
 
-        print(idsAreasPequenas)
+        currentStep+=1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Criando bounding box orientadas")) 
+        orientedBBox = algRunner.runOrientedBoundingBox(extracted, context)
+
+        currentStep+=1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("filtrando rodovias paralelas com comprimento acima do mínimo")) 
+        extractedFinal = algRunner.runFilterExpression(orientedBBox, f'height > {compMinimo}', context)
+        addedIds = set()
+
+        currentStep+=1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("adicionando rodovias paralelas ao sink")) 
+        for feature in extractedFinal.getFeatures():
+            if feature['featid'] not in addedIds:
+                feat = lineLayer.getFeature(feature['featid'])
+                sink.addFeature(feat, QgsFeatureSink.FastInsert)
+                addedIds.add(feature['featid'])
+            if feature['featid_2'] not in addedIds:
+                feat = lineLayer.getFeature(feature['featid_2'])
+                sink.addFeature(feat, QgsFeatureSink.FastInsert)
+                addedIds.add(feature['featid_2'])
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Retornando"))
         
-        return {}
+        return {self.OUTPUT: dest_id}
 
     def name(self):
         return "generalizehighwaysalgorithm"
@@ -163,5 +215,10 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
     def tr(self, string):
         return QCoreApplication.translate("GeneralizeHighwaysAlgorithm", string)
 
+    def shortHelpString(self):
+        return self.tr(
+            "Este processing recebe como input a camada de vias de deslocamento (linha) e entrega como output as linhas paralelas que satisfazem aos parâmetros de comprimento e distância lateral mínimos estabelecidos no input do processing."
+        )
+    
     def createInstance(self):
         return GeneralizeHighwaysAlgorithm()
