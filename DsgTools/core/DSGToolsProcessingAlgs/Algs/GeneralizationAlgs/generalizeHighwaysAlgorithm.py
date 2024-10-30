@@ -92,7 +92,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
                 self.MIN_LENGTH,
                 self.tr("Comprimento mínimo para o segmento paralelo ser eliminado"),
                 minValue=0,
-                defaultValue=0.001,
+                defaultValue=0.005,
                 parentParameterName=self.NETWORK_LAYER
             )
         )
@@ -101,7 +101,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
                 self.LAT_LENGTH,
                 self.tr("Distância lateral mínima para o segmento ser eliminado"),
                 minValue=0,
-                defaultValue=0.001,
+                defaultValue=0.0005,
                 parentParameterName=self.NETWORK_LAYER
             )
         )
@@ -118,7 +118,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         Implementação do processo com camadas de saída e atualização direta das camadas de entrada.
         """
         currentStep = 0
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(8, feedback)
         multiStepFeedback.setCurrentStep(currentStep)
 
         algRunner = AlgRunner()
@@ -137,12 +137,12 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
             QgsWkbTypes.LineString,
             lineLayer.sourceCrs()
         )
-        
+
         bufferDistance = self.parameterAsDouble(parameters, self.LAT_LENGTH, context)
         escala = self.parameterAsDouble(parameters, self.ESCALA, context)
         minLength = self.parameterAsDouble(parameters, self.MIN_LENGTH, context)
         geographicBoundsLayer = self.parameterAsLayer(parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context)
-   
+
         compMinimo = minLength * escala
 
         currentStep+=1
@@ -154,45 +154,39 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("criando ids")) 
         lineLayerWithID = algRunner.runCreateFieldWithExpression(lineLayer, '$id', 'featid', context, fieldType=1)
-        
+        featLengthField = "featlength"
+        multiStepFeedback.setProgressText(self.tr(f"criando novo atributo '{featLengthField}'")) 
+        lineLayerWithField = algRunner.runCreateFieldWithExpression(lineLayerWithID, 'length($geometry)', featLengthField, context, fieldType=0)
         currentStep+=1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("criando buffers")) 
-        buffer = algRunner.runBuffer(lineLayerWithID, distance=bufferDistance, context=context, endCapStyle=1, joinStyle=1, segments=5, mitterLimit=2)
+        buffer = algRunner.runBuffer(lineLayerWithField, distance=bufferDistance, context=context, endCapStyle=1, joinStyle=0, segments=5, mitterLimit=2)
+       
+        intersection_buffer_vias = algRunner.runIntersection(lineLayerWithField, context, overlayLyr=buffer)
 
         currentStep+=1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("calculando interseções")) 
-        intersection = algRunner.runIntersection(buffer, context, overlayLyr=buffer)
 
         currentStep+=1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("filtrando feições")) 
-        extracted = algRunner.runFilterExpression(intersection, 'featid!=featid_2', context)
-
-        currentStep+=1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Criando bounding box orientadas")) 
-        orientedBBox = algRunner.runOrientedBoundingBox(extracted, context)
-
+        extracted = algRunner.runFilterExpression(intersection_buffer_vias, 'featid!=featid_2', context)
+        
+        intersection_vias_extracted = algRunner.runIntersection(lineLayerWithField, context, overlayLyr=extracted)
+ 
         currentStep+=1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("filtrando rodovias paralelas com comprimento acima do mínimo")) 
-        extractedFinal = algRunner.runFilterExpression(orientedBBox, f'height > {compMinimo}', context)
-        addedIds = set()
+        extractedCompMin = algRunner.runFilterExpression(intersection_vias_extracted, f'length($geometry) > {compMinimo}', context)
+        addedIds = {feature['featid'] for feature in extractedCompMin.getFeatures()}
 
         currentStep+=1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("adicionando rodovias paralelas ao sink")) 
-        for feature in extractedFinal.getFeatures():
-            if feature['featid'] not in addedIds:
-                feat = lineLayer.getFeature(feature['featid'])
-                sink.addFeature(feat, QgsFeatureSink.FastInsert)
-                addedIds.add(feature['featid'])
-            if feature['featid_2'] not in addedIds:
-                feat = lineLayer.getFeature(feature['featid_2'])
-                sink.addFeature(feat, QgsFeatureSink.FastInsert)
-                addedIds.add(feature['featid_2'])
+        for featId in addedIds:
+            feat = lineLayer.getFeature(featId)
+            sink.addFeature(feat, QgsFeatureSink.FastInsert)
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
