@@ -48,6 +48,7 @@ from qgis.core import (
 )
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeUtils import GeneralizeUtils
 
 class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
     
@@ -252,6 +253,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
 
         algRunner = AlgRunner()
         layerHandler = LayerHandler()
+        generalizeUtils = GeneralizeUtils()
 
         steps = 53
         multiStepFeedback = QgsProcessingMultiStepFeedback(steps, feedback)
@@ -303,85 +305,8 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
-        multiStepFeedback.setProgressText(self.tr("Applying dissolve."))
-        dissolve = algRunner.runDissolve(localRiversCache,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Applying negative buffer to remove thin parts."))
-        buffer_neg = algRunner.runBuffer(dissolve,
-            distance=-min_water_body_width_tolerance / 2.0,
-            context=context,
-            dissolve=True,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
-        singlepart = algRunner.runMultipartToSingleParts(buffer_neg,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Removing null geometries."))
-        removenull = algRunner.runRemoveNull(singlepart,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Applying positive buffer."))
-        buffer_pos = algRunner.runBuffer(removenull,
-            distance=min_water_body_width_tolerance / 2.0,
-            context=context,
-            dissolve=True,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        # single part pois resultado do buffer dissolvido é sempre multipart (pior para spatialIndex)
-        multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
-        buffer_pos_single = algRunner.runMultipartToSingleParts(buffer_pos,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Applying difference between original and buffer."))
-        difference_original = algRunner.runDifference(inputLyr=localRiversCache,
-            overlayLyr=buffer_pos_single,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
-        new_singlepart = algRunner.runMultipartToSingleParts(difference_original,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        
-        multiStepFeedback.setProgressText(self.tr("Removing small holes."))
-        filtered_difference = algRunner.runFilterExpression(
-            inputLyr=new_singlepart,
-            expression=f"""area($geometry) >= {min_water_body_area_tolerance} """,
-            context=context,
-            feedback=multiStepFeedback,
-        )        
-        multiStepFeedback.setProgressText(self.tr("Applying difference between original and holes filtered."))
-        waterbodystretch = algRunner.runDifference(inputLyr=localRiversCache, overlayLyr=filtered_difference, context=context, feedback=multiStepFeedback)
+        multiStepFeedback.setProgressText(self.tr("Applying strangle."))
+        waterbodystretch = generalizeUtils.runStrangle(layer=localRiversCache, length_tol=min_water_body_width_tolerance, area_tol=min_water_body_area_tolerance, context=context, feedback=multiStepFeedback)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
