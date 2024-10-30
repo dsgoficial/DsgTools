@@ -706,12 +706,12 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyMissingPointsOnLineIntersections(),
             IdentifyMissingPolygonLineIntersectionsOnLines(),
             BatchRasterPackagingForBDGEx(),
-            GeneralizeWaterBodyAlgorithm(),
-            GeneralizeEdificationsAlgorithm(),
-            GeneralizeEdificationsAreaAlgorithm(),
-            GeneralizeLandingStripAlgorithm(),
-            GeneralizeRoundaboutsAlgorithm(),
-            GeneralizeHighwaysAlgorithm(),
+            # GeneralizeWaterBodyAlgorithm(),
+            # GeneralizeEdificationsAlgorithm(),
+            # GeneralizeEdificationsAreaAlgorithm(),
+            # GeneralizeLandingStripAlgorithm(),
+            # GeneralizeRoundaboutsAlgorithm(),
+            # GeneralizeHighwaysAlgorithm(),
         ]
         return algList
 
