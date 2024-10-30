@@ -360,6 +360,24 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
+        multiStepFeedback.setProgressText(self.tr("Obtaining empty spaces."))
+        waterbody_empty_space = algRunner.runDifference(
+            inputLyr=localInputLayerCache,
+            overlayLyr=filtered_waterbody,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.setProgressText(self.tr("Empty spaces multipart to singlepart."))
+        empty_spaces = algRunner.runMultipartToSingleParts(waterbody_empty_space,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
         # ISLAND
         
         multiStepFeedback.setProgressText(self.tr("Filtering Island."))
@@ -417,95 +435,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             newFeat = self.createNewFeature(island_point_layer.fields(), feat)
             island_point_layer.addFeature(newFeat)
         island_point_layer.endEditCommand()
-
-        multiStepFeedback.setProgressText(self.tr("Obtaining empty spaces."))
-        waterbody_empty_space = algRunner.runDifference(
-            inputLyr=localInputLayerCache,
-            overlayLyr=filtered_waterbody,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        
-        multiStepFeedback.setProgressText(self.tr("Creating spatial index."))
-        algRunner.runCreateSpatialIndex(
-            inputLyr=waterbody_empty_space,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Extracting waterbody from island."))
-        extracted_waterbody_to_island = algRunner.runExtractByLocation(
-            inputLyr=waterbody_empty_space,
-            intersectLyr=filtered_island,
-            predicate=[0],
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Creating spatial index."))
-        algRunner.runCreateSpatialIndex(
-            inputLyr=extracted_waterbody_to_island,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Joining Attributes."))
-        joined_waterbody_to_island = algRunner.runJoinAttributesByLocation(
-            inputLyr=extracted_waterbody_to_island,
-            joinLyr=filtered_island,
-            predicateList=[0],
-            context=context,
-            method=0,
-            discardNonMatching=True,
-            feedback=multiStepFeedback,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Getting waterbodies empty spaces."))
-        filtered_waterbody_empty_space = algRunner.runDifference(
-            inputLyr=waterbody_empty_space,
-            overlayLyr=joined_waterbody_to_island,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Getting islands empty spaces."))
-        island_empty_space = algRunner.runDifference(
-            inputLyr=localIslandCache,
-            overlayLyr=filtered_island,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Merging features."))
-        empty_spaces_merged = algRunner.runMergeVectorLayers(
-            inputList=[filtered_waterbody_empty_space, island_empty_space],
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Empty spaces multipart to singlepart."))
-        empty_spaces = algRunner.runMultipartToSingleParts(empty_spaces_merged,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
 
         # DRAINAGE LINE
         
