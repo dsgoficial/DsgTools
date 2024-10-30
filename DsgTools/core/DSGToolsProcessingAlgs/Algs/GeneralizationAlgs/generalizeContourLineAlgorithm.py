@@ -147,7 +147,7 @@ class GeneralizeContourLineAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
 
         if contour_line_layer is None:
-            feedback.reportError('Layers not defined correctly.')
+            feedback.reportError('Layer not defined correctly.')
             return {}
         if water_body_inside_field is not None and water_body_inside_field!='':
             field_index = contour_line_layer.fields().indexFromName(water_body_inside_field)
@@ -201,6 +201,7 @@ class GeneralizeContourLineAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
 
         if optional_step:
+            contour_line_layer.startEditing()
             contour_line_layer.beginEditCommand(self.tr("Update Outside Water Body Field"))
             spatial_index = QgsSpatialIndex(water_body_layer.getFeatures())
             for contour_feature in contour_line_layer.getFeatures():
