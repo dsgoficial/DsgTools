@@ -239,7 +239,7 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
     
     def shortHelpString(self):
         return self.tr(
-            "Generaliza inundação.\nScale: Escolha a escala desejada. Exemplo: '50000' para 50k.\nMinimum inunda width tolerance: Escolha o comprimento mínimo da inundação em graus. Exemplo: '0,000000008' para 0,8mm.\nMinimum inunda area tolerance: Escolha a área mínima da inundaçãoem graus quadrados. Exemplo: '0,0000000000000025' para 25mm².\nMaximum inunda home area tolerance: Escolha a área máxima dos buracos em graus quadrados. Exemplo: '0,0000000000000004' para 4mm²."
+            "Generaliza inundação.\nScale: Escolha a escala desejada. Exemplo: '50000' para 50k.\nMinimum inunda width tolerance: Escolha o comprimento mínimo da inundação em graus. Exemplo: '0,000000008' para 0,8mm.\nMinimum inunda area tolerance: Escolha a área mínima da inundaçãoem graus quadrados. Exemplo: '0,0000000000000025' para 25mm².\nMaximum inunda home area tolerance: Escolha a área máxima dos buracos a serem removidos em graus quadrados. Exemplo: '0,0000000000000004' para 4mm²."
         )
 
 

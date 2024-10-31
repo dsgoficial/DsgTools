@@ -55,6 +55,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
     SCALE = "SCALE"
     MIN_WATERBODY_WIDTH = "MIN_WATERBODY_WIDTH"
     MIN_WATERBODY_AREA = "MIN_WATERBODY_AREA"
+    MAX_WATERBODY_HOLE_AREA = "MAX_WATERBODY_HOLE_AREA"
     ISLAND = "ISLAND"
     ISLAND_POINT = "ISLAND_POINT"
     MIN_ISLAND_AREA = "MIN_ISLAND_AREA"
@@ -68,7 +69,8 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
     LINE_CONSTRAINT_LAYER_LIST = "LINE_CONSTRAINT_LAYER_LIST"
     POLYGON_CONSTRAINT_LAYER_LIST = "POLYGON_CONSTRAINT_LAYER_LIST"
     DAM = "DAM"
-    OUTPUT_POLYGON = "OUTPUT_POLYGON"
+    OUTPUT_WATERBODY = "OUTPUT_WATERBODY"
+    OUTPUT_DRAINAGE_LINE = "OUTPUT_DRAINAGE_LINE"
 
     def initAlgorithm(self, config=None):
         """
@@ -107,6 +109,14 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         param = QgsProcessingParameterDistance(
             self.MIN_WATERBODY_AREA,
             self.tr("Minimum waterbody area tolerance"),
+            parentParameterName=self.WATERBODY,
+            minValue=0,
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 20}})
+        self.addParameter(param)
+        param = QgsProcessingParameterDistance(
+            self.MAX_WATERBODY_HOLE_AREA,
+            self.tr("Maximum waterbody hole area to remove tolerance"),
             parentParameterName=self.WATERBODY,
             minValue=0,
         )
@@ -212,9 +222,16 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT_POLYGON,
-                self.tr("Output Removed Polygons"),
+                self.OUTPUT_WATERBODY,
+                self.tr("Output Removed Waterbody"),
                 type=QgsProcessing.TypeVectorPolygon,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT_DRAINAGE_LINE,
+                self.tr("Output Removed Draiage Line"),
+                type=QgsProcessing.TypeVectorLine,
             )
         )
 
@@ -235,6 +252,9 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         )
         min_waterbody_area = self.parameterAsDouble(
             parameters, self.MIN_WATERBODY_AREA, context
+        )
+        max_waterbody_hole_area = self.parameterAsDouble(
+            parameters, self.MAX_WATERBODY_HOLE_AREA, context
         )
         island_layer = self.parameterAsVectorLayer(parameters, self.ISLAND, context)
         island_point_layer = self.parameterAsVectorLayer(
@@ -283,6 +303,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
 
         min_waterbody_width_tolerance = min_waterbody_width * scale
         min_waterbody_area_tolerance = min_waterbody_area * (scale) ** 2
+        max_waterbody_hole_area_tolerance = max_waterbody_hole_area * (scale) ** 2
         min_island_area_tolerance = min_island_area * (scale) ** 2
         min_drainage_ines_width_tolerance = min_drainage_lines_width
 
@@ -290,7 +311,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         layerHandler = LayerHandler()
         generalizeUtils = GeneralizeUtils()
 
-        steps = 39
+        steps = 50
         multiStepFeedback = QgsProcessingMultiStepFeedback(steps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
@@ -374,29 +395,21 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
+        multiStepFeedback.setProgressText(self.tr("Finding holes on geometry."))
+        removed_hole = self.algRunner.runSmallHoleRemoverAlgorithm(
+            inputLayer=unified_single,
+            max_hole_area=max_waterbody_hole_area_tolerance,
+            context=context,
+            feedback=multiStepFeedback,
+        ) 
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+
         multiStepFeedback.setProgressText(self.tr("Filtering waterbody."))
         filtered_waterbody = self.algRunner.runFilterExpression(
-            inputLyr=unified_single,
+            inputLyr=removed_hole,
             expression=f"""area($geometry) >= {min_waterbody_area_tolerance} """,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Finding holes on geometry."))
-        _, hole = self.algRunner.runDonutHoleExtractor(
-            inputLyr=filtered_waterbody,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-
-        multiStepFeedback.setProgressText(self.tr("Getting holes."))
-        filtered_hole = self.algRunner.runFilterExpression(
-            inputLyr=hole,
-            expression=f"""area($geometry) >= {min_waterbody_area_tolerance}""",
             context=context,
             feedback=multiStepFeedback,
         )
@@ -485,7 +498,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Updating Island Point Layer."))
 
         island_point_layer.startEditing()
-        island_point_layer.beginEditCommand(self.tr("Updating Island Point Layer."))
+        island_point_layer.beginEditCommand(self.tr("Updating."))
         for feat in pointIsland.getFeatures():
             newFeat = self.createNewFeature(island_point_layer.fields(), feat)
             island_point_layer.addFeature(newFeat)
@@ -500,7 +513,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         )
         drainage_lines_layer.startEditing()
         drainage_lines_layer.beginEditCommand(
-            self.tr("Drainage lines field updating for features outside water body.")
+            self.tr("updating.")
         )
         idsOutsideWaterbody = self.getDrainageOutsideWaterbody(
             waterbody_layer, drainage_lines_layer, context, feedback=multiStepFeedback
@@ -567,7 +580,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         )
         drainage_poligonized_filtered = self.algRunner.runExtractByLocation(
             inputLyr=drainage_poligonized,
-            intersectLyr=filtered_hole,
+            intersectLyr=empty_spaces,
             predicate=[1],
             context=context,
             feedback=multiStepFeedback,
@@ -748,27 +761,42 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
 
         multiStepFeedback.setProgressText(self.tr("Generating output layer."))
-        polygon_fields = QgsFields()
-        polygon_fields.append(QgsField("layer", QVariant.String))
+        waterbody_fields = QgsFields()
+        drainage_line_fields = QgsFields()
+        waterbody_fields.append(QgsField("layer", QVariant.String))
 
-        polygon_output_sink, polygon_output_id = self.parameterAsSink(
+        waterbody_output_sink, waterbody_output_id = self.parameterAsSink(
             parameters,
-            self.OUTPUT_POLYGON,
+            self.OUTPUT_WATERBODY,
             context,
-            polygon_fields,
+            waterbody_fields,
             QgsWkbTypes.Polygon,
             empty_spaces.crs(),
         )
+        drainage_line_output_sink, drainage_line_output_id = self.parameterAsSink(
+            parameters,
+            self.OUTPUT_DRAINAGE_LINE,
+            context,
+            drainage_line_fields,
+            QgsWkbTypes.LineString,
+            combined_layer.crs(),
+        )
         for feature in empty_spaces.getFeatures():
-            new_feature = QgsFeature(polygon_fields)
+            new_feature = QgsFeature(waterbody_fields)
             new_feature.setGeometry(feature.geometry())
             new_feature.setAttribute("layer", feature["layer"])
-            polygon_output_sink.addFeature(new_feature, QgsFeatureSink.FastInsert)
+            waterbody_output_sink.addFeature(new_feature, QgsFeatureSink.FastInsert)
+
+        for feature in combined_layer.getFeatures():
+            new_feature = QgsFeature(drainage_line_fields)
+            new_feature.setGeometry(feature.geometry())
+            drainage_line_output_sink.addFeature(new_feature, QgsFeatureSink.FastInsert)
 
         self.sink_dict = {
-            empty_spaces.id(): polygon_output_sink,
+            empty_spaces.id(): waterbody_output_sink,
+            combined_layer.id(): drainage_line_output_sink,
         }
-        lyrList = [empty_spaces]
+        lyrList = [empty_spaces, combined_layer]
 
         multiStepFeedback.setProgressText(self.tr("Adding to sink."))
         for lyr in lyrList:
@@ -777,7 +805,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
-        return {self.OUTPUT_POLYGON: polygon_output_id}
+        return {self.OUTPUT_WATERBODY: waterbody_output_id, self.OUTPUT_DRAINAGE_LINE: drainage_line_output_id}
 
     def getDrainageOutsideWaterbody(
         self, waterbody_layer, drainage_lines_layer, context, feedback=None
@@ -787,6 +815,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             inputLyr=drainage_lines_layer,
             expression="$id",
             fieldName=auxFieldName,
+            fieldType=1,
             context=context,
             feedback=feedback,
         )
@@ -848,9 +877,10 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             """Generaliza massas d'água, ilhas, trechos de drenagem e barragens.\n
             Flow types expression: Escolha os números relacionados aos rios que possuem fluxo na tabela de atributos. Exemplo: 'tipo in (1,2,9,10)'.\n
             Scale: Escolha a escala desejada. Exemplo: '50000' para 50k.\n
-            Minimum waterbody width tolerance: Escolha o comprimento mínimo da massa d'água em graus na carta. Exemplo: '0,000000008' para 0,8mm (considerando 1 grau = 10^5m).\n
-            Minimum waterbody area tolerance: Escolha a área mínima da massa d'água em graus quadrados na carta. Exemplo: '4e-16' para 4mm² (considerando 1 grau = 10^5m).\n
-            Minimum island area tolerance: Escolha a área mínima da ilha em graus quadrados na carta. Exemplo: '4e-16' para 4mm² (considerando 1 grau = 10^5m).\n
+            Minimum waterbody width tolerance: Escolha o comprimento mínimo da massa d'água em graus na carta. Exemplo: '8e-9' para 0,8mm (considerando 1 grau = 10^5m).\n
+            Minimum waterbody area tolerance: Escolha a área mínima da massa d'água em graus quadrados na carta. Exemplo: '2.5e-15' para 25mm² (considerando 1 grau = 10^5m).\n
+            Maximum inunda home area tolerance: Escolha a área máxima dos buracos a serem removidos em graus quadrados. Exemplo: '4e-16' para 4mm² (considerando 1 grau = 10^5m).\n
+            Minimum island area tolerance: Escolha a área mínima da ilha em graus quadrados na carta. Exemplo: '2.5e-15' para 25mm² (considerando 1 grau = 10^5m).\n
             Minimum drainage line size tolerance: Escolha o comprimento mínimo do trecho de drenagem em graus. Exemplo: '8e-9' para 0,8mm. (considerando 1 grau = 10^5m)\n
             Select field from Drainage Lines to classify outside polygons: Escolha a coluna da tabela de atributos relacionada à situação da linha de drenagem dentro do polígono para alterá-la para fora do polígono.\n
             Value for outside polygon: Escolha o valor numérico relacionado à coluna escolhida anteriormente que se refere aos elementos fora do polígono.\n
