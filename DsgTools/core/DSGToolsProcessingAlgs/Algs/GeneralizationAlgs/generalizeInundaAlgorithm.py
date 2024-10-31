@@ -22,11 +22,17 @@
 """
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
+    QgsWkbTypes,
+    QgsFeature,
+    QgsFields,
+    QgsFeatureSink,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterVectorLayer,
+    QgsProcessingParameterNumber,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterDistance,
+    QgsProcessingParameterFeatureSink
 )
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -38,7 +44,8 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
     SCALE = "SCALE"
     MIN_INUNDA_WIDTH = "MIN_INUNDA_WIDTH"
     MIN_INUNDA_AREA = "MIN_INUNDA_AREA"
-    MIN_INUNDA_HOLE_AREA = "MIN_INUNDA_HOLE_AREA"
+    MAX_INUNDA_HOLE_AREA = "MAX_INUNDA_HOLE_AREA"
+    OUTPUT_POLYGON = "OUTPUT_POLYGON"
 
     def initAlgorithm(self, config=None):
         """
@@ -52,11 +59,11 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterDistance(
+            QgsProcessingParameterNumber(
                 self.SCALE,
                 self.tr("Scale"),
-                parentParameterName=self.INUNDA,
                 minValue=0,
+                type=QgsProcessingParameterNumber.Integer
             )
         )
         param = QgsProcessingParameterDistance(
@@ -64,7 +71,7 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
             parentParameterName=self.INUNDA,
             minValue=0,
         )
-        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        param.setMetadata({"widget_wrapper": {"decimals": 16}})
         self.addParameter(param
         )
         param = QgsProcessingParameterDistance(
@@ -72,16 +79,23 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
             parentParameterName=self.INUNDA,
             minValue=0,
         )
-        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        param.setMetadata({"widget_wrapper": {"decimals": 16}})
         self.addParameter(param
         )
         param = QgsProcessingParameterDistance(
-            self.MIN_INUNDA_HOLE_AREA, self.tr("Minimum inunda hole area tolerance"),
+            self.MAX_INUNDA_HOLE_AREA, self.tr("nMaximum inunda hole area tolerance"),
             parentParameterName=self.INUNDA,
             minValue=0,
         )
-        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        param.setMetadata({"widget_wrapper": {"decimals": 16}})
         self.addParameter(param
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT_POLYGON,
+                self.tr("Output Removed Polygons"),
+                type=QgsProcessing.TypeVectorPolygon
+            )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -93,7 +107,7 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
         scale = self.parameterAsDouble(parameters, self.SCALE, context)
         min_inunda_width = self.parameterAsDouble(parameters, self.MIN_INUNDA_WIDTH, context)
         min_inunda_area = self.parameterAsDouble(parameters, self.MIN_INUNDA_AREA, context)
-        min_inunda_hole_area = self.parameterAsDouble(parameters, self.MIN_INUNDA_HOLE_AREA, context)
+        max_inunda_hole_area = self.parameterAsDouble(parameters, self.MAX_INUNDA_HOLE_AREA, context)
         
 
         if inunda_layer is None:
@@ -102,7 +116,7 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
 
         min_inunda_width_tolerance = min_inunda_width*scale
         min_inunda_area_tolerance = min_inunda_area*(scale**2)
-        min_inunda_hole_area_tolerance = min_inunda_hole_area*(scale**2)
+        max_inunda_hole_area_tolerance = max_inunda_hole_area*(scale**2)
 
         layerHandler = LayerHandler()
         generalizeUtils = GeneralizeUtils()
@@ -113,7 +127,6 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
             [inunda_layer],
             geomType=inunda_layer.wkbType(),
         )
-        print(localInputLayerCache.featureCount())
 
         steps = 12
         multiStepFeedback = QgsProcessingMultiStepFeedback(steps, feedback)
@@ -121,21 +134,21 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
 
         multiStepFeedback.setProgressText(self.tr("Applying strangle."))
-        strangled_inunda = generalizeUtils.runStrangle(layer=localInputLayerCache, length_tol=min_inunda_width_tolerance, area_tol=min_inunda_area_tolerance, context=context, feedback=multiStepFeedback)
+        strangled_inunda = generalizeUtils.runStrangle(layer=localInputLayerCache, length_tol=min_inunda_width_tolerance, context=context, feedback=multiStepFeedback)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
-        filteredSmallInunda = algRunner.runSmallHoleRemoverAlgorithm(
+        filteredSmallHolesInunda = algRunner.runSmallHoleRemoverAlgorithm(
             inputLayer=strangled_inunda,
-            max_hole_area=min_inunda_hole_area_tolerance,
+            max_hole_area=max_inunda_hole_area_tolerance,
             context=context,
             feedback=multiStepFeedback,
         ) 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
-        filteredSmallHolesInunda = algRunner.runFilterExpression(
-            inputLyr=filteredSmallInunda,
+        filteredSmallInunda = algRunner.runFilterExpression(
+            inputLyr=filteredSmallHolesInunda,
             expression=f"""area($geometry) >= {min_inunda_area_tolerance} """,
             context=context,
             feedback=multiStepFeedback,
@@ -146,10 +159,71 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Editing inunda."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             [inunda_layer],
-            filteredSmallHolesInunda,
+            filteredSmallInunda,
             feedback=multiStepFeedback,
             onlySelected= False,
         )
+        
+        inunda_removed = algRunner.runDifference(
+            inputLyr=localInputLayerCache,
+            overlayLyr=filteredSmallInunda,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        
+        multiStepFeedback.setProgressText(self.tr("Generating output layer."))
+        polygon_fields = QgsFields()
+
+        polygon_output_sink, polygon_output_id = self.parameterAsSink(
+            parameters, self.OUTPUT_POLYGON, context, polygon_fields, QgsWkbTypes.Polygon, inunda_removed.crs()
+        )
+        for feature in inunda_removed.getFeatures():
+            new_feature = QgsFeature(polygon_fields)
+            new_feature.setGeometry(feature.geometry())
+            polygon_output_sink.addFeature(new_feature, QgsFeatureSink.FastInsert)
+
+        self.sink_dict = {
+            inunda_removed.id(): polygon_output_sink,
+        }
+        lyrList = [inunda_removed]
+        
+        multiStepFeedback.setProgressText(self.tr("Adding to sink."))
+        for lyr in lyrList:
+            self.iterateAndAddToSink(lyr, feedback)
+        multiStepFeedback.setProgressText(self.tr("Returning output layer."))
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        
+        return {self.OUTPUT_POLYGON:polygon_output_id}
+    
+    def iterateAndAddToSink(self, lyr, feedback=None):
+        sink = self.sink_dict.get(lyr.id(), None)
+        if sink is None:
+            return
+        nFeatures = lyr.featureCount()
+        if nFeatures == 0:
+            return
+        stepSize = 100/nFeatures
+        for current, feat in enumerate(lyr.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                return
+            newFeat = self.createNewFeature(lyr.fields(), feat)
+            sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            if feedback is not None:
+                feedback.setProgress(current * stepSize)
+
+    def createNewFeature(self, fields:QgsFields, feat:QgsFeature)->QgsFeature:
+        fieldsFeat = [f.name() for f in feat.fields()]
+        newFeat = QgsFeature(fields)
+        newFeat.setGeometry(feat.geometry())
+        for field in fields:
+            fieldName = field.name()
+            if fieldName not in fieldsFeat:
+                continue
+            newFeat[fieldName]=feat[fieldName]
+        return newFeat
     
     def name(self):
         return "generalizeinundaalgorithm"
@@ -165,7 +239,7 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
     
     def shortHelpString(self):
         return self.tr(
-            "Generaliza inundação.\nScale: Escolha a escala desejada. Exemplo: '50' para 50k.\nMinimum inunda width tolerance: Escolha o comprimento mínimo da inundação em graus. Exemplo: '0,000008' para 0,8mm.\nMinimum inunda area tolerance: Escolha a área mínima da inundaçãoem graus quadrados. Exemplo: '0,0000000004' para 4mm²."
+            "Generaliza inundação.\nScale: Escolha a escala desejada. Exemplo: '50000' para 50k.\nMinimum inunda width tolerance: Escolha o comprimento mínimo da inundação em graus. Exemplo: '0,000000008' para 0,8mm.\nMinimum inunda area tolerance: Escolha a área mínima da inundaçãoem graus quadrados. Exemplo: '0,0000000000000025' para 25mm².\nMaximum inunda home area tolerance: Escolha a área máxima dos buracos em graus quadrados. Exemplo: '0,0000000000000004' para 4mm²."
         )
 
 

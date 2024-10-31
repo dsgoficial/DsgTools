@@ -38,13 +38,12 @@ class GeneralizeUtils(QObject):
         self.algRunner = AlgRunner()
 
     def runStrangle(
-        self, layer:QgsVectorLayer, context, length_tol, area_tol, feedback=None
+        self, layer:QgsVectorLayer, context, length_tol, feedback=None
     ):
         """
         Gets the features from lyr acording to parameters.
         :param (QgsVectorLayer) lyr: layer;
         :param length_tol: number;
-        :param area_tol: number;
         """
         steps = 15
         currentStep = 0
