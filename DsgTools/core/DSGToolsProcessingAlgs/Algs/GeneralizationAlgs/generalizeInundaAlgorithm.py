@@ -71,7 +71,7 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
             parentParameterName=self.INUNDA,
             minValue=0,
         )
-        param.setMetadata({"widget_wrapper": {"decimals": 16}})
+        param.setMetadata({"widget_wrapper": {"decimals": 12}})
         self.addParameter(param
         )
         param = QgsProcessingParameterDistance(
@@ -79,7 +79,7 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
             parentParameterName=self.INUNDA,
             minValue=0,
         )
-        param.setMetadata({"widget_wrapper": {"decimals": 16}})
+        param.setMetadata({"widget_wrapper": {"decimals": 20}})
         self.addParameter(param
         )
         param = QgsProcessingParameterDistance(
@@ -87,7 +87,7 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
             parentParameterName=self.INUNDA,
             minValue=0,
         )
-        param.setMetadata({"widget_wrapper": {"decimals": 16}})
+        param.setMetadata({"widget_wrapper": {"decimals": 20}})
         self.addParameter(param
         )
         self.addParameter(
