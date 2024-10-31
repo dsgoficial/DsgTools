@@ -122,6 +122,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeRoun
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeHighwaysAlgorithm import (
     GeneralizeHighwaysAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeRoadElements import (
+    GeneralizeRoadElementsAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.line2Multiline import (
     Line2Multiline,
 )
@@ -720,6 +723,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             GeneralizeLandingStripAlgorithm(),
             GeneralizeRoundaboutsAlgorithm(),
             GeneralizeHighwaysAlgorithm(),
+            GeneralizeRoadElementsAlgorithm(),
         ]
         return algList
 

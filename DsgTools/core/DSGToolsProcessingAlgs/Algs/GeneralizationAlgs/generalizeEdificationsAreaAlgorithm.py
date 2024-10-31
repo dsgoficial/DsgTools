@@ -147,7 +147,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         return {self.OUTPUTPOLYGON: polygonSinkId}
 
     def name(self):
-        return "generalizeedificationsalgorithm"
+        return "generalizeedificationsareaalgorithm"
 
     def displayName(self):
         return self.tr("Generalizar Edificações - Area")

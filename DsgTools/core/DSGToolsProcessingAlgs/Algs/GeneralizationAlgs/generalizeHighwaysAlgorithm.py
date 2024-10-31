@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2023-04-15
+        begin                : 2024-10-30
         git sha              : $Format:%H$
         copyright            : (C) 2024 by Isaac Uchoa - Cartographic Engineer @ Brazilian Army
         email                : uchoalzac@eb.br
