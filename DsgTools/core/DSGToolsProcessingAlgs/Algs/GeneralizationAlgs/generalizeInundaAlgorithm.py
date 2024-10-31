@@ -83,7 +83,7 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(param
         )
         param = QgsProcessingParameterDistance(
-            self.MAX_INUNDA_HOLE_AREA, self.tr("nMaximum inunda hole area tolerance"),
+            self.MAX_INUNDA_HOLE_AREA, self.tr("Maximum inunda hole area to remove tolerance"),
             parentParameterName=self.INUNDA,
             minValue=0,
         )
