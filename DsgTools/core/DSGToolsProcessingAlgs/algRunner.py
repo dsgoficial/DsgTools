@@ -2395,9 +2395,9 @@ class AlgRunner:
         min_length: float = 0.001,
         bounds_layer: Optional[QgsVectorLayer] = None,
         spatial_partition: Optional[bool] = False,
-        pointlyr_list: Optional[List[QgsRasterLayer]] = None,
-        linelyr_list: Optional[List[QgsRasterLayer]] = None,
-        polygonlyr_list: Optional[List[QgsRasterLayer]] = None,
+        pointlyr_list: Optional[List[QgsVectorLayer]] = None,
+        linelyr_list: Optional[List[QgsVectorLayer]] = None,
+        polygonlyr_list: Optional[List[QgsVectorLayer]] = None,
         method: Optional[int] = 0,
         feedback: Optional[QgsFeedback] = None,
         is_child_algorithm: bool = False,
@@ -2437,6 +2437,33 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
+    
+    def runSmallHoleRemoverAlgorithm(
+        self,
+        inputLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        selected: bool = False,
+        dissolve: bool = False,
+        dissolve_attribute_list: Optional[List[QgsVectorLayer]] = None,
+        max_hole_area: float = 0.00000000001,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        output = processing.run(
+            "dsgtools:smallholeremoveralgorithm",
+            {
+                "INPUT": inputLayer,
+                "SELECTED": selected,
+                "DISSOLVE_OUTPUT": dissolve,
+                "DISSOLVE_ATTRIBUTE_LIST": dissolve_attribute_list,
+                "MAX_HOLE_AREA_TO_ELIMINATE": max_hole_area,
+                "OUPUT": "memory:"
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUPUT"]
 
 
     def runGdalWarp(
