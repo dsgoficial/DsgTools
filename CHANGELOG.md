@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.15.9 - dev
+## 4.15.10 - dev
 
 Novas Funcionalidades:
 
@@ -12,6 +12,7 @@ Novas Funcionalidades:
 - Criação do algoritmo de generalização de curva de nível;
 - Criação do algoritmo de generalização de rodovias; 
 - Criação do algoritmo de generalização de rotatórias;
+- Criação do algortimo de generalização de elementos viários;
 
 Melhorias:
 
