@@ -38,13 +38,12 @@ class GeneralizeUtils(QObject):
         self.algRunner = AlgRunner()
 
     def runStrangle(
-        self, layer:QgsVectorLayer, context, length_tol, area_tol, feedback=None
+        self, layer:QgsVectorLayer, context, length_tol, feedback=None
     ):
         """
         Gets the features from lyr acording to parameters.
         :param (QgsVectorLayer) lyr: layer;
         :param length_tol: number;
-        :param area_tol: number;
         """
         steps = 15
         currentStep = 0
@@ -60,8 +59,8 @@ class GeneralizeUtils(QObject):
         currentStep += 1
         if feedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Applying negative buffer to remove thin parts."))
-
+        
+        multiStepFeedback.setProgressText(self.tr("Applying negative buffer to remove thin parts."))
         buffer_neg = self.algRunner.runBuffer(dissolve,
             distance=-length_tol / 2.0,
             context=context,
@@ -71,7 +70,6 @@ class GeneralizeUtils(QObject):
         currentStep += 1
         if feedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Applying negative buffer to remove thin parts."))
 
         multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
         multitosingle = self.algRunner.runMultipartToSingleParts(buffer_neg,
@@ -81,7 +79,6 @@ class GeneralizeUtils(QObject):
         currentStep += 1
         if feedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Applying negative buffer to remove thin parts."))
 
         multiStepFeedback.setProgressText(self.tr("Removing null geometries."))
         removenull = self.algRunner.runRemoveNull(multitosingle,
@@ -91,7 +88,6 @@ class GeneralizeUtils(QObject):
         currentStep += 1
         if feedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Applying negative buffer to remove thin parts."))
 
         multiStepFeedback.setProgressText(self.tr("Applying positive buffer."))
         buffer_pos = self.algRunner.runBuffer(removenull,
@@ -106,44 +102,18 @@ class GeneralizeUtils(QObject):
             multiStepFeedback.setProgressText(self.tr("Applying negative buffer to remove thin parts."))
 
         # single part pois resultado do buffer dissolvido é sempre multipart (pior para spatialIndex)
-        multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
-        buffer_pos = self.algRunner.runMultipartToSingleParts(buffer_pos,
+        final_buffer_pos = self.algRunner.runMultipartToSingleParts(buffer_pos,
             context=context,
             feedback=multiStepFeedback
         )
         currentStep += 1
         if feedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Applying negative buffer to remove thin parts."))
-
-        multiStepFeedback.setProgressText(self.tr("Applying difference between original and buffer."))
-        difference = self.algRunner.runDifference(inputLyr=layer,
-            overlayLyr=buffer_pos,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        if feedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Applying negative buffer to remove thin parts."))
 
         multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
-        new_multitosingle = self.algRunner.runMultipartToSingleParts(difference,
+        output = self.algRunner.runMultipartToSingleParts(final_buffer_pos,
             context=context,
             feedback=multiStepFeedback
         )
-        currentStep += 1
-        if feedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-        
-        multiStepFeedback.setProgressText(self.tr("Removing small holes."))
-        filtered_difference = self.algRunner.runFilterExpression(
-            inputLyr=new_multitosingle,
-            expression=f"""area($geometry) >= {area_tol} """,
-            context=context,
-            feedback=multiStepFeedback,
-        )        
-        multiStepFeedback.setProgressText(self.tr("Applying difference between original and holes filtered."))
-        output = self.algRunner.runDifference(inputLyr=layer, overlayLyr=filtered_difference, context=context, feedback=multiStepFeedback)
 
         return output

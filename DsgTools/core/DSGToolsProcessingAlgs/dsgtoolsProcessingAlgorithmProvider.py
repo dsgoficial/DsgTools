@@ -45,6 +45,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeWate
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeContourLineAlgorithm import (
     GeneralizeContourLineAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeInundaAlgorithm import (
+    GeneralizeInundaAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import (
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm,
 )
@@ -714,6 +717,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             BatchRasterPackagingForBDGEx(),
             GeneralizeWaterBodyAlgorithm(),
             GeneralizeContourLineAlgorithm(),
+            GeneralizeInundaAlgorithm(),
             GeneralizeEdificationsAlgorithm(),
             GeneralizeEdificationsAreaAlgorithm(),
             GeneralizeLandingStripAlgorithm(),
