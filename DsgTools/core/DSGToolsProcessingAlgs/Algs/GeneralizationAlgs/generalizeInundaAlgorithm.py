@@ -128,13 +128,13 @@ class GeneralizeInundaAlgorithm(QgsProcessingAlgorithm):
             geomType=inunda_layer.wkbType(),
         )
 
-        steps = 12
+        steps = 20
         multiStepFeedback = QgsProcessingMultiStepFeedback(steps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
 
         multiStepFeedback.setProgressText(self.tr("Applying strangle."))
-        strangled_inunda = generalizeUtils.runStrangle(layer=localInputLayerCache, length_tol=min_inunda_width_tolerance, context=context, feedback=multiStepFeedback)
+        strangled_inunda = generalizeUtils.runStrangle(layer=localInputLayerCache, length_tol=min_inunda_width_tolerance, area_tol=min_inunda_area_tolerance, context=context, feedback=multiStepFeedback)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 

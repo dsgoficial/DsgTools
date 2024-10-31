@@ -38,14 +38,15 @@ class GeneralizeUtils(QObject):
         self.algRunner = AlgRunner()
 
     def runStrangle(
-        self, layer:QgsVectorLayer, context, length_tol, feedback=None
+        self, layer:QgsVectorLayer, context, length_tol, area_tol, feedback=None
     ):
         """
         Gets the features from lyr acording to parameters.
         :param (QgsVectorLayer) lyr: layer;
         :param length_tol: number;
+        :param area_tol: number;
         """
-        steps = 15
+        steps = 12
         currentStep = 0
         if feedback is not None:
             multiStepFeedback = QgsProcessingMultiStepFeedback(steps, feedback)
@@ -109,9 +110,49 @@ class GeneralizeUtils(QObject):
         currentStep += 1
         if feedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
+        
+        multiStepFeedback.setProgressText(self.tr("Obtaining empty spaces."))
+        empty_space = self.algRunner.runDifference(
+            inputLyr=layer,
+            overlayLyr=final_buffer_pos,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        if feedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        
+        multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
+        new_multitosingle = self.algRunner.runMultipartToSingleParts(empty_space,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        if feedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        
+        filtered_empty_space = self.algRunner.runFilterExpression(
+            inputLyr=new_multitosingle,
+            expression=f"""area($geometry) >= {area_tol} """,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        if feedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        
+        filtered_buffer = self.algRunner.runDifference(
+            inputLyr=layer,
+            overlayLyr=filtered_empty_space,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        if feedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
 
         multiStepFeedback.setProgressText(self.tr("Transforming multipart geometries into singlepart."))
-        output = self.algRunner.runMultipartToSingleParts(final_buffer_pos,
+        output = self.algRunner.runMultipartToSingleParts(filtered_buffer,
             context=context,
             feedback=multiStepFeedback
         )
