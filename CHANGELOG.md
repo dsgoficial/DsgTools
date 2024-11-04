@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.15.7 - dev
+## 4.15.8 - dev
 
 Novas Funcionalidades:
 
@@ -19,7 +19,8 @@ Correção de bugs:
 - Correção de bug no action do processo de inventário (os actions de vetor e raster agora foram unidos em um só);
 - Corrige nodata no processo de extrair pontos cotados;
 - Corrige rotina de construir o grid para edição;
-- Corrige bug no processo de identificar feições fechadas menores que a tolerância (Find Small Closed Lines Algorithm)
+- Corrige bug no processo de identificar feições fechadas menores que a tolerância (Find Small Closed Lines Algorithm);
+- Corrige bug no processo de remover geometrias nulas;
 
 ## 4.14.0 - 2024-06-20
 
