@@ -98,6 +98,13 @@ class TerrainModel:
     feedback: QgsProcessingFeedback = field(default=None)
 
     def __post_init__(self):
+        try:
+            import networkx as nx
+        except ImportError:
+            raise self.tr(
+                "This algorithm requires the Python networkx library. Please install this library and try again."
+            )
+        self.nx = nx
         self.context = QgsProcessingContext()
         self.algRunner = AlgRunner()
         multiStepFeedback = QgsProcessingMultiStepFeedback(10, self.feedback) if self.feedback is not None else None
@@ -605,8 +612,82 @@ class TerrainModel:
             )
         return invalidDict
     
-    def buildTerrainGraph(self, polygonBandDict: Dict[int, TerrainSlice], feedback: Optional[QgsProcessingFeedback] = None):
-        pass
+    def buildTerrainGraph(self, feedback: Optional[QgsProcessingFeedback] = None) -> Dict[QByteArray, str]:
+        G = self.nx.Graph()
+        auxDict = defaultdict(set)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+        featCount = self.contoursMiddlePointsJoinnedByPolygonBand.featureCount()
+        if featCount == 0:
+            return G
+        stepSize = 100 / featCount
+        for current, feat in enumerate(self.contoursMiddlePointsJoinnedByPolygonBand.getFeatures()):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                return G
+            geom = feat.geometry()
+            geomKey = geom.asWkb()
+            auxDict[geomKey].add(feat)
+            multiStepFeedback.setProgress(current * stepSize)
+        
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        dictSize = len(auxDict)
+        if dictSize == 0:
+            return G
+        stepSize = 100 / dictSize
+        for polygonSet in auxDict.values():
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                return G
+            if len(polygonSet) < 1:
+                continue
+            p1, p2 = polygonSet
+            G.add_edge(
+                p1["polygonid"],
+                p2["polygonid"],
+                {
+                    "contourid": p1["contourid"],
+                    "is_closed": p1["is_closed"],
+                    "height": p1[self.contourElevationFieldName],
+                }
+            )
+            multiStepFeedback.setProgress(current * stepSize)
+        return G
+    
+    def validateTerrainWithGraph(self, depressionIdSet, feedback: Optional[QgsProcessingFeedback] = None) -> Dict[QByteArray, str]:
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+        self.terrainGraph = self.buildTerrainGraph(feedback=multiStepFeedback)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        hilltops = (
+            i for i in self.terrainGraph.nodes \
+                if self.terrainGraph.degree(i) == 1 \
+                and self.terrainGraph.get_edge_data(i, list(self.terrainGraph.neighbors(i)[0]))["is_closed"] == True
+        )
+        sortedHilltops = sorted(hilltops, key=lambda x: self.terrainGraph.get_edge_data(x, list(self.terrainGraph.neighbors(x)[0]))["height"], reverse=True)
+        visitedSet = set()
+        flagDict = dict()
+        for hilltop in sortedHilltops:
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            visitedSet.add(visitedSet)
+            currentHeight = list(self.terrainGraph.neighbors(hilltop)[0])["height"]
+            heightRange = (currentHeight, currentHeight + self.threshold) if hilltop not in depressionIdSet else (currentHeight - self.threshold, currentHeight)
+            self.nx.set_node_attributes(self.terrainGraph, {hilltop: heightRange}, name="heightRange")
+            for node in graphHandler.fetch_connected_nodes(self.terrainGraph, hilltop, max_degree=2):
+                if self.terrainGraph.degree(node) == 1:
+                    continue
+                n_a, n_b = list(self.terrainGraph.neighbors(node))
+                h1 = self.terrainGraph.get_edge_data(node, n_a)["height"]
+                h2 = self.terrainGraph.get_edge_data(node, n_b)["height"]
+                if abs(h1-h2) > self.threshold:
+                    polygonFeat = self.terrainSlicesDict[node].polygonFeat
+                    geom = polygonFeat.geometry()
+                    geomKey = geom.asWkb()
+                    flagDict[geomKey] = self.tr("")
+        
 
     def validateTerrainBands(
         self, feedback: Optional[QgsProcessingFeedback] = None
@@ -630,6 +711,11 @@ class TerrainModel:
         if invalidDict != dict():
             return invalidDict
         # TODO search on graph starting on hilltops
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Building terrain graph"))
+            multiStepFeedback.setCurrentStep(1)
+        G = self.buildTerrainGraph(feedback=multiStepFeedback)
+
 
         
         # TODO output flags
