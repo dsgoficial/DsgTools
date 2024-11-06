@@ -95,7 +95,12 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=0,
             )
         )
-        self.addParameter(QgsProcessingParameterString(self.INDEX, self.tr("Index")))
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.INDEX, 
+                self.tr("Index (comma-separated for multiple)")
+            )
+        )
         self.addParameter(QgsProcessingParameterCrs(self.CRS, self.tr("CRS")))
         self.addParameter(
             QgsProcessingParameterNumber(
@@ -133,24 +138,32 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
                 )
             )
         indexTypeIdx = self.parameterAsEnum(parameters, self.INDEX_TYPE, context)
-        inputIndex = self.parameterAsString(parameters, self.INDEX, context)
+        inputIndexString = self.parameterAsString(parameters, self.INDEX, context)
+
+        if inputIndexString is None or inputIndexString.strip() == "":
+            raise QgsProcessingException(
+                self.tr("Invalid {index}").format(index=self.indexTypes[indexTypeIdx])
+            )
+            
+        inputIndexes = [idx.strip() for idx in inputIndexString.split(",")]
+
         if startScaleIdx in [0, 1] and indexTypeIdx == 0:
             raise QgsProcessingException(
                 self.tr("{index} is only valid for scales 250k and below.").format(
                     index=self.indexTypes[indexTypeIdx]
                 )
             )
-        if inputIndex is None or inputIndex == "":
-            raise QgsProcessingException(
-                self.tr("Invalid {index}").format(index=self.indexTypes[indexTypeIdx])
-            )
-        index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
-        if index is None or not self.validateIndex(index):
-            raise QgsProcessingException(
-                self.tr("Invalid {index} format.").format(
-                    index=self.indexTypes[indexTypeIdx]
+        
+        for inputIndex in inputIndexes:
+            index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
+            if index is None or not self.validateIndex(index):
+                raise QgsProcessingException(
+                    self.tr("Invalid {index} format: {value}").format(
+                        index=self.indexTypes[indexTypeIdx],
+                        value=inputIndex
+                    )
                 )
-            )
+
         crs = self.parameterAsCrs(parameters, self.CRS, context)
         if crs is None or not crs.isValid():
             raise QgsProcessingException(self.tr("Invalid CRS."))
@@ -162,23 +175,37 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         (output_sink, output_sink_id) = self.parameterAsSink(
             parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, crs
         )
+
         featureList = []
         coordinateTransformer = QgsCoordinateTransform(
             QgsCoordinateReferenceSystem(crs.geographicCrsAuthId()),
             crs,
             QgsProject.instance(),
         )
-        featureHandler.getSystematicGridFeatures(
-            featureList,
-            index,
-            stopScale,
-            coordinateTransformer,
-            fields,
-            xSubdivisions=xSubdivisions,
-            ySubdivisions=ySubdivisions,
-            feedback=feedback,
-        )
+
+        total = len(inputIndexes)
+        for i, inputIndex in enumerate(inputIndexes):
+            if feedback.isCanceled():
+                break
+                
+            index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
+            feedback.setProgress(int((i / total) * 100))
+            feedback.pushInfo(f"Processing index {i+1}/{total}: {inputIndex}")
+            
+            featureHandler.getSystematicGridFeatures(
+                featureList,
+                index,
+                stopScale,
+                coordinateTransformer,
+                fields,
+                xSubdivisions=xSubdivisions,
+                ySubdivisions=ySubdivisions,
+                feedback=feedback,
+            )
+
         for feat in featureList:
+            if feedback.isCanceled():
+                break
             output_sink.addFeature(feat, QgsFeatureSink.FastInsert)
 
         return {"OUTPUT": output_sink_id}
