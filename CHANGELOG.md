@@ -1,20 +1,27 @@
 # CHANGELOG
 
-## 4.15.3 - dev
+## 4.15.10 - dev
 
 Novas Funcionalidades:
 
--
+- Nova ferramenta para fechar linhas;
+- Criação do algoritmo de generalização de edificações (ponto);
+- Criação do algoritmo de generalização de edificações (polígono);
+- Criação do algoritmo de generalização de pistas de pouso;
+- Criação do algoritmo de generalização de massas d'água (polígono), ilhas (polígono), trechos de drenagem (linha) e barragens (linha);
 
 Melhorias:
 
--
+- O processo de criação de moldura agora aceita múltiplos MIs ou INOMs separados por vírgula;
 
 Correção de bugs:
 
 - Correção de bug no action do processo de inventário (os actions de vetor e raster agora foram unidos em um só);
 - Corrige nodata no processo de extrair pontos cotados;
 - Corrige rotina de construir o grid para edição;
+- Corrige bug no processo de identificar feições fechadas menores que a tolerância (Find Small Closed Lines Algorithm);
+- Corrige bug no processo de remover geometrias nulas;
+- Corrige bug na ferramenta de validação do terreno;
 
 ## 4.14.0 - 2024-06-20
 
