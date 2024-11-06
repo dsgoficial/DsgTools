@@ -20,12 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-import concurrent.futures
 from collections import defaultdict
 from dataclasses import dataclass, field
-from itertools import combinations, product
 import itertools
-import os
 from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
@@ -34,13 +31,9 @@ from qgis.core import (
     QgsProcessingFeedback,
     QgsProcessingMultiStepFeedback,
     QgsFeature,
-    QgsSpatialIndex,
-    QgsGeometry,
-    QgsProject,
-    QgsProcessingUtils,
     QgsFeatureRequest,
 )
-from typing import Dict, List, Optional, Set, Tuple, Union
+from typing import Dict, Optional, Set, Tuple
 from . import graphHandler
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
