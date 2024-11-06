@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.15.8 - dev
+## 4.15.9 - dev
 
 Novas Funcionalidades:
 
@@ -12,7 +12,7 @@ Novas Funcionalidades:
 
 Melhorias:
 
--
+- O processo de criação de moldura agora aceita múltiplos MIs ou INOMs separados por vírgula;
 
 Correção de bugs:
 
