@@ -47,6 +47,17 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 @dataclass()
 class TerrainSlice:
+    """
+    Represents a terrain slice with its properties and provides validation functions.
+
+    Attributes:
+        polygonid (int): Identifier of the polygon.
+        polygonFeat (QgsFeature): Feature object for the polygon.
+        contourElevationFieldName (str): Name of the elevation field in contour lines.
+        threshold (int): The elevation threshold for the model.
+        contoursOnSlice (Set[QgsFeature]): Set of contour features in this slice.
+        contourIdField (str): Field name for contour IDs.
+    """
     polygonid: int
     polygonFeat: QgsFeature
     contourElevationFieldName: str
@@ -55,6 +66,9 @@ class TerrainSlice:
     contourIdField: str
 
     def __post_init__(self):
+        """
+        Initializes the minimum and maximum elevation features on the slice.
+        """
         self.maxHeightFeatOnSlice: QgsFeature = max(
             self.contoursOnSlice,
             key=lambda x: x[self.contourElevationFieldName],
@@ -67,6 +81,12 @@ class TerrainSlice:
         )
 
     def validate(self) -> Dict[QByteArray, str]:
+        """
+        Validates if the terrain slice has consistent elevation values within the threshold.
+
+        Returns:
+            Dict[QByteArray, str]: Dictionary with any errors found, keyed by geometry.
+        """
         flagDict = dict()
         if self.maxHeightFeatOnSlice is None or self.minHeighFeatOnSlice is None:
             return flagDict
@@ -81,14 +101,42 @@ class TerrainSlice:
         return flagDict
 
     def getMinMaxHeight(self) -> Tuple[float, float]:
+        """
+        Retrieves the minimum and maximum heights in the terrain slice.
+
+        Returns:
+            Tuple[float, float]: Minimum and maximum elevation values.
+        """
         return self.minHeighFeatOnSlice[self.contourElevationFieldName], self.maxHeightFeatOnSlice[self.contourElevationFieldName]
 
     def tr(self, string: str) -> str:
+        """
+        Translates the given string for localization.
+
+        Args:
+            string (str): The string to translate.
+
+        Returns:
+            str: Translated string.
+        """
         return QCoreApplication.translate("TerrainSlice", string)
 
 
 @dataclass
 class TerrainModel:
+    """
+    Represents a terrain model composed of multiple terrain slices and processing algorithms.
+
+    Attributes:
+        contourLyr (QgsVectorLayer): Layer containing contour lines.
+        contourElevationFieldName (str): Field name for contour elevations.
+        geographicBoundsLyr (QgsVectorLayer): Layer defining the geographic bounds.
+        threshold (int): Elevation threshold for contour line consistency.
+        depressionExpression (str): Expression for identifying depressions in contours.
+        spotElevationLyr (QgsVectorLayer): Layer containing spot elevations.
+        spotElevationFieldName (str): Field name for spot elevations.
+        feedback (QgsProcessingFeedback): Feedback object for processing steps.
+    """
     contourLyr: QgsVectorLayer
     contourElevationFieldName: str
     geographicBoundsLyr: QgsVectorLayer
@@ -99,6 +147,9 @@ class TerrainModel:
     feedback: QgsProcessingFeedback = field(default=None)
 
     def __post_init__(self):
+        """
+        Initializes the minimum and maximum elevation features on the slice.
+        """
         try:
             import networkx as nx
         except ImportError:
@@ -222,6 +273,13 @@ class TerrainModel:
         context: Optional[QgsProcessingContext] = None,
         feedback: Optional[QgsProcessingFeedback] = None,
     ):
+        """
+        Builds auxiliary data structures required for terrain processing.
+
+        Args:
+            context (Optional[QgsProcessingContext]): Processing context.
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+        """
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(3, feedback)
             if feedback is not None
@@ -251,6 +309,9 @@ class TerrainModel:
         )
 
     def tr(self, string: str) -> str:
+        """
+        Initializes the minimum and maximum elevation features on the slice.
+        """
         return QCoreApplication.translate("TerrainModel", string)
 
     def buildTerrainPolygonLayerFromContours(
@@ -258,6 +319,16 @@ class TerrainModel:
         context: Optional[QgsProcessingContext] = None,
         feedback: Optional[QgsProcessingFeedback] = None,
     ) -> QgsVectorLayer:
+        """
+        Builds a polygon layer from the contours in the terrain model.
+
+        Args:
+            context (Optional[QgsProcessingContext]): Processing context.
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+
+        Returns:
+            QgsVectorLayer: Layer containing polygons built from contours.
+        """
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(4, feedback)
             if feedback is not None
@@ -322,6 +393,16 @@ class TerrainModel:
         context: Optional[QgsProcessingContext] = None,
         feedback: Optional[QgsProcessingFeedback] = None,
     ) -> QgsVectorLayer:
+        """
+        Creates boundary lines from the geographic bounds of the terrain model.
+
+        Args:
+            context (Optional[QgsProcessingContext]): Processing context.
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+
+        Returns:
+            QgsVectorLayer: Layer containing boundary lines.
+        """
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(3, feedback)
             if feedback is not None
@@ -374,6 +455,16 @@ class TerrainModel:
         context: Optional[QgsProcessingContext] = None,
         feedback: Optional[QgsProcessingFeedback] = None,
     ) -> Dict[int, TerrainSlice]:
+        """
+        Constructs terrain slices by dividing polygons based on contours.
+
+        Args:
+            context (Optional[QgsProcessingContext]): Processing context.
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+
+        Returns:
+            Dict[int, TerrainSlice]: Dictionary of TerrainSlice objects keyed by polygon ID.
+        """
         polygonBandDict = dict()
         nPolygons = self.terrainPolygonLayer.featureCount()
         if nPolygons == 0:
@@ -446,6 +537,16 @@ class TerrainModel:
         context: Optional[QgsProcessingContext] = None,
         feedback: Optional[QgsProcessingFeedback] = None,
     ) -> Dict[QByteArray, str]:
+        """
+        Finds contour lines that do not meet the threshold elevation criteria.
+
+        Args:
+            context (Optional[QgsProcessingContext]): Processing context.
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+
+        Returns:
+            Dict[QByteArray, str]: Dictionary of errors, keyed by geometry, indicating contours out of threshold.
+        """
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(1, feedback)
             if feedback is not None
@@ -471,6 +572,16 @@ class TerrainModel:
         context: Optional[QgsProcessingContext] = None,
         feedback: Optional[QgsProcessingFeedback] = None,
     ) -> Dict[QByteArray, str]:
+        """
+        Validates the entire terrain model for inconsistencies in contours, bands, and spot elevations.
+
+        Args:
+            context (Optional[QgsProcessingContext]): Processing context.
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+
+        Returns:
+            Dict[QByteArray, str]: Dictionary with invalid geometries and their messages.
+        """
         invalidDict = dict()
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(4, feedback)
@@ -511,6 +622,16 @@ class TerrainModel:
         context: Optional[QgsProcessingContext] = None,
         feedback: Optional[QgsProcessingFeedback] = None,
     ) -> Dict[QByteArray, str]:
+        """
+        Validates contour lines for dangles, intersections, and threshold compliance.
+
+        Args:
+            context (Optional[QgsProcessingContext]): Processing context.
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+
+        Returns:
+            Dict[QByteArray, str]: Dictionary with any errors found in contour lines, keyed by geometry.
+        """
         invalidDict = dict()
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(8, feedback)
@@ -614,6 +735,15 @@ class TerrainModel:
         return invalidDict
     
     def buildTerrainGraph(self, feedback: Optional[QgsProcessingFeedback] = None) -> Dict[QByteArray, str]:
+        """
+        Builds a graph representation of terrain relationships.
+
+        Args:
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+
+        Returns:
+            nx.Graph: Graph representation of terrain with nodes and edges.
+        """
         G = self.nx.Graph()
         auxDict = defaultdict(set)
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
@@ -658,6 +788,15 @@ class TerrainModel:
         return G
     
     def validateTerrainWithGraph(self, feedback: Optional[QgsProcessingFeedback] = None) -> Dict[QByteArray, str]:
+        """
+        Validates terrain bands using graph traversal for connectivity checks.
+
+        Args:
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+
+        Returns:
+            Dict[QByteArray, str]: Dictionary of validation errors, keyed by geometry.
+        """
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(0)
@@ -747,6 +886,13 @@ class TerrainModel:
         return flagDict
 
     def flag_terrain_band(self, flagDict, node):
+        """
+        Flags terrain bands that are out of the threshold range.
+
+        Args:
+            flagDict (dict): Dictionary for storing validation errors.
+            node: Node in the terrain graph to be flagged.
+        """
         polygonFeat = self.terrainSlicesDict[node].polygonFeat
         geom = polygonFeat.geometry()
         geomKey = geom.asWkb()
@@ -755,6 +901,15 @@ class TerrainModel:
     def validateTerrainBands(
         self, feedback: Optional[QgsProcessingFeedback] = None
     ) -> Dict[QByteArray, str]:
+        """
+        Validates terrain bands for elevation consistency.
+
+        Args:
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+
+        Returns:
+            Dict[QByteArray, str]: Dictionary of errors, keyed by geometry.
+        """
         invalidDict = dict()
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(2, feedback)
@@ -787,6 +942,16 @@ class TerrainModel:
         context: Optional[QgsProcessingContext],
         feedback: Optional[QgsProcessingFeedback] = None,
     ) -> Dict[QByteArray, str]:
+        """
+        Validates spot elevations for consistency with contour lines and elevation bands.
+
+        Args:
+            context (Optional[QgsProcessingContext]): Processing context.
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+
+        Returns:
+            Dict[QByteArray, str]: Dictionary with invalid spot elevation features.
+        """
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(2, feedback)
             if feedback is not None
