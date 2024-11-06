@@ -24,6 +24,7 @@ import concurrent.futures
 from collections import defaultdict
 from dataclasses import dataclass, field
 from itertools import combinations, product
+import itertools
 import os
 from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.QtCore import QByteArray
@@ -240,7 +241,7 @@ class TerrainModel:
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        self.depressionSet = (
+        self.depressionIdSet = (
             set()
             if self.depressionExpression is None
             else set(
@@ -628,7 +629,8 @@ class TerrainModel:
             geom = feat.geometry()
             geomKey = geom.asWkb()
             auxDict[geomKey].add(feat)
-            multiStepFeedback.setProgress(current * stepSize)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
         
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(1)
@@ -639,22 +641,23 @@ class TerrainModel:
         for polygonSet in auxDict.values():
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 return G
-            if len(polygonSet) < 1:
+            if len(polygonSet) <= 1:
                 continue
             p1, p2 = polygonSet
             G.add_edge(
                 p1["polygonid"],
                 p2["polygonid"],
-                {
+                **{
                     "contourid": p1["contourid"],
                     "is_closed": p1["is_closed"],
                     "height": p1[self.contourElevationFieldName],
                 }
             )
-            multiStepFeedback.setProgress(current * stepSize)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
         return G
     
-    def validateTerrainWithGraph(self, depressionIdSet, feedback: Optional[QgsProcessingFeedback] = None) -> Dict[QByteArray, str]:
+    def validateTerrainWithGraph(self, feedback: Optional[QgsProcessingFeedback] = None) -> Dict[QByteArray, str]:
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(0)
@@ -664,30 +667,90 @@ class TerrainModel:
         hilltops = (
             i for i in self.terrainGraph.nodes \
                 if self.terrainGraph.degree(i) == 1 \
-                and self.terrainGraph.get_edge_data(i, list(self.terrainGraph.neighbors(i)[0]))["is_closed"] == True
+                and self.terrainGraph.get_edge_data(
+                    i, list(self.terrainGraph.neighbors(i))[0]
+                )["is_closed"] == True
         )
-        sortedHilltops = sorted(hilltops, key=lambda x: self.terrainGraph.get_edge_data(x, list(self.terrainGraph.neighbors(x)[0]))["height"], reverse=True)
+        sortedHilltops = list(
+            sorted(
+                hilltops,
+                key=lambda x: self.terrainGraph.get_edge_data(
+                    x, list(self.terrainGraph.neighbors(x))[0]
+                )["height"], reverse=True
+            )
+        )
+        firstOrderNodesThatAreNotHilltops = [i for i in self.terrainGraph.nodes if self.terrainGraph.degree(i) == 1 and i not in sortedHilltops]
         visitedSet = set()
         flagDict = dict()
-        for hilltop in sortedHilltops:
+        for node in itertools.chain(sortedHilltops, firstOrderNodesThatAreNotHilltops):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
-            visitedSet.add(visitedSet)
-            currentHeight = list(self.terrainGraph.neighbors(hilltop)[0])["height"]
-            heightRange = (currentHeight, currentHeight + self.threshold) if hilltop not in depressionIdSet else (currentHeight - self.threshold, currentHeight)
-            self.nx.set_node_attributes(self.terrainGraph, {hilltop: heightRange}, name="heightRange")
-            for node in graphHandler.fetch_connected_nodes(self.terrainGraph, hilltop, max_degree=2):
+            visitedSet.add(node)
+            currentHeight = self.terrainGraph.get_edge_data(
+                node, list(self.terrainGraph.neighbors(node))[0]
+            )["height"]
+            heightRange = (currentHeight + self.threshold, currentHeight) if node not in self.depressionIdSet else (currentHeight, currentHeight - self.threshold)
+            self.nx.set_node_attributes(self.terrainGraph, {node: heightRange}, name="heightRange")
+            for node in graphHandler.fetch_connected_nodes(self.terrainGraph, node, max_degree=2):
+                visitedSet.add(node)
                 if self.terrainGraph.degree(node) == 1:
                     continue
                 n_a, n_b = list(self.terrainGraph.neighbors(node))
                 h1 = self.terrainGraph.get_edge_data(node, n_a)["height"]
                 h2 = self.terrainGraph.get_edge_data(node, n_b)["height"]
                 if abs(h1-h2) > self.threshold:
-                    polygonFeat = self.terrainSlicesDict[node].polygonFeat
-                    geom = polygonFeat.geometry()
-                    geomKey = geom.asWkb()
-                    flagDict[geomKey] = self.tr("")
-        
+                    self.flag_terrain_band(flagDict, node)
+                heightRange = (max(h1,h2), min(h1,h2))
+                self.nx.set_node_attributes(self.terrainGraph, {node: heightRange}, name="heightRange")
+        if len(flagDict) > 0:
+            return flagDict
+        degreeToStop = -1
+        cyclesUnchanged = 0
+        while set(self.terrainGraph.nodes) - visitedSet != set():
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            currentVisitedSet = set(visitedSet)
+            for node in sorted(set(self.terrainGraph.nodes) - visitedSet, key=lambda x: self.terrainGraph.degree(x)):
+                if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                    break
+                if node in visitedSet:
+                    continue
+                if degreeToStop > 0 and self.terrainGraph.degree(node) > degreeToStop:
+                    break
+                # grau maior ou igual a 3 daqui para frente
+                connectedNodesRanges = set(
+                    filter(
+                        lambda x: x is not None,
+                        (self.terrainGraph[i].get("heightRange", None) for i in self.terrainGraph.neighbors(node))
+                    )
+                )
+                nConnectedNodeRanges = len(list(connectedNodesRanges))
+                if nConnectedNodeRanges > 1:
+                    self.flag_terrain_band(flagDict, node)
+                    degreeToStop = self.terrainGraph.degree(node)
+                    visitedSet.add(node)
+                    continue
+
+                elif nConnectedNodeRanges == 1 and self.terrainGraph[node].get("heightRange", None) is None:
+                    previousHeightRange = list(connectedNodesRanges)[0]
+                    currentHeightRange = (min(previousHeightRange), min(previousHeightRange) - self.threshold)
+                    self.nx.set_node_attributes(self.terrainGraph, {node: currentHeightRange}, name="heightRange")
+                else:
+                    continue
+
+                visitedSet.add(node)
+
+            if visitedSet - currentVisitedSet == set():
+                cyclesUnchanged += 1
+            if cyclesUnchanged > 10:
+                break
+        return flagDict
+
+    def flag_terrain_band(self, flagDict, node):
+        polygonFeat = self.terrainSlicesDict[node].polygonFeat
+        geom = polygonFeat.geometry()
+        geomKey = geom.asWkb()
+        flagDict[geomKey] = self.tr("Terrain band contours out of threshold.")
 
     def validateTerrainBands(
         self, feedback: Optional[QgsProcessingFeedback] = None
@@ -712,11 +775,9 @@ class TerrainModel:
             return invalidDict
         # TODO search on graph starting on hilltops
         if multiStepFeedback is not None:
-            multiStepFeedback.pushInfo(self.tr("Building terrain graph"))
+            multiStepFeedback.pushInfo(self.tr("Building terrain graph and validating built terrain with it"))
             multiStepFeedback.setCurrentStep(1)
-        G = self.buildTerrainGraph(feedback=multiStepFeedback)
-
-
+        invalidDict = self.validateTerrainWithGraph(feedback=multiStepFeedback)
         
         # TODO output flags
         return invalidDict
