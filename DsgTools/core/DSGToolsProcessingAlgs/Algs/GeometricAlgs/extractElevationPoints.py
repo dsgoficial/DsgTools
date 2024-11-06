@@ -624,9 +624,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             maskLyr=maskLyr,
             feedback=multiStepFeedback,
         )
-        maskLyr = AlgRunner().runMergeVectorLayers(
-            [maskLyr, contourBufferLyr], context
-        )
+        maskLyr = AlgRunner().runMergeVectorLayers([maskLyr, contourBufferLyr], context)
         elevationPointsLayer = layerHandler.createMemoryLayerWithFeatures(
             featList=minMaxFeats,
             fields=fields,
@@ -1601,7 +1599,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-    
+
     def getMaxFeatures(
         self, fields, npRaster, transform, distance, maskLyr, feedback=None
     ):
@@ -1634,13 +1632,13 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             filteredFeatureList = self.filterFeaturesByDistanceAndExclusionLayer(
                 candidatesPointLyr=maxFeatLyr,
                 exclusionLyr=maskLyr,
-                distance=distance/10,
+                distance=distance / 10,
                 context=QgsProcessingContext(),
                 feedback=None,
             )
             if filteredFeatureList != []:
                 featSet |= self.filterFeaturesByBuffer(
-                    filteredFeatureList, distance/10, cotaMaisAlta=True
+                    filteredFeatureList, distance / 10, cotaMaisAlta=True
                 )
                 break
             if len(npRasterCopy[npRasterCopy == cotaMax]) > 0:

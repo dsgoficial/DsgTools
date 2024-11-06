@@ -197,7 +197,14 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         return bufferAroundBoundsLines
 
     def extendLinesByStartOrEndPoints(
-        self, inputLyr, boundsBuffer, tol, closedCurveIds, context, feedback, startPoint=True
+        self,
+        inputLyr,
+        boundsBuffer,
+        tol,
+        closedCurveIds,
+        context,
+        feedback,
+        startPoint=True,
     ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         multiStepFeedback.setCurrentStep(0)

@@ -146,7 +146,8 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.POLYGON_FLAGS, self.tr("{0} Polygon Flags").format(self.displayName())
+                self.POLYGON_FLAGS,
+                self.tr("{0} Polygon Flags").format(self.displayName()),
             )
         )
 
@@ -249,7 +250,11 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 continue
             self.flagFeature(geom, text, fromWkb=False, sink=flagSink)
 
-        return {self.POINT_FLAGS: point_flag_sink_id, self.LINE_FLAGS: line_flag_sink_id, self.POLYGON_FLAGS: polygon_flag_sink_id}
+        return {
+            self.POINT_FLAGS: point_flag_sink_id,
+            self.LINE_FLAGS: line_flag_sink_id,
+            self.POLYGON_FLAGS: polygon_flag_sink_id,
+        }
 
     def validateTerrainModel(
         self,
@@ -264,7 +269,11 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         context,
         feedback,
     ):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback) if feedback is not None else None
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(5, feedback)
+            if feedback is not None
+            else None
+        )
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(0)
         bufferedBounds = self.algRunner.runBuffer(

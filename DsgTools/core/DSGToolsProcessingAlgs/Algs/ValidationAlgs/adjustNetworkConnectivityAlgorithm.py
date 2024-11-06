@@ -99,12 +99,22 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(2)
         if multiStepFeedback.isCanceled():
             return {}
-        algRunner.runCreateSpatialIndex(inputLyr=dangleLyr, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            inputLyr=dangleLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
         multiStepFeedback.setCurrentStep(3)
         if multiStepFeedback.isCanceled():
             return {}
         multiStepFeedback.pushInfo(self.tr("Finding original segments"))
-        algRunner.runCreateSpatialIndex(inputLyr=dangleLyr, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            inputLyr=dangleLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
         originalSegments = algRunner.runExtractByLocation(
             inputLyr=inputLyr,
             intersectLyr=dangleLyr,
@@ -117,7 +127,12 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(4)
         if multiStepFeedback.isCanceled():
             return {}
-        algRunner.runCreateSpatialIndex(inputLyr=originalSegments, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            inputLyr=originalSegments,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
         multiStepFeedback.setCurrentStep(5)
         if multiStepFeedback.isCanceled():
             return {}

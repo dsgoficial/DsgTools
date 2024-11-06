@@ -79,14 +79,12 @@ class ExtractMiddleVertexOnLineAlgorithm(QgsProcessingAlgorithm):
             inputSource.sourceCrs(),
         )
         if output_sink is None:
-            raise QgsProcessingException(
-                self.invalidSinkError(parameters, self.OUTPUT)
-            )
+            raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
 
         featCount = inputSource.featureCount()
         if featCount == 0:
             return {self.OUTPUT: output_dest_id}
-        
+
         stepSize = 100 / featCount
 
         for current, feat in enumerate(inputSource.getFeatures()):
@@ -99,14 +97,18 @@ class ExtractMiddleVertexOnLineAlgorithm(QgsProcessingAlgorithm):
                 if feedback is not None and feedback.isCanceled():
                     break
                 vertexCount = len(list(part.vertices()))
-                vertex = part.vertexAt(vertexCount // 2) if vertexCount > 2 else part.vertexAt(0)
+                vertex = (
+                    part.vertexAt(vertexCount // 2)
+                    if vertexCount > 2
+                    else part.vertexAt(0)
+                )
                 newFeat = QgsFeature(outputFields)
                 newFeat.setAttributes(feat.attributes() + [partId])
                 newFeat.setGeometry(QgsGeometry(vertex))
                 output_sink.addFeature(newFeat)
             if feedback is not None:
                 feedback.setProgress(current * stepSize)
-            
+
         return {self.OUTPUT: output_dest_id}
 
     def name(self):
