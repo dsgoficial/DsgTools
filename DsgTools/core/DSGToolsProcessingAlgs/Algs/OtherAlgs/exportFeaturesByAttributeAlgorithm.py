@@ -35,6 +35,9 @@ from qgis.core import (QgsProcessing,
                        QgsFeatureRequest)
 from qgis import processing
 
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
+
+
 
 class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
@@ -85,12 +88,10 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
         return "DSGTools - Utils"
     
     def tr(self, string):
-        return QCoreApplication.translate("Exports all features with a specified attribute value to a new layer", string
+        return QCoreApplication.translate("ExportFeaturesByAttribute", string
     )
-
-
     def shortHelpString(self):
-        return self.tr("Exports all features with a specified attribute value to a new layer with the name of the input layer suffixed with '_Output'.")
+        return help().shortHelpString(self.name())
 
     def initAlgorithm(self, config=None):
         self.addParameter(
