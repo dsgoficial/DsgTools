@@ -224,6 +224,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.selectFeaturesOnCurrent
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.azimuthCalculationAlgorithm import (
     AzimuthCalculationAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ExportFeaturesByAttributeAlgorithm import (
+    ExportFeaturesByAttributeAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
     AddUnsharedVertexOnIntersectionsAlgorithm,
 )
@@ -687,6 +690,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             FixSegmentErrorsBetweenLinesAlgorithm(),
             IdentifyDifferencesBetweenDatabaseModelsAlgorithm(),
             AzimuthCalculationAlgorithm(),
+            ExportFeaturesByAttributeAlgorithm(),
             DetectChangesBetweenGroups(),
             IdentifyWaterBodyAndContourInconsistencies(),
             CreateGridFromCoordinatesAlgorithm(),
