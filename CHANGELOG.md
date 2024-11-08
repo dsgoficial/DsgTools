@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.15.11 - dev
+## 4.15.12 - dev
 
 Novas Funcionalidades:
 
@@ -10,10 +10,11 @@ Novas Funcionalidades:
 - Criação do algoritmo de generalização de pistas de pouso;
 - Criação do algoritmo de generalização de massas d'água (polígono), ilhas (polígono), trechos de drenagem (linha) e barragens (linha);
 - Criação do algoritmo de generalização de curva de nível;
-- Criação do algortimo de generalização de inundações;
-- Criação do algoritmo de generalização de rodovias; 
+- Criação do algoritmo de generalização de inundações;
+- Criação do algoritmo de generalização de rodovias;
 - Criação do algoritmo de generalização de rotatórias;
-- Criação do algortimo de generalização de elementos viários;
+- Criação do algoritmo de generalização de elementos viários;
+- Novo processo para reclassificar polígono baseado em polígonos adjacentes usando voronoi;
 
 Melhorias:
 
