@@ -26,6 +26,8 @@ from qgis.core import (
 )
 
 from ...algRunner import AlgRunner
+
+
 class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
     INPUT_LAYER = "INPUT_LAYER"
     ESCALA = "ESCALA"
@@ -40,31 +42,29 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LAYER,
                 self.tr("Camada de rodovias"),
-                [QgsProcessing.TypeVectorLine]
+                [QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.ESCALA,
-                self.tr("Escala"),
-                type=QgsProcessingParameterNumber.Double
+                self.ESCALA, self.tr("Escala"), type=QgsProcessingParameterNumber.Double
             )
         )
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.AREA_MINIMA,
-                self.tr("Área mínima para rotatórias na carta"),
-                parentParameterName=self.INPUT_LAYER
-            )
+
+        param = QgsProcessingParameterNumber(
+            self.AREA_MINIMA,
+            self.tr("Área mínima para rotatórias (na carta)"),
+            type=QgsProcessingParameterNumber.Double,
         )
+        param.setMetadata({"widget_wrapper": {"decimals": 20}})
+        self.addParameter(param)
+
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT,
-                self.tr("Rotatórias"),
-                QgsProcessing.TypeVectorPolygon
+                self.OUTPUT, self.tr("Rotatórias"), QgsProcessing.TypeVectorPolygon
             )
         )
-        
+
     def processAlgorithm(self, parameters, context, feedback):
         """
         Implementação do processo com camadas de saída e atualização direta das camadas de entrada.
@@ -76,29 +76,35 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
         algRunner = AlgRunner()
 
         lineLayer = self.parameterAsVectorLayer(parameters, self.INPUT_LAYER, context)
-       
+
         escala = self.parameterAsDouble(parameters, self.ESCALA, context)
         minArea = self.parameterAsDouble(parameters, self.AREA_MINIMA, context)
         fields = lineLayer.fields()
-        
+
         (sink, dest_id) = self.parameterAsSink(
             parameters,
             self.OUTPUT,
             context,
             fields,
             QgsWkbTypes.Polygon,
-            lineLayer.sourceCrs()
-        )  
+            lineLayer.sourceCrs(),
+        )
         areaminima = minArea * (escala**2)
 
-        lineLayerWithID = algRunner.runCreateFieldWithExpression(lineLayer, '$id', 'featid', context)
+        lineLayerWithID = algRunner.runCreateFieldWithExpression(
+            lineLayer, "$id", "featid", context
+        )
         currentStep += 1
-        multiStepFeedback.setProgressText(self.tr("Aplicando o polygonized"))  
+        multiStepFeedback.setProgressText(self.tr("Aplicando o polygonized"))
         polygonized = algRunner.runPolygonize(lineLayerWithID, context, keepFields=True)
 
-        areasPequenas = algRunner.runFilterExpression(polygonized, f'area($geometry) < {areaminima}', context)
+        areasPequenas = algRunner.runFilterExpression(
+            polygonized, f"area($geometry) < {areaminima}", context
+        )
         currentStep += 1
-        multiStepFeedback.setProgressText(self.tr("Adicionando os polígonos de área pequena ao sink"))
+        multiStepFeedback.setProgressText(
+            self.tr("Adicionando os polígonos de área pequena ao sink")
+        )
         for feature in areasPequenas.getFeatures():
             feat = QgsFeature(feature)
             sink.addFeature(feat, QgsFeatureSink.FastInsert)
@@ -106,7 +112,7 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Retornando"))
-        
+
         return {self.OUTPUT: dest_id}
 
     def name(self):
@@ -128,6 +134,6 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
         return self.tr(
             "Este processing recebe uma camada de linhas e retorna como output, os polígonos de área pequena limitados pelas linhas."
         )
-    
+
     def createInstance(self):
         return GeneralizeRoundaboutsAlgorithm()

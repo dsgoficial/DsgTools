@@ -305,7 +305,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         min_waterbody_area_tolerance = min_waterbody_area * (scale) ** 2
         max_waterbody_hole_area_tolerance = max_waterbody_hole_area * (scale) ** 2
         min_island_area_tolerance = min_island_area * (scale) ** 2
-        min_drainage_ines_width_tolerance = min_drainage_lines_width
+        min_drainage_lines_width_tolerance = min_drainage_lines_width * scale
 
         self.algRunner = AlgRunner()
         layerHandler = LayerHandler()
@@ -401,10 +401,9 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             max_hole_area=max_waterbody_hole_area_tolerance,
             context=context,
             feedback=multiStepFeedback,
-        ) 
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-
 
         multiStepFeedback.setProgressText(self.tr("Filtering waterbody."))
         filtered_waterbody = self.algRunner.runFilterExpression(
@@ -512,9 +511,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             self.tr("Drainage lines field updating for features outside water body.")
         )
         drainage_lines_layer.startEditing()
-        drainage_lines_layer.beginEditCommand(
-            self.tr("updating.")
-        )
+        drainage_lines_layer.beginEditCommand(self.tr("updating."))
         idsOutsideWaterbody = self.getDrainageOutsideWaterbody(
             waterbody_layer, drainage_lines_layer, context, feedback=multiStepFeedback
         )
@@ -528,17 +525,17 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         drainage_lines_layer.endEditCommand()
 
         multiStepFeedback.setProgressText(self.tr("Editing Drainage sections."))
-        self.algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(
-            inputLayer=drainage_lines_layer,
-            context=context,
-            min_length=min_drainage_ines_width_tolerance,
-            bounds_layer=geographicBoundsLayer,
-            spatial_partition=True,
-            pointlyr_list=pointLayerList,
-            linelyr_list=lineLayerList,
-            polygonlyr_list=polygonLayerList,
-            method=0,
-        )
+        # self.algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(
+        #     inputLayer=drainage_lines_layer,
+        #     context=context,
+        #     min_length=min_drainage_lines_width_tolerance,
+        #     bounds_layer=geographicBoundsLayer,
+        #     spatial_partition=True,
+        #     pointlyr_list=pointLayerList,
+        #     linelyr_list=lineLayerList,
+        #     polygonlyr_list=polygonLayerList,
+        #     method=0,
+        # )
         localDrainageCache = self.algRunner.runCreateFieldWithExpression(
             drainage_lines_layer, "$id", "featid", fieldType=1, context=context
         )
@@ -805,7 +802,10 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
-        return {self.OUTPUT_WATERBODY: waterbody_output_id, self.OUTPUT_DRAINAGE_LINE: drainage_line_output_id}
+        return {
+            self.OUTPUT_WATERBODY: waterbody_output_id,
+            self.OUTPUT_DRAINAGE_LINE: drainage_line_output_id,
+        }
 
     def getDrainageOutsideWaterbody(
         self, waterbody_layer, drainage_lines_layer, context, feedback=None

@@ -48,6 +48,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeCont
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeInundaAlgorithm import (
     GeneralizeInundaAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyAdjacentPolygonsV2Algorithm import (
+    ReclassifyAdjacentPolygonsAlgorithmV2,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import (
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm,
 )
@@ -724,6 +727,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             GeneralizeRoundaboutsAlgorithm(),
             GeneralizeHighwaysAlgorithm(),
             GeneralizeRoadElementsAlgorithm(),
+            ReclassifyAdjacentPolygonsAlgorithmV2(),
         ]
         return algList
 

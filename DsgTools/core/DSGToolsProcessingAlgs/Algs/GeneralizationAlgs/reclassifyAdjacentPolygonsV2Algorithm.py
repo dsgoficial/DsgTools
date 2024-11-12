@@ -54,6 +54,7 @@ from qgis.core import (
     QgsProcessingParameterExpression,
     QgsFeatureRequest,
     QgsVectorLayer,
+    QgsProcessingContext,
 )
 
 
@@ -133,11 +134,12 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
         visualAcuity = self.parameterAsDouble(parameters, self.VISUAL_ACUITY, context)
         scale = self.parameterAsDouble(parameters, self.MAP_SCALE, context)
 
-        nSteps = 23
+        nSteps = 24
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Creating cache layer"))
+        featInputLyrDict = {feat.id(): feat for feat in inputLyr.getFeatures()}
         cacheLyr = self.algRunner.runCreateFieldWithExpression(
             inputLyr=inputLyr
             if not onlySelected
@@ -157,50 +159,102 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Polygons to Lines"))
+        multiStepFeedback.setProgressText(self.tr("Densifying lines"))
         interval = visualAcuity * scale * 1000
         densified = self.algRunner.runDensifyByInterval(
             inputLayer=polygonsToLines,
-            interval=interval,
+            interval=interval * 100,
             context=context,
             feedback=multiStepFeedback,
         )
+        # fica muito lento em areas grandes, entao fazer voronoi para cada feicao
+        layersDensified = self.layerHandler.createMemoryLayerForEachFeature(
+            densified, context, returnFeature=False, feedback=multiStepFeedback
+        )
+        layersExploded = []
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Explode Lines"))
-        exploded = self.algRunner.runExplodeLines(
-            inputLyr=densified, context=context, feedback=multiStepFeedback
-        )
+        for densified in layersDensified:
+            exploded = self.algRunner.runExplodeLines(
+                inputLyr=densified, context=context
+            )
+            layersExploded.append(exploded)
         currentStep += 1
+        layersCentroids = []
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
             self.tr("Extracting centroids from exploded lines")
         )
-        centroids = self.algRunner.runCentroids(
-            inputLayer=exploded, context=context, feedback=multiStepFeedback
-        )
+        for exploded in layersExploded:
+            centroids = self.algRunner.runCentroids(
+                inputLayer=exploded, context=context
+            )
+            layersCentroids.append(centroids)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
             self.tr("Creating spatial index on centroids")
         )
+        for centroids in layersCentroids:
+            self.algRunner.runCreateSpatialIndex(
+                centroids,
+                context,
+                is_child_algorithm=True,
+            )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Merging Centroids"))
+        mergedCentroids = self.algRunner.runMergeVectorLayers(
+            layersCentroids, context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(
+            self.tr("Creating spatial index on merged centroids")
+        )
         self.algRunner.runCreateSpatialIndex(
-            centroids,
+            mergedCentroids,
             context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+
+        layersVoronoi = []
         multiStepFeedback.setProgressText(self.tr("Creating voronoi polygons"))
-        voronoi = self.algRunner.runVoronoiPolygons(
-            inputLayer=centroids, buffer=5, context=context, feedback=multiStepFeedback
-        )
+        if len(layersCentroids) == 0:
+            return {}
+        nSteps = len(layersCentroids)
+        stepSize = 100 / nSteps
+        for current, centroids in enumerate(layersCentroids):
+            voronoi = self.algRunner.runVoronoiPolygons(
+                inputLayer=centroids, buffer=5, context=context
+            )
+            layersVoronoi.append(voronoi)
+            multiStepFeedback.setProgress(current * stepSize)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Creating spatial index on voronoi"))
+        nSteps = len(layersVoronoi)
+        stepSize = 100 / nSteps
+        for current, voronoi in enumerate(layersVoronoi):
+            self.algRunner.runCreateSpatialIndex(
+                voronoi,
+                context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
+            multiStepFeedback.setProgress(current * stepSize)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Merging voronoi polygons"))
+        mergedVoronoi = self.algRunner.runMergeVectorLayers(
+            layersVoronoi, context, feedback=multiStepFeedback
+        )
         self.algRunner.runCreateSpatialIndex(
-            voronoi,
+            mergedVoronoi,
             context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
@@ -244,7 +298,7 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
         multiStepFeedback.setProgressText("Creating pk field for centroids")
         pkFieldCentroid = "featidcentroids"
         centroidsWithPkField = self.algRunner.runCreateFieldWithExpression(
-            inputLyr=centroids,
+            inputLyr=mergedCentroids,
             expression="$id",
             fieldType=1,
             fieldName=pkFieldCentroid,
@@ -281,42 +335,85 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
             context,
             is_child_algorithm=True,
         )
-        joinedByLocation = self.algRunner.runJoinAttributesByLocation(
-            inputLyr=voronoi,
-            joinLyr=joinedByNearest,
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
-        )
+        layersJoinedByLocation = []
+        nSteps = len(layersVoronoi)
+        stepSize = 100 / nSteps
+        for current, voronoi in enumerate(layersVoronoi):
+            joinedByLocation = self.algRunner.runJoinAttributesByLocation(
+                inputLyr=voronoi,
+                joinLyr=joinedByNearest,
+                context=context,
+                is_child_algorithm=False,
+            )
+            layersJoinedByLocation.append(joinedByLocation)
+            multiStepFeedback.setProgress(current * stepSize)
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Clipping voronoi polygons"))
-        self.algRunner.runCreateSpatialIndex(
-            joinedByLocation,
-            context,
-            is_child_algorithm=True,
+        for joinedByLocation in layersJoinedByLocation:
+            self.algRunner.runCreateSpatialIndex(
+                joinedByLocation,
+                context,
+                is_child_algorithm=True,
+            )
+
+        def compute(joinedByLocationLyr, overlayLyr):
+            localContext = QgsProcessingContext()
+            clippedLyr = self.algRunner.runClip(
+                inputLayer=joinedByLocationLyr,
+                overlayLayer=overlayLyr,
+                context=localContext,
+            )
+            return {feat for feat in clippedLyr.getFeatures()}
+
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        futures = set()
+        featuresClippedSet = set()
+        multiStepFeedback.setProgressText(
+            self.tr("Submitting tasks to thread (clip)...")
         )
-        clipped = self.algRunner.runClip(
-            inputLayer=joinedByLocation,
-            overlayLayer=cacheLyr,
-            context=context,
-            feedback=multiStepFeedback,
-        )
+        for current, joinedByLocation in enumerate(layersJoinedByLocation):
+
+            #     if multiStepFeedback.isCanceled():
+            #         pool.shutdown(cancel_futures=True)
+            #         break
+            #     futures.add(pool.submit(compute, joinedByLocation, cacheLyr))
+            #     multiStepFeedback.setProgress(current * stepSize)
+
+            # currentStep += 1
+            # multiStepFeedback.setCurrentStep(currentStep)
+            # multiStepFeedback.setProgressText(self.tr("Evaluating results (clip)..."))
+            # for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            #     if multiStepFeedback.isCanceled():
+            #         pool.shutdown(cancel_futures=True)
+            #         break
+            # featuresClippedSet |= future.result()
+            featuresClippedSet |= compute(joinedByLocation, cacheLyr)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Creating spatial index on clipped"))
-        self.algRunner.runCreateSpatialIndex(
-            clipped,
-            context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
+        firstJoinedLayer = layersJoinedByLocation[0]
+        mergedClipped = self.layerHandler.createMemoryLayerWithFeatures(
+            featList=list(featuresClippedSet),
+            fields=firstJoinedLayer.fields(),
+            crs=firstJoinedLayer.crs(),
+            wkbType=firstJoinedLayer.wkbType(),
+            context=context,
         )
+        # currentStep += 1
+        # multiStepFeedback.setCurrentStep(currentStep)
+        # multiStepFeedback.setProgressText(self.tr("Creating spatial index on clipped"))
+        # self.algRunner.runCreateSpatialIndex(
+        #     mergedClipped,
+        #     context,
+        #     feedback=multiStepFeedback,
+        #     is_child_algorithm=True,
+        # )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Dissolving"))
         dissolved = self.algRunner.runDissolve(
-            inputLyr=clipped,
+            inputLyr=mergedClipped,
             field=[f"{joinedPrefix}layer", joinedPrefix + pkField],
             context=context,
             feedback=multiStepFeedback,
@@ -354,30 +451,32 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Adding features to original layers"))
         self.updateOriginalLayer(
-            originalLayerList=polygonsLyrs, newLayerList=joinedLayers
+            originalLayerList=polygonsLyrs,
+            newLayerList=joinedLayers,
+            prefix=joinedPrefix,
         )
         currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(
-            self.tr("Snapping vertexes to grid")
-        )  # talvez pode gerar vertice duplicado?
+        # multiStepFeedback.setCurrentStep(currentStep)
+        # multiStepFeedback.setProgressText(
+        #     self.tr("Snapping vertexes to grid")
+        # )  # talvez pode gerar vertice duplicado?
 
-        self.runSnapToGridAndUpdateList(
-            layerList=polygonsLyrs,
-            tolerance=visualAcuity * 100,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Adding unshared vertexes"))
-        self.algRunner.runAddUnsharedVertexOnSharedEdges(
-            inputLinesList=[],
-            inputPolygonsList=polygonsLyrs,
-            searchRadius=visualAcuity * 1000,
-            context=context,
-            feedback=multiStepFeedback,
-        )
+        # self.runSnapToGridAndUpdateList(
+        #     layerList=polygonsLyrs,
+        #     tolerance=visualAcuity * 100,
+        #     context=context,
+        #     feedback=multiStepFeedback,
+        # )
+        # currentStep += 1
+        # multiStepFeedback.setCurrentStep(currentStep)
+        # multiStepFeedback.setProgressText(self.tr("Adding unshared vertexes"))
+        # self.algRunner.runAddUnsharedVertexOnSharedEdges(
+        #     inputLinesList=[],
+        #     inputPolygonsList=polygonsLyrs,
+        #     searchRadius=visualAcuity * 1000,
+        #     context=context,
+        #     feedback=multiStepFeedback,
+        # )
         outputLyr = nonDuplicated
 
         (output_sink, output_sink_id) = self.parameterAsSink(
@@ -490,17 +589,27 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
                 inputLyr=layer, tolerance=tolerance, context=context, feedback=feedback
             )
 
-    def updateOriginalLayer(self, originalLayerList, newLayerList):
+    def updateOriginalLayer(
+        self, originalLayerList, newLayerList: QgsVectorLayer, prefix
+    ):
         newLayersDict = {layer.name(): layer for layer in newLayerList}
         for layer in originalLayerList:
             newLayer = newLayersDict.get(layer.name(), None)
             if newLayer is None:
                 continue
             layer.startEditing()
-            layer.beginEditCommand(self.tr("Adding new features"))
+            layer.beginEditCommand(
+                self.tr(
+                    f"Adding {newLayer.featureCount()} new feature(s) to layer {layer.name()}"
+                )
+            )
             for feat in newLayer.getFeatures():
                 newFeat = QgsFeature(layer.fields())
-                newFeat["id"] = feat["polygons_attributes_id"]
+                featFieldsName = [field.name() for field in feat.fields()]
+                for field in layer.fields():
+                    fieldName = field.name()
+                    if prefix + "_" + fieldName in featFieldsName:
+                        newFeat[fieldName] = feat[f"{prefix}_{fieldName}"]
                 newFeat.setGeometry(feat.geometry())
                 layer.addFeature(newFeat)
             layer.endEditCommand()

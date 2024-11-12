@@ -82,11 +82,11 @@ class IdentifyUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.SEARCH_RADIUS, self.tr("Search Radius"), defaultValue=1.0
-            )
+        param = QgsProcessingParameterDistance(
+            self.SEARCH_RADIUS, self.tr("Search Radius"), defaultValue=1.0
         )
+        param.setMetadata({"widget_wrapper": {"decimals": 8}})
+        self.addParameter(param)
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
