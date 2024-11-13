@@ -2622,11 +2622,11 @@ class AlgRunner:
         inputLayer: QgsVectorLayer,
         context: QgsProcessingContext,
         buffer=0,
-        outputLyr: Optional[QgsRasterLayer] = None,
+        outputLyr: Optional[QgsVectorLayer] = None,
         feedback: Optional[QgsFeedback] = None,
         is_child_algorithm: bool = False,
     ) -> QgsVectorLayer:
-        outputLyr = "memory:" if outputLyr is None else outputLyr
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
         output = processing.run(
             "qgis:voronoipolygons",
             {"INPUT": inputLayer, "BUFFER": buffer, "OUTPUT": outputLyr},
