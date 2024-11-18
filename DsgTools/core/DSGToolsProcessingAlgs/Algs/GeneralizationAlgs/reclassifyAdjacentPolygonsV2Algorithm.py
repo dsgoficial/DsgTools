@@ -138,6 +138,12 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
         )
         visualAcuity = self.parameterAsDouble(parameters, self.VISUAL_ACUITY, context)
         scale = self.parameterAsDouble(parameters, self.MAP_SCALE, context)
+        for layer in polygonsLyrsList:
+            pk_fields = layer.primaryKeyAttributes()
+            if len(pk_fields) == 0:
+                raise QgsProcessingException(
+                    self.tr("Fill layer does not have a primary key")
+                )
 
         nSteps = 24
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
@@ -165,13 +171,41 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Merging fill layers"))
-        polygonsLyrs = self.algRunner.runMergeVectorLayers(
+        polygonsLyrsMerged = self.algRunner.runMergeVectorLayers(
             inputList=polygonsLyrsWithArea, context=context, feedback=multiStepFeedback
         )
+
+        # outputLyr = polygonsLyrs
+
+        # (output_sink, output_sink_id) = self.parameterAsSink(
+        #     parameters,
+        #     self.OUTPUT,
+        #     context,
+        #     outputLyr.fields(),
+        #     outputLyr.wkbType(),
+        #     outputLyr.sourceCrs(),
+        # )
+
+        # currentStep += 1
+        # nFeats = outputLyr.featureCount()
+        # if nFeats == 0:
+        #     return {self.OUTPUT: output_sink_id}
+        # stepSize = 100 / nFeats
+        # multiStepFeedback.setProgressText(self.tr("Building Outputs"))
+        # for current, feat in enumerate(outputLyr.getFeatures()):
+        #     if multiStepFeedback.isCanceled():
+        #         break
+        #     output_sink.addFeature(feat)
+        #     multiStepFeedback.setProgress(current * stepSize)
+
+        # # Compute the number of steps to display within the progress bar and
+        # # get features from source
+
+        # return {self.OUTPUT: output_sink_id}
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Creating cache layer"))
-        featInputLyrDict = {feat.id(): feat for feat in inputLyr.getFeatures()}
         cacheLyr = self.algRunner.runCreateFieldWithExpression(
             inputLyr=inputLyr
             if not onlySelected
@@ -182,13 +216,85 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
             feedback=multiStepFeedback,
             context=context,
         )
+        if cacheLyr.fields().indexFromName("fid") != -1:
+            cacheLyr = self.algRunner.runDropFields(
+                cacheLyr,
+                ["fid"],
+                context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
         currentStep += 1
         # Verificar vizinhos de feições da inputLyr, para ver se so tem 1 vizinho e preencher so com ele, ai continua com o resto (que tem mais de um vizinho)
+
+        neighbour = self.algRunner.runJoinByLocationSummary(
+            inputLyr=cacheLyr,
+            joinLyr=polygonsLyrsMerged,
+            predicateList=[0],
+            joinFields=[],
+            summaries=[],
+            context=context,
+        )
+
+        (
+            multipleNeighbours,
+            oneNeighbour,
+        ) = self.algRunner.runFilterExpressionWithFailOutput(
+            inputLyr=neighbour,
+            expression=f"{pkField}_count > 1 and layer>1",
+            context=context,
+            feedback=multiStepFeedback,
+        )
+
+        self.mergeFeaturesBasedOnAttributeForMultipleLayers(
+            layers=polygonsLyrsList,
+            mergeLyr=oneNeighbour,
+            matchfield2=pkField + "_min",
+            layerNameField="layer_min",
+            context=context,
+            feedback=multiStepFeedback,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Merging fill layers"))
+        newPolygonsLyrs = self.algRunner.runMergeVectorLayers(
+            inputList=polygonsLyrsWithArea, context=context, feedback=multiStepFeedback
+        )
+
+        # outputLyr = joinedOneNeighbourAndPolygonsWithArea
+        # print(outputLyr.name())
+
+        # (output_sink, output_sink_id) = self.parameterAsSink(
+        #     parameters,
+        #     self.OUTPUT,
+        #     context,
+        #     outputLyr.fields(),
+        #     outputLyr.wkbType(),
+        #     outputLyr.sourceCrs(),
+        # )
+
+        # currentStep += 1
+        # nFeats = outputLyr.featureCount()
+        # if nFeats == 0:
+        #     return {self.OUTPUT: output_sink_id}
+        # stepSize = 100 / nFeats
+        # multiStepFeedback.setProgressText(self.tr("Building Outputs"))
+        # for current, feat in enumerate(outputLyr.getFeatures()):
+        #     if multiStepFeedback.isCanceled():
+        #         break
+        #     output_sink.addFeature(feat)
+        #     multiStepFeedback.setProgress(current * stepSize)
+
+        # # Compute the number of steps to display within the progress bar and
+        # # get features from source
+
+        # return {self.OUTPUT: output_sink_id}
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Polygons to Lines"))
         polygonsToLines = self.algRunner.runPolygonsToLines(
-            inputLyr=cacheLyr, context=context, feedback=multiStepFeedback
+            inputLyr=multipleNeighbours, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -312,12 +418,13 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
                 # pool.shutdown(cancel_futures=True)
                 break
             neighbour = self.algRunner.runExtractByLocation(
-                inputLyr=polygonsLyrs,
+                inputLyr=newPolygonsLyrs,
                 intersectLyr=densified,
                 context=context,
+                is_child_algorithm=True,
             )
             clipper = self.algRunner.runExtractByLocation(
-                inputLyr=cacheLyr,
+                inputLyr=multipleNeighbours,
                 intersectLyr=densified,
                 context=context,
                 is_child_algorithm=True,
@@ -325,28 +432,30 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
             # futures.add(pool.submit(compute, densified, neighbour, clipper))
             multiStepFeedback.setProgress(current * stepSize)
 
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Evaluating results (clip)..."))
+            # currentStep += 1
+            # multiStepFeedback.setCurrentStep(currentStep)
+            # multiStepFeedback.setProgressText(self.tr("Evaluating results (clip)..."))
             # for current, future in enumerate(concurrent.futures.as_completed(futures)):
             #     if multiStepFeedback.isCanceled():
             #         pool.shutdown(cancel_futures=True)
             #         break
             # featuresClippedSet |= future.result()
             featuresClippedSet |= compute(densified, neighbour, clipper)
-            print(len(featuresClippedSet))
+        featuresClippedList = list(featuresClippedSet)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        firstDensifiedLayer = layersDensified[0]
+        firstDensifiedLayer = newPolygonsLyrs
         joinedPrefix = "polyattr_"
-        fields = firstDensifiedLayer.fields()
-        fields.append(QgsField("{joinedPrefix}layer", QVariant.String))
-        fields.append(QgsField(joinedPrefix + pkField, QVariant.Int))
+        firstFeature = featuresClippedList[0]
+        firstGeometry = firstFeature.geometry()
+        fields = firstFeature.fields()
+        # fields.append(QgsField("{joinedPrefix}layer", QVariant.String))
+        # fields.append(QgsField(joinedPrefix + pkField, QVariant.Int))
         mergedClipped = self.layerHandler.createMemoryLayerWithFeatures(
-            featList=list(featuresClippedSet),
+            featList=featuresClippedList,
             fields=fields,
             crs=firstDensifiedLayer.crs(),
-            wkbType=firstDensifiedLayer.wkbType(),
+            wkbType=firstGeometry.wkbType(),
             context=context,
         )
         # currentStep += 1
@@ -379,7 +488,7 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
 
         nonDuplicated = self.algRunner.runRemoveDuplicateVertex(
             inputLyr=singleParts,
-            tolerance=visualAcuity * 100,
+            tolerance=visualAcuity * 10,
             context=context,
             feedback=multiStepFeedback,
         )
@@ -484,6 +593,43 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
 
         return layersWithField
 
+    def mergeFeaturesBasedOnAttributeForMultipleLayers(
+        self,
+        layers: List[QgsVectorLayer],
+        mergeLyr,
+        matchfield2,
+        layerNameField,
+        context,
+        feedback=None,
+    ) -> List[QgsVectorLayer]:
+        layersMerged = []
+        if len(layers) == 0:
+            return layersMerged
+        stepSize = 100 / len(layers)
+        for current, layer in enumerate(layers):
+            if feedback is not None and feedback.isCanceled():
+                return layersMerged
+            layerFilteredToMerge = self.algRunner.runFilterExpression(
+                mergeLyr,
+                expression=f"{layerNameField} = '{layer.name()}'",
+                context=context,
+            )
+            pk_fields = layer.primaryKeyAttributes()
+            matchfield1 = layer.fields()[pk_fields[0]].name()
+            self.algRunner.runDSGToolsMergeFeaturesBasedOnAttributeAlgorithm(
+                inputLyr=layer,
+                matchfield1=matchfield1,
+                mergeLyr=layerFilteredToMerge,
+                matchfield2=matchfield2,
+                context=context,
+            )
+            # newLayer.setName(layer.name())
+            # layersMerged.append(newLayer)
+            if feedback is not None:
+                feedback.setProgress(current * stepSize)
+
+        return
+
     def filterFeatsWithSameAttributes(self, layer, fieldToCompare, fieldToFilter):
         layer.startEditing()
         layer.beginEditCommand(self.tr("Removing duplicates based on field"))
@@ -558,8 +704,8 @@ class ReclassifyAdjacentPolygonsAlgorithmV2(ValidationAlgorithm):
                 featFieldsName = [field.name() for field in feat.fields()]
                 for field in layer.fields():
                     fieldName = field.name()
-                    if prefix + "_" + fieldName in featFieldsName:
-                        newFeat[fieldName] = feat[f"{prefix}_{fieldName}"]
+                    if prefix + fieldName in featFieldsName:
+                        newFeat[fieldName] = feat[f"{prefix}{fieldName}"]
                 newFeat.setGeometry(feat.geometry())
                 layer.addFeature(newFeat)
             layer.endEditCommand()

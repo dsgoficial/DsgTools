@@ -2715,3 +2715,83 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+
+    def runDropFields(
+        self,
+        inputLyr,
+        columns: List[str],
+        context,
+        outputLyr=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:deletecolumn",
+            {
+                "INPUT": inputLyr,
+                "COLUMN": columns,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runDSGToolsMergeFeaturesBasedOnAttributeAlgorithm(
+        self,
+        inputLyr,
+        matchfield1,
+        mergeLyr,
+        matchfield2,
+        context,
+        outputLyr=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:mergefeaturesbasedonattribute",
+            {
+                "INPUT": inputLyr,
+                "MATCH_FIELD_1": matchfield1,
+                "MERGE": mergeLyr,
+                "MATCH_FIELD_2": matchfield2,
+                # "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return
+
+    def runDSGToolsDissolvePolygonsWithSameAttributeSet(
+        self,
+        inputLyr,
+        context,
+        selected=False,
+        minArea=0,
+        attributeBlackList=[],
+        ignoreVirtualFields=True,
+        ignorePrimaryKeyFields=True,
+        outputLyr=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:dissolvepolygonswithsameattributes",
+            {
+                "INPUT": inputLyr,
+                "SELECTED": selected,
+                "MIN_AREA": minArea,
+                "ATTRIBUTE_BLACK_LIST": attributeBlackList,
+                "IGNORE_VIRTUAL_FIELDS": ignoreVirtualFields,
+                "IGNORE_Pk_FIELDS": ignorePrimaryKeyFields,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return

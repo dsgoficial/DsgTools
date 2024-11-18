@@ -72,6 +72,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGe
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
     CreateGridFromCoordinatesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.mergeFeaturesBasedOnAttributeAlgorithm import (
+    MergeFeaturesBasedOnAttributeAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingForBDGEx import (
     BatchRasterPackagingForBDGEx,
 )
@@ -728,6 +731,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             GeneralizeHighwaysAlgorithm(),
             GeneralizeRoadElementsAlgorithm(),
             ReclassifyAdjacentPolygonsAlgorithmV2(),
+            MergeFeaturesBasedOnAttributeAlgorithm(),
         ]
         return algList
 
