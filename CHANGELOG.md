@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.15.9 - dev
+## 4.15.10 - dev
 
 Novas Funcionalidades:
 
@@ -13,6 +13,7 @@ Novas Funcionalidades:
 Melhorias:
 
 - O processo de criação de moldura agora aceita múltiplos MIs ou INOMs separados por vírgula;
+- As subdivisões das molduras foram padronizadas por escala, para garantir a existência de vértices das molduras desde a escala 1:25.000 até a escala 1:205.000;
 
 Correção de bugs:
 
