@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.15.10 - dev
+## 4.16.0 - 2024-11-27
 
 Novas Funcionalidades:
 
