@@ -118,6 +118,30 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
+    def runPoleOfInaccessibility(
+        self,
+        inputLyr,
+        context,
+        feedback=None,
+        outputLyr=None,
+        tolerance=1,
+        is_child_algorithm=False,
+    )->QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        parameters = {
+            "INPUT": inputLyr,
+            "TOLERANCE": tolerance,
+            "OUTPUT": outputLyr
+        }
+        output = processing.run(
+            "native:poleofinaccessibility",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
     def runGrassDissolve(
         self,
         inputLyr,
@@ -184,7 +208,7 @@ class AlgRunner:
 
     def runDeleteHoles(
         self, inputLyr, context, feedback=None, outputLyr=None, min_area=0
-    ):
+    )->QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLyr, "MIN_AREA": min_area, "OUTPUT": outputLyr}
         output = processing.run(
@@ -609,11 +633,30 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         is_child_algorithm=False,
-    ):
+    )->QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLayer, "OUTPUT": outputLyr}
         output = processing.run(
             "native:multiparttosingleparts",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+    
+    def runPromoteToMulti(
+        self,
+        inputLayer,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    )->QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        parameters = {"INPUT": inputLayer, "OUTPUT": outputLyr}
+        output = processing.run(
+            "native:promotetomulti",
             parameters,
             context=context,
             feedback=feedback,
@@ -634,7 +677,7 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         is_child_algorithm=False,
-    ):
+    )->QgsVectorLayer:
         endCapStyle = 0 if endCapStyle is None else endCapStyle
         joinStyle = 0 if joinStyle is None else joinStyle
         segments = 5 if segments is None else segments
@@ -683,6 +726,31 @@ class AlgRunner:
             "native:intersection", parameters, context=context, feedback=feedback
         )
         return output["OUTPUT"]
+    
+    def runUnion(
+        self,
+        inputLyr,
+        context,
+        inputFields=None,
+        outputLyr=None,
+        overlayLyr=None,
+        overlayFields=None,
+        feedback=None,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        inputFields = [] if inputFields is None else inputFields
+        overlayFields = [] if overlayFields is None else overlayFields
+        parameters = {
+            "INPUT": inputLyr,
+            "INPUT_FIELDS": inputFields,
+            "OUTPUT": outputLyr,
+            "OVERLAY": overlayLyr,
+            "OVERLAY_FIELDS": overlayFields,
+        }
+        output = processing.run(
+            "native:union", parameters, context=context, feedback=feedback
+        )
+        return output["OUTPUT"]
 
     def runFilterExpression(
         self,
@@ -692,7 +760,7 @@ class AlgRunner:
         outputLyr=None,
         feedback=None,
         is_child_algorithm=False,
-    ):
+    )->QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr}
         output = processing.run(
@@ -703,6 +771,29 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+    
+    def runFilterExpressionWithFailOutput(
+        self,
+        inputLyr,
+        expression,
+        context,
+        outputLyr=None,
+        failOutputLyr = None, 
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        failOutputLyr = "memory:" if failOutputLyr is None else failOutputLyr
+        parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr, "FAIL_OUTPUT": failOutputLyr}
+        output = processing.run(
+            "native:extractbyexpression",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"], output["FAIL_OUTPUT"]
+        
 
     def runRemoveDuplicatedFeatures(
         self,
@@ -996,6 +1087,32 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+    
+    def runStatisticsByCategories(
+        self,
+        inputLyr,
+        context,
+        valuesFieldName=None,
+        categoriesFieldName=None,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        parameters = {
+            "INPUT": inputLyr,
+            "VALUES_FIELD_NAME":"" if valuesFieldName is None else valuesFieldName,
+            "CATEGORIES_FIELD_NAME": [] if categoriesFieldName is None else categoriesFieldName,
+            "OUTPUT": outputLyr,
+        }
+        output = processing.run(
+            "qgis:statisticsbycategories",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
 
     def runSplitLinesWithLines(
         self,
@@ -1122,7 +1239,7 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         is_child_algorithm=False,
-    ):
+    ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:fieldcalculator",
@@ -1386,9 +1503,9 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runExtractSpecificVertices(
-        self, inputLyr, vertices, context, feedback=None, outputLyr=None
+        self, inputLyr, vertices, context, feedback=None, outputLyr=None, is_child_algorithm=False,
     ):
-        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:extractspecificvertices",
             {
@@ -1398,6 +1515,7 @@ class AlgRunner:
             },
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1944,11 +2062,11 @@ class AlgRunner:
         context,
         method,
         fieldsToCopy=None,
-        discardNonMatching=False,
+        discardNonMatching=True,
         prefix=None,
         feedback=None,
         is_child_algorithm=False,
-    ):
+    )->QgsVectorLayer:
         fieldsToCopy = [] if fieldsToCopy is None else fieldsToCopy
         prefix = "" if prefix is None else prefix
         output = processing.run(
@@ -2100,7 +2218,65 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-
+    def runDBScanClustering(
+        self,
+        inputLayer: QgsVectorLayer,
+        min_size: int,
+        tolerancia: float, 
+        context: QgsProcessingContext,
+        outputLyr = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsRasterLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:dbscanclustering",
+            {
+                "INPUT": inputLayer,
+                "MIN_SIZE": min_size,
+                "EPS": tolerancia,
+                "DBSCAN*": False,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output['OUTPUT']
+    def runSkeletonVoronoi(
+        self,
+        inputLayer: QgsVectorLayer,
+        smoothness: float,
+        thin: float,
+        context: QgsProcessingContext,
+        outputLyr = None, 
+        feedback: QgsFeedback = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsRasterLayer:
+        outputLyr = "TEMPORARY_OUTPUT:" if outputLyr is None else outputLyr
+        output = processing.run( "grass7:v.voronoi.skeleton",
+            {
+                'input':inputLayer,
+                'smoothness':smoothness,
+                'thin':thin,
+                '-a':False,
+                '-s':True,
+                '-l':False,
+                '-t':False,
+                'output':'TEMPORARY_OUTPUT',
+                'GRASS_REGION_PARAMETER':None,
+                'GRASS_SNAP_TOLERANCE_PARAMETER':-1,
+                'GRASS_MIN_AREA_PARAMETER':0.0001,
+                'GRASS_OUTPUT_TYPE_PARAMETER':0,
+                'GRASS_VECTOR_DSCO':'',
+                'GRASS_VECTOR_LCO':'',
+                'GRASS_VECTOR_EXPORT_NOCAT':False, 
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output['output']
     def runDSGToolsReclassifyGroupsOfPixels(
         self,
         inputRaster: QgsRasterLayer,
@@ -2211,6 +2387,36 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+    
+    def runGeneralizeNetworkEdgesFromLengthAlgorithm(
+        self,
+        inputLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        min_length: float = 0.001,
+        bounds_layer: Optional[QgsVectorLayer] = None,
+        spatial_partition: Optional[bool] = False,
+        pointlyr_list: Optional[List[QgsRasterLayer]] = None,
+        linelyr_list: Optional[List[QgsRasterLayer]] = None,
+        polygonlyr_list: Optional[List[QgsRasterLayer]] = None,
+        method: Optional[int] = 0,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ): processing.run(
+            "dsgtools:generalizenetworkedgeswithlengthalgorithm",
+            {
+                "NETWORK_LAYER": inputLayer,
+                "MIN_LENGTH": min_length,
+                "GEOGRAPHIC_BOUNDS_LAYER": bounds_layer,
+                "GROUP_BY_SPATIAL_PARTITION": spatial_partition,
+                "POINT_CONSTRAINT_LAYER_LIST": pointlyr_list,
+                "LINE_CONSTRAINT_LAYER_LIST": linelyr_list,
+                "POLYGON_CONSTRAINT_LAYER_LIST": polygonlyr_list,
+                "METHOD": method,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
 
     def runGdalWarp(
         self,
@@ -2292,5 +2498,24 @@ class AlgRunner:
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+        
+    def runOrientedBoundingBox(
+        self, 
+        inputLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: Optional[bool] = False,
+    ) -> QgsVectorLayer:
+        output = processing.run(
+            "qgis:orientedminimumboundingbox", 
+            {
+                "INPUT": inputLyr,
+                "OUTPUT":'TEMPORARY_OUTPUT'
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm, 
         )
         return output["OUTPUT"]

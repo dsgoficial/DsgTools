@@ -39,6 +39,7 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsField,
     QgsFields,
+    QgsProcessingParameterDefinition
 )
 
 
@@ -95,24 +96,35 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=0,
             )
         )
-        self.addParameter(QgsProcessingParameterString(self.INDEX, self.tr("Index")))
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.INDEX, 
+                self.tr("Index (comma-separated for multiple)")
+            )
+        )
         self.addParameter(QgsProcessingParameterCrs(self.CRS, self.tr("CRS")))
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.XSUBDIVISIONS,
-                self.tr("Number of subdivisions on x-axis"),
-                defaultValue=1,
-            )
+
+        param = QgsProcessingParameterNumber(
+            self.XSUBDIVISIONS,
+            self.tr("Number of subdivisions on x-axis"),
+            minValue=1,
+            type=QgsProcessingParameterNumber.Integer,
+            optional=True
         )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.YSUBDIVISIONS,
-                self.tr("Number of subdivisions on y-axis"),
-                defaultValue=1,
-                minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
-            )
+        param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
+
+        self.addParameter(param)
+
+        param = QgsProcessingParameterNumber(
+            self.YSUBDIVISIONS,
+            self.tr("Number of subdivisions on y-axis"),
+            minValue=1,
+            type=QgsProcessingParameterNumber.Integer,
+            optional=True
         )
+        param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
+        self.addParameter(param)
+
         self.addParameter(
             QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Created Frames"))
         )
@@ -133,52 +145,94 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
                 )
             )
         indexTypeIdx = self.parameterAsEnum(parameters, self.INDEX_TYPE, context)
-        inputIndex = self.parameterAsString(parameters, self.INDEX, context)
+        inputIndexString = self.parameterAsString(parameters, self.INDEX, context)
+
+        if inputIndexString is None or inputIndexString.strip() == "":
+            raise QgsProcessingException(
+                self.tr("Invalid {index}").format(index=self.indexTypes[indexTypeIdx])
+            )
+            
+        inputIndexes = [idx.strip() for idx in inputIndexString.split(",")]
+
         if startScaleIdx in [0, 1] and indexTypeIdx == 0:
             raise QgsProcessingException(
                 self.tr("{index} is only valid for scales 250k and below.").format(
                     index=self.indexTypes[indexTypeIdx]
                 )
             )
-        if inputIndex is None or inputIndex == "":
-            raise QgsProcessingException(
-                self.tr("Invalid {index}").format(index=self.indexTypes[indexTypeIdx])
-            )
-        index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
-        if index is None or not self.validateIndex(index):
-            raise QgsProcessingException(
-                self.tr("Invalid {index} format.").format(
-                    index=self.indexTypes[indexTypeIdx]
+        
+        for inputIndex in inputIndexes:
+            index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
+            if index is None or not self.validateIndex(index):
+                raise QgsProcessingException(
+                    self.tr("Invalid {index} format: {value}").format(
+                        index=self.indexTypes[indexTypeIdx],
+                        value=inputIndex
+                    )
                 )
-            )
+
         crs = self.parameterAsCrs(parameters, self.CRS, context)
         if crs is None or not crs.isValid():
             raise QgsProcessingException(self.tr("Invalid CRS."))
+        
         xSubdivisions = self.parameterAsInt(parameters, self.XSUBDIVISIONS, context)
         ySubdivisions = self.parameterAsInt(parameters, self.YSUBDIVISIONS, context)
+        
+        default_x = 1
+        default_y = 1
+        
+        if stopScale == 50:
+            default_x = 2
+            default_y = 2
+        elif stopScale == 100:
+            default_x = 4
+            default_y = 4
+        elif stopScale == 250:
+            default_x = 12
+            default_y = 8
+
+        if xSubdivisions is None or xSubdivisions == 0:
+            xSubdivisions = default_x
+        if ySubdivisions is None or ySubdivisions == 0:
+            ySubdivisions = default_y
+
         fields = QgsFields()
         fields.append(QgsField("inom", QVariant.String))
         fields.append(QgsField("mi", QVariant.String))
         (output_sink, output_sink_id) = self.parameterAsSink(
             parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, crs
         )
+
         featureList = []
         coordinateTransformer = QgsCoordinateTransform(
             QgsCoordinateReferenceSystem(crs.geographicCrsAuthId()),
             crs,
             QgsProject.instance(),
         )
-        featureHandler.getSystematicGridFeatures(
-            featureList,
-            index,
-            stopScale,
-            coordinateTransformer,
-            fields,
-            xSubdivisions=xSubdivisions,
-            ySubdivisions=ySubdivisions,
-            feedback=feedback,
-        )
+
+        total = len(inputIndexes)
+        for i, inputIndex in enumerate(inputIndexes):
+            if feedback.isCanceled():
+                break
+                
+            index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
+            feedback.setProgress(int((i / total) * 100))
+            feedback.pushInfo(f"Processing index {i+1}/{total}: {inputIndex}")
+            
+            featureHandler.getSystematicGridFeatures(
+                featureList,
+                index,
+                stopScale,
+                coordinateTransformer,
+                fields,
+                xSubdivisions=xSubdivisions,
+                ySubdivisions=ySubdivisions,
+                feedback=feedback,
+            )
+
         for feat in featureList:
+            if feedback.isCanceled():
+                break
             output_sink.addFeature(feat, QgsFeatureSink.FastInsert)
 
         return {"OUTPUT": output_sink_id}

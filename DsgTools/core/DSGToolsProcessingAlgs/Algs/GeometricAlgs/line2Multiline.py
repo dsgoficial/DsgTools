@@ -161,7 +161,7 @@ class Line2Multiline(QgsProcessingAlgorithm):
                 break
             self.id_to_feature[currentFeature["AUTO"]] = currentFeature
             self.ids_in_stack.add(currentFeature["AUTO"])
-            feedback.setCurrentStep(current * stepSize)
+            feedback.setProgress(current * stepSize)
 
     def aggregate(self, featureId, feedback):
         stack = [featureId]

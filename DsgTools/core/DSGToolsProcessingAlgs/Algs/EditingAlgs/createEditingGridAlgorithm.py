@@ -220,7 +220,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        gridLayer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         attribute = self.parameterAsFields(parameters, self.ATTRIBUTE_INDEX, context)[0]
         id_attribute = self.parameterAsFields(parameters, self.ATTRIBUTE_ID, context)[0]
         id_value = self.parameterAsInt(parameters, self.ID_VALUE, context)
@@ -233,23 +233,41 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         font = self.parameterAsFont(parameters, self.FONT, context)
         fontLL = self.parameterAsFont(parameters, self.FONT_LL, context)
         llcolor = self.parameterAsColor(parameters, self.COLOR_LL, context)
-        GridAndLabelCreator().geo_test(
-            inputLyr,
-            attribute,
-            id_attribute,
-            id_value,
-            spacing,
-            crossX,
-            crossY,
-            scale,
-            color,
-            fontSize,
-            font,
-            fontLL,
-            llcolor,
-        )
 
-        return {self.OUTPUT: inputLyr}
+        gridGenerator = GridAndLabelCreator()
+        gridCrs = gridLayer.crs().authid()
+        srid = gridCrs.replace("EPSG:", "")
+        gridGeometry = next(gridLayer.getFeatures()).geometry()
+        gridOpts = {
+                "crossX": crossX,
+                "crossY": crossY,
+                "fontSize": fontSize,
+                "font": font,
+                "fontLL": fontLL,
+                "llcolor": llcolor,
+                "linwidth_geo": 0.07,
+                "linwidth_utm": 0.05,
+                "linwidth_buffer_geo": 0,
+                "linwidth_buffer_utm": 0,
+                "geo_grid_color": llcolor,
+                "utm_grid_color": color,
+                "geo_grid_buffer_color": llcolor,
+                "utm_grid_buffer_color": color,
+                "masks_check": True,
+            }
+        gridGenerator.styleCreator(
+            feature_geometry=gridGeometry,
+            layer_bound=gridLayer,
+            utmSRID=srid,
+            id_attr="id",
+            id_value=1,
+            scale=scale,
+            spacing=spacing,
+            **gridOpts,
+        )
+        gridLayer.triggerRepaint()
+
+        return {self.OUTPUT: gridLayer}
 
     def name(self):
         """
