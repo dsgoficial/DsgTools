@@ -61,7 +61,6 @@ class ExecutionStatus(str, Enum):
         CANCELED: Execution canceled.
         FINISHED: Execution finished successfully.
         FINISHED_WITH_FLAGS: Execution finished with flags raised.
-        ON_HOLD: Execution on hold.
         PAUSED_BEFORE_RUNNING: Execution paused before running.
         IGNORE_FLAGS: Flags are ignored for this step.
     """
@@ -237,16 +236,15 @@ class DSGToolsWorkflowItem(QObject):
         self.context = dataobjects.createContext(feedback=self.feedback)
         self.context.setProject(QgsProject.instance())
         self.resetItem()
-        self.model = self.getModel()
-        self.currentTask = None
-        self.executionOutput = ModelExecutionOutput()
 
     def resetItem(self):
         """Reset the workflow item."""
+        self.currentTask = None
         if hasattr(self, "executionOutput"):
             self.clearOutputs()
         self.executionOutput = ModelExecutionOutput()
         self.feedback.setProgress(0)
+        self.model = self.getModel()
 
     def as_dict(self) -> Dict[str, str]:
         """Convert the workflow item to a dictionary."""
@@ -408,7 +406,6 @@ class DSGToolsWorkflowItem(QObject):
                 self.model,
                 {param: "memory:" for param in modelParameters},
                 feedback=self.feedback,
-                context=self.context,
             )
             out.pop("CHILD_INPUTS", None)
             out.pop("CHILD_RESULTS", None)
@@ -470,8 +467,8 @@ class DSGToolsWorkflowItem(QObject):
                     ),
                     status=ExecutionStatus.CANCELED,
                 )
-            self.workflowItemExecutionFinished.emit(self)
             self.currentTask = None
+            self.workflowItemExecutionFinished.emit(self)
 
         return on_finished_func
 

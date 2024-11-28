@@ -208,6 +208,8 @@ class DSGToolsWorkflow(QObject):
         for idx, workflowItem in enumerate(self.workflowItemList):
             if idx < startIdx:
                 continue
+            if workflowItem.getStatus() == ExecutionStatus.INITIAL:
+                continue
             workflowItem.resetItem()
             self.currentWorkflowItemStatusChanged.emit(idx, workflowItem)
         self.setCurrentWorkflowItem(startIdx)
@@ -288,7 +290,7 @@ class DSGToolsWorkflow(QObject):
         self.currentWorkflowItemStatusChanged.emit(
             self.currentStepIndex, currentWorkflowItem
         )
-        self.currentTaskChanged.emit(self.currentStepIndex, currentTask)
+        # self.currentTaskChanged.emit(self.currentStepIndex, currentTask)
         QgsApplication.taskManager().addTask(currentTask)
 
     def clearAllLayersBeforeRunning(self):

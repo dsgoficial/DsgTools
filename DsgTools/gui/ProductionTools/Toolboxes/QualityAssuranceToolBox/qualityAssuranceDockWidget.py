@@ -89,7 +89,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             ExecutionStatus.INITIAL: self.tr("Not yet run"),
             ExecutionStatus.RUNNING: self.tr("Running..."),
             ExecutionStatus.PAUSED_BEFORE_RUNNING: self.tr(
-                "On hold. Check data and resume."
+                "execution paused before running. Check data and resume."
             ),
             ExecutionStatus.CANCELED: self.tr("Canceled"),
             ExecutionStatus.FAILED: self.tr("Failed"),
@@ -581,6 +581,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             # dark mode does not look good with this color pallete...
             self.tableWidget.cellWidget(row, 0).setStyleSheet("")
             self.tableWidget.cellWidget(row, 1).setStyleSheet("")
+            self.intWrapper(row, 0)
         else:
             self.setRowColor(row, colorBackground, colorForeground)
 
@@ -663,6 +664,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
 
     def intWrapper(self, idx, v):
         pb = self.tableWidget.cellWidget(idx, 2)
+        if pb is None:
+            return
         pb.setValue(int(v))
 
     def setupProgressBar(self, idx, currentTask):
