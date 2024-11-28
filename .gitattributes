@@ -21,3 +21,4 @@
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
 DsgTools/resources.qrc export-ignore
+DsgTools/resources_rc.py export-ignore
