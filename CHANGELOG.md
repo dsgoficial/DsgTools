@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 4.17.1 - dev
+
+Novas Funcionalidades:
+
+- Novo algoritmo de conversão de modelagens no provedor de algoritmos;
+
+Melhorias:
+
+Correção de bugs:
+
 ## 4.16.0 - 2024-11-27
 
 Novas Funcionalidades:

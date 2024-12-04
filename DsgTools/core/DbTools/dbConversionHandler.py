@@ -21,19 +21,21 @@
  ***************************************************************************/
 """
 
-from abc import abstractclassmethod
-from collections import defaultdict
 import copy
 import json
-from typing import Any, Dict, Iterable, List, Union, Optional
+from abc import abstractclassmethod
+from collections import defaultdict
+from typing import Any, Dict, Iterable, List, Optional, Union
+
 from qgis.core import (
+    NULL,
     QgsFeature,
-    QgsVectorLayer,
     QgsFeedback,
+    QgsGeometry,
     QgsProcessingMultiStepFeedback,
+    QgsVectorLayer,
     QgsVectorLayerUtils,
     QgsWkbTypes,
-    NULL,
 )
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
@@ -43,7 +45,9 @@ class AbstractFeatureProcessor:
     def __init__(self):
         self.geometryHandler = GeometryHandler()
 
-    def deaggregateGeometries(self, featDict, parameterDict):
+    def deaggregateGeometries(
+        self, featDict: Dict[str, Any], parameterDict: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         geomList = self.geometryHandler.handleGeometry(
             featDict["geom"], parameterDict=parameterDict
         )
@@ -61,7 +65,12 @@ class AbstractFeatureProcessor:
                 features.append(copyDict)
         return features
 
-    def convert(self, featDictList, parameterDict, feedback=None):
+    def convert(
+        self,
+        featDictList: List[Dict[str, Any]],
+        parameterDict: Dict[str, Any],
+        feedback: QgsFeedback = None,
+    ) -> List[Dict[str, Any]]:
         outputFeatDictList = []
         if feedback is not None:
             nFeats = len(featDictList)
@@ -91,44 +100,38 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
         self.mappingDict = self.buildFileDict(mappingDictPath)
         self.mappingType = mappingType
         self.geometryHandler = GeometryHandler()
+        self.geomWkbToStringTypeMap = {
+            QgsWkbTypes.Point: "POINT",
+            QgsWkbTypes.MultiPoint: "POINT",
+            QgsWkbTypes.LineString: "LINESTRING",
+            QgsWkbTypes.MultiLineString: "LINESTRING",
+            QgsWkbTypes.Polygon: "POLYGON",
+            QgsWkbTypes.MultiPolygon: "POLYGON",
+        }
 
-    def buildFileDict(self, mappingPath):
+    def buildFileDict(self, mappingPath: str) -> dict:
         with open(mappingPath, "r", encoding="utf-8") as file:
             mapDict = json.loads(file.read())
         return mapDict
 
-    def buildFeatureDict(self, feature):
-        featDict = dict()
-        for attr in feature.getAllAttributeNames():
-            if attr == "layer_name" or (
-                "multi_writer" not in attr
-                and "multi_reader_" not in attr
-                and "fme_" not in attr
-                and "postgis_" not in attr
-            ):
-                if feature.getAttribute(attr) or feature.getAttribute(attr) == 0:
-                    if feature.getAttribute(attr) == "f":
-                        featDict[attr] = "False"
-                    elif feature.getAttribute(attr) == "t":
-                        featDict[attr] = "True"
-                    else:
-                        featDict[attr] = feature.getAttribute(attr)
-                else:
-                    featDict[attr] = None
-        if (
-            feature.performFunction("@GeometryType()") == "fme_polygon"
-            or feature.performFunction("@GeometryType()") == "fme_donut"
-        ):
-            featDict["$GEOM_TYPE"] = "POLYGON"
-        elif feature.performFunction("@GeometryType()") == "fme_line":
-            featDict["$GEOM_TYPE"] = "LINESTRING"
-        elif feature.performFunction("@GeometryType()") == "fme_point":
-            featDict["$GEOM_TYPE"] = "POINT"
+    def buildFeatureDict(
+        self, feature: Union[QgsFeature, Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        featDict = (
+            {f.name(): feature[f.name()] for f in feature.fields()}
+            if isinstance(feature, QgsFeature)
+            else feature
+        )
+        geom: QgsGeometry = (
+            feature.geometry() if isinstance(feature, QgsFeature) else feature["geom"]
+        )
+        if geom.wkbType() in self.geomWkbToStringTypeMap:
+            featDict["$GEOM_TYPE"] = self.geomWkbToStringTypeMap[geom.wkbType()]
         else:
             featDict["INVALID_GEOM"] = True
         return featDict
 
-    def evaluateExpression(self, featDict, expression):
+    def evaluateExpression(self, featDict: Dict[str, Any], expression: Dict[str, str]):
         if not expression["nome_atributo"] in featDict:
             return False
         if expression["valor"] is None or expression["valor"] == "":
@@ -162,56 +165,54 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
             return self.evaluateExpression(featDict, filter_condition)
 
     def convertFeature(self, featDict):
-        if self.mappingType == "ida":
-            key_attr_origin = "attr_ida"
-            key_attr_destiny = "attr_volta"
-            key_value_origin = "valor_ida"
-            key_value_destiny = "valor_volta"
-            key_default = "atributos_default_ida"
-            key_filter = "filtro_ida"
-            key_class_origin = "classe_ida"
-            key_class_destiny = "classe_volta"
-            key_group_origin = "tupla_ida"
-            key_group_destiny = "tupla_volta"
-            key_affix_origin = "afixo_geom_ida"
-            key_affix_destiny = "afixo_geom_volta"
-            key_schema_origin = "schema_ida"
-            key_schema_destiny = "schema_volta"
-            key_class_affix_origin = "com_afixo_geom_ida"
-            key_class_affix_destiny = "com_afixo_geom_volta"
-            key_class_schema_origin = "com_schema_ida"
-            key_class_schema_destiny = "com_schema_volta"
-            key_agregar = "agregar_geom_ida"
+        if self.mappingType == "A=>B":
+            key_attr_origin = "attr_A"
+            key_attr_destiny = "attr_B"
+            key_value_origin = "valor_A"
+            key_value_destiny = "valor_B"
+            key_default = "atributos_default_A"
+            key_filter = "filtro_A"
+            key_class_origin = "classe_A"
+            key_class_destiny = "classe_B"
+            key_group_origin = "tupla_A"
+            key_group_destiny = "tupla_B"
+            key_affix_origin = "afixo_geom_A"
+            key_affix_destiny = "afixo_geom_B"
+            key_schema_origin = "schema_A"
+            key_schema_destiny = "schema_B"
+            key_class_affix_origin = "com_afixo_geom_A"
+            key_class_affix_destiny = "com_afixo_geom_B"
+            key_class_schema_origin = "com_schema_A"
+            key_class_schema_destiny = "com_schema_B"
+            key_agregar = "agregar_geom_A"
         else:
-            key_attr_origin = "attr_volta"
-            key_attr_destiny = "attr_ida"
-            key_value_origin = "valor_volta"
-            key_value_destiny = "valor_ida"
-            key_default = "atributos_default_volta"
-            key_filter = "filtro_volta"
-            key_class_origin = "classe_volta"
-            key_class_destiny = "classe_ida"
-            key_group_origin = "tupla_volta"
-            key_group_destiny = "tupla_ida"
-            key_affix_origin = "afixo_geom_volta"
-            key_affix_destiny = "afixo_geom_ida"
-            key_schema_origin = "schema_volta"
-            key_schema_destiny = "schema_ida"
-            key_class_affix_origin = "com_afixo_geom_volta"
-            key_class_affix_destiny = "com_afixo_geom_ida"
-            key_class_schema_origin = "com_schema_volta"
-            key_class_schema_destiny = "com_schema_ida"
-            key_agregar = "agregar_geom_volta"
+            key_attr_origin = "attr_B"
+            key_attr_destiny = "attr_A"
+            key_value_origin = "valor_B"
+            key_value_destiny = "valor_A"
+            key_default = "atributos_default_B"
+            key_filter = "filtro_B"
+            key_class_origin = "classe_B"
+            key_class_destiny = "classe_A"
+            key_group_origin = "tupla_B"
+            key_group_destiny = "tupla_A"
+            key_affix_origin = "afixo_geom_B"
+            key_affix_destiny = "afixo_geom_A"
+            key_schema_origin = "schema_B"
+            key_schema_destiny = "schema_A"
+            key_class_affix_origin = "com_afixo_geom_B"
+            key_class_affix_destiny = "com_afixo_geom_A"
+            key_class_schema_origin = "com_schema_B"
+            key_class_schema_destiny = "com_schema_A"
+            key_agregar = "agregar_geom_B"
 
         featDict["layer_name_original"] = featDict["layer_name"]
 
-        if (
-            key_schema_origin in self.mappingDict
-            and self.mappingDict[key_schema_origin]
-        ):
-            featDict["layer_name"] = featDict["layer_name"][
-                len(self.mappingDict[key_schema_origin]) + 1 :
-            ]
+        # if (
+        #     key_schema_origin in self.mappingDict
+        #     and self.mappingDict[key_schema_origin]
+        # ):
+        #     featDict["layer_name"] = "_".join(featDict["layer_name"].split("_")[1:-1])
 
         featDict["layer_name_sem_schema"] = featDict["layer_name"]
 
@@ -274,7 +275,9 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
             featDict["CLASS_NOT_FOUND"] = True
             return featDict
 
+        geom = featDict.pop("geom")
         mappedFeat = copy.deepcopy(featDict)
+        mappedFeat["geom"] = geom
 
         if key_default in self.mappingDict:
             for default in self.mappingDict[key_default]:
@@ -538,21 +541,25 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
                     continue
                 mappedFeat[attmap[key_attr_destiny]] = valuemap[key_value_destiny]
 
-    def mapDictToFeature(self, feat, featDict):
-        for attr, value in featDict.items():
-            if value == "True":
-                feat.setAttribute(attr, 1)
-            elif value == "False":
-                feat.setAttribute(attr, 0)
-            elif value or value == 0:
-                feat.setAttribute(attr, "{0}".format(value))
-            else:
-                feat.setAttributeNullWithType(attr, 0)
-        if "AGGREGATE_GEOM" in featDict and featDict["AGGREGATE_GEOM"]:
-            feat.buildAggregateFeat([feat])
-        return feat
+    # def mapDictToFeature(self, feat, featDict):
+    #     for attr, value in featDict.items():
+    #         if value == "True" or value is True:
+    #             feat.setAttribute(attr, 1)
+    #         elif value == "False" or value is False:
+    #             feat.setAttribute(attr, 0)
+    #         elif value or value == 0:
+    #             feat.setAttribute(attr, "{0}".format(value))
+    #         else:
+    #             feat.setAttributeNullWithType(attr, 0)
+    #     if "AGGREGATE_GEOM" in featDict and featDict["AGGREGATE_GEOM"]:
+    #         feat.buildAggregateFeat([feat])
+    #     return feat
 
-    def convert_feat(self, featDict, parameterDict):
+    def convert_feat(
+        self,
+        featDict: Dict[str, Any],
+        parameterDict: Dict[str, Any],
+    ) -> List[Dict[str, Any]]:
         outputList = []
         features = self.deaggregateGeometries(featDict, parameterDict)
         for simple_feature in features:
@@ -569,13 +576,13 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
                 simple_feature["CLASS_NOT_FOUND"] = True
                 outputList.append(simple_feature)
             else:
-                outputFeature = self.mapDictToFeature(simple_feature, outputFeatDict)
-                outputList.append(outputFeature)
+                #     outputFeature = self.mapDictToFeature(simple_feature, outputFeatDict)
+                outputList.append(outputFeatDict)
         return outputList
 
 
 def convert_features(
-    inputLayerDict: Dict[str, QgsVectorLayer],
+    inputLayerDict: Dict[str, Union[QgsVectorLayer, Dict[str, Any]]],
     featureProcessor: AbstractFeatureProcessor,
     feedback: Optional[QgsFeedback] = None,
     layerNameAttr: Optional[str] = None,
@@ -606,8 +613,10 @@ def convert_features(
     return outputFeatDict
 
 
-def get_feat_dict(inputLyrName, feat):
-    attrDict = feat.attributeMap()
+def get_feat_dict(
+    inputLyrName: str, feat: Union[QgsFeature, Dict[str, Any]]
+) -> Dict[str, Any]:
+    attrDict = feat.attributeMap() if isinstance(feat, QgsFeature) else feat
     attrDict["layer_name"] = inputLyrName
     attrDict["geom"] = feat.geometry()
     return attrDict
@@ -636,7 +645,7 @@ def write_output_features(
     outputLayerDict: Dict[str, QgsVectorLayer],
     feedback: Optional[QgsFeedback] = None,
 ) -> Dict[str, List[Dict[str, Any]]]:
-    notConvertedDict = defaultdict(lambda: defaultdict(list))
+    notConvertedDict = defaultdict(list)
     multiStepFeedback = (
         QgsProcessingMultiStepFeedback(len(featDict), feedback)
         if feedback is not None

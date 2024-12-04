@@ -24,6 +24,10 @@
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.clipAndCopyFeaturesBetweenDatabasesAlgorithm import (
     ClipAndCopyFeaturesBetweenDatabasesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.convertDatabaseAlgorithm import (
+    ConvertDatabasesAlgorithm,
+    ParameterDbConversionType,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.genericSelectionToolParametersAlgorithm import (
     GenericSelectionToolParametersAlgorithm,
 )
@@ -710,12 +714,13 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyMissingPointsOnLineIntersections(),
             IdentifyMissingPolygonLineIntersectionsOnLines(),
             BatchRasterPackagingForBDGEx(),
-            # GeneralizeWaterBodyAlgorithm(),
-            # GeneralizeEdificationsAlgorithm(),
-            # GeneralizeEdificationsAreaAlgorithm(),
-            # GeneralizeLandingStripAlgorithm(),
+            GeneralizeWaterBodyAlgorithm(),
+            GeneralizeEdificationsAlgorithm(),
+            GeneralizeEdificationsAreaAlgorithm(),
+            GeneralizeLandingStripAlgorithm(),
             # GeneralizeRoundaboutsAlgorithm(),
-            # GeneralizeHighwaysAlgorithm(),
+            GeneralizeHighwaysAlgorithm(),
+            ConvertDatabasesAlgorithm(),
         ]
         return algList
 
@@ -741,6 +746,10 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         self.parameterDistanceBetweenLayersType = ParameterDistanceBetweenLayersType()
         QgsApplication.instance().processingRegistry().addParameterType(
             self.parameterDistanceBetweenLayersType
+        )
+        self.parameterDbConversionType = ParameterDbConversionType()
+        QgsApplication.instance().processingRegistry().addParameterType(
+            self.parameterDbConversionType
         )
         self.refreshAlgorithms()
         return True
