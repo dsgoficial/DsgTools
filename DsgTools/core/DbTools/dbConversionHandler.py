@@ -609,7 +609,7 @@ def convert_features(
             feedback=multiStepFeedback,
         )
         for featDict in outputFeatListDict:
-            outputFeatDict[featDict["layer_name"]].append(featDict)
+            outputFeatDict[featDict["layer_name"].split(".")[-1]].append(featDict)
     return outputFeatDict
 
 

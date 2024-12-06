@@ -20,8 +20,10 @@
  ***************************************************************************/
 """
 
+import fnmatch
 import json
 from typing import Dict, List, Optional
+from PyQt5.QtCore import QVariant, QMetaType, QDateTime
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
 )
@@ -61,7 +63,12 @@ from qgis.core import (
     QgsProcessingParameterFeatureSink,
     QgsProcessingContext,
     QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterString,
     QgsProcessingFeatureSource,
+    QgsFields,
+    QgsField,
+    QgsFeature,
+    QgsFeatureSink,
 )
 from qgis.utils import iface
 
@@ -71,6 +78,7 @@ from DsgTools.core.dsgEnums import DsgEnums
 
 class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
     INPUT_DATABASE = "INPUT_DATABASE"
+    INPUT_LAYERS_TO_EXCLUDE = "INPUT_LAYERS_TO_EXCLUDE"
     DESTINATION_DATABASE = "DESTINATION_DATABASE"
     CONVERSION_MAPS_STRUCTURE = "CONVERSION_MAPS_STRUCTURE"
     LOAD_DESTINATION_LAYERS = "LOAD_DESTINATION_LAYERS"
@@ -98,6 +106,18 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             "postgres",
         )
         self.addParameter(origin_db_param)
+
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.INPUT_LAYERS_TO_EXCLUDE,
+                description=self.tr(
+                    "Input layers to be excluded (csv format, can use * patterns)"
+                ),
+                multiLine=False,
+                defaultValue="aux_moldura_area_continua_a,delimitador*,centroide*",
+                optional=True,
+            )
+        )
 
         destination_db_param = QgsProcessingParameterProviderConnection(
             self.DESTINATION_DATABASE,
@@ -168,6 +188,12 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         inputConnectionName = self.parameterAsConnectionName(
             parameters, self.INPUT_DATABASE, context
         )
+        layerExclusionFilter = self.parameterAsString(
+            parameters, self.INPUT_LAYERS_TO_EXCLUDE, context
+        )
+        layerExclusionFilter = (
+            layerExclusionFilter.split(",") if layerExclusionFilter else None
+        )
         destinationConnectionName = self.parameterAsConnectionName(
             parameters, self.DESTINATION_DATABASE, context
         )
@@ -183,7 +209,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         loadDestinationLayers = self.parameterAsBool(
             parameters, self.LOAD_DESTINATION_LAYERS, context
         )
-        nSteps = 5 + len(conversionMapList)
+        nSteps = 6 + len(conversionMapList)
         if loadDestinationLayers:
             nSteps += 1
         multiStepFeedback = (
@@ -198,11 +224,48 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Loading layers with elements from input database")
             )
         inputLayerList = self.getLayersFromDbConnectionName(
-            inputConnectionName, feedback=multiStepFeedback
+            inputConnectionName,
+            feedback=multiStepFeedback,
+            layerExclusionFilter=layerExclusionFilter,
         )
         if len(inputLayerList) == 0:
             return {}
         currentStep += 1
+        self.fields = self.fieldsFlag()
+        crs = inputLayerList[0].crs()
+
+        point_flag_sink, point_flag_id = self.parameterAsSink(
+            parameters,
+            self.NOT_CONVERTED_POINT,
+            context,
+            self.fields,
+            QgsWkbTypes.Point,
+            crs,
+        )
+        line_flag_sink, line_flag_id = self.parameterAsSink(
+            parameters,
+            self.NOT_CONVERTED_LINE,
+            context,
+            self.fields,
+            QgsWkbTypes.LineString,
+            crs,
+        )
+        poly_flag_sink, poly_flag_id = self.parameterAsSink(
+            parameters,
+            self.NOT_CONVERTED_POLYGON,
+            context,
+            self.fields,
+            QgsWkbTypes.Polygon,
+            crs,
+        )
+        self.flagSinkDict = {
+            QgsWkbTypes.Point: point_flag_sink,
+            QgsWkbTypes.MultiPoint: point_flag_sink,
+            QgsWkbTypes.LineString: line_flag_sink,
+            QgsWkbTypes.MultiLineString: line_flag_sink,
+            QgsWkbTypes.Polygon: poly_flag_sink,
+            QgsWkbTypes.MultiPolygon: poly_flag_sink,
+        }
 
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -230,7 +293,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             },
             featureProcessor=featureProcessor,
             feedback=multiStepFeedback,
-            layerNameAttr="layerName",
+            layerNameAttr="layer_name",
         )
         currentStep += 1
         for conversionData in conversionMapList[1::]:
@@ -262,16 +325,36 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Writing to output"))
         outputLayerDict = {lyr.name(): lyr for lyr in destinationLayerList}
-        write_output_features(
+        notConvertedDict = write_output_features(
             convertedFeatureDict,
             outputLayerDict=outputLayerDict,
             feedback=multiStepFeedback,
         )
         currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
 
+        if len(notConvertedDict) > 0:
+            stepSize = 100 / len(notConvertedDict)
+            for geomType, featDictList in notConvertedDict.items():
+                if multiStepFeedback.isCanceled():
+                    break
+                list(
+                    map(
+                        lambda x: self.flagSinkDict[geomType].addFeature(
+                            self.buildFlagFeat(x), QgsFeatureSink.FastInsert
+                        ),
+                        featDictList,
+                    )
+                )
+
+        currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         if not commitChanges:
-            return {}
+            return {
+                self.NOT_CONVERTED_POINT: point_flag_id,
+                self.NOT_CONVERTED_LINE: line_flag_id,
+                self.NOT_CONVERTED_POLYGON: poly_flag_id,
+            }
         if multiStepFeedback is not None:
             multiStepFeedback.pushInfo(self.tr("Commiting changes"))
         stepSize = 100 / len(outputLayerDict)
@@ -286,10 +369,31 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         if not loadDestinationLayers:
             for lyrName, lyr in outputLayerDict.items():
                 QgsProject.instance().removeMapLayer(lyr.id())
-        return {}
+        return {
+            self.NOT_CONVERTED_POINT: point_flag_id,
+            self.NOT_CONVERTED_LINE: line_flag_id,
+            self.NOT_CONVERTED_POLYGON: poly_flag_id,
+        }
 
     def parameterAsConversionMapList(self, parameters, name, context):
         return parameters[name]
+
+    def fieldsFlag(self):
+        fields = QgsFields()
+        fields.append(QgsField("layer_name", QVariant.String))
+        fields.append(QgsField("attribute_map", QVariant.String))
+        return fields
+
+    def buildFlagFeat(self, featMap):
+        newFeat = QgsFeature(self.fields)
+        geom = featMap.pop("geom")
+        newFeat.setGeometry(geom)
+        newFeat["layer_name"] = featMap["layer_name_original"]
+        for k, v in featMap.items():
+            if isinstance(v, QDateTime):
+                featMap[k] = v.toString()
+        newFeat["attribute_map"] = json.dumps(featMap, default=str)
+        return newFeat
 
     def getLayersFromDbConnectionName(
         self,
@@ -298,6 +402,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         layerNameList: Optional[List[QgsVectorLayer]] = None,
         addToCanvas: Optional[bool] = False,
         withElements: Optional[bool] = True,
+        layerExclusionFilter: Optional[List[str]] = None,
     ) -> List[QgsVectorLayer]:
         inputAbstractDb = self.getAbstractDb(inputConnectionName)
         layerLoader = LayerLoaderFactory().makeLoader(iface, inputAbstractDb)
@@ -307,6 +412,18 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         inputParamList = list(map(lambda x: x.split(".")[-1], inputParamList))
         if layerNameList is not None and layerNameList != []:
             inputParamList = list(filter(lambda x: x in layerNameList, inputParamList))
+
+        if layerExclusionFilter is not None:
+            wildCardFilterList = [fi for fi in layerExclusionFilter if "*" in fi]
+            wildCardLayersSet = set()
+            for wildCardFilter in wildCardFilterList:
+                wildCardLayersSet = wildCardLayersSet.union(
+                    set(fnmatch.filter(inputParamList, wildCardFilter))
+                )
+            layerNamesToExclude = (
+                set(layerExclusionFilter) - set(wildCardFilterList) | wildCardLayersSet
+            )
+            inputParamList = list(set(inputParamList) - layerNamesToExclude)
         loadedLayerList = layerLoader.loadLayersInsideProcessing(
             inputParamList, addToCanvas=addToCanvas, feedback=feedback
         )
@@ -369,7 +486,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
                 inputLyr=clippedLyr,
                 expression=f"'{lyr.name()}'",
                 fieldType=2,
-                fieldName="layerName",
+                fieldName="layer_name",
                 feedback=multiStepFeedback,
                 context=context,
                 is_child_algorithm=False,
