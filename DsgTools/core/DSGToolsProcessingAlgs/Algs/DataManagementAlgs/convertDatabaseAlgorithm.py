@@ -226,6 +226,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         inputLayerList = self.getLayersFromDbConnectionName(
             inputConnectionName,
             feedback=multiStepFeedback,
+            context=context,
             layerExclusionFilter=layerExclusionFilter,
         )
         if len(inputLayerList) == 0:
@@ -316,6 +317,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         destinationLayerList = self.getLayersFromDbConnectionName(
             inputConnectionName=destinationConnectionName,
             feedback=multiStepFeedback,
+            context=context,
             layerNameList=list(convertedFeatureDict.keys()),
             addToCanvas=loadDestinationLayers,
             withElements=False,
@@ -399,11 +401,14 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         self,
         inputConnectionName: str,
         feedback: QgsProcessingFeedback,
+        context: QgsProcessingContext,
         layerNameList: Optional[List[QgsVectorLayer]] = None,
         addToCanvas: Optional[bool] = False,
         withElements: Optional[bool] = True,
         layerExclusionFilter: Optional[List[str]] = None,
     ) -> List[QgsVectorLayer]:
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
         inputAbstractDb = self.getAbstractDb(inputConnectionName)
         layerLoader = LayerLoaderFactory().makeLoader(iface, inputAbstractDb)
         inputParamList = inputAbstractDb.listGeomClassesFromDatabase(
@@ -424,9 +429,17 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
                 set(layerExclusionFilter) - set(wildCardFilterList) | wildCardLayersSet
             )
             inputParamList = list(set(inputParamList) - layerNamesToExclude)
+        multiStepFeedback.setCurrentStep(1)
         loadedLayerList = layerLoader.loadLayersInsideProcessing(
-            inputParamList, addToCanvas=addToCanvas, feedback=feedback
+            inputParamList, addToCanvas=addToCanvas, feedback=multiStepFeedback
         )
+        multiStepFeedback.setCurrentStep(2)
+        if addToCanvas:
+            AlgRunner().runDSGToolsGroupLayers(
+                inputList=loadedLayerList,
+                context=context,
+                feedback=multiStepFeedback,
+            )
         del inputAbstractDb
         del layerLoader
         return loadedLayerList

@@ -523,23 +523,23 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
         mappedFeat,
     ):
         for attmap in self.mappingDict["mapeamento_atributos"]:
-            if attmap[key_attr_origin] not in mappedFeat:
-                continue
-            mappedFeat[attmap[key_attr_destiny]] = featDict[attmap[key_attr_origin]]
-            if "traducao" not in attmap:
-                continue
-            for valuemap in attmap["traducao"]:
-                if "{0}".format(valuemap[key_value_origin]) != "{0}".format(
-                    featDict[attmap[key_attr_origin]]
-                ) and (
-                    "sentido" not in valuemap
-                    or (
-                        "sentido" in valuemap
-                        and valuemap["sentido"] == self.mappingType
-                    )
-                ):
+            if attmap[key_attr_origin] in mappedFeat:
+                mappedFeat[attmap[key_attr_destiny]] = featDict[attmap[key_attr_origin]]
+                if "traducao" not in attmap:
                     continue
-                mappedFeat[attmap[key_attr_destiny]] = valuemap[key_value_destiny]
+                for valuemap in attmap["traducao"]:
+                    if "{0}".format(valuemap[key_value_origin]) == "{0}".format(
+                        featDict[attmap[key_attr_origin]]
+                    ) and (
+                        "sentido" not in valuemap
+                        or (
+                            "sentido" in valuemap
+                            and valuemap["sentido"] == self.mappingType
+                        )
+                    ):
+                        mappedFeat[attmap[key_attr_destiny]] = valuemap[
+                            key_value_destiny
+                        ]
 
     # def mapDictToFeature(self, feat, featDict):
     #     for attr, value in featDict.items():
