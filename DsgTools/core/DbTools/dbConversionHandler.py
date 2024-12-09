@@ -170,7 +170,7 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
             key_attr_destiny = "attr_B"
             key_value_origin = "valor_A"
             key_value_destiny = "valor_B"
-            key_default = "atributos_default_A"
+            key_default = "atributos_default_B"
             key_filter = "filtro_A"
             key_class_origin = "classe_A"
             key_class_destiny = "classe_B"
@@ -190,7 +190,7 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
             key_attr_destiny = "attr_A"
             key_value_origin = "valor_B"
             key_value_destiny = "valor_A"
-            key_default = "atributos_default_B"
+            key_default = "atributos_default_A"
             key_filter = "filtro_B"
             key_class_origin = "classe_B"
             key_class_destiny = "classe_A"
@@ -208,11 +208,13 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
 
         featDict["layer_name_original"] = featDict["layer_name"]
 
-        # if (
-        #     key_schema_origin in self.mappingDict
-        #     and self.mappingDict[key_schema_origin]
-        # ):
-        #     featDict["layer_name"] = "_".join(featDict["layer_name"].split("_")[1:-1])
+        if (
+            key_schema_origin in self.mappingDict
+            and self.mappingDict[key_schema_origin]
+        ):
+            featDict["layer_name"] = featDict["layer_name"][
+                len(self.mappingDict[key_schema_origin]) + 1 :
+            ]
 
         featDict["layer_name_sem_schema"] = featDict["layer_name"]
 
@@ -242,35 +244,34 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
 
         should_map = False
         for classmap in self.mappingDict["mapeamento_classes"]:
-            if not (
-                "sentido" not in classmap
-                or ("sentido" in classmap and classmap["sentido"] == self.mappingType)
+            if "sentido" not in classmap or (
+                "sentido" in classmap and classmap["sentido"] == self.mappingType
             ):
-                continue
-            if (
-                key_class_affix_origin in classmap
-                and classmap[key_class_affix_origin]
-                and key_class_schema_origin in classmap
-                and classmap[key_class_schema_origin]
-            ):
-                class_name = featDict["layer_name_original"]
-            elif (
-                key_class_affix_origin in classmap and classmap[key_class_affix_origin]
-            ):
-                class_name = featDict["layer_name_sem_schema"]
-            elif (
-                key_class_schema_origin in classmap
-                and classmap[key_class_schema_origin]
-            ):
-                class_name = featDict["layer_name_sem_afixo"]
-            else:
-                class_name = featDict["layer_name"]
+                if (
+                    key_class_affix_origin in classmap
+                    and classmap[key_class_affix_origin]
+                    and key_class_schema_origin in classmap
+                    and classmap[key_class_schema_origin]
+                ):
+                    class_name = featDict["layer_name_original"]
+                elif (
+                    key_class_affix_origin in classmap
+                    and classmap[key_class_affix_origin]
+                ):
+                    class_name = featDict["layer_name_sem_schema"]
+                elif (
+                    key_class_schema_origin in classmap
+                    and classmap[key_class_schema_origin]
+                ):
+                    class_name = featDict["layer_name_sem_afixo"]
+                else:
+                    class_name = featDict["layer_name"]
 
-            if classmap[key_class_origin] == class_name:
-                if key_filter in classmap:
-                    if not self.evaluateFilter(featDict, classmap[key_filter]):
-                        continue
-                should_map = True
+                if classmap[key_class_origin] == class_name:
+                    if key_filter in classmap:
+                        if not self.evaluateFilter(featDict, classmap[key_filter]):
+                            continue
+                    should_map = True
         if not should_map:
             featDict["CLASS_NOT_FOUND"] = True
             return featDict
@@ -284,42 +285,197 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
                 mappedFeat[default["nome_atributo"]] = default["valor"]
 
         if "mapeamento_atributos" in self.mappingDict:
-            self.map_attributes(
-                featDict,
-                key_attr_origin,
-                key_attr_destiny,
-                key_value_origin,
-                key_value_destiny,
-                mappedFeat,
-            )
+            for attmap in self.mappingDict["mapeamento_atributos"]:
+                if attmap[key_attr_origin] in mappedFeat:
+                    mappedFeat[attmap[key_attr_destiny]] = featDict[
+                        attmap[key_attr_origin]
+                    ]
+                    if "traducao" in attmap:
+                        for valuemap in attmap["traducao"]:
+                            if "{0}".format(valuemap[key_value_origin]) == "{0}".format(
+                                featDict[attmap[key_attr_origin]]
+                            ) and (
+                                "sentido" not in valuemap
+                                or (
+                                    "sentido" in valuemap
+                                    and valuemap["sentido"] == self.mappingType
+                                )
+                            ):
+                                mappedFeat[attmap[key_attr_destiny]] = valuemap[
+                                    key_value_destiny
+                                ]
 
         if "mapeamento_multiplo" in self.mappingDict:
-            self.multiple_mapping(
-                featDict, key_group_origin, key_group_destiny, mappedFeat
-            )
+            for attmap in self.mappingDict["mapeamento_multiplo"]:
+                if "sentido" not in attmap or (
+                    "sentido" in attmap and attmap["sentido"] == self.mappingType
+                ):
+                    if all(
+                        [
+                            self.evaluateExpression(featDict, condition)
+                            for condition in attmap[key_group_origin]
+                        ]
+                    ):
+                        for valuemap in attmap[key_group_destiny]:
+                            if (
+                                "concatenar" in valuemap
+                                and valuemap["concatenar"]
+                                and valuemap["nome_atributo"] in mappedFeat
+                                and mappedFeat[valuemap["nome_atributo"]]
+                            ):
+                                mappedFeat[valuemap["nome_atributo"]] = (
+                                    mappedFeat[valuemap["nome_atributo"]]
+                                    + " | "
+                                    + valuemap["valor"]
+                                )
+                            else:
+                                mappedFeat[valuemap["nome_atributo"]] = valuemap[
+                                    "valor"
+                                ]
 
         if "mapeamento_classes" in self.mappingDict:
-            self.class_mapping(
-                featDict,
-                key_attr_origin,
-                key_attr_destiny,
-                key_value_origin,
-                key_value_destiny,
-                key_default,
-                key_filter,
-                key_class_origin,
-                key_class_destiny,
-                key_group_origin,
-                key_group_destiny,
-                key_affix_destiny,
-                key_schema_destiny,
-                key_class_affix_origin,
-                key_class_affix_destiny,
-                key_class_schema_origin,
-                key_class_schema_destiny,
-                key_agregar,
-                mappedFeat,
-            )
+            for classmap in self.mappingDict["mapeamento_classes"]:
+                if "sentido" not in classmap or (
+                    "sentido" in classmap and classmap["sentido"] == self.mappingType
+                ):
+                    if (
+                        key_class_affix_origin in classmap
+                        and classmap[key_class_affix_origin]
+                        and key_class_schema_origin in classmap
+                        and classmap[key_class_schema_origin]
+                    ):
+                        class_name = featDict["layer_name_original"]
+                    elif (
+                        key_class_affix_origin in classmap
+                        and classmap[key_class_affix_origin]
+                    ):
+                        class_name = featDict["layer_name_sem_schema"]
+                    elif (
+                        key_class_schema_origin in classmap
+                        and classmap[key_class_schema_origin]
+                    ):
+                        class_name = featDict["layer_name_sem_afixo"]
+                    else:
+                        class_name = featDict["layer_name"]
+
+                    if classmap[key_class_origin] == class_name:
+                        if key_filter in classmap:
+                            if not self.evaluateFilter(featDict, classmap[key_filter]):
+                                continue
+
+                        mappedFeat["layer_name"] = classmap[key_class_destiny]
+
+                        if (
+                            key_class_affix_destiny in classmap
+                            and classmap[key_class_affix_destiny]
+                        ):
+                            pass
+                        elif (
+                            key_affix_destiny in self.mappingDict
+                            and "tipo" in self.mappingDict[key_affix_destiny]
+                        ):
+                            if self.mappingDict[key_affix_destiny]["tipo"] == "sufixo":
+                                mappedFeat["layer_name"] = (
+                                    mappedFeat["layer_name"]
+                                    + self.mappingDict[key_affix_destiny][
+                                        featDict["$GEOM_TYPE"]
+                                    ]
+                                )
+
+                            if self.mappingDict[key_affix_destiny]["tipo"] == "prefixo":
+                                mappedFeat["layer_name"] = (
+                                    self.mappingDict[key_affix_destiny][
+                                        featDict["$GEOM_TYPE"]
+                                    ]
+                                    + mappedFeat["layer_name"]
+                                )
+
+                        if (
+                            key_class_schema_destiny in classmap
+                            and classmap[key_class_schema_destiny]
+                        ):
+                            pass
+                        elif (
+                            key_schema_destiny in self.mappingDict
+                            and self.mappingDict[key_schema_destiny]
+                        ):
+                            mappedFeat["layer_name"] = (
+                                self.mappingDict[key_schema_destiny]
+                                + "."
+                                + mappedFeat["layer_name"]
+                            )
+
+                        if key_default in classmap:
+                            for default in classmap[key_default]:
+                                mappedFeat[default["nome_atributo"]] = default["valor"]
+
+                        if "mapeamento_atributos" in classmap:
+                            for attmap in classmap["mapeamento_atributos"]:
+                                if attmap[key_attr_origin] in featDict:
+                                    if attmap[key_attr_destiny] not in mappedFeat:
+                                        mappedFeat[attmap[key_attr_destiny]] = featDict[
+                                            attmap[key_attr_origin]
+                                        ]
+                                    if "traducao" in attmap:
+                                        for valuemap in attmap["traducao"]:
+                                            if "{0}".format(
+                                                valuemap[key_value_origin]
+                                            ) == "{0}".format(
+                                                featDict[attmap[key_attr_origin]]
+                                            ) and (
+                                                "sentido" not in valuemap
+                                                or (
+                                                    "sentido" in valuemap
+                                                    and valuemap["sentido"]
+                                                    == self.mappingType
+                                                )
+                                            ):
+                                                mappedFeat[
+                                                    attmap[key_attr_destiny]
+                                                ] = valuemap[key_value_destiny]
+
+                        if "mapeamento_multiplo" in classmap:
+                            for attmap in classmap["mapeamento_multiplo"]:
+                                if "sentido" not in attmap or (
+                                    "sentido" in attmap
+                                    and attmap["sentido"] == self.mappingType
+                                ):
+                                    if all(
+                                        [
+                                            self.evaluateExpression(featDict, condition)
+                                            for condition in attmap[key_group_origin]
+                                        ]
+                                    ):
+                                        for valuemap in attmap[key_group_destiny]:
+                                            if (
+                                                "concatenar" in valuemap
+                                                and valuemap["concatenar"]
+                                                and valuemap["nome_atributo"]
+                                                in mappedFeat
+                                                and mappedFeat[
+                                                    valuemap["nome_atributo"]
+                                                ]
+                                            ):
+                                                mappedFeat[
+                                                    valuemap["nome_atributo"]
+                                                ] = (
+                                                    mappedFeat[
+                                                        valuemap["nome_atributo"]
+                                                    ]
+                                                    + " | "
+                                                    + valuemap["valor"]
+                                                )
+                                            else:
+                                                mappedFeat[
+                                                    valuemap["nome_atributo"]
+                                                ] = valuemap["valor"]
+
+                        if key_agregar in classmap:
+                            mappedFeat["AGGREGATE_GEOM"] = classmap[key_agregar]
+                        elif key_agregar in self.mappingDict:
+                            mappedFeat["AGGREGATE_GEOM"] = self.mappingDict[key_agregar]
+
+                        break
 
         return mappedFeat
 
@@ -609,7 +765,8 @@ def convert_features(
             feedback=multiStepFeedback,
         )
         for featDict in outputFeatListDict:
-            outputFeatDict[featDict["layer_name"].split(".")[-1]].append(featDict)
+            # outputFeatDict[featDict["layer_name"].split(".")[-1]].append(featDict)
+            outputFeatDict[featDict["layer_name"]].append(featDict)
     return outputFeatDict
 
 

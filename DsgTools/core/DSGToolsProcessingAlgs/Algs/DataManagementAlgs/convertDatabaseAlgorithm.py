@@ -318,7 +318,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             inputConnectionName=destinationConnectionName,
             feedback=multiStepFeedback,
             context=context,
-            layerNameList=list(convertedFeatureDict.keys()),
+            layerNameList=[i.split(".")[-1] for i in convertedFeatureDict.keys()],
             addToCanvas=loadDestinationLayers,
             withElements=False,
         )
@@ -328,7 +328,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             multiStepFeedback.pushInfo(self.tr("Writing to output"))
         outputLayerDict = {lyr.name(): lyr for lyr in destinationLayerList}
         notConvertedDict = write_output_features(
-            convertedFeatureDict,
+            {k.split(".")[-1]: v for k, v in convertedFeatureDict.items()},
             outputLayerDict=outputLayerDict,
             feedback=multiStepFeedback,
         )
@@ -478,6 +478,11 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             if feedback is not None
             else None
         )
+        schema_table_layer_dict = {
+            layer.name(): f"{uri.schema()}.{uri.table()}"
+            for layer in inputLayerList
+            for uri in [QgsDataSourceUri(layer.dataProvider().dataSourceUri())]
+        }
         for currentIdx, lyr in enumerate(inputLayerList):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 return outputDict
@@ -495,9 +500,10 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             )
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx + 1)
-            outputDict[lyr.name()] = self.algRunner.runCreateFieldWithExpression(
+            key = schema_table_layer_dict[lyr.name()]
+            outputDict[key] = self.algRunner.runCreateFieldWithExpression(
                 inputLyr=clippedLyr,
-                expression=f"'{lyr.name()}'",
+                expression=f"'{key}'",
                 fieldType=2,
                 fieldName="layer_name",
                 feedback=multiStepFeedback,
