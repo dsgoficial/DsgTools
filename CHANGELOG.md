@@ -8,6 +8,8 @@ Novas Funcionalidades:
 
 Melhorias:
 
+- Atualiza o modelo EDGV 3.0 para a implementação 1.1.6;
+
 Correção de bugs:
 
 ## 4.16.0 - 2024-11-27
