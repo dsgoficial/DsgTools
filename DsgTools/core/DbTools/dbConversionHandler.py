@@ -759,8 +759,9 @@ def convert_features(
             if layerNameAttr is None
             else get_feat_dict(x[layerNameAttr], x)
         )
+        featIterator = lyr.getFeatures() if isinstance(lyr, QgsVectorLayer) else lyr
         outputFeatListDict: List[Dict[str, Any]] = featureProcessor.convert(
-            list(map(get_feat_lambda, lyr.getFeatures())),
+            list(map(get_feat_lambda, featIterator)),
             parameterDict={"isMulti": QgsWkbTypes.isMultiType(lyr.wkbType())},
             feedback=multiStepFeedback,
         )
@@ -775,7 +776,7 @@ def get_feat_dict(
 ) -> Dict[str, Any]:
     attrDict = feat.attributeMap() if isinstance(feat, QgsFeature) else feat
     attrDict["layer_name"] = inputLyrName
-    attrDict["geom"] = feat.geometry()
+    attrDict["geom"] = feat.geometry() if isinstance(feat, QgsFeature) else feat["geom"]
     return attrDict
 
 
