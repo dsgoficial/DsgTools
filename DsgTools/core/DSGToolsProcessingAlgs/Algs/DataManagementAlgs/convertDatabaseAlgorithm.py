@@ -81,7 +81,6 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
     INPUT_LAYERS_TO_EXCLUDE = "INPUT_LAYERS_TO_EXCLUDE"
     DESTINATION_DATABASE = "DESTINATION_DATABASE"
     CONVERSION_MAPS_STRUCTURE = "CONVERSION_MAPS_STRUCTURE"
-    LOAD_DESTINATION_LAYERS = "LOAD_DESTINATION_LAYERS"
     COMMIT_OUTPUT_FEATURES = "COMMIT_OUTPUT_FEATURES"
     GEOGRAPHIC_BOUNDS = "GEOGRAPHIC_BOUNDS"
     NOT_CONVERTED_POINT = "NOT_CONVERTED_POINT"
@@ -155,7 +154,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterBoolean(
                 self.COMMIT_OUTPUT_FEATURES,
                 self.tr("Commit converted features to destination layers"),
-                defaultValue=True,
+                defaultValue=False,
             )
         )
         self.addParameter(
@@ -206,12 +205,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         commitChanges = self.parameterAsBool(
             parameters, self.COMMIT_OUTPUT_FEATURES, context
         )
-        loadDestinationLayers = self.parameterAsBool(
-            parameters, self.LOAD_DESTINATION_LAYERS, context
-        )
-        nSteps = 6 + len(conversionMapList)
-        if loadDestinationLayers:
-            nSteps += 1
+        nSteps = 7 + len(conversionMapList)
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback)
             if feedback is not None
@@ -319,7 +313,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
             context=context,
             layerNameList=[i.split(".")[-1] for i in convertedFeatureDict.keys()],
-            addToCanvas=loadDestinationLayers,
+            addToCanvas=True,
             withElements=False,
         )
         currentStep += 1
@@ -368,9 +362,6 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             lyr.commitChanges()
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
-        if not loadDestinationLayers:
-            for lyrName, lyr in outputLayerDict.items():
-                QgsProject.instance().removeMapLayer(lyr.id())
         return {
             self.NOT_CONVERTED_POINT: point_flag_id,
             self.NOT_CONVERTED_LINE: line_flag_id,
