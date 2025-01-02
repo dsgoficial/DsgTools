@@ -95,7 +95,7 @@ class DbConversionWrapper(WidgetWrapper):
                     "type": "widget",
                     "widget": self.modeComboBox,
                     "setter": "setCurrentIndex",
-                    "getter": "currentIndex",
+                    "getter": "currentText",
                 },
             }
         )
@@ -124,11 +124,11 @@ class DbConversionWrapper(WidgetWrapper):
                     "getter": "text",
                 },
                 1: {
-                    "header": self.tr("Snap mode"),
+                    "header": self.tr("Conversion mode"),
                     "type": "widget",
                     "widget": self.modeComboBox,
                     "setter": "setCurrentIndex",
-                    "getter": "currentIndex",
+                    "getter": "currentText",
                 },
             }
         )

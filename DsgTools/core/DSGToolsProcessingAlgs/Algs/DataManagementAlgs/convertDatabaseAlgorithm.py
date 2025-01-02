@@ -22,7 +22,7 @@
 
 import fnmatch
 import json
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from PyQt5.QtCore import QVariant, QMetaType, QDateTime
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
@@ -145,13 +145,6 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.LOAD_DESTINATION_LAYERS,
-                self.tr("Load destination layers"),
-                defaultValue=False,
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterBoolean(
                 self.COMMIT_OUTPUT_FEATURES,
                 self.tr("Commit converted features to destination layers"),
                 defaultValue=False,
@@ -212,6 +205,8 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             else None
         )
         currentStep = 0
+        if inputConnectionName == destinationConnectionName:
+            raise QgsProcessingException(self.tr("The destination connection must be different than the input connection!"))
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(
@@ -312,7 +307,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             inputConnectionName=destinationConnectionName,
             feedback=multiStepFeedback,
             context=context,
-            layerNameList=[i.split(".")[-1] for i in convertedFeatureDict.keys()],
+            layerNameList=list(convertedFeatureDict.keys()),
             addToCanvas=True,
             withElements=False,
         )
@@ -371,13 +366,13 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
     def parameterAsConversionMapList(self, parameters, name, context):
         return parameters[name]
 
-    def fieldsFlag(self):
+    def fieldsFlag(self) -> QgsFields:
         fields = QgsFields()
         fields.append(QgsField("layer_name", QVariant.String))
         fields.append(QgsField("attribute_map", QVariant.String))
         return fields
 
-    def buildFlagFeat(self, featMap):
+    def buildFlagFeat(self, featMap: Dict[str, Any]) -> QgsFeature:
         newFeat = QgsFeature(self.fields)
         geom = featMap.pop("geom")
         newFeat.setGeometry(geom)
@@ -405,9 +400,9 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         inputParamList = inputAbstractDb.listGeomClassesFromDatabase(
             withElements=withElements
         )
-        inputParamList = list(map(lambda x: x.split(".")[-1], inputParamList))
         if layerNameList is not None and layerNameList != []:
-            inputParamList = list(filter(lambda x: x in layerNameList, inputParamList))
+            inputParamList = list(set(inputParamList).intersection(set(layerNameList)))
+        inputParamList = list(map(lambda x: x.split(".")[-1], inputParamList))
 
         if layerExclusionFilter is not None:
             wildCardFilterList = [fi for fi in layerExclusionFilter if "*" in fi]
