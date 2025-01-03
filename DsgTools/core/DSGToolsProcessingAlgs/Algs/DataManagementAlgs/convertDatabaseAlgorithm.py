@@ -261,7 +261,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Clipping input layer list"))
-        clippedLayerDict = self.clipInputLayerList(
+        clippedLayerDict = self.prepareInputData(
             inputLayerList, geographicBoundLyr, context, multiStepFeedback
         )
         for lyr in inputLayerList:
@@ -456,7 +456,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         )
         return abstractDb
 
-    def clipInputLayerList(
+    def prepareInputData(
         self,
         inputLayerList: List[QgsVectorLayer],
         geographicBoundLyr: QgsProcessingFeatureSource,
@@ -479,32 +479,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
                 return outputDict
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx)
-            if geographicBoundLyr is None or geographicBoundLyr.featureCount() == 0 or lyr.name() in ["aux_moldura_a", "aux_moldura_area_continua_a"]:
-                clippedLyr = lyr
-            else:
-                subMultiStepFeedback = QgsProcessingMultiStepFeedback(geographicBoundLyr.featureCount() + 1, multiStepFeedback) if multiStepFeedback is not None else None
-                clipList = []
-                for current, clipLayer in enumerate(
-                    self.layerHandler.createMemoryLayerForEachFeature(
-                        layer=geographicBoundLyr, context=context
-                    )
-                ):
-                    if subMultiStepFeedback is not None and subMultiStepFeedback.isCanceled():
-                        break
-                    if subMultiStepFeedback is not None:
-                        subMultiStepFeedback.setCurrentStep(current)
-                    clipped = self.algRunner.runClip(
-                        inputLayer=lyr,
-                        overlayLayer=clipLayer,
-                        context=context,
-                        is_child_algorithm=True,
-                    )
-                    clipList.append(clipped)
-                if subMultiStepFeedback is not None:
-                    subMultiStepFeedback.setCurrentStep(current+1)
-                clippedLyr = self.algRunner.runMergeVectorLayers(
-                    inputList=clipList, context=context, feedback=subMultiStepFeedback
-                )
+            clippedLyr = self.clipInputLayer(lyr, geographicBoundLyr, context, multiStepFeedback)
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx + 1)
             key = schema_table_layer_dict[lyr.name()]
@@ -518,6 +493,34 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=False,
             )
         return outputDict
+
+    def clipInputLayer(self, lyr: QgsVectorLayer, geographicBoundLyr: QgsVectorLayer, context: QgsProcessingContext, multiStepFeedback: QgsProcessingMultiStepFeedback) -> QgsVectorLayer:
+        if geographicBoundLyr is None or geographicBoundLyr.featureCount() == 0 or lyr.name() in ["aux_moldura_a", "aux_moldura_area_continua_a"]:
+            return lyr
+        subMultiStepFeedback = QgsProcessingMultiStepFeedback(geographicBoundLyr.featureCount() + 1, multiStepFeedback) if multiStepFeedback is not None else None
+        clipList = []
+        for current, clipLayer in enumerate(
+                self.layerHandler.createMemoryLayerForEachFeature(
+                    layer=geographicBoundLyr, context=context
+                )
+            ):
+            if subMultiStepFeedback is not None and subMultiStepFeedback.isCanceled():
+                break
+            if subMultiStepFeedback is not None:
+                subMultiStepFeedback.setCurrentStep(current)
+            clipped = self.algRunner.runClip(
+                    inputLayer=lyr,
+                    overlayLayer=clipLayer,
+                    context=context,
+                    is_child_algorithm=True,
+                )
+            clipList.append(clipped)
+        if subMultiStepFeedback is not None:
+            subMultiStepFeedback.setCurrentStep(current+1)
+        clippedLyr = self.algRunner.runMergeVectorLayers(
+            inputList=clipList, context=context, feedback=subMultiStepFeedback
+        )
+        return clippedLyr
 
     def name(self):
         """
