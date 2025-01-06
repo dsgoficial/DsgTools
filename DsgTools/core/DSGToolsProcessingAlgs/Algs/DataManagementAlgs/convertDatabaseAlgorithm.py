@@ -24,6 +24,7 @@ import fnmatch
 import json
 from typing import Any, Dict, List, Optional
 from PyQt5.QtCore import QVariant, QMetaType, QDateTime
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.conversionParameterTypes import ParameterDbConversion
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
 )
@@ -568,57 +569,3 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return ConvertDatabasesAlgorithm()
-
-
-class ParameterDbConversionType(QgsProcessingParameterType):
-    def __init__(self):
-        super().__init__()
-
-    def create(self, name):
-        return ParameterDbConversion(name)  # mudar
-
-    def metadata(self):
-        return {
-            "widget_wrapper": "DsgTools.gui.ProcessingUI.dbConversionWrapper.DbConversionWrapper"
-        }  # mudar
-
-    def name(self):
-        return QCoreApplication.translate("Processing", "Database Conversion Maps")
-
-    def id(self):
-        return "db_conversion_maps"
-
-    def description(self):
-        return QCoreApplication.translate(
-            "Processing",
-            "A list of database conversion maps. Used in the Convert Database algorithm.",
-        )
-
-
-class ParameterDbConversion(QgsProcessingParameterDefinition):
-    def __init__(self, name, description=""):
-        super().__init__(name, description)
-
-    def clone(self):
-        copy = ParameterDbConversion(self.name(), self.description())
-        return copy
-
-    def type(self):
-        return self.typeName()
-
-    @staticmethod
-    def typeName():
-        return "db_conversion_maps"
-
-    def checkValueIsAcceptable(self, value, context=None):
-        return True
-
-    def valueAsPythonString(self, value, context):
-        return json.dumps(value)
-
-    def asScriptCode(self):
-        raise NotImplementedError()
-
-    @classmethod
-    def fromScriptCode(cls, name, description, isOptional, definition):
-        raise NotImplementedError()

@@ -24,9 +24,9 @@
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.clipAndCopyFeaturesBetweenDatabasesAlgorithm import (
     ClipAndCopyFeaturesBetweenDatabasesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.conversionParameterTypes import ParameterDbConversionType
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.convertDatabaseAlgorithm import (
     ConvertDatabasesAlgorithm,
-    ParameterDbConversionType,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.genericSelectionToolParametersAlgorithm import (
     GenericSelectionToolParametersAlgorithm,
