@@ -100,6 +100,7 @@ class DbConversionWrapper(WidgetWrapper):
             }
         )
         otw.setHeaderDoubleClickBehaviour("replicate")
+        otw.setMaximumHeight(200)
         return otw
 
     def batchPanel(self):
