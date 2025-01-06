@@ -70,6 +70,7 @@ from qgis.core import (
     QgsFeature,
     QgsFeatureSink,
     QgsProcessingParameterVectorLayer,
+    QgsCoordinateReferenceSystem,
 )
 from qgis.utils import iface
 
@@ -223,7 +224,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             return {}
         currentStep += 1
         self.fields = self.fieldsFlag()
-        crs = inputLayerList[0].crs()
+        outputCrs = self.getOutputCRS(destinationConnectionName)
 
         point_flag_sink, point_flag_id = self.parameterAsSink(
             parameters,
@@ -231,7 +232,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             context,
             self.fields,
             QgsWkbTypes.Point,
-            crs,
+            outputCrs,
         )
         line_flag_sink, line_flag_id = self.parameterAsSink(
             parameters,
@@ -239,7 +240,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             context,
             self.fields,
             QgsWkbTypes.LineString,
-            crs,
+            outputCrs,
         )
         poly_flag_sink, poly_flag_id = self.parameterAsSink(
             parameters,
@@ -247,7 +248,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             context,
             self.fields,
             QgsWkbTypes.Polygon,
-            crs,
+            outputCrs,
         )
         self.flagSinkDict = {
             QgsWkbTypes.Point: point_flag_sink,
@@ -262,15 +263,15 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Clipping input layer list"))
         clippedLayerDict = self.prepareInputData(
-            inputLayerList, geographicBoundLyr, context, multiStepFeedback
+            inputLayerList, geographicBoundLyr, outputCrs, context, multiStepFeedback
         )
         for lyr in inputLayerList:
             QgsProject.instance().removeMapLayer(lyr.id())
         currentStep += 1
-        
+        nStepsOnText = len(conversionMapList) if len(conversionMapList) > 0 else 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr(f"Converting Features: step 1/{len(conversionMapList)}"))
+            multiStepFeedback.pushInfo(self.tr(f"Converting Features: step 1/{nStepsOnText}"))
         firstConversionData = conversionMapList[0] if len(conversionMapList) > 0 else None
         featureProcessor = MappingFeatureProcessor(
             mappingDictPath=firstConversionData["conversionJson"],
@@ -378,12 +379,18 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         newFeat = QgsFeature(self.fields)
         geom = featMap.pop("geom")
         newFeat.setGeometry(geom)
-        newFeat["layer_name"] = featMap["layer_name_original"]
+        newFeat["layer_name"] = featMap.get("layer_name_original", featMap.get("layer_name", None))
         for k, v in featMap.items():
             if isinstance(v, QDateTime):
                 featMap[k] = v.toString()
         newFeat["attribute_map"] = json.dumps(featMap, default=str)
         return newFeat
+    
+    def getOutputCRS(self, connectionName: str) -> QgsCoordinateReferenceSystem:
+        abstractDb = self.getAbstractDb(connectionName)
+        srid = abstractDb.findEPSG()
+        del abstractDb
+        return QgsCoordinateReferenceSystem(int(srid))
 
     def getLayersFromDbConnectionName(
         self,
@@ -457,6 +464,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
         self,
         inputLayerList: List[QgsVectorLayer],
         geographicBoundLyr: QgsProcessingFeatureSource,
+        outputCrs: QgsCoordinateReferenceSystem,
         context: QgsProcessingContext,
         feedback: QgsProcessingFeedback,
     ) -> Dict[str, QgsVectorLayer]:
@@ -476,7 +484,7 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
                 return outputDict
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx)
-            clippedLyr = self.clipInputLayer(lyr, geographicBoundLyr, context, multiStepFeedback)
+            clippedLyr = self.clipAndReprojectInputLayer(lyr, geographicBoundLyr, outputCrs, context, multiStepFeedback)
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx + 1)
             key = schema_table_layer_dict[lyr.name()]
@@ -491,10 +499,12 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             )
         return outputDict
 
-    def clipInputLayer(self, lyr: QgsVectorLayer, geographicBoundLyr: QgsVectorLayer, context: QgsProcessingContext, multiStepFeedback: QgsProcessingMultiStepFeedback) -> QgsVectorLayer:
-        if geographicBoundLyr is None or geographicBoundLyr.featureCount() == 0 or lyr.name() in ["aux_moldura_a", "aux_moldura_area_continua_a"]:
-            return lyr
+    def clipAndReprojectInputLayer(self, lyr: QgsVectorLayer, geographicBoundLyr: QgsVectorLayer, outputCrs: QgsCoordinateReferenceSystem, context: QgsProcessingContext, multiStepFeedback: QgsProcessingMultiStepFeedback) -> QgsVectorLayer:
         subMultiStepFeedback = QgsProcessingMultiStepFeedback(geographicBoundLyr.featureCount() + 1, multiStepFeedback) if multiStepFeedback is not None else None
+        if geographicBoundLyr is None or geographicBoundLyr.featureCount() == 0 or lyr.name() in ["aux_moldura_a", "aux_moldura_area_continua_a"]:
+            return self.algRunner.runMergeVectorLayers(
+                inputList=[lyr], context=context, feedback=subMultiStepFeedback, crs=outputCrs
+            )
         clipList = []
         for current, clipLayer in enumerate(
                 self.layerHandler.createMemoryLayerForEachFeature(
@@ -506,16 +516,16 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             if subMultiStepFeedback is not None:
                 subMultiStepFeedback.setCurrentStep(current)
             clipped = self.algRunner.runClip(
-                    inputLayer=lyr,
-                    overlayLayer=clipLayer,
-                    context=context,
-                    is_child_algorithm=True,
-                )
+                inputLayer=lyr,
+                overlayLayer=clipLayer,
+                context=context,
+                is_child_algorithm=True,
+            )
             clipList.append(clipped)
         if subMultiStepFeedback is not None:
             subMultiStepFeedback.setCurrentStep(current+1)
         clippedLyr = self.algRunner.runMergeVectorLayers(
-            inputList=clipList, context=context, feedback=subMultiStepFeedback
+            inputList=clipList, context=context, feedback=subMultiStepFeedback, crs=outputCrs
         )
         return clippedLyr
 
