@@ -73,6 +73,10 @@ from qgis.core import (
     QgsFeatureSink,
     QgsProcessingParameterVectorLayer,
     QgsCoordinateReferenceSystem,
+    QgsProcessingParameterField,
+    QgsProcessingParameterFolderDestination,
+    QgsProcessingParameterCrs,
+    QgsProcessingParameterFile,
 )
 from qgis.utils import iface
 
@@ -80,13 +84,17 @@ from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.dsgEnums import DsgEnums
 
 
-class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
+class ExportDatabaseToShapefile(AbstractDatabaseAlgorithm):
     INPUT_DATABASE = "INPUT_DATABASE"
     INPUT_LAYERS_TO_EXCLUDE = "INPUT_LAYERS_TO_EXCLUDE"
-    DESTINATION_DATABASE = "DESTINATION_DATABASE"
     CONVERSION_MAPS_STRUCTURE = "CONVERSION_MAPS_STRUCTURE"
-    COMMIT_OUTPUT_FEATURES = "COMMIT_OUTPUT_FEATURES"
+    TEMPLATE_SHAPEFILES_FOLDER = "TEMPLATE_SHAPEFILES_FOLDER"
+    OUTPUT_CRS = "OUPUT_CRS"
     GEOGRAPHIC_BOUNDS = "GEOGRAPHIC_BOUNDS"
+    GEOGRAPHIC_BOUNDS_NAME_FIELD = "GEOGRAPHIC_BOUNDS_NAME_FIELD"
+    OUTPUT_FOLDER = "OUTPUT_FOLDER"
+    EXPORT_ZIP = "EXPORT_ZIP"
+    LOAD_EXPORTED_SHAPEFILES = "LOAD_EXPORTED_SHAPEFILES"
     NOT_CONVERTED_POINT = "NOT_CONVERTED_POINT"
     NOT_CONVERTED_LINE = "NOT_CONVERTED_LINE"
     NOT_CONVERTED_POLYGON = "NOT_CONVERTED_POLYGON"
@@ -114,13 +122,6 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
             )
         )
 
-        destination_db_param = QgsProcessingParameterProviderConnection(
-            self.DESTINATION_DATABASE,
-            self.tr("Destination Database (connection name)"),
-            "postgres",
-        )
-        self.addParameter(destination_db_param)
-
         hierarchy = ParameterDbConversion(
             self.CONVERSION_MAPS_STRUCTURE, description=self.tr("Conversion maps")
         )
@@ -130,20 +131,65 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
             }
         )
         self.addParameter(hierarchy)
+        
+        self.addParameter(
+            QgsProcessingParameterFile(
+                self.TEMPLATE_SHAPEFILES_FOLDER,
+                self.tr("Template Shapefiles Folder"),
+                behavior=QgsProcessingParameterFile.Folder,
+            )
+        )
+        
+        self.addParameter(
+            QgsProcessingParameterCrs(
+                self.OUTPUT_CRS,
+                self.tr("Output CRS"),
+                defaultValue=QgsCoordinateReferenceSystem(4674),
+            )
+        )
 
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS,
                 self.tr("Geographic Bounds"),
                 [QgsWkbTypes.PolygonGeometry],
-                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDS,
+                self.tr("Geographic Bounds"),
+                [QgsWkbTypes.PolygonGeometry],
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.GEOGRAPHIC_BOUNDS_NAME_FIELD,
+                self.tr("MI"),
+                parentLayerParameterName=self.GEOGRAPHIC_BOUNDS,
+                type=QgsProcessingParameterField.Any,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.COMMIT_OUTPUT_FEATURES,
-                self.tr("Commit converted features to destination layers"),
-                defaultValue=False,
+                self.EXPORT_ZIP,
+                self.tr("Export .zip of each generated folder"),
+                defaultValue=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.LOAD_EXPORTED_SHAPEFILES,
+                self.tr("Load exported shapefiles"),
+                defaultValue=True,
+            )
+        )
+        
+        self.addParameter(
+            QgsProcessingParameterFolderDestination(
+                self.OUTPUT_FOLDER,
+                self.tr('Output folder'),
+                
             )
         )
         self.addParameter(
@@ -182,17 +228,19 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
         layerExclusionFilter = (
             layerExclusionFilter.split(",") if layerExclusionFilter else None
         )
-        destinationConnectionName = self.parameterAsConnectionName(
-            parameters, self.DESTINATION_DATABASE, context
-        )
+        
         conversionMapList = self.parameterAsConversionMapList(
             parameters, self.CONVERSION_MAPS_STRUCTURE, context
         )
         geographicBoundLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDS, context
         )
-        commitChanges = self.parameterAsBool(
-            parameters, self.COMMIT_OUTPUT_FEATURES, context
+        miField = self.parameterAsFields(parameters, self.GEOGRAPHIC_BOUNDS_NAME_FIELD, context)[0]
+        zipOutputs = self.parameterAsBool(
+            parameters, self.EXPORT_ZIP, context
+        )
+        loadExportedShapefiles = self.parameterAsBool(
+            parameters, self.LOAD_EXPORTED_SHAPEFILES, context
         )
         nSteps = 7 + len(conversionMapList)
         multiStepFeedback = (
@@ -200,9 +248,9 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
             if feedback is not None
             else None
         )
+        if len(conversionMapList) == 0:
+            raise QgsProcessingException(self.tr("There must be at least one conversion map selected."))
         currentStep = 0
-        if inputConnectionName == destinationConnectionName:
-            raise QgsProcessingException(self.tr("The destination connection must be different than the input connection!"))
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(
@@ -218,7 +266,7 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
             return {}
         currentStep += 1
         self.fields = self.fieldsFlag()
-        outputCrs = self.getOutputCRS(destinationConnectionName)
+        outputCrs = self.parameterAsCrs(parameters, self.OUTPUT_CRS, context)
 
         self.buildOutputSinks(parameters, context, outputCrs)
 
@@ -306,12 +354,6 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        if not commitChanges:
-            return {
-                self.NOT_CONVERTED_POINT: self.point_flag_id,
-                self.NOT_CONVERTED_LINE: self.line_flag_id,
-                self.NOT_CONVERTED_POLYGON: self.poly_flag_id,
-            }
         if multiStepFeedback is not None:
             multiStepFeedback.pushInfo(self.tr("Commiting changes"))
         stepSize = 100 / len(outputLayerDict)
@@ -323,6 +365,15 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
             lyr.commitChanges()
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
+        
+        currentStep += 1
+        if not zipOutputs:
+            return {
+                self.NOT_CONVERTED_POINT: self.point_flag_id,
+                self.NOT_CONVERTED_LINE: self.line_flag_id,
+                self.NOT_CONVERTED_POLYGON: self.poly_flag_id,
+            }
+        # TODO zip
         return {
             self.NOT_CONVERTED_POINT: self.point_flag_id,
             self.NOT_CONVERTED_LINE: self.line_flag_id,
@@ -337,14 +388,14 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "convertdatabasesalgorithm"
+        return "exportdatabasetoshapefile"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Convert Databases")
+        return self.tr("Export Database To Shapefile")
 
     def group(self):
         """
@@ -364,7 +415,7 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
         return "DSGTools - Data Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate("ConvertDatabasesAlgorithm", string)
+        return QCoreApplication.translate("ExportDatabaseToShapefile", string)
 
     def createInstance(self):
-        return ConvertDatabasesAlgorithm()
+        return ExportDatabaseToShapefile()
