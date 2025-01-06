@@ -268,17 +268,14 @@ class ConvertDatabasesAlgorithm(QgsProcessingAlgorithm):
             QgsProject.instance().removeMapLayer(lyr.id())
         currentStep += 1
         
-        if len(conversionMapList) == 0:
-            # TODO
-            return
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr(f"Converting Features: step 1/{len(conversionMapList)}"))
-        firstConversionData = conversionMapList[0]
+        firstConversionData = conversionMapList[0] if len(conversionMapList) > 0 else None
         featureProcessor = MappingFeatureProcessor(
             mappingDictPath=firstConversionData["conversionJson"],
             mappingType=firstConversionData["mode"],
-        )
+        ) if firstConversionData is not None else FeatureProcessor()
         convertedFeatureDict = convert_features(
             inputLayerDict={
                 lyrName: lyr
