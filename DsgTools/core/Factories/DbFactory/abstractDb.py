@@ -158,10 +158,11 @@ class AbstractDb(QObject):
                 lyrWithElemList.append(lyr)
         return lyrWithElemList
 
-    def findEPSG(self, parameters=dict()):
+    def findEPSG(self, parameters=None):
         """
         Finds the database EPSG
         """
+        parameters = dict() if parameters is None else parameters
         self.checkAndOpenDb()
         sql = self.gen.getSrid(parameters=parameters)
         query = QSqlQuery(sql, self.db)

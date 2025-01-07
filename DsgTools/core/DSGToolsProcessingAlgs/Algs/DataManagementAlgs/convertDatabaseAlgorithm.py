@@ -5,9 +5,9 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2023-08-01
+        begin                : 2024-12-02
         git sha              : $Format:%H$
-        copyright            : (C) 2023 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2024 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 /***************************************************************************
@@ -20,15 +20,23 @@
  ***************************************************************************/
 """
 
+import fnmatch
+import json
+from typing import Any, Dict, List, Optional
+from PyQt5.QtCore import QVariant, QMetaType, QDateTime
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.abstractConvertDatabaseAlgorithm import AbstractDatabaseAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.conversionParameterTypes import ParameterDbConversion
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.DbTools.dbConversionHandler import (
     FeatureProcessor,
+    MappingFeatureProcessor,
     convert_features,
     write_output_features,
 )
+from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
     LayerLoaderFactory,
@@ -50,6 +58,21 @@ from qgis.core import (
     QgsDataSourceUri,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterType,
+    QgsVectorLayer,
+    QgsProcessingFeedback,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingContext,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterString,
+    QgsProcessingFeatureSource,
+    QgsFields,
+    QgsField,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessingParameterVectorLayer,
+    QgsCoordinateReferenceSystem,
 )
 from qgis.utils import iface
 
@@ -57,20 +80,16 @@ from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.dsgEnums import DsgEnums
 
 
-class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
+class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
     INPUT_DATABASE = "INPUT_DATABASE"
+    INPUT_LAYERS_TO_EXCLUDE = "INPUT_LAYERS_TO_EXCLUDE"
     DESTINATION_DATABASE = "DESTINATION_DATABASE"
-    WKT_POLYGON = "LAYER_WITH_FEATURES_TO_APPEND"
-    LOAD_DESTINATION_LAYERS = "LOAD_DESTINATION_LAYERS"
+    CONVERSION_MAPS_STRUCTURE = "CONVERSION_MAPS_STRUCTURE"
     COMMIT_OUTPUT_FEATURES = "COMMIT_OUTPUT_FEATURES"
-
-    def flags(self):
-        return (
-            super().flags()
-            | QgsProcessingAlgorithm.FlagNotAvailableInStandaloneTool
-            | QgsProcessingAlgorithm.FlagRequiresProject
-            | QgsProcessingAlgorithm.FlagNoThreading
-        )
+    GEOGRAPHIC_BOUNDS = "GEOGRAPHIC_BOUNDS"
+    NOT_CONVERTED_POINT = "NOT_CONVERTED_POINT"
+    NOT_CONVERTED_LINE = "NOT_CONVERTED_LINE"
+    NOT_CONVERTED_POLYGON = "NOT_CONVERTED_POLYGON"
 
     def initAlgorithm(self, config):
         """
@@ -83,33 +102,68 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(origin_db_param)
 
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.INPUT_LAYERS_TO_EXCLUDE,
+                description=self.tr(
+                    "Input layers to be excluded (csv format, can use * patterns)"
+                ),
+                multiLine=False,
+                defaultValue="aux_moldura_area_continua_a,delimitador*,centroide*",
+                optional=True,
+            )
+        )
+
         destination_db_param = QgsProcessingParameterProviderConnection(
             self.DESTINATION_DATABASE,
             self.tr("Destination Database (connection name)"),
             "postgres",
         )
         self.addParameter(destination_db_param)
-        self.addParameter(
-            QgsProcessingParameterGeometry(
-                self.WKT_POLYGON,
-                self.tr("WKT Geographic Bounds"),
-                geometryTypes=[QgsWkbTypes.PolygonGeometry],
-                allowMultipart=True,
-                optional=True,
-            )
+
+        hierarchy = ParameterDbConversion(
+            self.CONVERSION_MAPS_STRUCTURE, description=self.tr("Conversion maps")
         )
+        hierarchy.setMetadata(
+            {
+                "widget_wrapper": "DsgTools.gui.ProcessingUI.dbConversionWrapper.DbConversionWrapper"
+            }
+        )
+        self.addParameter(hierarchy)
+
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.LOAD_DESTINATION_LAYERS,
-                self.tr("Load destination layers"),
-                defaultValue=False,
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDS,
+                self.tr("Geographic Bounds"),
+                [QgsWkbTypes.PolygonGeometry],
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.COMMIT_OUTPUT_FEATURES,
                 self.tr("Commit converted features to destination layers"),
-                defaultValue=True,
+                defaultValue=False,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.NOT_CONVERTED_POINT,
+                self.tr("Points not converted"),
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.NOT_CONVERTED_LINE,
+                self.tr("Lines not converted"),
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.NOT_CONVERTED_POLYGON,
+                self.tr("Polygons not converted"),
             )
         )
 
@@ -122,60 +176,64 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         inputConnectionName = self.parameterAsConnectionName(
             parameters, self.INPUT_DATABASE, context
         )
+        layerExclusionFilter = self.parameterAsString(
+            parameters, self.INPUT_LAYERS_TO_EXCLUDE, context
+        )
+        layerExclusionFilter = (
+            layerExclusionFilter.split(",") if layerExclusionFilter else None
+        )
         destinationConnectionName = self.parameterAsConnectionName(
             parameters, self.DESTINATION_DATABASE, context
         )
-        geom = self.parameterAsGeometry(parameters, self.WKT_POLYGON, context)
+        conversionMapList = self.parameterAsConversionMapList(
+            parameters, self.CONVERSION_MAPS_STRUCTURE, context
+        )
+        geographicBoundLyr = self.parameterAsVectorLayer(
+            parameters, self.GEOGRAPHIC_BOUNDS, context
+        )
         commitChanges = self.parameterAsBool(
             parameters, self.COMMIT_OUTPUT_FEATURES, context
         )
-        loadDestinationLayers = self.parameterAsBool(
-            parameters, self.LOAD_DESTINATION_LAYERS, context
-        )
-        nSteps = 6 if not loadDestinationLayers else 7
+        nSteps = 6 + commitChanges
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback)
             if feedback is not None
             else None
         )
         currentStep = 0
+        if inputConnectionName == destinationConnectionName:
+            raise QgsProcessingException(self.tr("The destination connection must be different than the input connection!"))
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(
                 self.tr("Loading layers with elements from input database")
             )
         inputLayerList = self.getLayersFromDbConnectionName(
-            inputConnectionName, feedback=multiStepFeedback
+            inputConnectionName,
+            feedback=multiStepFeedback,
+            context=context,
+            layerExclusionFilter=layerExclusionFilter,
         )
         if len(inputLayerList) == 0:
             return {}
         currentStep += 1
+        self.fields = self.fieldsFlag()
+        outputCrs = self.getOutputCRS(destinationConnectionName)
+
+        self.buildOutputSinks(parameters, context, outputCrs)
 
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Clipping input layer list"))
-        clippedLayerDict = self.clipInputLayerList(
-            inputLayerList, geom, context, multiStepFeedback
+        clippedLayerDict = self.prepareInputData(
+            inputLayerList, geographicBoundLyr, outputCrs, context, multiStepFeedback
         )
         for lyr in inputLayerList:
             QgsProject.instance().removeMapLayer(lyr.id())
         currentStep += 1
-
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr("Converting Features"))
-        featureProcessor = FeatureProcessor()
-        convertedFeatureDict = convert_features(
-            inputLayerDict={
-                lyrName: lyr
-                for lyrName, lyr in clippedLayerDict.items()
-                if lyr.featureCount() > 0
-            },
-            featureProcessor=featureProcessor,
-            feedback=multiStepFeedback,
-            layerNameAttr="layerName",
-        )
-        currentStep += 1
+        convertedFeatureDict = self.convertFeaturesWithConversionMaps(conversionMapList, clippedLayerDict, multiStepFeedback)
 
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -183,8 +241,9 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         destinationLayerList = self.getLayersFromDbConnectionName(
             inputConnectionName=destinationConnectionName,
             feedback=multiStepFeedback,
+            context=context,
             layerNameList=list(convertedFeatureDict.keys()),
-            addToCanvas=loadDestinationLayers,
+            addToCanvas=True,
             withElements=False,
         )
         currentStep += 1
@@ -192,16 +251,36 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Writing to output"))
         outputLayerDict = {lyr.name(): lyr for lyr in destinationLayerList}
-        write_output_features(
-            convertedFeatureDict,
+        notConvertedDict = write_output_features(
+            {k.split(".")[-1]: v for k, v in convertedFeatureDict.items()},
             outputLayerDict=outputLayerDict,
             feedback=multiStepFeedback,
         )
         currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
 
+        if len(notConvertedDict) > 0:
+            stepSize = 100 / len(notConvertedDict)
+            for geomType, featDictList in notConvertedDict.items():
+                if multiStepFeedback.isCanceled():
+                    break
+                list(
+                    map(
+                        lambda x: self.flagSinkDict[geomType].addFeature(
+                            self.buildFlagFeat(x), QgsFeatureSink.FastInsert
+                        ),
+                        featDictList,
+                    )
+                )
+
+        currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         if not commitChanges:
-            return {}
+            return {
+                self.NOT_CONVERTED_POINT: self.point_flag_id,
+                self.NOT_CONVERTED_LINE: self.line_flag_id,
+                self.NOT_CONVERTED_POLYGON: self.poly_flag_id,
+            }
         if multiStepFeedback is not None:
             multiStepFeedback.pushInfo(self.tr("Commiting changes"))
         stepSize = 100 / len(outputLayerDict)
@@ -213,96 +292,11 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
             lyr.commitChanges()
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
-        if not loadDestinationLayers:
-            for lyrName, lyr in outputLayerDict.items():
-                QgsProject.instance().removeMapLayer(lyr.id())
-        return {}
-
-    def getLayersFromDbConnectionName(
-        self,
-        inputConnectionName,
-        feedback,
-        layerNameList=None,
-        addToCanvas=False,
-        withElements=True,
-    ):
-        inputAbstractDb = self.getAbstractDb(inputConnectionName)
-        layerLoader = LayerLoaderFactory().makeLoader(iface, inputAbstractDb)
-        inputParamList = inputAbstractDb.listGeomClassesFromDatabase(
-            withElements=withElements
-        )
-        inputParamList = list(map(lambda x: x.split(".")[-1], inputParamList))
-        if layerNameList is not None and layerNameList != []:
-            inputParamList = list(filter(lambda x: x in layerNameList, inputParamList))
-        loadedLayerList = layerLoader.loadLayersInsideProcessing(
-            inputParamList, addToCanvas=addToCanvas, feedback=feedback
-        )
-        del inputAbstractDb
-        del layerLoader
-        return loadedLayerList
-
-    def getAbstractDb(self, inputConnectionName):
-        try:
-            md = QgsProviderRegistry.instance().providerMetadata("postgres")
-            conn = md.createConnection(inputConnectionName)
-        except QgsProviderConnectionException:
-            raise QgsProcessingException(
-                self.tr("Could not retrieve connection details for {}").format(
-                    inputConnectionName
-                )
-            )
-        uri = QgsDataSourceUri(conn.uri())
-        abstractDb = DbFactory().createDbFactory(DsgEnums.DriverPostGIS)
-        abstractDb.connectDatabaseWithParameters(
-            uri.host(),
-            int(uri.port()),
-            uri.database(),
-            uri.username(),
-            uri.password(),
-        )
-        return abstractDb
-
-    def clipInputLayerList(self, inputLayerList, geom, context, feedback):
-        outputDict = dict()
-        multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(2 * len(inputLayerList), feedback)
-            if feedback is not None
-            else None
-        )
-        clipLayer = (
-            self.layerHandler.createMemoryLayerFromGeometry(
-                geom=geom, crs=QgsProject.instance().crs()
-            )
-            if geom is not None and not geom.isEmpty()
-            else None
-        )
-        for currentIdx, lyr in enumerate(inputLayerList):
-            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
-                return outputDict
-            if multiStepFeedback is not None:
-                multiStepFeedback.setCurrentStep(2 * currentIdx)
-            clippedLyr = (
-                self.algRunner.runClip(
-                    inputLayer=lyr,
-                    overlayLayer=clipLayer,
-                    context=context,
-                    feedback=multiStepFeedback,
-                )
-                if clippedLyr is not None
-                else lyr
-            )
-            if multiStepFeedback is not None:
-                multiStepFeedback.setCurrentStep(2 * currentIdx + 1)
-            outputDict[lyr.name()] = self.algRunner.runCreateFieldWithExpression(
-                inputLyr=clippedLyr,
-                expression=f"'{lyr.name()}'",
-                fieldType=2,
-                fieldName="layerName",
-                feedback=multiStepFeedback,
-                context=context,
-                is_child_algorithm=False,
-            )
-        return outputDict
+        return {
+            self.NOT_CONVERTED_POINT: self.point_flag_id,
+            self.NOT_CONVERTED_LINE: self.line_flag_id,
+            self.NOT_CONVERTED_POLYGON: self.poly_flag_id,
+        }
 
     def name(self):
         """
@@ -312,14 +306,14 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "clipandcopyfeaturesbetweendatabasesalgorithm"
+        return "convertdatabasesalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Clip and Copy features Between Databases")
+        return self.tr("Convert Databases")
 
     def group(self):
         """
@@ -339,7 +333,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         return "DSGTools - Data Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate("ClipAndCopyFeaturesBetweenDatabasesAlgorithm", string)
+        return QCoreApplication.translate("ConvertDatabasesAlgorithm", string)
 
     def createInstance(self):
-        return ClipAndCopyFeaturesBetweenDatabasesAlgorithm()
+        return ConvertDatabasesAlgorithm()
