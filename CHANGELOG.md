@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.1 - dev
+## 4.17.2 - dev
 
 Novas Funcionalidades:
 
@@ -11,6 +11,7 @@ Melhorias:
 
 - Atualiza o modelo EDGV 3.0 para a implementação 1.1.6;
 - Correção do comportamento do toggle layers;
+- Corrige mensagem de erro quando o BDGEx não está acessível;
 
 Correção de bugs:
 
