@@ -28,6 +28,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.conversionPara
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.convertDatabaseAlgorithm import (
     ConvertDatabasesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.exportPostGISDataToShapefile import ExportPostGISDataToShapefile
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.genericSelectionToolParametersAlgorithm import (
     GenericSelectionToolParametersAlgorithm,
 )
@@ -721,6 +722,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             # GeneralizeRoundaboutsAlgorithm(),
             GeneralizeHighwaysAlgorithm(),
             ConvertDatabasesAlgorithm(),
+            ExportPostGISDataToShapefile(),
         ]
         return algList
 

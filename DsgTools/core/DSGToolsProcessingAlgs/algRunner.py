@@ -2536,6 +2536,7 @@ class AlgRunner:
         context: QgsProcessingContext,
         categoryExpression: Optional[str] = None,
         feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: Optional[bool] = False,
     ) -> None:
         categoryExpression = (
             "regexp_substr(@layer_name ,'([^_]+)')"
@@ -2550,4 +2551,22 @@ class AlgRunner:
             },
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        
+    def runDSGToolsLoadShapefile(
+        self,
+        inputFolder: str,
+        context: QgsProcessingContext,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: Optional[bool] = False,
+    ) -> None:
+        processing.run(
+            "dsgtools:loadshapefilealgorithm",
+            {
+                "FOLDER_SHAPEFILES": inputFolder
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )

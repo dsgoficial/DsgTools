@@ -20,56 +20,29 @@
  ***************************************************************************/
 """
 
-import fnmatch
-import json
-from typing import Any, Dict, List, Optional
-from PyQt5.QtCore import QVariant, QMetaType, QDateTime
+from collections import defaultdict
+from pathlib import Path
+import shutil
+from typing import Dict, List
+import zipfile
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.abstractConvertDatabaseAlgorithm import AbstractDatabaseAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.conversionParameterTypes import ParameterDbConversion
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
-    ValidationAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.DbTools.dbConversionHandler import (
-    FeatureProcessor,
-    MappingFeatureProcessor,
-    convert_features,
     write_output_features,
 )
-from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
-    LayerLoaderFactory,
-)
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessing,
     QgsProcessingException,
-    QgsProviderConnectionException,
     QgsWkbTypes,
     QgsWkbTypes,
-    QgsProviderRegistry,
-    QgsProject,
     QgsProcessingParameterProviderConnection,
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterGeometry,
-    QgsDataSourceUri,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterType,
     QgsVectorLayer,
-    QgsProcessingFeedback,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingContext,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterString,
-    QgsProcessingFeatureSource,
-    QgsFields,
-    QgsField,
-    QgsFeature,
     QgsFeatureSink,
     QgsProcessingParameterVectorLayer,
     QgsCoordinateReferenceSystem,
@@ -78,13 +51,11 @@ from qgis.core import (
     QgsProcessingParameterCrs,
     QgsProcessingParameterFile,
 )
-from qgis.utils import iface
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.core.dsgEnums import DsgEnums
 
 
-class ExportDatabaseToShapefile(AbstractDatabaseAlgorithm):
+class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
     INPUT_DATABASE = "INPUT_DATABASE"
     INPUT_LAYERS_TO_EXCLUDE = "INPUT_LAYERS_TO_EXCLUDE"
     CONVERSION_MAPS_STRUCTURE = "CONVERSION_MAPS_STRUCTURE"
@@ -236,20 +207,32 @@ class ExportDatabaseToShapefile(AbstractDatabaseAlgorithm):
             parameters, self.GEOGRAPHIC_BOUNDS, context
         )
         miField = self.parameterAsFields(parameters, self.GEOGRAPHIC_BOUNDS_NAME_FIELD, context)[0]
+        templatePath = self.parameterAsString(
+            parameters, self.TEMPLATE_SHAPEFILES_FOLDER, context
+        )
         zipOutputs = self.parameterAsBool(
             parameters, self.EXPORT_ZIP, context
         )
         loadExportedShapefiles = self.parameterAsBool(
             parameters, self.LOAD_EXPORTED_SHAPEFILES, context
         )
-        nSteps = 7 + len(conversionMapList)
+        outputFolder = self.parameterAsString(
+            parameters,
+            self.OUTPUT_FOLDER,
+            context
+        )
+        if len(conversionMapList) == 0:
+            raise QgsProcessingException(self.tr("There must be at least one conversion map selected."))
+        
+        nGeographicBoundsFeats = geographicBoundLyr.featureCount()
+        if nGeographicBoundsFeats == 0:
+            raise QgsProcessingException(self.tr("There must be at least one feature on the geographic bounds layer"))
+        nSteps = 1 + nGeographicBoundsFeats * (7 + loadExportedShapefiles)
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback)
             if feedback is not None
             else None
         )
-        if len(conversionMapList) == 0:
-            raise QgsProcessingException(self.tr("There must be at least one conversion map selected."))
         currentStep = 0
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -263,122 +246,127 @@ class ExportDatabaseToShapefile(AbstractDatabaseAlgorithm):
             layerExclusionFilter=layerExclusionFilter,
         )
         if len(inputLayerList) == 0:
-            return {}
+            raise QgsProcessingException(self.tr("There must be at least one layer with features in the input database"))
         currentStep += 1
         self.fields = self.fieldsFlag()
         outputCrs = self.parameterAsCrs(parameters, self.OUTPUT_CRS, context)
 
         self.buildOutputSinks(parameters, context, outputCrs)
-
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr("Clipping input layer list"))
-        clippedLayerDict = self.prepareInputData(
-            inputLayerList, geographicBoundLyr, outputCrs, context, multiStepFeedback
-        )
-        for lyr in inputLayerList:
-            QgsProject.instance().removeMapLayer(lyr.id())
-        currentStep += 1
-        nStepsOnText = len(conversionMapList) if len(conversionMapList) > 0 else 1
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr(f"Converting Features: step 1/{nStepsOnText}"))
-        firstConversionData = conversionMapList[0] if len(conversionMapList) > 0 else None
-        featureProcessor = MappingFeatureProcessor(
-            mappingDictPath=firstConversionData["conversionJson"],
-            mappingType=firstConversionData["mode"],
-        ) if firstConversionData is not None else FeatureProcessor()
-        convertedFeatureDict = convert_features(
-            inputLayerDict={
-                lyrName: lyr
-                for lyrName, lyr in clippedLayerDict.items()
-                if lyr.featureCount() > 0
-            },
-            featureProcessor=featureProcessor,
-            feedback=multiStepFeedback,
-            layerNameAttr="layer_name",
-        )
-        currentStep += 1
-        for currentConversionStep, conversionData in enumerate(conversionMapList[1::], start=2):
+        templateFileDict = self.buildTemplateFileDict(templatePath=templatePath)
+        
+        for i, geographicBoundsFeat in enumerate(geographicBoundLyr.getFeatures(), start=1):
+            localGeographicBoundLyr = self.layerHandler.createMemoryLayerWithFeature(
+                layer=geographicBoundLyr, feat=geographicBoundsFeat, context=context
+            )
+            destinationPath = Path(outputFolder) / geographicBoundsFeat[miField]
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
-                multiStepFeedback.pushInfo(self.tr(f"Converting Features: step {currentConversionStep}/{len(conversionMapList)}"))
-            featureProcessor = MappingFeatureProcessor(
-                mappingDictPath=conversionData["conversionJson"],
-                mappingType=conversionData["mode"],
+                multiStepFeedback.setProgressText(self.tr(f"Processing MI {geographicBoundsFeat[miField]} ({i}/{nGeographicBoundsFeats})"))
+            clippedLayerDict = self.prepareInputData(
+                inputLayerList, localGeographicBoundLyr, outputCrs, context, multiStepFeedback
             )
-            convertedFeatureDict = convert_features(
-                inputLayerDict=convertedFeatureDict,
-                featureProcessor=featureProcessor,
+            currentStep += 1
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+            convertedFeatureDict = self.convertFeaturesWithConversionMaps(conversionMapList, clippedLayerDict, multiStepFeedback)
+            currentStep += 1
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+            outputLayerDict = self.copyFilesFromTemplate(
+                layerNameList=list(convertedFeatureDict.keys()),
+                destinationPath=destinationPath,
+                templateFileDict=templateFileDict,
+                outputCrs=outputCrs
+            )
+            
+            if loadExportedShapefiles:
+                currentStep += 1
+                if multiStepFeedback is not None:
+                    multiStepFeedback.setCurrentStep(currentStep)
+                self.algRunner.runDSGToolsLoadShapefile(
+                    inputFolder=str(destinationPath),
+                    context=context,
+                    feedback=multiStepFeedback
+                )
+            currentStep += 1
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+            notConvertedDict = write_output_features(
+                {k.split(".")[-1]: v for k, v in convertedFeatureDict.items()},
+                outputLayerDict=outputLayerDict,
                 feedback=multiStepFeedback,
             )
             currentStep += 1
-
-        if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr("Loading output layers"))
-        destinationLayerList = self.getLayersFromDbConnectionName(
-            inputConnectionName=destinationConnectionName,
-            feedback=multiStepFeedback,
-            context=context,
-            layerNameList=list(convertedFeatureDict.keys()),
-            addToCanvas=True,
-            withElements=False,
-        )
-        currentStep += 1
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr("Writing to output"))
-        outputLayerDict = {lyr.name(): lyr for lyr in destinationLayerList}
-        notConvertedDict = write_output_features(
-            {k.split(".")[-1]: v for k, v in convertedFeatureDict.items()},
-            outputLayerDict=outputLayerDict,
-            feedback=multiStepFeedback,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
 
-        if len(notConvertedDict) > 0:
-            stepSize = 100 / len(notConvertedDict)
-            for geomType, featDictList in notConvertedDict.items():
-                if multiStepFeedback.isCanceled():
-                    break
-                list(
-                    map(
-                        lambda x: self.flagSinkDict[geomType].addFeature(
-                            self.buildFlagFeat(x), QgsFeatureSink.FastInsert
-                        ),
-                        featDictList,
+            if len(notConvertedDict) > 0:
+                stepSize = 100 / len(notConvertedDict)
+                for geomType, featDictList in notConvertedDict.items():
+                    if multiStepFeedback.isCanceled():
+                        break
+                    list(
+                        map(
+                            lambda x: self.flagSinkDict[geomType].addFeature(
+                                self.buildFlagFeat(x), QgsFeatureSink.FastInsert
+                            ),
+                            featDictList,
+                        )
                     )
-                )
 
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        if multiStepFeedback is not None:
-            multiStepFeedback.pushInfo(self.tr("Commiting changes"))
-        stepSize = 100 / len(outputLayerDict)
-        for current, (lyrName, lyr) in enumerate(outputLayerDict.items()):
+            currentStep += 1
             if multiStepFeedback is not None:
-                multiStepFeedback.pushInfo(
-                    self.tr(f"Commiting changes for layer {lyrName}")
+                multiStepFeedback.setCurrentStep(currentStep)
+                multiStepFeedback.pushInfo(self.tr("Commiting changes"))
+            stepSize = 100 / len(outputLayerDict)
+            for current, (lyrName, lyr) in enumerate(outputLayerDict.items()):
+                lyr.commitChanges()
+                if multiStepFeedback is not None:
+                    multiStepFeedback.setProgress(current * stepSize)
+            
+            currentStep += 1
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+            if zipOutputs:
+                self.buildZipOutputs(
+                    sourceFolder=destinationPath,
+                    destinationPath=Path(outputFolder) / f"{geographicBoundsFeat[miField]}.zip",
                 )
-            lyr.commitChanges()
-            if multiStepFeedback is not None:
-                multiStepFeedback.setProgress(current * stepSize)
-        
-        currentStep += 1
-        if not zipOutputs:
-            return {
+            
+
+        return {
+                self.OUTPUT_FOLDER: outputFolder,
                 self.NOT_CONVERTED_POINT: self.point_flag_id,
                 self.NOT_CONVERTED_LINE: self.line_flag_id,
                 self.NOT_CONVERTED_POLYGON: self.poly_flag_id,
             }
-        # TODO zip
-        return {
-            self.NOT_CONVERTED_POINT: self.point_flag_id,
-            self.NOT_CONVERTED_LINE: self.line_flag_id,
-            self.NOT_CONVERTED_POLYGON: self.poly_flag_id,
-        }
+    
+    def buildTemplateFileDict(self, templatePath: str) -> Dict[str, List[Path]]:
+        templateFileDict = defaultdict(list)
+        p = Path(templatePath)
+        extensions = ['.shp', '.shx', '.prj', '.dbf', '.sbn', '.sbx', '.cpg', '.xml']
+        for f in p.glob("*"):
+            if f.suffix not in extensions:
+                continue
+            templateFileDict[f.stem].append(f)
+        return templateFileDict
+    
+    def copyFilesFromTemplate(self, layerNameList: List[str], destinationPath: str, templateFileDict: Dict[str, List[str]], outputCrs: QgsCoordinateReferenceSystem) -> Dict[str, QgsVectorLayer]:
+        outputDict = dict()
+        destinationDir = Path(destinationPath)
+        destinationDir.mkdir(parents=True, exist_ok=True)
+        for layerName in layerNameList:
+            for filePath in templateFileDict[layerName]:
+                destinationFile = destinationDir / filePath.name
+                shutil.copy(filePath, destinationFile)
+            lyr = QgsVectorLayer(str(destinationDir / f"{layerName}.shp"), layerName, 'ogr')
+            lyr.setCrs(outputCrs)
+            outputDict[layerName] = lyr
+        return outputDict
+    
+    def buildZipOutputs(self, sourceFolder, destinationPath: str):
+        with zipfile.ZipFile(destinationPath, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for file in sourceFolder.rglob("*"):
+                zipf.write(file, file.relative_to(sourceFolder.parent))
 
     def name(self):
         """
@@ -395,7 +383,7 @@ class ExportDatabaseToShapefile(AbstractDatabaseAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Export Database To Shapefile")
+        return self.tr("Export PostGIS data to Shapefile")
 
     def group(self):
         """
@@ -415,7 +403,7 @@ class ExportDatabaseToShapefile(AbstractDatabaseAlgorithm):
         return "DSGTools - Data Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate("ExportDatabaseToShapefile", string)
+        return QCoreApplication.translate("ExportPostGISDataToShapefile", string)
 
     def createInstance(self):
-        return ExportDatabaseToShapefile()
+        return ExportPostGISDataToShapefile()

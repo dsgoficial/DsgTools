@@ -25,6 +25,7 @@ import json
 from typing import Any, Dict, List, Optional
 from PyQt5.QtCore import QVariant, QDateTime
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.DbTools.dbConversionHandler import FeatureProcessor, MappingFeatureProcessor, convert_features
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
@@ -259,3 +260,41 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
             QgsWkbTypes.Polygon: self.poly_flag_sink,
             QgsWkbTypes.MultiPolygon: self.poly_flag_sink,
         }
+
+    def convertFeaturesWithConversionMaps(self, conversionMapList: List[str], clippedLayerDict: Dict[str, QgsVectorLayer], feedback: QgsProcessingFeedback) -> Dict[str, List[Dict[str, Any]]]:
+        multiStepFeedback = QgsProcessingMultiStepFeedback(len(conversionMapList), feedback)
+        currentStep = 0
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr(f"Converting Features: step 1/{len(conversionMapList)}"))
+        firstConversionData = conversionMapList[0] if len(conversionMapList) > 0 else None
+        featureProcessor = MappingFeatureProcessor(
+                mappingDictPath=firstConversionData["conversionJson"],
+                mappingType=firstConversionData["mode"],
+            ) if firstConversionData is not None else FeatureProcessor()
+        convertedFeatureDict = convert_features(
+                inputLayerDict={
+                    lyrName: lyr
+                    for lyrName, lyr in clippedLayerDict.items()
+                    if lyr.featureCount() > 0
+                },
+                featureProcessor=featureProcessor,
+                feedback=multiStepFeedback,
+                layerNameAttr="layer_name",
+            )
+        currentStep += 1
+        for currentConversionStep, conversionData in enumerate(conversionMapList[1::], start=2):
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+                multiStepFeedback.pushInfo(self.tr(f"Converting Features: step {currentConversionStep}/{len(conversionMapList)}"))
+            featureProcessor = MappingFeatureProcessor(
+                    mappingDictPath=conversionData["conversionJson"],
+                    mappingType=conversionData["mode"],
+                )
+            convertedFeatureDict = convert_features(
+                    inputLayerDict=convertedFeatureDict,
+                    featureProcessor=featureProcessor,
+                    feedback=multiStepFeedback,
+                )
+            currentStep += 1
+        return convertedFeatureDict
