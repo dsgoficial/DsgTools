@@ -194,7 +194,7 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
         commitChanges = self.parameterAsBool(
             parameters, self.COMMIT_OUTPUT_FEATURES, context
         )
-        nSteps = 7 + len(conversionMapList)
+        nSteps = 6 + commitChanges
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback)
             if feedback is not None
@@ -231,40 +231,9 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
         for lyr in inputLayerList:
             QgsProject.instance().removeMapLayer(lyr.id())
         currentStep += 1
-        nStepsOnText = len(conversionMapList) if len(conversionMapList) > 0 else 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr(f"Converting Features: step 1/{nStepsOnText}"))
-        firstConversionData = conversionMapList[0] if len(conversionMapList) > 0 else None
-        featureProcessor = MappingFeatureProcessor(
-            mappingDictPath=firstConversionData["conversionJson"],
-            mappingType=firstConversionData["mode"],
-        ) if firstConversionData is not None else FeatureProcessor()
-        convertedFeatureDict = convert_features(
-            inputLayerDict={
-                lyrName: lyr
-                for lyrName, lyr in clippedLayerDict.items()
-                if lyr.featureCount() > 0
-            },
-            featureProcessor=featureProcessor,
-            feedback=multiStepFeedback,
-            layerNameAttr="layer_name",
-        )
-        currentStep += 1
-        for currentConversionStep, conversionData in enumerate(conversionMapList[1::], start=2):
-            if multiStepFeedback is not None:
-                multiStepFeedback.setCurrentStep(currentStep)
-                multiStepFeedback.pushInfo(self.tr(f"Converting Features: step {currentConversionStep}/{len(conversionMapList)}"))
-            featureProcessor = MappingFeatureProcessor(
-                mappingDictPath=conversionData["conversionJson"],
-                mappingType=conversionData["mode"],
-            )
-            convertedFeatureDict = convert_features(
-                inputLayerDict=convertedFeatureDict,
-                featureProcessor=featureProcessor,
-                feedback=multiStepFeedback,
-            )
-            currentStep += 1
+        convertedFeatureDict = self.convertFeaturesWithConversionMaps(conversionMapList, clippedLayerDict, multiStepFeedback)
 
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)

@@ -264,9 +264,10 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
     def convertFeaturesWithConversionMaps(self, conversionMapList: List[str], clippedLayerDict: Dict[str, QgsVectorLayer], feedback: QgsProcessingFeedback) -> Dict[str, List[Dict[str, Any]]]:
         multiStepFeedback = QgsProcessingMultiStepFeedback(len(conversionMapList), feedback)
         currentStep = 0
+        nStepsOnText = len(conversionMapList) if len(conversionMapList) > 0 else 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr(f"Converting Features: step 1/{len(conversionMapList)}"))
+            multiStepFeedback.pushInfo(self.tr(f"Converting Features: step 1/{nStepsOnText}"))
         firstConversionData = conversionMapList[0] if len(conversionMapList) > 0 else None
         featureProcessor = MappingFeatureProcessor(
                 mappingDictPath=firstConversionData["conversionJson"],

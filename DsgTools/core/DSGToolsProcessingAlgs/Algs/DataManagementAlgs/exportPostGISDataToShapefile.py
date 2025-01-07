@@ -50,6 +50,7 @@ from qgis.core import (
     QgsProcessingParameterFolderDestination,
     QgsProcessingParameterCrs,
     QgsProcessingParameterFile,
+    QgsProject,
 )
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -331,7 +332,9 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
                     sourceFolder=destinationPath,
                     destinationPath=Path(outputFolder) / f"{geographicBoundsFeat[miField]}.zip",
                 )
-            
+        
+        for lyr in inputLayerList:
+            QgsProject.instance().removeMapLayer(lyr.id())
 
         return {
                 self.OUTPUT_FOLDER: outputFolder,
