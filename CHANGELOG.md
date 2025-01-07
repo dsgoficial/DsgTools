@@ -5,10 +5,12 @@
 Novas Funcionalidades:
 
 - Novo algoritmo de conversão de modelagens no provedor de algoritmos;
+- Novo algoritmo de exportação de modelos implementados em PostGIS para shapefile no provedor de algoritmos;
 
 Melhorias:
 
 - Atualiza o modelo EDGV 3.0 para a implementação 1.1.6;
+- Correção do comportamento do toggle layers;
 
 Correção de bugs:
 
