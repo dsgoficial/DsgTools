@@ -540,11 +540,12 @@ class ShapefileDb(AbstractDb):
                 lyrWithElemList.append(lyr)
         return lyrWithElemList
 
-    def findEPSG(self, parameters=dict()):
+    def findEPSG(self, parameters=None):
         """
         Finds the database EPSG. Parent reimplentation. Method assumes all layers have the same SRID.
         :return: (int) dataset (assumed to be all the same) SRID.
         """
+        parameters = dict() if parameters is None else parameters
         srid = None
         for shp in self.layerGeomCrsDict:
             srid = self.layerGeomCrsDict[shp]["crs"].authid().split(":")[1]

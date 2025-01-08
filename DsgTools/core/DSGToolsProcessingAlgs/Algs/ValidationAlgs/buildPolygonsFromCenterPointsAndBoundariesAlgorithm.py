@@ -437,7 +437,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             is_child_algorithm=True,
         )
 
-        multiStepFeedback.setProgressText(self.tr("Exploding boudary lines..."))
+        multiStepFeedback.setProgressText(self.tr("Exploding boundary lines..."))
         multiStepFeedback.setCurrentStep(currentStep)
         segments = self.algRunner.runExplodeLines(
             boundaryLineLyr,

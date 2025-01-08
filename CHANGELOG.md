@@ -1,6 +1,23 @@
 # CHANGELOG
 
-## 4.15.10 - dev
+## 4.17.2 - dev
+
+Novas Funcionalidades:
+
+- Novo algoritmo de conversão de modelagens no provedor de algoritmos;
+- Novo algoritmo de exportação de modelos implementados em PostGIS para shapefile no provedor de algoritmos;
+
+Melhorias:
+
+- Atualiza o modelo EDGV 3.0 para a implementação 1.1.6;
+- Correção do comportamento do toggle layers;
+- Corrige mensagem de erro quando o BDGEx não está acessível;
+
+Correção de bugs:
+
+- Corrige bug na ferramenta de validação do terreno;
+
+## 4.16.0 - 2024-11-27
 
 Novas Funcionalidades:
 
@@ -13,6 +30,8 @@ Novas Funcionalidades:
 Melhorias:
 
 - O processo de criação de moldura agora aceita múltiplos MIs ou INOMs separados por vírgula;
+- As subdivisões das molduras foram padronizadas por escala, para garantir a existência de vértices das molduras desde a escala 1:25.000 até a escala 1:250.000;
+
 
 Correção de bugs:
 
@@ -21,7 +40,6 @@ Correção de bugs:
 - Corrige rotina de construir o grid para edição;
 - Corrige bug no processo de identificar feições fechadas menores que a tolerância (Find Small Closed Lines Algorithm);
 - Corrige bug no processo de remover geometrias nulas;
-- Corrige bug na ferramenta de validação do terreno;
 
 ## 4.14.0 - 2024-06-20
 

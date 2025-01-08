@@ -20,4 +20,5 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
-resources.qrc export-ignore
+DsgTools/resources.qrc export-ignore
+DsgTools/resources_rc.py export-ignore

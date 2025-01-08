@@ -66,7 +66,7 @@ class IdentifySmallPolygonsAlgorithm(ValidationAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.TOLERANCE, self.tr("Area tolerance"), minValue=0, defaultValue=625
+                self.TOLERANCE, self.tr("Area tolerance"),QgsProcessingParameterNumber.Double, minValue=0, defaultValue=625
             )
         )
 

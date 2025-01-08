@@ -38,6 +38,7 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsField,
     QgsFields,
+    QgsProcessingParameterDefinition
 )
 
 
@@ -83,23 +84,26 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.XSUBDIVISIONS,
-                self.tr("Number of subdivisions on x-axis"),
-                defaultValue=1,
-            )
+        param = QgsProcessingParameterNumber(
+            self.XSUBDIVISIONS,
+            self.tr("Number of subdivisions on x-axis"),
+            minValue=1,
+            type=QgsProcessingParameterNumber.Integer,
+            optional=True
         )
+        param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
 
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.YSUBDIVISIONS,
-                self.tr("Number of subdivisions on y-axis"),
-                defaultValue=1,
-                minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
-            )
+        self.addParameter(param)
+
+        param = QgsProcessingParameterNumber(
+            self.YSUBDIVISIONS,
+            self.tr("Number of subdivisions on y-axis"),
+            minValue=1,
+            type=QgsProcessingParameterNumber.Integer,
+            optional=True
         )
+        param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
+        self.addParameter(param)
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Created Frames"))
@@ -122,8 +126,28 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField("inom", QVariant.String))
         fields.append(QgsField("mi", QVariant.String))
         crs = inputLyr.crs()
+
         xSubdivisions = self.parameterAsInt(parameters, self.XSUBDIVISIONS, context)
         ySubdivisions = self.parameterAsInt(parameters, self.YSUBDIVISIONS, context)
+        
+        default_x = 1
+        default_y = 1
+        
+        if stopScale == 50:
+            default_x = 2
+            default_y = 2
+        elif stopScale == 100:
+            default_x = 4
+            default_y = 4
+        elif stopScale == 250:
+            default_x = 12
+            default_y = 8
+
+        if xSubdivisions is None or xSubdivisions == 0:
+            xSubdivisions = default_x
+        if ySubdivisions is None or ySubdivisions == 0:
+            ySubdivisions = default_y
+
         (output_sink, output_sink_id) = self.parameterAsSink(
             parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, crs
         )
