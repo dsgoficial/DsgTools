@@ -41,7 +41,6 @@ from qgis.core import (
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
 from DsgTools.core.GeometricTools.terrainHandler import TerrainModel
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
@@ -60,6 +59,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
     GROUP_BY_SPATIAL_PARTITION = "GROUP_BY_SPATIAL_PARTITION"
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
+    POLYGON_FLAGS = "POLYGON_FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -144,12 +144,17 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.LINE_FLAGS, self.tr("{0} Line Flags").format(self.displayName())
             )
         )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.POLYGON_FLAGS,
+                self.tr("{0} Polygon Flags").format(self.displayName()),
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        self.spatialRealtionsHandler = SpatialRelationsHandler()
         self.algRunner = AlgRunner()
         self.layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
@@ -191,12 +196,21 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(
                 self.tr("Spot elevation height attribute must be selected.")
             )
-        point_flagSink, point_flag_id = self.prepareAndReturnFlagSink(
+        point_flagSink, point_flag_sink_id = self.prepareAndReturnFlagSink(
             parameters, inputLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
         )
-        line_flagSink, line_flag_id = self.prepareAndReturnFlagSink(
+        line_flagSink, line_flag_sink_id = self.prepareAndReturnFlagSink(
             parameters, inputLyr, QgsWkbTypes.LineString, context, self.LINE_FLAGS
         )
+        polygon_flagSink, polygon_flag_sink_id = self.prepareAndReturnFlagSink(
+            parameters, inputLyr, QgsWkbTypes.Polygon, context, self.POLYGON_FLAGS
+        )
+
+        sinkDict = {
+            QgsWkbTypes.PointGeometry: point_flagSink,
+            QgsWkbTypes.LineGeometry: line_flagSink,
+            QgsWkbTypes.PolygonGeometry: polygon_flagSink,
+        }
 
         invalidDict = (
             self.validateTerrainModel(
@@ -231,14 +245,16 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 break
             geom = QgsGeometry()
             geom.fromWkb(flagGeom)
-            flagSink = (
-                line_flagSink
-                if geom.type() == QgsWkbTypes.LineGeometry
-                else point_flagSink
-            )
+            flagSink = sinkDict.get(geom.type(), None)
+            if flagSink is None:
+                continue
             self.flagFeature(geom, text, fromWkb=False, sink=flagSink)
 
-        return {self.POINT_FLAGS: point_flag_id, self.LINE_FLAGS: line_flag_id}
+        return {
+            self.POINT_FLAGS: point_flag_sink_id,
+            self.LINE_FLAGS: line_flag_sink_id,
+            self.POLYGON_FLAGS: polygon_flag_sink_id,
+        }
 
     def validateTerrainModel(
         self,
@@ -253,16 +269,54 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         context,
         feedback,
     ):
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(5, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+        bufferedBounds = self.algRunner.runBuffer(
+            inputLayer=geoBoundsLyr,
+            distance=1e-6,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback.isCanceled():
+            return {}
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        clippedContours = self.algRunner.runClip(
+            inputLayer=contourLyr
+            if not onlySelected
+            else QgsProcessingFeatureSourceDefinition(contourLyr.id(), True),
+            overlayLayer=bufferedBounds,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=False,
+        )
+        if multiStepFeedback.isCanceled():
+            return {}
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(2)
+        singlePartContours = self.algRunner.runMultipartToSingleParts(
+            inputLayer=clippedContours, context=context, feedback=multiStepFeedback
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(3)
         terrainModel = TerrainModel(
-            contourLyr=contourLyr,
+            contourLyr=singlePartContours,
             contourElevationFieldName=heightFieldName,
             geographicBoundsLyr=geoBoundsLyr,
             threshold=threshold,
             depressionExpression=depressionExpression,
             spotElevationLyr=elevationPointsLyr,
             spotElevationFieldName=elevationPointHeightFieldName,
+            feedback=multiStepFeedback,
         )
-        return terrainModel.validate(context=context, feedback=feedback)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(4)
+        return terrainModel.validate(context=context, feedback=multiStepFeedback)
 
     def validateTerrainModelInParalel(
         self,
