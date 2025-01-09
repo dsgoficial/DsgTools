@@ -7,10 +7,10 @@ SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
 	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 3.0 Topo',
-	 dbimplversion varchar(50) NOT NULL DEFAULT '1.4.0',
+	 dbimplversion varchar(50) NOT NULL DEFAULT '1.4.1',
 	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 3.0 Topo')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Topo','1.4.0')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Topo','1.4.1')#
 
 CREATE TABLE dominios.sigla_uf (
 	 code smallint NOT NULL,
@@ -3419,7 +3419,7 @@ ALTER TABLE edgv.infra_ferrovia_l
 
 ALTER TABLE edgv.infra_ferrovia_l
 	 ADD CONSTRAINT infra_ferrovia_l_tipo_elemento_viario_check 
-	 CHECK (tipo_elemento_viario = ANY(ARRAY[101 :: SMALLINT, 201 :: SMALLINT, 202 :: SMALLINT, 203 :: SMALLINT, 204 :: SMALLINT, 301 :: SMALLINT, 302 :: SMALLINT, 501 :: SMALLINT, 97 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 CHECK (tipo_elemento_viario = ANY(ARRAY[101 :: SMALLINT, 102 :: SMALLINT, 201 :: SMALLINT, 202 :: SMALLINT, 203 :: SMALLINT, 204 :: SMALLINT, 301 :: SMALLINT, 302 :: SMALLINT, 97 :: SMALLINT, 9999 :: SMALLINT]))# 
 
 ALTER TABLE edgv.infra_ferrovia_l ALTER COLUMN tipo_elemento_viario SET DEFAULT 9999#
 
@@ -3961,6 +3961,10 @@ ALTER TABLE edgv.infra_via_deslocamento_l
 	 ADD CONSTRAINT infra_via_deslocamento_l_tipo_elemento_viario_fk FOREIGN KEY (tipo_elemento_viario)
 	 REFERENCES dominios.tipo_elemento_viario (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_via_deslocamento_l
+	 ADD CONSTRAINT infra_via_deslocamento_l_tipo_elemento_viario_check 
+	 CHECK (tipo_elemento_viario = ANY(ARRAY[101 :: SMALLINT, 102 :: SMALLINT, 201 :: SMALLINT, 202 :: SMALLINT, 203 :: SMALLINT, 204 :: SMALLINT, 301 :: SMALLINT, 302 :: SMALLINT, 401 :: SMALLINT, 402 :: SMALLINT, 97 :: SMALLINT, 9999 :: SMALLINT]))# 
 
 ALTER TABLE edgv.infra_via_deslocamento_l ALTER COLUMN tipo_elemento_viario SET DEFAULT 9999#
 

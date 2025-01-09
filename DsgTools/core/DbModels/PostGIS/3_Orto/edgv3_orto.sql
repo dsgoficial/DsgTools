@@ -7,10 +7,10 @@ SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
 	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 3.0 Orto',
-	 dbimplversion varchar(50) NOT NULL DEFAULT '2.5.0',
+	 dbimplversion varchar(50) NOT NULL DEFAULT '2.5.1',
 	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 3.0 Orto')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Orto','2.5.0')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Orto','2.5.1')#
 
 CREATE TABLE dominios.sigla_uf (
 	 code smallint NOT NULL,
@@ -1873,7 +1873,7 @@ ALTER TABLE edgv.infra_ferrovia_l
 
 ALTER TABLE edgv.infra_ferrovia_l
 	 ADD CONSTRAINT infra_ferrovia_l_tipo_elemento_viario_check 
-	 CHECK (tipo_elemento_viario = ANY(ARRAY[101 :: SMALLINT, 201 :: SMALLINT, 202 :: SMALLINT, 203 :: SMALLINT, 204 :: SMALLINT, 301 :: SMALLINT, 302 :: SMALLINT, 97 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 CHECK (tipo_elemento_viario = ANY(ARRAY[101 :: SMALLINT, 102 :: SMALLINT, 201 :: SMALLINT, 202 :: SMALLINT, 203 :: SMALLINT, 204 :: SMALLINT, 301 :: SMALLINT, 302 :: SMALLINT, 97 :: SMALLINT, 9999 :: SMALLINT]))# 
 
 ALTER TABLE edgv.infra_ferrovia_l ALTER COLUMN tipo_elemento_viario SET DEFAULT 9999#
 
