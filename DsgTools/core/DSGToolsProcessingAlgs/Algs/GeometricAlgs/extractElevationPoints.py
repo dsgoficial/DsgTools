@@ -66,6 +66,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
     CONTOUR_LINES = "CONTOUR_LINES"
     CONTOUR_ATTR = "CONTOUR_ATTR"
     CONTOUR_INTERVAL = "CONTOUR_INTERVAL"
+    DEPRESSION_EXPRESSION = "DEPRESSION_EXPRESSION"
     GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
     SCALE = "SCALE"
     WATER_BODIES = "WATER_BODIES"
@@ -115,6 +116,16 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
+            QgsProcessingParameterExpression(
+                self.DEPRESSION_EXPRESSION,
+                self.tr("Filter expression for contour that are depressions."),
+                """ "depressao" = 1 """,
+                self.INPUT,
+                optional=True,
+            )
+        )
+
+        self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic bounds layer"),
@@ -151,10 +162,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             3: 40000,
         }
         self.contourBufferLengths = {
-            0: 3.2e-3 * 25_000,
-            1: 3.2e-3 * 50_000,
-            2: 3.2e-3 * 100_000,
-            3: 3.2e-3 * 250_000,
+            0: 3.2e-8 * 25_000,
+            1: 3.2e-8 * 50_000,
+            2: 3.2e-8 * 100_000,
+            3: 3.2e-8 * 250_000,
         }
 
         self.planeGridSpacingDict = {
@@ -257,6 +268,11 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         contourHeightInterval = self.parameterAsDouble(
             parameters, self.CONTOUR_INTERVAL, context
         )
+        depressionExpression = self.parameterAsExpression(
+            parameters, self.DEPRESSION_EXPRESSION, context
+        )
+        if depressionExpression == "":
+            depressionExpression = None
         geoBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
@@ -430,6 +446,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             featList = self.computePoints(
                 contourLyr=parameters[self.CONTOUR_LINES],
                 heightFieldName=heightFieldName,
+                depressionExpression=depressionExpression,
                 contourHeightInterval=contourHeightInterval,
                 inputRaster=inputRaster,
                 geographicBoundsLyr=localBoundsLyr,
@@ -462,6 +479,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         contourLyr,
         heightFieldName,
         contourHeightInterval,
+        depressionExpression,
         inputRaster,
         geographicBoundsLyr,
         areaWithoutInformationLyr,
@@ -624,9 +642,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             maskLyr=maskLyr,
             feedback=multiStepFeedback,
         )
-        maskLyr = AlgRunner().runMergeVectorLayers(
-            [maskLyr, contourBufferLyr], context
-        )
+        maskLyr = AlgRunner().runMergeVectorLayers([maskLyr, contourBufferLyr], context)
         elevationPointsLayer = layerHandler.createMemoryLayerWithFeatures(
             featList=minMaxFeats,
             fields=fields,
@@ -653,6 +669,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             contourLyr=contourLyr,
             geographicBoundsLyr=geographicBoundsLyr,
             heightFieldName=heightFieldName,
+            depressionExpression=depressionExpression,
             context=context,
             feedback=multiStepFeedback,
         )
@@ -1198,6 +1215,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         contourLyr: QgsVectorLayer,
         geographicBoundsLyr: QgsVectorLayer,
         heightFieldName: str,
+        depressionExpression: str,
         context: QgsProcessingContext,
         feedback: QgsFeedback,
     ) -> Tuple[Dict, QgsVectorLayer]:
@@ -1257,7 +1275,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             attributeName=heightFieldName,
             contourSpatialIdx=contourSpatialIdx,
             contourIdDict=contourIdDict,
-            depressionExpression=None,  # TODO
+            depressionExpression=depressionExpression,  # TODO
             context=context,
             feedback=multiStepFeedback,
         )
@@ -1601,7 +1619,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-    
+
     def getMaxFeatures(
         self, fields, npRaster, transform, distance, maskLyr, feedback=None
     ):
@@ -1634,13 +1652,13 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             filteredFeatureList = self.filterFeaturesByDistanceAndExclusionLayer(
                 candidatesPointLyr=maxFeatLyr,
                 exclusionLyr=maskLyr,
-                distance=distance/10,
+                distance=distance / 10,
                 context=QgsProcessingContext(),
                 feedback=None,
             )
             if filteredFeatureList != []:
                 featSet |= self.filterFeaturesByBuffer(
-                    filteredFeatureList, distance/10, cotaMaisAlta=True
+                    filteredFeatureList, distance / 10, cotaMaisAlta=True
                 )
                 break
             if len(npRasterCopy[npRasterCopy == cotaMax]) > 0:

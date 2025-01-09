@@ -2513,7 +2513,7 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
-
+      
     def runOrientedBoundingBox(
         self,
         inputLyr: QgsVectorLayer,
@@ -2564,9 +2564,31 @@ class AlgRunner:
         processing.run(
             "dsgtools:loadshapefilealgorithm",
             {
-                "FOLDER_SHAPEFILES": inputFolder
+                "FOLDER_SHAPEFILES": inputFolder,
             },
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
+        return output["OUTPUT"]
+              
+    def runDSGToolsExtractMiddleVertexOnLine(
+        self,
+        inputLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:extractmiddlevertexonlinealgorithm",
+            {
+                "INPUT": inputLayer,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]

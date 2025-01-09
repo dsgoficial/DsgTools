@@ -56,6 +56,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixe
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.runReclassifyPixelsWithSlidingWindow import (
     ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractMiddleVertexOnLineAlgorithm import (
+    ExtractMiddleVertexOnLineAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.setLineOrientation import (
     SetLineOrientation,
 )
@@ -723,6 +726,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             GeneralizeHighwaysAlgorithm(),
             ConvertDatabasesAlgorithm(),
             ExportPostGISDataToShapefile(),
+            ExtractMiddleVertexOnLineAlgorithm(),
         ]
         return algList
 
