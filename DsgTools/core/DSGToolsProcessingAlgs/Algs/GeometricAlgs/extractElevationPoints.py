@@ -57,6 +57,7 @@ from qgis.core import (
     QgsSpatialIndex,
     QgsProcessingParameterExpression,
     QgsProcessingParameterBoolean,
+    QgsFeatureRequest,
 )
 
 
@@ -120,7 +121,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.DEPRESSION_EXPRESSION,
                 self.tr("Filter expression for contour that are depressions."),
                 """ "depressao" = 1 """,
-                self.INPUT,
+                self.CONTOUR_LINES,
                 optional=True,
             )
         )
@@ -1836,6 +1837,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         candidatesPointLyr: QgsVectorLayer,
         exclusionLyr: QgsVectorLayer,
         distance: float,
+        depressionExpression: str,
         context: QgsProcessingContext,
         feedback: QgsFeedback,
     ) -> List:
@@ -1863,7 +1865,13 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
         outputSet, exclusionSet = set(), set()
         stepSize = 100 / nFeats
-        for current, feat in enumerate(disjointLyr.getFeatures()):
+        request = QgsFeatureRequest()
+        orderByClause1 = QgsFeatureRequest.OrderByClause("cota_mais_alta", ascending=True)
+        orderByClause2 = QgsFeatureRequest.OrderByClause(depressionExpression, ascending=False)
+        orderByClause3 = QgsFeatureRequest.OrderByClause("cota", ascending=False)
+        orderby = QgsFeatureRequest.OrderBy([orderByClause1, orderByClause2, orderByClause3])
+        request.setOrderBy(orderby)
+        for current, feat in enumerate(disjointLyr.getFeatures(request)):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
             if feat.id() in exclusionSet:
