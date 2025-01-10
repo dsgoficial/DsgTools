@@ -638,7 +638,7 @@ class TerrainModel:
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Building terrain aux structures"))
-        self.buildAuxStructures(feedback=multiStepFeedback)
+        self.buildAuxStructures(context=context, feedback=multiStepFeedback)
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -650,7 +650,7 @@ class TerrainModel:
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Validating spot elevation"))
-        invalidDict.update(self.validateSpotElevation(feedback=multiStepFeedback))
+        invalidDict.update(self.validateSpotElevation(context=context, feedback=multiStepFeedback))
         return invalidDict
 
     def validateContourLines(
@@ -848,29 +848,7 @@ class TerrainModel:
             if feedback is not None
             else None
         )
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(0)
-        self.terrainGraph = self.buildTerrainGraph(feedback=multiStepFeedback)
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(1)
-        hilltops = (
-            i
-            for i in self.terrainGraph.nodes
-            if self.terrainGraph.degree(i) == 1
-            and self.terrainGraph.get_edge_data(
-                i, list(self.terrainGraph.neighbors(i))[0]
-            )["is_closed"]
-            == True
-        )
-        sortedHilltops = list(
-            sorted(
-                hilltops,
-                key=lambda x: self.terrainGraph.get_edge_data(
-                    x, list(self.terrainGraph.neighbors(x))[0]
-                )["height"],
-                reverse=True,
-            )
-        )
+        sortedHilltops = self.getHilltops(multiStepFeedback)
         firstOrderNodesThatAreNotHilltops = [
             i
             for i in self.terrainGraph.nodes
@@ -967,6 +945,38 @@ class TerrainModel:
             if cyclesUnchanged > 10:
                 break
         return flagDict
+
+    def getHilltops(self, feedback: Optional[QgsProcessingFeedback] = None):
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+        self.terrainGraph = self.buildTerrainGraph(feedback=multiStepFeedback)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        hilltops = (
+            i
+            for i in self.terrainGraph.nodes
+            if self.terrainGraph.degree(i) == 1
+            and self.terrainGraph.get_edge_data(
+                i, list(self.terrainGraph.neighbors(i))[0]
+            )["is_closed"]
+            == True
+        )
+        sortedHilltops = list(
+            sorted(
+                hilltops,
+                key=lambda x: self.terrainGraph.get_edge_data(
+                    x, list(self.terrainGraph.neighbors(x))[0]
+                )["height"],
+                reverse=True,
+            )
+        )
+        
+        return sortedHilltops
 
     def flag_terrain_band(self, flagDict, node):
         """
@@ -1074,8 +1084,8 @@ class TerrainModel:
         for current, feat in enumerate(joinnedSpotElevation.getFeatures()):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
-            bandId = joinnedSpotElevation["polygonid"]
-            pointHeight = joinnedSpotElevation[self.spotElevationFieldName]
+            bandId = feat["polygonid"]
+            pointHeight = feat[self.spotElevationFieldName]
             h_min, h_max = self.terrainSlicesDict[bandId].getMinMaxHeight()
             if h_min is None or h_max is None:
                 continue

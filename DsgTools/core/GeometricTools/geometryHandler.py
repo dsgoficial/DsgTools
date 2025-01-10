@@ -872,6 +872,7 @@ def convertDistance(distance, originEpsg, destinationEpsg, mapUnits=None):
     distanceArea.setSourceCrs(
         QgsCoordinateReferenceSystem(originEpsg), QgsCoordinateTransformContext()
     )
+    distanceArea.setEllipsoid(QgsCoordinateReferenceSystem(originEpsg).ellipsoidAcronym())
     return distanceArea.convertLengthMeasurement(distance, mapUnits)
 
 
