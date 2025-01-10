@@ -848,29 +848,7 @@ class TerrainModel:
             if feedback is not None
             else None
         )
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(0)
-        self.terrainGraph = self.buildTerrainGraph(feedback=multiStepFeedback)
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(1)
-        hilltops = (
-            i
-            for i in self.terrainGraph.nodes
-            if self.terrainGraph.degree(i) == 1
-            and self.terrainGraph.get_edge_data(
-                i, list(self.terrainGraph.neighbors(i))[0]
-            )["is_closed"]
-            == True
-        )
-        sortedHilltops = list(
-            sorted(
-                hilltops,
-                key=lambda x: self.terrainGraph.get_edge_data(
-                    x, list(self.terrainGraph.neighbors(x))[0]
-                )["height"],
-                reverse=True,
-            )
-        )
+        sortedHilltops = self.getHilltops(multiStepFeedback)
         firstOrderNodesThatAreNotHilltops = [
             i
             for i in self.terrainGraph.nodes
@@ -967,6 +945,38 @@ class TerrainModel:
             if cyclesUnchanged > 10:
                 break
         return flagDict
+
+    def getHilltops(self, feedback: Optional[QgsProcessingFeedback] = None):
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+        self.terrainGraph = self.buildTerrainGraph(feedback=multiStepFeedback)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        hilltops = (
+            i
+            for i in self.terrainGraph.nodes
+            if self.terrainGraph.degree(i) == 1
+            and self.terrainGraph.get_edge_data(
+                i, list(self.terrainGraph.neighbors(i))[0]
+            )["is_closed"]
+            == True
+        )
+        sortedHilltops = list(
+            sorted(
+                hilltops,
+                key=lambda x: self.terrainGraph.get_edge_data(
+                    x, list(self.terrainGraph.neighbors(x))[0]
+                )["height"],
+                reverse=True,
+            )
+        )
+        
+        return sortedHilltops
 
     def flag_terrain_band(self, flagDict, node):
         """
