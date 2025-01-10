@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+   <div>
+      <p>Help versão 1.0</p>
+      <hr/>
+      <h2>Descrição:</h2>
+      <h4 style="text-align: center; padding: 6px;">
+         Exporta feições de uma camada com base em um atributo específico e um operador. Permite selecionar e exportar feições filtradas, como aquelas que contêm, começam com ou não contêm um valor específico.
+      </h4>
+      <hr />
+   </div>
+
+   <div>
+      <h2>Parâmetros:</h2>
+      <p>
+         <span style="margin-bottom: 10px;">
+            &#8226; Camada de entrada &rarr; Camada vetorial que será processada para identificar feições com base em um atributo específico.
+         </span>
+
+         <span style="margin-bottom: 10px;">
+            &#8226; Atributo de seleção &rarr; Nome do atributo que será utilizado para a filtragem.
+         </span>
+
+         <span style="margin-bottom: 10px;">
+            &#8226; Operador &rarr; Operador de comparação a ser utilizado para selecionar feições (ex.: igual, diferente, contém, não contém, etc.).
+         </span>
+
+         <span style="margin-bottom: 10px;">
+            &#8226; Valor &rarr; Valor a ser comparado com o atributo selecionado.
+         </span>
+
+         <span style="margin-bottom: 10px;">
+            &#8226; Camada de saída &rarr; Nova camada onde as feições filtradas serão exportadas.
+         </span>
+
+         <span style="color:#ff0000; font-weight: bold;"><u>Atenção</u>: certifique-se de usar o operador correto para garantir que as feições desejadas sejam exportadas corretamente. Caso utilize a opção "Contém" ou "Não contém", o valor deve ser ajustado para a string apropriada.</span>
+
+      </p>
+      <hr />
+   </div>
+
+   <div>
+      <h2>Exemplo de uso: </h2>
+      <h4>Filtrando feições em uma camada de pontos de interesse na modelagem EDGV3.0 (EPSG:4674)</h4>
+
+      <span style="margin-bottom: 10px;">&#8226; Camada de entrada &rarr; cobter_massa_dagua_a</span><br>
+      <span style="margin-bottom: 10px;">&#8226; Atributo de seleção &rarr; tipo</span><br>
+      <span style="margin-bottom: 10px;">&#8226; Operador &rarr; igual '='</span><br>
+      <span style="margin-bottom: 10px;">&#8226; Valor &rarr; 7</span><br>
+      <span style="margin-bottom: 10px;">&#8226; Camada de saída &rarr; Output layer</span>
+
+      <hr />
+   </div>
+
+
+   <div>
+      <h2>Nota sobre o uso em models:</h2>
+      <p style="text-align: justify;">
+         Este algoritmo também pode ser utilizado em models quando houver necessidade de filtrar feições com base em seus atributos.
+         No entanto, deve ser usado <strong>restritamente</strong> quando a camada é opcional para o processamento.
+         isso evita que o modelo aplique o filtro em camadas essenciais ou obrigatórias sem supervisão.
+      </p>
+      <hr />
+   </div>
+
+</body>
+</html>

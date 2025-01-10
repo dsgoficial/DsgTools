@@ -107,7 +107,7 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
         idsToDeleteSet = set(f["_featid"] for f in cacheLyr.getFeatures()) - set(
-            f["_featid"] for f in notNullCount.getFeatures()
+            f["_featid"] for f in notNullLayer.getFeatures()
         )
         inputLyr.startEditing()
         inputLyr.beginEditCommand(f"Deleting null values from {inputLyr.name()}")

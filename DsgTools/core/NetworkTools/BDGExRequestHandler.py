@@ -165,9 +165,7 @@ class BDGExRequestHandler(QObject):
         except Exception as e:
             title = self.tr("BDGEx layers (DSGTools)")
             msg = self.tr(
-                "Unable to provide requested layer. Please check "
-                "your network settings (proxy and exceptions too, if"
-                " necessary)."
+                "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
             )
             MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
             return ""

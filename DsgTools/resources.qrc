@@ -95,5 +95,6 @@
         <file>icons/layer-landcover-24.png</file>
         <file>icons/DSGTools.png</file>
         <file>icons/DSGToolsIcon.png</file>
+        <file>icons/closedLines.png</file>
     </qresource>
 </RCC>

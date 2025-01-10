@@ -239,10 +239,24 @@ def buildAuxStructures(
     nodeDict = defaultdict(list)
     nodeIdDict = defaultdict(list)
     nodeCount = nodesLayer.featureCount()
-    stepSize = 100 / nodeCount
-    auxId = 0
     hashDict = defaultdict(lambda: [[], []])
     nodeLayerIdDict = dict()
+    if nodeCount == 0:
+        G = nx.Graph()
+        return (
+        (nodeDict, nodeIdDict, edgeDict, hashDict, G)
+        if not computeNodeLayerIdDict
+        else (
+            nodeDict,
+            nodeIdDict,
+            edgeDict,
+            hashDict,
+            G,
+            nodeLayerIdDict,
+        )
+    )
+    stepSize = 100 / nodeCount
+    auxId = 0
     for current, nodeFeat in enumerate(nodesLayer.getFeatures()):
         if multiStepFeedback is not None and multiStepFeedback.isCanceled():
             break
