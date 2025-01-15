@@ -43,6 +43,8 @@ from ...algRunner import AlgRunner
 class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
     INPUT = "INPUT"
     RELATED_TASK_ID = "RELATED_TASK_ID"
+    UNIT_WORK_ID = "UNIT_WORK_ID"
+    STEP_ID = "STEP_ID"
     X_GRID_SIZE = "X_GRID_SIZE"
     Y_GRID_SIZE = "Y_GRID_SIZE"
     OUTPUT = "OUTPUT"
@@ -51,7 +53,6 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         """
         Parameter setting.
         """
-
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
@@ -81,14 +82,33 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.RELATED_TASK_ID,
-                self.tr("Related task id"),
-                optional=True,
-                type=QgsProcessingParameterNumber.Integer,
-            )
+        # Parâmetros avançados
+        paramRelatedTask = QgsProcessingParameterNumber(
+            self.RELATED_TASK_ID,
+            self.tr("Related task id"),
+            optional=True,
+            type=QgsProcessingParameterNumber.Integer,
         )
+        paramRelatedTask.setFlags(paramRelatedTask.flags() | QgsProcessingParameterNumber.FlagAdvanced)
+        self.addParameter(paramRelatedTask)
+
+        paramUnitWork = QgsProcessingParameterNumber(
+            self.UNIT_WORK_ID,
+            self.tr("Work unit id"),
+            optional=True,
+            type=QgsProcessingParameterNumber.Integer,
+        )
+        paramUnitWork.setFlags(paramUnitWork.flags() | QgsProcessingParameterNumber.FlagAdvanced)
+        self.addParameter(paramUnitWork)
+
+        paramStep = QgsProcessingParameterNumber(
+            self.STEP_ID,
+            self.tr("Step id"),
+            optional=True,
+            type=QgsProcessingParameterNumber.Integer,
+        )
+        paramStep.setFlags(paramStep.flags() | QgsProcessingParameterNumber.FlagAdvanced)
+        self.addParameter(paramStep)
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
@@ -161,6 +181,8 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField("rank", QVariant.Int))
         fields.append(QgsField("visited", QVariant.Bool))
         fields.append(QgsField("atividade_id", QVariant.Int))
+        fields.append(QgsField("unidade_trabalho_id", QVariant.Int))
+        fields.append(QgsField("etapa_id", QVariant.Int))
         fields.append(QgsField("data_atualizacao", QVariant.DateTime))
         return fields
 
@@ -169,6 +191,8 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
     ):
         featList = [feat for feat in grid.getFeatures()]
         relatedTaskId = self.parameterAsInt(parameters, self.RELATED_TASK_ID, context)
+        unitWorkId = self.parameterAsInt(parameters, self.UNIT_WORK_ID, context)
+        stepId = self.parameterAsInt(parameters, self.STEP_ID, context)
         outputFeatList = []
         nSteps = len(featList)
         if nSteps == 0:
@@ -190,44 +214,27 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             newFeat = QgsFeature(fields)
             newFeat["visited"] = False
             newFeat["rank"] = current
-            newFeat["atividade_id"] = relatedTaskId
+            if relatedTaskId is not None:
+                newFeat["atividade_id"] = relatedTaskId
+            if unitWorkId is not None:
+                newFeat["unidade_trabalho_id"] = unitWorkId
+            if stepId is not None:
+                newFeat["etapa_id"] = stepId
             newFeat.setGeometry(feat.geometry())
             outputFeatList.append(newFeat)
             feedback.setProgress(current * stepSize)
         return outputFeatList
 
     def name(self):
-        """
-        Returns the algorithm name, used for identifying the algorithm. This
-        string should be fixed for the algorithm, and must not be localised.
-        The name should be unique within each provider. Names should contain
-        lowercase alphanumeric characters only and no spaces or other
-        formatting characters.
-        """
         return "createreviewgridalgorithm"
 
     def displayName(self):
-        """
-        Returns the translated algorithm name, which should be used for any
-        user-visible display of the algorithm name.
-        """
         return self.tr("Create Review Grid")
 
     def group(self):
-        """
-        Returns the name of the group this algorithm belongs to. This string
-        should be localised.
-        """
         return self.tr("Grid Algorithms")
 
     def groupId(self):
-        """
-        Returns the unique ID of the group this algorithm belongs to. This
-        string should be fixed for the algorithm, and must not be localised.
-        The group id should be unique within each provider. Group id should
-        contain lowercase alphanumeric characters only and no spaces or other
-        formatting characters.
-        """
         return "DSGTools - Grid Algorithms"
 
     def tr(self, string):
