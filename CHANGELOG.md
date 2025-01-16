@@ -12,6 +12,7 @@ Melhorias:
 - Atualiza o modelo EDGV 3.0 para a implementação 1.1.6;
 - Correção do comportamento do toggle layers;
 - Corrige mensagem de erro quando o BDGEx não está acessível;
+- Atualiza Create Review Grid para ficar compatível com os atributos previstos no SAP Operador 3.29.14
 
 Correção de bugs:
 
