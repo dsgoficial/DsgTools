@@ -1026,23 +1026,25 @@ class AlgRunner:
 
     def runJoinAttributesByLocation(
         self,
-        inputLyr,
-        joinLyr,
-        context,
-        predicateList=None,
-        joinFields=None,
-        method=None,
-        discardNonMatching=True,
-        feedback=None,
-        outputLyr=None,
-        unjoinnedLyr=None,
-        returnUnjoinned=False,
-        is_child_algorithm=False,
+        inputLyr: QgsVectorLayer,
+        joinLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        predicateList: Optional[List[int]]=None,
+        joinFields: Optional[List[str]]=None,
+        method: Optional[int]=None,
+        discardNonMatching: Optional[bool]=True,
+        prefix: Optional[str]=None,
+        feedback: Optional[QgsFeedback]=None,
+        outputLyr: Optional[QgsVectorLayer]=None,
+        unjoinnedLyr: Optional[QgsVectorLayer]=None,
+        returnUnjoinned: Optional[bool]=False,
+        is_child_algorithm: Optional[bool]=False,
     ) -> QgsVectorLayer:
         predicateList = [0] if predicateList is None else predicateList
         joinFields = [] if joinFields is None else joinFields
         method = 0 if method is None else method
         outputLyr = "memory:" if outputLyr is None else outputLyr
+        prefix = "" if prefix is None else prefix
         parameters = {
             "INPUT": inputLyr,
             "JOIN": joinLyr,
@@ -1050,7 +1052,7 @@ class AlgRunner:
             "JOIN_FIELDS": joinFields,
             "METHOD": method,
             "DISCARD_NONMATCHING": discardNonMatching,
-            "PREFIX": "",
+            "PREFIX": prefix,
             "OUTPUT": outputLyr,
         }
         output = processing.run(
@@ -1090,14 +1092,14 @@ class AlgRunner:
 
     def runStatisticsByCategories(
         self,
-        inputLyr,
-        context,
-        valuesFieldName=None,
-        categoriesFieldName=None,
-        feedback=None,
-        outputLyr=None,
-        is_child_algorithm=False,
-    ):
+        inputLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        valuesFieldName: Optional[str]=None,
+        categoriesFieldName: str=None,
+        feedback: Optional[QgsProcessingContext]=None,
+        outputLyr: Optional[QgsVectorLayer]=None,
+        is_child_algorithm: Optional[bool]=False,
+    ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
             "INPUT": inputLyr,
