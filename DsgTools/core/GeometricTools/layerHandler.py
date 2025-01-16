@@ -2603,8 +2603,9 @@ class LayerHandler(QObject):
         #                             for camada in constraintPolygonLyrList]
         #     inputCenterPointLyr = algRunner.runClip(inputCenterPointLyr, limit,
         #                                             context)
-        nSteps = 20 + 2*(geographicBoundaryLineLyr is not None) + 2*(not suppressPolygonWithoutCenterPointFlag)
+        nSteps = 20 + 2*(geographicBoundaryLyr is not None) + 2*(not suppressPolygonWithoutCenterPointFlag)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback) if feedback is not None else None
+        fieldNames = [f.name() for f in inputCenterPointLyr.fields() if f.name() not in attributeBlackList]
         currentStep = 0
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -2688,7 +2689,7 @@ class LayerHandler(QObject):
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
         filteredBuiltPolygonLyr: QgsVectorLayer = algRunner.runAddAutoIncrementalField(
-            filteredWithCombinedAttributes, context, fieldName="AUTO", feedback=multiStepFeedback
+            filteredBuiltPolygonLyr, context, fieldName="AUTO", feedback=multiStepFeedback
         )
         currentStep += 1
         if multiStepFeedback is not None:
@@ -2711,7 +2712,6 @@ class LayerHandler(QObject):
         if multiStepFeedback is not None:
             multiStepFeedback.setProgressText(self.tr("Computing polygon stats..."))
             multiStepFeedback.setCurrentStep(currentStep)
-        fieldNames = [f.name() for f in filteredBuiltPolygonLyr.fields() if f.name() not in attributeBlackList and f.name() != "AUTO"]
         expression = "concat(" + ", '_', ".join([f'"{f}"' for f in fieldNames]) + ")" if len(fieldNames) > 1 else f'"{fieldNames[0]}"'
         filteredWithCombinedAttributes: QgsVectorLayer = algRunner.runCreateFieldWithExpression(
             joined,
