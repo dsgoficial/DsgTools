@@ -291,7 +291,7 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
                 inputLyr=outputLyr,
                 intersectLyr=geographicBoundaryLyr,
                 context=context,
-                predicate=[AlgRunner.Intersect if self.mode == 1 else AlgRunner.Within],
+                predicate=[AlgRunner.Intersects if self.mode == 1 else AlgRunner.Within],
             )
             if geographicBoundaryLyr is not None and self.mode != 0
             else outputLyr

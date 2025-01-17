@@ -306,7 +306,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 inputLyr=nodesLayer,
                 intersectLyr=waterSinkLayer,
                 context=context,
-                predicate=[AlgRunner.Equal],
+                predicate=[AlgRunner.Equals],
                 feedback=multiStepFeedback,
             )
             for feat in selectedNodesFromWaterSink.getFeatures():
@@ -326,7 +326,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 inputLyr=nodesLayer,
                 intersectLyr=buffer,
                 context=context,
-                predicate=[AlgRunner.Intersect],
+                predicate=[AlgRunner.Intersects],
                 feedback=multiStepFeedback,
             )
             for feat in selectedNodesFromOcean.getFeatures():
@@ -340,7 +340,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 inputLyr=nodesLayer,
                 intersectLyr=waterBodyWithFlowLayer,
                 context=context,
-                predicate=[AlgRunner.Intersect],
+                predicate=[AlgRunner.Intersects],
                 feedback=multiStepFeedback,
             )
             nodesDict = defaultdict(list)

@@ -186,7 +186,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             inputLyr=polygonsNotOnEdge,
             joinLyr=polygonsNotOnEdge,
             joinFields=[],
-            predicateList=[AlgRunner.Intersect],
+            predicateList=[AlgRunner.Intersects],
             summaries=[0],
             feedback=multiStepFeedback,
             context=context,
