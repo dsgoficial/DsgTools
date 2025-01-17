@@ -174,7 +174,7 @@ class IdentifyUncoveredStartAndEndPointsAlgorithm(ValidationAlgorithm):
                 inputLyr=nodesLyr,
                 intersectLyr=geographicBoundaryLyr,
                 context=context,
-                predicate=[AlgRunner.Intersect],
+                predicate=[AlgRunner.Intersects],
                 feedback=multiStepFeedback,
             )
             if geographicBoundaryLyr is not None

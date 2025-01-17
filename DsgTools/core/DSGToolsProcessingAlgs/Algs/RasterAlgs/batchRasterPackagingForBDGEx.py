@@ -373,7 +373,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             joinnedSeamline = self.algRunner.runJoinAttributesByLocation(
                 inputLyr=valueDict["SEAMLINES_SHAPE"],
                 joinLyr=valueDict["TILE_SHAPE"],
-                predicateList=[AlgRunner.Intersect],
+                predicateList=[AlgRunner.Intersects],
                 method=0,
                 context=context,
             )

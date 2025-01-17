@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.3 - dev
+## 4.17.5 - dev
 
 Novas Funcionalidades:
 
@@ -12,7 +12,8 @@ Melhorias:
 - Atualiza o modelo EDGV 3.0 para a implementação 1.1.6;
 - Correção do comportamento do toggle layers;
 - Corrige mensagem de erro quando o BDGEx não está acessível;
-- Atualiza Create Review Grid para ficar compatível com os atributos previstos no SAP Operador 3.29.14
+- Atualiza Create Review Grid para ficar compatível com os atributos previstos no SAP Operador 3.29.14;
+- Melhora o desempenho do algoritmo de construir polígonos por linha e centróide;
 
 Correção de bugs:
 

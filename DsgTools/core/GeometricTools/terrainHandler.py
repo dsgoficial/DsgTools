@@ -513,7 +513,7 @@ class TerrainModel:
                 joinLyr=self.terrainPolygonLayer,
                 context=context,
                 feedback=multiStepFeedback,
-                predicateList=[self.algRunner.Intersect],
+                predicateList=[self.algRunner.Intersects],
                 method=0,
                 discardNonMatching=True,
                 is_child_algorithm=False,
@@ -532,7 +532,7 @@ class TerrainModel:
                 joinLyr=self.contourMiddlePointsLyr,
                 context=context,
                 feedback=multiStepFeedback,
-                predicateList=[self.algRunner.Intersect],
+                predicateList=[self.algRunner.Intersects],
                 method=0,
                 discardNonMatching=True,
                 is_child_algorithm=False,
@@ -1060,7 +1060,7 @@ class TerrainModel:
             inputLyr=self.spotElevationLyr,
             intersectLyr=self.contourLyr,
             context=context,
-            predicate=[self.algRunner.Intersect],
+            predicate=[self.algRunner.Intersects],
         )
         if spotElevationsThatIntersectContours.featureCount() > 0:
             flagDict = dict()
