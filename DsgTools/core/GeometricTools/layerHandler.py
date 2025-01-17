@@ -2603,7 +2603,7 @@ class LayerHandler(QObject):
         #                             for camada in constraintPolygonLyrList]
         #     inputCenterPointLyr = algRunner.runClip(inputCenterPointLyr, limit,
         #                                             context)
-        nSteps = 20 + 2*(geographicBoundaryLyr is not None) + 2*(not suppressPolygonWithoutCenterPointFlag)
+        nSteps = 21 + 2*(geographicBoundaryLyr is not None) + 2*(not suppressPolygonWithoutCenterPointFlag)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback) if feedback is not None else None
         fieldNames = [f.name() for f in inputCenterPointLyr.fields() if f.name() not in attributeBlackList]
         currentStep = 0
@@ -2701,7 +2701,7 @@ class LayerHandler(QObject):
         joined = algRunner.runJoinAttributesByLocation(
             inputLyr=inputCenterPointLyr,
             joinLyr=filteredBuiltPolygonLyr,
-            predicateList=[AlgRunner.Within],
+            predicateList=[AlgRunner.Intersect],
             joinFields=["AUTO"],
             method=0,
             prefix="pol_",
@@ -2745,12 +2745,16 @@ class LayerHandler(QObject):
         )
         idsWithProblems = set()
         flagDict = dict()
-        for p in polygonsWithMoreThanOneCenterPoint.getFeatures():
-            idsWithProblems.add(p["pol_AUTO"])
-            geom = p.geometry()
-            flagDict[geom.asWkb()] = self.tr(
-                "Polygon with more than one center point with conflicting attributes."
-            )
+        if polygonsWithMoreThanOneCenterPoint.featureCount() > 0:
+            request = QgsFeatureRequest()
+            request.setFilterExpression(f'"AUTO" in ({", ".join(map(str, [p["pol_AUTO"] for p in polygonsWithMoreThanOneCenterPoint.getFeatures()]))})')
+            polygonFeatDict = {feat['AUTO']: feat for feat in filteredBuiltPolygonLyr.getFeatures(request)}
+            for p in polygonsWithMoreThanOneCenterPoint.getFeatures():
+                idsWithProblems.add(p["pol_AUTO"])
+                geom = polygonFeatDict[p["pol_AUTO"]].geometry()
+                flagDict[geom.asWkb()] = self.tr(
+                    "Polygon with more than one center point with conflicting attributes."
+                )
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -2766,7 +2770,7 @@ class LayerHandler(QObject):
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
             for p in polygonsWithNoCenterPoint.getFeatures():
-                idsWithProblems.add(p["pol_AUTO"])
+                idsWithProblems.add(p["AUTO"])
                 geom = p.geometry()
                 flagDict[geom.asWkb()] = self.tr("Polygon without center point.")
             currentStep += 1
@@ -2777,7 +2781,7 @@ class LayerHandler(QObject):
             expression=f'"AUTO" not in ({", ".join(map(str, idsWithProblems))})',
             context=context,
             feedback=multiStepFeedback
-        )
+        ) if len(idsWithProblems) > 0 else filteredBuiltPolygonLyr
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -2788,9 +2792,18 @@ class LayerHandler(QObject):
         polygonsWithAttributes = algRunner.runJoinAttributesByLocation(
             inputLyr=builtPolygonsWithoutProblems,
             joinLyr=inputCenterPointLyr,
-            predicateList=[AlgRunner.Within],
+            predicateList=[AlgRunner.Contain],
             joinFields=fieldNames,
             method=1,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        polygonsWithAttributes = algRunner.runRetainFields(
+            inputLayer=polygonsWithAttributes,
+            fieldList=fieldNames,
             context=context,
             feedback=multiStepFeedback,
         )

@@ -2572,7 +2572,6 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        return output["OUTPUT"]
               
     def runDSGToolsExtractMiddleVertexOnLine(
         self,
@@ -2587,6 +2586,29 @@ class AlgRunner:
             "dsgtools:extractmiddlevertexonlinealgorithm",
             {
                 "INPUT": inputLayer,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runRetainFields(
+        self,
+        inputLayer: QgsVectorLayer,
+        fieldList: List[str],
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:retainfields",
+            {
+                "INPUT": inputLayer,
+                "FIELDS": fieldList,
                 "OUTPUT": outputLyr,
             },
             context=context,
