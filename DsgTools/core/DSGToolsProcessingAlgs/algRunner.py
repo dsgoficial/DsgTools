@@ -55,14 +55,14 @@ class AlgRunner:
         RMSA,
     ) = range(13)
     (
-        Intersect,
-        Contain,
+        Intersects,
+        Contains,
         Disjoint,
-        Equal,
-        Touch,
-        Overlap,
+        Equals,
+        Touches,
+        Overlaps,
         Within,
-        Cross,
+        Crosses,
     ) = range(8)
     (
         AlignNodesInsertExtraVerticesWhereRequired,  # Prefer aligning nodes, insert extra vertices where required

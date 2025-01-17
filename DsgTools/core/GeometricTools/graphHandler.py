@@ -1238,9 +1238,9 @@ def find_constraint_points(
         else constraintLayer
     )
     predicate = (
-        AlgRunner.Intersect
+        AlgRunner.Intersects
         if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry
-        else AlgRunner.Equal
+        else AlgRunner.Equals
     )
     selectedNodesFromOcean = algRunner.runExtractByLocation(
         inputLyr=nodesLayer,

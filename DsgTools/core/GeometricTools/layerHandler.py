@@ -2681,7 +2681,7 @@ class LayerHandler(QObject):
         filteredBuiltPolygonLyr: QgsVectorLayer = algRunner.runExtractByLocation(
             builtPolygonLyr,
             filteredPointsLyr,
-            predicate=[AlgRunner.Contain],
+            predicate=[AlgRunner.Contains],
             context=context,
             feedback=multiStepFeedback,
         )
@@ -2701,7 +2701,7 @@ class LayerHandler(QObject):
         joined = algRunner.runJoinAttributesByLocation(
             inputLyr=inputCenterPointLyr,
             joinLyr=filteredBuiltPolygonLyr,
-            predicateList=[AlgRunner.Intersect],
+            predicateList=[AlgRunner.Intersects],
             joinFields=["AUTO"],
             method=0,
             prefix="pol_",
@@ -2792,7 +2792,7 @@ class LayerHandler(QObject):
         polygonsWithAttributes = algRunner.runJoinAttributesByLocation(
             inputLyr=builtPolygonsWithoutProblems,
             joinLyr=inputCenterPointLyr,
-            predicateList=[AlgRunner.Contain],
+            predicateList=[AlgRunner.Contains],
             joinFields=fieldNames,
             method=1,
             context=context,
