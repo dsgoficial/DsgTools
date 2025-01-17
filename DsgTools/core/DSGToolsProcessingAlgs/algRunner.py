@@ -936,12 +936,12 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runMergeVectorLayers(
-        self, inputList, context, feedback=None, outputLyr=None, crs=None
+        self, inputList, context, feedback=None, outputLyr=None, crs=None, is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"LAYERS": inputList, "CRS": crs, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:mergevectorlayers", parameters, context=context, feedback=feedback
+            "native:mergevectorlayers", parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm
         )
         return output["OUTPUT"]
 
