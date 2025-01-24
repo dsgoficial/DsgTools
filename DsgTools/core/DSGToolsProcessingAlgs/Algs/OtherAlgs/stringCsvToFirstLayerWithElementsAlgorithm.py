@@ -67,6 +67,9 @@ class StringCsvToFirstLayerWithElementsAlgorithm(QgsProcessingAlgorithm):
                 feedback.setProgress(100)
                 return {"OUTPUT": lyr}
             feedback.setProgress(idx * progressStep)
+        if nSteps == 1:
+            lyr = QgsProcessingUtils.mapLayerFromString(layerName, context)
+            return {"OUTPUT": lyr}
 
         return {"OUTPUT": None}  # case where no layer from input has elements
 
