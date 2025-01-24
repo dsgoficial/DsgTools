@@ -82,6 +82,8 @@ class ImportExportFileWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         fd.setDirectory(QDir.homePath())
         filename = fd.getSaveFileName(caption=self.caption, filter=self.filter)
+        if filename == ("", ""):
+            return
         filename = (
             filename[0]
             if Path(filename[0]).suffix
