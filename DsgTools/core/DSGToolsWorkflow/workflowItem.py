@@ -460,6 +460,7 @@ class DSGToolsWorkflowItem(QObject):
                         f"Workflow item {self.displayName} {statusMsg}"
                     ),
                 )
+                self.feedback.setProgress(100)
             else:
                 self.executionOutput = ModelExecutionOutput(
                     executionMessage=self.tr(
