@@ -33,8 +33,8 @@ from DsgTools.Modules.acquisitionMenu.controllers.acquisitionMenuCtrl import (
 )
 from .ContourTool.calc_contour import CalcContour
 from .ComplexTools.complexWindow import ComplexWindow
-from .QualityAssuranceToolBox.qualityAssuranceDockWidget import (
-    QualityAssuranceDockWidget,
+from .WorkflowToolBox.workflowDockWidget import (
+    WorkflowDockWidget,
 )
 
 
@@ -66,9 +66,9 @@ class ToolBoxesGuiManager(QObject):
     def initGui(self):
         self.qaToolBox = None
         self.addTool(
-            self.showQaToolBox,
+            self.showWorkflowToolBox,
             "validationtools.png",
-            self.tr("Geospatial Data Quality Assurance Tool"),
+            self.tr("Workflow Toolbox"),
             parentButton=self.stackButton,
             setDefaultAction=True,
         )
@@ -156,17 +156,17 @@ class ToolBoxesGuiManager(QObject):
         if self.qaToolBox is not None:
             self.iface.removeDockWidget(self.qaToolBox)
             del self.qaToolBox
-        self.qaToolBox = QualityAssuranceDockWidget(self.iface)
+        self.qaToolBox = WorkflowDockWidget(self.iface)
         return self.qaToolBox
 
-    def showQaToolBox(self):
+    def showWorkflowToolBox(self):
         """
         Shows/Hides the Quality Assurance Dock on main window.
         """
         if self.qaToolBox:
             self.iface.removeDockWidget(self.qaToolBox)
         else:
-            self.qaToolBox = QualityAssuranceDockWidget(self.iface)
+            self.qaToolBox = WorkflowDockWidget(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.qaToolBox)
 
     def showCalcContourToolbox(self):

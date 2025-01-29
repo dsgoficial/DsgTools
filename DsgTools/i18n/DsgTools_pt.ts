@@ -18221,74 +18221,74 @@ Usuários com erro:</translation>
     </message>
 </context>
 <context>
-    <name>QualityAssuranceDockWidget</name>
+    <name>WorkflowDockWidget</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="72"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="72"/>
         <source>Not yet run</source>
         <translation>Ainda não executado</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="73"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="73"/>
         <source>Running...</source>
         <translation>Executando...</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="74"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="74"/>
         <source>On hold</source>
         <translation>Em espera</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="75"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="75"/>
         <source>Halted on flags</source>
         <translation>Parado nas flags</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="76"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="76"/>
         <source>Canceled</source>
         <translation>Cancelado</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="77"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="77"/>
         <source>Failed</source>
         <translation>Falha</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="78"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="78"/>
         <source>Completed</source>
         <translation>Completado</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="79"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="79"/>
         <source>Completed (raised flags)</source>
         <translation>Cocluído (com flags)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="101"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="101"/>
         <source>DSGTools Q&amp;A Tool Box: Confirm action</source>
         <translation>DSGTools Caixa de Ferramentas de Validação: Confirmar a ação</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="205"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="205"/>
         <source>Model name</source>
         <translation>Nome do modelo</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="205"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="205"/>
         <source>Status</source>
         <translation>Estado</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="205"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="205"/>
         <source>Progress</source>
         <translation>Progresso</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="215"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="215"/>
         <source>Select a workflow...</source>
         <translation>Selecione um fluxo de trabalho...</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="223"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="223"/>
         <source>Workflow author: {author}
 Workflow version: {version}
 Last modification: {lastModified}</source>
@@ -18297,47 +18297,47 @@ Versão do fluxo de trabalho: {version}
 Última modificação: {lastModified}</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="287"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="287"/>
         <source>Are you sure you want to remove workflow {0}?</source>
         <translation>Você tem certeza que quer remover o fluxo de trabalho {0}?</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="736"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="736"/>
         <source>DSGTools Q&amp;A Tool Box</source>
         <translation>DSGTools Caixa de Ferramentas de Validação</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="321"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="321"/>
         <source>modified name is already set for other workflow. Nothing changed.</source>
         <translation>nome modificado já foi atribuído a outro fluxo de trabalho. Nenhuma modificação foi feita.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="333"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="333"/>
         <source>{0} updated (make sure you exported it).</source>
         <translation>{0} atualizado (certifique-se de exportá-lo).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="338"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="338"/>
         <source>{1} renamed to {0} and updated (make sure you exported it).</source>
         <translation>{1}renomeado para {0} e atualizado (certifique-se de exportá-lo).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="690"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="690"/>
         <source>DSGTools Q&amp;A Toolbox</source>
         <translation>DSGTools Caixa de Ferramentas de Validação</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="424"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="424"/>
         <source>model {0} status changed to {1}.</source>
         <translation>Estado do modelo {0} mudado para {1}.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="440"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="440"/>
         <source>Model {0} status changed to {1}.</source>
         <translation>Estado do modelo {0} mudado para {1}.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="483"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="483"/>
         <source>Model author: {0}
 Model version: {1}
 Last modification: {2}
@@ -18350,37 +18350,37 @@ Versão do modelo: {1}
 {3}</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="684"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="684"/>
         <source>workflow {0} finished with flags.</source>
         <translation>Fluxo de trabalho {0} finalizado com flags.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="688"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="688"/>
         <source>workflow {0} finished.</source>
         <translation>Fluxo de trabalho {0} finalizado.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="709"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="709"/>
         <source>please select a valid Workflow.</source>
         <translation>por favor selecionar um fluxo de trablaho válido.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="723"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="723"/>
         <source>Select Workflow files</source>
         <translation>Selecione arquivos de fluxo de trabalho</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="723"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="723"/>
         <source>DSGTools Workflow (*.workflow *.json)</source>
         <translation>Fluxo de Trabalho do DSGTools (*.workflow *.json)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="736"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="736"/>
         <source>workflow &apos;{path}&apos; was not imported: &apos;{msg}&apos;</source>
         <translation>fluxo de trbalho &apos;{path}&apos; não foi importado: &apos;{msg}&apos;</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="758"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="758"/>
         <source>Model {model} imported.</source>
         <translation>Modelo {model} importado.</translation>
     </message>
@@ -22350,52 +22350,52 @@ Camada</translation>
 <context>
     <name>ValidationDockWidget</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="14"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.ui" line="14"/>
         <source>&amp;DSGTools: Geospatial Data Quality Assurance Toolbox</source>
         <translation>&amp;DSGTools: Caixa de Ferramentas de Validação de Dados Geoespaciais</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="36"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.ui" line="36"/>
         <source>Adds a workflow</source>
         <translation>Adiciona um fluxo de trabalho</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="57"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.ui" line="57"/>
         <source>Edits current selected workflow</source>
         <translation>Edita o fluxo de trabalho atualmente selecionado</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="78"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.ui" line="78"/>
         <source>Removes current selected workflow</source>
         <translation>Remove o fluxo de trablaho atualmente selecionado</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="105"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.ui" line="105"/>
         <source>Imports a workflow from a file</source>
         <translation>Importa um fluxo de trabalho a partir de um arquivo</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="135"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.ui" line="135"/>
         <source>Model Name</source>
         <translation>Nome do modelo</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="140"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.ui" line="140"/>
         <source>Status</source>
         <translation>Estado</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="145"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.ui" line="145"/>
         <source>Progress</source>
         <translation>Progresso</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="264"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.ui" line="264"/>
         <source>Run</source>
         <translation>Executar</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="290"/>
+        <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.ui" line="290"/>
         <source>Resume from last model</source>
         <translation>Recupera a partir do último modelo</translation>
     </message>

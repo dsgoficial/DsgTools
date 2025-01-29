@@ -48,7 +48,7 @@ from qgis.PyQt.QtWidgets import (
     QMenu,
 )
 
-from DsgTools.gui.ProductionTools.Toolboxes.QualityAssuranceToolBox.workflowSetupDialog import (
+from DsgTools.gui.ProductionTools.Toolboxes.WorkflowToolBox.workflowSetupDialog import (
     WorkflowSetupDialog,
 )
 from DsgTools.core.DSGToolsWorkflow.workflowItem import (
@@ -63,11 +63,11 @@ from DsgTools.core.DSGToolsWorkflow.workflow import (
 
 
 FORM_CLASS, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), "qualityAssuranceDockWidget.ui")
+    os.path.join(os.path.dirname(__file__), "workflowDockWidget.ui")
 )
 
 
-class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
+class WorkflowDockWidget(QDockWidget, FORM_CLASS):
     # current execution status
 
     def __init__(self, iface, parent=None):
@@ -78,7 +78,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         :param parent: (QtWidgets.*) any widget to parent this object's
                        instance.
         """
-        super(QualityAssuranceDockWidget, self).__init__(parent)
+        super(WorkflowDockWidget, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
         self._previousWorkflow = None

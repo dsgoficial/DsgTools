@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.6 - dev
+## 4.17.7 - dev
 
 Novas Funcionalidades:
 
@@ -14,6 +14,7 @@ Melhorias:
 - Corrige mensagem de erro quando o BDGEx não está acessível;
 - Atualiza Create Review Grid para ficar compatível com os atributos previstos no SAP Operador 3.29.14;
 - Melhora o desempenho do algoritmo de construir polígonos por linha e centróide;
+- Caixa de Ferramentas de Controle de Qualidade renomeada para Workflow Toolbox;
 
 Correção de bugs:
 
