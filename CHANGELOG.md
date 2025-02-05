@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.7 - dev
+## 4.17.8 - dev
 
 Novas Funcionalidades:
 
@@ -21,6 +21,7 @@ Correção de bugs:
 - Corrige bug na ferramenta de validação do terreno;
 - Corrige bug na ferramenta de extração de ponto cotados e melhora os critérios de inserção (caso de depressão, ordenamento geográfico e de cota para gerar um resultado determinístico);
 - Corrige bug na opção de uso de thread do algoritmo de construir polígonos por linha e centróide (crashes nos QGIS mais novos);
+- Corrige bug no algoritmo de criação de polígonos por linha e centróide (crash com camada vazia de polígonos);
 
 ## 4.16.0 - 2024-11-27
 
