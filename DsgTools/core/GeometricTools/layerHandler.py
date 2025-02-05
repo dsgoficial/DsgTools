@@ -2639,11 +2639,12 @@ class LayerHandler(QObject):
             inputList=constraintPolygonList,
             context=context,
             feedback=multiStepFeedback
-        )
+        ) if len(constraintPolygonList) > 0 else None
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(constraintPolygonLyr, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        if constraintPolygonLyr is not None:
+            algRunner.runCreateSpatialIndex(constraintPolygonLyr, context, feedback=multiStepFeedback, is_child_algorithm=True)
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -2670,7 +2671,7 @@ class LayerHandler(QObject):
             context,
             predicate=[AlgRunner.Disjoint],
             feedback=multiStepFeedback,
-        )
+        ) if constraintPolygonLyr is not None else centerPointsFromBuiltPolygons
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
