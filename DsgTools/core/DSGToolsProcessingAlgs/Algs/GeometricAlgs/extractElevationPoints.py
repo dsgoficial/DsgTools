@@ -54,7 +54,6 @@ from qgis.core import (
     QgsProcessingParameterField,
     QgsVectorLayerUtils,
     QgsProcessingParameterVectorLayer,
-    QgsProject,
     QgsProcessingParameterExpression,
     QgsProcessingParameterBoolean,
     QgsFeatureRequest,
@@ -636,6 +635,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             transform,
             distance=localBufferDistance,
             maskLyr=maskLyr,
+            crs=maskLyr.crs() if maskLyr is not None else clippedRasterLyr.crs(),
             feedback=multiStepFeedback,
         )
         minMaxFeats = self.getMinFeatures(
@@ -645,6 +645,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             transform,
             distance=localBufferDistance,
             maskLyr=maskLyr,
+            crs=maskLyr.crs() if maskLyr is not None else clippedRasterLyr.crs(),
             feedback=multiStepFeedback,
         )
         maskLyr = AlgRunner().runMergeVectorLayers([maskLyr, contourBufferLyr], context)
@@ -1628,7 +1629,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
     def getMaxFeatures(
-        self, fields, npRaster, transform, distance, maskLyr, feedback=None
+        self, fields, npRaster, transform, distance, maskLyr, crs, feedback=None
     ):
         featSet = set()
         maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(npRaster)
@@ -1652,7 +1653,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             maxFeatLyr = LayerHandler().createMemoryLayerWithFeatures(
                 featList=maxFeatList,
                 fields=fields,
-                crs=maskLyr.crs(),
+                crs=crs,
                 wkbType=QgsWkbTypes.Point,
                 context=QgsProcessingContext(),
             )
@@ -1691,7 +1692,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         return list(featSet)
 
     def getMinFeatures(
-        self, maxFeats, fields, npRaster, transform, distance, maskLyr, feedback=None
+        self, maxFeats, fields, npRaster, transform, distance, maskLyr, crs, feedback=None
     ):
         featSet = set(maxFeats)
         npRasterCopy = np.array(npRaster)
@@ -1717,7 +1718,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             minFeatLyr = LayerHandler().createMemoryLayerWithFeatures(
                 featList=minFeatList,
                 fields=fields,
-                crs=maskLyr.crs(),
+                crs=crs,
                 wkbType=QgsWkbTypes.Point,
                 context=QgsProcessingContext(),
             )
@@ -2039,7 +2040,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        QgsProject.instance().addMapLayer(hillTopsLyr)
+
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
