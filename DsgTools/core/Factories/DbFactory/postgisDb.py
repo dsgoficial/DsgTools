@@ -2883,7 +2883,7 @@ class PostgisDb(AbstractDb):
             cleaned_query = cleaned_query.replace(token, "")
         
         # Determine the split token
-        split_tokens = ["=", "<@"]
+        split_tokens = ["=", "<@", "@>", "<>", "!=", "~", "~*", "!~", "!~*"]
         split_token = next((token for token in split_tokens if token in cleaned_query), "=")
         
         # Split the query into attribute and values
