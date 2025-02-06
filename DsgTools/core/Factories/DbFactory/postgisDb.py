@@ -2853,12 +2853,13 @@ class PostgisDb(AbstractDb):
             .replace("ANY", "")
             .replace("ARRAY", "")
             .replace("::smallint", "")
+            .replace("::character varying", "")
+            .replace("::text", "")
             .replace("(", "")
             .replace(")", "")
             .replace("CHECK", "")
             .replace("[", "")
             .replace("]", "")
-            .replace(" ", "")
         )
         checkList = []
         splitToken = ""
@@ -2866,9 +2867,14 @@ class PostgisDb(AbstractDb):
             splitToken = "="
         elif "<@" in query1Split:
             splitToken = "<@"
-        equalSplit = query1Split.split(splitToken)
+        equalSplit = [part.strip() for part in query1Split.split(splitToken)]
         attribute = equalSplit[0]
-        checkList = list(map(int, equalSplit[1].split(",")))
+        checkList = [val.strip().strip("'") for val in equalSplit[1].split(',')]
+        try:
+            checkList = list(map(int,checkList))
+        except:
+            pass
+            
         return tableName, attribute, checkList
 
     def getMultiColumnsDict(self, layerFilter=None):

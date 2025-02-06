@@ -25,7 +25,7 @@ from builtins import object
 import os.path
 import sys
 
-from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtCore import QObject, Qt
 from .LoadLayersFromServer.loadLayersFromServer import LoadLayersFromServer
 from .CreateFrameTool.ui_create_inom_dialog import CreateInomDialog
 
@@ -83,6 +83,7 @@ class LayerToolsGuiManager(QObject):
         Shows the dialog that loads layers from server
         """
         dlg = LoadLayersFromServer(self.iface)
+        dlg.setWindowFlags(dlg.windowFlags() | Qt.WindowStaysOnTopHint)
         dlg.show()
         result = dlg.exec_()
         if result:

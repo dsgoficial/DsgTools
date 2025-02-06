@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.8 - dev
+## 4.17.9 - dev
 
 Novas Funcionalidades:
 
@@ -15,6 +15,7 @@ Melhorias:
 - Atualiza Create Review Grid para ficar compatível com os atributos previstos no SAP Operador 3.29.14;
 - Melhora o desempenho do algoritmo de construir polígonos por linha e centróide;
 - Caixa de Ferramentas de Controle de Qualidade renomeada para Workflow Toolbox;
+- Muda o comportamento da janela de carregamento (agora ela fica sempre no topo);
 
 Correção de bugs:
 
@@ -22,6 +23,7 @@ Correção de bugs:
 - Corrige bug na ferramenta de extração de ponto cotados e melhora os critérios de inserção (caso de depressão, ordenamento geográfico e de cota para gerar um resultado determinístico);
 - Corrige bug na opção de uso de thread do algoritmo de construir polígonos por linha e centróide (crashes nos QGIS mais novos);
 - Corrige bug no algoritmo de criação de polígonos por linha e centróide (crash com camada vazia de polígonos);
+- Corrige bug no carregamento com constraint string.
 
 ## 4.16.0 - 2024-11-27
 
