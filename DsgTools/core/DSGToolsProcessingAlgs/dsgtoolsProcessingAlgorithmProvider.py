@@ -74,6 +74,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinat
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingForBDGEx import (
     BatchRasterPackagingForBDGEx,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.prepareFilesForRasterPackagingForBDGEx import PrepareRasterFilesForPackagingForBDGEx
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
     FixSegmentErrorsBetweenLinesAlgorithm,
 )
@@ -727,6 +728,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ConvertDatabasesAlgorithm(),
             ExportPostGISDataToShapefile(),
             ExtractMiddleVertexOnLineAlgorithm(),
+            PrepareRasterFilesForPackagingForBDGEx(),
         ]
         return algList
 

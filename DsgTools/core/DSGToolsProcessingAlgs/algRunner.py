@@ -74,6 +74,19 @@ class AlgRunner:
         SnapEndPointsToEndPointsOnly,  # Snap end points to end points only
         SnapToAnchorNodes,  # Snap to anchor nodes (single layer only)
     ) = range(8)
+    (
+        FieldTypeDecimal,
+        FieldTypeInteger,
+        FieldTypeText,
+        FieldTypeDate,
+        FieldTypeTime,
+        FieldTypeDateAndTime,
+        FieldTypeBoolean,
+        FieldTypeBlob,
+        FieldTypeStringList,
+        FieldTypeIntegerList,
+        FieldTypeDecimalList,
+    ) = range(11)
 
     def generateGrassOutputAndError(self):
         uuid_value = str(uuid.uuid4()).replace("-", "")

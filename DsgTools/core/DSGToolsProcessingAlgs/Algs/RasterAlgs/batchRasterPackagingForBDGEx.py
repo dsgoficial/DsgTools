@@ -161,12 +161,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     for fileName in fileNameList
                 )
                 matchedFeature = self.shapefilesDict[folderKey]["FEAT_DICT"][geomWkb]
-                productName = f"""{matchedFeature["source"]}"""
-                if matchedFeature["productTyp"] != NULL:
-                    productName += (
-                        f"""_{matchedFeature["productTyp"].replace(" ","_")}"""
-                    )
-                productName += f"""_{re.sub("T.+", "", matchedFeature["acquisitio"]).replace("-","")}_id_{matchedFeature['featureId']}"""
+                productName = self.getProductName(matchedFeature)
                 output_file_path = output_dir / f"{productName}{input_path.suffix}"
                 vrt = self.algRunner.runBuildVRT(
                     inputRasterList=[
@@ -229,6 +224,17 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         return {
             "OUTPUT_FOLDER": output_path,
         }
+
+    def getProductName(self, matchedFeature):
+        if "_filename" in [f.name() for f in matchedFeature.fields()]:
+            return matchedFeature["_filename"]
+        productName = f"""{matchedFeature["source"]}"""
+        if matchedFeature["productTyp"] != NULL:
+            productName += (
+                        f"""_{matchedFeature["productTyp"].replace(" ","_")}"""
+                    )
+        productName += f"""_{re.sub("T.+", "", matchedFeature["acquisitio"]).replace("-","")}_id_{matchedFeature['featureId']}"""
+        return productName
 
     def getClipPolygonLayers(
         self,

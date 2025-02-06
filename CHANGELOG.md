@@ -1,11 +1,12 @@
 # CHANGELOG
 
-## 4.17.9 - dev
+## 4.17.10 - dev
 
 Novas Funcionalidades:
 
 - Novo algoritmo de conversão de modelagens no provedor de algoritmos;
 - Novo algoritmo de exportação de modelos implementados em PostGIS para shapefile no provedor de algoritmos;
+- Novo algoritmo de preparo de arquivos para empacotamento no BDGEx;
 
 Melhorias:
 
