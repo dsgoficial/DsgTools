@@ -2842,39 +2842,62 @@ class PostgisDb(AbstractDb):
         return tableName, attribute, checkList
 
     def parseCheckConstraintWithAny(self, queryValue0, queryValue1):
-        if "." in queryValue0:
-            query0Split = queryValue0.split(".")
-            tableSchema = query0Split[0]
-            tableName = query0Split[1]
-        else:
-            tableName = queryValue0
-        query1Split = (
-            queryValue1.replace('"', "")
-            .replace("ANY", "")
-            .replace("ARRAY", "")
-            .replace("::smallint", "")
-            .replace("::character varying", "")
-            .replace("::text", "")
-            .replace("(", "")
-            .replace(")", "")
-            .replace("CHECK", "")
-            .replace("[", "")
-            .replace("]", "")
-        )
-        checkList = []
-        splitToken = ""
-        if "=" in query1Split:
-            splitToken = "="
-        elif "<@" in query1Split:
-            splitToken = "<@"
-        equalSplit = [part.strip() for part in query1Split.split(splitToken)]
-        attribute = equalSplit[0]
-        checkList = [val.strip().strip("'") for val in equalSplit[1].split(',')]
+        # Handle table name parsing
+        tableName = queryValue0.split(".")[-1] if "." in queryValue0 else queryValue0
+        
+        # Define SQL type castings to remove
+        sql_type_castings = [
+            "::smallint",
+            "::bigint",
+            "::integer",
+            "::character varying",
+            "::varchar",
+            "::text",
+            "::numeric",
+            "::boolean",
+            "::timestamp",
+            "::date",
+            "::time",
+            "::interval",
+        ]
+        
+        # Define SQL keywords and symbols to remove
+        sql_tokens = [
+            "ANY",
+            "ARRAY",
+            "CHECK",
+            "(", ")",
+            "[", "]",
+            '"',
+        ]
+        
+        # Clean the query string
+        cleaned_query = queryValue1
+        
+        # Remove SQL type castings
+        for casting in sql_type_castings:
+            cleaned_query = cleaned_query.replace(casting, "")
+        
+        # Remove other SQL tokens
+        for token in sql_tokens:
+            cleaned_query = cleaned_query.replace(token, "")
+        
+        # Determine the split token
+        split_tokens = ["=", "<@"]
+        split_token = next((token for token in split_tokens if token in cleaned_query), "=")
+        
+        # Split the query into attribute and values
+        attribute, values = [part.strip() for part in cleaned_query.split(split_token)]
+        
+        # Process the check list
+        checkList = [val.strip().strip("'") for val in values.split(',')]
+        
+        # Try to convert values to integers if possible
         try:
-            checkList = list(map(int,checkList))
-        except:
+            checkList = list(map(int, checkList))
+        except ValueError:
             pass
-            
+        
         return tableName, attribute, checkList
 
     def getMultiColumnsDict(self, layerFilter=None):
