@@ -38,7 +38,6 @@ from qgis.core import (
     QgsRasterLayer,
     QgsVectorLayer,
     QgsFeedback,
-    QgsVectorLayerError,
     QgsVectorFileWriter,
     QgsField,
 )
@@ -186,7 +185,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                     # Load the source shapefile
                     source_layer = QgsVectorLayer(str(product_shape_file), "source", "ogr")
                     if not source_layer.isValid():
-                        raise QgsVectorLayerError(f"Failed to load source layer: {product_shape_file}")
+                        raise QgsProcessingException(f"Failed to load source layer: {product_shape_file}")
 
                     # Create new filename
                     original_name = product_shape_file.stem
@@ -214,7 +213,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                     )
 
                     if writer.hasError() != QgsVectorFileWriter.NoError:
-                        raise QgsVectorLayerError(f"Error creating writer for {output_file}")
+                        raise QgsProcessingException(f"Error creating writer for {output_file}")
 
                     # Get total feature count for progress
                     feature_count = source_layer.featureCount()
@@ -254,11 +253,6 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                     del writer
                     if multiStepFeedback is not None:
                         multiStepFeedback.pushInfo(f"Created {output_file}")
-
-                except QgsVectorLayerError as e:
-                    if multiStepFeedback is not None:
-                        multiStepFeedback.reportError(f"QGIS vector layer error: {str(e)}")
-                    continue
                 except PermissionError:
                     if multiStepFeedback is not None:
                         multiStepFeedback.reportError(f"Permission denied when creating output file")
