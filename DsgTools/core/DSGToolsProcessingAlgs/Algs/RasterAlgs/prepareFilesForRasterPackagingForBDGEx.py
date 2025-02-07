@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 
+import re
 import zipfile
 from xml.etree import ElementTree
 from pathlib import Path
@@ -84,10 +85,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(0)
         self.unzipFiles(inputFiles, output_path, multiStepFeedback)
         multiStepFeedback.setCurrentStep(1)
-        self.buildSeamlinesFile(output_path, multiStepFeedback)
-
-        input_folder_path = Path(inputFolder).resolve()
-        output_base_path = Path(output_path).resolve()
+        self.process_delivery_metadata(output_path, multiStepFeedback)
         
         return {
             "OUTPUT_FOLDER": output_path,
@@ -189,7 +187,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
 
                     # Create new filename
                     original_name = product_shape_file.stem
-                    new_name = original_name.replace('_PRODUCT_SHAPE', '_SEAMLINES')
+                    new_name = original_name.replace('_PRODUCT_SHAPE', '_SEAMLINES_SHAPE')
                     output_file = str(product_shape_file.parent / f"{new_name}.shp")
 
                     # Create field mappings for the new layer
@@ -197,7 +195,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                     
                     # Add new fields for metadata
                     fields.append(QgsField("sensorVeh", QVariant.String))
-                    fields.append(QgsField("acqTime", QVariant.String))
+                    fields.append(QgsField("acquisitio", QVariant.String))
                     fields.append(QgsField("catIdent", QVariant.String))
                     fields.append(QgsField("relDir", QVariant.String))
                     fields.append(QgsField("_filename", QVariant.String))
@@ -242,10 +240,10 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                             
                         # Add metadata attributes
                         new_feature["sensorVeh"] = metadata_dict["sensorVehicle"]
-                        new_feature["acqTime"] = metadata_dict["earliestAcquisitionTime"]
+                        new_feature["acquisitio"] = metadata_dict["earliestAcquisitionTime"]
                         new_feature["catIdent"] = f'ID_{metadata_dict["catalogIdentifier"]}'
                         new_feature["relDir"] = metadata_dict["relativeDirectory"]
-                        new_feature["_filename"] = f'{metadata_dict["sensorVehicle"]}_{feature["bandInfo"]}_{metadata_dict["earliestAcquisitionTime"]}_{metadata_dict["catalogIdentifier"]}_R_{metadata_dict["relativeDirectory"]}'
+                        new_feature["_filename"] = f'{metadata_dict["sensorVehicle"]}_{feature["bandInfo"]}_{re.sub("T.+", "", metadata_dict["earliestAcquisitionTime"]).replace("-","")}_{metadata_dict["catalogIdentifier"]}_R_{metadata_dict["relativeDirectory"].replace("/GIS_FILES", "")}'.replace(" ","_").replace("/GIS_FILES", "")
                         
                         writer.addFeature(new_feature)
 
