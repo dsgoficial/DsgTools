@@ -20,6 +20,7 @@
  ***************************************************************************/
 """
 from itertools import product
+import os
 from typing import Dict, List, Tuple, Union
 from uuid import uuid4
 
@@ -280,19 +281,64 @@ def createMaxPointFeatListFromRasterLayer(
 
 
 def writeOutputRaster(outputRaster, npRaster, ds, outputType=None):
-    outputType = gdal.GDT_Int32 if outputType is None else outputType
-    driver = gdal.GetDriverByName("GTiff")
-    out_ds = driver.Create(
-        outputRaster, npRaster.shape[1], npRaster.shape[0], 1, outputType
-    )
-    out_ds.SetProjection(ds.GetProjection())
-    out_ds.SetGeoTransform(ds.GetGeoTransform())
-    out_ds.GetRasterBand(1).SetNoDataValue(-9999)
-    band = out_ds.GetRasterBand(1)
-    band.WriteArray(npRaster)
-    band.FlushCache()
-    band.ComputeStatistics(False)
-    out_ds = None
+    try:
+        # 1. Check if file is in use
+        if os.path.exists(outputRaster):
+            try:
+                with open(outputRaster, 'r+b'):
+                    pass
+            except IOError:
+                raise RuntimeError(f"Output file {outputRaster} is locked or in use")
+
+        # 2. Check directory permissions
+        output_dir = os.path.dirname(outputRaster)
+        if not os.access(output_dir, os.W_OK):
+            raise RuntimeError(f"No write permission in directory {output_dir}")
+
+        # 3. Verify input data
+        if npRaster is None or ds is None:
+            raise ValueError("Input raster or dataset is None")
+
+        # 5. Verify array isn't empty and has valid dimensions
+        if npRaster.size == 0 or len(npRaster.shape) != 2:
+            raise ValueError(f"Invalid array shape: {npRaster.shape}")
+
+        outputType = gdal.GDT_Int32 if outputType is None else outputType
+        driver = gdal.GetDriverByName("GTiff")
+        options = ['COMPRESS=LZW', 'TILED=YES']
+        
+        # 6. Verify driver
+        if driver is None:
+            raise RuntimeError("Failed to get GTiff driver")
+
+        # 7. Create output dataset with error catching
+        mem_driver = gdal.GetDriverByName('MEM')
+        temp_ds = mem_driver.Create('', 
+                                  int(npRaster.shape[1]), 
+                                  int(npRaster.shape[0]), 
+                                  1, 
+                                  gdal.GDT_Int16)
+        
+        temp_ds.SetProjection(ds.GetProjection())
+        temp_ds.SetGeoTransform(ds.GetGeoTransform())
+        temp_ds.GetRasterBand(1).SetNoDataValue(-9999)
+        temp_ds.GetRasterBand(1).WriteArray(npRaster.astype(np.int16))
+        
+        translate_options = gdal.TranslateOptions(format='GTiff', 
+                                                creationOptions=['COMPRESS=LZW', 'TILED=YES'])
+        
+        gdal.Translate(outputRaster, 
+                      temp_ds, 
+                      options=translate_options)
+        
+    except Exception as e:
+        import traceback
+        error_msg = f"Failed to write raster:\n{str(e)}\n{traceback.format_exc()}"
+        raise RuntimeError(error_msg)
+    finally:
+        # Clean up
+        if 'temp_ds' in locals() and temp_ds is not None:
+            temp_ds = None
 
 
 def getNumpyViewFromPolygon(
