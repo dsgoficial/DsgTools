@@ -50,6 +50,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeWate
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import (
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2 import ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsToNearestNeighborAlgorithm import (
     ReclassifyAdjacentPixelsToNearestNeighborAlgorithm,
 )
@@ -711,6 +712,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyUncoveredStartAndEndPointsAlgorithm(),
             ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(),
+            ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(),
             ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(),
             FindSmallClosedLinesAlgorithm(),
             SetLineOrientation(),

@@ -280,7 +280,15 @@ def createMaxPointFeatListFromRasterLayer(
     )
 
 
-def writeOutputRaster(outputRaster, npRaster, ds, outputType=None):
+def writeOutputRaster(outputRaster, npRaster, ds=None, outputType=None):
+    driver = gdal.GetDriverByName("GTiff")
+    ds = ds if ds is not None else driver.Create(
+        outputRaster, 
+        int(npRaster.shape[1]), 
+        int(npRaster.shape[0]), 
+        1, 
+        gdal.GDT_Int16
+    )
     try:
         # 1. Check if file is in use
         if os.path.exists(outputRaster):
@@ -304,7 +312,6 @@ def writeOutputRaster(outputRaster, npRaster, ds, outputType=None):
             raise ValueError(f"Invalid array shape: {npRaster.shape}")
 
         outputType = gdal.GDT_Int32 if outputType is None else outputType
-        driver = gdal.GetDriverByName("GTiff")
         options = ['COMPRESS=LZW', 'TILED=YES']
         
         # 6. Verify driver
@@ -342,7 +349,7 @@ def writeOutputRaster(outputRaster, npRaster, ds, outputType=None):
 
 
 def getNumpyViewFromPolygon(
-    npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2
+    npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2, returnWindow=False,
 ) -> np.array:
     bbox = geom.boundingBox()
     terrain_xmin, terrain_ymin, terrain_xmax, terrain_ymax = bbox.toRectF().getCoords()
@@ -354,7 +361,12 @@ def getNumpyViewFromPolygon(
         max(xmin - pixelBuffer, 0) : xmax + pixelBuffer + 1,
         max(ymin - pixelBuffer, 0) : ymax + pixelBuffer + 1,
     ]
-    return npView
+    return npView if not returnWindow else npView, {
+        'x_start': xmin,
+        'x_end': xmax,
+        'y_start': ymin,
+        'y_end': ymax,
+    }
 
 
 def getNumpyViewAndMaskFromPolygon(
