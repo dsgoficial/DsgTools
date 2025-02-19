@@ -51,6 +51,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGrou
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2 import ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3 import ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsToNearestNeighborAlgorithm import (
     ReclassifyAdjacentPixelsToNearestNeighborAlgorithm,
 )
@@ -713,6 +714,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(),
+            ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(),
             ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(),
             FindSmallClosedLinesAlgorithm(),
             SetLineOrientation(),

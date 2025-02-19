@@ -42,6 +42,7 @@ from qgis.core import (
     QgsVectorFileWriter,
     QgsVectorLayer,
     QgsProcessingContext,
+    QgsPointXY,
 )
 
 
@@ -357,48 +358,84 @@ def getNumpyViewFromPolygon(
     c, d = map(int, ~transform * (terrain_xmax, terrain_ymax))
     xmin, xmax = min(a, c), max(a, c)
     ymin, ymax = min(b, d), max(b, d)
-    npView = npRaster[
-        max(xmin - pixelBuffer, 0) : xmax + pixelBuffer + 1,
-        max(ymin - pixelBuffer, 0) : ymax + pixelBuffer + 1,
-    ]
+    
+    x_start = max(xmin - pixelBuffer, 0)
+    x_end = min(xmax + pixelBuffer + 1, npRaster.shape[0])
+    y_start = max(ymin - pixelBuffer, 0)
+    y_end = min(ymax + pixelBuffer + 1, npRaster.shape[1])
+
+    npView = npRaster[x_start:x_end, y_start:y_end]
     return npView if not returnWindow else npView, {
-        'x_start': xmin,
-        'x_end': xmax,
-        'y_start': ymin,
-        'y_end': ymax,
+        'x_start': x_start,
+        'x_end': x_end,
+        'y_start': y_start,
+        'y_end': y_end,
     }
 
 
 def getNumpyViewAndMaskFromPolygon(
     npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2
 ) -> Tuple[np.array, np.array]:
+    """
+    Get a view of the numpy array for a polygon and create a mask of pixels that intersect with the polygon.
+    Strictly contains modifications within polygon boundaries.
+    
+    Parameters:
+        npRaster: The input numpy array
+        transform: Affine transform from pixel to world coordinates
+        geom: The polygon geometry
+        pixelBuffer: Buffer in pixels around the polygon bbox
+        
+    Returns:
+        Tuple of (array view, mask array) where mask is NaN inside polygon and original raster value outside
+    """
     bbox = geom.boundingBox()
     terrain_xmin, terrain_ymin, terrain_xmax, terrain_ymax = bbox.toRectF().getCoords()
+    
+    # Convert terrain coordinates to pixel coordinates
     a, b = map(int, ~transform * (terrain_xmin, terrain_ymin))
     c, d = map(int, ~transform * (terrain_xmax, terrain_ymax))
     xmin, xmax = min(a, c), max(a, c)
     ymin, ymax = min(b, d), max(b, d)
-    npView = npRaster[
-        max(xmin - pixelBuffer, 0) : xmax + pixelBuffer + 1,
-        max(ymin - pixelBuffer, 0) : ymax + pixelBuffer + 1,
-    ]
-    mask = np.zeros((1, npView.shape[0] * npView.shape[1]))
-    productPairList = list(
-        product(
-            range(max(xmin - pixelBuffer, 0), xmax + pixelBuffer + 1),
-            range(max(ymin - pixelBuffer, 0), ymax + pixelBuffer + 1),
-        )
-    )
-    maxIdx = npView.shape[0] * npView.shape[1]
-    for idx, transformedPair in enumerate(productPairList):
-        transfCoord = transform * transformedPair
-        candGeom = QgsGeometry(QgsPoint(*transfCoord))
-        if not candGeom.intersects(geom):
-            continue
-        if idx >= maxIdx:
-            break
-        mask[:, idx] = np.nan
-    mask = mask.reshape(npView.shape)
+    
+    # Calculate view boundaries with buffer
+    view_xmin = max(xmin - pixelBuffer, 0)
+    view_xmax = min(xmax + pixelBuffer + 1, npRaster.shape[0])
+    view_ymin = max(ymin - pixelBuffer, 0)
+    view_ymax = min(ymax + pixelBuffer + 1, npRaster.shape[1])
+    
+    # Get the view of the raster
+    npView = npRaster[view_xmin:view_xmax, view_ymin:view_ymax]
+    
+    # Create mask array initialized with the original raster values
+    mask = np.zeros(npView.shape)
+    
+    # Iterate through pixels in the view
+    for i in range(view_xmax - view_xmin):
+        for j in range(view_ymax - view_ymin):
+            # Get pixel coordinates
+            pixel_x = view_xmin + i
+            pixel_y = view_ymin + j
+            
+            # Get pixel corners in world coordinates
+            corners = [
+                transform * (pixel_x, pixel_y),  # Upper left
+                transform * (pixel_x + 1, pixel_y),  # Upper right
+                transform * (pixel_x + 1, pixel_y + 1),  # Lower right
+                transform * (pixel_x, pixel_y + 1)  # Lower left
+            ]
+            
+            # Get center point
+            center_x, center_y = transform * (pixel_x + 0.5, pixel_y + 0.5)
+            center_point = QgsGeometry.fromPointXY(QgsPointXY(center_x, center_y))
+            
+            # Create pixel polygon from corners
+            pixel_poly = QgsGeometry.fromPolygonXY([[QgsPointXY(*corner) for corner in corners]])
+            
+            # Check if pixel is completely inside polygon
+            if geom.contains(center_point) and geom.intersects(pixel_poly):
+                mask[i, j] = np.nan
+            
     return npView, mask
 
 

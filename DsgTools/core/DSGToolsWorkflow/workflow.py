@@ -164,6 +164,8 @@ class DSGToolsWorkflow(QObject):
 
     def getNextWorkflowItem(self) -> DSGToolsWorkflowItem:
         nextStepIdx = self.getNextWorkflowStep()
+        if nextStepIdx is None:
+            return None
         return self.workflowItemList[nextStepIdx]
 
     def getCurrentWorkflowItem(self) -> DSGToolsWorkflowItem:

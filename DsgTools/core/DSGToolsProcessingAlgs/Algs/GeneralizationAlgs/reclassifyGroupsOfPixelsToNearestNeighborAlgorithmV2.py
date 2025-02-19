@@ -19,23 +19,24 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
-from typing import Any, Dict, List, Set, Tuple, Optional
+
+
+from dataclasses import dataclass
+from typing import Any, Dict, List
 from uuid import uuid4
 import numpy as np
 import numpy.ma as ma
 from osgeo import gdal
-from functools import lru_cache
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass
-from copy import deepcopy
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
+    ValidationAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools import rasterHandler
 
 from PyQt5.QtCore import QCoreApplication
 
+from DsgTools.core.GeometricTools.affine import Affine
 from DsgTools.core.Utils.threadingTools import concurrently
 from qgis.core import (
     QgsProcessingException,
@@ -48,8 +49,8 @@ from qgis.core import (
     QgsFeedback,
     QgsProcessingParameterNumber,
     QgsProcessingParameterBoolean,
+    QgsGeometry,
     QgsProcessingUtils,
-    QgsGeometry
 )
 
 @dataclass
@@ -64,6 +65,12 @@ class RegionGroup:
     def __hash__(self):
         """Make RegionGroup hashable for caching"""
         return hash(self.region_id)
+    
+    def __post_init__(self):
+        self.geometries = sorted(self.geometries, key=lambda x: x.area(), reverse=False)
+    
+    def isValid(self):
+        return self.window_data.shape > (1, 1)
 
 class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
     INPUT = "INPUT"
@@ -71,9 +78,11 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
     NODATA_VALUE = "NODATA_VALUE"
     USE_THREADS = "USE_THREADS"
     OUTPUT = "OUTPUT"
-    
+
     def initAlgorithm(self, config):
-        """Parameter setting."""
+        """
+        Parameter setting.
+        """
         self.addParameter(
             QgsProcessingParameterRasterLayer(
                 self.INPUT,
@@ -81,14 +90,17 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
             )
         )
 
-        param = QgsProcessingParameterDistance(
-            self.MIN_AREA,
-            self.tr("Minimum area to process"),
-            parentParameterName=self.INPUT,
-            defaultValue=1e-8,
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.MIN_AREA,
+                self.tr(
+                    "Minimun area to process. If feature's area is smaller than this value, "
+                    "the feature will not be split, but only reclassified to the nearest neighbour. "
+                    "Area in meters."
+                ),
+                defaultValue=15625,
+            )
         )
-        param.setMetadata({"widget_wrapper": {"decimals": 10}})
-        self.addParameter(param)
 
         self.addParameter(
             QgsProcessingParameterNumber(
@@ -109,10 +121,278 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterRasterDestination(
-                self.OUTPUT,
-                self.tr("Output Raster")
+                self.OUTPUT, self.tr("Output Raster")
             )
         )
+
+    def processAlgorithm(self, parameters, context, feedback):
+        """
+        Here is where the processing itself takes place.
+        """
+        try:
+            from scipy.spatial import KDTree
+        except ImportError:
+            raise QgsProcessingException(self.tr("This algorithm requires scipy. Please install this library and try again."))
+        try:
+            import networkx as nx
+        except ImportError:
+            raise QgsProcessingException(self.tr("This algorithm requires networkx. Please install this library and try again."))
+        self.algRunner = AlgRunner()
+        inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT, context)
+        min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
+        self.nodata_value = self.parameterAsInt(parameters, self.NODATA_VALUE, context)
+        use_threads = self.parameterAsBool(parameters, self.USE_THREADS, context)
+        outputRaster = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(12, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Running initial polygonize"))
+        polygonLayer = self.algRunner.runGdalPolygonize(
+            inputRaster=inputRaster,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        selectedPolygonLayer = self.algRunner.runFilterExpression(
+            inputLyr=polygonLayer,
+            expression=f"""$area < {min_area} and "DN" != {self.nodata_value} """,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        nFeats = selectedPolygonLayer.featureCount()
+        if nFeats == 0:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.algRunner.runRasterClipByExtent(
+                inputRaster=inputRaster,
+                extent=inputRaster.extent(),
+                nodata=self.nodata_value,
+                context=context,
+                outputLyr=outputRaster,
+                feedback=multiStepFeedback,
+            )
+            return {self.OUTPUT: outputRaster}
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            selectedPolygonLayer, context, multiStepFeedback, is_child_algorithm=True
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        explodedBboxLine = self.computeBboxLine(parameters, context, multiStepFeedback)
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        polygonsNotOnEdge = self.algRunner.runExtractByLocation(
+            inputLyr=selectedPolygonLayer,
+            intersectLyr=explodedBboxLine,
+            context=context,
+            predicate=[AlgRunner.Disjoint],
+            feedback=multiStepFeedback,
+        )
+        if polygonsNotOnEdge.featureCount() == 0:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.algRunner.runRasterClipByExtent(
+                inputRaster=inputRaster,
+                extent=inputRaster.extent(),
+                nodata=self.nodata_value,
+                context=context,
+                outputLyr=outputRaster,
+                feedback=multiStepFeedback,
+            )
+            return {self.OUTPUT: outputRaster}
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            polygonsNotOnEdge, context, multiStepFeedback, is_child_algorithm=True
+        )
+
+        currentStep += 1
+        polygonsWithCount = self.algRunner.runJoinByLocationSummary(
+            inputLyr=polygonsNotOnEdge,
+            joinLyr=polygonsNotOnEdge,
+            joinFields=[],
+            predicateList=[AlgRunner.Intersects],
+            summaries=[0],
+            feedback=multiStepFeedback,
+            context=context,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Reading input numpy array"))
+
+        ds, npRaster = rasterHandler.readAsNumpy(inputRaster, dtype=np.int16)
+        transform = rasterHandler.getCoordinateTransform(ds)
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Masking for each polygon"))
+        request = QgsFeatureRequest()
+        request.setFilterExpression(""" "DN_count" = 1 """)
+        out = self.reclassifyGroupsOfPixelsInsidePolygons(
+            KDTree,
+            multiStepFeedback,
+            polygonsWithCount,
+            npRaster,
+            transform,
+            request,
+            self.nodata_value,
+        )
+
+        if not out:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.algRunner.runRasterClipByExtent(
+                inputRaster=inputRaster,
+                extent=inputRaster.extent(),
+                nodata=self.nodata_value,
+                context=context,
+                outputLyr=outputRaster,
+                feedback=multiStepFeedback,
+            )
+            return {self.OUTPUT: outputRaster}
+
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Writing output"))
+        rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds)
+
+        request = QgsFeatureRequest()
+        clause = QgsFeatureRequest.OrderByClause("$area", ascending=True)
+        orderby = QgsFeatureRequest.OrderBy([clause])
+        request.setOrderBy(orderby)
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Evaluating remaining polygons"))
+
+        ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int16)
+        transform = rasterHandler.getCoordinateTransform(ds)
+        polygonLayer = self.algRunner.runGdalPolygonize(
+            inputRaster=outputRaster,
+            context=context,
+        )
+        selectedPolygonLayer = self.algRunner.runFilterExpression(
+            inputLyr=polygonLayer,
+            expression=f"""$area < {min_area} and "DN" != {self.nodata_value} """,
+            context=context,
+        )
+        polygonsNotOnEdge = self.algRunner.runExtractByLocation(
+            inputLyr=selectedPolygonLayer,
+            intersectLyr=explodedBboxLine,
+            context=context,
+            predicate=[AlgRunner.Disjoint],
+            feedback=multiStepFeedback,
+        )
+        remainingFeatCount = polygonsNotOnEdge.featureCount()
+        if remainingFeatCount == 0:
+            return {self.OUTPUT: outputRaster}
+
+        multiStepFeedback.pushInfo(
+            self.tr(f"Evaluating {remainingFeatCount} groups of remaining pixels")
+        )
+
+        innerFeedback = QgsProcessingMultiStepFeedback(
+            remainingFeatCount, multiStepFeedback
+        )
+
+        regions = self.aggregate_polygons_to_regions(
+            nx,
+            polygonsNotOnEdge,
+            npRaster,
+            transform,
+            innerFeedback,
+            context
+        )
+        
+        currentStep +=1
+        innerFeedback.setCurrentStep(currentStep)
+        rasterProjection = ds.GetProjection()
+        # Process all groups using threads if enabled
+        changes_made = self.process_independent_groups(
+            regions,
+            transform,
+            min_area,
+            use_threads,
+            rasterProjection,
+            innerFeedback,
+            context,
+        )
+        currentStep +=1
+        innerFeedback.setCurrentStep(currentStep)
+        any_changes = False
+        for change in changes_made:
+            if change is not None and change['changes_made']:
+                window = change['window']
+                window_data = change['window_data']
+                
+                # Apply the window data back to the main array
+                npRaster[
+                    window['x_start']:window['x_end'],
+                    window['y_start']:window['y_end']
+                ] = window_data
+                
+                any_changes = True
+        
+        # Only write output and continue if changes were made
+        if any_changes:
+            # Write intermediate result
+            rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds)
+
+        return {self.OUTPUT: outputRaster}
+
+    def computeBboxLine(
+        self,
+        parameters: Dict[str, Any],
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+    ):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        bbox = self.algRunner.runPolygonFromLayerExtent(
+            inputLayer=parameters[self.INPUT],
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        bboxLine = self.algRunner.runPolygonsToLines(
+            inputLyr=bbox,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        explodedBboxLine = self.algRunner.runExplodeLines(
+            inputLyr=bboxLine,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            explodedBboxLine, context, multiStepFeedback, is_child_algorithm=True
+        )
+
+        return explodedBboxLine
 
     def build_polygon_graph(self, nx, polygons, context, feedback):
         """Build a graph of polygon interactions using QGIS processing"""
@@ -149,23 +429,10 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
                 continue
             graph.add_edge(feat['featid'], feat['i_featid'])
         return graph
-
-    def compute_nearest_neighbors(
-        self,
-        xygood: np.ndarray,
-        xybad: np.ndarray,
-        tree: Optional[Any] = None
-    ) -> np.ndarray:
-        """Compute nearest neighbors using provided or new KDTree"""
-        if tree is None:
-            from scipy.spatial import KDTree
-            tree = KDTree(xygood)
-        return tree.query(xybad)[1]
-
-    def process_window(self, window_data, window, transform, min_area, feedback=None, context=None):
+    
+    def process_window(self, window_data, window, transform, min_area, rasterProjection, pixelBuffer=2, feedback=None, context=None):
         """Process a single raster window, handling one polygon at a time"""
         from scipy.spatial import KDTree
-        changes_made = False
         context = QgsProcessingContext() if context is None else context
         
         # Validate window data dimensions
@@ -175,7 +442,8 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
         rows, cols = window_data.shape
         if rows <= 0 or cols <= 0:
             return None
-        
+        nIterations = None
+        currentIteration = 0
         while True:
             if feedback is not None and feedback.isCanceled():
                 break
@@ -185,13 +453,35 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
                 f"temp_window_{str(uuid4().hex)}.tif"
             )
             
-            rasterHandler.writeOutputRaster(temp_output, window_data.T)
+            # Create a new temporary dataset with proper geotransform
+            driver = gdal.GetDriverByName('GTiff')
+            temp_ds = driver.Create(temp_output, rows, cols, 1, gdal.GDT_Int16)
+            
+            window_transform = Affine(
+                transform.a,                                    # a: scale x
+                transform.b,                                    # b: shear x
+                transform.c + window['x_start'] * transform.a,  # c: translate x
+                transform.d,                                    # d: shear y
+                transform.e,                                    # e: scale y
+                transform.f + window['y_start'] * transform.e   # f: translate y
+            )
+            
+            # Set the geotransform using GDAL's expected format
+            temp_ds.SetGeoTransform(window_transform.to_gdal())
+            temp_ds.SetProjection(rasterProjection)  # Assuming ds is accessible or pass it as parameter
+            
+            # Write the data
+            temp_ds.GetRasterBand(1).WriteArray(window_data.T)
+            temp_ds.GetRasterBand(1).SetNoDataValue(self.nodata_value)
+            
+            # Flush to disk
+            temp_ds.FlushCache()
+            temp_ds = None
                 
             # Polygonize current window state
             polygonLayer = self.algRunner.runGdalPolygonize(
                 inputRaster=temp_output,
                 context=context,
-                feedback=feedback
             )
             
             # Filter small polygons within the window
@@ -199,82 +489,53 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
                 inputLyr=polygonLayer,
                 expression=f"""$area < {min_area} and "DN" != {self.nodata_value}""",
                 context=context,
-                feedback=feedback
             )
             
             if selectedPolygons.featureCount() == 0:
                 break
-                
+            bbox = self.algRunner.runPolygonFromLayerExtent(
+                inputLayer=polygonLayer,
+                context=context,
+                is_child_algorithm=True,
+            )
+            bboxLine = self.algRunner.runPolygonsToLines(
+                inputLyr=bbox,
+                context=context,
+                is_child_algorithm=True,
+            )
+            explodedBboxLine = self.algRunner.runExplodeLines(
+                inputLyr=bboxLine,
+                context=context,
+                is_child_algorithm=True,
+            )
+            polygonsNotOnEdge = self.algRunner.runExtractByLocation(
+                inputLyr=selectedPolygons,
+                intersectLyr=explodedBboxLine,
+                context=context,
+                predicate=[AlgRunner.Disjoint],
+            )
+            if polygonsNotOnEdge.featureCount() == 0:
+                break
+            if nIterations is None:
+                nIterations = 10 * polygonsNotOnEdge.featureCount()
             request = QgsFeatureRequest()
             clause = QgsFeatureRequest.OrderByClause("$area", ascending=True)
             orderby = QgsFeatureRequest.OrderBy([clause])
             request.setOrderBy(orderby)
 
             # Process one polygon at a time
-            feat = next(selectedPolygons.getFeatures(request))
-            current_geom = feat.geometry()
-            current_value = feat['DN']
-            
-            # Get view and mask for the single polygon
-            view, mask = rasterHandler.getNumpyViewAndMaskFromPolygon(
-                npRaster=window_data,
-                transform=transform,
-                geom=current_geom,
-                pixelBuffer=2
-            )
-            
-            if view is None or view.size == 0:
-                continue
-                
-            # Create masked array for processing
-            masked_view = ma.masked_array(
-                view,
-                view == current_value,
-                np.int16
-            )
-            masked_view = ma.masked_array(
-                masked_view,
-                view == self.nodata_value,
-                dtype=np.int16
-            )
-            
-            if masked_view.mask.all():
-                continue
-                
-            # Create coordinate grids
-            x, y = np.mgrid[0:masked_view.shape[0], 0:masked_view.shape[1]]
-            xygood = np.array((x[~masked_view.mask], y[~masked_view.mask])).T
-            xybad = np.array((x[masked_view.mask], y[masked_view.mask])).T
-            
-            if len(xygood) == 0 or len(xybad) == 0:
-                continue
-            
-            # Compute nearest neighbors
-            tree = KDTree(xygood)
-            nearest_indices = tree.query(xybad)[1]
-            masked_view[masked_view.mask] = masked_view[~masked_view.mask][nearest_indices]
-            
-            # Create change mask and apply changes
-            result_view = masked_view.data
-            changes_mask = (result_view != view) & ~np.isnan(mask)
-            
-            if changes_mask.any():
-                # Apply changes to window data
-                x_start = max(0, window.get('x_start', 0))
-                y_start = max(0, window.get('y_start', 0))
-                window_data[
-                    x_start:x_start + view.shape[0],
-                    y_start:y_start + view.shape[1]
-                ][changes_mask] = result_view[changes_mask]
-                changes_made = True
-        
-        if changes_made:
-            return {
-                'window_data': window_data,
-                'changes_made': True,
-                'window': window
-            }
-        return None
+            feat = next(polygonsNotOnEdge.getFeatures(request), None)
+            if feat is None:
+                break
+            self.processPixelGroup(KDTree, window_data, window_transform, feat, self.nodata_value, pixelBuffer=pixelBuffer)
+            currentIteration += 1
+            if currentIteration > nIterations:
+                break
+        return {
+            'window_data': window_data,
+            'changes_made': True,
+            'window': window
+        }
 
     def aggregate_polygons_to_regions(self, nx, polygons, npRaster, transform, feedback, context):
         """Aggregate polygons into regions based on spatial relationships"""
@@ -321,84 +582,26 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
                 dn_values=component_dn_values,
                 window_data=window_data,
                 window=window,
-                region_id=f"region_{component_idx}"
+                region_id=f"region_{component_idx}",
             )
+            if not region.isValid():
+                continue
             regions.append(region)
         
         return regions
 
-    def get_raster_window(self, npRaster, transform, geometry, buffer_size=2):
-        """Get raster window corresponding to geometry extent with buffer"""
-        # Add buffer to bounding box
-        bbox = geometry.boundingBox()
-        pixel_size = max(abs(transform[0]), abs(transform[4]))
-        bbox.grow(buffer_size * pixel_size)
-        
-        # Convert bbox to pixel coordinates
-        # Convert world coordinates to pixel coordinates using the inverse transform
-        # For an affine transform:
-        # [x'] = [a b c] [x]
-        # [y'] = [d e f] [y]
-        # [1 ] = [0 0 1] [1]
-        # where (x',y') are world coords and (x,y) are pixel coords
-        # To get pixel coords, we need to solve for (x,y):
-        # x = (x' - c)/a
-        # y = (y' - f)/e
-        min_x = int((bbox.xMinimum() - transform[2]) / transform[0])
-        min_y = int((bbox.yMinimum() - transform[5]) / transform[4])
-        max_x = int((bbox.xMaximum() - transform[2]) / transform[0])
-        max_y = int((bbox.yMaximum() - transform[5]) / transform[4])
-        
-        # Get window coordinates
-        window = {
-            'x_start': max(0, int(min_x)),
-            'x_end': min(npRaster.shape[0], int(max_x) + 1),
-            'y_start': max(0, int(min_y)),
-            'y_end': min(npRaster.shape[1], int(max_y) + 1)
-        }
-        
-        # Extract window
-        window_data = npRaster[
-            window['x_start']:window['x_end'],
-            window['y_start']:window['y_end']
-        ].copy()
-        
-        return window_data, window
-
-    def process_independent_groups(self, regions, transform, min_area, use_threads, feedback, context):
+    def process_independent_groups(self, regions, transform, min_area, use_threads, rasterProjection, feedback, context):
         """Process independent raster regions"""
         all_results = []
-        processLambda = lambda x: self.process_window(x.window_data, x.window, transform, min_area)
+        processLambda = lambda x: self.process_window(x.window_data, x.window, transform, min_area, rasterProjection)
         
         if use_threads and len(regions) > 1:
             for result in concurrently(
-                processLambda, regions, max_concurrency=5
+                processLambda, regions, feedback=feedback
             ):
                 if result is None:
                     continue
                 all_results.append(result)
-                
-            # with ThreadPoolExecutor(max_workers=os.cpu_count()-1) as executor:
-            #     futures = []
-            #     for region in regions:
-            #         if feedback.isCanceled():
-            #             break
-            #         futures.append(
-            #             executor.submit(
-            #                 self.process_window,
-            #                 region.window_data,
-            #                 region.window,
-            #                 transform,
-            #                 min_area,
-            #             )
-            #         )
-                
-            #     for future in as_completed(futures):
-            #         if feedback.isCanceled():
-            #             break
-            #         result = future.result()
-            #         if result is not None:
-            #             all_results.append(result)
         else:
             for region in regions:
                 if feedback.isCanceled():
@@ -408,213 +611,80 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
                     region.window,
                     transform,
                     min_area,
-                    feedback,
-                    context,
+                    rasterProjection,
+                    feedback=feedback,
+                    context=context,
                 )
                 if result is not None:
                     all_results.append(result)
         
         return all_results
-
-    def processAlgorithm(self, parameters, context, feedback):
-        """Main processing algorithm"""
-        try:
-            from scipy.spatial import KDTree
-        except ImportError:
-            raise QgsProcessingException(self.tr("This algorithm requires scipy."))
-        try:
-            import networkx as nx
-        except ImportError:
-            raise QgsProcessingException(self.tr("This algorithm requires networkx."))
-            
-        self.algRunner = AlgRunner()
-        inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT, context)
-        min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
-        self.nodata_value = self.parameterAsInt(parameters, self.NODATA_VALUE, context)
-        use_threads = self.parameterAsBool(parameters, self.USE_THREADS, context)
-        outputRaster = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        
-        # Initial raster read
-        ds, npRaster = rasterHandler.readAsNumpy(inputRaster, dtype=np.int16)
-        transform = rasterHandler.getCoordinateTransform(ds)
-        
-        # Get edge boundaries
-        bbox_lines = self.computeBboxLine(parameters, context, feedback)
-        
-        # Main processing loop
-        iteration = 0
-        while True:
-            if feedback.isCanceled():
-                break
-                
-            # Polygonize current raster state
-            polygonLayer = self.algRunner.runGdalPolygonize(
-                inputRaster=outputRaster if iteration > 0 else inputRaster,
-                context=context,
-                feedback=feedback
-            )
-            
-            # Filter small polygons
-            selectedPolygons = self.algRunner.runFilterExpression(
-                inputLyr=polygonLayer,
-                expression=f"""$area < {min_area} and "DN" != {self.nodata_value}""",
-                context=context,
-                feedback=feedback
-            )
-            
-            if selectedPolygons.featureCount() == 0:
-                break
-                
-            # Remove edge polygons
-            interior_polygons = self.algRunner.runExtractByLocation(
-                inputLyr=selectedPolygons,
-                intersectLyr=bbox_lines,
-                context=context,
-                predicate=[AlgRunner.Disjoint],
-                feedback=feedback
-            )
-            
-            if interior_polygons.featureCount() == 0:
-                break
-            
-            # Prepare groups for processing
-            regions = self.aggregate_polygons_to_regions(
-                nx,
-                interior_polygons,
-                npRaster,
-                transform,
-                feedback,
-                context
-            )
-            
-            # Process all groups using threads if enabled
-            changes_made = self.process_independent_groups(
-                regions,
-                transform,
-                min_area,
-                use_threads,
-                feedback,
-                context,
-            )
-            
-            # Only write output and continue if changes were made
-            if changes_made:
-                # Write intermediate result
-                rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds)
-            else:
-                # No changes were made, we can exit the loop
-                break
-            
-            iteration += 1
-            
-            # Optional: add iteration limit
-            if iteration > 100:  # Prevent infinite loops
-                feedback.pushWarning(
-                    self.tr("Maximum iteration limit reached. Some small polygons may remain.")
-                )
-                break
-        
-        return {self.OUTPUT: outputRaster}
     
-    def computeBboxLine(
-        self,
-        parameters: Dict[str, Any],
-        context: QgsProcessingContext,
-        feedback: QgsFeedback,
-    ):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-        currentStep = 0
-        multiStepFeedback.setCurrentStep(currentStep)
-        bbox = self.algRunner.runPolygonFromLayerExtent(
-            inputLayer=parameters[self.INPUT],
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
-        )
-
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        bboxLine = self.algRunner.runPolygonsToLines(
-            inputLyr=bbox,
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
-        )
-
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        explodedBboxLine = self.algRunner.runExplodeLines(
-            inputLyr=bboxLine,
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
-        )
-
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(
-            explodedBboxLine, context, multiStepFeedback, is_child_algorithm=True
-        )
-
-        return explodedBboxLine
-    
-    def process_pixel_group(
+    def reclassifyGroupsOfPixelsInsidePolygons(
         self,
         KDTree,
-        pixel_group: RegionGroup,
-        nodata: int
-    ) -> Tuple[np.ndarray, np.ndarray]:
-        """Process a single pixel group and return changed pixels"""
-        original_view = np.array(pixel_group.buffer_view)
-        
-        # Create masked array for processing
-        masked_view = ma.masked_array(
-            pixel_group.buffer_view,
-            pixel_group.buffer_view == pixel_group.dn_value,
-            np.int16
+        multiStepFeedback,
+        polygonsWithCount,
+        npRaster,
+        transform,
+        request,
+        nodata,
+    ):
+        polygonList = sorted(
+            polygonsWithCount.getFeatures(request),
+            key=lambda x: x.geometry().area(),
+            reverse=False,
         )
-        masked_view = ma.masked_array(
-            masked_view,
-            pixel_group.buffer_view == nodata,
-            dtype=np.int16
-        )
-        
-        # Create coordinate grids
-        x, y = np.mgrid[0:masked_view.shape[0], 0:masked_view.shape[1]]
-        xygood = np.array((x[~masked_view.mask], y[~masked_view.mask])).T
-        xybad = np.array((x[masked_view.mask], y[masked_view.mask])).T
-        
-        if len(xygood) == 0 or len(xybad) == 0:
-            return None, None
-        
-        # Compute nearest neighbors
-        tree = KDTree(xygood)
-        nearest_indices = tree.query(xybad)[1]
-        masked_view[masked_view.mask] = masked_view[~masked_view.mask][nearest_indices]
-        
-        # Create change mask
-        result_view = masked_view.data
-        changes_mask = (result_view != original_view) & ~np.isnan(pixel_group.mask)
-        
-        return result_view[changes_mask], changes_mask
+        if len(polygonList) == 0:
+            return False
+        stepSize = 100 / len(polygonList)
+        for current, polygonFeat in enumerate(polygonList):
+            if multiStepFeedback.isCanceled():
+                break
+            self.processPixelGroup(KDTree, npRaster, transform, polygonFeat, nodata)
+            multiStepFeedback.setProgress(current * stepSize)
+        return True
 
-    def process_group_wrapper(self, group_data):
-        """Wrapper for thread processing"""
-        try:
-            from scipy.spatial import KDTree
-        except ImportError:
-            raise QgsProcessingException(self.tr("This algorithm requires scipy."))
+    def processPixelGroup(
+        self,
+        KDTree,
+        npRaster,
+        transform,
+        polygonFeat,
+        nodata,
+        pixelBuffer=2,
+    ):
+        geom = polygonFeat.geometry()
+
+        currentView, mask = rasterHandler.getNumpyViewAndMaskFromPolygon(
+            npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=pixelBuffer
+        )
+        if currentView is None or currentView.size == 0 or currentView.shape == (1, 1):
+            return
+        v = polygonFeat["DN"]
+        originalCopy = np.array(currentView)
+        maskedCurrentView = ma.masked_array(currentView, currentView == v, np.int16)
+        maskedCurrentView = ma.masked_array(
+            maskedCurrentView, currentView == nodata, dtype=np.int16
+        )
+         # If everything is masked, return original
+        if maskedCurrentView.mask.all():
+            return
             
-        results = []
-        for pixel_group in group_data:
-            result_pixels, change_mask = self.process_pixel_group(
-                KDTree,
-                pixel_group,
-                self.nodata_value
-            )
-            if result_pixels is not None:
-                results.append((pixel_group.pixel_coords, result_pixels, change_mask))
-        return results
+        # If nothing is masked (no pixels to change), return
+        if not maskedCurrentView.mask.any():
+            return
+        x, y = np.mgrid[0 : maskedCurrentView.shape[0], 0 : maskedCurrentView.shape[1]]
+        xygood = np.array((x[~maskedCurrentView.mask], y[~maskedCurrentView.mask])).T
+        xybad = np.array((x[maskedCurrentView.mask], y[maskedCurrentView.mask])).T
+        if len(xygood) == 0 or len(xybad) == 0:
+            return
+        maskedCurrentView[maskedCurrentView.mask] = maskedCurrentView[
+            ~maskedCurrentView.mask
+        ][KDTree(xygood).query(xybad)[1]]
+        currentView = maskedCurrentView.data
+        currentView[~np.isnan(mask)] = originalCopy[~np.isnan(mask)]
+        currentView[originalCopy == nodata] = originalCopy[originalCopy == nodata]
 
     def name(self):
         """
