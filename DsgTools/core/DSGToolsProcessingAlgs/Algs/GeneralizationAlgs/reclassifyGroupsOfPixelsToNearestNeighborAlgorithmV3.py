@@ -331,10 +331,18 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
                 request.setFilterExpression(f''' "featid" in ({', '.join(map(str, component))})''')
                 polygonDict = {f["featid"]:f for f in polygonsNotOnEdge.getFeatures(request)}
                 # polygonList = list(polygonsNotOnEdge.getFeatures(request))
-                # combined_geometry = QgsGeometry.unaryUnion([f.geometry() for f in polygonList])
-                # currentView, _ = rasterHandler.getNumpyViewAndMaskFromPolygon(
-                #     npRaster=npRaster, transform=transform, geom=combined_geometry, pixelBuffer=2
-                # )
+                combined_geometry = QgsGeometry.unaryUnion([f.geometry() for f in polygonDict.values()])
+                currentView, _, window = rasterHandler.getNumpyViewAndMaskFromPolygon(
+                    npRaster=npRaster, transform=transform, geom=combined_geometry, pixelBuffer=2, returnWindow=True,
+                )
+                window_transform = Affine(
+                    transform.a,                                    # a: scale x
+                    transform.b,                                    # b: shear x
+                    transform.c + window['x_start'] * transform.a,  # c: translate x
+                    transform.d,                                    # d: shear y
+                    transform.e,                                    # e: scale y
+                    transform.f + window['y_start'] * transform.e   # f: translate y
+                ) 
                 while polygonDict != dict():
                     if innerFeedback.isCanceled():
                         break
@@ -344,9 +352,13 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
                 # for feat in polygonsNotOnEdge.getFeatures(request):
                     if G.nodes[currentNode]["area"] > min_area:
                         continue
-                    self.processPixelGroup(KDTree, npRaster, transform, feat, nodata)
-                    dn_dict = self.buildDnDict(npRaster, feat.geometry(), transform, crs)
+                    self.processPixelGroup(KDTree, currentView, window_transform, feat, nodata)
+                    dn_dict = self.buildDnDict(currentView, feat.geometry(), window_transform, crs)
                     self.updateGraph(feat["featid"], G, originalGraph, dn_dict)
+                    npRaster[
+                        window['x_start']:window['x_end'],
+                        window['y_start']:window['y_end']
+                    ] = currentView
             nIterations += 1
             rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds, outputType=gdal.GDT_Int16)
             ds = None
@@ -402,14 +414,6 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
             pixelBuffer=0,
             returnWindow=True
         )
-        # window_transform = Affine(
-        #     transform.a,                                    # a: scale x
-        #     transform.b,                                    # b: shear x
-        #     transform.c + window['x_start'] * transform.a,  # c: translate x
-        #     transform.d,                                    # d: shear y
-        #     transform.e,                                    # e: scale y
-        #     transform.f + window['y_start'] * transform.e   # f: translate y
-        # ) 
         npView, mask = rasterHandler.getNumpyViewAndMaskFromPolygon(
             npRaster,
             transform,
@@ -530,7 +534,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
         geom = polygonFeat.geometry()
 
         currentView, mask = rasterHandler.getNumpyViewAndMaskFromPolygon(
-            npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=2
+            npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=2, returnWindow=False
         )
         v = polygonFeat["DN"]
         originalCopy = np.array(currentView)

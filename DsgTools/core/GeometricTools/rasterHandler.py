@@ -374,8 +374,8 @@ def getNumpyViewFromPolygon(
 
 
 def getNumpyViewAndMaskFromPolygon(
-    npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2
-) -> Tuple[np.array, np.array]:
+    npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2, returnWindow=False,
+) -> Union[Tuple[np.array, np.array], Tuple[np.array, np.array, Dict[str, float]]]:
     """
     Get a view of the numpy array for a polygon and create a mask of pixels that intersect with the polygon.
     Strictly contains modifications within polygon boundaries.
@@ -435,8 +435,15 @@ def getNumpyViewAndMaskFromPolygon(
             # Check if pixel is completely inside polygon
             if geom.contains(center_point) and geom.intersects(pixel_poly):
                 mask[i, j] = np.nan
-            
-    return npView, mask
+    if not returnWindow:
+        return npView, mask
+    else:
+        return npView, mask, {
+            'x_start': view_xmin,
+            'x_end': view_xmax,
+            'y_start': view_ymin,
+            'y_end': view_ymax,
+        }
 
 
 def buildNumpyNodataMaskForPolygon(
