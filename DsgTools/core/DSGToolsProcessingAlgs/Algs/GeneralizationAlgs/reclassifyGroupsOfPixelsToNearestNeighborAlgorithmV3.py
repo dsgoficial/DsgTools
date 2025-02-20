@@ -259,6 +259,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
+        originalGraph = None
         while True:
             currentStep = 11
             multiStepFeedback.setCurrentStep(currentStep)
@@ -284,7 +285,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
             self.algRunner.runCreateSpatialIndex(polygonLayer, context, feedback=multiStepFeedback, is_child_algorithm=True)
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            originalGraph = self.buildGraph(nx, polygonLayer, context, feedback=multiStepFeedback)
+            originalGraph = self.buildGraph(nx, polygonLayer, context, feedback=multiStepFeedback) if originalGraph is None else originalGraph
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             selectedPolygonLayer = self.algRunner.runFilterExpression(
@@ -324,19 +325,24 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
                 if innerFeedback.isCanceled():
                     break
                 request = QgsFeatureRequest()
-                clause = QgsFeatureRequest.OrderByClause("$area", ascending=True)
-                orderby = QgsFeatureRequest.OrderBy([clause])
-                request.setOrderBy(orderby)
+                # clause = QgsFeatureRequest.OrderByClause("$area", ascending=True)
+                # orderby = QgsFeatureRequest.OrderBy([clause])
+                # request.setOrderBy(orderby)
                 request.setFilterExpression(f''' "featid" in ({', '.join(map(str, component))})''')
+                polygonDict = {f["featid"]:f for f in polygonsNotOnEdge.getFeatures(request)}
                 # polygonList = list(polygonsNotOnEdge.getFeatures(request))
                 # combined_geometry = QgsGeometry.unaryUnion([f.geometry() for f in polygonList])
                 # currentView, _ = rasterHandler.getNumpyViewAndMaskFromPolygon(
                 #     npRaster=npRaster, transform=transform, geom=combined_geometry, pixelBuffer=2
                 # )
-                for feat in polygonsNotOnEdge.getFeatures(request):
+                while polygonDict != dict():
                     if innerFeedback.isCanceled():
                         break
-                    if G.nodes[feat["featid"]]["area"] > min_area:
+                    sortedNodes = sorted(polygonDict.keys(), key=lambda x: G.nodes[x]["area"], reverse=False)
+                    currentNode = sortedNodes[0]
+                    feat = polygonDict.pop(currentNode)
+                # for feat in polygonsNotOnEdge.getFeatures(request):
+                    if G.nodes[currentNode]["area"] > min_area:
                         continue
                     self.processPixelGroup(KDTree, npRaster, transform, feat, nodata)
                     dn_dict = self.buildDnDict(npRaster, feat.geometry(), transform, crs)
@@ -385,11 +391,11 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
             neighbor_dn = G.nodes[neighbor]['dn']
             if neighbor_dn not in dn_dict:
                 continue
-            G.nodes[neighbor]["area"] += dn_dict[neighbor_dn] #+ large_dn_dict.get(neighbor_dn, 0)
+            G.nodes[neighbor]["area"] += dn_dict[neighbor_dn] + large_dn_dict.get(neighbor_dn, 0)
         G.remove_node(featid)
     
     def buildDnDict(self, npRaster: np.ndarray, polygon: QgsGeometry, transform, crs) -> Dict[int, float]:
-        npView, window = rasterHandler.getNumpyViewFromPolygon(
+        _, window = rasterHandler.getNumpyViewFromPolygon(
             npRaster, 
             transform,
             polygon,
@@ -404,8 +410,8 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
         #     transform.e,                                    # e: scale y
         #     transform.f + window['y_start'] * transform.e   # f: translate y
         # ) 
-        _, mask = rasterHandler.getNumpyViewAndMaskFromPolygon(
-            npView,
+        npView, mask = rasterHandler.getNumpyViewAndMaskFromPolygon(
+            npRaster,
             transform,
             polygon,
             pixelBuffer=0,
