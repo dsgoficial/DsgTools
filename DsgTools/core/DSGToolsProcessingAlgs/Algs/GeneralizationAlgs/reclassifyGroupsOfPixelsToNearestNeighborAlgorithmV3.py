@@ -328,21 +328,22 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
                 orderby = QgsFeatureRequest.OrderBy([clause])
                 request.setOrderBy(orderby)
                 request.setFilterExpression(f''' "featid" in ({', '.join(map(str, component))})''')
-                polygonList = list(polygonsNotOnEdge.getFeatures(request))
-                combined_geometry = QgsGeometry.unaryUnion([f.geometry() for f in polygonList])
-                currentView, _ = rasterHandler.getNumpyViewAndMaskFromPolygon(
-                    npRaster=npRaster, transform=transform, geom=combined_geometry, pixelBuffer=2
-                )
-                for feat in polygonList:
+                # polygonList = list(polygonsNotOnEdge.getFeatures(request))
+                # combined_geometry = QgsGeometry.unaryUnion([f.geometry() for f in polygonList])
+                # currentView, _ = rasterHandler.getNumpyViewAndMaskFromPolygon(
+                #     npRaster=npRaster, transform=transform, geom=combined_geometry, pixelBuffer=2
+                # )
+                for feat in polygonsNotOnEdge.getFeatures(request):
                     if innerFeedback.isCanceled():
                         break
                     if G.nodes[feat["featid"]]["area"] > min_area:
                         continue
-                    self.processPixelGroup(KDTree, currentView, transform, feat, nodata)
-                    dn_dict = self.buildDnDict(currentView, feat.geometry(), transform, crs)
+                    self.processPixelGroup(KDTree, npRaster, transform, feat, nodata)
+                    dn_dict = self.buildDnDict(npRaster, feat.geometry(), transform, crs)
                     self.updateGraph(feat["featid"], G, originalGraph, dn_dict)
             nIterations += 1
             rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds, outputType=gdal.GDT_Int16)
+            ds = None
         return {self.OUTPUT: outputRaster} if polygons_sink is not None else {
             self.OUTPUT: outputRaster,
             self.RECLASSIFIED_POLYGONS: polygons_dest_id,
@@ -384,7 +385,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
             neighbor_dn = G.nodes[neighbor]['dn']
             if neighbor_dn not in dn_dict:
                 continue
-            G.nodes[neighbor]["area"] += dn_dict[neighbor_dn] + large_dn_dict.get(neighbor_dn, 0)
+            G.nodes[neighbor]["area"] += dn_dict[neighbor_dn] #+ large_dn_dict.get(neighbor_dn, 0)
         G.remove_node(featid)
     
     def buildDnDict(self, npRaster: np.ndarray, polygon: QgsGeometry, transform, crs) -> Dict[int, float]:
