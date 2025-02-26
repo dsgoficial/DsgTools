@@ -96,5 +96,6 @@
         <file>icons/DSGTools.png</file>
         <file>icons/DSGToolsIcon.png</file>
         <file>icons/closedLines.png</file>
+        <file>icons/flags_centroids.png</file>
     </qresource>
 </RCC>
