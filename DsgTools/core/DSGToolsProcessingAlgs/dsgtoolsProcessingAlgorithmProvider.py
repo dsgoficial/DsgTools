@@ -92,6 +92,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWaterBodyA
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicateNodesAlgorithm import (
     RemoveDuplicateVertexesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapFeaturesInsideLayerWithGroupByAlgorithm import SnapFeaturesInsideLayerWithGroupByAlgorithm
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -733,6 +734,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ExportPostGISDataToShapefile(),
             ExtractMiddleVertexOnLineAlgorithm(),
             PrepareRasterFilesForPackagingForBDGEx(),
+            SnapFeaturesInsideLayerWithGroupByAlgorithm(),
         ]
         return algList
 
