@@ -1,12 +1,14 @@
 # CHANGELOG
 
-## 4.17.10 - dev
+## 4.17.12 - dev
 
 Novas Funcionalidades:
 
 - Novo algoritmo de conversão de modelagens no provedor de algoritmos;
 - Novo algoritmo de exportação de modelos implementados em PostGIS para shapefile no provedor de algoritmos;
 - Novo algoritmo de preparo de arquivos para empacotamento no BDGEx;
+- Novo algoritmo de realizar snap dentro de uma camada agrupando por atributo;
+- Nova caixa de ferramenta de inspecionar flags de área com mais de um centroide;
 
 Melhorias:
 
