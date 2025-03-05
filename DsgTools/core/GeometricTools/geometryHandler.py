@@ -924,17 +924,22 @@ def make_valid(geom: QgsGeometry) -> QgsGeometry:
         newGeom = fix_geom_vertices(geom)
         newGeom.makeValid()
         return newGeom
-    partList = []
-    newGeom = None
+    
     parts = geom.asGeometryCollection()
-    for idx, part in enumerate(parts):
+    if not parts:
+        return QgsGeometry()
+    
+    # Initialize with the first part
+    firstPart = QgsGeometry(parts[0])
+    newGeom = fix_geom_vertices(firstPart)
+    newGeom.convertToMultiType()
+    
+    # Add remaining parts using addPartGeometry
+    for part in parts[1:]:
         partGeom = QgsGeometry(part)
         newPart = fix_geom_vertices(partGeom)
-        if idx == 0:
-            newGeom = newPart
-            newGeom.convertToMultiType()
-            continue
-        newGeom.addPart(newPart)
+        newGeom.addPartGeometry(newPart)  # Use addPartGeometry instead of addPart
+    
     newGeom.makeValid()
     return newGeom
 
