@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="flags_centroids.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.5917969"
+     inkscape:cx="256"
+     inkscape:cy="256"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <!-- Polígono irregular em volta dos pontos -->
+  <polygon
+     points="28,28 484,28 484,484 28,484"
+     fill="none"
+     stroke="#2c3e50"
+     stroke-width="24"
+     stroke-linejoin="round"
+     id="polygon1" />
+  <!-- Polígono adicional em volta dos pontos (forma irregular) -->
+  <polygon
+     points="270,340 200,330 160,270 180,220 240,180 300,210 320,280 "
+     fill="rgba(135,206,250,0.3)"
+     stroke="#3498db"
+     stroke-width="12"
+     stroke-linejoin="round"
+     id="polygon2"
+     transform="matrix(2.0974844,0,0,2.0068802,-240.15211,-242.31403)"
+     inkscape:label="polygon2"
+     style="fill:none" />
+  <!-- Centroide correto (ponto verde) -->
+  <circle
+     cx="256"
+     cy="256"
+     r="20"
+     fill="#2ecc71"
+     id="circle2" />
+  <!-- Centroide com erro (ponto vermelho) -->
+  <circle
+     cx="200"
+     cy="300"
+     r="20"
+     fill="#e74c3c"
+     id="circle3" />
+  <!-- Símbolo de lupa -->
+  <circle
+     cx="131.73006"
+     cy="104.08834"
+     r="48"
+     fill="none"
+     stroke="#3498db"
+     stroke-width="16"
+     id="circle4" />
+  <line
+     x1="91.730064"
+     y1="144.08835"
+     x2="61.730061"
+     y2="174.08835"
+     stroke="#3498db"
+     stroke-width="16"
+     stroke-linecap="round"
+     id="line4" />
+</svg>

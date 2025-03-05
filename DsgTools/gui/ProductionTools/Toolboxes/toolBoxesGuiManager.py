@@ -36,6 +36,7 @@ from .ComplexTools.complexWindow import ComplexWindow
 from .WorkflowToolBox.workflowDockWidget import (
     WorkflowDockWidget,
 )
+from .CentroidsFlagTool.centroidsFlagTool import CentroidFlagsDockWidget
 
 
 class ToolBoxesGuiManager(QObject):
@@ -86,6 +87,15 @@ class ToolBoxesGuiManager(QObject):
             self.tr("Reclassify Mode"),
             parentButton=self.stackButton,
             withShortcut=True,
+        )
+
+        self.centroidFlagToolBox = None
+        self.addTool(
+            self.showCentroidFlagTool,
+            "flags_centroids.png",
+            self.tr("Inspect Centroid Flags Toolbox"),
+            parentButton=self.stackButton,
+            setDefaultAction=False,
         )
 
         self.calcContour = None
@@ -168,6 +178,13 @@ class ToolBoxesGuiManager(QObject):
         else:
             self.qaToolBox = WorkflowDockWidget(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.qaToolBox)
+    
+    def showCentroidFlagTool(self):
+        if self.centroidFlagToolBox is not None:
+            self.iface.removeDockWidget(self.centroidFlagToolBox)
+        else:
+            self.centroidFlagToolBox = CentroidFlagsDockWidget(self.iface)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.centroidFlagToolBox)
 
     def showCalcContourToolbox(self):
         """
