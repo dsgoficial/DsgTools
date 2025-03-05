@@ -73,6 +73,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGe
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
     CreateGridFromCoordinatesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeographicBoundary import FilterLayerListByGeographicBoundary
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingForBDGEx import (
     BatchRasterPackagingForBDGEx,
 )
@@ -735,6 +736,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ExtractMiddleVertexOnLineAlgorithm(),
             PrepareRasterFilesForPackagingForBDGEx(),
             SnapFeaturesInsideLayerWithGroupByAlgorithm(),
+            FilterLayerListByGeographicBoundary(),
         ]
         return algList
 

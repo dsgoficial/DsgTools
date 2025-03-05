@@ -175,12 +175,13 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                 self.prepareFlagSink(parameters, outputLyr, context)
             self.flagFeatures(outputLyr, algName, layerName, context)
         if self.flag_id is None:
+            lyrType = QgsProcessingUtils.mapLayerFromString(layerList[0], context).wkbType() if len(layerList) > 0 else QgsWkbTypes.Point
             _, self.flag_id = self.parameterAsSink(
                 parameters,
                 self.OUTPUT,
                 context,
                 self.flagFields,
-                QgsWkbTypes.Point,
+                lyrType,
                 QgsProject.instance().crs(),
             )
         return {self.OUTPUT: self.flag_id}

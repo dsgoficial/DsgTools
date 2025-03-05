@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.11 - dev
+## 4.17.12 - dev
 
 Novas Funcionalidades:
 
@@ -8,6 +8,7 @@ Novas Funcionalidades:
 - Novo algoritmo de exportação de modelos implementados em PostGIS para shapefile no provedor de algoritmos;
 - Novo algoritmo de preparo de arquivos para empacotamento no BDGEx;
 - Novo algoritmo de realizar snap dentro de uma camada agrupando por atributo;
+- Novo algoritmo de filtrar múltiplas saídas pela moldura;
 
 Melhorias:
 
@@ -25,7 +26,8 @@ Correção de bugs:
 - Corrige bug na ferramenta de extração de ponto cotados e melhora os critérios de inserção (caso de depressão, ordenamento geográfico e de cota para gerar um resultado determinístico);
 - Corrige bug na opção de uso de thread do algoritmo de construir polígonos por linha e centróide (crashes nos QGIS mais novos);
 - Corrige bug no algoritmo de criação de polígonos por linha e centróide (crash com camada vazia de polígonos);
-- Corrige bug no carregamento com constraint string.
+- Corrige bug no carregamento com constraint string;
+- Corrige bug na correção de geometria inválida (correção de vértice);
 
 ## 4.16.0 - 2024-11-27
 
