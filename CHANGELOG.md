@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.13 - dev
+## 4.17.14 - dev
 
 Novas Funcionalidades:
 
@@ -20,6 +20,7 @@ Melhorias:
 - Melhora o desempenho do algoritmo de construir polígonos por linha e centróide;
 - Caixa de Ferramentas de Controle de Qualidade renomeada para Workflow Toolbox;
 - Muda o comportamento da janela de carregamento (agora ela fica sempre no topo);
+- A Workflow Toolbox agora seta automaticamente o tipo de flag de geometria inválida para não filtrar (parâmetro do qgis necessário para rodar sem problemas os modelos);
 
 Correção de bugs:
 

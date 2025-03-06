@@ -26,6 +26,9 @@ from time import time
 from functools import partial
 from typing import Dict, List, OrderedDict, Union
 
+import processing
+from processing.core.ProcessingConfig import ProcessingConfig
+
 from qgis.PyQt import uic
 from qgis.core import (
     Qgis,
@@ -139,6 +142,21 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         self.iface.newProjectCreated.connect(self.saveState)
         self.iface.newProjectCreated.connect(self.loadState)
         self.iface.projectRead.connect(self.loadState)
+        self.setInvalidFeatureFiltering()
+    
+    def setInvalidFeatureFiltering(self):
+        currentValue = ProcessingConfig.getSetting("FILTER_INVALID_GEOMETRIES")
+        if currentValue == 0:
+            return
+        ProcessingConfig.setSettingValue("FILTER_INVALID_GEOMETRIES", 0)
+        self.iface.messageBar().pushMessage(
+            self.tr("DSGTools Workflow Toolbox"),
+            self.tr(
+                f"The processing Invalid Feature Filtering option changed to 'Do not filter (better performance)'. This feature is needed for the workflow to work properly."
+            ),
+            Qgis.Info,
+            duration=3,
+        )
 
     def generateMenu(self, pos, idx, widget, modelName, workflow: DSGToolsWorkflow):
         workflowName = workflow.displayName
@@ -229,7 +247,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                 action.setChecked(False)
 
         self.iface.messageBar().pushMessage(
-            self.tr("DSGTools Q&A Toolbox"),
+            self.tr("DSGTools Workflow Toolbox"),
             self.tr(
                 f"The user has set the current workflow item of the workflow '{workflow.displayName}' as '{currentWorkflowItem.displayName}'."
             ),
@@ -558,7 +576,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             # advise user a model status has changed only if it came from a
             # signal call
             self.iface.messageBar().pushMessage(
-                self.tr("DSGTools Q&A Toolbox"),
+                self.tr("DSGTools Workflow Toolbox"),
                 self.tr(
                     f"model {workflowItem.displayName} status changed to {status}."
                 ),
