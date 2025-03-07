@@ -21,7 +21,14 @@ Builds a temp rubberband with a given size and shape.
  ***************************************************************************/
 """
 import os
-from qgis.PyQt.QtWidgets import QMessageBox, QSpinBox, QAction, QDockWidget, QTableWidgetItem, QMenu
+from qgis.PyQt.QtWidgets import (
+    QMessageBox,
+    QSpinBox,
+    QAction,
+    QDockWidget,
+    QTableWidgetItem,
+    QMenu,
+)
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
@@ -61,7 +68,7 @@ class CentroidFlagsDockWidget(QDockWidget, Ui_CentroidFlagsDockWidget):
         self.flagsMapLayerComboBox.setAllowEmptyLayer(True)
         self.flagsMapLayerComboBox.setCurrentIndex(-1)
         self.flagsMapLayerComboBox.layerChanged.connect(self.updateTable)
-        self.pointsMapLayerComboBox.setAllowEmptyLayer(True) 
+        self.pointsMapLayerComboBox.setAllowEmptyLayer(True)
         self.pointsMapLayerComboBox.setCurrentIndex(-1)
         self.pointsMapLayerComboBox.layerChanged.connect(self.updateTable)
         self.pointDict = None
@@ -82,31 +89,35 @@ class CentroidFlagsDockWidget(QDockWidget, Ui_CentroidFlagsDockWidget):
                     continue
                 pointsInsideFlagPolygonList.append(pointFeat)
         return sorted(pointsInsideFlagPolygonList, key=lambda x: x.id())
-    
+
     def tableContextMenu(self):
         self.attributeTable.setContextMenuPolicy(Qt.CustomContextMenu)
         self.attributeTable.customContextMenuRequested.connect(self.showMenuContext)
-    
+
     def showMenuContext(self, position):
         index = self.attributeTable.indexAt(position)
         if not index.isValid():
             return
         contextMenu = QMenu()
-        action1 = QAction(self.tr("Set all point feature attributes like this feature"), self)
+        action1 = QAction(
+            self.tr("Set all point feature attributes like this feature"), self
+        )
         action1.triggered.connect(lambda: self.setAllFeatureAttributes(index))
         contextMenu.addAction(action1)
         contextMenu.exec_(self.attributeTable.viewport().mapToGlobal(position))
-        
+
     def setAllFeatureAttributes(self, index):
         lyrPoints = self.pointsMapLayerComboBox.currentLayer()
-        lyrFlags =  self.flagsMapLayerComboBox.currentLayer()
+        lyrFlags = self.flagsMapLayerComboBox.currentLayer()
         if lyrPoints is None or lyrFlags is None:
             return
         if self.pointDict is None:
             return
         referenceFeat = self.pointDict[index.row()]
         referenceDict = {
-            field.name(): referenceFeat[field.name()] for i, field in enumerate(referenceFeat.fields()) if i not in lyrPoints.primaryKeyAttributes()
+            field.name(): referenceFeat[field.name()]
+            for i, field in enumerate(referenceFeat.fields())
+            if i not in lyrPoints.primaryKeyAttributes()
         }
         lyrPoints.startEditing()
         lyrPoints.beginEditCommand("Updating flags")
@@ -122,7 +133,7 @@ class CentroidFlagsDockWidget(QDockWidget, Ui_CentroidFlagsDockWidget):
             fieldList=[f.name() for f in lyrPoints.fields()],
             lyrPoints=lyrPoints,
             lyrFlags=lyrFlags,
-            currentSelection=index.row()
+            currentSelection=index.row(),
         )
 
     def updateTable(self):
@@ -133,8 +144,11 @@ class CentroidFlagsDockWidget(QDockWidget, Ui_CentroidFlagsDockWidget):
                 self.lyrFlags.selectionChanged.disconnect(self.updateTable)
             except:
                 pass
-        self.lyrFlags =  self.flagsMapLayerComboBox.currentLayer()
-        if self.pointsMapLayerComboBox.currentIndex() == -1 or self.flagsMapLayerComboBox.currentIndex() == -1:
+        self.lyrFlags = self.flagsMapLayerComboBox.currentLayer()
+        if (
+            self.pointsMapLayerComboBox.currentIndex() == -1
+            or self.flagsMapLayerComboBox.currentIndex() == -1
+        ):
             return
         self.lyrFlags.selectionChanged.connect(self.updateTable)
         if self.lyrPoints is None:
@@ -144,7 +158,9 @@ class CentroidFlagsDockWidget(QDockWidget, Ui_CentroidFlagsDockWidget):
             [self.tr(f"{field.name()}") for field in self.lyrPoints.fields()]
         )
         self.valuesInTable(
-            [self.tr(f"{field.name()}") for field in self.lyrPoints.fields()], self.lyrPoints, self.lyrFlags
+            [self.tr(f"{field.name()}") for field in self.lyrPoints.fields()],
+            self.lyrPoints,
+            self.lyrFlags,
         )
 
     def valuesInTable(self, fieldList, lyrPoints, lyrFlags, currentSelection=None):
@@ -161,25 +177,23 @@ class CentroidFlagsDockWidget(QDockWidget, Ui_CentroidFlagsDockWidget):
                 self.attributeTable.setItem(nRow, nColumn, QTableWidgetItem(str(attr)))
         if currentSelection is not None:
             self.attributeTable.selectRow(currentSelection)
-    
+
     def setHeader(self, fieldList):
         self.attributeTable.setColumnCount(len(fieldList))
-        self.attributeTable.setHorizontalHeaderLabels(
-            fieldList
-        )
-    
+        self.attributeTable.setHorizontalHeaderLabels(fieldList)
+
     def clearTable(self):
         for row in range(self.attributeTable.rowCount()):
             self.attributeTable.removeRow(row)
         self.attributeTable.setRowCount(0)
-    
+
     @pyqtSlot(bool)
     def on_refreshPointsPushButton_clicked(self):
         activeLayer = self.iface.activeLayer()
         if not isinstance(activeLayer, QgsVectorLayer):
             return
         self.pointsMapLayerComboBox.setLayer(activeLayer)
-    
+
     @pyqtSlot(bool)
     def on_refreshFlagsPushButton_clicked(self):
         activeLayer = self.iface.activeLayer()

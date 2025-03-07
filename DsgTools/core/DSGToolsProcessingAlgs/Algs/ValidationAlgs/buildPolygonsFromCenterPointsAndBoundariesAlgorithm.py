@@ -642,7 +642,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 constraintLinesLyr, context, multiStepFeedback, is_child_algorithm=True
             )
         if constraintLinesLyr is not None:
-            constraintLinesLyr = QgsProcessingUtils.mapLayerFromString(constraintLinesLyr, context)
+            constraintLinesLyr = QgsProcessingUtils.mapLayerFromString(
+                constraintLinesLyr, context
+            )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Preparing constraint polygons"))
@@ -666,10 +668,14 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 is_child_algorithm=True,
             )
         if constraintPolygonsLyr is not None:
-            constraintPolygonsLyr = QgsProcessingUtils.mapLayerFromString(constraintPolygonsLyr, context)
+            constraintPolygonsLyr = QgsProcessingUtils.mapLayerFromString(
+                constraintPolygonsLyr, context
+            )
         currentStep += 1
 
-        def compute(localInputCenterPointLyr, localBoundaryLineLyr, localGeographicBoundsLyr):
+        def compute(
+            localInputCenterPointLyr, localBoundaryLineLyr, localGeographicBoundsLyr
+        ):
             localContext = QgsProcessingContext()
             if multiStepFeedback.isCanceled():
                 return [], {}
@@ -741,7 +747,14 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 feedback=None,
                 context=context,
             )
-            futures.add(pool.submit(compute, localInputCenterPointLyr, localBoundaryLineLyr, localGeographicBoundsLyr))
+            futures.add(
+                pool.submit(
+                    compute,
+                    localInputCenterPointLyr,
+                    localBoundaryLineLyr,
+                    localGeographicBoundsLyr,
+                )
+            )
             multiStepFeedback.setProgress(current * stepSize)
 
         currentStep += 1
@@ -944,6 +957,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             unused_boundary_flag_sink.addFeatures(
                 localFlagLyr.getFeatures(), QgsFeatureSink.FastInsert
             )
+
     @staticmethod
     def extractFeaturesUsingGeographicBounds(
         inputLyr, geographicBounds, context, feedback=None

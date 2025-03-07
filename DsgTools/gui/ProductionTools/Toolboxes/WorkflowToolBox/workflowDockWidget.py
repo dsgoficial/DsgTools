@@ -143,7 +143,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         self.iface.newProjectCreated.connect(self.loadState)
         self.iface.projectRead.connect(self.loadState)
         self.setInvalidFeatureFiltering()
-    
+
     def setInvalidFeatureFiltering(self):
         currentValue = ProcessingConfig.getSetting("FILTER_INVALID_GEOMETRIES")
         if currentValue == 0:

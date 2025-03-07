@@ -650,7 +650,9 @@ class TerrainModel:
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Validating spot elevation"))
-        invalidDict.update(self.validateSpotElevation(context=context, feedback=multiStepFeedback))
+        invalidDict.update(
+            self.validateSpotElevation(context=context, feedback=multiStepFeedback)
+        )
         return invalidDict
 
     def validateContourLines(
@@ -975,7 +977,7 @@ class TerrainModel:
                 reverse=True,
             )
         )
-        
+
         return sortedHilltops
 
     def flag_terrain_band(self, flagDict, node):

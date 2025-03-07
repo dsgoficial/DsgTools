@@ -24,33 +24,43 @@ class Ui_CentroidFlagsDockWidget(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label = QtWidgets.QLabel(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
-        spacerItem = QtWidgets.QSpacerItem(5, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            5, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.flagsMapLayerComboBox = QgsMapLayerComboBox(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.flagsMapLayerComboBox.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.flagsMapLayerComboBox.sizePolicy().hasHeightForWidth()
+        )
         self.flagsMapLayerComboBox.setSizePolicy(sizePolicy)
         self.flagsMapLayerComboBox.setMinimumSize(QtCore.QSize(100, 0))
         self.flagsMapLayerComboBox.setObjectName("flagsMapLayerComboBox")
-        self.flagsMapLayerComboBox.setFilters(
-            core.QgsMapLayerProxyModel.PolygonLayer
-        )
+        self.flagsMapLayerComboBox.setFilters(core.QgsMapLayerProxyModel.PolygonLayer)
         self.horizontalLayout.addWidget(self.flagsMapLayerComboBox)
         self.refreshFlagsPushButton = QtWidgets.QPushButton(self.dockWidgetContents)
         self.refreshFlagsPushButton.setEnabled(True)
         self.refreshFlagsPushButton.setStyleSheet("")
         self.refreshFlagsPushButton.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/plugins/DsgTools/icons/reload.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/plugins/DsgTools/icons/reload.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.refreshFlagsPushButton.setIcon(icon)
         self.refreshFlagsPushButton.setIconSize(QtCore.QSize(16, 16))
         self.refreshFlagsPushButton.setAutoExclusive(False)
@@ -60,26 +70,32 @@ class Ui_CentroidFlagsDockWidget(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.label_2 = QtWidgets.QLabel(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
         self.label_2.setSizePolicy(sizePolicy)
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_2.addWidget(self.label_2)
-        spacerItem1 = QtWidgets.QSpacerItem(5, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            5, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_2.addItem(spacerItem1)
         self.pointsMapLayerComboBox = QgsMapLayerComboBox(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pointsMapLayerComboBox.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.pointsMapLayerComboBox.sizePolicy().hasHeightForWidth()
+        )
         self.pointsMapLayerComboBox.setSizePolicy(sizePolicy)
         self.pointsMapLayerComboBox.setMinimumSize(QtCore.QSize(100, 0))
         self.pointsMapLayerComboBox.setObjectName("pointsMapLayerComboBox")
-        self.pointsMapLayerComboBox.setFilters(
-            core.QgsMapLayerProxyModel.PointLayer
-        )
+        self.pointsMapLayerComboBox.setFilters(core.QgsMapLayerProxyModel.PointLayer)
         self.horizontalLayout_2.addWidget(self.pointsMapLayerComboBox)
         self.refreshPointsPushButton = QtWidgets.QPushButton(self.dockWidgetContents)
         self.refreshPointsPushButton.setEnabled(True)
@@ -106,9 +122,13 @@ class Ui_CentroidFlagsDockWidget(object):
 
     def retranslateUi(self, CentroidFlagsDockWidget):
         _translate = QtCore.QCoreApplication.translate
-        CentroidFlagsDockWidget.setWindowTitle(_translate("CentroidFlagsDockWidget", "Inspect Centroid Flags Toolbox"))
+        CentroidFlagsDockWidget.setWindowTitle(
+            _translate("CentroidFlagsDockWidget", "Inspect Centroid Flags Toolbox")
+        )
         self.label.setText(_translate("CentroidFlagsDockWidget", "Camada de Flags"))
         self.label_2.setText(_translate("CentroidFlagsDockWidget", "Camada de Pontos"))
+
+
 from qgis.gui import (
     QgsMapLayerComboBox,
 )

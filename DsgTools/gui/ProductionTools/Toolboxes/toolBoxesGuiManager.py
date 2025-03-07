@@ -178,7 +178,7 @@ class ToolBoxesGuiManager(QObject):
         else:
             self.qaToolBox = WorkflowDockWidget(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.qaToolBox)
-    
+
     def showCentroidFlagTool(self):
         if self.centroidFlagToolBox is not None:
             self.iface.removeDockWidget(self.centroidFlagToolBox)

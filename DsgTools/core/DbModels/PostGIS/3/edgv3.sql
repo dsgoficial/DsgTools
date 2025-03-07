@@ -2779,8 +2779,8 @@ ALTER TABLE edgv.aer_pista_ponto_pouso_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.aer_pista_ponto_pouso_l
-	 ADD CONSTRAINT aer_pista_ponto_pouso_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT aer_pista_ponto_pouso_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.aer_pista_ponto_pouso_l ALTER COLUMN situacaofisica SET DEFAULT 9999#
 
@@ -2847,8 +2847,8 @@ ALTER TABLE edgv.aer_pista_ponto_pouso_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.aer_pista_ponto_pouso_p
-	 ADD CONSTRAINT aer_pista_ponto_pouso_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT aer_pista_ponto_pouso_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.aer_pista_ponto_pouso_p ALTER COLUMN situacaofisica SET DEFAULT 9999#
 
@@ -2915,8 +2915,8 @@ ALTER TABLE edgv.aer_pista_ponto_pouso_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.aer_pista_ponto_pouso_a
-	 ADD CONSTRAINT aer_pista_ponto_pouso_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT aer_pista_ponto_pouso_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.aer_pista_ponto_pouso_a ALTER COLUMN situacaofisica SET DEFAULT 9999#
 
@@ -2949,8 +2949,8 @@ ALTER TABLE edgv.enc_subest_transm_distrib_energia_eletrica_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.enc_subest_transm_distrib_energia_eletrica_p
-	 ADD CONSTRAINT enc_subest_transm_distrib_energia_eletrica_p_classeativecon_check 
-	 CHECK (classeativecon = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_subest_transm_distrib_energia_eletrica_p_classeativecon_check
+	 CHECK (classeativecon = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.enc_subest_transm_distrib_energia_eletrica_p ALTER COLUMN classeativecon SET DEFAULT 9999#
 
@@ -2990,8 +2990,8 @@ ALTER TABLE edgv.enc_subest_transm_distrib_energia_eletrica_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.enc_subest_transm_distrib_energia_eletrica_a
-	 ADD CONSTRAINT enc_subest_transm_distrib_energia_eletrica_a_classeativecon_check 
-	 CHECK (classeativecon = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_subest_transm_distrib_energia_eletrica_a_classeativecon_check
+	 CHECK (classeativecon = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.enc_subest_transm_distrib_energia_eletrica_a ALTER COLUMN classeativecon SET DEFAULT 9999#
 
@@ -3047,8 +3047,8 @@ ALTER TABLE edgv.cbge_deposito_geral_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.cbge_deposito_geral_p
-	 ADD CONSTRAINT cbge_deposito_geral_p_tipodepgeral_check 
-	 CHECK (tipodepgeral = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 19 :: SMALLINT, 26 :: SMALLINT, 32 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT cbge_deposito_geral_p_tipodepgeral_check
+	 CHECK (tipodepgeral = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 19 :: SMALLINT, 26 :: SMALLINT, 32 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.cbge_deposito_geral_p ALTER COLUMN tipodepgeral SET DEFAULT 9999#
 
@@ -3153,8 +3153,8 @@ ALTER TABLE edgv.cbge_deposito_geral_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.cbge_deposito_geral_a
-	 ADD CONSTRAINT cbge_deposito_geral_a_tipodepgeral_check 
-	 CHECK (tipodepgeral = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 19 :: SMALLINT, 26 :: SMALLINT, 32 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT cbge_deposito_geral_a_tipodepgeral_check
+	 CHECK (tipodepgeral = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 19 :: SMALLINT, 26 :: SMALLINT, 32 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.cbge_deposito_geral_a ALTER COLUMN tipodepgeral SET DEFAULT 9999#
 
@@ -3235,8 +3235,8 @@ ALTER TABLE edgv.cbge_area_agropec_ext_vegetal_pesca_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.cbge_area_agropec_ext_vegetal_pesca_a
-	 ADD CONSTRAINT cbge_area_agropec_ext_vegetal_pesca_a_tipoarea_check 
-	 CHECK (tipoarea = ANY(ARRAY[4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT cbge_area_agropec_ext_vegetal_pesca_a_tipoarea_check
+	 CHECK (tipoarea = ANY(ARRAY[4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.cbge_area_agropec_ext_vegetal_pesca_a ALTER COLUMN tipoarea SET DEFAULT 9999#
 
@@ -3727,8 +3727,8 @@ ALTER TABLE edgv.cbge_area_habitacional_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.cbge_area_habitacional_a
-	 ADD CONSTRAINT cbge_area_habitacional_a_tipoarea_check 
-	 CHECK (tipoarea = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT cbge_area_habitacional_a_tipoarea_check
+	 CHECK (tipoarea = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.cbge_area_habitacional_a ALTER COLUMN tipoarea SET DEFAULT 9999#
 
@@ -3778,8 +3778,8 @@ ALTER TABLE edgv.cbge_estacionamento_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.cbge_estacionamento_a
-	 ADD CONSTRAINT cbge_estacionamento_a_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT cbge_estacionamento_a_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.cbge_estacionamento_a ALTER COLUMN modaluso SET DEFAULT 9999#
 
@@ -3810,8 +3810,8 @@ ALTER TABLE edgv.cbge_estacionamento_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.cbge_estacionamento_a
-	 ADD CONSTRAINT cbge_estacionamento_a_finalidadepatio_check 
-	 CHECK (finalidadepatio = ANY(ARRAY[3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT cbge_estacionamento_a_finalidadepatio_check
+	 CHECK (finalidadepatio = ANY(ARRAY[3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.cbge_estacionamento_a ALTER COLUMN finalidadepatio SET DEFAULT 9999#
 
@@ -3865,8 +3865,8 @@ ALTER TABLE edgv.cbge_area_duto_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.cbge_area_duto_a
-	 ADD CONSTRAINT cbge_area_duto_a_tipoarea_check 
-	 CHECK (tipoarea = ANY(ARRAY[3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT cbge_area_duto_a_tipoarea_check
+	 CHECK (tipoarea = ANY(ARRAY[3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.cbge_area_duto_a ALTER COLUMN tipoarea SET DEFAULT 9999#
 
@@ -3904,8 +3904,8 @@ ALTER TABLE edgv.cbge_area_de_propriedade_particular_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.cbge_area_de_propriedade_particular_a
-	 ADD CONSTRAINT cbge_area_de_propriedade_particular_a_tipoarea_check 
-	 CHECK (tipoarea = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT cbge_area_de_propriedade_particular_a_tipoarea_check
+	 CHECK (tipoarea = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.cbge_area_de_propriedade_particular_a ALTER COLUMN tipoarea SET DEFAULT 9999#
 
@@ -3942,8 +3942,8 @@ ALTER TABLE edgv.cbge_area_uso_especifico_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.cbge_area_uso_especifico_a
-	 ADD CONSTRAINT cbge_area_uso_especifico_a_tipoarea_check 
-	 CHECK (tipoarea = ANY(ARRAY[0 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT cbge_area_uso_especifico_a_tipoarea_check
+	 CHECK (tipoarea = ANY(ARRAY[0 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.cbge_area_uso_especifico_a ALTER COLUMN tipoarea SET DEFAULT 9999#
 
@@ -4049,8 +4049,8 @@ ALTER TABLE edgv.dut_galeria_bueiro_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.dut_galeria_bueiro_l
-	 ADD CONSTRAINT dut_galeria_bueiro_l_tipotrechoduto_check 
-	 CHECK (tipotrechoduto = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT dut_galeria_bueiro_l_tipotrechoduto_check
+	 CHECK (tipotrechoduto = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.dut_galeria_bueiro_l ALTER COLUMN tipotrechoduto SET DEFAULT 9999#
 
@@ -4067,8 +4067,8 @@ ALTER TABLE edgv.dut_galeria_bueiro_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.dut_galeria_bueiro_l
-	 ADD CONSTRAINT dut_galeria_bueiro_l_setor_check 
-	 CHECK (setor = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT dut_galeria_bueiro_l_setor_check
+	 CHECK (setor = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.dut_galeria_bueiro_l ALTER COLUMN setor SET DEFAULT 9999#
 
@@ -4145,8 +4145,8 @@ ALTER TABLE edgv.dut_galeria_bueiro_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.dut_galeria_bueiro_p
-	 ADD CONSTRAINT dut_galeria_bueiro_p_tipotrechoduto_check 
-	 CHECK (tipotrechoduto = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT dut_galeria_bueiro_p_tipotrechoduto_check
+	 CHECK (tipotrechoduto = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.dut_galeria_bueiro_p ALTER COLUMN tipotrechoduto SET DEFAULT 9999#
 
@@ -4163,8 +4163,8 @@ ALTER TABLE edgv.dut_galeria_bueiro_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.dut_galeria_bueiro_p
-	 ADD CONSTRAINT dut_galeria_bueiro_p_setor_check 
-	 CHECK (setor = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT dut_galeria_bueiro_p_setor_check
+	 CHECK (setor = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.dut_galeria_bueiro_p ALTER COLUMN setor SET DEFAULT 9999#
 
@@ -4238,8 +4238,8 @@ ALTER TABLE edgv.dut_trecho_duto_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.dut_trecho_duto_l
-	 ADD CONSTRAINT dut_trecho_duto_l_tipotrechoduto_check 
-	 CHECK (tipotrechoduto = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT dut_trecho_duto_l_tipotrechoduto_check
+	 CHECK (tipotrechoduto = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.dut_trecho_duto_l ALTER COLUMN tipotrechoduto SET DEFAULT 9999#
 
@@ -4456,8 +4456,8 @@ ALTER TABLE edgv.eco_ext_mineral_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.eco_ext_mineral_p
-	 ADD CONSTRAINT eco_ext_mineral_p_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[32 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_ext_mineral_p_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[32 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.eco_ext_mineral_p ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -4467,8 +4467,8 @@ ALTER TABLE edgv.eco_ext_mineral_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.eco_ext_mineral_p
-	 ADD CONSTRAINT eco_ext_mineral_p_secaoativecon_check 
-	 CHECK (secaoativecon = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_ext_mineral_p_secaoativecon_check
+	 CHECK (secaoativecon = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.eco_ext_mineral_p ALTER COLUMN secaoativecon SET DEFAULT 9999#
 
@@ -4557,8 +4557,8 @@ ALTER TABLE edgv.eco_ext_mineral_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.eco_ext_mineral_a
-	 ADD CONSTRAINT eco_ext_mineral_a_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[32 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_ext_mineral_a_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[32 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.eco_ext_mineral_a ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -4568,8 +4568,8 @@ ALTER TABLE edgv.eco_ext_mineral_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.eco_ext_mineral_a
-	 ADD CONSTRAINT eco_ext_mineral_a_secaoativecon_check 
-	 CHECK (secaoativecon = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_ext_mineral_a_secaoativecon_check
+	 CHECK (secaoativecon = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.eco_ext_mineral_a ALTER COLUMN secaoativecon SET DEFAULT 9999#
 
@@ -4947,8 +4947,8 @@ ALTER TABLE edgv.edf_edif_constr_turistica_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_constr_turistica_p
-	 ADD CONSTRAINT edf_edif_constr_turistica_p_turistica_check 
-	 CHECK (turistica = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_constr_turistica_p_turistica_check
+	 CHECK (turistica = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_constr_turistica_p ALTER COLUMN turistica SET DEFAULT 9999#
 
@@ -5069,8 +5069,8 @@ ALTER TABLE edgv.edf_edif_constr_turistica_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_constr_turistica_a
-	 ADD CONSTRAINT edf_edif_constr_turistica_a_turistica_check 
-	 CHECK (turistica = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_constr_turistica_a_turistica_check
+	 CHECK (turistica = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_constr_turistica_a ALTER COLUMN turistica SET DEFAULT 9999#
 
@@ -6857,8 +6857,8 @@ ALTER TABLE edgv.edf_posto_guarda_municipal_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_p
-	 ADD CONSTRAINT edf_posto_guarda_municipal_p_tipousoedif_check 
-	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 5 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_guarda_municipal_p_tipousoedif_check
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 5 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_p ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -6868,8 +6868,8 @@ ALTER TABLE edgv.edf_posto_guarda_municipal_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_p
-	 ADD CONSTRAINT edf_posto_guarda_municipal_p_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_guarda_municipal_p_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_p ALTER COLUMN jurisdicao SET DEFAULT 9999#
 
@@ -6879,8 +6879,8 @@ ALTER TABLE edgv.edf_posto_guarda_municipal_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_p
-	 ADD CONSTRAINT edf_posto_guarda_municipal_p_tipoedifpubcivil_check 
-	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_guarda_municipal_p_tipoedifpubcivil_check
+	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_p ALTER COLUMN tipoedifpubcivil SET DEFAULT 9999#
 
@@ -6987,8 +6987,8 @@ ALTER TABLE edgv.edf_posto_guarda_municipal_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_a
-	 ADD CONSTRAINT edf_posto_guarda_municipal_a_tipousoedif_check 
-	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 5 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_guarda_municipal_a_tipousoedif_check
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 5 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_a ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -6998,8 +6998,8 @@ ALTER TABLE edgv.edf_posto_guarda_municipal_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_a
-	 ADD CONSTRAINT edf_posto_guarda_municipal_a_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_guarda_municipal_a_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_a ALTER COLUMN jurisdicao SET DEFAULT 9999#
 
@@ -7009,8 +7009,8 @@ ALTER TABLE edgv.edf_posto_guarda_municipal_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_a
-	 ADD CONSTRAINT edf_posto_guarda_municipal_a_tipoedifpubcivil_check 
-	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_guarda_municipal_a_tipoedifpubcivil_check
+	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_a ALTER COLUMN tipoedifpubcivil SET DEFAULT 9999#
 
@@ -7337,8 +7337,8 @@ ALTER TABLE edgv.edf_posto_fiscal_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_fiscal_p
-	 ADD CONSTRAINT edf_posto_fiscal_p_tipoedifpubcivil_check 
-	 CHECK (tipoedifpubcivil = ANY(ARRAY[99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_fiscal_p_tipoedifpubcivil_check
+	 CHECK (tipoedifpubcivil = ANY(ARRAY[99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_fiscal_p ALTER COLUMN tipoedifpubcivil SET DEFAULT 9999#
 
@@ -7468,8 +7468,8 @@ ALTER TABLE edgv.edf_posto_fiscal_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_fiscal_a
-	 ADD CONSTRAINT edf_posto_fiscal_a_tipoedifpubcivil_check 
-	 CHECK (tipoedifpubcivil = ANY(ARRAY[99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_fiscal_a_tipoedifpubcivil_check
+	 CHECK (tipoedifpubcivil = ANY(ARRAY[99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_fiscal_a ALTER COLUMN tipoedifpubcivil SET DEFAULT 9999#
 
@@ -8384,8 +8384,8 @@ ALTER TABLE edgv.edf_posto_combustivel_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_combustivel_p
-	 ADD CONSTRAINT edf_posto_combustivel_p_tipoedifcomercserv_check 
-	 CHECK (tipoedifcomercserv = ANY(ARRAY[19 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_combustivel_p_tipoedifcomercserv_check
+	 CHECK (tipoedifcomercserv = ANY(ARRAY[19 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_combustivel_p ALTER COLUMN tipoedifcomercserv SET DEFAULT 9999#
 
@@ -8498,8 +8498,8 @@ ALTER TABLE edgv.edf_posto_combustivel_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_combustivel_a
-	 ADD CONSTRAINT edf_posto_combustivel_a_tipoedifcomercserv_check 
-	 CHECK (tipoedifcomercserv = ANY(ARRAY[19 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_combustivel_a_tipoedifcomercserv_check
+	 CHECK (tipoedifcomercserv = ANY(ARRAY[19 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_combustivel_a ALTER COLUMN tipoedifcomercserv SET DEFAULT 9999#
 
@@ -8613,8 +8613,8 @@ ALTER TABLE edgv.edf_posto_policia_militar_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_militar_p
-	 ADD CONSTRAINT edf_posto_policia_militar_p_tipousoedif_check 
-	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_militar_p_tipousoedif_check
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_militar_p ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -8624,8 +8624,8 @@ ALTER TABLE edgv.edf_posto_policia_militar_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_militar_p
-	 ADD CONSTRAINT edf_posto_policia_militar_p_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_militar_p_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_militar_p ALTER COLUMN jurisdicao SET DEFAULT 9999#
 
@@ -8635,8 +8635,8 @@ ALTER TABLE edgv.edf_posto_policia_militar_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_militar_p
-	 ADD CONSTRAINT edf_posto_policia_militar_p_tipoinstalmilitar_check 
-	 CHECK (tipoinstalmilitar = ANY(ARRAY[22 :: SMALLINT, 23 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_militar_p_tipoinstalmilitar_check
+	 CHECK (tipoinstalmilitar = ANY(ARRAY[22 :: SMALLINT, 23 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_militar_p ALTER COLUMN tipoinstalmilitar SET DEFAULT 9999#
 
@@ -8743,8 +8743,8 @@ ALTER TABLE edgv.edf_posto_policia_militar_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_militar_a
-	 ADD CONSTRAINT edf_posto_policia_militar_a_tipousoedif_check 
-	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_militar_a_tipousoedif_check
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_militar_a ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -8754,8 +8754,8 @@ ALTER TABLE edgv.edf_posto_policia_militar_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_militar_a
-	 ADD CONSTRAINT edf_posto_policia_militar_a_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_militar_a_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_militar_a ALTER COLUMN jurisdicao SET DEFAULT 9999#
 
@@ -8765,8 +8765,8 @@ ALTER TABLE edgv.edf_posto_policia_militar_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_militar_a
-	 ADD CONSTRAINT edf_posto_policia_militar_a_tipoinstalmilitar_check 
-	 CHECK (tipoinstalmilitar = ANY(ARRAY[22 :: SMALLINT, 23 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_militar_a_tipoinstalmilitar_check
+	 CHECK (tipoinstalmilitar = ANY(ARRAY[22 :: SMALLINT, 23 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_militar_a ALTER COLUMN tipoinstalmilitar SET DEFAULT 9999#
 
@@ -10371,8 +10371,8 @@ ALTER TABLE edgv.edf_posto_policia_rod_federal_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_p
-	 ADD CONSTRAINT edf_posto_policia_rod_federal_p_tipousoedif_check 
-	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_rod_federal_p_tipousoedif_check
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_p ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -10382,8 +10382,8 @@ ALTER TABLE edgv.edf_posto_policia_rod_federal_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_p
-	 ADD CONSTRAINT edf_posto_policia_rod_federal_p_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_rod_federal_p_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_p ALTER COLUMN jurisdicao SET DEFAULT 9999#
 
@@ -10393,8 +10393,8 @@ ALTER TABLE edgv.edf_posto_policia_rod_federal_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_p
-	 ADD CONSTRAINT edf_posto_policia_rod_federal_p_tipoedifpubcivil_check 
-	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_rod_federal_p_tipoedifpubcivil_check
+	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_p ALTER COLUMN tipoedifpubcivil SET DEFAULT 9999#
 
@@ -10501,8 +10501,8 @@ ALTER TABLE edgv.edf_posto_policia_rod_federal_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_a
-	 ADD CONSTRAINT edf_posto_policia_rod_federal_a_tipousoedif_check 
-	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_rod_federal_a_tipousoedif_check
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_a ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -10512,8 +10512,8 @@ ALTER TABLE edgv.edf_posto_policia_rod_federal_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_a
-	 ADD CONSTRAINT edf_posto_policia_rod_federal_a_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_rod_federal_a_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_a ALTER COLUMN jurisdicao SET DEFAULT 9999#
 
@@ -10523,8 +10523,8 @@ ALTER TABLE edgv.edf_posto_policia_rod_federal_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_a
-	 ADD CONSTRAINT edf_posto_policia_rod_federal_a_tipoedifpubcivil_check 
-	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_posto_policia_rod_federal_a_tipoedifpubcivil_check
+	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_a ALTER COLUMN tipoedifpubcivil SET DEFAULT 9999#
 
@@ -10645,8 +10645,8 @@ ALTER TABLE edgv.edf_edif_pub_civil_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_pub_civil_p
-	 ADD CONSTRAINT edf_edif_pub_civil_p_tipoedifpubcivil_check 
-	 CHECK (tipoedifpubcivil = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 22 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_pub_civil_p_tipoedifpubcivil_check
+	 CHECK (tipoedifpubcivil = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 22 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_pub_civil_p ALTER COLUMN tipoedifpubcivil SET DEFAULT 9999#
 
@@ -10767,8 +10767,8 @@ ALTER TABLE edgv.edf_edif_pub_civil_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_pub_civil_a
-	 ADD CONSTRAINT edf_edif_pub_civil_a_tipoedifpubcivil_check 
-	 CHECK (tipoedifpubcivil = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 22 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_pub_civil_a_tipoedifpubcivil_check
+	 CHECK (tipoedifpubcivil = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 22 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_pub_civil_a ALTER COLUMN tipoedifpubcivil SET DEFAULT 9999#
 
@@ -11079,8 +11079,8 @@ ALTER TABLE edgv.edf_edif_policia_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_policia_p
-	 ADD CONSTRAINT edf_edif_policia_p_tipousoedif_check 
-	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_policia_p_tipousoedif_check
+	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_policia_p ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -11090,8 +11090,8 @@ ALTER TABLE edgv.edf_edif_policia_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_policia_p
-	 ADD CONSTRAINT edf_edif_policia_p_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_policia_p_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_policia_p ALTER COLUMN jurisdicao SET DEFAULT 9999#
 
@@ -11101,8 +11101,8 @@ ALTER TABLE edgv.edf_edif_policia_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_policia_p
-	 ADD CONSTRAINT edf_edif_policia_p_tipoedifpubcivil_check 
-	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 11 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_policia_p_tipoedifpubcivil_check
+	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 11 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_policia_p ALTER COLUMN tipoedifpubcivil SET DEFAULT 9999#
 
@@ -11209,8 +11209,8 @@ ALTER TABLE edgv.edf_edif_policia_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_policia_a
-	 ADD CONSTRAINT edf_edif_policia_a_tipousoedif_check 
-	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_policia_a_tipousoedif_check
+	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_policia_a ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -11220,8 +11220,8 @@ ALTER TABLE edgv.edf_edif_policia_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_policia_a
-	 ADD CONSTRAINT edf_edif_policia_a_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_policia_a_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_policia_a ALTER COLUMN jurisdicao SET DEFAULT 9999#
 
@@ -11231,8 +11231,8 @@ ALTER TABLE edgv.edf_edif_policia_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_policia_a
-	 ADD CONSTRAINT edf_edif_policia_a_tipoedifpubcivil_check 
-	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 11 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_policia_a_tipoedifpubcivil_check
+	 CHECK (tipoedifpubcivil = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 11 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_policia_a ALTER COLUMN tipoedifpubcivil SET DEFAULT 9999#
 
@@ -11339,8 +11339,8 @@ ALTER TABLE edgv.edf_edif_pub_militar_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_pub_militar_p
-	 ADD CONSTRAINT edf_edif_pub_militar_p_tipousoedif_check 
-	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_pub_militar_p_tipousoedif_check
+	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_pub_militar_p ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -11350,8 +11350,8 @@ ALTER TABLE edgv.edf_edif_pub_militar_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_pub_militar_p
-	 ADD CONSTRAINT edf_edif_pub_militar_p_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_pub_militar_p_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_pub_militar_p ALTER COLUMN jurisdicao SET DEFAULT 9999#
 
@@ -11465,8 +11465,8 @@ ALTER TABLE edgv.edf_edif_pub_militar_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_pub_militar_a
-	 ADD CONSTRAINT edf_edif_pub_militar_a_tipousoedif_check 
-	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_pub_militar_a_tipousoedif_check
+	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_pub_militar_a ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -11476,8 +11476,8 @@ ALTER TABLE edgv.edf_edif_pub_militar_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.edf_edif_pub_militar_a
-	 ADD CONSTRAINT edf_edif_pub_militar_a_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edf_edif_pub_militar_a_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_pub_militar_a ALTER COLUMN jurisdicao SET DEFAULT 9999#
 
@@ -12340,8 +12340,8 @@ ALTER TABLE edgv.emu_poste_sinalizacao_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.emu_poste_sinalizacao_p
-	 ADD CONSTRAINT emu_poste_sinalizacao_p_tipoposte_check 
-	 CHECK (tipoposte = ANY(ARRAY[5 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT emu_poste_sinalizacao_p_tipoposte_check
+	 CHECK (tipoposte = ANY(ARRAY[5 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.emu_poste_sinalizacao_p ALTER COLUMN tipoposte SET DEFAULT 9999#
 
@@ -12499,8 +12499,8 @@ ALTER TABLE edgv.enc_est_gerad_energia_eletrica_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.enc_est_gerad_energia_eletrica_p
-	 ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_tipoestgerad_check 
-	 CHECK (tipoestgerad = ANY(ARRAY[0 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_est_gerad_energia_eletrica_p_tipoestgerad_check
+	 CHECK (tipoestgerad = ANY(ARRAY[0 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.enc_est_gerad_energia_eletrica_p ALTER COLUMN tipoestgerad SET DEFAULT 9999#
 
@@ -12542,8 +12542,8 @@ ALTER TABLE edgv.enc_est_gerad_energia_eletrica_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.enc_est_gerad_energia_eletrica_a
-	 ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_tipoestgerad_check 
-	 CHECK (tipoestgerad = ANY(ARRAY[0 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_est_gerad_energia_eletrica_a_tipoestgerad_check
+	 CHECK (tipoestgerad = ANY(ARRAY[0 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.enc_est_gerad_energia_eletrica_a ALTER COLUMN tipoestgerad SET DEFAULT 9999#
 
@@ -12585,8 +12585,8 @@ ALTER TABLE edgv.enc_central_geradora_eolica_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.enc_central_geradora_eolica_p
-	 ADD CONSTRAINT enc_central_geradora_eolica_p_tipoestgerad_check 
-	 CHECK (tipoestgerad = ANY(ARRAY[5 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_central_geradora_eolica_p_tipoestgerad_check
+	 CHECK (tipoestgerad = ANY(ARRAY[5 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.enc_central_geradora_eolica_p ALTER COLUMN tipoestgerad SET DEFAULT 9999#
 
@@ -12628,8 +12628,8 @@ ALTER TABLE edgv.enc_central_geradora_eolica_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.enc_central_geradora_eolica_a
-	 ADD CONSTRAINT enc_central_geradora_eolica_a_tipoestgerad_check 
-	 CHECK (tipoestgerad = ANY(ARRAY[5 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_central_geradora_eolica_a_tipoestgerad_check
+	 CHECK (tipoestgerad = ANY(ARRAY[5 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.enc_central_geradora_eolica_a ALTER COLUMN tipoestgerad SET DEFAULT 9999#
 
@@ -12685,8 +12685,8 @@ ALTER TABLE edgv.enc_hidreletrica_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.enc_hidreletrica_l
-	 ADD CONSTRAINT enc_hidreletrica_l_tipoestgerad_check 
-	 CHECK (tipoestgerad = ANY(ARRAY[8 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_hidreletrica_l_tipoestgerad_check
+	 CHECK (tipoestgerad = ANY(ARRAY[8 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.enc_hidreletrica_l ALTER COLUMN tipoestgerad SET DEFAULT 9999#
 
@@ -12736,8 +12736,8 @@ ALTER TABLE edgv.enc_hidreletrica_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.enc_hidreletrica_p
-	 ADD CONSTRAINT enc_hidreletrica_p_tipoestgerad_check 
-	 CHECK (tipoestgerad = ANY(ARRAY[8 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_hidreletrica_p_tipoestgerad_check
+	 CHECK (tipoestgerad = ANY(ARRAY[8 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.enc_hidreletrica_p ALTER COLUMN tipoestgerad SET DEFAULT 9999#
 
@@ -12787,8 +12787,8 @@ ALTER TABLE edgv.enc_hidreletrica_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.enc_hidreletrica_a
-	 ADD CONSTRAINT enc_hidreletrica_a_tipoestgerad_check 
-	 CHECK (tipoestgerad = ANY(ARRAY[8 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_hidreletrica_a_tipoestgerad_check
+	 CHECK (tipoestgerad = ANY(ARRAY[8 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.enc_hidreletrica_a ALTER COLUMN tipoestgerad SET DEFAULT 9999#
 
@@ -12859,8 +12859,8 @@ ALTER TABLE edgv.enc_termeletrica_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.enc_termeletrica_p
-	 ADD CONSTRAINT enc_termeletrica_p_tipoestgerad_check 
-	 CHECK (tipoestgerad = ANY(ARRAY[9 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_termeletrica_p_tipoestgerad_check
+	 CHECK (tipoestgerad = ANY(ARRAY[9 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.enc_termeletrica_p ALTER COLUMN tipoestgerad SET DEFAULT 9999#
 
@@ -12910,8 +12910,8 @@ ALTER TABLE edgv.enc_termeletrica_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.enc_termeletrica_a
-	 ADD CONSTRAINT enc_termeletrica_a_tipoestgerad_check 
-	 CHECK (tipoestgerad = ANY(ARRAY[9 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_termeletrica_a_tipoestgerad_check
+	 CHECK (tipoestgerad = ANY(ARRAY[9 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.enc_termeletrica_a ALTER COLUMN tipoestgerad SET DEFAULT 9999#
 
@@ -13706,8 +13706,8 @@ ALTER TABLE edgv.hdv_fundeadouro_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hdv_fundeadouro_p
-	 ADD CONSTRAINT hdv_fundeadouro_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 7 :: SMALLINT, 15 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hdv_fundeadouro_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 7 :: SMALLINT, 15 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hdv_fundeadouro_p ALTER COLUMN administracao SET DEFAULT 9999#
 
@@ -13739,8 +13739,8 @@ ALTER TABLE edgv.hdv_fundeadouro_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hdv_fundeadouro_a
-	 ADD CONSTRAINT hdv_fundeadouro_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 7 :: SMALLINT, 15 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hdv_fundeadouro_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 7 :: SMALLINT, 15 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hdv_fundeadouro_a ALTER COLUMN administracao SET DEFAULT 9999#
 
@@ -13833,8 +13833,8 @@ ALTER TABLE edgv.hid_ilha_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_ilha_p
-	 ADD CONSTRAINT hid_ilha_p_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[21 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_ilha_p_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[21 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_ilha_p ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -13866,8 +13866,8 @@ ALTER TABLE edgv.hid_ilha_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_ilha_a
-	 ADD CONSTRAINT hid_ilha_a_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[21 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_ilha_a_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[21 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_ilha_a ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -13903,8 +13903,8 @@ ALTER TABLE edgv.hid_vala_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_vala_l
-	 ADD CONSTRAINT hid_vala_l_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[31 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_vala_l_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[31 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_vala_l ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -13942,8 +13942,8 @@ ALTER TABLE edgv.hid_vala_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_vala_l
-	 ADD CONSTRAINT hid_vala_l_finalidade_check 
-	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_vala_l_finalidade_check
+	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_vala_l ALTER COLUMN finalidade SET DEFAULT 9999#
 
@@ -13972,8 +13972,8 @@ ALTER TABLE edgv.hid_vala_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_vala_a
-	 ADD CONSTRAINT hid_vala_a_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[31 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_vala_a_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[31 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_vala_a ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -14011,8 +14011,8 @@ ALTER TABLE edgv.hid_vala_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_vala_a
-	 ADD CONSTRAINT hid_vala_a_finalidade_check 
-	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_vala_a_finalidade_check
+	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_vala_a ALTER COLUMN finalidade SET DEFAULT 9999#
 
@@ -14104,8 +14104,8 @@ ALTER TABLE edgv.hid_canal_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_canal_l
-	 ADD CONSTRAINT hid_canal_l_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[30 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_canal_l_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[30 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_canal_l ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -14143,8 +14143,8 @@ ALTER TABLE edgv.hid_canal_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_canal_l
-	 ADD CONSTRAINT hid_canal_l_finalidade_check 
-	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_canal_l_finalidade_check
+	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_canal_l ALTER COLUMN finalidade SET DEFAULT 9999#
 
@@ -14173,8 +14173,8 @@ ALTER TABLE edgv.hid_canal_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_canal_a
-	 ADD CONSTRAINT hid_canal_a_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[30 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_canal_a_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[30 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_canal_a ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -14212,8 +14212,8 @@ ALTER TABLE edgv.hid_canal_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_canal_a
-	 ADD CONSTRAINT hid_canal_a_finalidade_check 
-	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_canal_a_finalidade_check
+	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_canal_a ALTER COLUMN finalidade SET DEFAULT 9999#
 
@@ -14562,8 +14562,8 @@ ALTER TABLE edgv.hid_rocha_em_agua_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_rocha_em_agua_p
-	 ADD CONSTRAINT hid_rocha_em_agua_p_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[23 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_rocha_em_agua_p_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[23 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_rocha_em_agua_p ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -14604,8 +14604,8 @@ ALTER TABLE edgv.hid_rocha_em_agua_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.hid_rocha_em_agua_a
-	 ADD CONSTRAINT hid_rocha_em_agua_a_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[23 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_rocha_em_agua_a_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[23 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.hid_rocha_em_agua_a ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -15013,8 +15013,8 @@ ALTER TABLE edgv.laz_sitio_arqueologico_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.laz_sitio_arqueologico_p
-	 ADD CONSTRAINT laz_sitio_arqueologico_p_cultura_check 
-	 CHECK (cultura = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT laz_sitio_arqueologico_p_cultura_check
+	 CHECK (cultura = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.laz_sitio_arqueologico_p ALTER COLUMN cultura SET DEFAULT 9999#
 
@@ -15046,8 +15046,8 @@ ALTER TABLE edgv.laz_sitio_arqueologico_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.laz_sitio_arqueologico_a
-	 ADD CONSTRAINT laz_sitio_arqueologico_a_cultura_check 
-	 CHECK (cultura = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT laz_sitio_arqueologico_a_cultura_check
+	 CHECK (cultura = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.laz_sitio_arqueologico_a ALTER COLUMN cultura SET DEFAULT 9999#
 
@@ -15351,8 +15351,8 @@ ALTER TABLE edgv.laz_ruina_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.laz_ruina_p
-	 ADD CONSTRAINT laz_ruina_p_cultura_check 
-	 CHECK (cultura = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT laz_ruina_p_cultura_check
+	 CHECK (cultura = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.laz_ruina_p ALTER COLUMN cultura SET DEFAULT 9999#
 
@@ -15384,8 +15384,8 @@ ALTER TABLE edgv.laz_ruina_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.laz_ruina_a
-	 ADD CONSTRAINT laz_ruina_a_cultura_check 
-	 CHECK (cultura = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT laz_ruina_a_cultura_check
+	 CHECK (cultura = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.laz_ruina_a ALTER COLUMN cultura SET DEFAULT 9999#
 
@@ -15567,8 +15567,8 @@ ALTER TABLE edgv.lml_unidade_protecao_integral_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.lml_unidade_protecao_integral_a
-	 ADD CONSTRAINT lml_unidade_protecao_integral_a_tipounidprotegida_check 
-	 CHECK (tipounidprotegida = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lml_unidade_protecao_integral_a_tipounidprotegida_check
+	 CHECK (tipounidprotegida = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.lml_unidade_protecao_integral_a ALTER COLUMN tipounidprotegida SET DEFAULT 9999#
 
@@ -15624,8 +15624,8 @@ ALTER TABLE edgv.lml_unidade_uso_sustentavel_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.lml_unidade_uso_sustentavel_a
-	 ADD CONSTRAINT lml_unidade_uso_sustentavel_a_tipounidprotegida_check 
-	 CHECK (tipounidprotegida = ANY(ARRAY[3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lml_unidade_uso_sustentavel_a_tipounidprotegida_check
+	 CHECK (tipounidprotegida = ANY(ARRAY[3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.lml_unidade_uso_sustentavel_a ALTER COLUMN tipounidprotegida SET DEFAULT 9999#
 
@@ -15707,8 +15707,8 @@ ALTER TABLE edgv.lml_area_pub_militar_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.lml_area_pub_militar_a
-	 ADD CONSTRAINT lml_area_pub_militar_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lml_area_pub_militar_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.lml_area_pub_militar_a ALTER COLUMN administracao SET DEFAULT 9999#
 
@@ -15718,8 +15718,8 @@ ALTER TABLE edgv.lml_area_pub_militar_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.lml_area_pub_militar_a
-	 ADD CONSTRAINT lml_area_pub_militar_a_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lml_area_pub_militar_a_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.lml_area_pub_militar_a ALTER COLUMN jurisdicao SET DEFAULT 9999#
 
@@ -15801,8 +15801,8 @@ ALTER TABLE edgv.lml_unidade_conservacao_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.lml_unidade_conservacao_a
-	 ADD CONSTRAINT lml_unidade_conservacao_a_tipounidprotegida_check 
-	 CHECK (tipounidprotegida = ANY(ARRAY[4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lml_unidade_conservacao_a_tipounidprotegida_check
+	 CHECK (tipounidprotegida = ANY(ARRAY[4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.lml_unidade_conservacao_a ALTER COLUMN tipounidprotegida SET DEFAULT 9999#
 
@@ -16046,8 +16046,8 @@ ALTER TABLE edgv.rel_gruta_caverna_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_gruta_caverna_l
-	 ADD CONSTRAINT rel_gruta_caverna_l_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[15 :: SMALLINT, 20 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_gruta_caverna_l_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[15 :: SMALLINT, 20 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_gruta_caverna_l ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16071,8 +16071,8 @@ ALTER TABLE edgv.rel_gruta_caverna_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_gruta_caverna_p
-	 ADD CONSTRAINT rel_gruta_caverna_p_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[15 :: SMALLINT, 20 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_gruta_caverna_p_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[15 :: SMALLINT, 20 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_gruta_caverna_p ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16097,8 +16097,8 @@ ALTER TABLE edgv.rel_rocha_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_rocha_l
-	 ADD CONSTRAINT rel_rocha_l_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[23 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_rocha_l_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[23 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_rocha_l ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16130,8 +16130,8 @@ ALTER TABLE edgv.rel_rocha_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_rocha_p
-	 ADD CONSTRAINT rel_rocha_p_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[23 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_rocha_p_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[23 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_rocha_p ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16163,8 +16163,8 @@ ALTER TABLE edgv.rel_rocha_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_rocha_a
-	 ADD CONSTRAINT rel_rocha_a_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[23 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_rocha_a_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[23 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_rocha_a ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16196,8 +16196,8 @@ ALTER TABLE edgv.rel_corte_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_corte_l
-	 ADD CONSTRAINT rel_corte_l_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[26 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_corte_l_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[26 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_corte_l ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -16207,8 +16207,8 @@ ALTER TABLE edgv.rel_corte_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_corte_l
-	 ADD CONSTRAINT rel_corte_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_corte_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_corte_l ALTER COLUMN matconstr SET DEFAULT 9999#
 
@@ -16233,8 +16233,8 @@ ALTER TABLE edgv.rel_corte_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_corte_p
-	 ADD CONSTRAINT rel_corte_p_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[26 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_corte_p_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[26 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_corte_p ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -16244,8 +16244,8 @@ ALTER TABLE edgv.rel_corte_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_corte_p
-	 ADD CONSTRAINT rel_corte_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_corte_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_corte_p ALTER COLUMN matconstr SET DEFAULT 9999#
 
@@ -16270,8 +16270,8 @@ ALTER TABLE edgv.rel_corte_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_corte_a
-	 ADD CONSTRAINT rel_corte_a_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[26 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_corte_a_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[26 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_corte_a ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -16281,8 +16281,8 @@ ALTER TABLE edgv.rel_corte_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_corte_a
-	 ADD CONSTRAINT rel_corte_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_corte_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_corte_a ALTER COLUMN matconstr SET DEFAULT 9999#
 
@@ -16334,8 +16334,8 @@ ALTER TABLE edgv.rel_dolina_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_dolina_p
-	 ADD CONSTRAINT rel_dolina_p_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[16 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_dolina_p_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[16 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_dolina_p ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16359,8 +16359,8 @@ ALTER TABLE edgv.rel_dolina_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_dolina_a
-	 ADD CONSTRAINT rel_dolina_a_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[16 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_dolina_a_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[16 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_dolina_a ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16385,8 +16385,8 @@ ALTER TABLE edgv.rel_aterro_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_aterro_l
-	 ADD CONSTRAINT rel_aterro_l_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[27 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_aterro_l_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[27 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_aterro_l ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -16396,8 +16396,8 @@ ALTER TABLE edgv.rel_aterro_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_aterro_l
-	 ADD CONSTRAINT rel_aterro_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_aterro_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_aterro_l ALTER COLUMN matconstr SET DEFAULT 9999#
 
@@ -16422,8 +16422,8 @@ ALTER TABLE edgv.rel_aterro_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_aterro_p
-	 ADD CONSTRAINT rel_aterro_p_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[27 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_aterro_p_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[27 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_aterro_p ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -16433,8 +16433,8 @@ ALTER TABLE edgv.rel_aterro_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_aterro_p
-	 ADD CONSTRAINT rel_aterro_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_aterro_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_aterro_p ALTER COLUMN matconstr SET DEFAULT 9999#
 
@@ -16459,8 +16459,8 @@ ALTER TABLE edgv.rel_aterro_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_aterro_a
-	 ADD CONSTRAINT rel_aterro_a_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[27 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_aterro_a_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[27 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_aterro_a ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -16470,8 +16470,8 @@ ALTER TABLE edgv.rel_aterro_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_aterro_a
-	 ADD CONSTRAINT rel_aterro_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_aterro_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_aterro_a ALTER COLUMN matconstr SET DEFAULT 9999#
 
@@ -16509,8 +16509,8 @@ ALTER TABLE edgv.rel_elemento_fisiografico_natural_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_elemento_fisiografico_natural_l
-	 ADD CONSTRAINT rel_elemento_fisiografico_natural_l_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_elemento_fisiografico_natural_l_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_elemento_fisiografico_natural_l ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16534,8 +16534,8 @@ ALTER TABLE edgv.rel_elemento_fisiografico_natural_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_elemento_fisiografico_natural_p
-	 ADD CONSTRAINT rel_elemento_fisiografico_natural_p_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_elemento_fisiografico_natural_p_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_elemento_fisiografico_natural_p ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16559,8 +16559,8 @@ ALTER TABLE edgv.rel_elemento_fisiografico_natural_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_elemento_fisiografico_natural_a
-	 ADD CONSTRAINT rel_elemento_fisiografico_natural_a_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_elemento_fisiografico_natural_a_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_elemento_fisiografico_natural_a ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16584,8 +16584,8 @@ ALTER TABLE edgv.rel_pico_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_pico_p
-	 ADD CONSTRAINT rel_pico_p_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[22 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_pico_p_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[22 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_pico_p ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16610,8 +16610,8 @@ ALTER TABLE edgv.rel_duna_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_duna_l
-	 ADD CONSTRAINT rel_duna_l_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[17 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_duna_l_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[17 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_duna_l ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16636,8 +16636,8 @@ ALTER TABLE edgv.rel_duna_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_duna_p
-	 ADD CONSTRAINT rel_duna_p_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[17 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_duna_p_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[17 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_duna_p ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16662,8 +16662,8 @@ ALTER TABLE edgv.rel_duna_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_duna_a
-	 ADD CONSTRAINT rel_duna_a_tipoelemnat_check 
-	 CHECK (tipoelemnat = ANY(ARRAY[17 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_duna_a_tipoelemnat_check
+	 CHECK (tipoelemnat = ANY(ARRAY[17 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_duna_a ALTER COLUMN tipoelemnat SET DEFAULT 9999#
 
@@ -16700,8 +16700,8 @@ ALTER TABLE edgv.rel_alteracao_fisiografica_antropica_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_alteracao_fisiografica_antropica_l
-	 ADD CONSTRAINT rel_alteracao_fisiografica_antropica_l_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[0 :: SMALLINT, 24 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 32 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_alteracao_fisiografica_antropica_l_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[0 :: SMALLINT, 24 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 32 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_alteracao_fisiografica_antropica_l ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -16725,8 +16725,8 @@ ALTER TABLE edgv.rel_alteracao_fisiografica_antropica_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_alteracao_fisiografica_antropica_p
-	 ADD CONSTRAINT rel_alteracao_fisiografica_antropica_p_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[0 :: SMALLINT, 24 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 32 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_alteracao_fisiografica_antropica_p_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[0 :: SMALLINT, 24 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 32 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_alteracao_fisiografica_antropica_p ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -16750,8 +16750,8 @@ ALTER TABLE edgv.rel_alteracao_fisiografica_antropica_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rel_alteracao_fisiografica_antropica_a
-	 ADD CONSTRAINT rel_alteracao_fisiografica_antropica_a_tipoalterantrop_check 
-	 CHECK (tipoalterantrop = ANY(ARRAY[0 :: SMALLINT, 24 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 32 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rel_alteracao_fisiografica_antropica_a_tipoalterantrop_check
+	 CHECK (tipoalterantrop = ANY(ARRAY[0 :: SMALLINT, 24 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 32 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rel_alteracao_fisiografica_antropica_a ALTER COLUMN tipoalterantrop SET DEFAULT 9999#
 
@@ -16860,8 +16860,8 @@ ALTER TABLE edgv.rod_trecho_rodoviario_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rod_trecho_rodoviario_l
-	 ADD CONSTRAINT rod_trecho_rodoviario_l_tipovia_check 
-	 CHECK (tipovia = ANY(ARRAY[2 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rod_trecho_rodoviario_l_tipovia_check
+	 CHECK (tipovia = ANY(ARRAY[2 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rod_trecho_rodoviario_l ALTER COLUMN tipovia SET DEFAULT 9999#
 
@@ -16971,8 +16971,8 @@ ALTER TABLE edgv.rod_trecho_rodoviario_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.rod_trecho_rodoviario_a
-	 ADD CONSTRAINT rod_trecho_rodoviario_a_tipovia_check 
-	 CHECK (tipovia = ANY(ARRAY[2 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT rod_trecho_rodoviario_a_tipovia_check
+	 CHECK (tipovia = ANY(ARRAY[2 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.rod_trecho_rodoviario_a ALTER COLUMN tipovia SET DEFAULT 9999#
 
@@ -17036,8 +17036,8 @@ ALTER TABLE edgv.snb_dep_abast_agua_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.snb_dep_abast_agua_p
-	 ADD CONSTRAINT snb_dep_abast_agua_p_tipodepgeral_check 
-	 CHECK (tipodepgeral = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT snb_dep_abast_agua_p_tipodepgeral_check
+	 CHECK (tipodepgeral = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.snb_dep_abast_agua_p ALTER COLUMN tipodepgeral SET DEFAULT 9999#
 
@@ -17061,8 +17061,8 @@ ALTER TABLE edgv.snb_dep_abast_agua_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.snb_dep_abast_agua_p
-	 ADD CONSTRAINT snb_dep_abast_agua_p_tipoprodutoresiduo_check 
-	 CHECK (tipoprodutoresiduo = ANY(ARRAY[46 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT snb_dep_abast_agua_p_tipoprodutoresiduo_check
+	 CHECK (tipoprodutoresiduo = ANY(ARRAY[46 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.snb_dep_abast_agua_p ALTER COLUMN tipoprodutoresiduo SET DEFAULT 9999#
 
@@ -17093,8 +17093,8 @@ ALTER TABLE edgv.snb_dep_abast_agua_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.snb_dep_abast_agua_p
-	 ADD CONSTRAINT snb_dep_abast_agua_p_estadofisico_check 
-	 CHECK (estadofisico = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT snb_dep_abast_agua_p_estadofisico_check
+	 CHECK (estadofisico = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.snb_dep_abast_agua_p ALTER COLUMN estadofisico SET DEFAULT 9999#
 
@@ -17158,8 +17158,8 @@ ALTER TABLE edgv.snb_dep_abast_agua_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.snb_dep_abast_agua_a
-	 ADD CONSTRAINT snb_dep_abast_agua_a_tipodepgeral_check 
-	 CHECK (tipodepgeral = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT snb_dep_abast_agua_a_tipodepgeral_check
+	 CHECK (tipodepgeral = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 19 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.snb_dep_abast_agua_a ALTER COLUMN tipodepgeral SET DEFAULT 9999#
 
@@ -17183,8 +17183,8 @@ ALTER TABLE edgv.snb_dep_abast_agua_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.snb_dep_abast_agua_a
-	 ADD CONSTRAINT snb_dep_abast_agua_a_tipoprodutoresiduo_check 
-	 CHECK (tipoprodutoresiduo = ANY(ARRAY[46 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT snb_dep_abast_agua_a_tipoprodutoresiduo_check
+	 CHECK (tipoprodutoresiduo = ANY(ARRAY[46 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.snb_dep_abast_agua_a ALTER COLUMN tipoprodutoresiduo SET DEFAULT 9999#
 
@@ -17215,8 +17215,8 @@ ALTER TABLE edgv.snb_dep_abast_agua_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.snb_dep_abast_agua_a
-	 ADD CONSTRAINT snb_dep_abast_agua_a_estadofisico_check 
-	 CHECK (estadofisico = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT snb_dep_abast_agua_a_estadofisico_check
+	 CHECK (estadofisico = ANY(ARRAY[1 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.snb_dep_abast_agua_a ALTER COLUMN estadofisico SET DEFAULT 9999#
 
@@ -17257,8 +17257,8 @@ ALTER TABLE edgv.snb_barragem_calcadao_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.snb_barragem_calcadao_a
-	 ADD CONSTRAINT snb_barragem_calcadao_a_tipoequipdesenvsocial_check 
-	 CHECK (tipoequipdesenvsocial = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT snb_barragem_calcadao_a_tipoequipdesenvsocial_check
+	 CHECK (tipoequipdesenvsocial = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.snb_barragem_calcadao_a ALTER COLUMN tipoequipdesenvsocial SET DEFAULT 9999#
 
@@ -17353,8 +17353,8 @@ ALTER TABLE edgv.tra_ponte_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_ponte_l
-	 ADD CONSTRAINT tra_ponte_l_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_ponte_l_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_ponte_l ALTER COLUMN modaluso SET DEFAULT 9999#
 
@@ -17364,8 +17364,8 @@ ALTER TABLE edgv.tra_ponte_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_ponte_l
-	 ADD CONSTRAINT tra_ponte_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_ponte_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_ponte_l ALTER COLUMN matconstr SET DEFAULT 9999#
 
@@ -17445,8 +17445,8 @@ ALTER TABLE edgv.tra_ponte_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_ponte_p
-	 ADD CONSTRAINT tra_ponte_p_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_ponte_p_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_ponte_p ALTER COLUMN modaluso SET DEFAULT 9999#
 
@@ -17456,8 +17456,8 @@ ALTER TABLE edgv.tra_ponte_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_ponte_p
-	 ADD CONSTRAINT tra_ponte_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_ponte_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_ponte_p ALTER COLUMN matconstr SET DEFAULT 9999#
 
@@ -17537,8 +17537,8 @@ ALTER TABLE edgv.tra_ponte_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_ponte_a
-	 ADD CONSTRAINT tra_ponte_a_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_ponte_a_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_ponte_a ALTER COLUMN modaluso SET DEFAULT 9999#
 
@@ -17548,8 +17548,8 @@ ALTER TABLE edgv.tra_ponte_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_ponte_a
-	 ADD CONSTRAINT tra_ponte_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_ponte_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_ponte_a ALTER COLUMN matconstr SET DEFAULT 9999#
 
@@ -17950,8 +17950,8 @@ ALTER TABLE edgv.tra_tunel_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_tunel_l
-	 ADD CONSTRAINT tra_tunel_l_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_tunel_l_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_tunel_l ALTER COLUMN modaluso SET DEFAULT 9999#
 
@@ -17989,8 +17989,8 @@ ALTER TABLE edgv.tra_tunel_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_tunel_l
-	 ADD CONSTRAINT tra_tunel_l_posicaopista_check 
-	 CHECK (posicaopista = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_tunel_l_posicaopista_check
+	 CHECK (posicaopista = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_tunel_l ALTER COLUMN posicaopista SET DEFAULT 9999#
 
@@ -18040,8 +18040,8 @@ ALTER TABLE edgv.tra_tunel_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_tunel_p
-	 ADD CONSTRAINT tra_tunel_p_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_tunel_p_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_tunel_p ALTER COLUMN modaluso SET DEFAULT 9999#
 
@@ -18079,8 +18079,8 @@ ALTER TABLE edgv.tra_tunel_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_tunel_p
-	 ADD CONSTRAINT tra_tunel_p_posicaopista_check 
-	 CHECK (posicaopista = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_tunel_p_posicaopista_check
+	 CHECK (posicaopista = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_tunel_p ALTER COLUMN posicaopista SET DEFAULT 9999#
 
@@ -18130,8 +18130,8 @@ ALTER TABLE edgv.tra_tunel_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_tunel_a
-	 ADD CONSTRAINT tra_tunel_a_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_tunel_a_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_tunel_a ALTER COLUMN modaluso SET DEFAULT 9999#
 
@@ -18169,8 +18169,8 @@ ALTER TABLE edgv.tra_tunel_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_tunel_a
-	 ADD CONSTRAINT tra_tunel_a_posicaopista_check 
-	 CHECK (posicaopista = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_tunel_a_posicaopista_check
+	 CHECK (posicaopista = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_tunel_a ALTER COLUMN posicaopista SET DEFAULT 9999#
 
@@ -18224,8 +18224,8 @@ ALTER TABLE edgv.tra_passagem_elevada_viaduto_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_l
-	 ADD CONSTRAINT tra_passagem_elevada_viaduto_l_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_passagem_elevada_viaduto_l_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_l ALTER COLUMN modaluso SET DEFAULT 9999#
 
@@ -18263,8 +18263,8 @@ ALTER TABLE edgv.tra_passagem_elevada_viaduto_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_l
-	 ADD CONSTRAINT tra_passagem_elevada_viaduto_l_posicaopista_check 
-	 CHECK (posicaopista = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 7 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_passagem_elevada_viaduto_l_posicaopista_check
+	 CHECK (posicaopista = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 7 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_l ALTER COLUMN posicaopista SET DEFAULT 9999#
 
@@ -18318,8 +18318,8 @@ ALTER TABLE edgv.tra_passagem_elevada_viaduto_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_p
-	 ADD CONSTRAINT tra_passagem_elevada_viaduto_p_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_passagem_elevada_viaduto_p_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_p ALTER COLUMN modaluso SET DEFAULT 9999#
 
@@ -18357,8 +18357,8 @@ ALTER TABLE edgv.tra_passagem_elevada_viaduto_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_p
-	 ADD CONSTRAINT tra_passagem_elevada_viaduto_p_posicaopista_check 
-	 CHECK (posicaopista = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 7 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_passagem_elevada_viaduto_p_posicaopista_check
+	 CHECK (posicaopista = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 7 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_p ALTER COLUMN posicaopista SET DEFAULT 9999#
 
@@ -18412,8 +18412,8 @@ ALTER TABLE edgv.tra_passagem_elevada_viaduto_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_a
-	 ADD CONSTRAINT tra_passagem_elevada_viaduto_a_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_passagem_elevada_viaduto_a_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_a ALTER COLUMN modaluso SET DEFAULT 9999#
 
@@ -18451,8 +18451,8 @@ ALTER TABLE edgv.tra_passagem_elevada_viaduto_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_a
-	 ADD CONSTRAINT tra_passagem_elevada_viaduto_a_posicaopista_check 
-	 CHECK (posicaopista = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 7 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_passagem_elevada_viaduto_a_posicaopista_check
+	 CHECK (posicaopista = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 7 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_passagem_elevada_viaduto_a ALTER COLUMN posicaopista SET DEFAULT 9999#
 
@@ -18522,8 +18522,8 @@ ALTER TABLE edgv.tra_patio_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.tra_patio_a
-	 ADD CONSTRAINT tra_patio_a_finalidadepatio_check 
-	 CHECK (finalidadepatio = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_patio_a_finalidadepatio_check
+	 CHECK (finalidadepatio = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.tra_patio_a ALTER COLUMN finalidadepatio SET DEFAULT 9999#
 
@@ -18551,8 +18551,8 @@ ALTER TABLE edgv.veg_floresta_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.veg_floresta_a
-	 ADD CONSTRAINT veg_floresta_a_classificacaoporte_check 
-	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_floresta_a_classificacaoporte_check
+	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.veg_floresta_a ALTER COLUMN classificacaoporte SET DEFAULT 9999#
 
@@ -18909,8 +18909,8 @@ ALTER TABLE edgv.veg_reflorestamento_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.veg_reflorestamento_a
-	 ADD CONSTRAINT veg_reflorestamento_a_tipolavoura_check 
-	 CHECK (tipolavoura = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_reflorestamento_a_tipolavoura_check
+	 CHECK (tipolavoura = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.veg_reflorestamento_a ALTER COLUMN tipolavoura SET DEFAULT 9999#
 
@@ -18934,8 +18934,8 @@ ALTER TABLE edgv.veg_reflorestamento_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.veg_reflorestamento_a
-	 ADD CONSTRAINT veg_reflorestamento_a_cultivopredominante_check 
-	 CHECK (cultivopredominante = ANY(ARRAY[20 :: SMALLINT, 21 :: SMALLINT, 23 :: SMALLINT, 96 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_reflorestamento_a_cultivopredominante_check
+	 CHECK (cultivopredominante = ANY(ARRAY[20 :: SMALLINT, 21 :: SMALLINT, 23 :: SMALLINT, 96 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.veg_reflorestamento_a ALTER COLUMN cultivopredominante SET DEFAULT 9999#
 
@@ -18963,8 +18963,8 @@ ALTER TABLE edgv.veg_campo_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.veg_campo_a
-	 ADD CONSTRAINT veg_campo_a_classificacaoporte_check 
-	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_campo_a_classificacaoporte_check
+	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.veg_campo_a ALTER COLUMN classificacaoporte SET DEFAULT 9999#
 
@@ -18981,8 +18981,8 @@ ALTER TABLE edgv.veg_campo_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.veg_campo_a
-	 ADD CONSTRAINT veg_campo_a_densidade_check 
-	 CHECK (densidade = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_campo_a_densidade_check
+	 CHECK (densidade = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.veg_campo_a ALTER COLUMN densidade SET DEFAULT 9999#
 
@@ -19141,8 +19141,8 @@ ALTER TABLE edgv.ver_jardim_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.ver_jardim_a
-	 ADD CONSTRAINT ver_jardim_a_tipolavoura_check 
-	 CHECK (tipolavoura = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT ver_jardim_a_tipolavoura_check
+	 CHECK (tipolavoura = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.ver_jardim_a ALTER COLUMN tipolavoura SET DEFAULT 9999#
 
@@ -19152,8 +19152,8 @@ ALTER TABLE edgv.ver_jardim_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.ver_jardim_a
-	 ADD CONSTRAINT ver_jardim_a_finalidade_check 
-	 CHECK (finalidade = ANY(ARRAY[4 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 ADD CONSTRAINT ver_jardim_a_finalidade_check
+	 CHECK (finalidade = ANY(ARRAY[4 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.ver_jardim_a ALTER COLUMN finalidade SET DEFAULT 9999#
 

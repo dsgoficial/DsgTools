@@ -53,24 +53,27 @@ from qgis.core import (
     QgsProcessingUtils,
 )
 
+
 @dataclass
 class RegionGroup:
     """Data class to store region information containing multiple pixel groups"""
+
     geometries: List[QgsGeometry]
     dn_values: List[int]
     window_data: np.ndarray
     window: Dict[str, int]
     region_id: str
-    
+
     def __hash__(self):
         """Make RegionGroup hashable for caching"""
         return hash(self.region_id)
-    
+
     def __post_init__(self):
         self.geometries = sorted(self.geometries, key=lambda x: x.area(), reverse=False)
-    
+
     def isValid(self):
         return self.window_data.shape > (1, 1)
+
 
 class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
     INPUT = "INPUT"
@@ -110,12 +113,10 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
                 defaultValue=-9999,
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.USE_THREADS,
-                self.tr("Use multithreading"),
-                defaultValue=True
+                self.USE_THREADS, self.tr("Use multithreading"), defaultValue=True
             )
         )
 
@@ -132,11 +133,19 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
         try:
             from scipy.spatial import KDTree
         except ImportError:
-            raise QgsProcessingException(self.tr("This algorithm requires scipy. Please install this library and try again."))
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires scipy. Please install this library and try again."
+                )
+            )
         try:
             import networkx as nx
         except ImportError:
-            raise QgsProcessingException(self.tr("This algorithm requires networkx. Please install this library and try again."))
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires networkx. Please install this library and try again."
+                )
+            )
         self.algRunner = AlgRunner()
         inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT, context)
         min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
@@ -308,15 +317,10 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
         )
 
         regions = self.aggregate_polygons_to_regions(
-            nx,
-            polygonsNotOnEdge,
-            npRaster,
-            transform,
-            innerFeedback,
-            context
+            nx, polygonsNotOnEdge, npRaster, transform, innerFeedback, context
         )
-        
-        currentStep +=1
+
+        currentStep += 1
         innerFeedback.setCurrentStep(currentStep)
         rasterProjection = ds.GetProjection()
         # Process all groups using threads if enabled
@@ -329,22 +333,22 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
             innerFeedback,
             context,
         )
-        currentStep +=1
+        currentStep += 1
         innerFeedback.setCurrentStep(currentStep)
         any_changes = False
         for change in changes_made:
-            if change is not None and change['changes_made']:
-                window = change['window']
-                window_data = change['window_data']
-                
+            if change is not None and change["changes_made"]:
+                window = change["window"]
+                window_data = change["window_data"]
+
                 # Apply the window data back to the main array
                 npRaster[
-                    window['x_start']:window['x_end'],
-                    window['y_start']:window['y_end']
+                    window["x_start"] : window["x_end"],
+                    window["y_start"] : window["y_end"],
                 ] = window_data
-                
+
                 any_changes = True
-        
+
         # Only write output and continue if changes were made
         if any_changes:
             # Write intermediate result
@@ -397,11 +401,11 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
     def build_polygon_graph(self, nx, polygons, context, feedback):
         """Build a graph of polygon interactions using QGIS processing"""
         graph = nx.Graph()
-        
+
         # Add all polygons as nodes
         for feat in polygons.getFeatures():
-            graph.add_node(feat.id(), geometry=feat.geometry(), dn=feat['DN'])
-        
+            graph.add_node(feat.id(), geometry=feat.geometry(), dn=feat["DN"])
+
         localPolygons = self.algRunner.runCreateFieldWithExpression(
             inputLyr=polygons,
             expression="$id",
@@ -411,34 +415,45 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
             feedback=feedback,
             is_child_algorithm=True,
         )
-        
+
         # Use QGIS processing to find intersecting polygons
         intersecting_pairs = self.algRunner.runJoinAttributesByLocation(
             inputLyr=localPolygons,
             joinLyr=localPolygons,
             predicateList=[AlgRunner.Intersects],
-            prefix='i_',
+            prefix="i_",
             discardNonMatching=True,
             context=context,
-            feedback=feedback
+            feedback=feedback,
         )
-        
+
         # Add edges for intersecting polygons
         for feat in intersecting_pairs.getFeatures():
-            if feat['featid'] == feat['i_featid']:
+            if feat["featid"] == feat["i_featid"]:
                 continue
-            graph.add_edge(feat['featid'], feat['i_featid'])
+            graph.add_edge(feat["featid"], feat["i_featid"])
         return graph
-    
-    def process_window(self, window_data, window, transform, min_area, rasterProjection, pixelBuffer=2, feedback=None, context=None):
+
+    def process_window(
+        self,
+        window_data,
+        window,
+        transform,
+        min_area,
+        rasterProjection,
+        pixelBuffer=2,
+        feedback=None,
+        context=None,
+    ):
         """Process a single raster window, handling one polygon at a time"""
         from scipy.spatial import KDTree
+
         context = QgsProcessingContext() if context is None else context
-        
+
         # Validate window data dimensions
         if window_data is None or window_data.size == 0:
             return None
-            
+
         rows, cols = window_data.shape
         if rows <= 0 or cols <= 0:
             return None
@@ -447,50 +462,52 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
         while True:
             if feedback is not None and feedback.isCanceled():
                 break
-                
+
             # Create and write temporary raster
             temp_output = QgsProcessingUtils.generateTempFilename(
                 f"temp_window_{str(uuid4().hex)}.tif"
             )
-            
+
             # Create a new temporary dataset with proper geotransform
-            driver = gdal.GetDriverByName('GTiff')
+            driver = gdal.GetDriverByName("GTiff")
             temp_ds = driver.Create(temp_output, rows, cols, 1, gdal.GDT_Int16)
-            
+
             window_transform = Affine(
-                transform.a,                                    # a: scale x
-                transform.b,                                    # b: shear x
-                transform.c + window['x_start'] * transform.a,  # c: translate x
-                transform.d,                                    # d: shear y
-                transform.e,                                    # e: scale y
-                transform.f + window['y_start'] * transform.e   # f: translate y
+                transform.a,  # a: scale x
+                transform.b,  # b: shear x
+                transform.c + window["x_start"] * transform.a,  # c: translate x
+                transform.d,  # d: shear y
+                transform.e,  # e: scale y
+                transform.f + window["y_start"] * transform.e,  # f: translate y
             )
-            
+
             # Set the geotransform using GDAL's expected format
             temp_ds.SetGeoTransform(window_transform.to_gdal())
-            temp_ds.SetProjection(rasterProjection)  # Assuming ds is accessible or pass it as parameter
-            
+            temp_ds.SetProjection(
+                rasterProjection
+            )  # Assuming ds is accessible or pass it as parameter
+
             # Write the data
             temp_ds.GetRasterBand(1).WriteArray(window_data.T)
             temp_ds.GetRasterBand(1).SetNoDataValue(self.nodata_value)
-            
+
             # Flush to disk
             temp_ds.FlushCache()
             temp_ds = None
-                
+
             # Polygonize current window state
             polygonLayer = self.algRunner.runGdalPolygonize(
                 inputRaster=temp_output,
                 context=context,
             )
-            
+
             # Filter small polygons within the window
             selectedPolygons = self.algRunner.runFilterExpression(
                 inputLyr=polygonLayer,
                 expression=f"""$area < {min_area} and "DN" != {self.nodata_value}""",
                 context=context,
             )
-            
+
             if selectedPolygons.featureCount() == 0:
                 break
             bbox = self.algRunner.runPolygonFromLayerExtent(
@@ -527,40 +544,45 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
             feat = next(polygonsNotOnEdge.getFeatures(request), None)
             if feat is None:
                 break
-            self.processPixelGroup(KDTree, window_data, window_transform, feat, self.nodata_value, pixelBuffer=pixelBuffer)
+            self.processPixelGroup(
+                KDTree,
+                window_data,
+                window_transform,
+                feat,
+                self.nodata_value,
+                pixelBuffer=pixelBuffer,
+            )
             currentIteration += 1
             if currentIteration > nIterations:
                 break
-        return {
-            'window_data': window_data,
-            'changes_made': True,
-            'window': window
-        }
+        return {"window_data": window_data, "changes_made": True, "window": window}
 
-    def aggregate_polygons_to_regions(self, nx, polygons, npRaster, transform, feedback, context):
+    def aggregate_polygons_to_regions(
+        self, nx, polygons, npRaster, transform, feedback, context
+    ):
         """Aggregate polygons into regions based on spatial relationships"""
         regions = []
-        
+
         # Build the graph of polygon relationships
         graph = self.build_polygon_graph(nx, polygons, context, feedback)
-        
+
         # Get connected components (groups of related polygons)
         connected_components = list(nx.connected_components(graph))
-        
+
         for component_idx, component in enumerate(connected_components):
             if feedback is not None and feedback.isCanceled():
                 break
-            
+
             # Get all geometries and DN values for this component
             component_geometries = []
             component_dn_values = []
-            
+
             # Start with first geometry to build combined geometry
             first_feat = polygons.getFeature(next(iter(component)))
             combined_geom = first_feat.geometry()
             component_geometries.append(combined_geom)
-            component_dn_values.append(first_feat['DN'])
-            
+            component_dn_values.append(first_feat["DN"])
+
             # Add remaining geometries
             for feat_id in component:
                 if feat_id == first_feat.id():
@@ -569,13 +591,13 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
                 geom = feat.geometry()
                 combined_geom = combined_geom.combine(geom)
                 component_geometries.append(geom)
-                component_dn_values.append(feat['DN'])
-            
+                component_dn_values.append(feat["DN"])
+
             # Extract window data
             window_data, window = rasterHandler.getNumpyViewFromPolygon(
                 npRaster, transform, combined_geom, pixelBuffer=2, returnWindow=True
             )
-            
+
             # Create region group
             region = RegionGroup(
                 geometries=component_geometries,
@@ -587,18 +609,27 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
             if not region.isValid():
                 continue
             regions.append(region)
-        
+
         return regions
 
-    def process_independent_groups(self, regions, transform, min_area, use_threads, rasterProjection, feedback, context):
+    def process_independent_groups(
+        self,
+        regions,
+        transform,
+        min_area,
+        use_threads,
+        rasterProjection,
+        feedback,
+        context,
+    ):
         """Process independent raster regions"""
         all_results = []
-        processLambda = lambda x: self.process_window(x.window_data, x.window, transform, min_area, rasterProjection)
-        
+        processLambda = lambda x: self.process_window(
+            x.window_data, x.window, transform, min_area, rasterProjection
+        )
+
         if use_threads and len(regions) > 1:
-            for result in concurrently(
-                processLambda, regions, feedback=feedback
-            ):
+            for result in concurrently(processLambda, regions, feedback=feedback):
                 if result is None:
                     continue
                 all_results.append(result)
@@ -617,9 +648,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
                 )
                 if result is not None:
                     all_results.append(result)
-        
+
         return all_results
-    
+
     def reclassifyGroupsOfPixelsInsidePolygons(
         self,
         KDTree,
@@ -667,10 +698,10 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
         maskedCurrentView = ma.masked_array(
             maskedCurrentView, currentView == nodata, dtype=np.int16
         )
-         # If everything is masked, return original
+        # If everything is masked, return original
         if maskedCurrentView.mask.all():
             return
-            
+
         # If nothing is masked (no pixels to change), return
         if not maskedCurrentView.mask.any():
             return

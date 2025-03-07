@@ -38,7 +38,7 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsField,
     QgsFields,
-    QgsProcessingParameterDefinition
+    QgsProcessingParameterDefinition,
 )
 
 
@@ -89,7 +89,7 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             self.tr("Number of subdivisions on x-axis"),
             minValue=1,
             type=QgsProcessingParameterNumber.Integer,
-            optional=True
+            optional=True,
         )
         param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
 
@@ -100,7 +100,7 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             self.tr("Number of subdivisions on y-axis"),
             minValue=1,
             type=QgsProcessingParameterNumber.Integer,
-            optional=True
+            optional=True,
         )
         param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
         self.addParameter(param)
@@ -129,10 +129,10 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
 
         xSubdivisions = self.parameterAsInt(parameters, self.XSUBDIVISIONS, context)
         ySubdivisions = self.parameterAsInt(parameters, self.YSUBDIVISIONS, context)
-        
+
         default_x = 1
         default_y = 1
-        
+
         if stopScale == 50:
             default_x = 2
             default_y = 2

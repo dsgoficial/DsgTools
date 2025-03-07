@@ -24,8 +24,12 @@ import fnmatch
 import json
 from typing import Any, Dict, List, Optional
 from PyQt5.QtCore import QVariant, QMetaType, QDateTime
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.abstractConvertDatabaseAlgorithm import AbstractDatabaseAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.conversionParameterTypes import ParameterDbConversion
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.abstractConvertDatabaseAlgorithm import (
+    AbstractDatabaseAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.conversionParameterTypes import (
+    ParameterDbConversion,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
 )
@@ -202,7 +206,11 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
         )
         currentStep = 0
         if inputConnectionName == destinationConnectionName:
-            raise QgsProcessingException(self.tr("The destination connection must be different than the input connection!"))
+            raise QgsProcessingException(
+                self.tr(
+                    "The destination connection must be different than the input connection!"
+                )
+            )
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(
@@ -233,7 +241,9 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        convertedFeatureDict = self.convertFeaturesWithConversionMaps(conversionMapList, clippedLayerDict, multiStepFeedback)
+        convertedFeatureDict = self.convertFeaturesWithConversionMaps(
+            conversionMapList, clippedLayerDict, multiStepFeedback
+        )
 
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)

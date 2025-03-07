@@ -339,7 +339,9 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         return "DSGTools - Data Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate("ClipAndCopyFeaturesBetweenDatabasesAlgorithm", string)
+        return QCoreApplication.translate(
+            "ClipAndCopyFeaturesBetweenDatabasesAlgorithm", string
+        )
 
     def createInstance(self):
         return ClipAndCopyFeaturesBetweenDatabasesAlgorithm()

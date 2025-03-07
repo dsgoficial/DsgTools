@@ -283,7 +283,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             if nextFeat is None:
                 break
             self.processPixelGroup(KDTree, npRaster, transform, nextFeat, nodata)
-            rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds, outputType=gdal.GDT_Int16)
+            rasterHandler.writeOutputRaster(
+                outputRaster, npRaster.T, ds, outputType=gdal.GDT_Int16
+            )
 
             ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int16)
             transform = rasterHandler.getCoordinateTransform(ds)

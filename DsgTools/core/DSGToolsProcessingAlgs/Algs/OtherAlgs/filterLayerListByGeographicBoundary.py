@@ -71,21 +71,27 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POINT_OUTPUT,
-                self.tr("Merged Point layer with features that intersect the geographic boundary"),
+                self.tr(
+                    "Merged Point layer with features that intersect the geographic boundary"
+                ),
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.LINE_OUTPUT,
-                self.tr("Merged line layer with features that intersect the geographic boundary"),
+                self.tr(
+                    "Merged line layer with features that intersect the geographic boundary"
+                ),
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POLYGON_OUTPUT,
-                self.tr("Merged polygon layer with features that intersect the geographic boundary"),
+                self.tr(
+                    "Merged polygon layer with features that intersect the geographic boundary"
+                ),
             )
         )
 
@@ -100,10 +106,10 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
         algRunner = AlgRunner()
         listSize = len(inputLyrList)
         crs = QgsProject.instance().crs() if listSize == 0 else inputLyrList[0].crs()
-        fieldList = [field for field in chain.from_iterable(i.fields() for i in inputLyrList)]
-        fieldDict = {
-            field.name(): field for field in fieldList
-        }
+        fieldList = [
+            field for field in chain.from_iterable(i.fields() for i in inputLyrList)
+        ]
+        fieldDict = {field.name(): field for field in fieldList}
         self.fields = QgsFields([fieldDict[f.name()] for f in fieldList])
 
         self.buildOutputSinks(
@@ -123,16 +129,24 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
             QgsWkbTypes.LineGeometry: [],
             QgsWkbTypes.PolygonGeometry: [],
         }
-        
-        if geographicBoundaryLyr is not None and not geographicBoundaryLyr.hasSpatialIndex():
-            algRunner.runCreateSpatialIndex(geographicBoundaryLyr, context, is_child_algorithm=True)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2*listSize, feedback)
+
+        if (
+            geographicBoundaryLyr is not None
+            and not geographicBoundaryLyr.hasSpatialIndex()
+        ):
+            algRunner.runCreateSpatialIndex(
+                geographicBoundaryLyr, context, is_child_algorithm=True
+            )
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2 * listSize, feedback)
         currentStep = 0
         for current, lyr in enumerate(inputLyrList):
             if multiStepFeedback.isCanceled():
                 break
             multiStepFeedback.setCurrentStep(currentStep)
-            if geographicBoundaryLyr is None or geographicBoundaryLyr.featureCount() == 0:
+            if (
+                geographicBoundaryLyr is None
+                or geographicBoundaryLyr.featureCount() == 0
+            ):
                 geometryDict[lyr.geometryType()].append(lyr.id())
                 feedback.setProgress(current * stepSize)
                 continue
@@ -155,7 +169,12 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             if len(inputList) == 0:
                 continue
-            merged = algRunner.runMergeVectorLayers(inputList=inputList, context=context, feedback=multiStepFeedback, crs=crs)
+            merged = algRunner.runMergeVectorLayers(
+                inputList=inputList,
+                context=context,
+                feedback=multiStepFeedback,
+                crs=crs,
+            )
             list(
                 map(
                     lambda x: self.flagSinkDict[geomType].addFeature(
@@ -165,14 +184,19 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
                 )
             )
             currentStep += 1
-        
+
         return {
             self.POINT_OUTPUT: self.point_flag_id,
             self.LINE_OUTPUT: self.line_flag_id,
             self.POLYGON_OUTPUT: self.poly_flag_id,
         }
-    
-    def buildOutputSinks(self, parameters: Dict[str, Any], context: QgsProcessingContext, outputCrs: QgsCoordinateReferenceSystem) -> None:
+
+    def buildOutputSinks(
+        self,
+        parameters: Dict[str, Any],
+        context: QgsProcessingContext,
+        outputCrs: QgsCoordinateReferenceSystem,
+    ) -> None:
         self.point_flag_sink, self.point_flag_id = self.parameterAsSink(
             parameters,
             self.POINT_OUTPUT,

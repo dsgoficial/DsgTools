@@ -27,6 +27,7 @@ from qgis.core import (
     QgsProcessingParameterType,
 )
 
+
 class ParameterDbConversionType(QgsProcessingParameterType):
     def __init__(self):
         super().__init__()
