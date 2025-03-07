@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.14 - dev
+## 4.17.15 - dev
 
 Novas Funcionalidades:
 
@@ -30,6 +30,7 @@ Correção de bugs:
 - Corrige bug no algoritmo de criação de polígonos por linha e centróide (crash com camada vazia de polígonos);
 - Corrige bug no carregamento com constraint string;
 - Corrige bug na correção de geometria inválida (correção de vértice);
+- Corrige bug do Match and Apply QML Styles to Layers com camadas shapefile;
 
 ## 4.16.0 - 2024-11-27
 
