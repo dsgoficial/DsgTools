@@ -9,6 +9,8 @@ Novas Funcionalidades:
 - Novo algoritmo de preparo de arquivos para empacotamento no BDGEx;
 - Novo algoritmo de realizar snap dentro de uma camada agrupando por atributo;
 - Nova caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides;
+- Nova caixa de ferramenta de inspecionar flags de área com mais de um centroide;
+- Novo algoritmo de filtrar múltiplas saídas pela moldura;
 
 Melhorias:
 
@@ -19,6 +21,7 @@ Melhorias:
 - Melhora o desempenho do algoritmo de construir polígonos por linha e centróide;
 - Caixa de Ferramentas de Controle de Qualidade renomeada para Workflow Toolbox;
 - Muda o comportamento da janela de carregamento (agora ela fica sempre no topo);
+- A Workflow Toolbox agora seta automaticamente o tipo de flag de geometria inválida para não filtrar (parâmetro do qgis necessário para rodar sem problemas os modelos);
 
 Correção de bugs:
 
@@ -26,7 +29,9 @@ Correção de bugs:
 - Corrige bug na ferramenta de extração de ponto cotados e melhora os critérios de inserção (caso de depressão, ordenamento geográfico e de cota para gerar um resultado determinístico);
 - Corrige bug na opção de uso de thread do algoritmo de construir polígonos por linha e centróide (crashes nos QGIS mais novos);
 - Corrige bug no algoritmo de criação de polígonos por linha e centróide (crash com camada vazia de polígonos);
-- Corrige bug no carregamento com constraint string.
+- Corrige bug no carregamento com constraint string;
+- Corrige bug na correção de geometria inválida (correção de vértice);
+- Corrige bug do Match and Apply QML Styles to Layers com camadas shapefile;
 
 ## 4.16.0 - 2024-11-27
 

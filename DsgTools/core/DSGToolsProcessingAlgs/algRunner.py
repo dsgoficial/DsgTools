@@ -949,12 +949,22 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runMergeVectorLayers(
-        self, inputList, context, feedback=None, outputLyr=None, crs=None, is_child_algorithm=False,
+        self,
+        inputList,
+        context,
+        feedback=None,
+        outputLyr=None,
+        crs=None,
+        is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"LAYERS": inputList, "CRS": crs, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:mergevectorlayers", parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm
+            "native:mergevectorlayers",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1042,16 +1052,16 @@ class AlgRunner:
         inputLyr: QgsVectorLayer,
         joinLyr: QgsVectorLayer,
         context: QgsProcessingContext,
-        predicateList: Optional[List[int]]=None,
-        joinFields: Optional[List[str]]=None,
-        method: Optional[int]=None,
-        discardNonMatching: Optional[bool]=True,
-        prefix: Optional[str]=None,
-        feedback: Optional[QgsFeedback]=None,
-        outputLyr: Optional[QgsVectorLayer]=None,
-        unjoinnedLyr: Optional[QgsVectorLayer]=None,
-        returnUnjoinned: Optional[bool]=False,
-        is_child_algorithm: Optional[bool]=False,
+        predicateList: Optional[List[int]] = None,
+        joinFields: Optional[List[str]] = None,
+        method: Optional[int] = None,
+        discardNonMatching: Optional[bool] = True,
+        prefix: Optional[str] = None,
+        feedback: Optional[QgsFeedback] = None,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        unjoinnedLyr: Optional[QgsVectorLayer] = None,
+        returnUnjoinned: Optional[bool] = False,
+        is_child_algorithm: Optional[bool] = False,
     ) -> QgsVectorLayer:
         predicateList = [0] if predicateList is None else predicateList
         joinFields = [] if joinFields is None else joinFields
@@ -1107,11 +1117,11 @@ class AlgRunner:
         self,
         inputLyr: QgsVectorLayer,
         context: QgsProcessingContext,
-        valuesFieldName: Optional[str]=None,
-        categoriesFieldName: str=None,
-        feedback: Optional[QgsProcessingContext]=None,
-        outputLyr: Optional[QgsVectorLayer]=None,
-        is_child_algorithm: Optional[bool]=False,
+        valuesFieldName: Optional[str] = None,
+        categoriesFieldName: str = None,
+        feedback: Optional[QgsProcessingContext] = None,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        is_child_algorithm: Optional[bool] = False,
     ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
@@ -2528,7 +2538,7 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
-      
+
     def runOrientedBoundingBox(
         self,
         inputLyr: QgsVectorLayer,
@@ -2568,7 +2578,7 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        
+
     def runDSGToolsLoadShapefile(
         self,
         inputFolder: str,
@@ -2585,7 +2595,7 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-              
+
     def runDSGToolsExtractMiddleVertexOnLine(
         self,
         inputLayer: QgsVectorLayer,

@@ -36,7 +36,9 @@ from .ComplexTools.complexWindow import ComplexWindow
 from .WorkflowToolBox.workflowDockWidget import (
     WorkflowDockWidget,
 )
-from .MultiLayersCentroidsFlagTool.multiLayersCentroidsFlagTool import MultiLayersCentroidsFlagDockWidget
+from .MultiLayersCentroidsFlagTool.multiLayersCentroidsFlagTool import (
+    MultiLayersCentroidsFlagDockWidget,
+)
 
 
 class ToolBoxesGuiManager(QObject):
@@ -178,13 +180,17 @@ class ToolBoxesGuiManager(QObject):
         else:
             self.qaToolBox = WorkflowDockWidget(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.qaToolBox)
-    
+
     def showMultiLayersCentroidsFlagTool(self):
         if self.multiLayersCentroidsFlagToolBox is not None:
             self.iface.removeDockWidget(self.multiLayersCentroidsFlagToolBox)
         else:
-            self.multiLayersCentroidsFlagToolBox = MultiLayersCentroidsFlagDockWidget(self.iface)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.multiLayersCentroidsFlagToolBox)
+            self.multiLayersCentroidsFlagToolBox = MultiLayersCentroidsFlagDockWidget(
+                self.iface
+            )
+        self.iface.addDockWidget(
+            Qt.RightDockWidgetArea, self.multiLayersCentroidsFlagToolBox
+        )
 
     def showCalcContourToolbox(self):
         """

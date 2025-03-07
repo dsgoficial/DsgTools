@@ -283,18 +283,22 @@ def createMaxPointFeatListFromRasterLayer(
 
 def writeOutputRaster(outputRaster, npRaster, ds=None, outputType=None):
     driver = gdal.GetDriverByName("GTiff")
-    ds = ds if ds is not None else driver.Create(
-        outputRaster, 
-        int(npRaster.shape[1]), 
-        int(npRaster.shape[0]), 
-        1, 
-        gdal.GDT_Int16
+    ds = (
+        ds
+        if ds is not None
+        else driver.Create(
+            outputRaster,
+            int(npRaster.shape[1]),
+            int(npRaster.shape[0]),
+            1,
+            gdal.GDT_Int16,
+        )
     )
     try:
         # 1. Check if file is in use
         if os.path.exists(outputRaster):
             try:
-                with open(outputRaster, 'r+b'):
+                with open(outputRaster, "r+b"):
                     pass
             except IOError:
                 raise RuntimeError(f"Output file {outputRaster} is locked or in use")
@@ -313,44 +317,46 @@ def writeOutputRaster(outputRaster, npRaster, ds=None, outputType=None):
             raise ValueError(f"Invalid array shape: {npRaster.shape}")
 
         outputType = gdal.GDT_Int32 if outputType is None else outputType
-        options = ['COMPRESS=LZW', 'TILED=YES']
-        
+        options = ["COMPRESS=LZW", "TILED=YES"]
+
         # 6. Verify driver
         if driver is None:
             raise RuntimeError("Failed to get GTiff driver")
 
         # 7. Create output dataset with error catching
-        mem_driver = gdal.GetDriverByName('MEM')
-        temp_ds = mem_driver.Create('', 
-                                  int(npRaster.shape[1]), 
-                                  int(npRaster.shape[0]), 
-                                  1, 
-                                  gdal.GDT_Int16)
-        
+        mem_driver = gdal.GetDriverByName("MEM")
+        temp_ds = mem_driver.Create(
+            "", int(npRaster.shape[1]), int(npRaster.shape[0]), 1, gdal.GDT_Int16
+        )
+
         temp_ds.SetProjection(ds.GetProjection())
         temp_ds.SetGeoTransform(ds.GetGeoTransform())
         temp_ds.GetRasterBand(1).SetNoDataValue(-9999)
         temp_ds.GetRasterBand(1).WriteArray(npRaster.astype(np.int16))
-        
-        translate_options = gdal.TranslateOptions(format='GTiff', 
-                                                creationOptions=['COMPRESS=LZW', 'TILED=YES'])
-        
-        gdal.Translate(outputRaster, 
-                      temp_ds, 
-                      options=translate_options)
-        
+
+        translate_options = gdal.TranslateOptions(
+            format="GTiff", creationOptions=["COMPRESS=LZW", "TILED=YES"]
+        )
+
+        gdal.Translate(outputRaster, temp_ds, options=translate_options)
+
     except Exception as e:
         import traceback
+
         error_msg = f"Failed to write raster:\n{str(e)}\n{traceback.format_exc()}"
         raise RuntimeError(error_msg)
     finally:
         # Clean up
-        if 'temp_ds' in locals() and temp_ds is not None:
+        if "temp_ds" in locals() and temp_ds is not None:
             temp_ds = None
 
 
 def getNumpyViewFromPolygon(
-    npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2, returnWindow=False,
+    npRaster: np.array,
+    transform: Affine,
+    geom: QgsGeometry,
+    pixelBuffer: int = 2,
+    returnWindow=False,
 ) -> np.array:
     bbox = geom.boundingBox()
     terrain_xmin, terrain_ymin, terrain_xmax, terrain_ymax = bbox.toRectF().getCoords()
@@ -358,7 +364,7 @@ def getNumpyViewFromPolygon(
     c, d = map(int, ~transform * (terrain_xmax, terrain_ymax))
     xmin, xmax = min(a, c), max(a, c)
     ymin, ymax = min(b, d), max(b, d)
-    
+
     x_start = max(xmin - pixelBuffer, 0)
     x_end = min(xmax + pixelBuffer + 1, npRaster.shape[0])
     y_start = max(ymin - pixelBuffer, 0)
@@ -366,84 +372,94 @@ def getNumpyViewFromPolygon(
 
     npView = npRaster[x_start:x_end, y_start:y_end]
     return npView if not returnWindow else npView, {
-        'x_start': x_start,
-        'x_end': x_end,
-        'y_start': y_start,
-        'y_end': y_end,
+        "x_start": x_start,
+        "x_end": x_end,
+        "y_start": y_start,
+        "y_end": y_end,
     }
 
 
 def getNumpyViewAndMaskFromPolygon(
-    npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2, returnWindow=False,
+    npRaster: np.array,
+    transform: Affine,
+    geom: QgsGeometry,
+    pixelBuffer: int = 2,
+    returnWindow=False,
 ) -> Union[Tuple[np.array, np.array], Tuple[np.array, np.array, Dict[str, float]]]:
     """
     Get a view of the numpy array for a polygon and create a mask of pixels that intersect with the polygon.
     Strictly contains modifications within polygon boundaries.
-    
+
     Parameters:
         npRaster: The input numpy array
         transform: Affine transform from pixel to world coordinates
         geom: The polygon geometry
         pixelBuffer: Buffer in pixels around the polygon bbox
-        
+
     Returns:
         Tuple of (array view, mask array) where mask is NaN inside polygon and original raster value outside
     """
     bbox = geom.boundingBox()
     terrain_xmin, terrain_ymin, terrain_xmax, terrain_ymax = bbox.toRectF().getCoords()
-    
+
     # Convert terrain coordinates to pixel coordinates
     a, b = map(int, ~transform * (terrain_xmin, terrain_ymin))
     c, d = map(int, ~transform * (terrain_xmax, terrain_ymax))
     xmin, xmax = min(a, c), max(a, c)
     ymin, ymax = min(b, d), max(b, d)
-    
+
     # Calculate view boundaries with buffer
     view_xmin = max(xmin - pixelBuffer, 0)
     view_xmax = min(xmax + pixelBuffer + 1, npRaster.shape[0])
     view_ymin = max(ymin - pixelBuffer, 0)
     view_ymax = min(ymax + pixelBuffer + 1, npRaster.shape[1])
-    
+
     # Get the view of the raster
     npView = npRaster[view_xmin:view_xmax, view_ymin:view_ymax]
-    
+
     # Create mask array initialized with the original raster values
     mask = np.zeros(npView.shape)
-    
+
     # Iterate through pixels in the view
     for i in range(view_xmax - view_xmin):
         for j in range(view_ymax - view_ymin):
             # Get pixel coordinates
             pixel_x = view_xmin + i
             pixel_y = view_ymin + j
-            
+
             # Get pixel corners in world coordinates
             corners = [
                 transform * (pixel_x, pixel_y),  # Upper left
                 transform * (pixel_x + 1, pixel_y),  # Upper right
                 transform * (pixel_x + 1, pixel_y + 1),  # Lower right
-                transform * (pixel_x, pixel_y + 1)  # Lower left
+                transform * (pixel_x, pixel_y + 1),  # Lower left
             ]
-            
+
             # Get center point
             center_x, center_y = transform * (pixel_x + 0.5, pixel_y + 0.5)
             center_point = QgsGeometry.fromPointXY(QgsPointXY(center_x, center_y))
-            
+
             # Create pixel polygon from corners
-            pixel_poly = QgsGeometry.fromPolygonXY([[QgsPointXY(*corner) for corner in corners]])
-            
+            pixel_poly = QgsGeometry.fromPolygonXY(
+                [[QgsPointXY(*corner) for corner in corners]]
+            )
+
             # Check if pixel is completely inside polygon
             if geom.contains(center_point) and geom.intersects(pixel_poly):
                 mask[i, j] = np.nan
     if not returnWindow:
         return npView, mask
     else:
-        return npView, mask, {
-            'x_start': view_xmin,
-            'x_end': view_xmax,
-            'y_start': view_ymin,
-            'y_end': view_ymax,
-        }
+        return (
+            npView,
+            mask,
+            {
+                "x_start": view_xmin,
+                "x_end": view_xmax,
+                "y_start": view_ymin,
+                "y_end": view_ymax,
+            },
+        )
 
 
 def buildNumpyNodataMaskForPolygon(

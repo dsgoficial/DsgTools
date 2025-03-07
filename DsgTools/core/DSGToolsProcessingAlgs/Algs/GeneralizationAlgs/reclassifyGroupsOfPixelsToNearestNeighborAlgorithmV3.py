@@ -103,7 +103,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
             self.RECLASSIFIED_POLYGONS,
             self.tr("Reclassified groups of pixels (Optional)"),
             optional=True,
-            createByDefault=False
+            createByDefault=False,
         )
         self.addParameter(reclassSink)
 
@@ -122,7 +122,11 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
         try:
             import networkx as nx
         except ImportError:
-            raise QgsProcessingException(self.tr("This algorithm requires networkx. Please install this library and try again."))
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires networkx. Please install this library and try again."
+                )
+            )
         self.algRunner = AlgRunner()
         inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT, context)
         min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
@@ -212,7 +216,6 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
             feedback=multiStepFeedback,
             context=context,
         )
-        
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -282,10 +285,19 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
             )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            self.algRunner.runCreateSpatialIndex(polygonLayer, context, feedback=multiStepFeedback, is_child_algorithm=True)
+            self.algRunner.runCreateSpatialIndex(
+                polygonLayer,
+                context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            originalGraph = self.buildGraph(nx, polygonLayer, context, feedback=multiStepFeedback) if originalGraph is None else originalGraph
+            originalGraph = (
+                self.buildGraph(nx, polygonLayer, context, feedback=multiStepFeedback)
+                if originalGraph is None
+                else originalGraph
+            )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             selectedPolygonLayer = self.algRunner.runFilterExpression(
@@ -309,7 +321,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
             if remainingFeatCount == 0 or nIterations > 10:
                 break
             if nIterations > 0:
-                multiStepFeedback.pushInfo(self.tr(f"Evaluating remaining polygons: Loop {nIterations+1}"))
+                multiStepFeedback.pushInfo(
+                    self.tr(f"Evaluating remaining polygons: Loop {nIterations+1}")
+                )
             G = self.buildGraph(nx, polygonsNotOnEdge, context, multiStepFeedback)
             connected_components = list(nx.connected_components(G))
 
@@ -319,7 +333,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
             nGroups = len(connected_components)
             innerFeedback = QgsProcessingMultiStepFeedback(nGroups, multiStepFeedback)
             crs = inputRaster.crs()
-            
+
             for currentComponent, component in enumerate(connected_components):
                 innerFeedback.setCurrentStep(currentComponent)
                 if innerFeedback.isCanceled():
@@ -328,44 +342,68 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
                 # clause = QgsFeatureRequest.OrderByClause("$area", ascending=True)
                 # orderby = QgsFeatureRequest.OrderBy([clause])
                 # request.setOrderBy(orderby)
-                request.setFilterExpression(f''' "featid" in ({', '.join(map(str, component))})''')
-                polygonDict = {f["featid"]:f for f in polygonsNotOnEdge.getFeatures(request)}
+                request.setFilterExpression(
+                    f""" "featid" in ({', '.join(map(str, component))})"""
+                )
+                polygonDict = {
+                    f["featid"]: f for f in polygonsNotOnEdge.getFeatures(request)
+                }
                 # polygonList = list(polygonsNotOnEdge.getFeatures(request))
-                combined_geometry = QgsGeometry.unaryUnion([f.geometry() for f in polygonDict.values()])
+                combined_geometry = QgsGeometry.unaryUnion(
+                    [f.geometry() for f in polygonDict.values()]
+                )
                 currentView, _, window = rasterHandler.getNumpyViewAndMaskFromPolygon(
-                    npRaster=npRaster, transform=transform, geom=combined_geometry, pixelBuffer=2, returnWindow=True,
+                    npRaster=npRaster,
+                    transform=transform,
+                    geom=combined_geometry,
+                    pixelBuffer=2,
+                    returnWindow=True,
                 )
                 window_transform = Affine(
-                    transform.a,                                    # a: scale x
-                    transform.b,                                    # b: shear x
-                    transform.c + window['x_start'] * transform.a,  # c: translate x
-                    transform.d,                                    # d: shear y
-                    transform.e,                                    # e: scale y
-                    transform.f + window['y_start'] * transform.e   # f: translate y
-                ) 
+                    transform.a,  # a: scale x
+                    transform.b,  # b: shear x
+                    transform.c + window["x_start"] * transform.a,  # c: translate x
+                    transform.d,  # d: shear y
+                    transform.e,  # e: scale y
+                    transform.f + window["y_start"] * transform.e,  # f: translate y
+                )
                 while polygonDict != dict():
                     if innerFeedback.isCanceled():
                         break
-                    sortedNodes = sorted(polygonDict.keys(), key=lambda x: G.nodes[x]["area"], reverse=False)
+                    sortedNodes = sorted(
+                        polygonDict.keys(),
+                        key=lambda x: G.nodes[x]["area"],
+                        reverse=False,
+                    )
                     currentNode = sortedNodes[0]
                     feat = polygonDict.pop(currentNode)
-                # for feat in polygonsNotOnEdge.getFeatures(request):
+                    # for feat in polygonsNotOnEdge.getFeatures(request):
                     if G.nodes[currentNode]["area"] > min_area:
                         continue
-                    self.processPixelGroup(KDTree, currentView, window_transform, feat, nodata)
-                    dn_dict = self.buildDnDict(currentView, feat.geometry(), window_transform, crs)
+                    self.processPixelGroup(
+                        KDTree, currentView, window_transform, feat, nodata
+                    )
+                    dn_dict = self.buildDnDict(
+                        currentView, feat.geometry(), window_transform, crs
+                    )
                     self.updateGraph(feat["featid"], G, originalGraph, dn_dict)
                     npRaster[
-                        window['x_start']:window['x_end'],
-                        window['y_start']:window['y_end']
+                        window["x_start"] : window["x_end"],
+                        window["y_start"] : window["y_end"],
                     ] = currentView
             nIterations += 1
-            rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds, outputType=gdal.GDT_Int16)
+            rasterHandler.writeOutputRaster(
+                outputRaster, npRaster.T, ds, outputType=gdal.GDT_Int16
+            )
             ds = None
-        return {self.OUTPUT: outputRaster} if polygons_sink is not None else {
-            self.OUTPUT: outputRaster,
-            self.RECLASSIFIED_POLYGONS: polygons_dest_id,
-        }
+        return (
+            {self.OUTPUT: outputRaster}
+            if polygons_sink is not None
+            else {
+                self.OUTPUT: outputRaster,
+                self.RECLASSIFIED_POLYGONS: polygons_dest_id,
+            }
+        )
 
     def buildGraph(self, nx, polygonLyr, context, feedback):
         graph = nx.Graph()
@@ -375,44 +413,46 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
         for feat in polygonLyr.getFeatures():
             geom = feat.geometry()
             area = d.measureArea(geom)
-            graph.add_node(feat["featid"], dn=feat['DN'], area=area)
+            graph.add_node(feat["featid"], dn=feat["DN"], area=area)
         multiStepFeedback = QgsProcessingMultiStepFeedback(1, feedback)
         multiStepFeedback.setCurrentStep(0)
         intersectingPairs = self.algRunner.runJoinAttributesByLocation(
             inputLyr=polygonLyr,
             joinLyr=polygonLyr,
             predicateList=[AlgRunner.Intersects],
-            prefix='i_',
+            prefix="i_",
             discardNonMatching=True,
             context=context,
-            feedback=feedback
+            feedback=feedback,
         )
         for feat in intersectingPairs.getFeatures():
-            if feat['featid'] == feat['i_featid']:
+            if feat["featid"] == feat["i_featid"]:
                 continue
-            graph.add_edge(feat['featid'], feat['i_featid'])
+            graph.add_edge(feat["featid"], feat["i_featid"])
         return graph
-    
+
     def updateGraph(self, featid, G, originalGraph, dn_dict):
         neighbors = set(G.neighbors(featid))
         if len(neighbors) == 0:
             return
         originalLargeNeighbors = set(originalGraph.neighbors(featid)) - neighbors
-        large_dn_dict = {i: originalGraph.nodes[i]['dn'] for i in originalLargeNeighbors}
+        large_dn_dict = {
+            i: originalGraph.nodes[i]["dn"] for i in originalLargeNeighbors
+        }
         for neighbor in neighbors:
-            neighbor_dn = G.nodes[neighbor]['dn']
+            neighbor_dn = G.nodes[neighbor]["dn"]
             if neighbor_dn not in dn_dict:
                 continue
-            G.nodes[neighbor]["area"] += dn_dict[neighbor_dn] + large_dn_dict.get(neighbor_dn, 0)
+            G.nodes[neighbor]["area"] += dn_dict[neighbor_dn] + large_dn_dict.get(
+                neighbor_dn, 0
+            )
         G.remove_node(featid)
-    
-    def buildDnDict(self, npRaster: np.ndarray, polygon: QgsGeometry, transform, crs) -> Dict[int, float]:
+
+    def buildDnDict(
+        self, npRaster: np.ndarray, polygon: QgsGeometry, transform, crs
+    ) -> Dict[int, float]:
         _, window = rasterHandler.getNumpyViewFromPolygon(
-            npRaster, 
-            transform,
-            polygon,
-            pixelBuffer=0,
-            returnWindow=True
+            npRaster, transform, polygon, pixelBuffer=0, returnWindow=True
         )
         npView, mask = rasterHandler.getNumpyViewAndMaskFromPolygon(
             npRaster,
@@ -422,38 +462,43 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
         )
         d = QgsDistanceArea()
         d.setEllipsoid(QgsProject.instance().ellipsoid())
-        
+
         pixel_width = abs(transform.a)
         pixel_height = abs(transform.e)
         if crs.isGeographic():
             # For geographic coordinates, we need a sample pixel to calculate its area
             # Get center of the region for a better representation
-            center_x = (window['x_start'] + window['x_end']) / 2
-            center_y = (window['y_start'] + window['y_end']) / 2
+            center_x = (window["x_start"] + window["x_end"]) / 2
+            center_y = (window["y_start"] + window["y_end"]) / 2
             terrain_coords = transform * (center_x, center_y)
-            
+
             # Create a sample pixel polygon at the center
-            sample_pixel = QgsGeometry.fromRect(QgsRectangle(
-                terrain_coords[0],
-                terrain_coords[1],
-                terrain_coords[0] + pixel_width,
-                terrain_coords[1] + pixel_height
-            ))
-            
+            sample_pixel = QgsGeometry.fromRect(
+                QgsRectangle(
+                    terrain_coords[0],
+                    terrain_coords[1],
+                    terrain_coords[0] + pixel_width,
+                    terrain_coords[1] + pixel_height,
+                )
+            )
+
             # Calculate area in square meters using QgsDistanceArea
             pixel_area = d.measureArea(sample_pixel)
         else:
             # For projected coordinates, convert to square meters based on the CRS units
             units = crs.mapUnits()
-            conversion_factor = QgsUnitTypes.fromUnitToUnitFactor(units, QgsUnitTypes.SquareMeters)
+            conversion_factor = QgsUnitTypes.fromUnitToUnitFactor(
+                units, QgsUnitTypes.SquareMeters
+            )
             pixel_area = pixel_width * pixel_height * conversion_factor
-    
+
         # Count occurrences of each value
         unique_values, counts = np.unique(npView[np.isnan(mask)], return_counts=True)
-        
+
         # Calculate areas in square meters
         return {
-            int(value): count * pixel_area for value, count in zip(unique_values, counts)
+            int(value): count * pixel_area
+            for value, count in zip(unique_values, counts)
         }
 
     def computeBboxLine(
@@ -534,12 +579,18 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
         geom = polygonFeat.geometry()
 
         currentView, mask = rasterHandler.getNumpyViewAndMaskFromPolygon(
-            npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=2, returnWindow=False
+            npRaster=npRaster,
+            transform=transform,
+            geom=geom,
+            pixelBuffer=2,
+            returnWindow=False,
         )
         v = polygonFeat["DN"]
         originalCopy = np.array(currentView)
         maskedCurrentView = ma.masked_array(currentView, np.isnan(mask), np.int16)
-        maskedCurrentView = ma.masked_array(maskedCurrentView, currentView == v, np.int16)
+        maskedCurrentView = ma.masked_array(
+            maskedCurrentView, currentView == v, np.int16
+        )
         maskedCurrentView = ma.masked_array(
             maskedCurrentView, currentView == nodata, dtype=np.int16
         )

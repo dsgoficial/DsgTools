@@ -82,7 +82,6 @@ class SnapFeaturesInsideLayerWithGroupByAlgorithm(ValidationAlgorithm):
         )
         param.setMetadata({"widget_wrapper": {"decimals": 8}})
         self.addParameter(param)
-        
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -97,17 +96,20 @@ class SnapFeaturesInsideLayerWithGroupByAlgorithm(ValidationAlgorithm):
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        attributeName = self.parameterAsFields(
-            parameters, self.ATTRIBUTE, context
-        )[0]
+        attributeName = self.parameterAsFields(parameters, self.ATTRIBUTE, context)[0]
         currentStep = 0
-        uniqueValues = inputLyr.uniqueValues(inputLyr.dataProvider().fieldNameIndex(attributeName))
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3 + 3*len(uniqueValues), feedback)
+        uniqueValues = inputLyr.uniqueValues(
+            inputLyr.dataProvider().fieldNameIndex(attributeName)
+        )
+        multiStepFeedback = QgsProcessingMultiStepFeedback(
+            3 + 3 * len(uniqueValues), feedback
+        )
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Creating aux structure..."))
-        
+
         cacheLyr = algRunner.runCreateFieldWithExpression(
-            inputLyr=inputLyr if not onlySelected
+            inputLyr=inputLyr
+            if not onlySelected
             else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True),
             expression="$id",
             fieldName="featid",
@@ -133,14 +135,19 @@ class SnapFeaturesInsideLayerWithGroupByAlgorithm(ValidationAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             currentLayer = algRunner.runFilterExpression(
                 cacheLyr,
-                expression=f''' "{attributeName}" = {value}''',
+                expression=f""" "{attributeName}" = {value}""",
                 context=context,
                 feedback=multiStepFeedback,
                 is_child_algorithm=True,
             )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            algRunner.runCreateSpatialIndex(currentLayer, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+            algRunner.runCreateSpatialIndex(
+                currentLayer,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             snappedDict[value] = algRunner.runSnapGeometriesToLayer(
@@ -215,7 +222,9 @@ class SnapFeaturesInsideLayerWithGroupByAlgorithm(ValidationAlgorithm):
         return "DSGTools - QA Tools: Snap Processes"
 
     def tr(self, string):
-        return QCoreApplication.translate("SnapFeaturesInsideLayerWithGroupByAlgorithm", string)
+        return QCoreApplication.translate(
+            "SnapFeaturesInsideLayerWithGroupByAlgorithm", string
+        )
 
     def createInstance(self):
         return SnapFeaturesInsideLayerWithGroupByAlgorithm()

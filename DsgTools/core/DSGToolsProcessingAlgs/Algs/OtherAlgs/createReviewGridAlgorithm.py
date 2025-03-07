@@ -89,7 +89,9 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             optional=True,
             type=QgsProcessingParameterNumber.Integer,
         )
-        paramRelatedTask.setFlags(paramRelatedTask.flags() | QgsProcessingParameterNumber.FlagAdvanced)
+        paramRelatedTask.setFlags(
+            paramRelatedTask.flags() | QgsProcessingParameterNumber.FlagAdvanced
+        )
         self.addParameter(paramRelatedTask)
 
         paramUnitWork = QgsProcessingParameterNumber(
@@ -98,7 +100,9 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             optional=True,
             type=QgsProcessingParameterNumber.Integer,
         )
-        paramUnitWork.setFlags(paramUnitWork.flags() | QgsProcessingParameterNumber.FlagAdvanced)
+        paramUnitWork.setFlags(
+            paramUnitWork.flags() | QgsProcessingParameterNumber.FlagAdvanced
+        )
         self.addParameter(paramUnitWork)
 
         paramStep = QgsProcessingParameterNumber(
@@ -107,7 +111,9 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             optional=True,
             type=QgsProcessingParameterNumber.Integer,
         )
-        paramStep.setFlags(paramStep.flags() | QgsProcessingParameterNumber.FlagAdvanced)
+        paramStep.setFlags(
+            paramStep.flags() | QgsProcessingParameterNumber.FlagAdvanced
+        )
         self.addParameter(paramStep)
 
         self.addParameter(

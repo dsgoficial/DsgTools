@@ -42,14 +42,14 @@ def concurrently(handler, inputs, *, max_concurrency=None, feedback=None):
     """
     # Make sure we get a consistent iterator throughout, rather than
     # getting the first element repeatedly.
-     # Determine optimal concurrency
+    # Determine optimal concurrency
     if max_concurrency is None:
         max_concurrency = min(os.cpu_count() - 1 or 1, 5)
-    
+
     # Convert inputs to iterator
     handler_inputs = iter(inputs)
     total_submitted = 0
-    
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_concurrency) as executor:
         # Initial batch of tasks
         futures = {
@@ -61,8 +61,7 @@ def concurrently(handler, inputs, *, max_concurrency=None, feedback=None):
         while futures:
             # Wait for the first task to complete
             done, _ = concurrent.futures.wait(
-                futures, 
-                return_when=concurrent.futures.FIRST_COMPLETED
+                futures, return_when=concurrent.futures.FIRST_COMPLETED
             )
 
             for fut in done:
@@ -81,8 +80,10 @@ def concurrently(handler, inputs, *, max_concurrency=None, feedback=None):
                     executor.shutdown(cancel_futures=True, wait=False)
                     break
                 # Update progress if possible
-                if hasattr(feedback, 'setProgress') and total_submitted > 0:
-                    progress = ((total_submitted - len(futures)) / total_submitted) * 100
+                if hasattr(feedback, "setProgress") and total_submitted > 0:
+                    progress = (
+                        (total_submitted - len(futures)) / total_submitted
+                    ) * 100
                     feedback.setProgress(progress)
 
             # Submit new tasks to replace completed ones
