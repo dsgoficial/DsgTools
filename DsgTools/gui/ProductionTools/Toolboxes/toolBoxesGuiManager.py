@@ -36,7 +36,9 @@ from .ComplexTools.complexWindow import ComplexWindow
 from .WorkflowToolBox.workflowDockWidget import (
     WorkflowDockWidget,
 )
-from .CentroidsFlagTool.centroidsFlagTool import CentroidFlagsDockWidget
+from .MultiLayersCentroidsFlagTool.multiLayersCentroidsFlagTool import (
+    MultiLayersCentroidsFlagDockWidget,
+)
 
 
 class ToolBoxesGuiManager(QObject):
@@ -89,11 +91,11 @@ class ToolBoxesGuiManager(QObject):
             withShortcut=True,
         )
 
-        self.centroidFlagToolBox = None
+        self.multiLayersCentroidsFlagToolBox = None
         self.addTool(
-            self.showCentroidFlagTool,
+            self.showMultiLayersCentroidsFlagTool,
             "flags_centroids.png",
-            self.tr("Inspect Centroid Flags Toolbox"),
+            self.tr("Inspect Multiple Layers Centroid Flags Toolbox"),
             parentButton=self.stackButton,
             setDefaultAction=False,
         )
@@ -179,12 +181,16 @@ class ToolBoxesGuiManager(QObject):
             self.qaToolBox = WorkflowDockWidget(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.qaToolBox)
 
-    def showCentroidFlagTool(self):
-        if self.centroidFlagToolBox is not None:
-            self.iface.removeDockWidget(self.centroidFlagToolBox)
+    def showMultiLayersCentroidsFlagTool(self):
+        if self.multiLayersCentroidsFlagToolBox is not None:
+            self.iface.removeDockWidget(self.multiLayersCentroidsFlagToolBox)
         else:
-            self.centroidFlagToolBox = CentroidFlagsDockWidget(self.iface)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.centroidFlagToolBox)
+            self.multiLayersCentroidsFlagToolBox = MultiLayersCentroidsFlagDockWidget(
+                self.iface
+            )
+        self.iface.addDockWidget(
+            Qt.RightDockWidgetArea, self.multiLayersCentroidsFlagToolBox
+        )
 
     def showCalcContourToolbox(self):
         """
