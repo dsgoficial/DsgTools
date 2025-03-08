@@ -385,10 +385,14 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
     ):
         inputDrainagesLyr.startEditing()
         inputDrainagesLyr.beginEditCommand(commandMessage)
-        changeValuesLambda = lambda x: inputDrainagesLyr.changeAttributeValue(
-            x, polygonRelationshipAttributeIdx, outsidePolygonValue
-        )
-        list(map(changeValuesLambda, featIdsToUpdate))
+        for fieldId in featIdsToUpdate:
+            inputDrainagesLyr.changeAttributeValue(
+                fieldId, polygonRelationshipAttributeIdx, outsidePolygonValue
+            )
+        # changeValuesLambda = lambda x: inputDrainagesLyr.changeAttributeValue(
+        #     x, polygonRelationshipAttributeIdx, outsidePolygonValue
+        # )
+        # list(map(changeValuesLambda, featIdsToUpdate))
         inputDrainagesLyr.endEditCommand()
 
     def buildPointDict(self, pointsInsideWaterBodies, feedback):
