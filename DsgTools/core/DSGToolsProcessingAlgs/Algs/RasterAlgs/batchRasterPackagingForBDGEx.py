@@ -215,7 +215,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     self.buildXML(
                         rasterLayer=clippedRasterLayer,
                         matchedFeature=matchedFeature,
-                        output_xml_file=clippedOutputPath.replace(".tif", ".xml").replace(".TIF", ".xml"),
+                        output_xml_file=clippedOutputPath.replace(
+                            ".tif", ".xml"
+                        ).replace(".TIF", ".xml"),
                         productName=Path(clippedOutputPath).stem,
                     )
                     currentIndex += 1
@@ -230,9 +232,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             return matchedFeature["_filename"]
         productName = f"""{matchedFeature["source"]}"""
         if matchedFeature["productTyp"] != NULL:
-            productName += (
-                        f"""_{matchedFeature["productTyp"].replace(" ","_")}"""
-                    )
+            productName += f"""_{matchedFeature["productTyp"].replace(" ","_")}"""
         productName += f"""_{re.sub("T.+", "", matchedFeature["acquisitio"]).replace("-","")}_id_{matchedFeature['featureId']}"""
         return productName
 
@@ -322,7 +322,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         for zipPath in Path(inputFolder).rglob("*.zip"):
             with zipfile.ZipFile(zipPath, "r") as zip_ref:
                 zip_ref.extractall(self.tempFolder)
-        for shp in itertools.chain.from_iterable([Path(self.tempFolder).rglob("*.shp"), Path(inputFolder).rglob("*.shp")]):
+        for shp in itertools.chain.from_iterable(
+            [Path(self.tempFolder).rglob("*.shp"), Path(inputFolder).rglob("*.shp")]
+        ):
             if "_SEAMLINES_SHAPE" in str(shp):
                 key = str(shp.name).replace(".shp", "").replace("_SEAMLINES_SHAPE", "")
                 shapefilesDict[key]["SEAMLINES_SHAPE"] = QgsVectorLayer(

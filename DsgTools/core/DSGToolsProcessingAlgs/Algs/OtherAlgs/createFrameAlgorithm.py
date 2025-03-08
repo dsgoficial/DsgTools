@@ -39,7 +39,7 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsField,
     QgsFields,
-    QgsProcessingParameterDefinition
+    QgsProcessingParameterDefinition,
 )
 
 
@@ -98,8 +98,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterString(
-                self.INDEX, 
-                self.tr("Index (comma-separated for multiple)")
+                self.INDEX, self.tr("Index (comma-separated for multiple)")
             )
         )
         self.addParameter(QgsProcessingParameterCrs(self.CRS, self.tr("CRS")))
@@ -109,7 +108,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             self.tr("Number of subdivisions on x-axis"),
             minValue=1,
             type=QgsProcessingParameterNumber.Integer,
-            optional=True
+            optional=True,
         )
         param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
 
@@ -120,7 +119,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             self.tr("Number of subdivisions on y-axis"),
             minValue=1,
             type=QgsProcessingParameterNumber.Integer,
-            optional=True
+            optional=True,
         )
         param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
         self.addParameter(param)
@@ -151,7 +150,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             raise QgsProcessingException(
                 self.tr("Invalid {index}").format(index=self.indexTypes[indexTypeIdx])
             )
-            
+
         inputIndexes = [idx.strip() for idx in inputIndexString.split(",")]
 
         if startScaleIdx in [0, 1] and indexTypeIdx == 0:
@@ -160,27 +159,26 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
                     index=self.indexTypes[indexTypeIdx]
                 )
             )
-        
+
         for inputIndex in inputIndexes:
             index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
             if index is None or not self.validateIndex(index):
                 raise QgsProcessingException(
                     self.tr("Invalid {index} format: {value}").format(
-                        index=self.indexTypes[indexTypeIdx],
-                        value=inputIndex
+                        index=self.indexTypes[indexTypeIdx], value=inputIndex
                     )
                 )
 
         crs = self.parameterAsCrs(parameters, self.CRS, context)
         if crs is None or not crs.isValid():
             raise QgsProcessingException(self.tr("Invalid CRS."))
-        
+
         xSubdivisions = self.parameterAsInt(parameters, self.XSUBDIVISIONS, context)
         ySubdivisions = self.parameterAsInt(parameters, self.YSUBDIVISIONS, context)
-        
+
         default_x = 1
         default_y = 1
-        
+
         if stopScale == 50:
             default_x = 2
             default_y = 2
@@ -214,11 +212,11 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         for i, inputIndex in enumerate(inputIndexes):
             if feedback.isCanceled():
                 break
-                
+
             index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
             feedback.setProgress(int((i / total) * 100))
             feedback.pushInfo(f"Processing index {i+1}/{total}: {inputIndex}")
-            
+
             featureHandler.getSystematicGridFeatures(
                 featureList,
                 index,

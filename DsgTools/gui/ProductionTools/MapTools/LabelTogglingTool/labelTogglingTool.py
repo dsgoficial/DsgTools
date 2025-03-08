@@ -121,16 +121,16 @@ class LabelTogglingTool(QgsMapTool):
             self.stackButton.setDefaultAction(self.sender())
         except:
             pass
-        
+
         # Inverte o estado global das labels
         self.labels_enabled = not self.labels_enabled
-        
+
         # Aplica o mesmo estado para todas as camadas
         for lyr in self.getLayers(iface, mode):
             if not isinstance(lyr, QgsVectorLayer):
                 continue
             lyr.setLabelsEnabled(self.labels_enabled)
-        
+
         self.canvas.refresh()
 
     def getLayers(self, iface, mode):

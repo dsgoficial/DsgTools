@@ -763,8 +763,9 @@ def convert_features(
         outputFeatListDict: List[Dict[str, Any]] = featureProcessor.convert(
             list(map(get_feat_lambda, featIterator)),
             parameterDict={
-                "isMulti": QgsWkbTypes.isMultiType(lyr.wkbType())\
-                    if isinstance(lyr, QgsVectorLayer) else True
+                "isMulti": QgsWkbTypes.isMultiType(lyr.wkbType())
+                if isinstance(lyr, QgsVectorLayer)
+                else True
             },
             feedback=multiStepFeedback,
         )

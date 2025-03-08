@@ -115,7 +115,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 optional=True,
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.CONTOUR_INTERVAL,
@@ -124,7 +124,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 defaultValue=10,
             )
         )
-
 
         self.addParameter(
             QgsProcessingParameterVectorLayer(
@@ -1692,7 +1691,15 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         return list(featSet)
 
     def getMinFeatures(
-        self, maxFeats, fields, npRaster, transform, distance, maskLyr, crs, feedback=None
+        self,
+        maxFeats,
+        fields,
+        npRaster,
+        transform,
+        distance,
+        maskLyr,
+        crs,
+        feedback=None,
     ):
         featSet = set(maxFeats)
         npRasterCopy = np.array(npRaster)
@@ -1855,7 +1862,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep = 0
             multiStepFeedback.setCurrentStep(currentStep)
-        AlgRunner().runCreateSpatialIndex(candidatesPointLyr, context, is_child_algorithm=True)
+        AlgRunner().runCreateSpatialIndex(
+            candidatesPointLyr, context, is_child_algorithm=True
+        )
 
         disjointLyr = AlgRunner().runExtractByLocation(
             candidatesPointLyr,
@@ -1874,12 +1883,16 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         outputSet, exclusionSet = set(), set()
         stepSize = 100 / nFeats
         request = QgsFeatureRequest()
-        orderByClause1 = QgsFeatureRequest.OrderByClause("cota_mais_alta", ascending=True)
+        orderByClause1 = QgsFeatureRequest.OrderByClause(
+            "cota_mais_alta", ascending=True
+        )
         orderByClause2 = QgsFeatureRequest.OrderByClause("cota", ascending=False)
         # ordenamento geográfico, da esquerda para direita, de cima para baixo
         orderByClause3 = QgsFeatureRequest.OrderByClause("$y", ascending=False)
         orderByClause4 = QgsFeatureRequest.OrderByClause("$x", ascending=True)
-        orderby = QgsFeatureRequest.OrderBy([orderByClause1, orderByClause2, orderByClause3, orderByClause4])
+        orderby = QgsFeatureRequest.OrderBy(
+            [orderByClause1, orderByClause2, orderByClause3, orderByClause4]
+        )
         request.setOrderBy(orderby)
         for current, feat in enumerate(disjointLyr.getFeatures(request)):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
@@ -2044,9 +2057,17 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        depressionHilltops = [feat for feat in hillTopsLyr.getFeatures(depressionExpression)]
+        depressionHilltops = [
+            feat for feat in hillTopsLyr.getFeatures(depressionExpression)
+        ]
         if len(depressionHilltops) > 0:
-            depressionPoints = [f for f in pointList if any(f.geometry().intersects(i.geometry()) for i in depressionHilltops)]
+            depressionPoints = [
+                f
+                for f in pointList
+                if any(
+                    f.geometry().intersects(i.geometry()) for i in depressionHilltops
+                )
+            ]
             filteredDepressionPoints = self.filterWithAllCriteria(
                 inputPointList=depressionPoints,
                 referenceLyr=polygonLyr,
@@ -2150,7 +2171,11 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             clippedHilltops, context=context, is_child_algorithm=True
         )
         clippedHilltops = algRunner.runJoinAttributesByLocation(
-            inputLyr=clippedHilltops, joinLyr=contourLayer, context=context, discardNonMatching=True, method=1,
+            inputLyr=clippedHilltops,
+            joinLyr=contourLayer,
+            context=context,
+            discardNonMatching=True,
+            method=1,
         )
         stepSize = 100 / nFeats
         featList = []

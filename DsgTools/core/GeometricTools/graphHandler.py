@@ -244,17 +244,17 @@ def buildAuxStructures(
     if nodeCount == 0:
         G = nx.Graph()
         return (
-        (nodeDict, nodeIdDict, edgeDict, hashDict, G)
-        if not computeNodeLayerIdDict
-        else (
-            nodeDict,
-            nodeIdDict,
-            edgeDict,
-            hashDict,
-            G,
-            nodeLayerIdDict,
+            (nodeDict, nodeIdDict, edgeDict, hashDict, G)
+            if not computeNodeLayerIdDict
+            else (
+                nodeDict,
+                nodeIdDict,
+                edgeDict,
+                hashDict,
+                G,
+                nodeLayerIdDict,
+            )
         )
-    )
     stepSize = 100 / nodeCount
     auxId = 0
     for current, nodeFeat in enumerate(nodesLayer.getFeatures()):

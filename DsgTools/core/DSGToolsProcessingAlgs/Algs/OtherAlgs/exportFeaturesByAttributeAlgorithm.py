@@ -21,18 +21,20 @@
 """
 
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
-from qgis.core import (QgsProcessing,
-                       QgsProcessingException,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterVectorLayer,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterFeatureSink,
-                       QgsExpression,
-                       QgsFeatureSink,
-                       QgsVectorLayer,
-                       QgsFeatureRequest)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingException,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingParameterField,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterString,
+    QgsProcessingParameterFeatureSink,
+    QgsExpression,
+    QgsFeatureSink,
+    QgsVectorLayer,
+    QgsFeatureRequest,
+)
 from qgis import processing
 
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
@@ -41,73 +43,67 @@ from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
     """Algorithm to export features based on attribute filtering."""
 
-    INPUT = 'INPUT'
-    FIELD = 'FIELD'
-    OPERATOR = 'OPERATOR'
-    VALUE = 'VALUE'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    FIELD = "FIELD"
+    OPERATOR = "OPERATOR"
+    VALUE = "VALUE"
+    OUTPUT = "OUTPUT"
 
-    OPERATORS = ['=',
-                 '<>',
-                 '>',
-                 '>=',
-                 '<',
-                 '<=',
-                 'begins with',
-                 'contains',
-                 'is null',
-                 'is not null',
-                 'does not contain']
-    STRING_OPERATORS = ['begins with', 'contains', 'does not contain']
-
+    OPERATORS = [
+        "=",
+        "<>",
+        ">",
+        ">=",
+        "<",
+        "<=",
+        "begins with",
+        "contains",
+        "is null",
+        "is not null",
+        "does not contain",
+    ]
+    STRING_OPERATORS = ["begins with", "contains", "does not contain"]
 
     def initAlgorithm(self, config=None):
         """Initializes algorithm parameters."""
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVector]
+                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVector]
             )
         )
 
         self.addParameter(
             QgsProcessingParameterField(
                 self.FIELD,
-                self.tr('Selection attribute'),
-                parentLayerParameterName=self.INPUT
+                self.tr("Selection attribute"),
+                parentLayerParameterName=self.INPUT,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.OPERATOR,
-                self.tr('Operator'),
+                self.tr("Operator"),
                 options=self.OPERATORS,
-                defaultValue=0
+                defaultValue=0,
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterString(
-                self.VALUE,
-                self.tr('Value'),
-                optional=True
-            )
+            QgsProcessingParameterString(self.VALUE, self.tr("Value"), optional=True)
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.OUTPUT,
-                self.tr('Output layer')
-            )
+            QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Output layer"))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
         """Processes the algorithm."""
         layer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         fieldName = self.parameterAsString(parameters, self.FIELD, context)
-        operator = self.OPERATORS[self.parameterAsEnum(parameters, self.OPERATOR, context)]
+        operator = self.OPERATORS[
+            self.parameterAsEnum(parameters, self.OPERATOR, context)
+        ]
         value = self.parameterAsString(parameters, self.VALUE, context)
 
         fields = layer.fields() if layer else QgsFields()
@@ -117,32 +113,31 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
             context,
             fields,
             layer.wkbType() if layer else QgsWkbTypes.NoGeometry,
-            layer.sourceCrs() if layer else None
+            layer.sourceCrs() if layer else None,
         )
 
         if sink is None:
             raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
 
-       
         if layer is None:
             raise QgsProcessingException("Camada inválida ou não encontrada.")
 
-       
         if fieldName not in layer.fields().names():
-            feedback.pushInfo(f"O atributo '{fieldName}' não foi encontrado na camada. Nenhuma exportação realizada.")
+            feedback.pushInfo(
+                f"O atributo '{fieldName}' não foi encontrado na camada. Nenhuma exportação realizada."
+            )
             return {self.OUTPUT: dest_id}
 
-       
         field_ref = QgsExpression.quotedColumnRef(fieldName)
-        if operator == 'is null':
+        if operator == "is null":
             expression_string = f"{field_ref} IS NULL"
-        elif operator == 'is not null':
+        elif operator == "is not null":
             expression_string = f"{field_ref} IS NOT NULL"
-        elif operator == 'begins with':
+        elif operator == "begins with":
             expression_string = f"{field_ref} LIKE '{value}%'"
-        elif operator == 'contains':
+        elif operator == "contains":
             expression_string = f"{field_ref} LIKE '%{value}%'"
-        elif operator == 'does not contain':
+        elif operator == "does not contain":
             expression_string = f"{field_ref} NOT LIKE '%{value}%'"
         else:
             quoted_val = QgsExpression.quotedValue(value)
@@ -150,13 +145,13 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
 
         expression = QgsExpression(expression_string)
         if expression.hasParserError():
-            raise QgsProcessingException(f"Erro na expressão: {expression.parserErrorString()}")
+            raise QgsProcessingException(
+                f"Erro na expressão: {expression.parserErrorString()}"
+            )
 
-        
         features = layer.getFeatures(QgsFeatureRequest(expression))
         matched_features = [f for f in features]
 
-        
         nFeatures = len(matched_features)
         if nFeatures == 0:
             feedback.pushInfo("Nenhum recurso encontrado com o valor especificado.")
@@ -164,7 +159,6 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
 
         stepSize = 100 / nFeatures
 
-    
         for current, feature in enumerate(matched_features):
             if feedback.isCanceled():
                 break
@@ -173,25 +167,24 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
 
         feedback.pushInfo("Exportação concluída com sucesso.")
         return {self.OUTPUT: dest_id}
-    
+
     def name(self):
-        return 'exportfeaturesbyattribute'
+        return "exportfeaturesbyattribute"
 
     def displayName(self):
-        return self.tr('Export Features by Attribute')
+        return self.tr("Export Features by Attribute")
 
     def group(self):
         return self.tr("Utils")
 
     def groupId(self):
         return "DSGTools - Utils"
-    
+
     def tr(self, string):
         return QCoreApplication.translate("ExportFeaturesByAttribute", string)
 
     def shortHelpString(self):
         return help().shortHelpString(self.name())
-        
+
     def createInstance(self):
         return ExportFeaturesByAttributeAlgorithm()
-

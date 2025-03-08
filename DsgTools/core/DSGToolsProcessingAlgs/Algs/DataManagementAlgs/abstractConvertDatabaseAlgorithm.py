@@ -25,7 +25,11 @@ import json
 from typing import Any, Dict, List, Optional
 from PyQt5.QtCore import QVariant, QDateTime
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.DbTools.dbConversionHandler import FeatureProcessor, MappingFeatureProcessor, convert_features
+from DsgTools.core.DbTools.dbConversionHandler import (
+    FeatureProcessor,
+    MappingFeatureProcessor,
+    convert_features,
+)
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
@@ -55,7 +59,6 @@ from DsgTools.core.dsgEnums import DsgEnums
 
 
 class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
-
     def flags(self):
         return (
             super().flags()
@@ -77,13 +80,15 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
         newFeat = QgsFeature(self.fields)
         geom = featMap.pop("geom")
         newFeat.setGeometry(geom)
-        newFeat["layer_name"] = featMap.get("layer_name_original", featMap.get("layer_name", None))
+        newFeat["layer_name"] = featMap.get(
+            "layer_name_original", featMap.get("layer_name", None)
+        )
         for k, v in featMap.items():
             if isinstance(v, QDateTime):
                 featMap[k] = v.toString()
         newFeat["attribute_map"] = json.dumps(featMap, default=str)
         return newFeat
-    
+
     def getOutputCRS(self, connectionName: str) -> QgsCoordinateReferenceSystem:
         abstractDb = self.getAbstractDb(connectionName)
         srid = abstractDb.findEPSG()
@@ -124,7 +129,10 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
             inputParamList = list(set(inputParamList) - layerNamesToExclude)
         multiStepFeedback.setCurrentStep(1)
         loadedLayerList = layerLoader.loadLayersInsideProcessing(
-            inputParamList, addToCanvas=addToCanvas, uniqueLoad=True, feedback=multiStepFeedback
+            inputParamList,
+            addToCanvas=addToCanvas,
+            uniqueLoad=True,
+            feedback=multiStepFeedback,
         )
         multiStepFeedback.setCurrentStep(2)
         if addToCanvas:
@@ -182,7 +190,9 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
                 return outputDict
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx)
-            clippedLyr = self.clipAndReprojectInputLayer(lyr, geographicBoundLyr, outputCrs, context, multiStepFeedback)
+            clippedLyr = self.clipAndReprojectInputLayer(
+                lyr, geographicBoundLyr, outputCrs, context, multiStepFeedback
+            )
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx + 1)
             key = schema_table_layer_dict[lyr.name()]
@@ -197,18 +207,38 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
             )
         return outputDict
 
-    def clipAndReprojectInputLayer(self, lyr: QgsVectorLayer, geographicBoundLyr: QgsVectorLayer, outputCrs: QgsCoordinateReferenceSystem, context: QgsProcessingContext, multiStepFeedback: QgsProcessingMultiStepFeedback) -> QgsVectorLayer:
-        subMultiStepFeedback = QgsProcessingMultiStepFeedback(geographicBoundLyr.featureCount() + 1, multiStepFeedback) if multiStepFeedback is not None else None
-        if geographicBoundLyr is None or geographicBoundLyr.featureCount() == 0 or lyr.name() in ["aux_moldura_a", "aux_moldura_area_continua_a"]:
+    def clipAndReprojectInputLayer(
+        self,
+        lyr: QgsVectorLayer,
+        geographicBoundLyr: QgsVectorLayer,
+        outputCrs: QgsCoordinateReferenceSystem,
+        context: QgsProcessingContext,
+        multiStepFeedback: QgsProcessingMultiStepFeedback,
+    ) -> QgsVectorLayer:
+        subMultiStepFeedback = (
+            QgsProcessingMultiStepFeedback(
+                geographicBoundLyr.featureCount() + 1, multiStepFeedback
+            )
+            if multiStepFeedback is not None
+            else None
+        )
+        if (
+            geographicBoundLyr is None
+            or geographicBoundLyr.featureCount() == 0
+            or lyr.name() in ["aux_moldura_a", "aux_moldura_area_continua_a"]
+        ):
             return self.algRunner.runMergeVectorLayers(
-                inputList=[lyr], context=context, feedback=subMultiStepFeedback, crs=outputCrs
+                inputList=[lyr],
+                context=context,
+                feedback=subMultiStepFeedback,
+                crs=outputCrs,
             )
         clipList = []
         for current, clipLayer in enumerate(
-                self.layerHandler.createMemoryLayerForEachFeature(
-                    layer=geographicBoundLyr, context=context
-                )
-            ):
+            self.layerHandler.createMemoryLayerForEachFeature(
+                layer=geographicBoundLyr, context=context
+            )
+        ):
             if subMultiStepFeedback is not None and subMultiStepFeedback.isCanceled():
                 break
             if subMultiStepFeedback is not None:
@@ -221,13 +251,21 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
             )
             clipList.append(clipped)
         if subMultiStepFeedback is not None:
-            subMultiStepFeedback.setCurrentStep(current+1)
+            subMultiStepFeedback.setCurrentStep(current + 1)
         clippedLyr = self.algRunner.runMergeVectorLayers(
-            inputList=clipList, context=context, feedback=subMultiStepFeedback, crs=outputCrs
+            inputList=clipList,
+            context=context,
+            feedback=subMultiStepFeedback,
+            crs=outputCrs,
         )
         return clippedLyr
-    
-    def buildOutputSinks(self, parameters: Dict[str, Any], context: QgsProcessingContext, outputCrs: QgsCoordinateReferenceSystem) -> None:
+
+    def buildOutputSinks(
+        self,
+        parameters: Dict[str, Any],
+        context: QgsProcessingContext,
+        outputCrs: QgsCoordinateReferenceSystem,
+    ) -> None:
         self.point_flag_sink, self.point_flag_id = self.parameterAsSink(
             parameters,
             self.NOT_CONVERTED_POINT,
@@ -261,41 +299,62 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
             QgsWkbTypes.MultiPolygon: self.poly_flag_sink,
         }
 
-    def convertFeaturesWithConversionMaps(self, conversionMapList: List[str], clippedLayerDict: Dict[str, QgsVectorLayer], feedback: QgsProcessingFeedback) -> Dict[str, List[Dict[str, Any]]]:
-        multiStepFeedback = QgsProcessingMultiStepFeedback(len(conversionMapList), feedback)
+    def convertFeaturesWithConversionMaps(
+        self,
+        conversionMapList: List[str],
+        clippedLayerDict: Dict[str, QgsVectorLayer],
+        feedback: QgsProcessingFeedback,
+    ) -> Dict[str, List[Dict[str, Any]]]:
+        multiStepFeedback = QgsProcessingMultiStepFeedback(
+            len(conversionMapList), feedback
+        )
         currentStep = 0
         nStepsOnText = len(conversionMapList) if len(conversionMapList) > 0 else 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr(f"Converting Features: step 1/{nStepsOnText}"))
-        firstConversionData = conversionMapList[0] if len(conversionMapList) > 0 else None
-        featureProcessor = MappingFeatureProcessor(
+            multiStepFeedback.pushInfo(
+                self.tr(f"Converting Features: step 1/{nStepsOnText}")
+            )
+        firstConversionData = (
+            conversionMapList[0] if len(conversionMapList) > 0 else None
+        )
+        featureProcessor = (
+            MappingFeatureProcessor(
                 mappingDictPath=firstConversionData["conversionJson"],
                 mappingType=firstConversionData["mode"],
-            ) if firstConversionData is not None else FeatureProcessor()
-        convertedFeatureDict = convert_features(
-                inputLayerDict={
-                    lyrName: lyr
-                    for lyrName, lyr in clippedLayerDict.items()
-                    if lyr.featureCount() > 0
-                },
-                featureProcessor=featureProcessor,
-                feedback=multiStepFeedback,
-                layerNameAttr="layer_name",
             )
+            if firstConversionData is not None
+            else FeatureProcessor()
+        )
+        convertedFeatureDict = convert_features(
+            inputLayerDict={
+                lyrName: lyr
+                for lyrName, lyr in clippedLayerDict.items()
+                if lyr.featureCount() > 0
+            },
+            featureProcessor=featureProcessor,
+            feedback=multiStepFeedback,
+            layerNameAttr="layer_name",
+        )
         currentStep += 1
-        for currentConversionStep, conversionData in enumerate(conversionMapList[1::], start=2):
+        for currentConversionStep, conversionData in enumerate(
+            conversionMapList[1::], start=2
+        ):
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
-                multiStepFeedback.pushInfo(self.tr(f"Converting Features: step {currentConversionStep}/{len(conversionMapList)}"))
+                multiStepFeedback.pushInfo(
+                    self.tr(
+                        f"Converting Features: step {currentConversionStep}/{len(conversionMapList)}"
+                    )
+                )
             featureProcessor = MappingFeatureProcessor(
-                    mappingDictPath=conversionData["conversionJson"],
-                    mappingType=conversionData["mode"],
-                )
+                mappingDictPath=conversionData["conversionJson"],
+                mappingType=conversionData["mode"],
+            )
             convertedFeatureDict = convert_features(
-                    inputLayerDict=convertedFeatureDict,
-                    featureProcessor=featureProcessor,
-                    feedback=multiStepFeedback,
-                )
+                inputLayerDict=convertedFeatureDict,
+                featureProcessor=featureProcessor,
+                feedback=multiStepFeedback,
+            )
             currentStep += 1
         return convertedFeatureDict
