@@ -62,6 +62,7 @@ class MultiLayersCentroidsFlagDockWidget(QDockWidget, Ui_MultiLayersCentroidsFla
         self.flagsMapLayerComboBox.setCurrentIndex(-1)
         self.flagsMapLayerComboBox.layerChanged.connect(self.updateTable)
         QgsProject.instance().layersWillBeRemoved.connect(self.syncLayers)
+        self.attributeTable.cellClicked.connect(self.zoomToFeature)
         self.pointLayerDict = dict()
         self.lyrsNRowPointDict = defaultdict(dict)
         self.columns = []
@@ -175,6 +176,21 @@ class MultiLayersCentroidsFlagDockWidget(QDockWidget, Ui_MultiLayersCentroidsFla
         contextMenu.addAction(action1)
         contextMenu.exec_(self.attributeTable.viewport().mapToGlobal(position))
     
+    def zoomToFeature(self, row):
+        lyrFlags = self.flagsMapLayerComboBox.currentLayer()
+        lyrid, feat = self.lyrsNRowPointDict[row]
+        geom = feat.geometry()
+        lyrPoint = self.pointLayerDict[lyrid]
+        pointCrs = lyrPoint.crs()
+        selectedCrs = lyrFlags.crs()
+        if pointCrs != selectedCrs:
+            transform = QgsCoordinateTransform(pointCrs, selectedCrs, QgsProject.instance())
+            geom.transform(transform)
+        bbox = geom.boundingBox()
+        self.iface.mapCanvas().setExtent(bbox)
+        self.iface.mapCanvas().zoomScale(500)
+        self.iface.mapCanvas().refresh()
+    
     def setAllFeatureAttributesAllLayers(self, index):
         lyrFlags = self.flagsMapLayerComboBox.currentLayer()
         lyrsPointsInsideFlagPolygonDict = self.pointsInSelectedPolygonFlags(lyrFlags)
@@ -266,3 +282,4 @@ class MultiLayersCentroidsFlagDockWidget(QDockWidget, Ui_MultiLayersCentroidsFla
 
     def unload(self):
         QgsProject.instance().layersWillBeRemoved.disconnect(self.syncLayers)
+        self.attributeTable.cellClicked.disconnect(self.zoomToFeature)
