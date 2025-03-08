@@ -171,6 +171,16 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        waterBody = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=waterBody,
+            expression="$id",
+            fieldName="wb_featid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         (
             nodeDict,
             nodeIdDict,
@@ -208,7 +218,7 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
         multiStepFeedback.setCurrentStep(currentStep)
         drainagesOutside = self.algRunner.runExtractByLocation(
             inputLyr=localCache,
-            intersectLyr=waterBody,
+            intersectLyr=waterBodyWithFlow,
             predicate=AlgRunner.Disjoint,
             context=context,
             feedback=multiStepFeedback,
@@ -228,10 +238,10 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        pointsInsideWaterBodies = self.algRunner.runExtractByLocation(
+        pointsInsideWaterBodies = self.algRunner.runJoinAttributesByLocation(
             inputLyr=nodesLayer,
-            intersectLyr=waterBody,
-            predicate=AlgRunner.Intersects,
+            joinLyr=waterBody,
+            predicateList=[AlgRunner.Intersects],
             context=context,
             feedback=multiStepFeedback,
         )
@@ -287,6 +297,7 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
             for featid, nodeSet in pointDict.items()
             if len(nodeSet) >= 2
             and edgeDict[featid][polygonRelationshipAttribute] == outsidePolygonValue
+            and all(f["wb_featid"] == next(iter(nodeSet))["wb_featid"] for f in nodeSet)
         )
         flagLambda = lambda x: self.flagFeature(
             flagGeom=edgeDict[x].geometry(),
@@ -337,15 +348,29 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
                 except:
                     continue
 
-                if neighbor_featid == featid or neighbor_featid not in edgeDict:
+                if (
+                    neighbor_featid == featid
+                    or neighbor_featid not in edgeDict
+                    or neighbor_featid not in pointDict
+                ):
                     continue
                 if (
                     edgeDict[neighbor_featid][polygonRelationshipAttribute]
-                    != outsidePolygonValue
+                    == outsidePolygonValue
                 ):
-                    insideValue = edgeDict[neighbor_featid][
+                    nextNeighbor = [
+                        i
+                        for i in networkBidirectionalGraph.neighbors(neighbor)
+                        if i != node_id
+                    ][0]
+                    nextNeighborFeatId = networkBidirectionalGraph[nextNeighbor][
+                        neighbor
+                    ]["featid"]
+                    insideValue = edgeDict[nextNeighborFeatId][
                         polygonRelationshipAttribute
                     ]
+                    if insideValue == outsidePolygonValue:
+                        continue
                     insideValueFeatsMap[insideValue].add(featid)
                     break
         return insideValueFeatsMap
