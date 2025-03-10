@@ -110,7 +110,9 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
             field for field in chain.from_iterable(i.fields() for i in inputLyrList)
         ]
         fieldDict = {field.name(): field for field in fieldList}
-        self.fields = QgsFields([fieldDict[f.name()] for f in fieldList])
+        self.fields = QgsFields()
+        for f in fieldList:
+            self.fields.append(fieldDict[f.name()])
 
         self.buildOutputSinks(
             parameters,
