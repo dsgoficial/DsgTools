@@ -223,7 +223,7 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        
+
         featIdsToUpdate |= set(
             f["featid"] for f in drainagesOutsideWithWrongAttributes.getFeatures()
         )
@@ -237,39 +237,51 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        
+
         wbBounds = self.algRunner.runBoundary(
             inputLayer=waterBodyWithFlow,
             context=context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
-        
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(wbBounds, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
-        
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        drainagesThatIntersectWaterBodyWithFlowBounds = self.algRunner.runExtractByLocation(
-            inputLyr=localCache,
-            intersectLyr=wbBounds,
+        self.algRunner.runCreateSpatialIndex(
+            wbBounds,
             context=context,
-            predicate=AlgRunner.Intersects,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
-        drainagesThatIntersectWBIdSet = set(f["featid"] for f in drainagesThatIntersectWaterBodyWithFlowBounds.getFeatures())
-        
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        drainagesThatIntersectWaterBodyWithFlowBounds = (
+            self.algRunner.runExtractByLocation(
+                inputLyr=localCache,
+                intersectLyr=wbBounds,
+                context=context,
+                predicate=AlgRunner.Intersects,
+                feedback=multiStepFeedback,
+            )
+        )
+        drainagesThatIntersectWBIdSet = set(
+            f["featid"]
+            for f in drainagesThatIntersectWaterBodyWithFlowBounds.getFeatures()
+        )
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        pointDict = self.buildPointDict(pointsInsideWaterBodies, drainagesThatIntersectWBIdSet, multiStepFeedback)
-        
+        pointDict = self.buildPointDict(
+            pointsInsideWaterBodies, drainagesThatIntersectWBIdSet, multiStepFeedback
+        )
+
         drainagesWithinWaterBody = self.algRunner.runExtractByLocation(
             inputLyr=localCache,
             intersectLyr=waterBodyWithFlow,
@@ -293,7 +305,11 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
             featIdsToUpdate,
             commandMessage="Updating drainages outside polygons",
         )
-        multiStepFeedback.pushInfo(self.tr(f"{len(featIdsToUpdate)} outside polygons changed to {polygonRelationshipAttribute} = {outsidePolygonValue}"))
+        multiStepFeedback.pushInfo(
+            self.tr(
+                f"{len(featIdsToUpdate)} outside polygons changed to {polygonRelationshipAttribute} = {outsidePolygonValue}"
+            )
+        )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -305,10 +321,12 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
         )
         if drainagesWithinWithWrongAttributes.featureCount() == 0:
             return {}
-        
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        drainagesWithinWaterBodySet = set(f["featid"] for f in drainagesWithinWaterBody.getFeatures())
+        drainagesWithinWaterBodySet = set(
+            f["featid"] for f in drainagesWithinWaterBody.getFeatures()
+        )
         insideValueFeatsMap = self.verifyDrainagesInsideWaterBodies(
             drainagesWithinWithWrongAttributes,
             drainagesWithinWaterBodySet,
@@ -348,8 +366,12 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
             featid = feat["featid"]
             if feedback.isCanceled():
                 break
-            neighborFeatIds = graphHandler.connectedEdgesFeatIds(networkBidirectionalGraph, featid)
-            neighborFeatIdsWithinWaterBody = neighborFeatIds.intersection(drainagesWithinWaterBodySet)
+            neighborFeatIds = graphHandler.connectedEdgesFeatIds(
+                networkBidirectionalGraph, featid
+            )
+            neighborFeatIdsWithinWaterBody = neighborFeatIds.intersection(
+                drainagesWithinWaterBodySet
+            )
             if len(neighborFeatIdsWithinWaterBody) > 2:
                 continue
             neighborAttributeDict = defaultdict(int)
@@ -386,7 +408,9 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
         # list(map(changeValuesLambda, featIdsToUpdate))
         inputDrainagesLyr.endEditCommand()
 
-    def buildPointDict(self, pointsInsideWaterBodies, drainagesThatIntersectWBIdSet, feedback):
+    def buildPointDict(
+        self, pointsInsideWaterBodies, drainagesThatIntersectWBIdSet, feedback
+    ):
         pointDict = defaultdict(set)
         for nodeFeat in pointsInsideWaterBodies.getFeatures():
             if feedback.isCanceled():
@@ -415,9 +439,7 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr(
-            "Fix Drainage Versus Water Body Attribute Algorithm"
-        )
+        return self.tr("Fix Drainage Versus Water Body Attribute Algorithm")
 
     def group(self):
         """
