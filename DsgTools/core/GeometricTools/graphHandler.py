@@ -1338,3 +1338,67 @@ def find_small_closed_line_groups(
         if feedback is not None:
             feedback.setProgress(current * stepSize)
     return idsToRemove
+
+def connectedEdgesFeatIds(
+    G: Any,
+    featid: int,
+    feedback: Optional[QgsFeedback] = None,
+) -> Set[int]:
+    """
+    Find edges connected to the edge with the given featid.
+    
+    Args:
+        G: The graph object (can be Graph, DiGraph, MultiGraph, or MultiDiGraph).
+        featid: The feature ID to find connected edges for.
+        feedback: An optional QgsFeedback object to provide feedback during processing.
+    
+    Returns:
+        A set of feature IDs for edges connected to the edge with the given featid.
+    """
+    # Determine if the graph is a multigraph
+    is_multigraph = hasattr(G, "is_multigraph") and G.is_multigraph()
+    
+    # Find the nodes of the edge with the given featid
+    edge_nodes = set()
+    
+    # Iterate through all edges to find the one with the matching featid
+    if is_multigraph:
+        for u, v, key in G.edges(keys=True):
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            if G[u][v][key].get('featid') == featid:
+                edge_nodes.add(u)
+                edge_nodes.add(v)
+    else:
+        for u, v in G.edges():
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            if G[u][v].get('featid') == featid:
+                edge_nodes.add(u)
+                edge_nodes.add(v)
+    
+    if not edge_nodes:
+        # No edge found with the given featid
+        return set()
+    
+    # Get all connected featids
+    connected_featids = set()
+    
+    # Process all edges connected to the nodes of the edge with the given featid
+    for node in edge_nodes:
+        if is_multigraph:
+            for u, v, key in G.edges(node, keys=True):
+                if feedback is not None and feedback.isCanceled():
+                    return connected_featids
+                connected_featid = G[u][v][key].get('featid')
+                if connected_featid is not None and connected_featid != featid:
+                    connected_featids.add(connected_featid)
+        else:
+            for u, v in G.edges(node):
+                if feedback is not None and feedback.isCanceled():
+                    return connected_featids
+                connected_featid = G[u][v].get('featid')
+                if connected_featid is not None and connected_featid != featid:
+                    connected_featids.add(connected_featid)
+    
+    return connected_featids

@@ -627,11 +627,15 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runBoundary(self, inputLayer, context, feedback=None, outputLyr=None):
+    def runBoundary(self, inputLayer, context, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLayer, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:boundary", parameters, context=context, feedback=feedback
+            "native:boundary",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 

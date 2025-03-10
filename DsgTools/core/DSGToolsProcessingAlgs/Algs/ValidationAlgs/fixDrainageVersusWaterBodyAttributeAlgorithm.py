@@ -22,6 +22,7 @@
 """
 
 from collections import defaultdict
+from typing import Any, Dict, Set
 from PyQt5.QtCore import QCoreApplication
 
 import concurrent.futures
@@ -34,11 +35,12 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
+    QgsFeature,
     QgsProcessingParameterField,
     QgsProcessingParameterExpression,
     QgsProcessingParameterString,
     QgsVectorLayer,
+    QgsFeedback,
 )
 
 from ...algRunner import AlgRunner
@@ -46,13 +48,12 @@ from .validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.GeometricTools import graphHandler
 
 
-class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgorithm):
+class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
     INPUT_DRAINAGES = "INPUT_DRAINAGES"
     INSIDE_POLYGON_ATTRIBUTE = "INSIDE_POLYGON_ATTRIBUTE"
     OUTSIDE_POLYGON_ATTRIBUTE_VALUE = "OUTSIDE_POLYGON_ATTRIBUTE_VALUE"
     WATER_BODY = "WATER_BODY"
     WATER_BODY_WITH_FLOW_EXPRESSION = "WATER_BODY_WITH_FLOW_EXPRESSION"
-    FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -63,6 +64,7 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
                 self.INPUT_DRAINAGES,
                 self.tr("Input Drainages layer"),
                 [QgsProcessing.TypeVectorLine],
+                defaultValue="elemnat_trecho_drenagem_l",
             )
         )
         self.addParameter(
@@ -90,6 +92,7 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
                 self.WATER_BODY,
                 self.tr("Water body"),
                 [QgsProcessing.TypeVectorPolygon],
+                defaultValue="cobter_massa_dagua_a",
             )
         )
         self.addParameter(
@@ -98,12 +101,7 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
                 self.tr("Filter expression for water bodies with flow"),
                 parentLayerParameterName=self.WATER_BODY,
                 optional=True,
-                defaultValue=""" "tipo_massa_dagua" in (1,2,9,10)""",
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
+                defaultValue=""" "tipo" in (1,2,9,10)""",
             )
         )
 
@@ -149,13 +147,6 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
         waterBody = self.parameterAsLayer(parameters, self.WATER_BODY, context)
         waterBodyWithFlowExpression = self.parameterAsExpression(
             parameters, self.WATER_BODY_WITH_FLOW_EXPRESSION, context
-        )
-        self.prepareFlagSink(
-            parameters,
-            inputDrainagesLyr,
-            inputDrainagesLyr.wkbType(),
-            context,
-            addFeatId=True,
         )
         featIdsToUpdate = set()
 
@@ -232,6 +223,7 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
             context=context,
             feedback=multiStepFeedback,
         )
+        
         featIdsToUpdate |= set(
             f["featid"] for f in drainagesOutsideWithWrongAttributes.getFeatures()
         )
@@ -245,10 +237,46 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
             context=context,
             feedback=multiStepFeedback,
         )
+        
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        
+        wbBounds = self.algRunner.runBoundary(
+            inputLayer=waterBodyWithFlow,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(wbBounds, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+        
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        drainagesThatIntersectWaterBodyWithFlowBounds = self.algRunner.runExtractByLocation(
+            inputLyr=localCache,
+            intersectLyr=wbBounds,
+            context=context,
+            predicate=AlgRunner.Intersects,
+            feedback=multiStepFeedback
+        )
+        drainagesThatIntersectWBIdSet = set(f["featid"] for f in drainagesThatIntersectWaterBodyWithFlowBounds.getFeatures())
+        
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        pointDict = self.buildPointDict(pointsInsideWaterBodies, multiStepFeedback)
+        pointDict = self.buildPointDict(pointsInsideWaterBodies, drainagesThatIntersectWBIdSet, multiStepFeedback)
+        
+        drainagesWithinWaterBody = self.algRunner.runExtractByLocation(
+            inputLyr=localCache,
+            intersectLyr=waterBodyWithFlow,
+            predicate=AlgRunner.Within,
+            context=context,
+            feedback=multiStepFeedback,
+        )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -265,19 +293,31 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
             featIdsToUpdate,
             commandMessage="Updating drainages outside polygons",
         )
+        multiStepFeedback.pushInfo(self.tr(f"{len(featIdsToUpdate)} outside polygons changed to {polygonRelationshipAttribute} = {outsidePolygonValue}"))
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        insideValueFeatsMap = self.verifyDrainagesInsideWaterBodies(
-            polygonRelationshipAttribute,
-            outsidePolygonValue,
-            nodeDict,
-            edgeDict,
-            networkBidirectionalGraph,
-            pointDict,
+        drainagesWithinWithWrongAttributes = self.algRunner.runFilterExpression(
+            inputLyr=drainagesWithinWaterBody,
+            expression=f""""{polygonRelationshipAttribute}" = {outsidePolygonValue}""",
+            context=context,
             feedback=multiStepFeedback,
         )
-
+        if drainagesWithinWithWrongAttributes.featureCount() == 0:
+            return {}
+        
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        drainagesWithinWaterBodySet = set(f["featid"] for f in drainagesWithinWaterBody.getFeatures())
+        insideValueFeatsMap = self.verifyDrainagesInsideWaterBodies(
+            drainagesWithinWithWrongAttributes,
+            drainagesWithinWaterBodySet,
+            polygonRelationshipAttribute,
+            outsidePolygonValue,
+            edgeDict,
+            networkBidirectionalGraph,
+            feedback=multiStepFeedback,
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         for insideValue, featIdSet in insideValueFeatsMap.items():
@@ -290,89 +330,38 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
                     f"Updating drainage lines inside water bodies with value {insideValue}"
                 ),
             )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        invalidPointSet = set(
-            featid
-            for featid, nodeSet in pointDict.items()
-            if len(nodeSet) >= 2
-            and edgeDict[featid][polygonRelationshipAttribute] == outsidePolygonValue
-            and all(f["wb_featid"] == next(iter(nodeSet))["wb_featid"] for f in nodeSet)
-        )
-        flagLambda = lambda x: self.flagFeature(
-            flagGeom=edgeDict[x].geometry(),
-            flagText=self.tr(
-                f"Drainage inside water body with attribute {polygonRelationshipAttribute}={outsidePolygonValue}"
-            ),
-            featid=x,
-        )
-        list(map(flagLambda, invalidPointSet))
 
-        return {self.FLAGS: self.flag_id}
+        return {}
 
     def verifyDrainagesInsideWaterBodies(
         self,
-        polygonRelationshipAttribute,
-        outsidePolygonValue,
-        nodeDict,
-        edgeDict,
-        networkBidirectionalGraph,
-        pointDict,
-        feedback,
-    ):
+        drainagesWithinWithWrongAttributes: QgsVectorLayer,
+        drainagesWithinWaterBodySet: Set[int],
+        polygonRelationshipAttribute: str,
+        outsidePolygonValue: int,
+        edgeDict: Dict[int, QgsFeature],
+        networkBidirectionalGraph: Any,
+        feedback: QgsFeedback,
+    ) -> Dict[int, Dict[int, set]]:
         insideValueFeatsMap = defaultdict(set)
-        for featid, nodeSet in pointDict.items():
+        for feat in drainagesWithinWithWrongAttributes.getFeatures():
+            featid = feat["featid"]
             if feedback.isCanceled():
                 break
-            if edgeDict[featid][polygonRelationshipAttribute] != outsidePolygonValue:
+            neighborFeatIds = graphHandler.connectedEdgesFeatIds(networkBidirectionalGraph, featid)
+            neighborFeatIdsWithinWaterBody = neighborFeatIds.intersection(drainagesWithinWaterBodySet)
+            if len(neighborFeatIdsWithinWaterBody) > 2:
                 continue
-            if len(nodeSet) >= 2:
+            neighborAttributeDict = defaultdict(int)
+            for nid in neighborFeatIdsWithinWaterBody:
+                attr = edgeDict[nid][polygonRelationshipAttribute]
+                if attr == outsidePolygonValue:
+                    continue
+                neighborAttributeDict[attr] += 1
+            if len(neighborAttributeDict) > 1:
                 continue
-
-            insideNodeFeat = next(iter(nodeSet))
-            node_wkb = insideNodeFeat.geometry().asWkb()
-
-            if node_wkb not in nodeDict:
-                continue
-
-            node_id = nodeDict[node_wkb]
-
-            # Encontrar feições conectadas através deste nó
-            for neighbor in networkBidirectionalGraph.neighbors(node_id):
-                if networkBidirectionalGraph.degree(neighbor) != 2:
-                    continue
-                try:
-                    neighbor_featid = networkBidirectionalGraph[node_id][neighbor][
-                        "featid"
-                    ]
-                except:
-                    continue
-
-                if (
-                    neighbor_featid == featid
-                    or neighbor_featid not in edgeDict
-                    or neighbor_featid not in pointDict
-                ):
-                    continue
-                if (
-                    edgeDict[neighbor_featid][polygonRelationshipAttribute]
-                    == outsidePolygonValue
-                ):
-                    nextNeighbor = [
-                        i
-                        for i in networkBidirectionalGraph.neighbors(neighbor)
-                        if i != node_id
-                    ][0]
-                    nextNeighborFeatId = networkBidirectionalGraph[nextNeighbor][
-                        neighbor
-                    ]["featid"]
-                    insideValue = edgeDict[nextNeighborFeatId][
-                        polygonRelationshipAttribute
-                    ]
-                    if insideValue == outsidePolygonValue:
-                        continue
-                    insideValueFeatsMap[insideValue].add(featid)
-                    break
+            attrValue = [i for i in neighborAttributeDict.keys()][0]
+            insideValueFeatsMap[attrValue].add(featid)
         return insideValueFeatsMap
 
     def updateDrainages(
@@ -383,6 +372,8 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
         featIdsToUpdate,
         commandMessage,
     ):
+        if len(featIdsToUpdate) == 0:
+            return
         inputDrainagesLyr.startEditing()
         inputDrainagesLyr.beginEditCommand(commandMessage)
         for fieldId in featIdsToUpdate:
@@ -395,13 +386,15 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
         # list(map(changeValuesLambda, featIdsToUpdate))
         inputDrainagesLyr.endEditCommand()
 
-    def buildPointDict(self, pointsInsideWaterBodies, feedback):
+    def buildPointDict(self, pointsInsideWaterBodies, drainagesThatIntersectWBIdSet, feedback):
         pointDict = defaultdict(set)
         for nodeFeat in pointsInsideWaterBodies.getFeatures():
             if feedback.isCanceled():
                 break
-            geom = nodeFeat.geometry()
-            pointDict[nodeFeat["featid"]].add(nodeFeat)
+            featid = nodeFeat["featid"]
+            if featid not in drainagesThatIntersectWBIdSet:
+                continue
+            pointDict[featid].add(nodeFeat)
         return pointDict
 
     def changeAttributeValueOfOutsidePolygonDrainages(self):
@@ -415,7 +408,7 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "identifydrainageversuswaterbodyattributeproblemsalgorithm"
+        return "fixdrainageversuswaterbodyattributealgorithm"
 
     def displayName(self):
         """
@@ -423,7 +416,7 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
         user-visible display of the algorithm name.
         """
         return self.tr(
-            "Identify Drainage Versus Water Body Attribute Problems Algorithm"
+            "Fix Drainage Versus Water Body Attribute Algorithm"
         )
 
     def group(self):
@@ -445,8 +438,8 @@ class IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(ValidationAlgori
 
     def tr(self, string):
         return QCoreApplication.translate(
-            "IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm", string
+            "FixDrainageVersusWaterBodyAttributeAlgorithm", string
         )
 
     def createInstance(self):
-        return IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm()
+        return FixDrainageVersusWaterBodyAttributeAlgorithm()

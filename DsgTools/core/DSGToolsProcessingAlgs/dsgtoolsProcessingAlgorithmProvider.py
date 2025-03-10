@@ -93,8 +93,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.prepareFilesForRasterP
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
     FixSegmentErrorsBetweenLinesAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageVersusWaterBodyAttributeProblemsAlgorithm import (
-    IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm,
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixDrainageVersusWaterBodyAttributeAlgorithm import (
+    FixDrainageVersusWaterBodyAttributeAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
     IdentifySmallObjectsOnLayersAlgorithm,
@@ -754,7 +754,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             PrepareRasterFilesForPackagingForBDGEx(),
             SnapFeaturesInsideLayerWithGroupByAlgorithm(),
             FilterLayerListByGeographicBoundary(),
-            IdentifyDrainageVersusWaterBodyAttributeProblemsAlgorithm(),
+            FixDrainageVersusWaterBodyAttributeAlgorithm(),
         ]
         return algList
 
