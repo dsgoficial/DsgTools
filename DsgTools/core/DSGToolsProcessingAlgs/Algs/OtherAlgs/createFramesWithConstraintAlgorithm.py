@@ -178,19 +178,16 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             ySubdivisions=ySubdivisions,
             feedback=feedback,
         )
-        featList = []
-        for feat in featureList:
+        
+        def filterFunc(feat):
             geom = feat.geometry()
             bbox = geom.boundingBox()
-            for featLyr in inputOld.getFeatures(bbox):
-                geomFeat = featLyr.geometry()
-                if not geomFeat.intersects(geom):
-                    continue
-                featList.append(feat)
+            return any(geom.intersects(f.geometry()) for f in inputOld.getFeatures(bbox))
+        
         list(
             map(
                 lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
-                featList,
+                filter(filterFunc, featureList) if geomTypeLyr != QgsWkbTypes.PolygonGeometry else featureList,
             )
         )
 
