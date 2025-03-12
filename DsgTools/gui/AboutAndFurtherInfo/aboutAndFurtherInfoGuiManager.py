@@ -100,7 +100,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
         )
 
         icon_path = self.iconBasePath + "DSGToolsIcon.png"
-        self.manager.add_action(
+        action = self.manager.add_action(
             icon_path,
             text=self.tr("About DSGTools"),
             callback=self.showAbout,

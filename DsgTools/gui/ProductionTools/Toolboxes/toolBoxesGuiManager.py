@@ -87,7 +87,6 @@ class ToolBoxesGuiManager(QObject):
             self.acquisitionMenuCtrl.clickReclassfyMode,
             "customFeatureToolBox.png",
             self.tr("Reclassify Mode"),
-            parentButton=self.stackButton,
             withShortcut=True,
         )
 

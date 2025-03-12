@@ -13,7 +13,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MultiLayersCentroidsFlagDockWidget(object):
     def setupUi(self, MultiLayersCentroidsFlagDockWidget):
-        MultiLayersCentroidsFlagDockWidget.setObjectName("MultiLayersCentroidsFlagDockWidget")
+        MultiLayersCentroidsFlagDockWidget.setObjectName(
+            "MultiLayersCentroidsFlagDockWidget"
+        )
         MultiLayersCentroidsFlagDockWidget.resize(298, 428)
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
@@ -22,41 +24,59 @@ class Ui_MultiLayersCentroidsFlagDockWidget(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.flagsMapLayerComboBox = QgsMapLayerComboBox(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.flagsMapLayerComboBox.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.flagsMapLayerComboBox.sizePolicy().hasHeightForWidth()
+        )
         self.flagsMapLayerComboBox.setSizePolicy(sizePolicy)
         self.flagsMapLayerComboBox.setMinimumSize(QtCore.QSize(160, 0))
         self.flagsMapLayerComboBox.setMaximumSize(QtCore.QSize(500, 16777215))
         self.flagsMapLayerComboBox.setObjectName("flagsMapLayerComboBox")
-        self.flagsMapLayerComboBox.setFilters(
-            core.QgsMapLayerProxyModel.PolygonLayer
-        )
+        self.flagsMapLayerComboBox.setFilters(core.QgsMapLayerProxyModel.PolygonLayer)
         self.horizontalLayout.addWidget(self.flagsMapLayerComboBox)
         self.refreshFlagsPushButton = QtWidgets.QPushButton(self.dockWidgetContents)
         self.refreshFlagsPushButton.setMinimumSize(QtCore.QSize(28, 24))
         self.refreshFlagsPushButton.setMaximumSize(QtCore.QSize(28, 24))
         self.refreshFlagsPushButton.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/plugins/DsgTools/icons/reload.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/plugins/DsgTools/icons/reload.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.refreshFlagsPushButton.setIcon(icon)
         self.refreshFlagsPushButton.setObjectName("refreshFlagsPushButton")
         self.horizontalLayout.addWidget(self.refreshFlagsPushButton)
-        self.multiLayersCentroidsPushButton = QtWidgets.QPushButton(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        self.multiLayersCentroidsPushButton = QtWidgets.QPushButton(
+            self.dockWidgetContents
+        )
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.multiLayersCentroidsPushButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.multiLayersCentroidsPushButton.sizePolicy().hasHeightForWidth()
+        )
         self.multiLayersCentroidsPushButton.setSizePolicy(sizePolicy)
         self.multiLayersCentroidsPushButton.setMinimumSize(QtCore.QSize(28, 24))
         self.multiLayersCentroidsPushButton.setMaximumSize(QtCore.QSize(28, 24))
         self.multiLayersCentroidsPushButton.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/plugins/DsgTools/icons/config.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(":/plugins/DsgTools/icons/config.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.multiLayersCentroidsPushButton.setIcon(icon1)
         self.multiLayersCentroidsPushButton.setIconSize(QtCore.QSize(100, 18))
-        self.multiLayersCentroidsPushButton.setObjectName("multiLayersCentroidsPushButton")
+        self.multiLayersCentroidsPushButton.setObjectName(
+            "multiLayersCentroidsPushButton"
+        )
         self.horizontalLayout.addWidget(self.multiLayersCentroidsPushButton)
         self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
         self.attributeTable = QtWidgets.QTableWidget(self.dockWidgetContents)
@@ -71,9 +91,24 @@ class Ui_MultiLayersCentroidsFlagDockWidget(object):
 
     def retranslateUi(self, MultiLayersCentroidsFlagDockWidget):
         _translate = QtCore.QCoreApplication.translate
-        MultiLayersCentroidsFlagDockWidget.setWindowTitle(_translate("MultiLayersCentroidsFlagDockWidget", "Inspect Multi Layers Centroids Flags Toolbox"))
-        self.flagsMapLayerComboBox.setToolTip(_translate("MultiLayersCentroidsFlagDockWidget", "Select the polygon flag layer"))
-        self.multiLayersCentroidsPushButton.setToolTip(_translate("MultiLayersCentroidsFlagDockWidget", "Select the center point layers"))
+        MultiLayersCentroidsFlagDockWidget.setWindowTitle(
+            _translate(
+                "MultiLayersCentroidsFlagDockWidget",
+                "Inspect Multi Layers Centroids Flags Toolbox",
+            )
+        )
+        self.flagsMapLayerComboBox.setToolTip(
+            _translate(
+                "MultiLayersCentroidsFlagDockWidget", "Select the polygon flag layer"
+            )
+        )
+        self.multiLayersCentroidsPushButton.setToolTip(
+            _translate(
+                "MultiLayersCentroidsFlagDockWidget", "Select the center point layers"
+            )
+        )
+
+
 from qgsmaplayercombobox import QgsMapLayerComboBox
 from qgis import core
 import resources_rc
