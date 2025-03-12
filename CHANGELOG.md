@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.17 - dev
+## 4.17.18 - dev
 
 Novas Funcionalidades:
 
@@ -23,6 +23,7 @@ Melhorias:
 - Caixa de Ferramentas de Controle de Qualidade renomeada para Workflow Toolbox;
 - Muda o comportamento da janela de carregamento (agora ela fica sempre no topo);
 - A Workflow Toolbox agora seta automaticamente o tipo de flag de geometria inválida para não filtrar (parâmetro do qgis necessário para rodar sem problemas os modelos);
+- O processo de gerar moldura sistemática à camada relaciona agora suporta a entrade de camadas do tipo ponto e linha;
 
 Correção de bugs:
 
