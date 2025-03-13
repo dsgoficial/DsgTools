@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.18 - dev
+## 4.17.19 - dev
 
 Novas Funcionalidades:
 
@@ -34,6 +34,7 @@ Correção de bugs:
 - Corrige bug no carregamento com constraint string;
 - Corrige bug na correção de geometria inválida (correção de vértice);
 - Corrige bug do Match and Apply QML Styles to Layers com camadas shapefile;
+- Corrige bug no algoritmo de identificação de erros de cruzamento de curva de nível com massa d'água (adicionadas barragens para retirar falsos positivos);
 
 ## 4.16.0 - 2024-11-27
 
