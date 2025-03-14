@@ -132,6 +132,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 self.tr("Water sink and spillway layer"),
                 [QgsProcessing.TypeVectorPoint],
                 optional=True,
+                defaultValue="elemnat_sumidouro_vertedouro_p",
             )
         )
         self.addParameter(
