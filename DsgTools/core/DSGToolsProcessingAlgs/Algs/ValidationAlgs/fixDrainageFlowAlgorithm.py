@@ -132,7 +132,6 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 self.tr("Water sink and spillway layer"),
                 [QgsProcessing.TypeVectorPoint],
                 optional=True,
-                defaultValue="elemnat_sumidouro_vertedouro_p",
             )
         )
         self.addParameter(
@@ -176,6 +175,11 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.LINE_FLAGS, self.tr("{0} line errors").format(self.displayName())
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.POLYGON_FLAGS, self.tr("{0} polygon errors").format(self.displayName())
             )
         )
 
@@ -251,6 +255,14 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             context,
             self.getFlagFields(),
             QgsWkbTypes.LineString,
+            networkLayer.sourceCrs(),
+        )
+        (self.polygon_flags_sink, self.polygon_flags_sink_id) = self.parameterAsSink(
+            parameters,
+            self.POLYGON_FLAGS,
+            context,
+            self.getFlagFields(),
+            QgsWkbTypes.Polygon,
             networkLayer.sourceCrs(),
         )
         nSteps = (
@@ -490,18 +502,34 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr("Finding flow issues"))
-            pointFlagLyr = self.algRunner.runIdentifyDrainageFlowIssues(
-                inputLyr=networkLayer,
-                context=context,
-                feedback=multiStepFeedback,
+            pointFlagLyr, lineFlagLyr, polygonFlagLyr = self.algRunner.runIdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(
+                
             )
             pointFlagLambda = lambda x: self.flagFeature(
                 x.geometry(), flagText=x["reason"], sink=self.point_flags_sink
             )
             list(map(pointFlagLambda, pointFlagLyr.getFeatures()))
             multiStepFeedback.setProgressText(
-                self.tr(f"Found {pointFlagLyr.featureCount()} flow issues.")
+                self.tr(f"Found {pointFlagLyr.featureCount()} points of flow issues.")
+                
             )
+            lineFlagLambda = lambda x: self.flagFeature(
+                x.geometry(), flagText=x["reason"], sink=self.line_flags_sink
+            )
+            list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
+            multiStepFeedback.setProgressText(
+                self.tr(f"Found {lineFlagLyr.featureCount()} lines of flow issues.")
+                
+            )
+            polygonFlagLambda = lambda x: self.flagFeature(
+                x.geometry(), flagText=x["reason"], sink=self.polygon_flags_sink
+            )
+            list(map(polygonFlagLambda, polygonFlagLyr.getFeatures()))
+            multiStepFeedback.setProgressText(
+                self.tr(f"Found {polygonFlagLyr.featureCount()} polygon of flow issues.")
+                
+            )
+
         if runLoopCheck:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
