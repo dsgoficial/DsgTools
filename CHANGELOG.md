@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.19 - dev
+## 4.17.20 - dev
 
 Novas Funcionalidades:
 
@@ -24,6 +24,8 @@ Melhorias:
 - Muda o comportamento da janela de carregamento (agora ela fica sempre no topo);
 - A Workflow Toolbox agora seta automaticamente o tipo de flag de geometria inválida para não filtrar (parâmetro do qgis necessário para rodar sem problemas os modelos);
 - O processo de gerar moldura sistemática à camada relaciona agora suporta a entradas de camadas do tipo ponto e linha;
+- Melhora nas entradas do algoritmo Fix Drainage Flow;
+- Melhora nas entradas do algoritmo Identify Drainage Flow Issues With Hydrography Elements;
 
 Correção de bugs:
 

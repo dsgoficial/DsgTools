@@ -81,6 +81,8 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
         algRunner = AlgRunner()
 
         inputLyr = self.parameterAsVectorLayer(parameters, "INPUT", context)
+        if inputLyr.featureCount() == 0:
+            return {self.FLAGS: self.flag_id}
         buildCache = self.parameterAsBool(parameters, self.BUILD_CACHE, context)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.LineString, context)
 
@@ -174,7 +176,7 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 break
             futures.add(pool.submit(evaluate, polygonFeature))
-            multiStepFeedback.setCurrentStep(current * stepSize)
+            multiStepFeedback.setProgress(current * stepSize)
 
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.setProgressText(self.tr("Evaluating results"))
@@ -185,7 +187,7 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
             loopSet = future.result()
             if loopSet != set():
                 list(map(flagFeatLambda, loopSet))
-            multiStepFeedback.setCurrentStep(current * stepSize)
+            multiStepFeedback.setProgress(current * stepSize)
 
     def findLoopsOnEdgeSet(self, nx, graph, feedback):
         # loops = nx.strongly_connected_components(graph)
