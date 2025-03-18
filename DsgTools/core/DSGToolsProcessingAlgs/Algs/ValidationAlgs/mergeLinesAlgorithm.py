@@ -146,11 +146,12 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             vertices="0,-1",
             context=context,
             feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         nodesLayer = self.algRunner.runCreateFieldWithExpression(
-            inputLyr=nodesLayer,
+            inputLyr=nodesLayer.clone(),
             expression="$id",
             fieldName="nfeatid",
             fieldType=1,

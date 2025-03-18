@@ -852,7 +852,9 @@ class GeometryHandler(QObject):
         geom.insertVertex(vertex, after)
         return geom
 
-    def addVertexesToGeometry(self, vertexSet: set, geom: QgsGeometry) -> QgsGeometry:
+    def addVertexesToGeometry(
+        self, vertexSet: set, geom: QgsGeometry, duplicateTol=1e-8
+    ) -> QgsGeometry:
         geomVertexSet = set(QgsGeometry(i) for i in geom.vertices())
         changedGeom = QgsGeometry(geom)  # deep copy
         for vertex in vertexSet:
@@ -862,7 +864,7 @@ class GeometryHandler(QObject):
             if vertex in geomVertexSet or closestVertexGeom.intersects(vertex):
                 continue
             changedGeom = self.addVertex(vertexPoint, changedGeom)
-        changedGeom.removeDuplicateNodes()
+        changedGeom.removeDuplicateNodes(epsilon=duplicateTol)
         return changedGeom
 
 
