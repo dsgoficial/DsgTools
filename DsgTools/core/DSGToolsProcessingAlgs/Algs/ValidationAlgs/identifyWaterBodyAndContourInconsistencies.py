@@ -120,6 +120,9 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
         contourExpression = self.parameterAsExpression(
             parameters, self.CONTOUR_INSIDE_WATER_BODY_EXPRESSION, context
         )
+        inputWaterBodiesLyr = self.parameterAsVectorLayer(
+            parameters, self.INPUT_WATER_BODIES, context
+        )
         damLyr = self.parameterAsVectorLayer(
             parameters, self.DAM_LAYER, context
         )
@@ -128,6 +131,8 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
         )
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
+        if inputWaterBodiesLyr is None or inputWaterBodiesLyr.featureCount() == 0 or inputContours.featureCount() == 0:
+            return {self.FLAGS: self.flag_id}
         inputWaterBodiesLyr = algRunner.runCreateFieldWithExpression(
             inputLyr=parameters[self.INPUT_WATER_BODIES],
             expression="$id",
@@ -136,8 +141,6 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        if inputWaterBodiesLyr.featureCount() == 0 or inputContours.featureCount() == 0:
-            return {self.FLAGS: self.flag_id}
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(inputWaterBodiesLyr, context, multiStepFeedback, is_child_algorithm=True)
