@@ -149,15 +149,22 @@ class MultiLayersCentroidsFlagDockWidget(
                 )
                 for nColumn, field in enumerate(self.columns):
                     if field in lyrFields:
-                        field_idx = self.pointLayerDict[lyrid].fields().indexFromName(field)
-                        widget_setup = self.pointLayerDict[lyrid].editorWidgetSetup(field_idx)
+                        field_idx = (
+                            self.pointLayerDict[lyrid].fields().indexFromName(field)
+                        )
+                        widget_setup = self.pointLayerDict[lyrid].editorWidgetSetup(
+                            field_idx
+                        )
                         attr = feat[field]
                         if isinstance(attr, QDateTime):
                             attr = attr.toString("dd/MM/yyyy HH:mm:ss")
-                        if widget_setup.type() == 'ValueMap':
+                        if widget_setup.type() == "ValueMap":
                             config = widget_setup.config()
-                            map_values = config['map']
-                            attr = next((k for k, v in map_values.items() if v == str(attr)), None)
+                            map_values = config["map"]
+                            attr = next(
+                                (k for k, v in map_values.items() if v == str(attr)),
+                                None,
+                            )
                     else:
                         attr = "-"
                     self.attributeTable.setItem(
