@@ -135,8 +135,9 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
             fieldType=1,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True,
         )
+        if inputWaterBodiesLyr.featureCount() == 0 or inputContours.featureCount() == 0:
+            return {self.FLAGS: self.flag_id}
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(inputWaterBodiesLyr, context, multiStepFeedback, is_child_algorithm=True)
