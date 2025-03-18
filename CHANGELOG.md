@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.17 - dev
+## 4.17.20 - dev
 
 Novas Funcionalidades:
 
@@ -23,6 +23,9 @@ Melhorias:
 - Caixa de Ferramentas de Controle de Qualidade renomeada para Workflow Toolbox;
 - Muda o comportamento da janela de carregamento (agora ela fica sempre no topo);
 - A Workflow Toolbox agora seta automaticamente o tipo de flag de geometria inválida para não filtrar (parâmetro do qgis necessário para rodar sem problemas os modelos);
+- O processo de gerar moldura sistemática à camada relaciona agora suporta a entradas de camadas do tipo ponto e linha;
+- Melhora nas entradas do algoritmo Fix Drainage Flow;
+- Melhora nas entradas do algoritmo Identify Drainage Flow Issues With Hydrography Elements;
 
 Correção de bugs:
 
@@ -33,6 +36,7 @@ Correção de bugs:
 - Corrige bug no carregamento com constraint string;
 - Corrige bug na correção de geometria inválida (correção de vértice);
 - Corrige bug do Match and Apply QML Styles to Layers com camadas shapefile;
+- Corrige bug no algoritmo de identificação de erros de cruzamento de curva de nível com massa d'água (adicionadas barragens para retirar falsos positivos);
 
 ## 4.16.0 - 2024-11-27
 

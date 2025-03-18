@@ -30,7 +30,7 @@ from qgis.PyQt.QtWidgets import (
     QMenu,
 )
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
+from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt, QDateTime
 from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.Qt import QObject
 
@@ -149,7 +149,15 @@ class MultiLayersCentroidsFlagDockWidget(
                 )
                 for nColumn, field in enumerate(self.columns):
                     if field in lyrFields:
+                        field_idx = self.pointLayerDict[lyrid].fields().indexFromName(field)
+                        widget_setup = self.pointLayerDict[lyrid].editorWidgetSetup(field_idx)
                         attr = feat[field]
+                        if isinstance(attr, QDateTime):
+                            attr = attr.toString("dd/MM/yyyy HH:mm:ss")
+                        if widget_setup.type() == 'ValueMap':
+                            config = widget_setup.config()
+                            map_values = config['map']
+                            attr = next((k for k, v in map_values.items() if v == str(attr)), None)
                     else:
                         attr = "-"
                     self.attributeTable.setItem(
@@ -180,6 +188,7 @@ class MultiLayersCentroidsFlagDockWidget(
         if (
             self.flagsMapLayerComboBox.currentIndex() == -1
             or self.pointLayerDict == dict()
+            or self.lyrFlags is None
         ):
             return
         self.lyrFlags.selectionChanged.connect(self.updateTable)

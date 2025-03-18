@@ -41,6 +41,8 @@ from qgis.core import (
     QgsProcessingParameterDefinition,
 )
 
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+
 
 class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
     INPUT = "INPUT"
@@ -58,7 +60,7 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input Polygon Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.TypeVectorPolygon, QgsProcessing.TypeVectorLine, QgsProcessing.TypeVectorPoint],
             )
         )
 
@@ -114,10 +116,19 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         featureHandler = FeatureHandler()
+        algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        inputOld = inputLyr
         if inputLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT)
+            )
+        geomTypeLyr = inputLyr.geometryType()
+        if geomTypeLyr == QgsWkbTypes.PointGeometry or geomTypeLyr == QgsWkbTypes.LineGeometry:
+            inputLyr = algRunner.runBuffer(
+                inputLayer=inputLyr,
+                distance=10**(-5),
+                context=context
             )
         stopScaleIdx = self.parameterAsEnum(parameters, self.STOP_SCALE, context)
         stopScale = self.scales[stopScaleIdx]
@@ -167,10 +178,16 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             ySubdivisions=ySubdivisions,
             feedback=feedback,
         )
+        
+        def filterFunc(feat):
+            geom = feat.geometry()
+            bbox = geom.boundingBox()
+            return any(geom.intersects(f.geometry()) for f in inputOld.getFeatures(bbox))
+        
         list(
             map(
                 lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
-                featureList,
+                filter(filterFunc, featureList) if geomTypeLyr != QgsWkbTypes.PolygonGeometry else featureList,
             )
         )
 

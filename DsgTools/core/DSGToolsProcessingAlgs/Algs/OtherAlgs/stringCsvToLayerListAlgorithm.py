@@ -58,7 +58,7 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         layerCsv = self.parameterAsString(parameters, self.INPUTLAYERS, context)
-        layerNameList = layerCsv.split(",") if layerCsv != "" else []
+        layerNameList = [i.strip() for i in layerCsv.split(",")] if layerCsv != "" else []
         if not len(layerNameList):
             return {self.OUTPUT: []}
         layerSet = set()

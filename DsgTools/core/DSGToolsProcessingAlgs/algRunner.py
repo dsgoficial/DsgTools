@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 import uuid
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import processing
 from qgis.core import (
@@ -1974,6 +1974,49 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["FLAGS"]
+    
+    def runIdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(
+        self,
+        inputDrainagesLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        waterBodyLayer: Optional[QgsVectorLayer] = None,
+        waterBodyWithFlowExpression: Optional[str] = None,
+        waterBodyWithoutFlowExpression: Optional[str] = None,
+        oceanFilterExpression: Optional[str] = None,
+        sinkAndSpillwayLayer: Optional[QgsVectorLayer] = None,
+        sinkFilterExpression: Optional[str] = None,
+        spillwayFilterExpression: Optional[str] = None,
+        geographicBoundsLayer: Optional[QgsVectorLayer] = None,
+        outputPointLyr: Optional[QgsVectorLayer] = None,
+        outputLineLyr: Optional[QgsVectorLayer] = None,
+        outputPolygonyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> Tuple[QgsVectorLayer, QgsVectorLayer, QgsVectorLayer]:
+        outputPointLyr = "memory:" if outputPointLyr is None else outputPointLyr
+        outputLineLyr = "memory:" if outputLineLyr is None else outputLineLyr
+        outputPolygonyr = "memory:" if outputPolygonyr is None else outputPolygonyr
+        output = processing.run(
+            "dsgtools:identifydrainageflowissueswithhydrographyelementsalgorithm",
+            {
+                'INPUT_DRAINAGES': inputDrainagesLayer,
+                'WATER_BODY_LAYER': waterBodyLayer,
+                'WATER_BODY_WITH_FLOW_FILTER_EXPRESSION': waterBodyWithFlowExpression,
+                'WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION': waterBodyWithoutFlowExpression,
+                'OCEAN_FILTER_EXPRESSION': oceanFilterExpression,
+                'SINK_AND_SPILLWAY_LAYER': sinkAndSpillwayLayer,
+                'SINK_FILTER_EXPRESSION': sinkFilterExpression,
+                'SPILLWAY_FILTER_EXPRESSION': spillwayFilterExpression,
+                'GEOGRAPHIC_BOUNDARY': geographicBoundsLayer,
+                'POINT_FLAGS': outputPointLyr,
+                'LINE_FLAGS': outputLineLyr,
+                'POLYGON_FLAGS': outputPolygonyr
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["POINT_FLAGS"], output["LINE_FLAGS"], output["POLYGON_FLAGS"]
 
     def runIdentifySmallLines(
         self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False

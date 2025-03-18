@@ -48,15 +48,20 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class FixDrainageFlowAlgorithm(ValidationAlgorithm):
     NETWORK_LAYER = "NETWORK_LAYER"
-    FILTER_EXPRESSION = "FILTER_EXPRESSION"
-    SINK_LAYER = "SINK_LAYER"
+    NETWORK_FILTER_EXPRESSION = "NETWORK_FILTER_EXPRESSION"
+    SINK_AND_SPILLWAY_LAYER = "SINK_AND_SPILLWAY_LAYER"
+    SINK_FILTER_EXPRESSION = "SINK_FILTER_EXPRESSION"
+    SPILLWAY_FILTER_EXPRESSION = "SPILLWAY_FILTER_EXPRESSION"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
-    WATER_BODY_WITH_FLOW_LAYER = "WATER_BODY_WITH_FLOW_LAYER"
-    OCEAN_LAYER = "OCEAN_LAYER"
+    WATER_BODY_LAYER = "WATER_BODY_LAYER"
+    WATER_BODY_WITH_FLOW_FILTER_EXPRESSION = "WATER_BODY_WITH_FLOW_FILTER_EXPRESSION"
+    WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION = "WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION"
+    OCEAN_FILTER_EXPRESSION = "OCEAN_FILTER_EXPRESSION"
     RUN_FLOW_CHECK = "RUN_FLOW_CHECK"
     RUN_LOOP_CHECK = "RUN_LOOP_CHECK"
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
+    POLYGON_FLAGS = "POLYGON_FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -71,11 +76,11 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterExpression(
-                self.FILTER_EXPRESSION,
-                self.tr("Filter expression for nodes with fixed flow"),
-                None,
-                self.NETWORK_LAYER,
+                name=self.NETWORK_FILTER_EXPRESSION,
+                description=self.tr("Filter expression for nodes with fixed flow"),
+                parentLayerParameterName=self.NETWORK_LAYER,
                 optional=True,
+                defaultValue=""""direcao_fixada" = 1""",
             )
         )
         self.addParameter(
@@ -87,26 +92,64 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.WATER_BODY_WITH_FLOW_LAYER,
-                self.tr("Water body with flow layer"),
+                self.WATER_BODY_LAYER,
+                self.tr("Water body layer"),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=True,
             )
         )
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.OCEAN_LAYER,
-                self.tr("Ocean layer"),
-                [QgsProcessing.TypeVectorPolygon],
+            QgsProcessingParameterExpression(
+                name=self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION,
+                description=self.tr("Filter expression for water bodies with flow"),
+                parentLayerParameterName=self.WATER_BODY_LAYER,
+                defaultValue=""""tipo" in (1,2,9,10)""",
+                optional=True,
+            )
+        )
+        
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                name=self.WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION,
+                description=self.tr("Filter expression for water bodies without flow"),
+                parentLayerParameterName=self.WATER_BODY_LAYER,
+                defaultValue=""""tipo" in (6,7)""",
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                name=self.OCEAN_FILTER_EXPRESSION,
+                description=self.tr("Filter expression for ocean"),
+                parentLayerParameterName=self.WATER_BODY_LAYER,
+                defaultValue=""""tipo" in (3,4,5)""",
                 optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.SINK_LAYER,
-                self.tr("Water sink layer"),
+                self.SINK_AND_SPILLWAY_LAYER,
+                self.tr("Water sink and spillway layer"),
                 [QgsProcessing.TypeVectorPoint],
                 optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                name=self.SINK_FILTER_EXPRESSION,
+                description=self.tr("Filter expression for sink layer"),
+                parentLayerParameterName=self.SINK_AND_SPILLWAY_LAYER,
+                optional=True,
+                defaultValue=""""tipo" in (3,4)""",
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                name=self.SPILLWAY_FILTER_EXPRESSION,
+                description=self.tr("Filter expression for spillway layer"),
+                parentLayerParameterName=self.SINK_AND_SPILLWAY_LAYER,
+                optional=True,
+                defaultValue=""""tipo" in (5)""",
             )
         )
         self.addParameter(
@@ -134,6 +177,11 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 self.LINE_FLAGS, self.tr("{0} line errors").format(self.displayName())
             )
         )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.POLYGON_FLAGS, self.tr("{0} polygon errors").format(self.displayName())
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -151,15 +199,43 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         self.algRunner = AlgRunner()
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
         filterExpression = self.parameterAsExpression(
-            parameters, self.FILTER_EXPRESSION, context
+            parameters, self.NETWORK_FILTER_EXPRESSION, context
         )
         if filterExpression == "":
             filterExpression = None
-        oceanLayer = self.parameterAsLayer(parameters, self.OCEAN_LAYER, context)
-        waterBodyWithFlowLayer = self.parameterAsLayer(
-            parameters, self.WATER_BODY_WITH_FLOW_LAYER, context
+        waterBodyLayer = self.parameterAsLayer(parameters, self.WATER_BODY_LAYER, context)
+        oceanFilterExpression = self.parameterAsExpression(
+            parameters, self.OCEAN_FILTER_EXPRESSION, context
         )
-        waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
+        if oceanFilterExpression == "":
+            oceanFilterExpression = None
+        if waterBodyLayer is not None and oceanFilterExpression is None:
+            raise QgsProcessingException("There must be a oceanFilterExpression if a water body layer is selected.")
+        waterBodyWithFlowFilterExpression = self.parameterAsExpression(
+            parameters, self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION, context
+        )
+        if waterBodyWithFlowFilterExpression == "":
+            waterBodyWithFlowFilterExpression = None
+        waterBodyWithoutFlowFilterExpression = self.parameterAsExpression(
+            parameters, self.WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION, context
+        )
+        if waterBodyWithoutFlowFilterExpression == "":
+            waterBodyWithoutFlowFilterExpression = None
+        if waterBodyLayer is not None and (waterBodyWithFlowFilterExpression is None or waterBodyWithoutFlowFilterExpression is None):
+            raise QgsProcessingException("There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected.")
+        sinkAndSpillwayLayer = self.parameterAsLayer(parameters, self.SINK_AND_SPILLWAY_LAYER, context)
+        sinkFilterExpression = self.parameterAsExpression(
+            parameters, self.SINK_FILTER_EXPRESSION, context
+        )
+        if sinkFilterExpression == "":
+            sinkFilterExpression = None
+        spillwayFilterExpression = self.parameterAsExpression(
+            parameters, self.SPILLWAY_FILTER_EXPRESSION, context
+        )
+        if spillwayFilterExpression == "":
+            spillwayFilterExpression = None
+        if sinkAndSpillwayLayer is not None and (sinkFilterExpression is None or spillwayFilterExpression is None):
+            raise QgsProcessingException("There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected.")
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
         )
@@ -181,15 +257,33 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             QgsWkbTypes.LineString,
             networkLayer.sourceCrs(),
         )
-        # searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
+        (self.polygon_flags_sink, self.polygon_flags_sink_id) = self.parameterAsSink(
+            parameters,
+            self.POLYGON_FLAGS,
+            context,
+            self.getFlagFields(),
+            QgsWkbTypes.Polygon,
+            networkLayer.sourceCrs(),
+        )
         nSteps = (
             15
+            + (sinkAndSpillwayLayer is not None)
+            + (waterBodyLayer is not None) * 2
             + (runFlowCheck is True)
             + (runLoopCheck is True)
-            + (waterBodyWithFlowLayer is not None)
         )
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Running preliminary checks"))
+        if not self.networkHasFlowIssues(parameters, context, feedback=multiStepFeedback):
+            multiStepFeedback.pushInfo(self.tr("Found 0 errors on data, skipping process."))
+            return {
+                self.NETWORK_LAYER: networkLayer,
+                self.POINT_FLAGS: self.point_flags_sink_id,
+                self.LINE_FLAGS: self.line_flags_sink_id,
+            }
+        currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Building aux structures"))
         localCache = self.algRunner.runCreateFieldWithExpression(
@@ -213,23 +307,22 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             else None
         )
         currentStep += 1
-        if geographicBoundsLayer is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-            self.algRunner.runCreateSpatialIndex(
-                inputLyr=localCache,
-                context=context,
-                feedback=multiStepFeedback,
-                is_child_algorithm=True,
-            )
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
-            localCache = self.algRunner.runExtractByLocation(
-                inputLyr=localCache,
-                intersectLyr=geographicBoundsLayer,
-                context=context,
-                feedback=multiStepFeedback,
-            )
-            currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=localCache,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        localCache = self.algRunner.runExtractByLocation(
+            inputLyr=localCache,
+            intersectLyr=geographicBoundsLayer,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
             inputLyr=localCache,
@@ -301,7 +394,15 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         constantSinkPointSet = set()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        if waterSinkLayer is not None:
+        if sinkAndSpillwayLayer is not None:
+            waterSinkLayer = self.algRunner.runFilterExpression(
+                inputLyr=sinkAndSpillwayLayer,
+                expression=sinkFilterExpression,
+                context=context,
+                feedback=multiStepFeedback
+            ) if sinkFilterExpression is not None else sinkAndSpillwayLayer
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
             selectedNodesFromWaterSink = self.algRunner.runExtractByLocation(
                 inputLyr=nodesLayer,
                 intersectLyr=waterSinkLayer,
@@ -315,49 +416,64 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 constantSinkPointSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        if oceanLayer is not None and oceanLayer.featureCount() > 0:
-            buffer = self.algRunner.runBuffer(
-                inputLayer=oceanLayer,
-                distance=1e-6,
+        if waterBodyLayer is not None and waterBodyLayer.featureCount() > 0:
+            oceanLayer = self.algRunner.runFilterExpression(
+                inputLyr=parameters[self.WATER_BODY_LAYER],
+                expression=oceanFilterExpression,
                 context=context,
-                is_child_algorithm=True,
-            )
-            selectedNodesFromOcean = self.algRunner.runExtractByLocation(
-                inputLyr=nodesLayer,
-                intersectLyr=buffer,
-                context=context,
-                predicate=[AlgRunner.Intersects],
                 feedback=multiStepFeedback,
             )
-            for feat in selectedNodesFromOcean.getFeatures():
-                if multiStepFeedback.isCanceled():
-                    break
-                constantSinkPointSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
-        if waterBodyWithFlowLayer is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            selectedNodes = self.algRunner.runExtractByLocation(
-                inputLyr=nodesLayer,
-                intersectLyr=waterBodyWithFlowLayer,
+            if oceanLayer.featureCount() > 0:
+                buffer = self.algRunner.runBuffer(
+                    inputLayer=oceanLayer,
+                    distance=1e-6,
+                    context=context,
+                    is_child_algorithm=True,
+                )
+                selectedNodesFromOcean = self.algRunner.runExtractByLocation(
+                    inputLyr=nodesLayer,
+                    intersectLyr=buffer,
+                    context=context,
+                    predicate=[AlgRunner.Intersects],
+                    feedback=multiStepFeedback,
+                )
+                for feat in selectedNodesFromOcean.getFeatures():
+                    if multiStepFeedback.isCanceled():
+                        break
+                    constantSinkPointSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            waterBodyWithFlowLayer = self.algRunner.runFilterExpression(
+                inputLyr=waterBodyLayer,
+                expression=waterBodyWithFlowFilterExpression,
                 context=context,
-                predicate=[AlgRunner.Intersects],
                 feedback=multiStepFeedback,
             )
-            nodesDict = defaultdict(list)
-            for nodeFeat in selectedNodes.getFeatures():
-                nodesDict[nodeFeat["featid"]].append(nodeFeat)
-            edgesWithinWaterBodiesIdSet = set(featid for featid in nodesDict.keys())
-            # penalize edges not in water bodies
-            for (a, b) in networkBidirectionalGraph.edges:
-                if (
-                    networkBidirectionalGraph[a][b]["featid"]
-                    in edgesWithinWaterBodiesIdSet
-                ):
-                    continue
-                networkBidirectionalGraph[a][b]["length"] = (
-                    networkBidirectionalGraph[a][b]["length"] * 1e8
+            if waterBodyWithFlowLayer.featureCount() > 0:
+                selectedNodes = self.algRunner.runExtractByLocation(
+                    inputLyr=nodesLayer,
+                    intersectLyr=waterBodyWithFlowLayer,
+                    context=context,
+                    predicate=[AlgRunner.Intersects],
+                    feedback=multiStepFeedback,
                 )
-                networkBidirectionalGraph[a][b]["inside_river"] = True
+                nodesDict = defaultdict(list)
+                for nodeFeat in selectedNodes.getFeatures():
+                    nodesDict[nodeFeat["featid"]].append(nodeFeat)
+                edgesWithinWaterBodiesIdSet = set(featid for featid in nodesDict.keys())
+                # penalize edges not in water bodies
+                for (a, b) in networkBidirectionalGraph.edges:
+                    if (
+                        networkBidirectionalGraph[a][b]["featid"]
+                        in edgesWithinWaterBodiesIdSet
+                    ):
+                        continue
+                    networkBidirectionalGraph[a][b]["length"] = (
+                        networkBidirectionalGraph[a][b]["length"] * 1e8
+                    )
+                    networkBidirectionalGraph[a][b]["inside_river"] = True
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -386,22 +502,38 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr("Finding flow issues"))
-            pointFlagLyr = self.algRunner.runIdentifyDrainageFlowIssues(
-                inputLyr=networkLayer,
-                context=context,
-                feedback=multiStepFeedback,
+            pointFlagLyr, lineFlagLyr, polygonFlagLyr = self.algRunner.runIdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(
+                
             )
             pointFlagLambda = lambda x: self.flagFeature(
                 x.geometry(), flagText=x["reason"], sink=self.point_flags_sink
             )
             list(map(pointFlagLambda, pointFlagLyr.getFeatures()))
             multiStepFeedback.setProgressText(
-                self.tr(f"Found {pointFlagLyr.featureCount()} flow issues.")
+                self.tr(f"Found {pointFlagLyr.featureCount()} points of flow issues.")
+                
             )
+            lineFlagLambda = lambda x: self.flagFeature(
+                x.geometry(), flagText=x["reason"], sink=self.line_flags_sink
+            )
+            list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
+            multiStepFeedback.setProgressText(
+                self.tr(f"Found {lineFlagLyr.featureCount()} lines of flow issues.")
+                
+            )
+            polygonFlagLambda = lambda x: self.flagFeature(
+                x.geometry(), flagText=x["reason"], sink=self.polygon_flags_sink
+            )
+            list(map(polygonFlagLambda, polygonFlagLyr.getFeatures()))
+            multiStepFeedback.setProgressText(
+                self.tr(f"Found {polygonFlagLyr.featureCount()} polygon of flow issues.")
+                
+            )
+
         if runLoopCheck:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Finding loop issues"))
+            multiStepFeedback.pushInfo(self.tr("Finding loop issues"))
             lineFlagLyr = self.algRunner.runIdentifyLoops(
                 inputLyr=networkLayer,
                 context=context,
@@ -413,7 +545,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             )
             list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
 
-            multiStepFeedback.setProgressText(
+            multiStepFeedback.pushInfo(
                 self.tr(f"Found {lineFlagLyr.featureCount()} loop issues.")
             )
         return {
@@ -421,6 +553,35 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             self.POINT_FLAGS: self.point_flags_sink_id,
             self.LINE_FLAGS: self.line_flags_sink_id,
         }
+    
+    def networkHasFlowIssues(self, parameters, context, feedback):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        lineFlagLyr = self.algRunner.runIdentifyLoops(
+            inputLyr=parameters[self.NETWORK_LAYER],
+            context=context,
+            buildLocalCache=True,
+            feedback=multiStepFeedback,
+        )
+        if lineFlagLyr.featureCount() > 0:
+            return True
+        multiStepFeedback.setCurrentStep(1)
+        outputFlagsLayers = self.algRunner.runIdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(
+            inputDrainagesLayer=parameters[self.NETWORK_LAYER],
+            waterBodyLayer=parameters[self.WATER_BODY_LAYER],
+            waterBodyWithFlowExpression=parameters[self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION],
+            waterBodyWithoutFlowExpression=parameters[self.WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION],
+            sinkAndSpillwayLayer=parameters[self.SINK_AND_SPILLWAY_LAYER],
+            sinkFilterExpression=parameters[self.SINK_FILTER_EXPRESSION],
+            spillwayFilterExpression=parameters[self.SPILLWAY_FILTER_EXPRESSION],
+            geographicBoundsLayer=parameters[self.GEOGRAPHIC_BOUNDS_LAYER],
+            context=context,
+            feedback=multiStepFeedback
+        )
+        if any(lyr.featureCount() > 0 for lyr in outputFlagsLayers):
+            return True
+        return False
+        
 
     def getInAndOutNodesOnGeographicBounds(
         self,

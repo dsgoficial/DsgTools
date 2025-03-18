@@ -35,6 +35,7 @@ from qgis.core import (
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
+    QgsProcessingParameterExpression,
 )
 
 from ...algRunner import AlgRunner
@@ -43,11 +44,14 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgorithm):
     INPUT_DRAINAGES = "INPUT_DRAINAGES"
-    SINK_LAYER = "SINK_LAYER"
-    SPILLWAY_LAYER = "SPILLWAY_LAYER"
-    WATER_BODY_WITH_FLOW_LAYER = "WATER_BODY_WITH_FLOW_LAYER"
-    WATER_BODY_WITHOUT_FLOW_LAYER = "WATER_BODY_WITHOUT_FLOW_LAYER"
-    OCEAN_LAYER = "OCEAN_LAYER"
+    SINK_AND_SPILLWAY_LAYER = "SINK_AND_SPILLWAY_LAYER"
+    SINK_FILTER_EXPRESSION = "SINK_FILTER_EXPRESSION"
+    SPILLWAY_FILTER_EXPRESSION = "SPILLWAY_FILTER_EXPRESSION"
+    GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
+    WATER_BODY_LAYER = "WATER_BODY_LAYER"
+    WATER_BODY_WITH_FLOW_FILTER_EXPRESSION = "WATER_BODY_WITH_FLOW_FILTER_EXPRESSION"
+    WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION = "WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION"
+    OCEAN_FILTER_EXPRESSION = "OCEAN_FILTER_EXPRESSION"
     GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
@@ -62,47 +66,70 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 self.INPUT_DRAINAGES,
                 self.tr("Input Drainages layer"),
                 [QgsProcessing.TypeVectorLine],
+                defaultValue="elemnat_trecho_drenagem_l",
             )
         )
 
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.SINK_LAYER,
-                self.tr("Water sink layer"),
+                self.WATER_BODY_LAYER,
+                self.tr("Water body layer"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+                defaultValue="cobter_massa_dagua_a",
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                name=self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION,
+                description=self.tr("Filter expression for water bodies with flow"),
+                parentLayerParameterName=self.WATER_BODY_LAYER,
+                defaultValue=""""tipo" in (1,2,9,10)""",
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                name=self.WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION,
+                description=self.tr("Filter expression for water bodies without flow"),
+                parentLayerParameterName=self.WATER_BODY_LAYER,
+                defaultValue=""""tipo" in (6,7)""",
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                name=self.OCEAN_FILTER_EXPRESSION,
+                description=self.tr("Filter expression for ocean"),
+                parentLayerParameterName=self.WATER_BODY_LAYER,
+                defaultValue=""""tipo" in (3,4,5)""",
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.SINK_AND_SPILLWAY_LAYER,
+                self.tr("Water sink and spillway layer"),
                 [QgsProcessing.TypeVectorPoint],
                 optional=True,
             )
         )
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.SPILLWAY_LAYER,
-                self.tr("Spillway layer"),
-                [QgsProcessing.TypeVectorPoint],
+            QgsProcessingParameterExpression(
+                name=self.SINK_FILTER_EXPRESSION,
+                description=self.tr("Filter expression for sink layer"),
+                parentLayerParameterName=self.SINK_AND_SPILLWAY_LAYER,
                 optional=True,
+                defaultValue=""""tipo" in (3,4)""",
             )
         )
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.WATER_BODY_WITH_FLOW_LAYER,
-                self.tr("Water body with flow layer"),
-                [QgsProcessing.TypeVectorPolygon],
+            QgsProcessingParameterExpression(
+                name=self.SPILLWAY_FILTER_EXPRESSION,
+                description=self.tr("Filter expression for spillway layer"),
+                parentLayerParameterName=self.SINK_AND_SPILLWAY_LAYER,
                 optional=True,
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.WATER_BODY_WITHOUT_FLOW_LAYER,
-                self.tr("Water body without flow layer"),
-                [QgsProcessing.TypeVectorPolygon],
-                optional=True,
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.OCEAN_LAYER,
-                self.tr("Ocean layer"),
-                [QgsProcessing.TypeVectorPolygon],
-                optional=True,
+                defaultValue=""""tipo" in (5)""",
             )
         )
         self.addParameter(
@@ -113,6 +140,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 ),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=True,
+                defaultValue="aux_moldura_a",
             )
         )
         self.addParameter(
@@ -144,15 +172,39 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT_DRAINAGES)
             )
-        waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
-        spillwayLayer = self.parameterAsLayer(parameters, self.SPILLWAY_LAYER, context)
-        waterBodyWithFlowLyr = self.parameterAsLayer(
-            parameters, self.WATER_BODY_WITH_FLOW_LAYER, context
+        waterBodyLayer = self.parameterAsLayer(parameters, self.WATER_BODY_LAYER, context)
+        oceanFilterExpression = self.parameterAsExpression(
+            parameters, self.OCEAN_FILTER_EXPRESSION, context
         )
-        waterBodyWithoutFlowLyr = self.parameterAsLayer(
-            parameters, self.WATER_BODY_WITHOUT_FLOW_LAYER, context
+        if oceanFilterExpression == "":
+            oceanFilterExpression = None
+        if waterBodyLayer is not None and oceanFilterExpression is None:
+            raise QgsProcessingException("There must be a oceanFilterExpression if a water body layer is selected.")
+        waterBodyWithFlowFilterExpression = self.parameterAsExpression(
+            parameters, self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION, context
         )
-        oceanLyr = self.parameterAsLayer(parameters, self.OCEAN_LAYER, context)
+        if waterBodyWithFlowFilterExpression == "":
+            waterBodyWithFlowFilterExpression = None
+        waterBodyWithoutFlowFilterExpression = self.parameterAsExpression(
+            parameters, self.WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION, context
+        )
+        if waterBodyWithoutFlowFilterExpression == "":
+            waterBodyWithoutFlowFilterExpression = None
+        if waterBodyLayer is not None and (waterBodyWithFlowFilterExpression is None or waterBodyWithoutFlowFilterExpression is None):
+            raise QgsProcessingException("There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected.")
+        sinkAndSpillwayLayer = self.parameterAsLayer(parameters, self.SINK_AND_SPILLWAY_LAYER, context)
+        sinkFilterExpression = self.parameterAsExpression(
+            parameters, self.SINK_FILTER_EXPRESSION, context
+        )
+        if sinkFilterExpression == "":
+            sinkFilterExpression = None
+        spillwayFilterExpression = self.parameterAsExpression(
+            parameters, self.SPILLWAY_FILTER_EXPRESSION, context
+        )
+        if spillwayFilterExpression == "":
+            spillwayFilterExpression = None
+        if sinkAndSpillwayLayer is not None and (sinkFilterExpression is None or spillwayFilterExpression is None):
+            raise QgsProcessingException("There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected.")
         geographicBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
@@ -175,11 +227,11 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         )
         nSteps = (
             4
-            + (waterSinkLayer is not None)
-            + (spillwayLayer is not None)
-            + 2 * (oceanLyr is not None)
-            + (waterBodyWithoutFlowLyr is not None)
-            + 2 * (waterBodyWithFlowLyr is not None)
+            + (sinkFilterExpression is not None)
+            + (spillwayFilterExpression is not None)
+            + 2 * (oceanFilterExpression is not None)
+            + (waterBodyWithoutFlowFilterExpression is not None)
+            + 2 * (waterBodyWithFlowFilterExpression is not None)
         )
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
@@ -192,12 +244,12 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             waterBodyWithoutFlowLyr,
             oceanLyr,
         ) = self.buildCacheAndSpatialIndexOnLayerList(
-            layerList=[
-                waterSinkLayer,
-                spillwayLayer,
-                waterBodyWithFlowLyr,
-                waterBodyWithoutFlowLyr,
-                oceanLyr,
+            layerAndFilterExpressionList=[
+                (sinkAndSpillwayLayer, sinkFilterExpression),
+                (sinkAndSpillwayLayer, spillwayFilterExpression),
+                (waterBodyLayer, waterBodyWithFlowFilterExpression),
+                (waterBodyLayer, waterBodyWithoutFlowFilterExpression),
+                (waterBodyLayer, oceanFilterExpression),
             ],
             context=context,
             feedback=multiStepFeedback,
@@ -333,35 +385,45 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             self.POLYGON_FLAGS: self.polygon_flag_id,
         }
 
-    def buildCacheAndSpatialIndexOnLayerList(self, layerList, context, feedback):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(len(layerList), feedback)
+    def buildCacheAndSpatialIndexOnLayerList(self, layerAndFilterExpressionList, context, feedback):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(len(layerAndFilterExpressionList), feedback)
         outputList = []
-        for i, lyr in enumerate(layerList):
+        for i, (lyr, filterExpression) in enumerate(layerAndFilterExpressionList):
             if multiStepFeedback.isCanceled():
                 return outputList
             multiStepFeedback.setCurrentStep(i)
-            cachedLyr = self.buildCacheAndSpatialIndex(
-                layer=lyr, context=context, feedback=multiStepFeedback
+            cachedLyr = self.buildCacheApplyFilterAndSpatialIndex(
+                layer=lyr, filterExpression=filterExpression, context=context, feedback=multiStepFeedback
             )
             outputList.append(cachedLyr)
         return outputList
 
-    def buildCacheAndSpatialIndex(self, layer, context, feedback):
+    def buildCacheApplyFilterAndSpatialIndex(self, layer, context, feedback, filterExpression=None):
         if layer is None or layer.featureCount() == 0:
             return None
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3 + (filterExpression is not None), feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        layer = self.algRunner.runFilterExpression(
+            inputLyr=layer, expression=filterExpression, context=context, feedback=multiStepFeedback
+        ) if filterExpression is not None else layer
+        if layer is None or layer.featureCount() == 0:
+            return None
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         cacheLyr = self.algRunner.runMultipartToSingleParts(
             inputLayer=layer,
             context=context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
-        multiStepFeedback.setCurrentStep(1)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         cacheLyr = self.algRunner.runAddAutoIncrementalField(
             inputLyr=cacheLyr, context=context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(2)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
             inputLyr=cacheLyr,
             context=context,
@@ -379,7 +441,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             inputLayer=inputDrainagesLyr, context=context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
-        cachedInputDrainagesLyr = self.buildCacheAndSpatialIndex(
+        cachedInputDrainagesLyr = self.buildCacheApplyFilterAndSpatialIndex(
             layer=inputDrainagesLyr, context=context, feedback=multiStepFeedback
         )
         drainageDict = {

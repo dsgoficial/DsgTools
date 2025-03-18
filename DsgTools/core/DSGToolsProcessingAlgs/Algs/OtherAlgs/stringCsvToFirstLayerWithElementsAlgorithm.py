@@ -52,7 +52,7 @@ class StringCsvToFirstLayerWithElementsAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         layerCsv = self.parameterAsString(parameters, self.INPUTLAYERS, context)
-        layerNameList = layerCsv.split(",")
+        layerNameList = [i.strip() for i in layerCsv.split(",")]
         nSteps = len(layerNameList)
         if not nSteps:
             return {self.OUTPUT: None}
