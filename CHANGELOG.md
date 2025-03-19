@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.22 - dev
+## 4.17.23 - dev
 
 Novas Funcionalidades:
 
@@ -12,6 +12,7 @@ Novas Funcionalidades:
 - Nova caixa de ferramenta de inspecionar flags de área com mais de um centroide;
 - Novo algoritmo de filtrar múltiplas saídas pela moldura;
 - Novo algoritmo de corrigir atributação do atributo dentro de polígono em trechos de drenagem;
+- Novo algoritmo de identificar erros na atributação de curvas de nível;
 
 Melhorias:
 
