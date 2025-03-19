@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.20 - dev
+## 4.17.21 - dev
 
 Novas Funcionalidades:
 
@@ -26,6 +26,7 @@ Melhorias:
 - O processo de gerar moldura sistemática à camada relaciona agora suporta a entradas de camadas do tipo ponto e linha;
 - Melhora nas entradas do algoritmo Fix Drainage Flow;
 - Melhora nas entradas do algoritmo Identify Drainage Flow Issues With Hydrography Elements;
+- Novo formato de exportação para os arquivos de configuração do Snap Hierárquico e Enforce Spatial Rules (os antigos ainda funcionam);
 
 Correção de bugs:
 
