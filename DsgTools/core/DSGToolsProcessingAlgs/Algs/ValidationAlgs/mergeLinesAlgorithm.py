@@ -151,7 +151,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         nodesLayer = self.algRunner.runCreateFieldWithExpression(
-            inputLyr=nodesLayer.clone(),
+            inputLyr=nodesLayer,
             expression="$id",
             fieldName="nfeatid",
             fieldType=1,
