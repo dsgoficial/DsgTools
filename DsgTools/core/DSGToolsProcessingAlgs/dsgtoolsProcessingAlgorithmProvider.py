@@ -24,15 +24,11 @@
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.clipAndCopyFeaturesBetweenDatabasesAlgorithm import (
     ClipAndCopyFeaturesBetweenDatabasesAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.conversionParameterTypes import (
-    ParameterDbConversionType,
-)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.conversionParameterTypes import ParameterDbConversionType
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.convertDatabaseAlgorithm import (
     ConvertDatabasesAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.exportPostGISDataToShapefile import (
-    ExportPostGISDataToShapefile,
-)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.exportPostGISDataToShapefile import ExportPostGISDataToShapefile
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.genericSelectionToolParametersAlgorithm import (
     GenericSelectionToolParametersAlgorithm,
 )
@@ -53,12 +49,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeWate
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import (
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2 import (
-    ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3 import (
-    ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsToNearestNeighborAlgorithm import (
     ReclassifyAdjacentPixelsToNearestNeighborAlgorithm,
@@ -81,20 +71,11 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGe
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
     CreateGridFromCoordinatesAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeographicBoundary import (
-    FilterLayerListByGeographicBoundary,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingForBDGEx import (
     BatchRasterPackagingForBDGEx,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.prepareFilesForRasterPackagingForBDGEx import (
-    PrepareRasterFilesForPackagingForBDGEx,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
     FixSegmentErrorsBetweenLinesAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixDrainageVersusWaterBodyAttributeAlgorithm import (
-    FixDrainageVersusWaterBodyAttributeAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
     IdentifySmallObjectsOnLayersAlgorithm,
@@ -107,9 +88,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWaterBodyA
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicateNodesAlgorithm import (
     RemoveDuplicateVertexesAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapFeaturesInsideLayerWithGroupByAlgorithm import (
-    SnapFeaturesInsideLayerWithGroupByAlgorithm,
 )
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
@@ -562,6 +540,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyAdjacentGeog
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadThemesAlgorithm import (
     LoadThemesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.numberPolygons import (
+    NumberPolygonsAlgorithm,
+)
 
 # from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
 
@@ -732,8 +713,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyUncoveredStartAndEndPointsAlgorithm(),
             ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(),
-            ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(),
-            ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(),
             ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(),
             FindSmallClosedLinesAlgorithm(),
             SetLineOrientation(),
@@ -751,10 +730,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ConvertDatabasesAlgorithm(),
             ExportPostGISDataToShapefile(),
             ExtractMiddleVertexOnLineAlgorithm(),
-            PrepareRasterFilesForPackagingForBDGEx(),
-            SnapFeaturesInsideLayerWithGroupByAlgorithm(),
-            FilterLayerListByGeographicBoundary(),
-            FixDrainageVersusWaterBodyAttributeAlgorithm(),
+            NumberPolygonsAlgorithm()
         ]
         return algList
 
