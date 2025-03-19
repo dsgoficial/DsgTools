@@ -77,6 +77,11 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingFo
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
     FixSegmentErrorsBetweenLinesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixDrainageVersusWaterBodyAttributeAlgorithm import (
+    FixDrainageVersusWaterBodyAttributeAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageVersusWaterBodyAttributeErrorsAlgorithm import IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyErrorsInContourAttributesAlgorithm import IdentifyErrorsInContourAttributesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
     IdentifySmallObjectsOnLayersAlgorithm,
 )
@@ -731,6 +736,12 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ExportPostGISDataToShapefile(),
             ExtractMiddleVertexOnLineAlgorithm(),
             NumberPolygonsAlgorithm()
+            PrepareRasterFilesForPackagingForBDGEx(),
+            SnapFeaturesInsideLayerWithGroupByAlgorithm(),
+            FilterLayerListByGeographicBoundary(),
+            FixDrainageVersusWaterBodyAttributeAlgorithm(),
+            IdentifyErrorsInContourAttributesAlgorithm(),
+            IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(),
         ]
         return algList
 

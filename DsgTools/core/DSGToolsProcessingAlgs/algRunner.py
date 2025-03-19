@@ -1974,7 +1974,7 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["FLAGS"]
-    
+
     def runIdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(
         self,
         inputDrainagesLayer: QgsVectorLayer,
@@ -1999,18 +1999,18 @@ class AlgRunner:
         output = processing.run(
             "dsgtools:identifydrainageflowissueswithhydrographyelementsalgorithm",
             {
-                'INPUT_DRAINAGES': inputDrainagesLayer,
-                'WATER_BODY_LAYER': waterBodyLayer,
-                'WATER_BODY_WITH_FLOW_FILTER_EXPRESSION': waterBodyWithFlowExpression,
-                'WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION': waterBodyWithoutFlowExpression,
-                'OCEAN_FILTER_EXPRESSION': oceanFilterExpression,
-                'SINK_AND_SPILLWAY_LAYER': sinkAndSpillwayLayer,
-                'SINK_FILTER_EXPRESSION': sinkFilterExpression,
-                'SPILLWAY_FILTER_EXPRESSION': spillwayFilterExpression,
-                'GEOGRAPHIC_BOUNDARY': geographicBoundsLayer,
-                'POINT_FLAGS': outputPointLyr,
-                'LINE_FLAGS': outputLineLyr,
-                'POLYGON_FLAGS': outputPolygonyr
+                "INPUT_DRAINAGES": inputDrainagesLayer,
+                "WATER_BODY_LAYER": waterBodyLayer,
+                "WATER_BODY_WITH_FLOW_FILTER_EXPRESSION": waterBodyWithFlowExpression,
+                "WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION": waterBodyWithoutFlowExpression,
+                "OCEAN_FILTER_EXPRESSION": oceanFilterExpression,
+                "SINK_AND_SPILLWAY_LAYER": sinkAndSpillwayLayer,
+                "SINK_FILTER_EXPRESSION": sinkFilterExpression,
+                "SPILLWAY_FILTER_EXPRESSION": spillwayFilterExpression,
+                "GEOGRAPHIC_BOUNDARY": geographicBoundsLayer,
+                "POINT_FLAGS": outputPointLyr,
+                "LINE_FLAGS": outputLineLyr,
+                "POLYGON_FLAGS": outputPolygonyr,
             },
             context=context,
             feedback=feedback,

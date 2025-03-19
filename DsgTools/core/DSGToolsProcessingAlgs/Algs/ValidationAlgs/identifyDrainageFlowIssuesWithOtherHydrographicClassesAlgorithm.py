@@ -50,7 +50,9 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
     WATER_BODY_LAYER = "WATER_BODY_LAYER"
     WATER_BODY_WITH_FLOW_FILTER_EXPRESSION = "WATER_BODY_WITH_FLOW_FILTER_EXPRESSION"
-    WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION = "WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION"
+    WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION = (
+        "WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION"
+    )
     OCEAN_FILTER_EXPRESSION = "OCEAN_FILTER_EXPRESSION"
     GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
     POINT_FLAGS = "POINT_FLAGS"
@@ -172,14 +174,18 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT_DRAINAGES)
             )
-        waterBodyLayer = self.parameterAsLayer(parameters, self.WATER_BODY_LAYER, context)
+        waterBodyLayer = self.parameterAsLayer(
+            parameters, self.WATER_BODY_LAYER, context
+        )
         oceanFilterExpression = self.parameterAsExpression(
             parameters, self.OCEAN_FILTER_EXPRESSION, context
         )
         if oceanFilterExpression == "":
             oceanFilterExpression = None
         if waterBodyLayer is not None and oceanFilterExpression is None:
-            raise QgsProcessingException("There must be a oceanFilterExpression if a water body layer is selected.")
+            raise QgsProcessingException(
+                "There must be a oceanFilterExpression if a water body layer is selected."
+            )
         waterBodyWithFlowFilterExpression = self.parameterAsExpression(
             parameters, self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION, context
         )
@@ -190,9 +196,16 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         )
         if waterBodyWithoutFlowFilterExpression == "":
             waterBodyWithoutFlowFilterExpression = None
-        if waterBodyLayer is not None and (waterBodyWithFlowFilterExpression is None or waterBodyWithoutFlowFilterExpression is None):
-            raise QgsProcessingException("There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected.")
-        sinkAndSpillwayLayer = self.parameterAsLayer(parameters, self.SINK_AND_SPILLWAY_LAYER, context)
+        if waterBodyLayer is not None and (
+            waterBodyWithFlowFilterExpression is None
+            or waterBodyWithoutFlowFilterExpression is None
+        ):
+            raise QgsProcessingException(
+                "There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected."
+            )
+        sinkAndSpillwayLayer = self.parameterAsLayer(
+            parameters, self.SINK_AND_SPILLWAY_LAYER, context
+        )
         sinkFilterExpression = self.parameterAsExpression(
             parameters, self.SINK_FILTER_EXPRESSION, context
         )
@@ -203,8 +216,12 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         )
         if spillwayFilterExpression == "":
             spillwayFilterExpression = None
-        if sinkAndSpillwayLayer is not None and (sinkFilterExpression is None or spillwayFilterExpression is None):
-            raise QgsProcessingException("There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected.")
+        if sinkAndSpillwayLayer is not None and (
+            sinkFilterExpression is None or spillwayFilterExpression is None
+        ):
+            raise QgsProcessingException(
+                "There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected."
+            )
         geographicBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
@@ -385,28 +402,46 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             self.POLYGON_FLAGS: self.polygon_flag_id,
         }
 
-    def buildCacheAndSpatialIndexOnLayerList(self, layerAndFilterExpressionList, context, feedback):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(len(layerAndFilterExpressionList), feedback)
+    def buildCacheAndSpatialIndexOnLayerList(
+        self, layerAndFilterExpressionList, context, feedback
+    ):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(
+            len(layerAndFilterExpressionList), feedback
+        )
         outputList = []
         for i, (lyr, filterExpression) in enumerate(layerAndFilterExpressionList):
             if multiStepFeedback.isCanceled():
                 return outputList
             multiStepFeedback.setCurrentStep(i)
             cachedLyr = self.buildCacheApplyFilterAndSpatialIndex(
-                layer=lyr, filterExpression=filterExpression, context=context, feedback=multiStepFeedback
+                layer=lyr,
+                filterExpression=filterExpression,
+                context=context,
+                feedback=multiStepFeedback,
             )
             outputList.append(cachedLyr)
         return outputList
 
-    def buildCacheApplyFilterAndSpatialIndex(self, layer, context, feedback, filterExpression=None):
+    def buildCacheApplyFilterAndSpatialIndex(
+        self, layer, context, feedback, filterExpression=None
+    ):
         if layer is None or layer.featureCount() == 0:
             return None
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3 + (filterExpression is not None), feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(
+            3 + (filterExpression is not None), feedback
+        )
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
-        layer = self.algRunner.runFilterExpression(
-            inputLyr=layer, expression=filterExpression, context=context, feedback=multiStepFeedback
-        ) if filterExpression is not None else layer
+        layer = (
+            self.algRunner.runFilterExpression(
+                inputLyr=layer,
+                expression=filterExpression,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if filterExpression is not None
+            else layer
+        )
         if layer is None or layer.featureCount() == 0:
             return None
         currentStep += 1
