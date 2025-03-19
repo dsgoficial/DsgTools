@@ -96,6 +96,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBe
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixDrainageVersusWaterBodyAttributeAlgorithm import (
     FixDrainageVersusWaterBodyAttributeAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageVersusWaterBodyAttributeErrorsAlgorithm import IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyErrorsInContourAttributesAlgorithm import IdentifyErrorsInContourAttributesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
     IdentifySmallObjectsOnLayersAlgorithm,
@@ -757,6 +758,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             FilterLayerListByGeographicBoundary(),
             FixDrainageVersusWaterBodyAttributeAlgorithm(),
             IdentifyErrorsInContourAttributesAlgorithm(),
+            IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(),
         ]
         return algList
 
