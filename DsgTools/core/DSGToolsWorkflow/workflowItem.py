@@ -226,6 +226,7 @@ class DSGToolsWorkflowItem(QObject):
     pauseAfterExecution: bool
     source: ModelSource
     metadata: Metadata
+    tooltip: str = ""
 
     workflowItemExecutionFinished = pyqtSignal(object)
 
@@ -236,6 +237,8 @@ class DSGToolsWorkflowItem(QObject):
         self.context = dataobjects.createContext(feedback=self.feedback)
         self.context.setProject(QgsProject.instance())
         self.resetItem()
+        if self.tooltip == "" and self.model.shortDescription != "":
+            self.tooltip = self.model.shortDescription()
 
     def resetItem(self):
         """Reset the workflow item."""
@@ -298,7 +301,7 @@ class DSGToolsWorkflowItem(QObject):
         return self.flags.modelCanHaveFalsePositiveFlags
 
     def getDescription(self) -> str:
-        return self.model.shortDescription()
+        return self.model.shortDescription() if self.tooltip in ("", None) else self.tooltip
 
     def getOutputFlags(self):
         """Get the output flags."""

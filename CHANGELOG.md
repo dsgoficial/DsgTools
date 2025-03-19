@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.21 - dev
+## 4.17.22 - dev
 
 Novas Funcionalidades:
 
@@ -27,6 +27,7 @@ Melhorias:
 - Melhora nas entradas do algoritmo Fix Drainage Flow;
 - Melhora nas entradas do algoritmo Identify Drainage Flow Issues With Hydrography Elements;
 - Novo formato de exportação para os arquivos de configuração do Snap Hierárquico e Enforce Spatial Rules (os antigos ainda funcionam);
+- Configuração de tooltip adicionada na caixa de ferramentas de workflow (é retrocompatível com o formato anterior de descrição no model);
 
 Correção de bugs:
 
