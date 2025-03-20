@@ -20,61 +20,65 @@
  ***************************************************************************/
 """
 
-from qgis.core import (QgsFeatureSink,
-                        QgsProcessing,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterVectorLayer,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProject,
-                       QgsFeatureRequest,
-                       QgsProcessingUtils,
-                       QgsVectorLayer,
-                       QgsField,
-                       QgsFeature)
+from qgis.core import (
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingParameterField,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterString,
+    QgsProcessingParameterFeatureSink,
+    QgsProject,
+    QgsFeatureRequest,
+    QgsProcessingUtils,
+    QgsVectorLayer,
+    QgsField,
+    QgsFeature,
+)
 from qgis.PyQt.QtCore import QVariant, QCoreApplication
 import processing
 
+
 class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
 
-    INPUT_LAYER = 'INPUT_LAYER'
-    ATTRIBUTE_NAME = 'ATTRIBUTE_NAME'
-    OUTPUT_LAYER = 'OUTPUT_LAYER'
-    DIRECTION = 'DIRECTION'
+    INPUT_LAYER = "INPUT_LAYER"
+    ATTRIBUTE_NAME = "ATTRIBUTE_NAME"
+    OUTPUT_LAYER = "OUTPUT_LAYER"
+    DIRECTION = "DIRECTION"
 
     def initAlgorithm(self, config):
 
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LAYER,
-                self.tr('Insira a camada de polígonos'),
-                [QgsProcessing.TypeVectorPolygon]
+                self.tr("Insira a camada de polígonos"),
+                [QgsProcessing.TypeVectorPolygon],
             )
         )
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.DIRECTION,
-                self.tr('Indique a direção de numeração:'),
-                options = ['Do Norte para o Sul, do Oeste para o Leste',
-                            'Do Norte para o Sul, do Leste para o Oeste',
-                            'Do Sul para o Norte, do Leste para o Oeste',
-                            'Do Sul para o Norte, do Oeste para o Leste'],
-                defaultValue=0
+                self.tr("Indique a direção de numeração:"),
+                options=[
+                    "Do Norte para o Sul, do Oeste para o Leste",
+                    "Do Norte para o Sul, do Leste para o Oeste",
+                    "Do Sul para o Norte, do Leste para o Oeste",
+                    "Do Sul para o Norte, do Oeste para o Leste",
+                ],
+                defaultValue=0,
             )
         )
         self.addParameter(
             QgsProcessingParameterString(
                 self.ATTRIBUTE_NAME,
-                self.tr('Insira o nome do atributo de ordenamento'),
-                defaultValue = 'ord'
+                self.tr("Insira o nome do atributo de ordenamento"),
+                defaultValue="ord",
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT_LAYER,
-                self.tr('Numbered Polygons')
+                self.OUTPUT_LAYER, self.tr("Numbered Polygons")
             )
         )
 
@@ -87,37 +91,59 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         total = 100.0 / layer.featureCount() if layer.featureCount() else 0
 
         if not layer:
-            raise QgsProcessingException('Invalid input layer')
+            raise QgsProcessingException("Invalid input layer")
 
         fields = layer.fields()
         fields.append(QgsField(attr_name, QVariant.Int))
 
-        (sink, dest_id) = self.parameterAsSink(parameters,
-                                                self.OUTPUT_LAYER,
-                                                context,
-                                                fields,
-                                                layer.wkbType(),
-                                                layer.sourceCrs())
+        (sink, dest_id) = self.parameterAsSink(
+            parameters,
+            self.OUTPUT_LAYER,
+            context,
+            fields,
+            layer.wkbType(),
+            layer.sourceCrs(),
+        )
 
         features = list(layer.getFeatures())
-       
+
         # Ordenação do Norte para o Sul e do Oeste para o Leste
         if direction == 0:
-            features.sort(key=lambda f: (-f.geometry().centroid().asPoint().y(), f.geometry().centroid().asPoint().x()))
+            features.sort(
+                key=lambda f: (
+                    -f.geometry().centroid().asPoint().y(),
+                    f.geometry().centroid().asPoint().x(),
+                )
+            )
 
         # Ordenação do Norte para o Sul e do Leste para o Oeste
         elif direction == 1:
-            features.sort(key=lambda f: (-f.geometry().centroid().asPoint().y(), -f.geometry().centroid().asPoint().x()))
+            features.sort(
+                key=lambda f: (
+                    -f.geometry().centroid().asPoint().y(),
+                    -f.geometry().centroid().asPoint().x(),
+                )
+            )
 
         # Ordenação do Sul para o Norte e do Leste para o Oeste
         elif direction == 2:
-            features.sort(key=lambda f: (f.geometry().centroid().asPoint().y(), -f.geometry().centroid().asPoint().x()))
+            features.sort(
+                key=lambda f: (
+                    f.geometry().centroid().asPoint().y(),
+                    -f.geometry().centroid().asPoint().x(),
+                )
+            )
 
         # Ordenação do Sul para o Norte e do Oeste para o Leste
         elif direction == 3:
-            features.sort(key=lambda f: (f.geometry().centroid().asPoint().y(), f.geometry().centroid().asPoint().x()))
-        
-        feedback.setProgressText('Numerando os polígonos conforme direção dada...\n')
+            features.sort(
+                key=lambda f: (
+                    f.geometry().centroid().asPoint().y(),
+                    f.geometry().centroid().asPoint().x(),
+                )
+            )
+
+        feedback.setProgressText("Numerando os polígonos conforme direção dada...\n")
 
         for i, feature in enumerate(features, start=1):
             new_feature = QgsFeature(fields)
@@ -125,9 +151,9 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
             new_feature.setAttributes(feature.attributes() + [i])
             sink.addFeature(new_feature, QgsFeatureSink.FastInsert)
             feedback.setProgress(int(i * total))
-        
+
         """
-        centroides = processing.run("native:centroids", 
+        centroides = processing.run("native:centroids",
                                     {'INPUT': layer,
                                     'ALL_PARTS':False,
                                     'OUTPUT':'TEMPORARY_OUTPUT'})['OUTPUT']

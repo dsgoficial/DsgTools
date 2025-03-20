@@ -301,7 +301,11 @@ class DSGToolsWorkflowItem(QObject):
         return self.flags.modelCanHaveFalsePositiveFlags
 
     def getDescription(self) -> str:
-        return self.model.shortDescription() if self.tooltip in ("", None) else self.tooltip
+        return (
+            self.model.shortDescription()
+            if self.tooltip in ("", None)
+            else self.tooltip
+        )
 
     def getOutputFlags(self):
         """Get the output flags."""

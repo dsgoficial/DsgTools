@@ -142,7 +142,13 @@ class IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(ValidationAlgorith
         waterBodyWithFlowExpression = self.parameterAsExpression(
             parameters, self.WATER_BODY_WITH_FLOW_EXPRESSION, context
         )
-        self.prepareFlagSink(parameters, inputDrainagesLyr, QgsWkbTypes.LineString, context, addFeatId=True)
+        self.prepareFlagSink(
+            parameters,
+            inputDrainagesLyr,
+            QgsWkbTypes.LineString,
+            context,
+            addFeatId=True,
+        )
 
         nSteps = 10
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
@@ -207,7 +213,9 @@ class IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(ValidationAlgorith
         flagLambda = lambda x: self.flagFeature(
             flagGeom=x.geometry(),
             featid=x["featid"],
-            flagText=self.tr(f"Features outside water body with attribute inside water body ({polygonRelationshipAttribute} != {outsidePolygonValue}).")
+            flagText=self.tr(
+                f"Features outside water body with attribute inside water body ({polygonRelationshipAttribute} != {outsidePolygonValue})."
+            ),
         )
         list(map(flagLambda, drainagesOutsideWithWrongAttributes.getFeatures()))
         currentStep += 1
@@ -234,12 +242,13 @@ class IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(ValidationAlgorith
         flagLambda = lambda x: self.flagFeature(
             flagGeom=x.geometry(),
             featid=x["featid"],
-            flagText=self.tr(f"Features inside water body with attribute inside water body ({polygonRelationshipAttribute} = {outsidePolygonValue}).")
+            flagText=self.tr(
+                f"Features inside water body with attribute inside water body ({polygonRelationshipAttribute} = {outsidePolygonValue})."
+            ),
         )
-        list(map(flagLambda, drainagesInsideWithWrongAttributes.getFeatures())) 
+        list(map(flagLambda, drainagesInsideWithWrongAttributes.getFeatures()))
 
         return {self.FLAGS: self.flag_id}
-
 
     def name(self):
         """

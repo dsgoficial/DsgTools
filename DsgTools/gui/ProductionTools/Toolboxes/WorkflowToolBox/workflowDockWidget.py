@@ -628,9 +628,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             return
         self.tableWidget.setRowCount(len(workflow.workflowItemList))
         for row, workflowItem in enumerate(workflow.workflowItemList):
-            tooltip = self.tr(
-                f"Model name: {workflowItem.displayName}"
-            )
+            tooltip = self.tr(f"Model name: {workflowItem.displayName}")
             if workflowItem.getDescription() != "":
                 tooltip += f"\n\nModel description: {workflowItem.getDescription()}"
             if workflowItem.flagsCanHaveFalsePositiveResults():

@@ -303,7 +303,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         le.setFrame(False)
         le.textChanged.connect(lambda x: le.setToolTip(x))
         return le
-    
+
     def tooltipWidget(self, text=None):
         """
         Gets a new instance of tooltip's setter widget.

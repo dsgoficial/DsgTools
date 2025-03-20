@@ -422,21 +422,21 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         self.panel.otw.extension = ".rules"
         self.panel.otw.fileType = self.tr("Set of DSGTools Spatial Rules")
         self.panel.otw.setMetadata({"version": self.__ATTRIBUTE_MAP_VERSION})
-        
+
         # Store original methods
         original_load = self.panel.otw.load
         original_save = self.panel.otw.save
-        
+
         # Replace with our custom methods
         def new_load(filepath):
             try:
                 with open(filepath, "r", encoding="utf-8") as f:
                     data = json.loads(f.read())
-                    
+
                     # Convert new format to old format if needed
                     if self._isNewFormat(data):
                         data = self._convertNewFormatToOld(data)
-                    
+
                     # Use original restore method with data in old format
                     self.panel.otw.restore(data)
             except Exception as e:
@@ -446,16 +446,13 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                     "Check file {0}:\n{1}".format(filepath, "\n".join(e.args)),
                 )
                 self.panel.otw.setHeaders(self.panel.otw.headers)
-        
+
         def new_save(filepath):
             try:
                 with open(filepath, "w", encoding="utf-8") as f:
                     # Create new format structure
-                    new_data = {
-                        "metadata": self.panel.otw.metadata(True),
-                        "rules": []
-                    }
-                    
+                    new_data = {"metadata": self.panel.otw.metadata(True), "rules": []}
+
                     # Read values directly from the table widgets
                     for row in range(self.panel.otw.rowCount()):
                         rule = {
@@ -466,17 +463,19 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                             "predicateDE9IM": self.panel.otw.getValue(row, 4),
                             "layerB": self.panel.otw.getValue(row, 5),
                             "filterB": self.panel.otw.getValue(row, 6),
-                            "cardinality": self.panel.otw.getValue(row, 7)
+                            "cardinality": self.panel.otw.getValue(row, 7),
                         }
                         new_data["rules"].append(rule)
-                    
+
                     # Save in the new format
                     f.write(json.dumps(new_data, indent=4))
                     self.messageBar.pushMessage(
                         self.tr("Success"),
-                        self.tr("Spatial rules successfully exported to {0}").format(filepath),
+                        self.tr("Spatial rules successfully exported to {0}").format(
+                            filepath
+                        ),
                         level=Qgis.Success,
-                        duration=5
+                        duration=5,
                     )
             except Exception as e:
                 QMessageBox.warning(
@@ -484,11 +483,11 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                     self.tr("Unable to export {0}").format(filepath),
                     "Check file {0}:\n{1}".format(filepath, "\n".join(e.args)),
                 )
-        
+
         # Apply our custom methods
         self.panel.otw.load = new_load
         self.panel.otw.save = new_save
-        
+
         return self.panel
 
     def parentLayerChanged(self, layer=None):
@@ -653,7 +652,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
 
     def postInitialize(self, wrappers):
         pass
-    
+
     def _isNewFormat(self, data):
         """
         Detects if the data is in the new format.
@@ -668,20 +667,22 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         :param value: (dict) value in old format
         :return: (dict) value in new format
         """
-        result = {'metadata': value.get('metadata', {}), 'rules': []}
+        result = {"metadata": value.get("metadata", {}), "rules": []}
         for key, rule in value.items():
-            if key == 'metadata':
+            if key == "metadata":
                 continue
-            result['rules'].append({
-                'name': rule.get('0', ''),
-                'layerA': rule.get('1', ''),
-                'filterA': rule.get('2', ''),
-                'predicate': rule.get('3', ''),
-                'predicateDE9IM': rule.get('4', ''),
-                'layerB': rule.get('5', ''),
-                'filterB': rule.get('6', ''),
-                'cardinality': rule.get('7', '')
-            })
+            result["rules"].append(
+                {
+                    "name": rule.get("0", ""),
+                    "layerA": rule.get("1", ""),
+                    "filterA": rule.get("2", ""),
+                    "predicate": rule.get("3", ""),
+                    "predicateDE9IM": rule.get("4", ""),
+                    "layerB": rule.get("5", ""),
+                    "filterB": rule.get("6", ""),
+                    "cardinality": rule.get("7", ""),
+                }
+            )
         return result
 
     def _convertNewFormatToOld(self, value):
@@ -690,18 +691,16 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         :param value: (dict) value in new format
         :return: (dict) value in old format
         """
-        result = {'metadata': value.get('metadata', {})}
-        for i, rule in enumerate(value.get('rules', [])):
+        result = {"metadata": value.get("metadata", {})}
+        for i, rule in enumerate(value.get("rules", [])):
             result[str(i)] = {
-                '0': rule.get('name', ''),
-                '1': rule.get('layerA', ''),
-                '2': rule.get('filterA', ''),
-                '3': rule.get('predicate', ''),
-                '4': rule.get('predicateDE9IM', ''),
-                '5': rule.get('layerB', ''),
-                '6': rule.get('filterB', ''),
-                '7': rule.get('cardinality', '')
+                "0": rule.get("name", ""),
+                "1": rule.get("layerA", ""),
+                "2": rule.get("filterA", ""),
+                "3": rule.get("predicate", ""),
+                "4": rule.get("predicateDE9IM", ""),
+                "5": rule.get("layerB", ""),
+                "6": rule.get("filterB", ""),
+                "7": rule.get("cardinality", ""),
             }
         return result
-
-

@@ -109,7 +109,6 @@ class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):
                 self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
-        
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -118,38 +117,55 @@ class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT_CONTOURS, context)
         scale = self.parameterAsEnum(parameters, self.SCALE, context)
         equidistance = self.equidistances[scale]
-        heightFieldName = self.parameterAsFields(parameters, self.CONTOUR_ATTR, context)[0]
+        heightFieldName = self.parameterAsFields(
+            parameters, self.CONTOUR_ATTR, context
+        )[0]
         masterContourExpression = self.parameterAsExpression(
             parameters, self.MASTER_CONTOUR_EXPRESSION, context
         )
-        masterContourExpression = masterContourExpression if masterContourExpression != "" else None
+        masterContourExpression = (
+            masterContourExpression if masterContourExpression != "" else None
+        )
         if masterContourExpression is None:
             raise QgsProcessingException("invalid expression")
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.LineString, context, addFeatId=True)
+        self.prepareFlagSink(
+            parameters, inputLyr, QgsWkbTypes.LineString, context, addFeatId=True
+        )
         request = QgsFeatureRequest()
-        request.setFilterExpression(expression=f"""{masterContourExpression} and ("{heightFieldName}" % (5*{equidistance}) = 0)""")
+        request.setFilterExpression(
+            expression=f"""{masterContourExpression} and ("{heightFieldName}" % (5*{equidistance}) = 0)"""
+        )
         masterContoursWithCorrectIndexValueSet = set(
             f.id() for f in inputLyr.getFeatures(request)
         )
         request = QgsFeatureRequest()
-        request.setFilterExpression(expression=f"""not({masterContourExpression}) and ("{heightFieldName}" % (5*{equidistance}) != 0)""")
+        request.setFilterExpression(
+            expression=f"""not({masterContourExpression}) and ("{heightFieldName}" % (5*{equidistance}) != 0)"""
+        )
         normalContoursWithCorrectIndexValueSet = set(
             f.id() for f in inputLyr.getFeatures(request)
         )
         nFeats = inputLyr.featureCount()
         if nFeats == 0:
             return {self.FLAGS: self.flag_id}
-        stepSize = 100/nFeats
+        stepSize = 100 / nFeats
         for current, feat in enumerate(inputLyr.getFeatures()):
             if feedback.isCanceled():
                 break
             feedback.setProgress(current * stepSize)
-            if feat.id() in masterContoursWithCorrectIndexValueSet or feat.id() in normalContoursWithCorrectIndexValueSet:
+            if (
+                feat.id() in masterContoursWithCorrectIndexValueSet
+                or feat.id() in normalContoursWithCorrectIndexValueSet
+            ):
                 continue
-            attrDict = {k:v for k,v in feat.attributeMap().items() if isinstance(v, int)}
+            attrDict = {
+                k: v for k, v in feat.attributeMap().items() if isinstance(v, int)
+            }
             self.flagFeature(
                 flagGeom=feat.geometry(),
-                flagText=self.tr(f"Contour with height {feat[heightFieldName]} has invalid index (attributes: {attrDict})"),
+                flagText=self.tr(
+                    f"Contour with height {feat[heightFieldName]} has invalid index (attributes: {attrDict})"
+                ),
                 featid=feat.id(),
             )
         return {self.FLAGS: self.flag_id}
