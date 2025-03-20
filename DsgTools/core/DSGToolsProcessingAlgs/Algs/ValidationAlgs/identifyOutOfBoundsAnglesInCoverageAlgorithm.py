@@ -129,9 +129,9 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         if inputLyrList == []:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.INPUTLAYERS)
-            )
+            self.prepareFlagSink(parameters, None, QgsWkbTypes.Point, context)
+            feedback.pushWarning(self.tr("Empty layer list"))
+            return {self.FLAGS: self.flag_id}
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Point, context)
