@@ -26,6 +26,7 @@ from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 from qgis.PyQt.QtCore import QByteArray
 from itertools import chain
 from itertools import product
+from itertools import combinations
 
 from qgis.core import (
     QgsGeometry,
@@ -35,6 +36,7 @@ from qgis.core import (
     QgsFeedback,
     QgsProcessingContext,
     QgsWkbTypes,
+    QgsPointXY,
 )
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
@@ -965,8 +967,9 @@ def filter_mergeable_graphs_using_attibutes(
     attributeNameList: List[str],
     isMulti: bool,
     allowClosedLines: bool = False,
+    constraintNodeIds: Set[int] = None,
 ) -> Tuple[Set[int], Set[int]]:
-    """Filters mergeable graphs based on specified attributes.
+    """Filters mergeable graphs based on specified attributes, with constraint nodes as break points.
 
     Args:
         nx (module): NetworkX library.
@@ -975,36 +978,358 @@ def filter_mergeable_graphs_using_attibutes(
         nodeIdDict (Dict[int, QByteArray]): Dictionary mapping node IDs to QByteArray objects.
         attributeNameList (List[str]): List of attribute names to consider for filtering.
         isMulti (bool): Flag indicating whether the graph is a multi-type graph.
+        allowClosedLines (bool, optional): Flag to allow closed lines in output. Defaults to False.
+        constraintNodeIds (Set[int], optional): Set of node IDs that should act as break points. Defaults to None.
 
     Returns:
-        Tuple[Set[int], Set[int]]: Tuple containing sets of feature IDs to update and delete.
+        Tuple[Set[QgsFeature], Set[int]]: Tuple containing sets of features to update and IDs to delete.
     """
+
+    constraintNodeIds = set() if constraintNodeIds is None else constraintNodeIds
     auxDict = defaultdict(lambda: nx.MultiGraph())
     featureSetToUpdate, deleteIdSet = set(), set()
+
+    # Group edges by attribute values
     for n0, n1, p in G.edges:
         featid = G[n0][n1][p]["featid"]
         feat = featDict[featid]
         attrTuple = tuple(feat[i] for i in attributeNameList)
         auxDict[attrTuple].add_edge(n0, n1, featid=featid)
-    for auxGraph in auxDict.values():
-        for mergeableG in find_mergeable_edges_on_graph(
+
+    # Process each attribute group
+    for attrTuple, auxGraph in auxDict.items():
+        # Get mergeable edge groups
+        mergeable_groups = find_mergeable_edges_on_graph(
             nx, auxGraph, nodeIdDict, allowClosedLines=allowClosedLines
-        ).values():
+        )
+
+        # Process each mergeable group
+        for nodeSet, mergeableG in mergeable_groups.items():
             if not allowClosedLines and len(mergeableG.edges) < 2:
                 continue
-            idToKeep, *idsToDelete = set(
-                mergeableG[n0][n1][p]["featid"] for n0, n1, p in mergeableG.edges
+
+            # Check if there are constraint nodes in this group
+            local_constraint_nodes = (
+                nodeSet.intersection(constraintNodeIds) if constraintNodeIds else set()
             )
-            outputFeat = featDict[idToKeep]
-            geom = outputFeat.geometry()
-            for id in idsToDelete:
-                geom_b = featDict[id].geometry()
-                geom = geom.combine(geom_b).mergeLines()
-                deleteIdSet.add(id)
-            if isMulti:
-                geom.convertToMultiType()
-            outputFeat.setGeometry(geom)
-            featureSetToUpdate.add(outputFeat)
+
+            if not local_constraint_nodes:
+                # No constraint nodes, perform normal merging while preserving direction
+                edge_feat_ids = []
+                for n0, n1, p in mergeableG.edges:
+                    edge_feat_ids.append(mergeableG[n0][n1][p]["featid"])
+
+                if not edge_feat_ids:
+                    continue
+
+                # Use first edge as reference
+                idToKeep = edge_feat_ids[0]
+                idsToDelete = set(edge_feat_ids[1:])
+
+                # Get the initial geometry
+                outputFeat = featDict[idToKeep]
+                merged_geom = outputFeat.geometry()
+
+                for id in idsToDelete:
+                    geom_to_merge = featDict[id].geometry()
+
+                    # Get start and end points of both geometries using vertices()
+                    merged_vertices = list(merged_geom.vertices())
+                    merged_start = QgsPointXY(merged_vertices[0])
+                    merged_end = QgsPointXY(merged_vertices[-1])
+
+                    to_merge_vertices = list(geom_to_merge.vertices())
+                    to_merge_start = QgsPointXY(to_merge_vertices[0])
+                    to_merge_end = QgsPointXY(to_merge_vertices[-1])
+
+                    # Calculate distances between endpoints
+                    d_end_start = merged_end.distance(to_merge_start)
+                    d_end_end = merged_end.distance(to_merge_end)
+                    d_start_start = merged_start.distance(to_merge_start)
+                    d_start_end = merged_start.distance(to_merge_end)
+
+                    # Choose the best connection strategy to preserve direction
+                    if d_end_start < d_end_end and d_end_start < d_start_start:
+                        # Append directly - no reversal needed
+                        merged_geom = merged_geom.combine(geom_to_merge).mergeLines()
+                    elif d_start_end < d_end_end and d_start_end < d_start_start:
+                        # Prepend directly - no reversal needed
+                        merged_geom = geom_to_merge.combine(merged_geom).mergeLines()
+                    else:
+                        # We need to reverse the geometry being merged
+                        line = geom_to_merge.constGet().clone()
+                        reversed_line = line.reversed()
+                        geom_to_merge = QgsGeometry(reversed_line)
+
+                        # Recalculate vertices after reversal
+                        to_merge_vertices = list(geom_to_merge.vertices())
+                        to_merge_start = QgsPointXY(to_merge_vertices[0])
+
+                        # Determine which end to connect to
+                        if merged_end.distance(to_merge_start) < merged_start.distance(
+                            to_merge_start
+                        ):
+                            # Append the reversed geometry
+                            merged_geom = merged_geom.combine(
+                                geom_to_merge
+                            ).mergeLines()
+                        else:
+                            # Prepend the reversed geometry
+                            merged_geom = geom_to_merge.combine(
+                                merged_geom
+                            ).mergeLines()
+
+                    deleteIdSet.add(id)
+
+                if isMulti:
+                    merged_geom.convertToMultiType()
+
+                outputFeat.setGeometry(merged_geom)
+                featureSetToUpdate.add(outputFeat)
+            else:
+                # With constraint nodes, split paths at these nodes
+
+                # Find endpoints (degree 1) and add constraint nodes
+                endpoints = set(
+                    n for n in mergeableG.nodes if mergeableG.degree(n) == 1
+                )
+                path_endpoints = endpoints.union(local_constraint_nodes)
+
+                # If we have no endpoints (e.g., a closed ring), use constraint nodes
+                if not path_endpoints:
+                    path_endpoints = local_constraint_nodes
+
+                # Skip if not enough endpoints
+                if len(path_endpoints) < 2:
+                    continue
+
+                # Process each possible path between endpoints
+                endpoint_pairs = list(combinations(path_endpoints, 2))
+                processed_segments = set()  # Track processed segments
+
+                for start, end in endpoint_pairs:
+                    try:
+                        # Find path between these endpoints
+                        path = nx.shortest_path(mergeableG, start, end)
+
+                        # Check for internal constraint nodes
+                        internal_constraints = set(path[1:-1]).intersection(
+                            local_constraint_nodes
+                        )
+
+                        if internal_constraints:
+                            # Split path at constraint nodes
+                            break_points = (
+                                [0]
+                                + sorted([path.index(n) for n in internal_constraints])
+                                + [len(path) - 1]
+                            )
+
+                            # Process each segment between break points
+                            for i in range(len(break_points) - 1):
+                                start_idx = break_points[i]
+                                end_idx = break_points[i + 1]
+
+                                # Get the subpath
+                                segment = path[start_idx : end_idx + 1]
+                                segment_key = frozenset(segment)
+
+                                # Skip if already processed or too short
+                                if (
+                                    segment_key in processed_segments
+                                    or len(segment) < 3
+                                ):
+                                    continue
+                                processed_segments.add(segment_key)
+
+                                # Get edges in this segment
+                                segment_edges = []
+                                for j in range(len(segment) - 1):
+                                    n0, n1 = segment[j], segment[j + 1]
+                                    for p in mergeableG[n0][n1]:
+                                        segment_edges.append(
+                                            mergeableG[n0][n1][p]["featid"]
+                                        )
+
+                                # Skip if only one edge
+                                if len(segment_edges) <= 1:
+                                    continue
+
+                                # Use first edge as reference for merging
+                                idToKeep = segment_edges[0]
+                                segment_ids_to_delete = set(segment_edges[1:])
+
+                                # Start with reference geometry
+                                outputFeat = featDict[idToKeep]
+                                merged_geom = outputFeat.geometry()
+
+                                # Merge each additional geometry while preserving direction
+                                for id in segment_ids_to_delete:
+                                    geom_to_merge = featDict[id].geometry()
+
+                                    # Get vertices of both geometries
+                                    merged_vertices = list(merged_geom.vertices())
+                                    merged_start = QgsPointXY(merged_vertices[0])
+                                    merged_end = QgsPointXY(merged_vertices[-1])
+
+                                    to_merge_vertices = list(geom_to_merge.vertices())
+                                    to_merge_start = QgsPointXY(to_merge_vertices[0])
+                                    to_merge_end = QgsPointXY(to_merge_vertices[-1])
+
+                                    # Calculate distances between endpoints
+                                    d_end_start = merged_end.distance(to_merge_start)
+                                    d_end_end = merged_end.distance(to_merge_end)
+                                    d_start_start = merged_start.distance(
+                                        to_merge_start
+                                    )
+                                    d_start_end = merged_start.distance(to_merge_end)
+
+                                    # Choose connection strategy based on endpoint distances
+                                    if (
+                                        d_end_start < d_end_end
+                                        and d_end_start < d_start_start
+                                    ):
+                                        # Append directly
+                                        merged_geom = merged_geom.combine(
+                                            geom_to_merge
+                                        ).mergeLines()
+                                    elif (
+                                        d_start_end < d_end_end
+                                        and d_start_end < d_start_start
+                                    ):
+                                        # Prepend directly
+                                        merged_geom = geom_to_merge.combine(
+                                            merged_geom
+                                        ).mergeLines()
+                                    else:
+                                        # Reverse and then connect
+                                        line = geom_to_merge.constGet().clone()
+                                        reversed_line = line.reversed()
+                                        geom_to_merge = QgsGeometry(reversed_line)
+
+                                        # Recalculate after reversal
+                                        to_merge_vertices = list(
+                                            geom_to_merge.vertices()
+                                        )
+                                        to_merge_start = QgsPointXY(
+                                            to_merge_vertices[0]
+                                        )
+
+                                        # Determine which end to connect to
+                                        if merged_end.distance(
+                                            to_merge_start
+                                        ) < merged_start.distance(to_merge_start):
+                                            merged_geom = merged_geom.combine(
+                                                geom_to_merge
+                                            ).mergeLines()
+                                        else:
+                                            merged_geom = geom_to_merge.combine(
+                                                merged_geom
+                                            ).mergeLines()
+
+                                    deleteIdSet.add(id)
+
+                                if isMulti:
+                                    merged_geom.convertToMultiType()
+
+                                outputFeat.setGeometry(merged_geom)
+                                featureSetToUpdate.add(outputFeat)
+                        else:
+                            # No internal constraints, process whole path
+                            segment_key = frozenset(path)
+
+                            # Skip if already processed
+                            if segment_key in processed_segments:
+                                continue
+                            processed_segments.add(segment_key)
+
+                            # Get edges in this path
+                            path_edges = []
+                            for i in range(len(path) - 1):
+                                n0, n1 = path[i], path[i + 1]
+                                for p in mergeableG[n0][n1]:
+                                    path_edges.append(mergeableG[n0][n1][p]["featid"])
+
+                            # Skip if only one edge
+                            if len(path_edges) <= 1:
+                                continue
+
+                            # Merge the path edges
+                            idToKeep = path_edges[0]
+                            path_ids_to_delete = set(path_edges[1:])
+
+                            outputFeat = featDict[idToKeep]
+                            merged_geom = outputFeat.geometry()
+
+                            for id in path_ids_to_delete:
+                                geom_to_merge = featDict[id].geometry()
+
+                                # Get vertices
+                                merged_vertices = list(merged_geom.vertices())
+                                merged_start = QgsPointXY(merged_vertices[0])
+                                merged_end = QgsPointXY(merged_vertices[-1])
+
+                                to_merge_vertices = list(geom_to_merge.vertices())
+                                to_merge_start = QgsPointXY(to_merge_vertices[0])
+                                to_merge_end = QgsPointXY(to_merge_vertices[-1])
+
+                                # Calculate endpoint distances
+                                d_end_start = merged_end.distance(to_merge_start)
+                                d_end_end = merged_end.distance(to_merge_end)
+                                d_start_start = merged_start.distance(to_merge_start)
+                                d_start_end = merged_start.distance(to_merge_end)
+
+                                # Choose connection strategy
+                                if (
+                                    d_end_start < d_end_end
+                                    and d_end_start < d_start_start
+                                ):
+                                    # Append directly
+                                    merged_geom = merged_geom.combine(
+                                        geom_to_merge
+                                    ).mergeLines()
+                                elif (
+                                    d_start_end < d_end_end
+                                    and d_start_end < d_start_start
+                                ):
+                                    # Prepend directly
+                                    merged_geom = geom_to_merge.combine(
+                                        merged_geom
+                                    ).mergeLines()
+                                else:
+                                    # Reverse and then connect
+                                    line = geom_to_merge.constGet().clone()
+                                    reversed_line = line.reversed()
+                                    geom_to_merge = QgsGeometry(reversed_line)
+
+                                    # Recalculate
+                                    to_merge_vertices = list(geom_to_merge.vertices())
+                                    to_merge_start = QgsPointXY(to_merge_vertices[0])
+
+                                    # Choose connection point
+                                    if merged_end.distance(
+                                        to_merge_start
+                                    ) < merged_start.distance(to_merge_start):
+                                        merged_geom = merged_geom.combine(
+                                            geom_to_merge
+                                        ).mergeLines()
+                                    else:
+                                        merged_geom = geom_to_merge.combine(
+                                            merged_geom
+                                        ).mergeLines()
+
+                                deleteIdSet.add(id)
+
+                            if isMulti:
+                                merged_geom.convertToMultiType()
+
+                            outputFeat.setGeometry(merged_geom)
+                            featureSetToUpdate.add(outputFeat)
+
+                    except nx.NetworkXNoPath:
+                        # No path between endpoints
+                        continue
+
     return featureSetToUpdate, deleteIdSet
 
 

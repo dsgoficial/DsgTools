@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "line_constraint",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ 0.172705, -0.690821 ], [ 0.182367, -0.567633 ], [ 0.225414, -0.355141 ], [ 0.112319, -0.15942 ] ] } },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -0.19686, 0.391304 ], [ -0.206522, 0.466184 ], [ -0.170431, 0.603786 ], [ -0.211353, 0.705314 ] ] } },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ 1.100242, -0.014493 ], [ 1.115996, 0.138949 ], [ 1.14372, 0.270531 ] ] } }
+]
+}

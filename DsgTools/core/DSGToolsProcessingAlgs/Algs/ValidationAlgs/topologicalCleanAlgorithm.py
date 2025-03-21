@@ -277,6 +277,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
                 tol=snap,
                 context=context,
                 feedback=multiStepFeedback,
+                geographicBoundaryLyr=geographicBoundsLyr,
             )
         )
 
