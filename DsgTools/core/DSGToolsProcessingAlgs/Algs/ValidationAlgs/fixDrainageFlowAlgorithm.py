@@ -533,7 +533,22 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 lineFlagLyr,
                 polygonFlagLyr,
             ) = (
-                self.algRunner.runIdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm()
+                self.algRunner.self.algRunner.runIdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(
+                    inputDrainagesLayer=networkLayer,
+                    waterBodyLayer=parameters[self.WATER_BODY_LAYER],
+                    waterBodyWithFlowExpression=parameters[
+                        self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION
+                    ],
+                    waterBodyWithoutFlowExpression=parameters[
+                        self.WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION
+                    ],
+                    sinkAndSpillwayLayer=parameters[self.SINK_AND_SPILLWAY_LAYER],
+                    sinkFilterExpression=parameters[self.SINK_FILTER_EXPRESSION],
+                    spillwayFilterExpression=parameters[self.SPILLWAY_FILTER_EXPRESSION],
+                    geographicBoundsLayer=parameters[self.GEOGRAPHIC_BOUNDS_LAYER],
+                    context=context,
+                    feedback=multiStepFeedback,
+                )
             )
             pointFlagLambda = lambda x: self.flagFeature(
                 x.geometry(), flagText=x["reason"], sink=self.point_flags_sink
