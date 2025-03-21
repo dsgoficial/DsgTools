@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.25 - dev
+## 4.17.26 - dev
 
 Novas Funcionalidades:
 
@@ -31,6 +31,7 @@ Melhorias:
 - Melhora nas entradas do algoritmo Identify Drainage Flow Issues With Hydrography Elements;
 - Novo formato de exportação para os arquivos de configuração do Snap Hierárquico e Enforce Spatial Rules (os antigos ainda funcionam);
 - Configuração de tooltip adicionada na caixa de ferramentas de workflow (é retrocompatível com o formato anterior de descrição no model);
+- Melhora o comportamento do algoritmo de identificar linhas pequenas de primeira ordem (exclui casos de linhas que cruzam a moldura);
 
 Correção de bugs:
 
