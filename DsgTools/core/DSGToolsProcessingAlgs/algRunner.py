@@ -2184,9 +2184,14 @@ class AlgRunner:
         ignoreVirtualFields=True,
         ignorePkFields=True,
         allowClosed=False,
+        pointFilterLyrList=None,
+        lineFilterLyrList=None,
+        geographicBoundaryLyr=None,
         feedback=None,
     ) -> None:
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        pointFilterLyrList = [] if pointFilterLyrList is None else pointFilterLyrList
+        lineFilterLyrList = [] if lineFilterLyrList is None else lineFilterLyrList
         output = processing.run(
             "dsgtools:mergelineswithsameattributeset",
             {
@@ -2196,6 +2201,9 @@ class AlgRunner:
                 "IGNORE_VIRTUAL_FIELDS": ignoreVirtualFields,
                 "IGNORE_PK_FIELDS": ignorePkFields,
                 "ALLOW_CLOSED": allowClosed,
+                "POINT_FILTER_LAYERS": pointFilterLyrList,
+                "LINE_FILTER_LAYERS": lineFilterLyrList,
+                "GEOGRAPHIC_BOUNDARY": geographicBoundaryLyr,
             },
             context=context,
             feedback=feedback,

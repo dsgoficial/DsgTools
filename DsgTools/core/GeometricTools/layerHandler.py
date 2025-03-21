@@ -3462,7 +3462,13 @@ class LayerHandler(QObject):
         return insideLyr, outsideLyr
 
     def integrateSpatialConstrainedAlgorithmOutputAndOutsideLayer(
-        self, algOutputLyr, outsideLyr, tol, context=None, feedback=None
+        self,
+        algOutputLyr,
+        outsideLyr,
+        tol,
+        context=None,
+        feedback=None,
+        geographicBoundaryLyr=None,
     ):
         context = QgsProcessingContext() if context is None else context
         multiStepFeedback = (
@@ -3503,6 +3509,7 @@ class LayerHandler(QObject):
             attributeBlackList=["path", "layer_2", "cat", "cat_"],
             context=context,
             feedback=multiStepFeedback,
+            geographicBoundaryLyr=geographicBoundaryLyr,
         )
         mergedLayer.commitChanges()
         return mergedLayer

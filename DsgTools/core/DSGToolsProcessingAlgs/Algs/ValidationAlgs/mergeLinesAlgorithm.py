@@ -38,6 +38,7 @@ from qgis.core import (
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsWkbTypes,
+    QgsProcessingParameterMultipleLayers,
 )
 
 from .validationAlgorithm import ValidationAlgorithm
@@ -50,6 +51,9 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
     IGNORE_VIRTUAL_FIELDS = "IGNORE_VIRTUAL_FIELDS"
     IGNORE_PK_FIELDS = "IGNORE_PK_FIELDS"
     ALLOW_CLOSED_LINES_ON_OUTPUT = "ALLOW_CLOSED_LINES_ON_OUTPUT"
+    POINT_FILTER_LAYERS = "POINT_FILTER_LAYERS"
+    LINE_FILTER_LAYERS = "LINE_FILTER_LAYERS"
+    GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
 
     def initAlgorithm(self, config):
         """
@@ -97,6 +101,30 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
                 defaultValue=False,
             )
         )
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.POINT_FILTER_LAYERS,
+                self.tr("Point Filter Layers"),
+                QgsProcessing.TypeVectorPoint,
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.LINE_FILTER_LAYERS,
+                self.tr("Line Filter Layers"),
+                QgsProcessing.TypeVectorLine,
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr("Geographic Boundary"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -124,7 +152,21 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         allowClosedLines = self.parameterAsBool(
             parameters, self.ALLOW_CLOSED_LINES_ON_OUTPUT, context
         )
-        nSteps = 8
+        pointFilterLyrList = self.parameterAsLayerList(
+            parameters, self.POINT_FILTER_LAYERS, context
+        )
+        lineFilterLyrList = self.parameterAsLayerList(
+            parameters, self.LINE_FILTER_LAYERS, context
+        )
+        geographicBoundaryLyr = self.parameterAsVectorLayer(
+            parameters, self.GEOGRAPHIC_BOUNDARY, context
+        )
+        nSteps = (
+            9
+            + 3 * (pointFilterLyrList != [])
+            + 3 * (lineFilterLyrList != [])
+            + (geographicBoundaryLyr is not None)
+        )
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
@@ -138,6 +180,21 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             fieldType=1,
             context=context,
             feedback=multiStepFeedback,
+        )
+        if localCache.featureCount() == 0:
+            return {}
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        localCache = (
+            self.algRunner.runExtractByLocation(
+                inputLyr=localCache,
+                intersectLyr=geographicBoundaryLyr,
+                predicate=AlgRunner.Intersects,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if geographicBoundaryLyr is not None
+            else localCache
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -178,6 +235,86 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             addEdgeLength=True,
         )
         currentStep += 1
+        constraintNodeIds = set()
+
+        if pointFilterLyrList:
+            # Merge point layers if multiple
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(
+                self.tr("Identifying constraint nodes from point layers...")
+            )
+            mergedPointLyr = self.algRunner.runMergeVectorLayers(
+                pointFilterLyrList, context, multiStepFeedback
+            )
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.algRunner.runCreateSpatialIndex(
+                mergedPointLyr, context, multiStepFeedback, is_child_algorithm=True
+            )
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            # Find nodes that intersect with points
+            nodesFromPoints = self.algRunner.runExtractByLocation(
+                inputLyr=nodesLayer,
+                intersectLyr=mergedPointLyr,
+                predicate=[self.algRunner.Intersects],
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            currentStep += 1
+
+            for nodeFeat in nodesFromPoints.getFeatures():
+                geom = nodeFeat.geometry()
+                geomWkb = geom.asWkb()
+                constraintNodeIds.add(nodeDict[geomWkb])
+
+        if lineFilterLyrList:
+            # Merge line layers if multiple
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(
+                self.tr("Identifying constraint nodes from line layers...")
+            )
+            mergedLineLyr = self.algRunner.runMergeVectorLayers(
+                lineFilterLyrList, context, multiStepFeedback
+            )
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.algRunner.runCreateSpatialIndex(
+                mergedLineLyr, context, multiStepFeedback, is_child_algorithm=True
+            )
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            # Find nodes that intersect with lines
+            nodesFromLines = self.algRunner.runExtractByLocation(
+                inputLyr=nodesLayer,
+                intersectLyr=mergedLineLyr,
+                predicate=[self.algRunner.Intersects],
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            currentStep += 1
+
+            for nodeFeat in nodesFromLines.getFeatures():
+                geom = nodeFeat.geometry()
+                geomWkb = geom.asWkb()
+                constraintNodeIds.add(nodeDict[geomWkb])
+        if geographicBoundaryLyr is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            # Find nodes that intersect with points
+            nodesOutsideGeographicBounds = self.algRunner.runExtractByLocation(
+                inputLyr=nodesLayer,
+                intersectLyr=geographicBoundaryLyr,
+                predicate=[self.algRunner.Disjoint],
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            currentStep += 1
+
+            for nodeFeat in nodesOutsideGeographicBounds.getFeatures():
+                geom = nodeFeat.geometry()
+                geomWkb = geom.asWkb()
+                constraintNodeIds.add(nodeDict[geomWkb])
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Finding mergeable edges"))
         outputGraphDict = graphHandler.find_mergeable_edges_on_graph(
@@ -211,6 +348,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
                 isMulti=QgsWkbTypes.isMultiType(inputLyr.wkbType()),
                 nodeIdDict=nodeIdDict,
                 allowClosedLines=allowClosedLines,
+                constraintNodeIds=constraintNodeIds,
             )
 
         futures = set()

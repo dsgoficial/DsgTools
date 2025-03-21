@@ -413,6 +413,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 outsideLyr=outsideLyr,
                 tol=auxDict["snap"],
                 context=context,
+                geographicBoundaryLyr=geographicBoundaryLyr,
             )
             outputLyr = self.algRunner.runRenameField(
                 inputLayer=outputLyr,
