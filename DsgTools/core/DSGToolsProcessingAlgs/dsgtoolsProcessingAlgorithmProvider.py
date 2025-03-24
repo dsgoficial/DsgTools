@@ -66,6 +66,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractMiddleVertex
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.setLineOrientation import (
     SetLineOrientation,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitLinesAtMaximumLengthAlgorithm import SplitLinesAtMaximumLengthAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import (
     BuildZipPackageAlgorithm,
 )
@@ -111,6 +112,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicateNod
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapFeaturesInsideLayerWithGroupByAlgorithm import (
     SnapFeaturesInsideLayerWithGroupByAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.splitContoursAtMaximumLengthAlgorithm import SplitContoursAtMaximumLengthAlgorithm
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -759,6 +761,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             FixDrainageVersusWaterBodyAttributeAlgorithm(),
             IdentifyErrorsInContourAttributesAlgorithm(),
             IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(),
+            SplitLinesAtMaximumLengthAlgorithm(),
+            SplitContoursAtMaximumLengthAlgorithm(),
         ]
         return algList
 

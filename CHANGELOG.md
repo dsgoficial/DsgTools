@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.27 - dev
+## 4.17.28 - dev
 
 Novas Funcionalidades:
 
@@ -15,6 +15,8 @@ Novas Funcionalidades:
 - Novo algoritmo de identificar erros na atributação de curvas de nível;
 - Novo algoritmo de identificar erros de atributação no atributo dentro de polígono em trechos de drenagem;
 - Novo algoritmo de numeração de polígonos;
+- Novo algoritmo de segmentar linhas com um tamanho máximo;
+- Novo algoritmo de segmentar curvas de nível;
 
 Melhorias:
 

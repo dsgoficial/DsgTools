@@ -2724,3 +2724,26 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+
+    def runDSGToolsSplitLinesAtMaximumLengthAlgorithm(
+        self,
+        inputLayer: QgsVectorLayer,
+        maxLength: float,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:splitlinesatmaximumlengthalgorithm",
+            {
+                "INPUT": inputLayer,
+                "MAX_LENGTH": maxLength,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
