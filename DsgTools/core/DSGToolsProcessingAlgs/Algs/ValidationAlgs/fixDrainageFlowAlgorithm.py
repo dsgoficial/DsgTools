@@ -533,7 +533,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 lineFlagLyr,
                 polygonFlagLyr,
             ) = (
-                self.algRunner.self.algRunner.runIdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(
+                self.algRunner.runIdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(
                     inputDrainagesLayer=networkLayer,
                     waterBodyLayer=parameters[self.WATER_BODY_LAYER],
                     waterBodyWithFlowExpression=parameters[
