@@ -264,7 +264,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                 tol=snap,
                 context=context,
                 feedback=multiStepFeedback,
-                geographicBoundsLyr=geographicBoundsLyr,
+                geographicBoundaryLyr=geographicBoundsLyr,
             )
         )
         outputLyr = algRunner.runRenameField(
