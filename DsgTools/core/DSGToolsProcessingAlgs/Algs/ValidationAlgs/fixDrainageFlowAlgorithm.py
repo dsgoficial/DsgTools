@@ -301,9 +301,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 self.tr("Found 0 errors on data, skipping process.")
             )
             return {
-                self.NETWORK_LAYER: networkLayer,
                 self.POINT_FLAGS: self.point_flags_sink_id,
                 self.LINE_FLAGS: self.line_flags_sink_id,
+                self.POLYGON_FLAGS: self.polygon_flags_sink_id,
             }
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -403,6 +403,23 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 feedback=multiStepFeedback,
             )
         )
+        nodesWithDegreeLargerThan3 = [
+            nodeId for nodeId in networkBidirectionalGraph.nodes if networkBidirectionalGraph.degree(nodeId) > 3
+        ]
+        if len(nodesWithDegreeLargerThan3) > 0:
+            pointFlagLambda = lambda x: self.flagFeature(
+                nodeIdDict[x],
+                flagText=self.tr("Invalid confluences (more than 3 edges on it)"),
+                sink=self.point_flags_sink,
+                fromWkb=True,
+            )
+            list(map(pointFlagLambda, nodesWithDegreeLargerThan3))
+            return {
+                self.POINT_FLAGS: self.point_flags_sink_id,
+                self.LINE_FLAGS: self.line_flags_sink_id,
+                self.POLYGON_FLAGS: self.polygon_flags_sink_id,
+            }
+            
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Computing constraint nodes"))
@@ -593,9 +610,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 self.tr(f"Found {lineFlagLyr.featureCount()} loop issues.")
             )
         return {
-            self.NETWORK_LAYER: networkLayer,
             self.POINT_FLAGS: self.point_flags_sink_id,
             self.LINE_FLAGS: self.line_flags_sink_id,
+            self.POLYGON_FLAGS: self.polygon_flags_sink_id,
         }
 
     def networkHasFlowIssues(self, parameters, context, feedback):

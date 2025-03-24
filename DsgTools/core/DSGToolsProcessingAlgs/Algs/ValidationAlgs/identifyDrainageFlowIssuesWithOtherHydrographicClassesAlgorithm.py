@@ -243,7 +243,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             self.POLYGON_FLAGS,
         )
         nSteps = (
-            4
+            5
             + (sinkFilterExpression is not None)
             + (spillwayFilterExpression is not None)
             + 2 * (oceanFilterExpression is not None)
@@ -395,6 +395,9 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             ],
             feedback=multiStepFeedback,
         )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.validateDrainagesConfluences(drainageStartAndEndPointDict)
 
         return {
             self.POINT_FLAGS: self.point_flag_id,
@@ -787,6 +790,20 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             if polygonWithProblem is not None:
                 flagPolygonLambda(polygonWithProblem)
             multiStepFeedback.setProgress(current * stepSize)
+    
+    def validateDrainagesConfluences(self, drainageStartAndEndPointDict):
+        nFeats = len(drainageStartAndEndPointDict)
+        if nFeats == 0:
+            return
+        flagPointLambda = lambda geom: self.flagFeature(
+            QgsGeometry.fromWkt(geom),
+            flagText=self.tr(f"Confluence with more than 3 rivers"),
+            sink=self.pointFlagSink,
+        )
+        list(map(
+            flagPointLambda,
+            (k for k,v in drainageStartAndEndPointDict.items() if len(v) > 3),
+        ))
 
     def validateDrainagesEndPoints(self, endPointDict, elementList, feedback):
         nFeats = len(endPointDict)
