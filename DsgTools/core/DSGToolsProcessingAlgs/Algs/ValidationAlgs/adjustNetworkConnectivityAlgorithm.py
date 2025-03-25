@@ -109,12 +109,13 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         if multiStepFeedback.isCanceled():
             return {}
         multiStepFeedback.pushInfo(self.tr("Finding original segments"))
-        algRunner.runCreateSpatialIndex(
-            inputLyr=dangleLyr,
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
-        )
+        if not inputLyr.hasSpatialIndex():
+            algRunner.runCreateSpatialIndex(
+                inputLyr=inputLyr,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
         originalSegments = algRunner.runExtractByLocation(
             inputLyr=inputLyr,
             intersectLyr=dangleLyr,

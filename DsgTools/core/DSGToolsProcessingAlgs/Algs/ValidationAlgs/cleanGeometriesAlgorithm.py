@@ -217,8 +217,9 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Populating temp layer..."))
+        inputLyrList = [inputLyr]
         auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
-            [inputLyr],
+            inputLyrList,
             geomType=inputLyr.wkbType(),
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
@@ -275,8 +276,9 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(4)
         multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
+        layerList = [inputLyr.clone()]
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            [inputLyr],
+            layerList,
             outputLyr,
             feedback=multiStepFeedback,
             onlySelected=onlySelected,
