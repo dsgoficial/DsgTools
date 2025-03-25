@@ -137,9 +137,11 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
             return {}
         multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 4, feedback)
         multiStepFeedback.setCurrentStep(0)
+        lineLayerList = [i.clone() for i in inputLineLyrList]
+        polygonLayerList = [i.clone() for i in inputPolygonLyrList]
         flagsLyr = algRunner.runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(
-            lineLayerList=[i.clone() for i in inputLineLyrList],
-            polygonLayerList=[i.clone() for i in inputPolygonLyrList],
+            lineLayerList=lineLayerList,
+            polygonLayerList=polygonLayerList,
             onlySelected=onlySelected,
             searchRadius=searchRadius,
             context=context,
@@ -184,9 +186,11 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
             )
         currentStep = current + 1 + (geographicBoundary is not None)
         multiStepFeedback.setCurrentStep(currentStep)
+        lineLayerList = [i.clone() for i in inputLineLyrList]
+        polygonLayerList = [i.clone() for i in inputPolygonLyrList]
         newFlagsLyr = algRunner.runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(
-            lineLayerList=[i.clone() for i in inputLineLyrList],
-            polygonLayerList=[i.clone() for i in inputPolygonLyrList],
+            lineLayerList=lineLayerList,
+            polygonLayerList=polygonLayerList,
             onlySelected=onlySelected,
             searchRadius=searchRadius,
             context=context,
@@ -210,9 +214,10 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(currentStep)
         currentStep += 1
+        layerList = list(chain(inputLineLyrList, inputPolygonLyrList))
         LayerHandler().addVertexesToLayers(
             vertexLyr=newFlagsLyr,
-            layerList=list(chain(inputLineLyrList, inputPolygonLyrList)),
+            layerList=layerList,
             searchRadius=searchRadius,
             feedback=multiStepFeedback,
         )
