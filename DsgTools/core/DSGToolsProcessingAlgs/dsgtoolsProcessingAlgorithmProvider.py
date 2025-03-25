@@ -565,7 +565,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadThemesAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.numberPolygons import (
     NumberPolygonsAlgorithm,
 )
-
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridAlongLineAlgorithm import (
+    CreateGridAlongLineAlgorithm,
+)
 # from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
 
 
@@ -759,6 +761,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             FixDrainageVersusWaterBodyAttributeAlgorithm(),
             IdentifyErrorsInContourAttributesAlgorithm(),
             IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(),
+            CreateGridAlongLineAlgorithm()
         ]
         return algList
 
