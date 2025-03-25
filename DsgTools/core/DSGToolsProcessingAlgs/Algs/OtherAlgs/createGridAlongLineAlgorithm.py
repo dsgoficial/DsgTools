@@ -20,7 +20,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
@@ -34,21 +33,16 @@ from qgis.core import (
     QgsField,
     QgsFields,
     QgsWkbTypes,
-    QgsFeatureSink
+    QgsFeatureSink,
+    QgsProject,
+    QgsPointXY,
+    QgsProcessingParameterFeatureSource,
 )
 
 from qgis.PyQt.Qt import QVariant
 
-from qgis.core import (
-    QgsProject,
-    QgsGeometry,
-    QgsField,
-    QgsFeature,
-    QgsPointXY,
-    QgsVectorLayer,
-    QgsWkbTypes
-)
 from qgis.PyQt.QtCore import (
+    QCoreApplication,
     QVariant
 )
 
@@ -72,7 +66,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         """
 
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
+            QgsProcessingParameterFeatureSource(
                 self.INPUT_LAYER,
                 self.tr("Insira a camada de linha"),
                 [QgsProcessing.TypeVectorLine],
@@ -166,7 +160,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        layer = self.parameterAsVectorLayer(parameters, self.INPUT_LAYER, context)
+        source = self.parameterAsSource(parameters, self.INPUT_LAYER, context)
         scale = self.parameterAsEnum(parameters, self.SCALE, context)
         paper_size = self.parameterAsEnum(parameters, self.PAPER_SIZE, context)
         margins_top = self.parameterAsDouble(parameters, self.MARGINS_TOP, context)
@@ -185,10 +179,13 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         else: proportion = (420, 297) # proporção do a3
 
         #Tamanho da escala - 0-1000, 1-2000, 3-5000, 4-10000
-        if scale == 0: escala = 1
-        elif scale == 1: escala = 2
-        elif scale == 2: escala = 5
-        elif scale == 3: escala = 10
+        escalas = {
+            0: 1,
+            1: 2,
+            2: 5,
+            3: 10,
+        }
+        escala = escalas[scale]
 
         #Definição da largura e tamanho no terreno
         height = (proportion[1] - ((margins_left + margins_right))) * escala
@@ -200,11 +197,22 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
             context,
             fields,
             QgsWkbTypes.Polygon,
-            layer.sourceCrs(),
+            source.sourceCrs(),
         )
 
+        self.calcula_grid(source, sink, start, width, height, overlap, feedback)
+
+        return {"OUTPUT": dest_id}
+    
+    def calcula_grid(self, source, sink, start, width, height, overlap, feedback):
         r = 1
-        for feature in layer.getFeatures():
+        nFeatures = source.featureCount()
+        if nFeatures == 0:
+            return
+        stepSize = 100/nFeatures
+        for current, feature in enumerate(source.getFeatures()):
+            if feedback.isCanceled():
+                break
             geom = feature.geometry()
             line_id = feature.id()
             extended_geom = QgsGeometry.extendLine(geom, start, overlap)
@@ -223,25 +231,31 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
                 endpoint = extended_geom.interpolate(forward*geomlength)
                 x_start = startpoint.asPoint().x()
                 y_start = startpoint.asPoint().y()
-                currpoly = QgsGeometry().fromWkt(
-                    'POLYGON((0 0, 0 {height},{width} {height}, {width} 0, 0 0))'.format(height=height, width=width))
-                currpoly.translate(0, - height/2)
-                azimuth = startpoint.asPoint().azimuth(endpoint.asPoint())
-                currangle = (azimuth+270) % 360
-                curratlas = 360-currangle
-                currpoly.rotate(currangle, QgsPointXY(0, 0))
-                currpoly.translate(x_start, y_start)
-                currpoly.asPolygon()
-
-                page = currpoly
+                geom = self.createPolygon(x_start, y_start, startpoint, endpoint, height, width)
                 curs = curs + stepnudge
-                new_feat = QgsFeature()
-                new_feat.setAttributes([r, line_id])
-                new_feat.setGeometry(page)
+                new_feat = self.createFeature(r, line_id, geom)
                 sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
                 r += 1
 
-        return {"OUTPUT": dest_id}
+            feedback.setProgress(current * stepSize)
+    
+    def createPolygon(self, x_start, y_start, startpoint, endpoint, height, width):
+        page_polygon = QgsGeometry().fromWkt(
+                    f'POLYGON((0 0, 0 {height},{width} {height}, {width} 0, 0 0))'
+                )
+        page_polygon.translate(0, - height/2)
+        azimuth = startpoint.asPoint().azimuth(endpoint.asPoint())
+        currangle = (azimuth+270) % 360
+        page_polygon.rotate(currangle, QgsPointXY(0, 0))
+        page_polygon.translate(x_start, y_start)
+        page_polygon.asPolygon()
+        return page_polygon
+
+    def createFeature(self, r, line_id, geom):
+        new_feat = QgsFeature()
+        new_feat.setAttributes([r, line_id])
+        new_feat.setGeometry(geom)
+        return new_feat
 
     def name(self):
         """
