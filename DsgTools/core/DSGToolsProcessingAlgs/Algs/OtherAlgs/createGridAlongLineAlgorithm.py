@@ -59,6 +59,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
     PAPER_SIZE = "PAGE_SIZE"
     SCALE = "SCALE"
     OVERLAP = 'OVERLAP'
+    START = 'START'
     MARGINS_TOP = 'MARGINS_TOP'
     MARGINS_BOTTOM = 'MARGINS_BOTTOM'
     MARGINS_LEFT = 'MARGINS_LEFT'
@@ -107,6 +108,14 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.START,
+                self.tr('Start from begin (m)'),
+                type=QgsProcessingParameterNumber.Double,
+                defaultValue=50
+            )
+        )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MARGINS_TOP,
@@ -165,9 +174,11 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         margins_left = self.parameterAsDouble(parameters, self.MARGINS_LEFT, context)
         margins_right = self.parameterAsDouble(parameters, self.MARGINS_RIGHT, context)
         overlap = self.parameterAsDouble(parameters, self.OVERLAP, context)
+        start = self.parameterAsDouble(parameters, self.START, context)
 
         fields = QgsFields()
-        fields.append(QgsField("ID", QVariant.Int))
+        fields.append(QgsField("ord", QVariant.Int))
+        fields.append(QgsField("id", QVariant.Int))  # ID da feição de linha
 
         #Tamanho da folha
         if paper_size == 0: proportion = (297, 210) # proporção do a4 Altura/largura
@@ -192,15 +203,16 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
             layer.sourceCrs(),
         )
 
+        r = 1
         for feature in layer.getFeatures():
             geom = feature.geometry()
-            extended_geom = QgsGeometry.extendLine(geom, 0, overlap)
+            line_id = feature.id()
+            extended_geom = QgsGeometry.extendLine(geom, start, overlap)
             curs = 0
             geomlength = geom.length()
             numpages = geomlength / width #Divisão do comprimento da feição pela altura da folha
             step = 1.0 / numpages
             stepnudge = (1.0 - (overlap/100)) * step
-            r = 1
 
             while curs <= 1:
                 startpoint = extended_geom.interpolate(curs*geomlength)
@@ -224,7 +236,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
                 page = currpoly
                 curs = curs + stepnudge
                 new_feat = QgsFeature()
-                new_feat.setAttributes([r]) 
+                new_feat.setAttributes([r, line_id])
                 new_feat.setGeometry(page)
                 sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
                 r += 1
