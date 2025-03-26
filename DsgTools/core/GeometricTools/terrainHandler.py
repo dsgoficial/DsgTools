@@ -1056,8 +1056,11 @@ class TerrainModel:
         )
         currentStep = 0
         context = QgsProcessingContext() if context is not None else context
+        invalidDict = dict()
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
+        if self.spotElevationLyr is not None and self.spotElevationLyr.featureCount() == 0:
+            return invalidDict
         spotElevationsThatIntersectContours = self.algRunner.runExtractByLocation(
             inputLyr=self.spotElevationLyr,
             intersectLyr=self.contourLyr,
@@ -1081,8 +1084,10 @@ class TerrainModel:
             context=context,
         )
         nFeats = joinnedSpotElevation.featureCount()
+        if nFeats == 0:
+            return invalidDict
         stepSize = 100 / nFeats
-        invalidDict = dict()
+        
         for current, feat in enumerate(joinnedSpotElevation.getFeatures()):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
