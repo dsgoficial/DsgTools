@@ -27,10 +27,10 @@ from qgis.core import (
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
     QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
 )
 
 from ...algRunner import AlgRunner
@@ -101,7 +101,15 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         snappedLayer = algRunner.runSnapToGrid(
             auxLyr, tol, context, feedback=multiStepFeedback
         )
-
+        if inputLyr.geometryType() == QgsWkbTypes.LineGeometry:
+            missconstructedFeaturesIds = [
+                f.id() for f in snappedLayer.getFeatures() if 'Too few points in geometry component' in f.geometry().constGet().isValid()[1]
+            ]
+            if missconstructedFeaturesIds != []:
+                snappedLayer.startEditing()
+                snappedLayer.beginEditCommand("Removing missconstructed")
+                snappedLayer.deleteFeatures(missconstructedFeaturesIds)
+                snappedLayer.endEditCommand()
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(

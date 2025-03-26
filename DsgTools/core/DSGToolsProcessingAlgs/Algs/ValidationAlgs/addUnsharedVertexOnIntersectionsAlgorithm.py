@@ -208,9 +208,10 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        layerList = list(chain(inputLineLyrList, inputPolygonLyrList))
         LayerHandler().addVertexesToLayers(
-            vertexLyr=newFlagsLyr,
-            layerList=list(chain(inputLineLyrList, inputPolygonLyrList)),
+            vertexLyr=newFlagsLyr.clone(),
+            layerList=layerList,
             searchRadius=searchRadius,
             feedback=multiStepFeedback,
         )

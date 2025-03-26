@@ -315,6 +315,7 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
                 tol=snap,
                 context=context,
                 feedback=multiStepFeedback,
+                geographicBoundaryLyr=geographicBoundsLyr,
             )
         )
         renamedOutputLyr = algRunner.runRenameField(

@@ -66,6 +66,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractMiddleVertex
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.setLineOrientation import (
     SetLineOrientation,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitLinesAtMaximumLengthAlgorithm import SplitLinesAtMaximumLengthAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import (
     BuildZipPackageAlgorithm,
 )
@@ -111,6 +112,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicateNod
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapFeaturesInsideLayerWithGroupByAlgorithm import (
     SnapFeaturesInsideLayerWithGroupByAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.splitContoursAtMaximumLengthAlgorithm import SplitContoursAtMaximumLengthAlgorithm
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -497,7 +499,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuild
     IdentifyWrongBuildingAnglesAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyZAnglesBetweenFeaturesAlgorithm import (
-    identifyZAnglesBetweenFeaturesAlgorithm,
+    IdentifyZAnglesBetweenFeaturesAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.lineOnLineOverlayerAlgorithm import (
     LineOnLineOverlayerAlgorithm,
@@ -667,7 +669,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RunFMESAPAlgorithm(),
             EnforceAttributeRulesAlgorithm(),
             IdentifyPolygonSliverAlgorithm(),
-            identifyZAnglesBetweenFeaturesAlgorithm(),
+            IdentifyZAnglesBetweenFeaturesAlgorithm(),
             IdentifySmallHolesAlgorithm(),
             IdentifyInvalidUUIDsAlgorithm(),
             LoadShapefileAlgorithm(),
@@ -762,6 +764,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyErrorsInContourAttributesAlgorithm(),
             IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(),
             CreateGridAlongLineAlgorithm()
+            SplitLinesAtMaximumLengthAlgorithm(),
+            SplitContoursAtMaximumLengthAlgorithm(),
         ]
         return algList
 

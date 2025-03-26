@@ -183,10 +183,13 @@ class ModelExecutionOutput:
             "executionTime": self.executionTime,
             "executionMessage": self.executionMessage,
             "status": self.status,
+            "result": dict(),
         }
-        output_dict["result"] = {
-            k: self.getGeoJsonFromQgsVectorLayer(v) for k, v in self.result.items()
-        }
+        for k, v in self.result.items():
+            geojson_dict = self.getGeoJsonFromQgsVectorLayer(v)
+            if geojson_dict == {}:
+                continue
+            output_dict["result"][k] = geojson_dict
         return output_dict
 
     def loadGeojsonAsQgsVectorLayer(self, layerName: str, data: dict) -> QgsVectorLayer:
@@ -196,13 +199,15 @@ class ModelExecutionOutput:
     def getGeoJsonFromQgsVectorLayer(self, lyr: QgsVectorLayer) -> dict:
         temp_geojson = tempfile.NamedTemporaryFile(suffix=".geojson", delete=False)
         temp_geojson.close()
-        error = QgsVectorFileWriter.writeAsVectorFormat(
-            lyr, temp_geojson.name, "utf-8", lyr.crs(), "GeoJSON"
-        )
+        try:
+            error = QgsVectorFileWriter.writeAsVectorFormat(
+                lyr, temp_geojson.name, "utf-8", lyr.crs(), "GeoJSON"
+            )
+        except:
+            return {}
         with open(temp_geojson.name, "r", encoding="utf-8") as f:
             geojson_content = f.read()
         Path(temp_geojson.name).unlink()
-
         return geojson_content
 
 

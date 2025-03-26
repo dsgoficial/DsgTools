@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.25 - dev
+## 4.17.29 - dev
 
 Novas Funcionalidades:
 
@@ -15,6 +15,8 @@ Novas Funcionalidades:
 - Novo algoritmo de identificar erros na atributação de curvas de nível;
 - Novo algoritmo de identificar erros de atributação no atributo dentro de polígono em trechos de drenagem;
 - Novo algoritmo de numeração de polígonos;
+- Novo algoritmo de segmentar linhas com um tamanho máximo;
+- Novo algoritmo de segmentar curvas de nível;
 
 Melhorias:
 
@@ -31,6 +33,10 @@ Melhorias:
 - Melhora nas entradas do algoritmo Identify Drainage Flow Issues With Hydrography Elements;
 - Novo formato de exportação para os arquivos de configuração do Snap Hierárquico e Enforce Spatial Rules (os antigos ainda funcionam);
 - Configuração de tooltip adicionada na caixa de ferramentas de workflow (é retrocompatível com o formato anterior de descrição no model);
+- Melhora o comportamento do algoritmo de identificar linhas pequenas de primeira ordem (exclui casos de linhas que cruzam a moldura);
+- O processo de unir linhas agora pode receber camadas ponto e linha que impedem a união caso exista um elemento dessas camadas em um ponto de união;
+- O processo de unir linhas agora só une linhas com pontos de união dentro da moldura (quando for informada uma);
+- Melhora o desempenho do identificar Z;
 
 Correção de bugs:
 
@@ -42,6 +48,7 @@ Correção de bugs:
 - Corrige bug na correção de geometria inválida (correção de vértice);
 - Corrige bug do Match and Apply QML Styles to Layers com camadas shapefile;
 - Corrige bug no algoritmo de identificação de erros de cruzamento de curva de nível com massa d'água (adicionadas barragens para retirar falsos positivos);
+- Corrige bug de retomar o estado do Workflow após carregar um projeto salvo;
 
 ## 4.16.0 - 2024-11-27
 

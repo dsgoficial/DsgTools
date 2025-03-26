@@ -39,6 +39,7 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterDefinition,
     QgsWkbTypes,
+    QgsVectorLayer,
 )
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -312,9 +313,9 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
             currentStep += 1
             snapStructure[item["referenceLayer"]] = {
-                "originalLayer": lyr,
-                "tempLayer": insideLyr,
-                "outsideLayer": outsideLyr,
+                "originalLayer": lyr.clone(),
+                "tempLayer": insideLyr.clone(),
+                "outsideLayer": outsideLyr.clone(),
                 "snap": item["snap"],
                 "insideFeatureCount": insideLyr.featureCount(),
             }
@@ -390,7 +391,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
             if geographicBoundaryLyr is None:
                 self.layerHandler.updateOriginalLayersFromUnifiedLayer(
-                    [auxDict["originalLayer"]],
+                    [auxDict["originalLayer"].clone()],
                     tempLyr,
                     feedback=multiStepFeedback,
                     onlySelected=onlySelected,
@@ -409,20 +410,27 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 context=context,
             )
             outputLyr = self.layerHandler.integrateSpatialConstrainedAlgorithmOutputAndOutsideLayer(
-                algOutputLyr=outputLyr,
+                algOutputLyr=outputLyr.clone(),
                 outsideLyr=outsideLyr,
                 tol=auxDict["snap"],
                 context=context,
+                geographicBoundaryLyr=geographicBoundaryLyr,
             )
             outputLyr = self.algRunner.runRenameField(
-                inputLayer=outputLyr,
+                inputLayer=outputLyr.clone(),
                 field="oldfeatid",
                 newName="featid",
                 context=context,
             )
+            originalLyr = (
+                auxDict["originalLayer"].clone() if isinstance(auxDict["originalLayer"], QgsVectorLayer) 
+                else QgsProcessingUtils.mapLayerFromString(
+                    auxDict["originalLayer"], context
+                )
+            )
             self.layerHandler.updateOriginalLayersFromUnifiedLayer(
-                [auxDict["originalLayer"]],
-                outputLyr,
+                [originalLyr],
+                outputLyr.clone(),
                 feedback=multiStepFeedback,
                 onlySelected=onlySelected,
             )

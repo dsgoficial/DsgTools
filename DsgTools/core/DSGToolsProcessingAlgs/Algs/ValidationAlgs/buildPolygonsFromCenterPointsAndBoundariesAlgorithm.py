@@ -524,7 +524,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.tr("Checking for invalid geometries on output polygons...")
         )
         multiStepFeedback.setCurrentStep(0)
-        invalidGeomFlagDict, _ = self.layerHandler.identifyInvalidGeometries(
+        invalidGeomFlagDict, _, __ = self.layerHandler.identifyInvalidGeometries(
             polygonFeatList,
             len(polygonFeatList),
             inputCenterPointLyr,

@@ -2184,9 +2184,14 @@ class AlgRunner:
         ignoreVirtualFields=True,
         ignorePkFields=True,
         allowClosed=False,
+        pointFilterLyrList=None,
+        lineFilterLyrList=None,
+        geographicBoundaryLyr=None,
         feedback=None,
     ) -> None:
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        pointFilterLyrList = [] if pointFilterLyrList is None else pointFilterLyrList
+        lineFilterLyrList = [] if lineFilterLyrList is None else lineFilterLyrList
         output = processing.run(
             "dsgtools:mergelineswithsameattributeset",
             {
@@ -2196,6 +2201,9 @@ class AlgRunner:
                 "IGNORE_VIRTUAL_FIELDS": ignoreVirtualFields,
                 "IGNORE_PK_FIELDS": ignorePkFields,
                 "ALLOW_CLOSED": allowClosed,
+                "POINT_FILTER_LAYERS": pointFilterLyrList,
+                "LINE_FILTER_LAYERS": lineFilterLyrList,
+                "GEOGRAPHIC_BOUNDARY": geographicBoundaryLyr,
             },
             context=context,
             feedback=feedback,
@@ -2709,6 +2717,29 @@ class AlgRunner:
             {
                 "INPUT": inputLayer,
                 "COLUMN": fieldList,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runDSGToolsSplitLinesAtMaximumLengthAlgorithm(
+        self,
+        inputLayer: QgsVectorLayer,
+        maxLength: float,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:splitlinesatmaximumlengthalgorithm",
+            {
+                "INPUT": inputLayer,
+                "MAX_LENGTH": maxLength,
                 "OUTPUT": outputLyr,
             },
             context=context,
