@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.28 - dev
+## 4.17.29 - dev
 
 Novas Funcionalidades:
 
@@ -36,6 +36,7 @@ Melhorias:
 - Melhora o comportamento do algoritmo de identificar linhas pequenas de primeira ordem (exclui casos de linhas que cruzam a moldura);
 - O processo de unir linhas agora pode receber camadas ponto e linha que impedem a união caso exista um elemento dessas camadas em um ponto de união;
 - O processo de unir linhas agora só une linhas com pontos de união dentro da moldura (quando for informada uma);
+- Melhora o desempenho do identificar Z;
 
 Correção de bugs:
 
@@ -47,6 +48,7 @@ Correção de bugs:
 - Corrige bug na correção de geometria inválida (correção de vértice);
 - Corrige bug do Match and Apply QML Styles to Layers com camadas shapefile;
 - Corrige bug no algoritmo de identificação de erros de cruzamento de curva de nível com massa d'água (adicionadas barragens para retirar falsos positivos);
+- Corrige bug de retomar o estado do Workflow após carregar um projeto salvo;
 
 ## 4.16.0 - 2024-11-27
 
