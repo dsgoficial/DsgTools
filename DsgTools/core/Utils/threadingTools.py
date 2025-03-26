@@ -44,7 +44,7 @@ def concurrently(handler, inputs, *, max_concurrency=None, feedback=None):
     # getting the first element repeatedly.
     # Determine optimal concurrency
     if max_concurrency is None:
-        max_concurrency = min(os.cpu_count() - 1 or 1, 5)
+        max_concurrency = os.cpu_count() - 1 or 1
 
     # Convert inputs to iterator
     handler_inputs = iter(inputs)

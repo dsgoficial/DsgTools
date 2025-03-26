@@ -3342,16 +3342,16 @@ class LayerHandler(QObject):
         for current, feat in enumerate(layer.getFeatures()):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 return
-            #     futures.add(pool.submit(evaluateAddVertex, feat))
+            futures.add(pool.submit(evaluateAddVertex, feat))
             #     multiStepFeedback.setProgress(current * stepSize)
             # multiStepFeedback.setCurrentStep(1)
 
-            # updateSet = set()
-            # for current, future in enumerate(concurrent.futures.as_completed(futures)):
-            #     if multiStepFeedback.isCanceled():
-            #         return
-            #     outputFeat = future.result()
-            outputFeat = evaluateAddVertex(feat)
+        updateSet = set()
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                return
+            outputFeat = future.result()
+            # outputFeat = evaluateAddVertex(feat)
             if outputFeat is not None:
                 updateSet.add(outputFeat)
             if multiStepFeedback is not None:
