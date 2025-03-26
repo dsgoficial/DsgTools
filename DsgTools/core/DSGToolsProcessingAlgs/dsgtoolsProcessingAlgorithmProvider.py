@@ -499,7 +499,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuild
     IdentifyWrongBuildingAnglesAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyZAnglesBetweenFeaturesAlgorithm import (
-    identifyZAnglesBetweenFeaturesAlgorithm,
+    IdentifyZAnglesBetweenFeaturesAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.lineOnLineOverlayerAlgorithm import (
     LineOnLineOverlayerAlgorithm,
@@ -667,7 +667,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RunFMESAPAlgorithm(),
             EnforceAttributeRulesAlgorithm(),
             IdentifyPolygonSliverAlgorithm(),
-            identifyZAnglesBetweenFeaturesAlgorithm(),
+            IdentifyZAnglesBetweenFeaturesAlgorithm(),
             IdentifySmallHolesAlgorithm(),
             IdentifyInvalidUUIDsAlgorithm(),
             LoadShapefileAlgorithm(),
