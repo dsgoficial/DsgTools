@@ -27,7 +27,7 @@ import copy
 from functools import partial
 from itertools import combinations
 import os
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 from uuid import uuid4
 
 from processing.tools import dataobjects
@@ -1350,7 +1350,7 @@ class LayerHandler(QObject):
         iterator, featCount = self.getFeatureList(inputLyr, onlySelected=onlySelected)
         parameterDict = self.getDestinationParameters(inputLyr)
         geometryType = inputLyr.geometryType()
-        flagDict, newFeatSet = self.identifyInvalidGeometries(
+        flagDict, newFeatSet, deleteFeatSet = self.identifyInvalidGeometries(
             iterator,
             featCount,
             inputLyr,
@@ -1361,7 +1361,7 @@ class LayerHandler(QObject):
             feedback=feedback,
         )
         if fixInput:
-            self.applyGeometryFixesOnLayer(inputLyr, newFeatSet)
+            self.applyGeometryFixesOnLayer(inputLyr, newFeatSet, deleteFeatSet)
 
         return flagDict
 
@@ -1378,6 +1378,7 @@ class LayerHandler(QObject):
     ):
         flagDict = dict()
         newFeatSet = set()
+        deleteFeatSet = set()
         stepSize = 100 / featCount if featCount else 0
         futures = set()
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
@@ -1392,13 +1393,14 @@ class LayerHandler(QObject):
 
         def evaluate(feat):
             _newFeatSet = set()
+            _deleteSet = set()
             geom = feat.geometry()
             id = feat.id()
             flagDict = self.checkGeomIsValid(
                 geom, parameterDict, ignoreClosed, feedback
             )
             if not fixInput:
-                return flagDict, _newFeatSet, feat
+                return flagDict, _newFeatSet, _deleteSet, feat
             flagDict = dict()
             outputGeomList = self.fixGeometryFromInput(
                 inputLyr, parameterDict, geometryType, _newFeatSet, feat, geom, id
@@ -1407,7 +1409,10 @@ class LayerHandler(QObject):
                 flagDict.update(
                     self.checkGeomIsValid(g, parameterDict, ignoreClosed, feedback)
                 )
-            return flagDict, _newFeatSet, feat
+            isValid, reason = geom.constGet().isValid()
+            if 'Too few points in geometry component' in reason:
+                _deleteSet.add(id)
+            return flagDict, _newFeatSet, _deleteSet, feat
 
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
@@ -1427,7 +1432,7 @@ class LayerHandler(QObject):
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if feedback is not None and feedback.isCanceled():
                 break
-            output, _newFeatSet, feat = future.result()
+            output, _newFeatSet, _deleteSet, feat = future.result()
             if output:
                 featIdText = (
                     f"{feat.id()}"
@@ -1443,9 +1448,11 @@ class LayerHandler(QObject):
                     flagDict[point]["featid"] = featIdText
             if _newFeatSet:
                 newFeatSet = newFeatSet.union(_newFeatSet)
+            if _deleteSet:
+                deleteFeatSet = deleteFeatSet.union(_deleteSet)
             if feedback is not None:
                 feedback.setProgress(stepSize * current)
-        return flagDict, newFeatSet
+        return flagDict, newFeatSet, deleteFeatSet
 
     def checkGeomIsValid(self, geom, parameterDict, ignoreClosed, feedback=None):
         flagDict = dict()
@@ -1498,10 +1505,20 @@ class LayerHandler(QObject):
             returnList.append(newGeom)
         return returnList
 
-    def applyGeometryFixesOnLayer(self, inputLyr, newFeatSet):
+    def applyGeometryFixesOnLayer(
+        self,
+        inputLyr: QgsVectorLayer,
+        newFeatSet: Set[QgsFeature],
+        deleteFeatSet: Set[QgsFeature]
+    ):
+        if newFeatSet == set() and deleteFeatSet == set():
+            return
         inputLyr.startEditing()
         inputLyr.beginEditCommand("Fixing geometries")
-        inputLyr.addFeatures(newFeatSet)
+        if newFeatSet != set():
+            inputLyr.addFeatures(list(newFeatSet))
+        if deleteFeatSet != set():
+            inputLyr.deleteFeatures(list(deleteFeatSet))
         inputLyr.endEditCommand()
 
     def analyze_polygon_boundary_and_holes(self, flagDict, geom):
