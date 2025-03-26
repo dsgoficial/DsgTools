@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.29 - dev
+## 4.17.30 - dev
 
 Novas Funcionalidades:
 
@@ -17,6 +17,7 @@ Novas Funcionalidades:
 - Novo algoritmo de numeração de polígonos;
 - Novo algoritmo de segmentar linhas com um tamanho máximo;
 - Novo algoritmo de segmentar curvas de nível;
+- Novo algoritmo de criar grid ao longo de linhas;
 
 Melhorias:
 
