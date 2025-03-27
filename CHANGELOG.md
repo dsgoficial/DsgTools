@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.30 - dev
+## 4.17.31 - dev
 
 Novas Funcionalidades:
 
@@ -50,6 +50,8 @@ Correção de bugs:
 - Corrige bug do Match and Apply QML Styles to Layers com camadas shapefile;
 - Corrige bug no algoritmo de identificação de erros de cruzamento de curva de nível com massa d'água (adicionadas barragens para retirar falsos positivos);
 - Corrige bug de retomar o estado do Workflow após carregar um projeto salvo;
+- Corrige bug de curva cortada na intersecção com drenagem no algoritmo de identificar inconsistências entre drenagens e curvas de nível;
+- Corrige bug no spellchecker de campo não encontrado;
 
 ## 4.16.0 - 2024-11-27
 
