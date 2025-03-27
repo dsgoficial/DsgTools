@@ -42,6 +42,7 @@ from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
     QgsProcessingAlgorithm,
+    QgsProcessingParameterEnum,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFile,
     QgsProcessingParameterFolderDestination,
@@ -64,6 +65,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
 
     INPUT_FOLDER = "INPUT_FOLDER"
     XML_TEMPLATE_FILE = "XML_TEMPLATE_FILE"
+    IMAGE_SENSOR = "IMAGE_SENSOR"
     OUTPUT_FOLDER = "OUTPUT_FOLDER"
 
     def initAlgorithm(self, config=None):
@@ -82,6 +84,16 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 fileFilter="XML (*.xml)",
             )
         )
+        self.image_sensors = [
+            self.tr("Imagens BECA"),
+            self.tr("Imagens MAXAR"),
+        ]
+
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.IMAGE_SENSOR, self.tr("Sensor"), options=self.image_sensors, defaultValue=0
+            )
+        )
         self.addParameter(
             QgsProcessingParameterFolderDestination(
                 self.OUTPUT_FOLDER, self.tr("Pasta para salvar os arquivos exportados")
@@ -96,6 +108,8 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             self.XML_TEMPLATE_FILE,
             context,
         )
+        idx = self.parameterAsEnum(parameters, self.IMAGE_SENSOR, context)
+        imageSensor = self.image_sensors[idx]
         self.algRunner = AlgRunner()
         self.layerHandler = LayerHandler()
         inputFiles = list(
@@ -401,6 +415,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         matchedFeature: QgsFeature,
         output_xml_file: str,
         productName: str,
+        imageSensor: str,
     ) -> None:
         extent = rasterLayer.extent()
         # prefix = "".join(re.findall(r"R\d+C\d+", rasterLayer.name()))
@@ -411,6 +426,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             "Y_MAX": f"{extent.xMaximum()}",
             "NOME_PRODUTO": productName,
             "DATA_IMAGEM": re.sub("T.+", "", matchedFeature["acquisitio"]),
+            "SENSOR_IMAGEM": imageSensor,
         }
         with open(self.xml_template_path, "r") as f:
             xmlstring = f.read()

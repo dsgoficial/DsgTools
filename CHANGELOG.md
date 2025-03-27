@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.31 - dev
+## 4.17.32 - dev
 
 Novas Funcionalidades:
 
@@ -38,6 +38,7 @@ Melhorias:
 - O processo de unir linhas agora pode receber camadas ponto e linha que impedem a união caso exista um elemento dessas camadas em um ponto de união;
 - O processo de unir linhas agora só une linhas com pontos de união dentro da moldura (quando for informada uma);
 - Melhora o desempenho do identificar Z;
+- Melhoria no processo de converter imagens e preencher metadados para carga no BDGEx (opções de sensores);
 
 Correção de bugs:
 
