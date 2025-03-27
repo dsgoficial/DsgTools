@@ -763,7 +763,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             FixDrainageVersusWaterBodyAttributeAlgorithm(),
             IdentifyErrorsInContourAttributesAlgorithm(),
             IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(),
-            CreateGridAlongLineAlgorithm()
+            CreateGridAlongLineAlgorithm(),
             SplitLinesAtMaximumLengthAlgorithm(),
             SplitContoursAtMaximumLengthAlgorithm(),
         ]
