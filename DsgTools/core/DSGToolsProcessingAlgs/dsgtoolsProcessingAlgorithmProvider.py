@@ -65,6 +65,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.runReclassifyP
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractMiddleVertexOnLineAlgorithm import (
     ExtractMiddleVertexOnLineAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.lineOnAreaOverlayer import LineOnAreaOverlayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.setLineOrientation import (
     SetLineOrientation,
 )
@@ -770,6 +771,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             SplitContoursAtMaximumLengthAlgorithm(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(),
+            LineOnAreaOverlayerAlgorithm(),
         ]
         return algList
 

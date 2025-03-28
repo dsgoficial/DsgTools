@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.32 - dev
+## 4.17.33 - dev
 
 Novas Funcionalidades:
 
@@ -18,6 +18,7 @@ Novas Funcionalidades:
 - Novo algoritmo de segmentar linhas com um tamanho máximo;
 - Novo algoritmo de segmentar curvas de nível;
 - Novo algoritmo de criar grid ao longo de linhas;
+- Novo algoritmo de seccionar polígonos com linhas (line on area overlayer);
 
 Melhorias:
 
