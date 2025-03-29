@@ -91,7 +91,10 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.IMAGE_SENSOR, self.tr("Sensor"), options=self.image_sensors, defaultValue=0
+                self.IMAGE_SENSOR,
+                self.tr("Sensor"),
+                options=self.image_sensors,
+                defaultValue=0,
             )
         )
         self.addParameter(

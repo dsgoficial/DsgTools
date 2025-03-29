@@ -54,8 +54,12 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeWate
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import (
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2 import ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3 import ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2 import (
+    ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3 import (
+    ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsToNearestNeighborAlgorithm import (
     ReclassifyAdjacentPixelsToNearestNeighborAlgorithm,
 )
@@ -65,11 +69,15 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.runReclassifyP
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractMiddleVertexOnLineAlgorithm import (
     ExtractMiddleVertexOnLineAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.lineOnAreaOverlayer import LineOnAreaOverlayerAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.lineOnAreaOverlayer import (
+    LineOnAreaOverlayerAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.setLineOrientation import (
     SetLineOrientation,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitLinesAtMaximumLengthAlgorithm import SplitLinesAtMaximumLengthAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitLinesAtMaximumLengthAlgorithm import (
+    SplitLinesAtMaximumLengthAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import (
     BuildZipPackageAlgorithm,
 )
@@ -115,7 +123,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicateNod
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapFeaturesInsideLayerWithGroupByAlgorithm import (
     SnapFeaturesInsideLayerWithGroupByAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.splitContoursAtMaximumLengthAlgorithm import SplitContoursAtMaximumLengthAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.splitContoursAtMaximumLengthAlgorithm import (
+    SplitContoursAtMaximumLengthAlgorithm,
+)
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -573,6 +583,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.numberPolygons impo
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridAlongLineAlgorithm import (
     CreateGridAlongLineAlgorithm,
 )
+
 # from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
 
 

@@ -790,7 +790,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             if polygonWithProblem is not None:
                 flagPolygonLambda(polygonWithProblem)
             multiStepFeedback.setProgress(current * stepSize)
-    
+
     def validateDrainagesConfluences(self, drainageStartAndEndPointDict):
         nFeats = len(drainageStartAndEndPointDict)
         if nFeats == 0:
@@ -800,10 +800,12 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             flagText=self.tr(f"Confluence with more than 3 rivers"),
             sink=self.pointFlagSink,
         )
-        list(map(
-            flagPointLambda,
-            (k for k,v in drainageStartAndEndPointDict.items() if len(v) > 3),
-        ))
+        list(
+            map(
+                flagPointLambda,
+                (k for k, v in drainageStartAndEndPointDict.items() if len(v) > 3),
+            )
+        )
 
     def validateDrainagesEndPoints(self, endPointDict, elementList, feedback):
         nFeats = len(endPointDict)

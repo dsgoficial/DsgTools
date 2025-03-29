@@ -1729,31 +1729,31 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.py" line="243"/>
-        <source>Drop operation complete. 
+        <source>Drop operation complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.py" line="254"/>
-        <source>Upgrade Posgtis operation complete. 
+        <source>Upgrade Posgtis operation complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.py" line="339"/>
-        <source>Import operation complete. 
+        <source>Import operation complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.py" line="466"/>
-        <source>Delete operation complete. 
+        <source>Delete operation complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.py" line="502"/>
-        <source>Customize from SQL file operation complete. 
+        <source>Customize from SQL file operation complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
@@ -6814,25 +6814,25 @@ Shift + clique esquerdo + arrastar do mouse: selecione um conjunto de pontos e d
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="141"/>
-        <source>Update Earth Coverage configuration complete. 
+        <source>Update Earth Coverage configuration complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="161"/>
-        <source>Uninstall Earth Coverage configuration complete. 
+        <source>Uninstall Earth Coverage configuration complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="151"/>
-        <source>Install Earth Coverage configuration complete. 
+        <source>Install Earth Coverage configuration complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="156"/>
-        <source>Delete Earth Coverage configuration complete. 
+        <source>Delete Earth Coverage configuration complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
@@ -9102,7 +9102,7 @@ Reshapes polygon or line features from mouse movement.</source>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeEdificationsAlgorithm.py" line="399"/>
-        <source>Dentre outros inputs, este algoritmo recebe uma expressão, que será utilizada para distinguir as feições de baixa prioridade (as que satisfazem à expressão). A partindo daí, o processing executa os seguintes passos: 
+        <source>Dentre outros inputs, este algoritmo recebe uma expressão, que será utilizada para distinguir as feições de baixa prioridade (as que satisfazem à expressão). A partindo daí, o processing executa os seguintes passos:
 1.Eliminar genéricas próximas de edificações específicas;
 2. Eliminar edificações próximas de mesmo tipo;</source>
         <translation type="unfinished"></translation>
@@ -9343,10 +9343,10 @@ Reshapes polygon or line features from mouse movement.</source>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeLandingStrip.py" line="365"/>
-        <source>Este algoritmo recebe uma camada do tipo polígono com feições que correspondem a pistas de pouso. 
+        <source>Este algoritmo recebe uma camada do tipo polígono com feições que correspondem a pistas de pouso.
 Se a área da pista de pouso for menor que a mínima ou sua largura for menor que a mínima, o algoritmo cria uma linha centra para representar a pista de pouso e elimina o polígono da camada de polígonos original.
- A camada de output são as linhas criadas correspondentes às respectivas pistas de pouso. 
-Obs.1: Os parâmetros de área e largura têm unidade de medida correspondente às unidades da camada de entrada. Assim, se a camada tem uma projeção métrica, os valores de largura e área serão recebidos pelo algoritmo em metros e metros quadrados, respectivamente. 
+ A camada de output são as linhas criadas correspondentes às respectivas pistas de pouso.
+Obs.1: Os parâmetros de área e largura têm unidade de medida correspondente às unidades da camada de entrada. Assim, se a camada tem uma projeção métrica, os valores de largura e área serão recebidos pelo algoritmo em metros e metros quadrados, respectivamente.
 Obs.2: O valor default da suavização do 'simplify' corresponde a uma projeção geográfica (unidades em graus). Para um sistema de referência métrico, valor de suavização deve ser corrigido, sendo multiplicado por um valor na ordem de grandeza de 10^5.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17918,13 +17918,13 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="240"/>
-        <source>Problem saving file! 
+        <source>Problem saving file!
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="281"/>
-        <source>Problem deleting profile! 
+        <source>Problem deleting profile!
 </source>
         <translation type="unfinished"></translation>
     </message>
@@ -20848,7 +20848,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/splitLinesAtMaximumLengthAlgorithm.py" line="223"/>
         <source>This algorithm splits lines based on maximum length.
         If the line is closed (a ring) and shorter than the maximum length, it will be split in half.
-        If the line is closed and longer than the maximum length, or if the line is open, 
+        If the line is closed and longer than the maximum length, or if the line is open,
         it will be split into parts no longer than the maximum length.
         All calculations are performed in the source CRS units.</source>
         <translation type="unfinished"></translation>
@@ -21076,25 +21076,25 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="78"/>
-        <source>Update Style configuration complete. 
+        <source>Update Style configuration complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="98"/>
-        <source>Uninstall Style configuration complete. 
+        <source>Uninstall Style configuration complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="88"/>
-        <source>Install Style configuration complete. 
+        <source>Install Style configuration complete.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="93"/>
-        <source>Delete Style configuration complete. 
+        <source>Delete Style configuration complete.
 </source>
         <translation type="unfinished"></translation>
     </message>

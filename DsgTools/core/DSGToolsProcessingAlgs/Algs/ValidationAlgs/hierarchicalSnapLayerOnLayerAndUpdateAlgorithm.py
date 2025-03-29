@@ -423,7 +423,8 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 context=context,
             )
             originalLyr = (
-                auxDict["originalLayer"].clone() if isinstance(auxDict["originalLayer"], QgsVectorLayer) 
+                auxDict["originalLayer"].clone()
+                if isinstance(auxDict["originalLayer"], QgsVectorLayer)
                 else QgsProcessingUtils.mapLayerFromString(
                     auxDict["originalLayer"], context
                 )

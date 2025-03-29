@@ -137,28 +137,42 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         multiStepFeedback = QgsProcessingMultiStepFeedback(feedbackTotal, feedback)
         multiStepFeedback.setCurrentStep(0)
-        geographicBoundsLines = algRunner.runPolygonsToLines(
-            inputLyr=geographicBoundsLyr,
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True
-        ) if geographicBoundsLyr is not None else inputLyr
+        geographicBoundsLines = (
+            algRunner.runPolygonsToLines(
+                inputLyr=geographicBoundsLyr,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
+            if geographicBoundsLyr is not None
+            else inputLyr
+        )
         multiStepFeedback.setCurrentStep(1)
-        explodedLines = algRunner.runExplodeLines(
-            inputLyr=geographicBoundsLines,
-            context=context,
-            feedback=multiStepFeedback
-        ) if geographicBoundsLyr is not None else inputLyr
+        explodedLines = (
+            algRunner.runExplodeLines(
+                inputLyr=geographicBoundsLines,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if geographicBoundsLyr is not None
+            else inputLyr
+        )
         multiStepFeedback.setCurrentStep(2)
-        algRunner.runCreateSpatialIndex(explodedLines, context, multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            explodedLines, context, multiStepFeedback, is_child_algorithm=True
+        )
         multiStepFeedback.setCurrentStep(3)
-        disjointInputsFromExplodedLines = algRunner.runExtractByLocation(
-            inputLyr=inputLyr,
-            intersectLyr=explodedLines,
-            predicate=AlgRunner.Disjoint,
-            context=context,
-            feedback=multiStepFeedback,
-        ) if geographicBoundsLyr is not None else inputLyr
+        disjointInputsFromExplodedLines = (
+            algRunner.runExtractByLocation(
+                inputLyr=inputLyr,
+                intersectLyr=explodedLines,
+                predicate=AlgRunner.Disjoint,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if geographicBoundsLyr is not None
+            else inputLyr
+        )
         multiStepFeedback.setCurrentStep(4)
         multiStepFeedback.setProgressText(self.tr("Getting Dangles..."))
         dangleLyr = algRunner.runIdentifyDangles(
@@ -191,15 +205,15 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
             x.geometry(),
             flagText=self.tr(
                 f"First order dangle on {inputLyr.name()} smaller than {minLength}"
-            )
+            ),
         )
         list(
             map(
                 flagLambda,
                 filter(
                     lambda x: x.geometry().length() < minLength,
-                    candidates.getFeatures()
-                )
+                    candidates.getFeatures(),
+                ),
             )
         )
         return {self.FLAGS: self.flag_id}

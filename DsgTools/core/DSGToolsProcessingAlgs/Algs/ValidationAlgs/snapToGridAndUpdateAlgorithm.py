@@ -103,7 +103,10 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         )
         if inputLyr.geometryType() == QgsWkbTypes.LineGeometry:
             missconstructedFeaturesIds = [
-                f.id() for f in snappedLayer.getFeatures() if 'Too few points in geometry component' in f.geometry().constGet().isValid()[1]
+                f.id()
+                for f in snappedLayer.getFeatures()
+                if "Too few points in geometry component"
+                in f.geometry().constGet().isValid()[1]
             ]
             if missconstructedFeaturesIds != []:
                 snappedLayer.startEditing()

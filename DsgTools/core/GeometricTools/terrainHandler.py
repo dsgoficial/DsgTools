@@ -1059,7 +1059,10 @@ class TerrainModel:
         invalidDict = dict()
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        if self.spotElevationLyr is not None and self.spotElevationLyr.featureCount() == 0:
+        if (
+            self.spotElevationLyr is not None
+            and self.spotElevationLyr.featureCount() == 0
+        ):
             return invalidDict
         spotElevationsThatIntersectContours = self.algRunner.runExtractByLocation(
             inputLyr=self.spotElevationLyr,
@@ -1087,7 +1090,7 @@ class TerrainModel:
         if nFeats == 0:
             return invalidDict
         stepSize = 100 / nFeats
-        
+
         for current, feat in enumerate(joinnedSpotElevation.getFeatures()):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break

@@ -1410,7 +1410,7 @@ class LayerHandler(QObject):
                     self.checkGeomIsValid(g, parameterDict, ignoreClosed, feedback)
                 )
             isValid, reason = geom.constGet().isValid()
-            if 'Too few points in geometry component' in reason:
+            if "Too few points in geometry component" in reason:
                 _deleteSet.add(id)
             return flagDict, _newFeatSet, _deleteSet, feat
 
@@ -1509,7 +1509,7 @@ class LayerHandler(QObject):
         self,
         inputLyr: QgsVectorLayer,
         newFeatSet: Set[QgsFeature],
-        deleteFeatSet: Set[QgsFeature]
+        deleteFeatSet: Set[QgsFeature],
     ):
         if newFeatSet == set() and deleteFeatSet == set():
             return

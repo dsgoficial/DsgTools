@@ -64,12 +64,12 @@ class SplitContoursAtMaximumLengthAlgorithm(ValidationAlgorithm):
             )
         )
         param = QgsProcessingParameterDistance(
-                self.MAX_LENGTH,
-                self.tr("Maximum length"),
-                minValue=0,
-                parentParameterName=self.INPUT,
-                defaultValue=0.05,
-            )
+            self.MAX_LENGTH,
+            self.tr("Maximum length"),
+            minValue=0,
+            parentParameterName=self.INPUT,
+            defaultValue=0.05,
+        )
         param.setMetadata({"widget_wrapper": {"decimals": 8}})
         self.addParameter(param)
 
@@ -86,7 +86,9 @@ class SplitContoursAtMaximumLengthAlgorithm(ValidationAlgorithm):
                 self.invalidSourceError(parameters, self.INPUT)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        if inputLyr.featureCount() == 0 or (onlySelected is True and inputLyr.selectedFeatureCount() == 0):
+        if inputLyr.featureCount() == 0 or (
+            onlySelected is True and inputLyr.selectedFeatureCount() == 0
+        ):
             feedback.pushWarning(self.tr("Empty input"))
             return {}
         maxLength = self.parameterAsDouble(parameters, self.MAX_LENGTH, context)
@@ -161,7 +163,9 @@ class SplitContoursAtMaximumLengthAlgorithm(ValidationAlgorithm):
         return "DSGTools - QA Tools: Terrain Processes"
 
     def tr(self, string):
-        return QCoreApplication.translate("SplitContoursAtMaximumLengthAlgorithm", string)
+        return QCoreApplication.translate(
+            "SplitContoursAtMaximumLengthAlgorithm", string
+        )
 
     def createInstance(self):
         return SplitContoursAtMaximumLengthAlgorithm()

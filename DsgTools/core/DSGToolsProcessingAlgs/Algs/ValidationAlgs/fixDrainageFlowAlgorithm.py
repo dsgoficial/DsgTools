@@ -404,7 +404,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             )
         )
         nodesWithDegreeLargerThan3 = [
-            nodeId for nodeId in networkBidirectionalGraph.nodes if networkBidirectionalGraph.degree(nodeId) > 3
+            nodeId
+            for nodeId in networkBidirectionalGraph.nodes
+            if networkBidirectionalGraph.degree(nodeId) > 3
         ]
         if len(nodesWithDegreeLargerThan3) > 0:
             pointFlagLambda = lambda x: self.flagFeature(
@@ -419,7 +421,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 self.LINE_FLAGS: self.line_flags_sink_id,
                 self.POLYGON_FLAGS: self.polygon_flags_sink_id,
             }
-            
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Computing constraint nodes"))
@@ -549,23 +551,21 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 pointFlagLyr,
                 lineFlagLyr,
                 polygonFlagLyr,
-            ) = (
-                self.algRunner.runIdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(
-                    inputDrainagesLayer=networkLayer,
-                    waterBodyLayer=parameters[self.WATER_BODY_LAYER],
-                    waterBodyWithFlowExpression=parameters[
-                        self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION
-                    ],
-                    waterBodyWithoutFlowExpression=parameters[
-                        self.WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION
-                    ],
-                    sinkAndSpillwayLayer=parameters[self.SINK_AND_SPILLWAY_LAYER],
-                    sinkFilterExpression=parameters[self.SINK_FILTER_EXPRESSION],
-                    spillwayFilterExpression=parameters[self.SPILLWAY_FILTER_EXPRESSION],
-                    geographicBoundsLayer=parameters[self.GEOGRAPHIC_BOUNDS_LAYER],
-                    context=context,
-                    feedback=multiStepFeedback,
-                )
+            ) = self.algRunner.runIdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(
+                inputDrainagesLayer=networkLayer,
+                waterBodyLayer=parameters[self.WATER_BODY_LAYER],
+                waterBodyWithFlowExpression=parameters[
+                    self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION
+                ],
+                waterBodyWithoutFlowExpression=parameters[
+                    self.WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION
+                ],
+                sinkAndSpillwayLayer=parameters[self.SINK_AND_SPILLWAY_LAYER],
+                sinkFilterExpression=parameters[self.SINK_FILTER_EXPRESSION],
+                spillwayFilterExpression=parameters[self.SPILLWAY_FILTER_EXPRESSION],
+                geographicBoundsLayer=parameters[self.GEOGRAPHIC_BOUNDS_LAYER],
+                context=context,
+                feedback=multiStepFeedback,
             )
             pointFlagLambda = lambda x: self.flagFeature(
                 x.geometry(), flagText=x["reason"], sink=self.point_flags_sink

@@ -348,13 +348,11 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             geomWkb = feat.geometry().asWkb()
             nodesDict[feat.id()] = feat
             nodesWkbToIdDict[geomWkb] = feat.id()
-            drainageNodeDict[feat["d_featid"]][
-                feat["vertex_pos"]
-            ] = geomWkb
+            drainageNodeDict[feat["d_featid"]][feat["vertex_pos"]] = geomWkb
             multiStepFeedback.setProgress(current * stepSize)
         newNodeId = max(nodesDict.keys()) + 1
         stepSize = 100 / len(drainageNodeDict)
-        
+
         def distance(start, end):
             startGeom = nodesDict[start].geometry()
             endGeom = nodesDict[end].geometry()
@@ -389,14 +387,14 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                 map(
                     addEdgeLambda,
                     filter(
-                        lambda x: distance(x[0], x[1])>0,
+                        lambda x: distance(x[0], x[1]) > 0,
                         graphHandler.pairwise(
                             [
                                 nodesWkbToIdDict[startEndDict[0]],
                                 *intersectionIdList,
                                 nodesWkbToIdDict[startEndDict[-1]],
                             ]
-                        )   
+                        ),
                     ),
                 )
             )

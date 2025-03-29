@@ -137,20 +137,23 @@ class DSGToolsWorkflow(QObject):
             workflowItem.setStatusFromDict(d["execution_status"])
             status = workflowItem.getStatus()
             statusList.append((idx, status))
-            if (
-                status == ExecutionStatus.INITIAL
-            ):
+            if status == ExecutionStatus.INITIAL:
                 continue
             self.currentWorkflowItemStatusChanged.emit(idx, workflowItem)
-        initialIdx, _ = min(filter(lambda x: x[1] != ExecutionStatus.FINISHED, statusList), key=lambda x: x[0], default=0)
+        initialIdx, _ = min(
+            filter(lambda x: x[1] != ExecutionStatus.FINISHED, statusList),
+            key=lambda x: x[0],
+            default=0,
+        )
         self.setCurrentWorkflowItem(initialIdx)
 
     def getStatusList(self) -> List[Dict[str, Any]]:
         return [
             {
                 "workflowItem": workflowItem.displayName,
-                "execution_status": workflowItem.executionStatusAsDict()
-            } for workflowItem in self.workflowItemList
+                "execution_status": workflowItem.executionStatusAsDict(),
+            }
+            for workflowItem in self.workflowItemList
         ]
 
     def getCurrentWorkflowStepIndex(self) -> int:

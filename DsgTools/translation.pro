@@ -625,7 +625,7 @@
                      gui/guiManager.py \
                      plugin_upload.py \
                      resources.py \
-                     resources_rc.py 
+                     resources_rc.py
 
  FORMS		 =	Modules/acquisitionMenu/uis/addButtonDialog.ui \
                      Modules/acquisitionMenu/uis/addTabDialog.ui \
@@ -754,7 +754,7 @@
                      gui/ServerTools/selectStyles.ui \
                      gui/ServerTools/ui_serverConfigurator.ui \
                      gui/ServerTools/ui_serverDBExplorer.ui \
-                     gui/ServerTools/ui_viewServers.ui 
+                     gui/ServerTools/ui_viewServers.ui
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 

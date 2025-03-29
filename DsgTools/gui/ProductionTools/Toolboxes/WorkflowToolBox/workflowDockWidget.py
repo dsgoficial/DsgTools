@@ -697,7 +697,9 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         QgsProject, making it "loadable" along with saved QGIS projects.
         """
         # workflow objects cannot be serialized, so they must be passed as dict
-        workflows: Dict[str, DSGToolsWorkflow] = {w.displayName: w.as_dict() for w in self.workflows.values()}
+        workflows: Dict[str, DSGToolsWorkflow] = {
+            w.displayName: w.as_dict() for w in self.workflows.values()
+        }
         workflowStatusDict = {
             w.displayName: w.getStatusList() for w in self.workflows.values()
         }
@@ -729,7 +731,9 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             )
             or "{}"
         )
-        workflows: Dict[str, DSGToolsWorkflow] = state["workflows"] if "workflows" in state else {}
+        workflows: Dict[str, DSGToolsWorkflow] = (
+            state["workflows"] if "workflows" in state else {}
+        )
         workflow_status_dict_list = state.get("workflow_status_dict_list", {})
         self.resetComboBox()
         try:
@@ -737,7 +741,9 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                 self.workflows[name] = dsgtools_workflow_from_dict(workflowMap)
                 self.comboBox.addItem(name)
                 self.setWorkflowTooltip(idx + 1, self.workflows[name].metadata)
-                self.workflows[name].setStatusFromList(workflow_status_dict_list.get(name, []))
+                self.workflows[name].setStatusFromList(
+                    workflow_status_dict_list.get(name, [])
+                )
             currentIdx = state["current_workflow"] if "current_workflow" in state else 0
             self.comboBox.setCurrentIndex(currentIdx)
             showButtons = state["show_buttons"] if "show_buttons" in state else True
