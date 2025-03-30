@@ -28,7 +28,7 @@ from qgis.core import (
     QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterVectorLayer,
+    QgsProcessingParameterMapLayer,
     QgsWkbTypes,
     QgsProcessingParameterEnum,
     QgsProcessingParameterNumber,
@@ -39,6 +39,10 @@ from qgis.core import (
     QgsField,
     QgsFields,
     QgsProcessingParameterDefinition,
+    QgsMapLayer,
+    QgsVectorLayer,
+    QgsGeometry,
+    QgsFeature,
 )
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
@@ -57,14 +61,9 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         """
 
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
+            QgsProcessingParameterMapLayer(
                 self.INPUT,
-                self.tr("Input Polygon Layer"),
-                [
-                    QgsProcessing.TypeVectorPolygon,
-                    QgsProcessing.TypeVectorLine,
-                    QgsProcessing.TypeVectorPoint,
-                ],
+                self.tr("Input Layer (Vector or Raster)"),
             )
         )
 
@@ -121,13 +120,33 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         """
         featureHandler = FeatureHandler()
         algRunner = AlgRunner()
-        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        inputLyr = self.parameterAsLayer(parameters, self.INPUT, context)
         inputOld = inputLyr
         if inputLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT)
             )
-        geomTypeLyr = inputLyr.geometryType()
+        
+        # Verificar se é uma camada raster
+        if inputLyr.type() == QgsMapLayer.RasterLayer:
+            # Obter o extent do raster e convertê-lo em um polígono
+            extent = inputLyr.extent()
+            rasterGeom = QgsGeometry.fromRect(extent)
+            
+            # Criar uma camada temporária de polígono com esse extent
+            fields = QgsFields()
+            tempLayer = QgsVectorLayer("Polygon?crs=" + inputLyr.crs().authid(), "temp", "memory")
+            provider = tempLayer.dataProvider()
+            tempLayer.startEditing()
+            feat = QgsFeature()
+            feat.setGeometry(rasterGeom)
+            provider.addFeature(feat)
+            tempLayer.commitChanges()
+            
+            # Usar essa camada temporária como entrada
+            inputLyr = tempLayer
+        
+        geomTypeLyr = inputLyr.geometryType() if hasattr(inputLyr, 'geometryType') else QgsWkbTypes.PolygonGeometry
         if (
             geomTypeLyr == QgsWkbTypes.PointGeometry
             or geomTypeLyr == QgsWkbTypes.LineGeometry
@@ -184,21 +203,39 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             feedback=feedback,
         )
 
+        # Função de filtro para remover MI que não intersectam com a camada original
         def filterFunc(feat):
-            geom = feat.geometry()
-            bbox = geom.boundingBox()
-            return any(
-                geom.intersects(f.geometry()) for f in inputOld.getFeatures(bbox)
-            )
+            if hasattr(inputOld, 'type') and inputOld.type() == QgsMapLayer.RasterLayer:
+                geom = feat.geometry()
+                extent_geom = QgsGeometry.fromRect(inputOld.extent())
+                return geom.intersects(extent_geom)
+            else:
+                geom = feat.geometry()
+                bbox = geom.boundingBox()
+                return any(
+                    geom.intersects(f.geometry()) for f in inputOld.getFeatures(bbox)
+                )
 
-        list(
-            map(
-                lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
-                filter(filterFunc, featureList)
-                if geomTypeLyr != QgsWkbTypes.PolygonGeometry
-                else featureList,
+        # Se a entrada original for um polígono, não precisamos filtrar
+        needsFiltering = True
+        if hasattr(inputOld, 'type'):
+            if inputOld.type() == QgsMapLayer.VectorLayer and inputOld.geometryType() == QgsWkbTypes.PolygonGeometry:
+                needsFiltering = False
+        
+        if needsFiltering:
+            list(
+                map(
+                    lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
+                    filter(filterFunc, featureList)
+                )
             )
-        )
+        else:
+            list(
+                map(
+                    lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
+                    featureList
+                )
+            )
 
         return {"OUTPUT": output_sink_id}
 
