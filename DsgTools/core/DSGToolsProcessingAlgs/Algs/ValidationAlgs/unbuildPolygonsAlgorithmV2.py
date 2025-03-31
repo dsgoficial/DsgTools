@@ -982,9 +982,6 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Parallel processing complete"))
-        multiStepFeedback.pushInfo(
-            self.tr(f"Merged {mergedLyr.featureCount()} line segments")
-        )
         if is_child_algorithm == False:
             mergedLyr = QgsProcessingUtils.mapLayerFromString(mergedLyr, context)
         return mergedLyr
