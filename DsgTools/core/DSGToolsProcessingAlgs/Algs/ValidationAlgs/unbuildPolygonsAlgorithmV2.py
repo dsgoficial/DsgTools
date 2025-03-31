@@ -20,6 +20,7 @@
  ***************************************************************************/
 """
 
+import math
 import os
 import concurrent.futures
 from typing import List, Optional, Set, Union
@@ -219,11 +220,12 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Splitting lines at intersections"))
-        intersectedLines = self.algRunner.runSplitLinesWithLines(
+        intersectedLines = self.splitLinesWithParallelProcessing(
             inputLyr=mergedLines,
             linesLyr=mergedLines,
             context=context,
             feedback=multiStepFeedback,
+            threshold=10000,
             is_child_algorithm=True,
         )
         multiStepFeedback.pushInfo(
@@ -816,6 +818,153 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             )
         )
         return outputSet
+
+    def splitLinesWithParallelProcessing(
+        self,
+        inputLyr,
+        linesLyr,
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+        threshold: Optional[int] = 10000,
+        is_child_algorithm: Optional[bool] = False,
+    ) -> QgsVectorLayer:
+        inputFeatureCount = inputLyr.featureCount()
+        linesFeatureCount = linesLyr.featureCount()
+        totalFeatureCount = inputFeatureCount + linesFeatureCount
+        if totalFeatureCount > threshold:
+            return self.algRunner.runSplitLinesWithLines(
+                inputLyr=inputLyr,
+                linesLyr=linesLyr,
+                context=context,
+                feedback=feedback,
+                is_child_algorithm=is_child_algorithm,
+            )
+        cpuCount = os.cpu_count() or 4
+        basePartitionCount = max(2, int(math.sqrt(totalFeatureCount / 1000)))
+        partitionCount = min(cpuCount * 2, basePartitionCount)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                f"Creating {partitionCount}x{partitionCount} grid for spatial partitioning"
+            )
+        )
+        multiStepFeedback.pushInfo("Calculating combined extent")
+        extentLayer = self.algRunner.runPolygonFromLayerExtent(
+            inputLyr,
+            context,
+            roundTo=0.0,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo("Creating processing grid")
+
+        # Create grid with the appropriate number of rows and columns
+        gridLayer = self.runDSGToolsPolygonTiler(
+            extentLayer,
+            rows=partitionCount,
+            cols=partitionCount,
+            context=context,
+            includePartial=True,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo("Processing grid cells")
+
+        # Calculate total number of cells for progress reporting
+        cellCount = gridLayer.featureCount()
+        cellStep = 100 / cellCount if cellCount > 0 else 1
+
+        def compute(lyr, intersectLyr, cellLyr):
+            localContext = QgsProcessingContext()
+            clippedLyr = self.algRunner.runClip(
+                inputLayer=lyr,
+                overlayLayer=cellLyr,
+                context=localContext,
+                feedback=None,
+                is_child_algorithm=True,
+            )
+            intersectLyrRelatedToCell = self.algRunner.runExtractByLocation(
+                inputLyr=intersectLyr,
+                overlayLyr=cellLyr,
+                context=localContext,
+                predicate=AlgRunner.Intersects,
+                feedback=None,
+                is_child_algorithm=True,
+            )
+            self.algRunner.runCreateSpatialIndex(
+                clippedLyr, localContext, feedback=None, is_child_algorithm=True
+            )
+            self.algRunner.runCreateSpatialIndex(
+                intersectLyrRelatedToCell,
+                localContext,
+                feedback=None,
+                is_child_algorithm=True,
+            )
+            splitLyr = self.algRunner.runSplitLinesWithLines(
+                inputLyr=clippedLyr,
+                linesLyr=intersectLyrRelatedToCell,
+                context=localContext,
+                feedback=None,
+                is_child_algorithm=False,
+            )
+            return splitLyr
+
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        futures = set()
+
+        for i, cell in enumerate(gridLayer.getFeatures()):
+            if multiStepFeedback.isCanceled():
+                break
+            futures.add(pool.submit(compute, inputLyr.clone(), linesLyr.clone(), cell))
+            multiStepFeedback.setProgress(i * cellStep)
+            if i % 5 == 0 and i > 0:
+                multiStepFeedback.pushInfo(
+                    self.tr(f"Submitted {i} of {cellCount} grid cells for processing")
+                )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Collecting results from parallel processing")
+        )
+        processedCount = 0
+        totalFutures = len(futures)
+        stepSize = 100 / totalFutures if totalFutures > 0 else 100
+        mergedLyr = self.layerHandler.createMemoryLayer(
+            name="MergedLines", crs=inputLyr.sourceCrs(), context=context
+        )
+        for future in concurrent.futures.as_completed(futures):
+            if multiStepFeedback.isCanceled():
+                break
+            processedCount += 1
+            result = future.result()
+            if isinstance(result, str):
+                result = QgsProcessingUtils.mapLayerFromString(result, context)
+            if isinstance(result, QgsVectorLayer):
+                self.algRunner.runMergeVectorLayers(
+                    inputList=[mergedLyr, result],
+                    context=context,
+                    feedback=multiStepFeedback,
+                    is_child_algorithm=True,
+                )
+            multiStepFeedback.setProgress(processedCount * stepSize)
+            if processedCount % 5 == 0 or processedCount == totalFutures:
+                multiStepFeedback.pushInfo(
+                    self.tr(
+                        f"Processed {processedCount}/{totalFutures} grid cells, merged {mergedLyr.featureCount()} line segments so far"
+                    )
+                )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Parallel processing complete"))
+        multiStepFeedback.pushInfo(
+            self.tr(f"Merged {mergedLyr.featureCount()} line segments")
+        )
+        return mergedLyr
 
     def name(self):
         """
