@@ -126,27 +126,33 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT)
             )
-        
+
         # Verificar se é uma camada raster
         if inputLyr.type() == QgsMapLayer.RasterLayer:
             # Obter o extent do raster e convertê-lo em um polígono
             extent = inputLyr.extent()
             rasterGeom = QgsGeometry.fromRect(extent)
-            
+
             # Criar uma camada temporária de polígono com esse extent
             fields = QgsFields()
-            tempLayer = QgsVectorLayer("Polygon?crs=" + inputLyr.crs().authid(), "temp", "memory")
+            tempLayer = QgsVectorLayer(
+                "Polygon?crs=" + inputLyr.crs().authid(), "temp", "memory"
+            )
             provider = tempLayer.dataProvider()
             tempLayer.startEditing()
             feat = QgsFeature()
             feat.setGeometry(rasterGeom)
             provider.addFeature(feat)
             tempLayer.commitChanges()
-            
+
             # Usar essa camada temporária como entrada
             inputLyr = tempLayer
-        
-        geomTypeLyr = inputLyr.geometryType() if hasattr(inputLyr, 'geometryType') else QgsWkbTypes.PolygonGeometry
+
+        geomTypeLyr = (
+            inputLyr.geometryType()
+            if hasattr(inputLyr, "geometryType")
+            else QgsWkbTypes.PolygonGeometry
+        )
         if (
             geomTypeLyr == QgsWkbTypes.PointGeometry
             or geomTypeLyr == QgsWkbTypes.LineGeometry
@@ -205,7 +211,7 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
 
         # Função de filtro para remover MI que não intersectam com a camada original
         def filterFunc(feat):
-            if hasattr(inputOld, 'type') and inputOld.type() == QgsMapLayer.RasterLayer:
+            if hasattr(inputOld, "type") and inputOld.type() == QgsMapLayer.RasterLayer:
                 geom = feat.geometry()
                 extent_geom = QgsGeometry.fromRect(inputOld.extent())
                 return geom.intersects(extent_geom)
@@ -218,22 +224,25 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
 
         # Se a entrada original for um polígono, não precisamos filtrar
         needsFiltering = True
-        if hasattr(inputOld, 'type'):
-            if inputOld.type() == QgsMapLayer.VectorLayer and inputOld.geometryType() == QgsWkbTypes.PolygonGeometry:
+        if hasattr(inputOld, "type"):
+            if (
+                inputOld.type() == QgsMapLayer.VectorLayer
+                and inputOld.geometryType() == QgsWkbTypes.PolygonGeometry
+            ):
                 needsFiltering = False
-        
+
         if needsFiltering:
             list(
                 map(
                     lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
-                    filter(filterFunc, featureList)
+                    filter(filterFunc, featureList),
                 )
             )
         else:
             list(
                 map(
                     lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
-                    featureList
+                    featureList,
                 )
             )
 
