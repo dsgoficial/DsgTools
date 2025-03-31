@@ -205,8 +205,19 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             inputList=constraintLyrList + [singleInputPolygonBoundariesLayer],
             context=context,
             feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.pushInfo(self.tr("Merged all line layers successfully"))
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Exploding lines"))
+        mergedLines = self.algRunner.runExplodeLines(
+            inputLyr=mergedLines,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=False,
+        )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -831,7 +842,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         linesFeatureCount = linesLyr.featureCount()
         totalFeatureCount = inputFeatureCount + linesFeatureCount
         if totalFeatureCount > threshold:
-            multiStepFeedback.pushInfo(
+            feedback.pushInfo(
                 self.tr(
                     f"Doing single threaded evaluation. Total feature count: {totalFeatureCount} > threshold: {threshold}"
                 )
