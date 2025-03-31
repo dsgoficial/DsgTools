@@ -125,6 +125,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
                 )
             )
         self.algRunner = AlgRunner()
+        self.layerHandler = LayerHandler()
         inputPolygonLyrList = self.parameterAsLayerList(
             parameters, self.INPUT_POLYGONS, context
         )
@@ -222,9 +223,21 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        uniqueBoundariesIdSet = self.getUniqueBoundariesIds(
-            inputLyr=intersectedLines,
-            referenceSet=inputPolygonLyrIdSet,
+        uniqueBoundariesIdSet = (
+            self.getUniqueBoundariesIds(
+                nx=nx,
+                inputLyr=intersectedLines,
+                referenceSet=inputPolygonLyrIdSet,
+                feedback=multiStepFeedback,
+            )
+            if intersectedLines.featureCount() < 10000
+            else self.getUniqueBoundariesIdsWithParallelProcessing(
+                inputLyr=intersectedLines,
+                referenceSet=inputPolygonLyrIdSet,
+                geographicBoundaryLyr=geographicBoundaryLyr,
+                context=context,
+                feedback=multiStepFeedback,
+            )
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -479,11 +492,11 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
 
     def getUniqueBoundariesIds(
         self,
+        nx,
         inputLyr: QgsVectorLayer,
         referenceSet: Set[str],
         feedback=None,
     ) -> Set[int]:
-        import networkx as nx
 
         G = nx.Graph()
         nFeats = inputLyr.featureCount()
@@ -505,6 +518,89 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             for startPoint, endPoint in G.edges()
             if G[startPoint][endPoint]["layerIdSet"].issubset(referenceSet)
         )
+
+    def getUniqueBoundariesIdsWithParallelProcessing(
+        self,
+        nx,
+        inputLyr: QgsVectorLayer,
+        referenceSet: Set[str],
+        geographicBoundaryLyr: Optional[QgsVectorLayer] = None,
+        context: Optional[QgsProcessingContext] = None,
+        feedback: Optional[QgsFeedback] = None,
+    ) -> Set[int]:
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback=feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        layerToSplit = (
+            geographicBoundaryLyr
+            if geographicBoundaryLyr is not None
+            else self.algRunner.runPolygonFromLayerExtent(
+                inputLyr=inputLyr,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        referencePolygonLayer = self.algRunner.runDSGToolsPolygonTiler(
+            inputLayer=layerToSplit,
+            context=context,
+            feedback=multiStepFeedback,
+            rows=os.cpu_count() // 2,
+            columns=os.cpu_count() // 2,
+            includePartial=True,
+        )
+        outputSet = set()
+
+        def compute(inputLyr: QgsVectorLayer, polygonTile: QgsVectorLayer) -> Set[int]:
+            localContext = QgsProcessingContext()
+            extractedLines = self.algRunner.runExtractByLocation(
+                inputLyr=inputLyr,
+                overlayLyr=polygonTile,
+                context=localContext,
+                predicate=AlgRunner.Intersects,
+                feedback=None,
+            )
+            return self.getUniqueBoundariesIds(
+                nx=nx,
+                inputLyr=extractedLines,
+                referenceSet=referenceSet,
+            )
+
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        futures = set()
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        nFeats = referencePolygonLayer.featureCount()
+        if nFeats == 0:
+            return set()
+        if nFeats == 1:
+            return self.getUniqueBoundariesIds(
+                nx=nx,
+                inputLyr=inputLyr,
+                referenceSet=referenceSet,
+            )
+        stepSize = 100 / nFeats
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        for current, polygonTile in enumerate(referencePolygonLayer.getFeatures()):
+            if multiStepFeedback.isCanceled():
+                break
+            tileLayer = self.layerHandler.createMemoryLayerWithFeature(
+                layer=referencePolygonLayer, feat=polygonTile, context=context
+            )
+            futures.add(pool.submit(compute, inputLyr.clone(), tileLayer))
+            multiStepFeedback.setProgress(current * stepSize)
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        for current, future in concurrent.futures.as_completed(futures):
+            if multiStepFeedback.isCanceled():
+                break
+            outputSet.update(future.result())
+            multiStepFeedback.setProgress(current * stepSize)
+        return outputSet
 
     def name(self):
         """

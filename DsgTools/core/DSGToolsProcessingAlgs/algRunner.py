@@ -2757,3 +2757,53 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+
+    def runDSGToolsPolygonTiler(
+        self,
+        inputLayer: QgsVectorLayer,
+        rows: int,
+        cols: int,
+        context: QgsProcessingContext,
+        includePartial: bool,
+        feedback: Optional[QgsFeedback] = None,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        is_child_algorithm: Optional[bool] = False,
+    ) -> Union[QgsVectorLayer, str]:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:polygontiler",
+            {
+                "INPUT": inputLayer,
+                "ROWS": rows,
+                "COLUMNS": cols,
+                "INCLUDE_PARTIAL": includePartial,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runPolygonFromLayerExtent(
+        self,
+        inputLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        roundTo: Optional[float] = 0.0,
+        feedback: Optional[QgsFeedback] = None,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        is_child_algorithm: Optional[bool] = False,
+    ) -> Union[QgsVectorLayer, str]:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:polygonfromlayerextent",
+            {
+                "INPUT": inputLayer,
+                "ROUND_TO": roundTo,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
