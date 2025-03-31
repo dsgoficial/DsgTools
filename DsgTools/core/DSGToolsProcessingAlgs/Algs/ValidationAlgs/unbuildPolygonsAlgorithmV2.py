@@ -155,6 +155,8 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             mergeOutputs=True,
             is_child_algorithm=False,
         )[0]
+        multiStepFeedback.pushInfo(self.tr("Single polygon layer built successfully"))
+
         outputSinkFields = singleInputPolygonBoundariesLayer.fields()
         (output_center_point_sink, output_center_point_sink_id) = self.parameterAsSink(
             parameters,
@@ -173,12 +175,16 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             singleInputPolygonBoundariesLayer.sourceCrs(),
         )
         if singleInputPolygonBoundariesLayer.featureCount() == 0:
+            multiStepFeedback.pushInfo(
+                self.tr("No features found in input layers. Processing complete.")
+            )
             return {
                 self.OUTPUT_CENTER_POINTS: output_center_point_sink_id,
                 self.OUTPUT_BOUNDARIES: output_boundaries_sink_id,
             }
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Preparing constraint layers"))
         inputConstraintLyrList = constraintLineLyrList + constraintPolygonLyrList
         if geographicBoundaryLyr is not None:
             inputConstraintLyrList.append(geographicBoundaryLyr)
@@ -189,20 +195,30 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             onlySelected=onlySelected,
             is_child_algorithm=True,
         )
+        multiStepFeedback.pushInfo(self.tr("Constraint layers prepared successfully"))
+
         currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Merging all line layers"))
         mergedLines = self.algRunner.runMergeVectorLayers(
             inputList=constraintLyrList + [singleInputPolygonBoundariesLayer],
             context=context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
+        multiStepFeedback.pushInfo(self.tr("Merged all line layers successfully"))
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Creating spatial index for merged lines"))
         self.algRunner.runCreateSpatialIndex(
             mergedLines, context, feedback, is_child_algorithm=True
         )
+        multiStepFeedback.pushInfo(self.tr("Spatial index created successfully"))
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Splitting lines at intersections"))
         intersectedLines = self.algRunner.runSplitLinesWithLines(
             inputLyr=mergedLines,
             linesLyr=mergedLines,
@@ -210,8 +226,15 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
+        multiStepFeedback.pushInfo(
+            self.tr("Lines split successfully at all intersections")
+        )
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Creating feature ID field for each line segment")
+        )
         intersectedLines = self.algRunner.runCreateFieldWithExpression(
             inputLyr=intersectedLines,
             expression="$id",
@@ -221,8 +244,11 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             context=context,
             is_child_algorithm=False,
         )
+        multiStepFeedback.pushInfo(self.tr("Feature ID field created successfully"))
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Identifying unique boundaries"))
         uniqueBoundariesIdSet = (
             self.getUniqueBoundariesIds(
                 nx=nx,
@@ -232,6 +258,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             )
             if intersectedLines.featureCount() < 10000
             else self.getUniqueBoundariesIdsWithParallelProcessing(
+                nx=nx,
                 inputLyr=intersectedLines,
                 referenceSet=inputPolygonLyrIdSet,
                 geographicBoundaryLyr=geographicBoundaryLyr,
@@ -239,17 +266,27 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
                 feedback=multiStepFeedback,
             )
         )
+        multiStepFeedback.pushInfo(
+            self.tr(f"Found {len(uniqueBoundariesIdSet)} unique boundary segments")
+        )
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         if len(uniqueBoundariesIdSet) > 0:
+            multiStepFeedback.pushInfo(self.tr("Filtering unique boundary lines"))
             uniqueBoundaries = self.algRunner.runFilterExpression(
                 inputLyr=intersectedLines,
                 expression=f"\"featid\" IN ({','.join(map(str, uniqueBoundariesIdSet))})",
                 context=context,
                 feedback=multiStepFeedback,
             )
+            multiStepFeedback.pushInfo(
+                self.tr("Unique boundary lines filtered successfully")
+            )
+
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Merging connected line segments"))
             self.algRunner.runDSGToolsMergeLines(
                 uniqueBoundaries,
                 context=context,
@@ -258,18 +295,30 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
                 allowClosed=False,
                 lineFilterLyrList=constraintLyrList,
             )
+            multiStepFeedback.pushInfo(self.tr("Line segments merged successfully"))
+
             outputBoundariesLambda = lambda x: output_boundaries_sink.addFeature(x)
             list(map(outputBoundariesLambda, uniqueBoundaries.getFeatures()))
+            multiStepFeedback.pushInfo(
+                self.tr(f"Added {uniqueBoundaries.featureCount()} boundaries to output")
+            )
+        else:
+            multiStepFeedback.pushInfo(self.tr("No unique boundaries found to process"))
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Merging input polygon layers"))
         mergedInputPolygons = self.algRunner.runMergeVectorLayers(
             inputList=parameters[self.INPUT_POLYGONS],
             context=context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
+        multiStepFeedback.pushInfo(self.tr("Input polygon layers merged successfully"))
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Creating layer ID field"))
         mergedInputPolygons = self.algRunner.runCreateFieldWithExpression(
             mergedInputPolygons,
             fieldName="layer_id",
@@ -279,23 +328,38 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
+        multiStepFeedback.pushInfo(self.tr("Layer ID field created successfully"))
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Creating spatial index for merged polygons")
+        )
         self.algRunner.runCreateSpatialIndex(
             mergedInputPolygons,
             context,
             feedback,
             is_child_algorithm=True,
         )
+        multiStepFeedback.pushInfo(self.tr("Spatial index created successfully"))
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Creating polygons from line network"))
         polygonizeOutput = self.algRunner.runPolygonize(
             inputLyr=intersectedLines,
             context=context,
             feedback=multiStepFeedback,
         )
+        multiStepFeedback.pushInfo(
+            self.tr(
+                f"Created {polygonizeOutput.featureCount()} polygons from line network"
+            )
+        )
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Creating center points for each polygon"))
         centerPointLayer = self.algRunner.runPointOnSurface(
             polygonizeOutput,
             context,
@@ -303,24 +367,41 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
+        multiStepFeedback.pushInfo(self.tr("Center points created successfully"))
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Converting multipart geometries to single parts")
+        )
         centerPointLayer = self.algRunner.runMultipartToSingleParts(
             inputLayer=centerPointLayer,
             context=context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
+        multiStepFeedback.pushInfo(
+            self.tr(
+                f"Converted to {centerPointLayer.featureCount()} single part geometries"
+            )
+        )
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Creating spatial index for center points"))
         self.algRunner.runCreateSpatialIndex(
             centerPointLayer,
             context,
             feedback,
             is_child_algorithm=True,
         )
+        multiStepFeedback.pushInfo(self.tr("Spatial index created successfully"))
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Extracting center points inside input polygons")
+        )
         centerPointsInsideInput = self.algRunner.runExtractByLocation(
             centerPointLayer,
             mergedInputPolygons,
@@ -328,9 +409,18 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             predicate=AlgRunner.Within,
             feedback=multiStepFeedback,
         )
+        multiStepFeedback.pushInfo(
+            self.tr(
+                f"Extracted {centerPointsInsideInput.featureCount()} center points inside polygons"
+            )
+        )
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         if geographicBoundaryLyr is not None:
+            multiStepFeedback.pushInfo(
+                self.tr("Filtering center points by geographic boundary")
+            )
             centerPointsInsideInput = self.algRunner.runExtractByLocation(
                 centerPointsInsideInput,
                 geographicBoundaryLyr,
@@ -338,16 +428,30 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
                 predicate=AlgRunner.Within,
                 feedback=multiStepFeedback,
             )
+            multiStepFeedback.pushInfo(
+                self.tr(
+                    f"Filtered to {centerPointsInsideInput.featureCount()} center points within boundary"
+                )
+            )
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Creating spatial index for filtered center points")
+        )
         self.algRunner.runCreateSpatialIndex(
             centerPointsInsideInput,
             context,
             feedback,
             is_child_algorithm=True,
         )
+        multiStepFeedback.pushInfo(self.tr("Spatial index created successfully"))
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Joining polygon attributes to center points")
+        )
         final_result_lyr = self.algRunner.runJoinAttributesByLocation(
             centerPointsInsideInput,
             mergedInputPolygons,
@@ -356,6 +460,11 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             method=0,  # Take attributes from the first located feature
             discardNonMatching=False,
             feedback=multiStepFeedback,
+        )
+        multiStepFeedback.pushInfo(
+            self.tr(
+                f"Successfully joined attributes to {final_result_lyr.featureCount()} center points"
+            )
         )
 
         def outputFeature(feat):
@@ -368,7 +477,15 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             newFeat.setGeometry(feat.geometry())
             output_center_point_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
 
-        list(map(outputFeature, final_result_lyr.getFeatures()))
+        count = 0
+        for feat in final_result_lyr.getFeatures():
+            outputFeature(feat)
+            count += 1
+
+        multiStepFeedback.pushInfo(
+            self.tr(f"Added {count} center points to output sink")
+        )
+        multiStepFeedback.pushInfo(self.tr("Processing complete!"))
 
         return {
             self.OUTPUT_CENTER_POINTS: output_center_point_sink_id,
@@ -399,6 +516,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 break
             multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr(f"Preparing layer: {lyr.name()}"))
             outputLyr = self.prepareLayer(
                 lyr,
                 onlySelected=onlySelected,
@@ -407,6 +525,9 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
                 is_child_algorithm=True,
             )
             layerList.append(outputLyr)
+            multiStepFeedback.pushInfo(
+                self.tr(f"Layer {lyr.name()} prepared successfully")
+            )
         if not mergeOutputs:
             return layerList
         multiStepFeedback.setCurrentStep(currentStep + 1)
@@ -423,6 +544,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         )
         if is_child_algorithm == False and isinstance(mergedLayer, str):
             mergedLayer = [QgsProcessingUtils.mapLayerFromString(mergedLayer, context)]
+        multiStepFeedback.pushInfo(self.tr("Layers merged successfully"))
         return mergedLayer
 
     def prepareLayer(
@@ -456,9 +578,14 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             context=localContext,
             is_child_algorithm=True,
         )
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Layer ID attribute added successfully"))
+
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
+            if inputLyr.geometryType() == QgsWkbTypes.PolygonGeometry:
+                multiStepFeedback.pushInfo(self.tr("Converting polygons to lines"))
         linesLyr = (
             self.algRunner.runPolygonsToLines(
                 inputLyr=layerWithId,
@@ -469,15 +596,31 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             if inputLyr.geometryType() == QgsWkbTypes.PolygonGeometry
             else layerWithId
         )
+        if (
+            multiStepFeedback is not None
+            and inputLyr.geometryType() == QgsWkbTypes.PolygonGeometry
+        ):
+            multiStepFeedback.pushInfo(
+                self.tr("Polygons converted to lines successfully")
+            )
+
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(
+                self.tr("Converting multipart geometries to single parts")
+            )
         singlePartsLyr = self.algRunner.runMultipartToSingleParts(
             inputLayer=linesLyr,
             context=localContext,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(
+                self.tr("Multipart geometries converted successfully")
+            )
+
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -488,6 +631,9 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=is_child_algorithm,
         )
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Lines exploded successfully"))
+
         return explodedLinesLyr
 
     def getUniqueBoundariesIds(
@@ -497,13 +643,15 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         referenceSet: Set[str],
         feedback=None,
     ) -> Set[int]:
+        if feedback is not None:
+            feedback.pushInfo(self.tr("Building network graph from line segments"))
 
         G = nx.Graph()
         nFeats = inputLyr.featureCount()
         if nFeats == 0:
             return set()
         stepSize = 100 / nFeats
-        for feat in inputLyr.getFeatures():
+        for i, feat in enumerate(inputLyr.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 break
             geom = feat.geometry()
@@ -511,13 +659,26 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             if not G.has_edge(startPoint, endPoint):
                 G.add_edge(startPoint, endPoint, layerIdSet=set(), featid=feat.id())
             G[startPoint][endPoint]["layerIdSet"].add(feat["layer_id"])
-            if feedback is not None:
-                feedback.setProgress(int(feat.id() * stepSize))
-        return set(
+            if feedback is not None and i % 1000 == 0:
+                feedback.setProgress(int(i * stepSize))
+                feedback.pushInfo(self.tr(f"Processed {i} of {nFeats} line segments"))
+
+        if feedback is not None:
+            feedback.pushInfo(
+                self.tr("Identifying boundaries belonging only to input layers")
+            )
+            feedback.setProgress(100)
+
+        result = set(
             G[startPoint][endPoint]["featid"]
             for startPoint, endPoint in G.edges()
             if G[startPoint][endPoint]["layerIdSet"].issubset(referenceSet)
         )
+
+        if feedback is not None:
+            feedback.pushInfo(self.tr(f"Found {len(result)} unique boundary segments"))
+
+        return result
 
     def getUniqueBoundariesIdsWithParallelProcessing(
         self,
@@ -531,6 +692,8 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback=feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Creating grid for parallel processing"))
+
         layerToSplit = (
             geographicBoundaryLyr
             if geographicBoundaryLyr is not None
@@ -541,16 +704,28 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
                 is_child_algorithm=True,
             )
         )
+        multiStepFeedback.pushInfo(self.tr("Layer extent determined for grid creation"))
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Creating polygon grid for parallel processing")
+        )
+        cpuCount = os.cpu_count() // 2
         referencePolygonLayer = self.algRunner.runDSGToolsPolygonTiler(
             inputLayer=layerToSplit,
             context=context,
             feedback=multiStepFeedback,
-            rows=os.cpu_count() // 2,
-            columns=os.cpu_count() // 2,
+            rows=cpuCount,
+            columns=cpuCount,
             includePartial=True,
         )
+        multiStepFeedback.pushInfo(
+            self.tr(
+                f"Created grid with {referencePolygonLayer.featureCount()} cells for parallel processing"
+            )
+        )
+
         outputSet = set()
 
         def compute(inputLyr: QgsVectorLayer, polygonTile: QgsVectorLayer) -> Set[int]:
@@ -572,34 +747,74 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         futures = set()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Starting parallel processing of grid cells")
+        )
+
         nFeats = referencePolygonLayer.featureCount()
         if nFeats == 0:
             return set()
         if nFeats == 1:
+            multiStepFeedback.pushInfo(
+                self.tr("Only one grid cell, reverting to single-process mode")
+            )
             return self.getUniqueBoundariesIds(
                 nx=nx,
                 inputLyr=inputLyr,
                 referenceSet=referenceSet,
+                feedback=multiStepFeedback,
             )
+
         stepSize = 100 / nFeats
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         for current, polygonTile in enumerate(referencePolygonLayer.getFeatures()):
             if multiStepFeedback.isCanceled():
                 break
+            multiStepFeedback.pushInfo(
+                self.tr(f"Submitting grid cell {current+1}/{nFeats} for processing")
+            )
             tileLayer = self.layerHandler.createMemoryLayerWithFeature(
                 layer=referencePolygonLayer, feat=polygonTile, context=context
             )
             futures.add(pool.submit(compute, inputLyr.clone(), tileLayer))
             multiStepFeedback.setProgress(current * stepSize)
+            if current % 5 == 0 and current > 0:
+                multiStepFeedback.pushInfo(
+                    self.tr(
+                        f"Submitted {current} of {nFeats} grid cells for processing"
+                    )
+                )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        for current, future in concurrent.futures.as_completed(futures):
+        multiStepFeedback.pushInfo(
+            self.tr("Collecting results from parallel processing")
+        )
+        processedCount = 0
+        totalFutures = len(futures)
+        stepSize = 100 / totalFutures if totalFutures > 0 else 100
+
+        for future in concurrent.futures.as_completed(futures):
             if multiStepFeedback.isCanceled():
                 break
-            outputSet.update(future.result())
-            multiStepFeedback.setProgress(current * stepSize)
+            processedCount += 1
+            result = future.result()
+            outputSet.update(result)
+            multiStepFeedback.setProgress(processedCount * stepSize)
+
+            if processedCount % 5 == 0 or processedCount == totalFutures:
+                multiStepFeedback.pushInfo(
+                    self.tr(
+                        f"Processed {processedCount}/{totalFutures} grid cells, found {len(outputSet)} unique boundaries so far"
+                    )
+                )
+
+        multiStepFeedback.pushInfo(
+            self.tr(
+                f"Parallel processing complete. Total unique boundaries: {len(outputSet)}"
+            )
+        )
         return outputSet
 
     def name(self):
