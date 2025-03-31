@@ -2762,7 +2762,7 @@ class AlgRunner:
         self,
         inputLayer: QgsVectorLayer,
         rows: int,
-        cols: int,
+        columns: int,
         context: QgsProcessingContext,
         includePartial: bool,
         feedback: Optional[QgsFeedback] = None,
@@ -2775,7 +2775,7 @@ class AlgRunner:
             {
                 "INPUT": inputLayer,
                 "ROWS": rows,
-                "COLUMNS": cols,
+                "COLUMNS": columns,
                 "INCLUDE_PARTIAL": includePartial,
                 "OUTPUT": outputLyr,
             },

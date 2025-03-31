@@ -865,7 +865,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         gridLayer = self.runDSGToolsPolygonTiler(
             extentLayer,
             rows=partitionCount,
-            cols=partitionCount,
+            columns=partitionCount,
             context=context,
             includePartial=True,
             feedback=multiStepFeedback,
