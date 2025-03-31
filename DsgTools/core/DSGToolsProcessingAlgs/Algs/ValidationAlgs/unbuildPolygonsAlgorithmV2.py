@@ -205,7 +205,6 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             inputList=constraintLyrList + [singleInputPolygonBoundariesLayer],
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True,
         )
         multiStepFeedback.pushInfo(self.tr("Merged all line layers successfully"))
 
