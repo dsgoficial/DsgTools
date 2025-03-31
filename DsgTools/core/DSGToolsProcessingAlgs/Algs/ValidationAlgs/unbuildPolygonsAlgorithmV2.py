@@ -700,7 +700,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             geographicBoundaryLyr
             if geographicBoundaryLyr is not None
             else self.algRunner.runPolygonFromLayerExtent(
-                inputLyr=inputLyr,
+                inputLayer=inputLyr,
                 context=context,
                 feedback=multiStepFeedback,
                 is_child_algorithm=True,
