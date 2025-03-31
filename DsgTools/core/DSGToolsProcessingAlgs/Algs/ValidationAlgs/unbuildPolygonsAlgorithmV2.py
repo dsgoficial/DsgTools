@@ -143,13 +143,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         inputPolygonLyrIdSet = set(lyr.id() for lyr in inputPolygonLyrList)
-        # Compute the number of steps to display within the progress bar and
-        # get features from source
-        # alg steps:
-        # 1- Build single polygon layer
-        # 2- Compute center points
-        # 3- Compute boundaries
-        multiStepFeedback = QgsProcessingMultiStepFeedback(19, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(20, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Building single polygon layer"))
@@ -251,7 +245,6 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
                 allowClosed=False,
                 lineFilterLyrList=constraintLyrList,
             )
-            uniqueBoundaries.commitChanges()
             outputBoundariesLambda = lambda x: output_boundaries_sink.addFeature(x)
             list(map(outputBoundariesLambda, uniqueBoundaries.getFeatures()))
         currentStep += 1
@@ -322,6 +315,16 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             predicate=AlgRunner.Within,
             feedback=multiStepFeedback,
         )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        if geographicBoundaryLyr is not None:
+            centerPointsInsideInput = self.algRunner.runExtractByLocation(
+                centerPointsInsideInput,
+                geographicBoundaryLyr,
+                context,
+                predicate=AlgRunner.Within,
+                feedback=multiStepFeedback,
+            )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
@@ -475,17 +478,28 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         return explodedLinesLyr
 
     def getUniqueBoundariesIds(
-        self, inputLyr: QgsVectorLayer, referenceSet: Set[str]
+        self,
+        inputLyr: QgsVectorLayer,
+        referenceSet: Set[str],
+        feedback=None,
     ) -> Set[int]:
         import networkx as nx
 
         G = nx.Graph()
+        nFeats = inputLyr.featureCount()
+        if nFeats == 0:
+            return set()
+        stepSize = 100 / nFeats
         for feat in inputLyr.getFeatures():
+            if feedback is not None and feedback.isCanceled():
+                break
             geom = feat.geometry()
             startPoint, endPoint = geom.asPolyline()[0], geom.asPolyline()[-1]
             if not G.has_edge(startPoint, endPoint):
                 G.add_edge(startPoint, endPoint, layerIdSet=set(), featid=feat.id())
             G[startPoint][endPoint]["layerIdSet"].add(feat["layer_id"])
+            if feedback is not None:
+                feedback.setProgress(int(feat.id() * stepSize))
         return set(
             G[startPoint][endPoint]["featid"]
             for startPoint, endPoint in G.edges()

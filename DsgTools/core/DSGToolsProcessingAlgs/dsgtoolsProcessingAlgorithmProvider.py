@@ -72,6 +72,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractMiddleVertex
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.lineOnAreaOverlayer import (
     LineOnAreaOverlayerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.polygonTiler import (
+    PolygonTilerAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.setLineOrientation import (
     SetLineOrientation,
 )
@@ -787,6 +790,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(),
             LineOnAreaOverlayerAlgorithm(),
             UnbuildPolygonsAlgorithmV2(),
+            PolygonTilerAlgorithm(),
         ]
         return algList
 
