@@ -928,7 +928,12 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         for i, cell in enumerate(gridLayer.getFeatures()):
             if multiStepFeedback.isCanceled():
                 break
-            futures.add(pool.submit(compute, inputLyr.clone(), linesLyr.clone(), cell))
+            cellLyr = self.layerHandler.createMemoryLayerWithFeature(
+                layer=gridLayer, feat=cell, context=context
+            )
+            futures.add(
+                pool.submit(compute, inputLyr.clone(), linesLyr.clone(), cellLyr)
+            )
             multiStepFeedback.setProgress(i * cellStep)
             if i % 5 == 0 and i > 0:
                 multiStepFeedback.pushInfo(
@@ -942,9 +947,8 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         processedCount = 0
         totalFutures = len(futures)
         stepSize = 100 / totalFutures if totalFutures > 0 else 100
-        mergedLyr = self.layerHandler.createMemoryLayer(
-            name="MergedLines", crs=inputLyr.sourceCrs(), context=context
-        )
+        mergedLyr = None
+        layersToMerge = []
         for future in concurrent.futures.as_completed(futures):
             if multiStepFeedback.isCanceled():
                 break
@@ -953,14 +957,25 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             if isinstance(result, str):
                 result = QgsProcessingUtils.mapLayerFromString(result, context)
             if isinstance(result, QgsVectorLayer):
-                self.algRunner.runMergeVectorLayers(
-                    inputList=[mergedLyr, result],
-                    context=context,
-                    feedback=multiStepFeedback,
-                    is_child_algorithm=True,
-                )
+                layersToMerge.append(result)
+            if len(layersToMerge) >= 10 or processedCount == totalFutures:
+                if mergedLyr is None:
+                    mergedLyr = self.algRunner.runMergeVectorLayers(
+                        inputList=layersToMerge,
+                        context=context,
+                        feedback=multiStepFeedback,
+                        is_child_algorithm=True,
+                    )
+                else:
+                    mergedLyr = self.algRunner.runMergeVectorLayers(
+                        inputList=[mergedLyr] + layersToMerge,
+                        context=context,
+                        feedback=multiStepFeedback,
+                        is_child_algorithm=True,
+                    )
+                layersToMerge = []
             multiStepFeedback.setProgress(processedCount * stepSize)
-            if processedCount % 5 == 0 or processedCount == totalFutures:
+            if processedCount % 10 == 0 or processedCount == totalFutures:
                 multiStepFeedback.pushInfo(
                     self.tr(
                         f"Processed {processedCount}/{totalFutures} grid cells, merged {mergedLyr.featureCount()} line segments so far"
