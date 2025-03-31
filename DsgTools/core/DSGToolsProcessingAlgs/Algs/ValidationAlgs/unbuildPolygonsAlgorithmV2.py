@@ -224,7 +224,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             linesLyr=mergedLines,
             context=context,
             feedback=multiStepFeedback,
-            threshold=10000,
+            threshold=5_000,
             is_child_algorithm=True,
         )
         multiStepFeedback.pushInfo(
@@ -831,6 +831,11 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         linesFeatureCount = linesLyr.featureCount()
         totalFeatureCount = inputFeatureCount + linesFeatureCount
         if totalFeatureCount > threshold:
+            multiStepFeedback.pushInfo(
+                self.tr(
+                    f"Doing single threaded evaluation. Total feature count: {totalFeatureCount} > threshold: {threshold}"
+                )
+            )
             return self.algRunner.runSplitLinesWithLines(
                 inputLyr=inputLyr,
                 linesLyr=linesLyr,
