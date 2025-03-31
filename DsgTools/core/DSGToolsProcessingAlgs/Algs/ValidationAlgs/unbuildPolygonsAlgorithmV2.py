@@ -385,11 +385,6 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
-        multiStepFeedback.pushInfo(
-            self.tr(
-                f"Converted to {centerPointLayer.featureCount()} single part geometries"
-            )
-        )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
