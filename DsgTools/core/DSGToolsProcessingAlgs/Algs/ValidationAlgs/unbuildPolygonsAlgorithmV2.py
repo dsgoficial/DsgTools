@@ -229,7 +229,6 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
             threshold=10_000,
-            is_child_algorithm=True,
         )
         multiStepFeedback.pushInfo(
             self.tr("Lines split successfully at all intersections")
@@ -824,7 +823,6 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         context: QgsProcessingContext,
         feedback: QgsFeedback,
         threshold: Optional[int] = 10000,
-        is_child_algorithm: Optional[bool] = False,
     ) -> QgsVectorLayer:
         inputFeatureCount = inputLyr.featureCount()
         linesFeatureCount = linesLyr.featureCount()
@@ -980,8 +978,10 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         multiStepFeedback.pushInfo(
             self.tr(f"Evaluation of {totalFeatureCount} elements complete.")
         )
-        if is_child_algorithm == False:
-            mergedLyr = QgsProcessingUtils.mapLayerFromString(mergedLyr, context)
+        mergedLyr = QgsProcessingUtils.mapLayerFromString(mergedLyr, context)
+        multiStepFeedback.pushInfo(
+            self.tr(f"Output layer has {mergedLyr.featureCount()} segments.")
+        )
         return mergedLyr
 
     def name(self):
