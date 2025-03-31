@@ -898,7 +898,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             )
             intersectLyrRelatedToCell = self.algRunner.runExtractByLocation(
                 inputLyr=intersectLyr,
-                overlayLyr=cellLyr,
+                intersectLyr=cellLyr,
                 context=localContext,
                 predicate=AlgRunner.Intersects,
                 feedback=None,
