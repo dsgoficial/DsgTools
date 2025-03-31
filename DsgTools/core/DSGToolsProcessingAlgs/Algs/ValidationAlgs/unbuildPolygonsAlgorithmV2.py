@@ -911,7 +911,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
                 linesLyr=intersectLyrRelatedToCell,
                 context=localContext,
                 feedback=None,
-                is_child_algorithm=False,
+                is_child_algorithm=True,
             )
             return splitLyr
 
