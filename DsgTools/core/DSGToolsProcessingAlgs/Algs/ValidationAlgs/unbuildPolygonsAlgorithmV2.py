@@ -149,7 +149,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         # 1- Build single polygon layer
         # 2- Compute center points
         # 3- Compute boundaries
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(19, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Building single polygon layer"))
