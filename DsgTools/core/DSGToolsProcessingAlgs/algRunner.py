@@ -1017,11 +1017,16 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         onlySelected=False,
+        is_child_algorithm=True,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLyr, "ALL_PARTS": allParts, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:pointonsurface", parameters, context=context, feedback=feedback
+            "native:pointonsurface",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1154,13 +1159,14 @@ class AlgRunner:
 
     def runSplitLinesWithLines(
         self,
-        inputLyr,
-        linesLyr,
-        context,
-        feedback=None,
-        onlySelected=False,
-        outputLyr=None,
-    ):
+        inputLyr: QgsVectorLayer,
+        linesLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        feedback: Optional[QgsFeedback] = None,
+        onlySelected: Optional[bool] = False,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        is_child_algorithm: Optional[bool] = False,
+    ) -> Union[QgsVectorLayer, str]:
         inputLyr = (
             QgsProcessingUtils.mapLayerFromString(inputLyr, context)
             if isinstance(inputLyr, str)
@@ -1184,7 +1190,11 @@ class AlgRunner:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": usedInput, "LINES": usedLines, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:splitwithlines", parameters, context=context, feedback=feedback
+            "native:splitwithlines",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 

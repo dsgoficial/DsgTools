@@ -126,6 +126,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapFeaturesInside
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.splitContoursAtMaximumLengthAlgorithm import (
     SplitContoursAtMaximumLengthAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unbuildPolygonsAlgorithmV2 import (
+    UnbuildPolygonsAlgorithmV2,
+)
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -783,6 +786,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(),
             LineOnAreaOverlayerAlgorithm(),
+            UnbuildPolygonsAlgorithmV2(),
         ]
         return algList
 
