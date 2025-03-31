@@ -935,7 +935,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
                 pool.submit(compute, inputLyr.clone(), linesLyr.clone(), cellLyr)
             )
             multiStepFeedback.setProgress(i * cellStep)
-            if i % 5 == 0 and i > 0:
+            if i % 20 == 0 or i >= cellCount - 1:
                 multiStepFeedback.pushInfo(
                     self.tr(f"Submitted {i} of {cellCount} grid cells for processing")
                 )
@@ -977,9 +977,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
             multiStepFeedback.setProgress(processedCount * stepSize)
             if processedCount % 10 == 0 or processedCount == totalFutures:
                 multiStepFeedback.pushInfo(
-                    self.tr(
-                        f"Processed {processedCount}/{totalFutures} grid cells, merged {mergedLyr.featureCount()} line segments so far"
-                    )
+                    self.tr(f"Processed {processedCount}/{totalFutures} grid cells")
                 )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -987,6 +985,8 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         multiStepFeedback.pushInfo(
             self.tr(f"Merged {mergedLyr.featureCount()} line segments")
         )
+        if is_child_algorithm == False:
+            mergedLyr = QgsProcessingUtils.mapLayerFromString(mergedLyr, context)
         return mergedLyr
 
     def name(self):
