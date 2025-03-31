@@ -871,7 +871,7 @@ class UnbuildPolygonsAlgorithmV2(ValidationAlgorithm):
         multiStepFeedback.pushInfo("Creating processing grid")
 
         # Create grid with the appropriate number of rows and columns
-        gridLayer = self.runDSGToolsPolygonTiler(
+        gridLayer = self.algRunner.runDSGToolsPolygonTiler(
             extentLayer,
             rows=partitionCount,
             columns=partitionCount,
