@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.34 - dev
+## 4.17.35 - dev
 
 Novas Funcionalidades:
 
@@ -41,6 +41,7 @@ Melhorias:
 - Melhora o desempenho do identificar Z;
 - Melhoria no processo de converter imagens e preencher metadados para carga no BDGEx (opções de sensores);
 - Melhoria no processo de criar molduras a partir de uma camada (agora aceita camada raster como entrada);
+- Melhoria no processo de desconstruir polígonos;
 
 Correção de bugs:
 
