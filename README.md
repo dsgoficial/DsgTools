@@ -1,4 +1,3 @@
-
 ![DSGTools](https://github.com/dsgoficial/DsgTools/assets/6131641/fc2511a4-607b-4ce6-a24c-96b390be2739)
 
 #
@@ -14,39 +13,79 @@
 ------------------------------------
 # Complemento DSGTools
 
-O DSGTools é um complemento para o QGIS (http://qgis.org/pt_BR/site/) que permite aos usuários a criação e utilização de produtos cartográficos de acordo com as especificações da ET-EDGV 2.1.3 e da ET-EDGV 3.0. O DSGTools visa atender não apenas o Exército Brasileiro, mas também produtores e usuários de geoinformação da sociedade.
-Este projeto visa cumprir a missão estabelecida no Plano Estratégico do Exército 2016-2019 (PEEx 2016-2019), relativo ao seguinte Objetivo Estratégico do Exército (OEE):
-* OEE 7 - Aprimorar a Governança de Tecnologia da Informação;
-* Estratégia 7.2 - Reorganização do Sistema de Informação do Exército (SINFOEx);
-* Ação Estratégica 7.2.1 - Aperfeiçoar a produção e disponibilização da geoinformação;
-* Atividade imposta 7.2.1.5 - Implantar o SIG para ambiente desktop no âmbito do Exército.
+O DSGTools é um complemento para o QGIS (http://qgis.org/pt_BR/site/) que permite aos usuários a criação e utilização de produtos cartográficos de acordo com as especificações da ET-EDGV. O DSGTools visa atender não apenas o Exército Brasileiro, mas também produtores e usuários de geoinformação da sociedade.
 
-O plugin foi todo desenvolvido em python e está disponível para download pelo próprio QGIS ou pelo endereço http://plugins.qgis.org/plugins/DsgTools/.
+## Enquadramento Estratégico Atual
 
-Estão disponíveis as seguintes funcionalidades no plugin em sua versão 3.1 (changelog completo disponível em https://github.com/dsgoficial/DsgTools/wiki ):
+Este projeto visa cumprir a missão estabelecida no Plano Estratégico do Exército 2024-2027 (PEEx 2024-2027), relativo ao seguinte Objetivo Estratégico do Exército (OEE):
+* OEE 6 - Aperfeiçoar os Sistemas de Informação e de Comando e Controle do Exército
+* Estratégia 6.3 - Ampliação das capacidades de produção e disseminação de geoinformação
+* Iniciativa 6.3.1.1 - Ampliar a capacidade de uso de geoinformação digital da F Ter
+* Iniciativa 6.3.2.1 - Obter sistemas de produção de geoinformação com o uso de Inteligência Artificial
 
-- Criação, armazenamento e remoção de configuração de servidores PostGIS;
-- Criação de banco de dados em Spatialite e em PostGIS de acordo a ET-EDGV 2.1.3 e ET-EDGV 3.0;
-- Criação de banco de dados em Spatialite e em PostGIS de acordo com ET-EDGV 2.1.3, ET-EDGV 3.0;
-- Carregamento de camadas por classe e por categoria conforme definido na ET-EDGV 2.1.3, ET-EDGV 3.0;
-- Manipulação de feições complexas (criação, edição, remoção, zoom, associação e desassociação);
-- Acesso a alguns serviços WM(T)S do BDGEx e;
-- Acesso ao mapa índice de produtos vetoriais e matriciais do BDGEx.
-- Ferramenta de Inventário de Dados Geoespaciais suportados pela GDAL/OGR;
-- Ferramentas para instalar modelos e scripts (geoalgoritmos) na Caixa de Ferramenta do QGIS;
-- Gerenciamento de permissoes de usuários (ex. Permissões de leitura/escrita em partes espcíficas do banco);
-- Criação/Remoção de usuários no PostgreSQL;
-- Alteração de senha de usuários no PostgreSQL;
-- Conversão entre formatos de bancos de dados (PostGIS para Spatialite e vice e versa);
-- Ferramenta para atribuição de cotas de maneira automática para isolinhas;
-- Visualizador de valores de códigos da EDGV para auxiliar em consultas por atributos;
-- Deleção de bancos EDGV feitos em PostgreSQL;
-- Ferramenta de (re)classificação de feições;
-- Ferramentas de validação geométrica;
+## Principais Funcionalidades
+
+O plugin está na versão 4.17.27 e possui as seguintes funcionalidades:
+
+### Gestão de Bancos de Dados
+- Criação de bancos de dados em Spatialite e PostGIS de acordo com os modelos EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto e EDGV 3.0 Topo
+- Criação, armazenamento e remoção de configuração de servidores PostGIS
+- Conversão entre formatos de bancos de dados (PostGIS para Spatialite e vice-versa)
+- Conversão de dados entre modelagens de banco no formato PostGIS utilizando o json de mapeamento
+- Validação da estrutura do banco de dados em relação ao masterfile
+
+### Carregamento e Gestão de Camadas
+- Carregamento de camadas por classe, categoria, primitiva geométrica e esquema
+- Ferramentas para carregar shapefiles, camadas PostGIS Raster e temas
+
+### Edição e Manipulação de Feições
+- Manipulação de feições complexas (criação, edição, remoção, zoom, associação e desassociação)
+- Menu de classificação para aquisição de feições
+- Menu de aquisição de feições
+- Ferramentas de aquisição com ângulos retos e à mão livre
+- Ferramenta para inverter sentido de linhas (flip)
+- Ferramentas para indicar tamanho da feição durante aquisição
+
+### Validação e Controle de Qualidade
+- Ferramentas de validação geométrica (identificação e correção)
+- Ferramentas para identificar geometrias inválidas, vértices duplicados, Z, ângulos e densidades incorretas
+- Controle de Qualidade e Workflow Toolbox com ferramentas de validação específicas
+- Identificação de feições fechadas, não unidas, entrelaçadas e próximas 
+- Validação de atributos e verificação de atributos Unicode
+
+### Integração de Dados
+- Acesso a serviços WM(T)S do BDGEx
+- Acesso ao mapa índice de produtos vetoriais e matriciais do BDGEx
+- Ferramenta de Inventário de Dados Geoespaciais suportados pela GDAL/OGR
+
+### Processamento Topológico
+- Ferramentas de Snap Hierárquico
+- Ferramentas de construção de polígonos por linha e centroide
+- Ferramentas para adicionar vértices em intersecções e segmentos compartilhados
+
+### Processamento de Dados Específicos
+- Ferramentas para processamento de redes de drenagem e terreno
+- Direcionamento de fluxo de drenagens e identificação de inconsistências
+- Ferramentas para extração de pontos cotados e validação do terreno
+- Ferramentas para numeração de polígonos e generalização
+
+### Gerenciamento de Usuários e Segurança
+- Gerenciamento de permissões de usuários
+- Criação/Remoção de usuários no PostgreSQL
+- Alteração de senha de usuários no PostgreSQL
+
+### Outros
+- Visualizador de valores de códigos da EDGV para auxiliar em consultas por atributos
+- Ferramenta para preparação de arquivos para empacotamento no BDGEx
+- Ferramentas para simulação e filtros espaciais
+
+O plugin foi todo desenvolvido em Python e está disponível para download pelo próprio QGIS ou pelo endereço http://plugins.qgis.org/plugins/DsgTools/.
+
+Para acessar o histórico completo de mudanças, visite: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
 
 Para maiores informações, acesse https://github.com/dsgoficial/DsgTools/wiki ou https://bdgex.eb.mil.br/portal/index.php?option=com_content&view=article&id=96&Itemid=380&lang=pt
 
-Dependências a serem instaladas (Ubuntu/Debian):
+## Requisitos para Linux (Ubuntu/Debian)
 
 Instalar os seguintes pacotes de acordo com o código abaixo:
 ```
@@ -57,38 +96,81 @@ sudo apt-get install libqt5sql5-sqlite
 ------------------------------------
 # DSGTools Plugin
 
-DSGTools is a QGIS plugin that allow users to create and manipulate Geospatial Data according to Brazilian Law (ET-EDGV 2.1.3 and ET-EDGV 3.0). DSGTools aims to provide tools not only to Brazilian Army, but to GIS comunity in general.
+DSGTools is a QGIS plugin that allows users to create and manipulate Geospatial Data according to Brazilian standards (ET-EDGV). DSGTools aims to provide tools not only to the Brazilian Army but to the GIS community in general.
 
-Current changelog can be viewed on https://github.com/dsgoficial/DsgTools/wiki (portuguese only, for now).
+## Strategic Framework
 
-DSGTools 4.1 has the following features:
+This project fulfills the mission established in the Brazilian Army Strategic Plan 2024-2027 (PEEx 2024-2027), related to the following Army Strategic Objective (OEE):
+* OEE 6 - Improving the Army's Information and Command and Control Systems
+* Strategy 6.3 - Expanding geoinformation production and dissemination capabilities
+* Initiative 6.3.1.1 - Expand the capability of using digital geoinformation for the Land Force
+* Initiative 6.3.2.1 - Obtain geoinformation production systems using Artificial Intelligence
 
-- Creation, Storage and Deletion of PostGIS servers configurations;
-- Database creation using Spatialite and PostGIS according to EDGV version 2.1.3 and EDGV version 3.0
-- Layer loading by category and class as defined by EDGV version 2.1.3 and EDGV version 3.0;
-- Layer loading grouping by geometric primitive and schema for any PostGIS database;
-- Manipulation of complex features (Creation, Editing, Deletion, Zoom, Association, Disassociation) and;
-- Access to some WM(T)S services provided by BDGEx (Brazilian Army SDI);
-- Inventory Tool for all geospatial data supported by GDAL/OGR;
-- Tool to install Models and Script (geoalgorithms) in the Processing Toolbox (HSV fusion script available);
-- Database role management. Access profile (i.e. Read/Write permissions by table in database );
-- Database user profile management (e.g. Grant/Revoke predifined roles to/from user );
-- Create/Remove PostgreSQL users;
-- Alter PostgreSQL user Password;
-- Conversion tools between postgis and spatialite EDGV databases;
-- Tool to assign elevation values to contour lines in a simple way;
-- EDGV code list viewer to aid attributes queries using our EDGV databases;
-- Drop EDGV databases;
-- Tool to reclassify features (move them to another layer) with predefined attributes;
-- Quality Assurance Tools: fix geometry problems prior to creating a topology structure;
+## Main Features
 
+The plugin is in version 4.17.27 and has the following features:
 
-Requirements for LINUX (Ubuntu/Debian):
+### Database Management
+- Database creation using Spatialite and PostGIS according to EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto, and EDGV 3.0 Topo models
+- Creation, storage, and deletion of PostGIS server configurations
+- Conversion between database formats (PostGIS to Spatialite and vice versa)
+- Database structure validation against the masterfile
+
+### Layer Loading and Management
+- Layer loading by class, category, geometric primitive, and schema
+- Tools for loading shapefiles, PostGIS Raster layers, and themes
+
+### Feature Editing and Manipulation
+- Complex features manipulation (creation, editing, deletion, zoom, association, disassociation)
+- Classification menu for feature acquisition
+- Feature reclassification tools
+- Right-angle and freehand acquisition tools
+- Line direction flip tool
+- Tools to indicate feature size during acquisition
+
+### Validation and Quality Control
+- Geometric validation tools (identification and correction)
+- Tools to identify invalid geometries, duplicate vertices, Z values, angles, and incorrect densities
+- Quality Control and Workflow Toolbox with specific validation tools
+- Identification of closed, unmerged, intertwined, and nearby features
+- Attribute validation and Unicode attribute verification
+
+### Data Integration
+- Access to BDGEx WM(T)S services
+- Access to BDGEx vector and raster product index map
+- Geospatial Data Inventory Tool supported by GDAL/OGR
+
+### Topological Processing
+- Hierarchical Snap tools
+- Polygon construction from lines and centroids
+- Tools to add vertices at intersections and shared segments
+
+### Specific Data Processing
+- Drainage networks and terrain processing tools
+- Drainage flow direction and inconsistency identification
+- Tools for spot elevation extraction and terrain validation
+- Tools for polygon numbering and generalization
+
+### User and Security Management
+- User permissions management
+- User creation/removal in PostgreSQL
+- Password changing for PostgreSQL users
+
+### Others
+- EDGV code list viewer to aid attribute queries
+- Tool for preparing files for packaging in BDGEx
+- Simulation tools and spatial filters
+
+The plugin was fully developed in Python and is available for download through QGIS or from http://plugins.qgis.org/plugins/DsgTools/.
+
+For the complete changelog, visit: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
+
+For further information, go to https://github.com/dsgoficial/DsgTools/wiki or https://bdgex.eb.mil.br/portal/index.php?option=com_content&view=article&id=96&Itemid=380&lang=pt
+
+## Requirements for LINUX (Ubuntu/Debian)
 
 Install the following packages as follows:
 ```
 sudo apt-get install libqt5sql5-psql
 sudo apt-get install libqt5sql5-sqlite
 ```
-
-For further information, go to https://github.com/dsgoficial/DsgTools/wiki or https://bdgex.eb.mil.br/portal/index.php?option=com_content&view=article&id=96&Itemid=380&lang=pt
