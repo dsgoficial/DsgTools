@@ -227,7 +227,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             inputLyr=mergedLines,
             linesLyr=mergedLines,
             context=context,
-            feedback=feedback,
+            feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
         multiStepFeedback.pushInfo(
