@@ -50,7 +50,7 @@ O plugin está na versão 4.17.27 e possui as seguintes funcionalidades:
 - Ferramentas de validação geométrica (identificação e correção)
 - Ferramentas para identificar geometrias inválidas, vértices duplicados, Z, ângulos e densidades incorretas
 - Controle de Qualidade e Workflow Toolbox com ferramentas de validação específicas
-- Identificação de feições fechadas, não unidas, entrelaçadas e próximas 
+- Identificação de feições fechadas, não unidas, entrelaçadas e próximas
 - Validação de atributos e verificação de atributos Unicode
 
 ### Integração de Dados
