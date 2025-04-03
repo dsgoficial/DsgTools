@@ -21,6 +21,7 @@ Builds a temp rubberband with a given size and shape.
  ***************************************************************************/
 """
 import os
+from typing import Dict, List, Optional, Tuple, Union, Set, DefaultDict
 from qgis.PyQt.QtWidgets import (
     QMessageBox,
     QSpinBox,
@@ -30,7 +31,16 @@ from qgis.PyQt.QtWidgets import (
     QMenu,
 )
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt, QDateTime
+from qgis.PyQt.QtCore import (
+    QSettings,
+    pyqtSignal,
+    pyqtSlot,
+    QObject,
+    Qt,
+    QDateTime,
+    QPoint,
+    QModelIndex,
+)
 from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.Qt import QObject
 
@@ -49,7 +59,7 @@ from qgis.core import (
     QgsFeature,
     QgsProject,
 )
-from qgis.gui import QgsMessageBar
+from qgis.gui import QgsMessageBar, QgisInterface
 
 from DsgTools.gui.ProductionTools.Toolboxes.MultiLayersCentroidsFlagTool.multiLayersCentroidsFlagTool_ui import (
     Ui_MultiLayersCentroidsFlagDockWidget,
@@ -60,41 +70,67 @@ from collections import defaultdict
 class MultiLayersCentroidsFlagDockWidget(
     QDockWidget, Ui_MultiLayersCentroidsFlagDockWidget
 ):
-    def __init__(self, iface, parent=None):
+    def __init__(self, iface: QgisInterface, parent: Optional[QObject] = None) -> None:
         """
-        Constructor
+        Constructor for the MultiLayersCentroidsFlagDockWidget class.
+
+        Args:
+            iface: The QGIS interface instance
+            parent: The parent widget
         """
         super(MultiLayersCentroidsFlagDockWidget, self).__init__(parent)
         self.setupUi(self)
-        self.parent = parent
-        self.iface = iface
-        self.lyrsFlags = None
+        self.parent: Optional[QObject] = parent
+        self.iface: QgisInterface = iface
+        self.lyrsFlags: Optional[QgsVectorLayer] = None
         self.flagsMapLayerComboBox.setAllowEmptyLayer(True)
         self.flagsMapLayerComboBox.setCurrentIndex(-1)
         self.flagsMapLayerComboBox.layerChanged.connect(self.updateTable)
         QgsProject.instance().layersWillBeRemoved.connect(self.syncLayers)
         self.attributeTable.cellClicked.connect(self.zoomToFeature)
-        self.pointLayerDict = dict()
-        self.lyrsNRowPointDict = defaultdict(dict)
-        self.columns = []
+        self.pointLayerDict: Dict[str, QgsVectorLayer] = dict()
+        self.lyrsNRowPointDict: DefaultDict[int, Tuple[str, QgsFeature]] = defaultdict(
+            dict
+        )
+        self.columns: List[str] = []
         self.tableContextMenu()
         self.updateTable()
 
-    def syncLayers(self, layerIdsRemoved):
+    def syncLayers(self, layerIdsRemoved: List[str]) -> None:
+        """
+        Removes deleted layers from the internal dictionary.
+
+        Args:
+            layerIdsRemoved: List of layer IDs that are being removed
+        """
         for id in layerIdsRemoved:
             if id not in self.pointLayerDict:
                 continue
             del self.pointLayerDict[id]
         self.updateTable()
 
-    def pointsInSelectedPolygonFlags(self, lyrFlags):
+    def pointsInSelectedPolygonFlags(
+        self, lyrFlags: Optional[QgsVectorLayer]
+    ) -> Optional[DefaultDict[str, List[QgsFeature]]]:
+        """
+        Finds point features that intersect with selected polygon features.
+
+        Args:
+            lyrFlags: The vector layer containing polygon features
+
+        Returns:
+            A dictionary mapping layer IDs to lists of point features,
+            or None if no polygons are selected
+        """
         if lyrFlags is None:
             return
         selectedPolygons = [feat for feat in lyrFlags.getSelectedFeatures()]
         selectedCrs = lyrFlags.crs()
         if selectedPolygons == []:
             return
-        lyrsPointsInsideFlagPolygonDict = defaultdict(list)
+        lyrsPointsInsideFlagPolygonDict: DefaultDict[
+            str, List[QgsFeature]
+        ] = defaultdict(list)
         for polygonFeat in selectedPolygons:
             for lyrid, pointLyr in self.pointLayerDict.items():
                 geom = polygonFeat.geometry()
@@ -113,7 +149,16 @@ class MultiLayersCentroidsFlagDockWidget(
                 lyrsPointsInsideFlagPolygonDict[lyrid].sort(key=lambda x: x.id())
         return lyrsPointsInsideFlagPolygonDict
 
-    def columnsTable(self, lyrsPointsInsideFlagPolygonDict):
+    def columnsTable(
+        self,
+        lyrsPointsInsideFlagPolygonDict: Optional[DefaultDict[str, List[QgsFeature]]],
+    ) -> None:
+        """
+        Updates the columns list based on fields from all point features.
+
+        Args:
+            lyrsPointsInsideFlagPolygonDict: Dictionary mapping layer IDs to lists of point features
+        """
         self.columns = []
         if lyrsPointsInsideFlagPolygonDict is None:
             return
@@ -129,7 +174,18 @@ class MultiLayersCentroidsFlagDockWidget(
                     continue
                 self.columns.append(field)
 
-    def valuesInTable(self, lyrsPointsInsideFlagPolygonDict, currentSelection=None):
+    def valuesInTable(
+        self,
+        lyrsPointsInsideFlagPolygonDict: Optional[DefaultDict[str, List[QgsFeature]]],
+        currentSelection: Optional[int] = None,
+    ) -> None:
+        """
+        Populates the attribute table with values from features.
+
+        Args:
+            lyrsPointsInsideFlagPolygonDict: Dictionary mapping layer IDs to lists of point features
+            currentSelection: Index of row to select after filling the table
+        """
         if lyrsPointsInsideFlagPolygonDict is None:
             return
         nRows = sum(
@@ -174,16 +230,29 @@ class MultiLayersCentroidsFlagDockWidget(
         if currentSelection is not None:
             self.attributeTable.selectRow(currentSelection)
 
-    def setHeader(self, fieldList):
+    def setHeader(self, fieldList: List[str]) -> None:
+        """
+        Sets the table header with field names.
+
+        Args:
+            fieldList: List of field names to display as column headers
+        """
         self.attributeTable.setColumnCount(len(fieldList))
         self.attributeTable.setHorizontalHeaderLabels(fieldList)
 
-    def clearTable(self):
+    def clearTable(self) -> None:
+        """
+        Clears all rows from the attribute table.
+        """
         for row in range(self.attributeTable.rowCount()):
             self.attributeTable.removeRow(row)
         self.attributeTable.setRowCount(0)
 
-    def updateTable(self):
+    def updateTable(self) -> None:
+        """
+        Updates the attribute table with features from the selected polygons.
+        Connects signals and fills table data.
+        """
         self.clearTable()
         lyrFlags = self.flagsMapLayerComboBox.currentLayer()
         lyrsPointsInsideFlagPolygonDict = self.pointsInSelectedPolygonFlags(lyrFlags)
@@ -206,11 +275,20 @@ class MultiLayersCentroidsFlagDockWidget(
         self.setHeader([self.tr("Camada")] + self.columns)
         self.valuesInTable(lyrsPointsInsideFlagPolygonDict)
 
-    def tableContextMenu(self):
+    def tableContextMenu(self) -> None:
+        """
+        Sets up the context menu for the attribute table.
+        """
         self.attributeTable.setContextMenuPolicy(Qt.CustomContextMenu)
         self.attributeTable.customContextMenuRequested.connect(self.showMenuContext)
 
-    def showMenuContext(self, position):
+    def showMenuContext(self, position: QPoint) -> None:
+        """
+        Shows the context menu at the specified position.
+
+        Args:
+            position: The position where the user right-clicked
+        """
         index = self.attributeTable.indexAt(position)
         if not index.isValid():
             return
@@ -225,7 +303,13 @@ class MultiLayersCentroidsFlagDockWidget(
         contextMenu.addAction(action1)
         contextMenu.exec_(self.attributeTable.viewport().mapToGlobal(position))
 
-    def zoomToFeature(self, row):
+    def zoomToFeature(self, row: int) -> None:
+        """
+        Zooms the map to the feature at the specified row in the table.
+
+        Args:
+            row: The row index in the attribute table
+        """
         lyrFlags = self.flagsMapLayerComboBox.currentLayer()
         lyrid, feat = self.lyrsNRowPointDict[row]
         geom = feat.geometry()
@@ -242,7 +326,13 @@ class MultiLayersCentroidsFlagDockWidget(
         self.iface.mapCanvas().zoomScale(500)
         self.iface.mapCanvas().refresh()
 
-    def setAllFeatureAttributesAllLayers(self, index):
+    def setAllFeatureAttributesAllLayers(self, index: QModelIndex) -> None:
+        """
+        Sets the attributes of all features to match the attributes of the selected feature.
+
+        Args:
+            index: Model index of the selected feature
+        """
         lyrFlags = self.flagsMapLayerComboBox.currentLayer()
         lyrsPointsInsideFlagPolygonDict = self.pointsInSelectedPolygonFlags(lyrFlags)
         if lyrFlags is None or self.pointLayerDict == dict():
@@ -292,7 +382,24 @@ class MultiLayersCentroidsFlagDockWidget(
         lyrsPointsInsideFlagPolygonDict = self.pointsInSelectedPolygonFlags(lyrFlags)
         self.valuesInTable(lyrsPointsInsideFlagPolygonDict, index.row())
 
-    def setLayerFeatures(self, feat, referenceDict, lyrid, lyrPoints, row):
+    def setLayerFeatures(
+        self,
+        feat: QgsFeature,
+        referenceDict: Dict[str, any],
+        lyrid: str,
+        lyrPoints: QgsVectorLayer,
+        row: int,
+    ) -> None:
+        """
+        Updates a feature's attributes based on reference values.
+
+        Args:
+            feat: The feature to update
+            referenceDict: Dictionary of attribute names to values
+            lyrid: ID of the layer containing the feature
+            lyrPoints: The vector layer to update
+            row: The row index in the attribute table
+        """
         for fieldName, value in referenceDict.items():
             feat[fieldName] = value
             lyrPoints.updateFeature(feat)
@@ -300,6 +407,10 @@ class MultiLayersCentroidsFlagDockWidget(
 
     @pyqtSlot(bool)
     def on_multiLayersCentroidsPushButton_clicked(self) -> None:
+        """
+        Handles click on the multiLayersCentroids button.
+        Shows a dialog for selecting point layers to analyze.
+        """
         pointLyrs = sorted(
             [
                 i
@@ -328,12 +439,19 @@ class MultiLayersCentroidsFlagDockWidget(
         self.updateTable()
 
     @pyqtSlot(bool)
-    def on_refreshFlagsPushButton_clicked(self):
+    def on_refreshFlagsPushButton_clicked(self) -> None:
+        """
+        Handles click on the refreshFlags button.
+        Sets the current active layer as the flags layer.
+        """
         activeLayer = self.iface.activeLayer()
         if not isinstance(activeLayer, QgsVectorLayer):
             return
         self.flagsMapLayerComboBox.setLayer(activeLayer)
 
-    def unload(self):
+    def unload(self) -> None:
+        """
+        Disconnects signals when the plugin is unloaded.
+        """
         QgsProject.instance().layersWillBeRemoved.disconnect(self.syncLayers)
         self.attributeTable.cellClicked.disconnect(self.zoomToFeature)
