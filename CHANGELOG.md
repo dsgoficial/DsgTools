@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.35 - dev
+## 4.17.36 - dev
 
 Novas Funcionalidades:
 
@@ -42,6 +42,9 @@ Melhorias:
 - Melhoria no processo de converter imagens e preencher metadados para carga no BDGEx (opções de sensores);
 - Melhoria no processo de criar molduras a partir de uma camada (agora aceita camada raster como entrada);
 - Melhoria no processo de desconstruir polígonos;
+- Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: adicionada a opção de esconder colunas das camadas de centroide;
+- Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: adicionada a opção de definir nas opções do dsgtools os campos default para serem escondidos;
+- Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: a ferramenta tem seu estado salvo no projeto e ao abrir o projeto, o estado anterior é restaurado;
 
 Correção de bugs:
 

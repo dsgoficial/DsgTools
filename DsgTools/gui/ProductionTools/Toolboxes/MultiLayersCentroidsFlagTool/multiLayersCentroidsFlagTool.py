@@ -21,7 +21,8 @@ Builds a temp rubberband with a given size and shape.
  ***************************************************************************/
 """
 import os
-from typing import Dict, List, Optional, Tuple, Union, Set, DefaultDict
+import json
+from typing import Any, Dict, List, Optional, Tuple, Union, Set, DefaultDict
 from qgis.PyQt.QtWidgets import (
     QMessageBox,
     QSpinBox,
@@ -41,7 +42,7 @@ from qgis.PyQt.QtCore import (
     QPoint,
     QModelIndex,
 )
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtGui, uic, QtCore, QtWidgets
 from qgis.PyQt.Qt import QObject
 
 from processing.gui.MultipleInputDialog import MultipleInputDialog
@@ -58,6 +59,7 @@ from qgis.core import (
     QgsWkbTypes,
     QgsFeature,
     QgsProject,
+    QgsExpressionContextUtils,
 )
 from qgis.gui import QgsMessageBar, QgisInterface
 
@@ -88,13 +90,45 @@ class MultiLayersCentroidsFlagDockWidget(
         self.flagsMapLayerComboBox.layerChanged.connect(self.updateTable)
         QgsProject.instance().layersWillBeRemoved.connect(self.syncLayers)
         self.attributeTable.cellClicked.connect(self.zoomToFeature)
+
+        # Make the entire table read-only
+        self.attributeTable.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+
         self.pointLayerDict: Dict[str, QgsVectorLayer] = dict()
         self.lyrsNRowPointDict: DefaultDict[int, Tuple[str, QgsFeature]] = defaultdict(
             dict
         )
         self.columns: List[str] = []
+        self.defaultHiddenColumns = self.loadHiddenColumnSettings()
+        # Initialize the defaultdict properly in the __init__ method
+        self.hiddenColumnsPerLayer = defaultdict(list)
         self.tableContextMenu()
+        self.headerContextMenu()
+
+        # Connect to project signals for state management
+        QgsProject.instance().projectSaved.connect(self.saveState)
+        self.iface.projectRead.connect(self.loadState)
+
+        # Load state for current project
+        self.loadState()
+
         self.updateTable()
+
+    def loadHiddenColumnSettings(self) -> List[str]:
+        """
+        Loads the list of columns to hide by default from QSettings.
+
+        Returns:
+            List[str]: List of column names to hide
+        """
+        settings = QSettings()
+        settings.beginGroup("PythonPlugins/DsgTools/Options")
+        centroidFlagValueList = settings.value("centroidFlagValueList")
+        settings.endGroup()
+
+        if centroidFlagValueList:
+            return centroidFlagValueList.split(";")
+        return []
 
     def syncLayers(self, layerIdsRemoved: List[str]) -> None:
         """
@@ -200,9 +234,12 @@ class MultiLayersCentroidsFlagDockWidget(
             ]
             for feat in lyrsPointsInsideFlagPolygonDict[lyrid]:
                 self.lyrsNRowPointDict[row] = (lyrid, feat)
-                self.attributeTable.setItem(
-                    row, 0, QTableWidgetItem(self.pointLayerDict[lyrid].name())
-                )
+
+                # Create layer name item and make it read-only
+                layerItem = QTableWidgetItem(self.pointLayerDict[lyrid].name())
+                layerItem.setFlags(layerItem.flags() & ~Qt.ItemIsEditable)
+                self.attributeTable.setItem(row, 0, layerItem)
+
                 for nColumn, field in enumerate(self.columns):
                     if field in lyrFields:
                         field_idx = (
@@ -223,22 +260,41 @@ class MultiLayersCentroidsFlagDockWidget(
                             )
                     else:
                         attr = "-"
-                    self.attributeTable.setItem(
-                        row, nColumn + 1, QTableWidgetItem(str(attr))
-                    )
+
+                    # Create attribute item and make it read-only
+                    attrItem = QTableWidgetItem(str(attr))
+                    attrItem.setFlags(attrItem.flags() & ~Qt.ItemIsEditable)
+                    self.attributeTable.setItem(row, nColumn + 1, attrItem)
+
                 row += 1
         if currentSelection is not None:
             self.attributeTable.selectRow(currentSelection)
 
     def setHeader(self, fieldList: List[str]) -> None:
         """
-        Sets the table header with field names.
+        Sets the table header with field names and applies column visibility.
 
         Args:
             fieldList: List of field names to display as column headers
         """
         self.attributeTable.setColumnCount(len(fieldList))
         self.attributeTable.setHorizontalHeaderLabels(fieldList)
+
+        # Get current flag layer ID
+        layerId = ""
+        if self.lyrFlags:
+            layerId = self.lyrFlags.id()
+
+        # Apply column visibility based on layer-specific settings
+        if layerId:
+            # If this is the first time we're seeing this layer, apply defaults
+            if layerId not in self.hiddenColumnsPerLayer:
+                self.hiddenColumnsPerLayer[layerId] = list(self.defaultHiddenColumns)
+
+            hiddenColumns = self.hiddenColumnsPerLayer[layerId]
+            for i, field in enumerate(fieldList):
+                if field in hiddenColumns:
+                    self.attributeTable.setColumnHidden(i, True)
 
     def clearTable(self) -> None:
         """
@@ -281,6 +337,145 @@ class MultiLayersCentroidsFlagDockWidget(
         """
         self.attributeTable.setContextMenuPolicy(Qt.CustomContextMenu)
         self.attributeTable.customContextMenuRequested.connect(self.showMenuContext)
+
+    def headerContextMenu(self) -> None:
+        """
+        Sets up the context menu for the attribute table header.
+        """
+        header = self.attributeTable.horizontalHeader()
+        header.setContextMenuPolicy(Qt.CustomContextMenu)
+        header.customContextMenuRequested.connect(self.showHeaderMenuContext)
+
+    def showHeaderMenuContext(self, position: QPoint) -> None:
+        """
+        Shows the context menu for the header at the specified position.
+
+        Args:
+            position: The position where the user right-clicked
+        """
+        header = self.attributeTable.horizontalHeader()
+        logicalIndex = header.logicalIndexAt(position)
+
+        if logicalIndex < 0:
+            return
+
+        contextMenu = QMenu()
+
+        # Get column name
+        columnName = self.attributeTable.horizontalHeaderItem(logicalIndex).text()
+
+        # Check if column is currently hidden
+        isHidden = self.attributeTable.isColumnHidden(logicalIndex)
+
+        if not isHidden:
+            # Add action to hide this column
+            hideAction = QAction(self.tr(f"Hide column '{columnName}'"), self)
+            hideAction.triggered.connect(lambda: self.hideColumn(logicalIndex))
+            contextMenu.addAction(hideAction)
+        else:
+            # Add action to show this column
+            showAction = QAction(self.tr(f"Show column '{columnName}'"), self)
+            showAction.triggered.connect(lambda: self.showColumn(logicalIndex))
+            contextMenu.addAction(showAction)
+
+        # Add separator
+        contextMenu.addSeparator()
+
+        # Add action to show all columns
+        showAllAction = QAction(self.tr("Show all columns"), self)
+        showAllAction.triggered.connect(self.showAllColumns)
+        contextMenu.addAction(showAllAction)
+
+        # Add action to reset to default visibility
+        resetAction = QAction(self.tr("Reset to default visibility"), self)
+        resetAction.triggered.connect(self.resetToDefaultColumnVisibility)
+        contextMenu.addAction(resetAction)
+
+        # Execute the menu
+        contextMenu.exec_(header.viewport().mapToGlobal(position))
+
+    def hideColumn(self, columnIndex: int) -> None:
+        """
+        Hides the column at the specified index.
+
+        Args:
+            columnIndex: The index of the column to hide
+        """
+        columnName = self.attributeTable.horizontalHeaderItem(columnIndex).text()
+
+        # Get current flag layer ID
+        layerId = ""
+        if self.lyrFlags:
+            layerId = self.lyrFlags.id()
+
+        # Update the hidden columns list for this layer
+        if layerId and columnName not in self.hiddenColumnsPerLayer[layerId]:
+            self.hiddenColumnsPerLayer[layerId].append(columnName)
+
+        self.attributeTable.setColumnHidden(columnIndex, True)
+
+    def showColumn(self, columnIndex: int) -> None:
+        """
+        Shows a specific column and updates per-layer settings.
+
+        Args:
+            columnIndex: The index of the column to show
+        """
+        columnName = self.attributeTable.horizontalHeaderItem(columnIndex).text()
+
+        # Get current flag layer ID
+        layerId = ""
+        if self.lyrFlags:
+            layerId = self.lyrFlags.id()
+
+        # Update the hidden columns list for this layer
+        if layerId and columnName in self.hiddenColumnsPerLayer[layerId]:
+            self.hiddenColumnsPerLayer[layerId].remove(columnName)
+
+        self.attributeTable.setColumnHidden(columnIndex, False)
+
+    def showAllColumns(self) -> None:
+        """
+        Shows all hidden columns in the attribute table and updates per-layer settings.
+        """
+        # Get current flag layer ID
+        layerId = ""
+        if self.lyrFlags:
+            layerId = self.lyrFlags.id()
+
+        # Clear hidden columns for this layer but preserve default ones for new layers
+        if layerId:
+            # Reset to default - this means we preserve the defaults but won't hide them for this layer
+            self.hiddenColumnsPerLayer[layerId] = []
+
+        for i in range(self.attributeTable.columnCount()):
+            self.attributeTable.setColumnHidden(i, False)
+
+    def resetToDefaultColumnVisibility(self) -> None:
+        """
+        Resets column visibility to default settings from the Options dialog.
+        Shows all columns, then hides only those specified in the Options dialog.
+        """
+        # Get current flag layer ID
+        layerId = ""
+        if self.lyrFlags:
+            layerId = self.lyrFlags.id()
+
+        if not layerId:
+            return
+
+        # Reset this layer's hidden columns to the defaults
+        self.hiddenColumnsPerLayer[layerId] = list(self.defaultHiddenColumns)
+
+        # First show all columns
+        for i in range(self.attributeTable.columnCount()):
+            self.attributeTable.setColumnHidden(i, False)
+
+        # Then hide the default ones
+        for i in range(self.attributeTable.columnCount()):
+            columnName = self.attributeTable.horizontalHeaderItem(i).text()
+            if columnName in self.defaultHiddenColumns:
+                self.attributeTable.setColumnHidden(i, True)
 
     def showMenuContext(self, position: QPoint) -> None:
         """
@@ -455,3 +650,123 @@ class MultiLayersCentroidsFlagDockWidget(
         """
         QgsProject.instance().layersWillBeRemoved.disconnect(self.syncLayers)
         self.attributeTable.cellClicked.disconnect(self.zoomToFeature)
+
+        # Disconnect header context menu signal if it exists
+        try:
+            header = self.attributeTable.horizontalHeader()
+            header.customContextMenuRequested.disconnect(self.showHeaderMenuContext)
+        except:
+            pass
+
+        # Disconnect project signals
+        try:
+            QgsProject.instance().projectSaved.disconnect(self.saveState)
+            self.iface.projectRead.disconnect(self.loadState)
+        except:
+            pass
+
+    def getToolState(self) -> Dict[str, Any]:
+        """
+        Get the current state of the widget as a dictionary for serialization.
+        This method is called by ToolBoxesGuiManager to save state.
+
+        Returns:
+            Dict[str, Any]: The widget state dictionary
+        """
+        # Save selected features in the current polygon layer
+        selectedFeatureIds = []
+        if self.lyrFlags and self.lyrFlags.selectedFeatureCount() > 0:
+            selectedFeatureIds = [f.id() for f in self.lyrFlags.selectedFeatures()]
+
+        state = {
+            "hiddenColumnsPerLayer": dict(self.hiddenColumnsPerLayer),
+            "pointLayerIds": list(self.pointLayerDict.keys()),
+            "flagLayerId": self.lyrFlags.id() if self.lyrFlags else "",
+            "selectedFeatureIds": selectedFeatureIds,
+        }
+        return state
+
+    def setToolState(self, state: Dict[str, Any]) -> None:
+        """
+        Restore widget state from a dictionary.
+        This method is called by ToolBoxesGuiManager to restore state.
+
+        Args:
+            state (Dict[str, Any]): The widget state dictionary
+        """
+        if not state:
+            return
+
+        # Restore hidden columns per layer
+        if "hiddenColumnsPerLayer" in state:
+            self.hiddenColumnsPerLayer.clear()
+            for k, v in state["hiddenColumnsPerLayer"].items():
+                self.hiddenColumnsPerLayer[k] = v
+
+        # Restore point layers
+        if "pointLayerIds" in state:
+            pointLayerIds = state["pointLayerIds"]
+            self.pointLayerDict.clear()
+            for layer_id in pointLayerIds:
+                layer = QgsProject.instance().mapLayer(layer_id)
+                if (
+                    layer
+                    and isinstance(layer, QgsVectorLayer)
+                    and layer.geometryType() == QgsWkbTypes.PointGeometry
+                ):
+                    self.pointLayerDict[layer_id] = layer
+
+        # Restore flag layer
+        if "flagLayerId" in state and state["flagLayerId"]:
+            layer = QgsProject.instance().mapLayer(state["flagLayerId"])
+            if layer and isinstance(layer, QgsVectorLayer):
+                self.flagsMapLayerComboBox.setLayer(layer)
+
+                # Restore selected features
+                if "selectedFeatureIds" in state and state["selectedFeatureIds"]:
+                    try:
+                        layer.selectByIds(state["selectedFeatureIds"])
+                    except:
+                        # In case of error (features might have been deleted)
+                        pass
+
+        # Update the table after setting state
+        self.updateTable()
+
+    def saveState(self):
+        """
+        Save this toolbox's state to project variables.
+        """
+        state = self.getToolState()
+        current_state = self.loadStateFromProject()
+
+        # Update the current toolboxes state with this toolbox's state
+        current_state["MultiLayersCentroidsFlagDockWidget"] = state
+
+        # Save back to project variables
+        QgsExpressionContextUtils.setProjectVariable(
+            QgsProject.instance(), "dsgtools_toolboxes_state", json.dumps(current_state)
+        )
+
+    def loadStateFromProject(self):
+        """
+        Loads all toolboxes state from current QgsProject instance.
+
+        Returns:
+            Dict: The current toolboxes state
+        """
+        state = json.loads(
+            QgsExpressionContextUtils.projectScope(QgsProject.instance()).variable(
+                "dsgtools_toolboxes_state"
+            )
+            or "{}"
+        )
+        return state
+
+    def loadState(self):
+        """
+        Load this toolbox's state from project variables.
+        """
+        state = self.loadStateFromProject()
+        if "MultiLayersCentroidsFlagDockWidget" in state:
+            self.setToolState(state["MultiLayersCentroidsFlagDockWidget"])

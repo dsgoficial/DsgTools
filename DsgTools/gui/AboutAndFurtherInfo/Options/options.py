@@ -56,7 +56,7 @@ class Options(QDialog, FORM_CLASS):
     def on_addPushButton_clicked(self):
         newValue = self.addParameterLineEdit.text()
         valueList = [
-            self.blackListWidget.itemAt(i, 0).text()
+            self.blackListWidget.item(i).text()
             for i in range(self.blackListWidget.count())
         ]
         if newValue == "":
@@ -73,6 +73,30 @@ class Options(QDialog, FORM_CLASS):
         self.blackListWidget.sortItems(order=Qt.AscendingOrder)
         self.addParameterLineEdit.setText("")
 
+    @pyqtSlot(bool)
+    def on_addCentroidFlagPushButton_clicked(self):
+        """
+        Adds a new value to the centroid flag black list.
+        """
+        newValue = self.addCentroidFlagParameterLineEdit.text()
+        valueList = [
+            self.centroidFlagBlackListWidget.item(i).text()
+            for i in range(self.centroidFlagBlackListWidget.count())
+        ]
+        if newValue == "":
+            QMessageBox.warning(
+                self, self.tr("Warning!"), self.tr("Fill in a value before adding!")
+            )
+            return
+        if newValue in valueList:
+            QMessageBox.warning(
+                self, self.tr("Warning!"), self.tr("Value already in black list!")
+            )
+            return
+        self.centroidFlagBlackListWidget.addItem(newValue)
+        self.centroidFlagBlackListWidget.sortItems(order=Qt.AscendingOrder)
+        self.addCentroidFlagParameterLineEdit.setText("")
+
     def getParameters(self):
         freeHandTolerance = self.toleranceQgsDoubleSpinBox.value()
         freeHandSmoothIterations = self.smoothIterationsQgsSpinBox.value()
@@ -87,6 +111,10 @@ class Options(QDialog, FORM_CLASS):
         undoPoints = self.undoQgsSpinBox.value()
         decimals = self.decimalQgsSpinBox.value()
         freeHandFinalSimplifyTolerance = self.finalToleranceQgsDoubleSpinBox.value()
+        centroidFlagValueList = [
+            self.centroidFlagBlackListWidget.item(i).text()
+            for i in range(self.centroidFlagBlackListWidget.count())
+        ]
         return (
             freeHandTolerance,
             freeHandSmoothIterations,
@@ -98,6 +126,7 @@ class Options(QDialog, FORM_CLASS):
             undoPoints,
             decimals,
             freeHandFinalSimplifyTolerance,
+            centroidFlagValueList,
         )
 
     def loadParametersFromConfig(self):
@@ -115,8 +144,11 @@ class Options(QDialog, FORM_CLASS):
         freeHandFinalSimplifyTolerance = settings.value(
             "freeHandFinalSimplifyTolerance"
         )
+        centroidFlagValueList = settings.value("centroidFlagValueList")
         if valueList:
             valueList = valueList.split(";")
+        if centroidFlagValueList:
+            centroidFlagValueList = centroidFlagValueList.split(";")
         settings.endGroup()
         return (
             freeHandTolerance,
@@ -129,6 +161,7 @@ class Options(QDialog, FORM_CLASS):
             undoPoints,
             decimals,
             freeHandFinalSimplifyTolerance,
+            centroidFlagValueList,
         )
 
     def setInterfaceWithParametersFromConfig(self):
@@ -143,6 +176,7 @@ class Options(QDialog, FORM_CLASS):
             undoPoints,
             decimals,
             freeHandFinalSimplifyTolerance,
+            centroidFlagValueList,
         ) = self.loadParametersFromConfig()
         if freeHandTolerance:
             self.toleranceQgsDoubleSpinBox.setValue(float(freeHandTolerance))
@@ -168,6 +202,10 @@ class Options(QDialog, FORM_CLASS):
             self.finalToleranceQgsDoubleSpinBox.setValue(
                 float(freeHandFinalSimplifyTolerance)
             )
+        if centroidFlagValueList:
+            self.centroidFlagBlackListWidget.clear()
+            self.centroidFlagBlackListWidget.addItems(centroidFlagValueList)
+            self.centroidFlagBlackListWidget.sortItems(order=Qt.AscendingOrder)
 
     def storeParametersInConfig(self):
         (
@@ -181,6 +219,7 @@ class Options(QDialog, FORM_CLASS):
             undoPoints,
             decimals,
             freeHandFinalSimplifyTolerance,
+            centroidFlagValueList,
         ) = self.getParameters()
         settings = QSettings()
         settings.beginGroup("PythonPlugins/DsgTools/Options")
@@ -196,6 +235,7 @@ class Options(QDialog, FORM_CLASS):
         settings.setValue(
             "freeHandFinalSimplifyTolerance", freeHandFinalSimplifyTolerance
         )
+        settings.setValue("centroidFlagValueList", ";".join(centroidFlagValueList))
         settings.endGroup()
 
     @pyqtSlot()
@@ -215,6 +255,20 @@ class Options(QDialog, FORM_CLASS):
         for i in idxList:
             self.blackListWidget.takeItem(i)
 
+    @pyqtSlot(bool)
+    def on_removeCentroidFlagPushButton_clicked(self):
+        """
+        Removes selected values from the centroid flag black list.
+        """
+        selectedItems = self.centroidFlagBlackListWidget.selectedItems()
+        idxList = []
+        for i in range(self.centroidFlagBlackListWidget.count()):
+            if self.centroidFlagBlackListWidget.item(i) in selectedItems:
+                idxList.append(i)
+        idxList.sort(reverse=True)
+        for i in idxList:
+            self.centroidFlagBlackListWidget.takeItem(i)
+
     def firstTimeConfig(self):
         (
             freeHandTolerance,
@@ -227,6 +281,7 @@ class Options(QDialog, FORM_CLASS):
             undoPoints,
             decimals,
             freeHandFinalSimplifyTolerance,
+            centroidFlagValueList,
         ) = self.loadParametersFromConfig()
         if not (
             freeHandTolerance
@@ -237,6 +292,7 @@ class Options(QDialog, FORM_CLASS):
             and undoPoints
             and decimals is not None
             and freeHandFinalSimplifyTolerance is not None
+            and centroidFlagValueList
         ):
             self.storeParametersInConfig()
 
