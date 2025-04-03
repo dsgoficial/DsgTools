@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.36 - dev
+## 4.17.37 - dev
 
 Novas Funcionalidades:
 
@@ -45,6 +45,7 @@ Melhorias:
 - Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: adicionada a opção de esconder colunas das camadas de centroide;
 - Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: adicionada a opção de definir nas opções do dsgtools os campos default para serem escondidos;
 - Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: a ferramenta tem seu estado salvo no projeto e ao abrir o projeto, o estado anterior é restaurado;
+- Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: adicionado o flash feature e trocado o zoom pelo pan;
 
 Correção de bugs:
 

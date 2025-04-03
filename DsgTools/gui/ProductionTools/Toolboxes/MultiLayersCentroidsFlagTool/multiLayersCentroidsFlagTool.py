@@ -89,7 +89,7 @@ class MultiLayersCentroidsFlagDockWidget(
         self.flagsMapLayerComboBox.setCurrentIndex(-1)
         self.flagsMapLayerComboBox.layerChanged.connect(self.updateTable)
         QgsProject.instance().layersWillBeRemoved.connect(self.syncLayers)
-        self.attributeTable.cellClicked.connect(self.zoomToFeature)
+        self.attributeTable.cellClicked.connect(self.panAndFlashFeature)
 
         # Make the entire table read-only
         self.attributeTable.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
@@ -498,28 +498,18 @@ class MultiLayersCentroidsFlagDockWidget(
         contextMenu.addAction(action1)
         contextMenu.exec_(self.attributeTable.viewport().mapToGlobal(position))
 
-    def zoomToFeature(self, row: int) -> None:
+    def panAndFlashFeature(self, row: int) -> None:
         """
         Zooms the map to the feature at the specified row in the table.
 
         Args:
             row: The row index in the attribute table
         """
-        lyrFlags = self.flagsMapLayerComboBox.currentLayer()
         lyrid, feat = self.lyrsNRowPointDict[row]
-        geom = feat.geometry()
         lyrPoint = self.pointLayerDict[lyrid]
-        pointCrs = lyrPoint.crs()
-        selectedCrs = lyrFlags.crs()
-        if pointCrs != selectedCrs:
-            transform = QgsCoordinateTransform(
-                pointCrs, selectedCrs, QgsProject.instance()
-            )
-            geom.transform(transform)
-        bbox = geom.boundingBox()
-        self.iface.mapCanvas().setExtent(bbox)
-        self.iface.mapCanvas().zoomScale(500)
+        self.iface.mapCanvas().panToFeatureIds(lyrPoint, [feat.id()])
         self.iface.mapCanvas().refresh()
+        self.iface.mapCanvas().flashFeatureIds(lyrPoint, [feat.id()])
 
     def setAllFeatureAttributesAllLayers(self, index: QModelIndex) -> None:
         """
@@ -649,7 +639,7 @@ class MultiLayersCentroidsFlagDockWidget(
         Disconnects signals when the plugin is unloaded.
         """
         QgsProject.instance().layersWillBeRemoved.disconnect(self.syncLayers)
-        self.attributeTable.cellClicked.disconnect(self.zoomToFeature)
+        self.attributeTable.cellClicked.disconnect(self.panAndFlashFeature)
 
         # Disconnect header context menu signal if it exists
         try:
