@@ -18,7 +18,7 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
+
 
 from qgis.PyQt.QtCore import Qt
 from qgis.core import QgsPointXY, Qgis, QgsGeometry, QgsWkbTypes

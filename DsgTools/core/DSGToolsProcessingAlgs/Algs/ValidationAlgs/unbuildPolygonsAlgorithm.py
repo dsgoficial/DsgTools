@@ -45,6 +45,7 @@ from qgis.core import (
     QgsFeature,
     QgsFeatureSink,
     QgsProcessingUtils,
+    QgsProject,
 )
 
 from DsgTools.core.Utils.threadingTools import concurrently
@@ -144,8 +145,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         geographicBoundaryLyr = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
-        inputPolygonLyrIdSet = set(lyr.id() for lyr in inputPolygonLyrList)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(20, feedback)
+        inputPolygonLyrIdSet = set(lyr.name() for lyr in inputPolygonLyrList)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(21, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Building single polygon layer"))
@@ -206,7 +207,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.pushInfo(self.tr("Merged all line layers successfully"))
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -218,7 +218,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         self.algRunner.runCreateSpatialIndex(
             mergedLines, context, feedback, is_child_algorithm=True
         )
-        multiStepFeedback.pushInfo(self.tr("Spatial index created successfully"))
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -229,9 +228,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
-        )
-        multiStepFeedback.pushInfo(
-            self.tr("Lines split successfully at all intersections")
         )
 
         currentStep += 1
@@ -248,7 +244,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             context=context,
             is_child_algorithm=False,
         )
-        multiStepFeedback.pushInfo(self.tr("Feature ID field created successfully"))
+        
+        QgsProject.instance().addMapLayer(intersectedLines, True)
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -256,7 +253,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         uniqueBoundariesIdSet = (
             self.getUniqueBoundariesIds(
                 nx=nx,
-                inputLyr=intersectedLines,
+                input=intersectedLines,
                 referenceSet=inputPolygonLyrIdSet,
                 feedback=multiStepFeedback,
             )
@@ -278,14 +275,11 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         if len(uniqueBoundariesIdSet) > 0:
             multiStepFeedback.pushInfo(self.tr("Filtering unique boundary lines"))
-            uniqueBoundaries = self.algRunner.runFilterExpression(
-                inputLyr=intersectedLines,
-                expression=f"\"featid\" IN ({','.join(map(str, uniqueBoundariesIdSet))})",
+            uniqueBoundaries = self.processBoundariesInBatches(
+                intersectedLines=intersectedLines,
+                uniqueBoundariesIdSet=uniqueBoundariesIdSet,
                 context=context,
                 feedback=multiStepFeedback,
-            )
-            multiStepFeedback.pushInfo(
-                self.tr("Unique boundary lines filtered successfully")
             )
 
             currentStep += 1
@@ -299,7 +293,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
                 allowClosed=False,
                 lineFilterLyrList=constraintLyrList,
             )
-            multiStepFeedback.pushInfo(self.tr("Line segments merged successfully"))
 
             outputBoundariesLambda = lambda x: output_boundaries_sink.addFeature(x)
             list(map(outputBoundariesLambda, uniqueBoundaries.getFeatures()))
@@ -318,7 +311,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
-        multiStepFeedback.pushInfo(self.tr("Input polygon layers merged successfully"))
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -332,7 +324,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
-        multiStepFeedback.pushInfo(self.tr("Layer ID field created successfully"))
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -345,7 +336,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             feedback,
             is_child_algorithm=True,
         )
-        multiStepFeedback.pushInfo(self.tr("Spatial index created successfully"))
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -360,6 +350,15 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
                 f"Created {polygonizeOutput.featureCount()} polygons from line network"
             )
         )
+        
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Filtering small polygons"))
+        polygonizeOutput = self.algRunner.runFilterExpression(
+            inputLyr=polygonizeOutput,
+            expression=f"$area > 1",
+            context=context,
+            feedback=multiStepFeedback,
+        )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -371,7 +370,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
-        multiStepFeedback.pushInfo(self.tr("Center points created successfully"))
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -394,7 +392,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             feedback,
             is_child_algorithm=True,
         )
-        multiStepFeedback.pushInfo(self.tr("Spatial index created successfully"))
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -444,7 +441,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             feedback,
             is_child_algorithm=True,
         )
-        multiStepFeedback.pushInfo(self.tr("Spatial index created successfully"))
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -638,7 +634,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
     def getUniqueBoundariesIds(
         self,
         nx,
-        inputLyr: QgsVectorLayer,
+        input: Union[QgsVectorLayer, List[QgsFeature]],
         referenceSet: Set[str],
         feedback=None,
     ) -> Set[int]:
@@ -646,17 +642,18 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             feedback.pushInfo(self.tr("Building network graph from line segments"))
 
         G = nx.Graph()
-        nFeats = inputLyr.featureCount()
+        nFeats = input.featureCount() if isinstance(input, QgsVectorLayer) else len(input)
         if nFeats == 0:
             return set()
         stepSize = 100 / nFeats
-        for i, feat in enumerate(inputLyr.getFeatures()):
+        features = input.getFeatures() if isinstance(input, QgsVectorLayer) else input
+        for i, feat in enumerate(features):
             if feedback is not None and feedback.isCanceled():
                 break
             geom = feat.geometry()
             startPoint, endPoint = geom.asPolyline()[0], geom.asPolyline()[-1]
             if not G.has_edge(startPoint, endPoint):
-                G.add_edge(startPoint, endPoint, layerIdSet=set(), featid=feat.id())
+                G.add_edge(startPoint, endPoint, layerIdSet=set(), featid=feat["featid"])
             G[startPoint][endPoint]["layerIdSet"].add(feat["layer_id"])
             if feedback is not None and i % 1000 == 0:
                 feedback.setProgress(int(i * stepSize))
@@ -731,14 +728,15 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             localContext = QgsProcessingContext()
             extractedLines = self.algRunner.runExtractByLocation(
                 inputLyr=inputLyr,
-                overlayLyr=polygonTile,
+                intersectLyr=polygonTile,
                 context=localContext,
                 predicate=AlgRunner.Intersects,
                 feedback=None,
             )
+            extractedLines = [f for f in extractedLines.getFeatures()]
             return self.getUniqueBoundariesIds(
                 nx=nx,
-                inputLyr=extractedLines,
+                input=extractedLines,
                 referenceSet=referenceSet,
             )
 
@@ -759,7 +757,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             )
             return self.getUniqueBoundariesIds(
                 nx=nx,
-                inputLyr=inputLyr,
+                input=inputLyr,
                 referenceSet=referenceSet,
                 feedback=multiStepFeedback,
             )
@@ -778,12 +776,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             )
             futures.add(pool.submit(compute, inputLyr.clone(), tileLayer))
             multiStepFeedback.setProgress(current * stepSize)
-            if current % 5 == 0 and current > 0:
-                multiStepFeedback.pushInfo(
-                    self.tr(
-                        f"Submitted {current} of {nFeats} grid cells for processing"
-                    )
-                )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -815,6 +807,90 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             )
         )
         return outputSet
+
+    def processBoundariesInBatches(self, intersectedLines, uniqueBoundariesIdSet, context, feedback):
+        """
+        Process unique boundaries in batches to avoid expression length limitations.
+        
+        Args:
+            intersectedLines: Input line layer
+            uniqueBoundariesIdSet: Set of feature IDs to process
+            constraintLyrList: List of constraint layers
+            context: Processing context
+            feedback: Feedback object
+            
+        Returns:
+            QgsVectorLayer: Processed boundaries layer
+        """
+        # Convert set to list for indexing
+        uniqueBoundariesIdList = list(uniqueBoundariesIdSet)
+        
+        # Determine batch size - adjust based on typical ID size and system constraints
+        # 1000 IDs per batch is usually safe
+        BATCH_SIZE = 1000
+        
+        # Calculate number of batches
+        total_ids = len(uniqueBoundariesIdList)
+        num_batches = math.ceil(total_ids / BATCH_SIZE)
+        
+        if num_batches <= 1:
+            # If small enough, process normally
+            feedback.pushInfo(self.tr(f"Processing {total_ids} boundaries in a single batch"))
+            return self.algRunner.runFilterExpression(
+                inputLyr=intersectedLines,
+                expression=f"\"featid\" IN ({','.join(map(str, uniqueBoundariesIdList))})",
+                context=context,
+                feedback=feedback
+            )
+        
+        # Process in batches
+        feedback.pushInfo(self.tr(f"Processing {total_ids} boundaries in {num_batches} batches"))
+        
+        # Create a temporary layer for accumulating results
+        result_layer = None
+        
+        # Set up sub-feedback for batches
+        subFeedback = QgsProcessingMultiStepFeedback(num_batches, feedback)
+        
+        for batch_idx in range(num_batches):
+            if feedback.isCanceled():
+                break
+                
+            # Get current batch of IDs
+            start_idx = batch_idx * BATCH_SIZE
+            end_idx = min(start_idx + BATCH_SIZE, total_ids)
+            batch_ids = uniqueBoundariesIdList[start_idx:end_idx]
+            
+            # Update progress and info
+            subFeedback.setCurrentStep(batch_idx)
+            subFeedback.pushInfo(self.tr(f"Processing batch {batch_idx + 1}/{num_batches} with {len(batch_ids)} boundaries"))
+            
+            # Create filter expression for this batch
+            expression = f"\"featid\" IN ({','.join(map(str, batch_ids))})"
+            
+            # Process this batch
+            batch_layer = self.algRunner.runFilterExpression(
+                inputLyr=intersectedLines,
+                expression=expression,
+                context=context,
+                feedback=subFeedback
+            )
+            
+            # Add features to result layer
+            if result_layer is None:
+                # First batch becomes the result layer
+                result_layer = batch_layer
+            else:
+                # Merge subsequent batches
+                result_layer = self.algRunner.runMergeVectorLayers(
+                    inputList=[result_layer, batch_layer],
+                    context=context,
+                    feedback=subFeedback
+                )
+        
+        # Return the combined layer
+        feedback.pushInfo(self.tr(f"Successfully processed all {total_ids} boundaries in {num_batches} batches"))
+        return result_layer
 
     def name(self):
         """

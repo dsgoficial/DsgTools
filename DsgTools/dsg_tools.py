@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import absolute_import
+
 from builtins import object
 from qgis.PyQt.QtCore import QSettings, qVersion, QCoreApplication, QTranslator
 from qgis.PyQt.QtWidgets import QMenu

@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import print_function
+
 
 ##DSG=group
 ##RGB_Layer=raster

@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
+
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellChecker.datasets.ptBR import (
     PalavrasFileConfig,
     WordDatasetPtBRFileConfig,

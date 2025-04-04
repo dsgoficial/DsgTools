@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import absolute_import
+
 from qgis.gui import QgsMapTool, QgsMessageBar
 from qgis.core import (
     QgsMapLayer,
