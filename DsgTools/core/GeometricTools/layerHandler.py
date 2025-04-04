@@ -27,7 +27,7 @@ import copy
 from functools import partial
 from itertools import combinations
 import os
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from processing.tools import dataobjects
@@ -2621,7 +2621,7 @@ class LayerHandler(QObject):
         #     inputCenterPointLyr = algRunner.runClip(inputCenterPointLyr, limit,
         #                                             context)
         nSteps = (
-            21
+            22
             + 2 * (geographicBoundaryLyr is not None)
             + 2 * (not suppressPolygonWithoutCenterPointFlag)
         )
@@ -2696,6 +2696,13 @@ class LayerHandler(QObject):
             multiStepFeedback.setProgressText(self.tr("Running polygonize..."))
         builtPolygonLyr: QgsVectorLayer = algRunner.runPolygonize(
             constraintLineLyr, context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Removing duplicated nodes..."))
+        builtPolygonLyr: QgsVectorLayer = algRunner.runRemoveDuplicateVertex(
+            inputLyr=builtPolygonLyr, tolerance=1e-7, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
         if multiStepFeedback is not None:
@@ -2859,9 +2866,18 @@ class LayerHandler(QObject):
             currentStep += 1
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
+            geographicBoundsGeomList = [f.geometry() for f in geographicBoundaryLyr.getFeatures()] if geographicBoundaryLyr is not None else []
+            geographicBoundsGeom: QgsGeometry = None if len(geographicBoundsGeomList) == 0 else geographicBoundsGeomList[0]
+            if len(geographicBoundsGeomList) > 1:
+                for otherGeom in geographicBoundsGeomList[1::]:
+                    geographicBoundsGeom = geographicBoundsGeom.combine(otherGeom)
             for p in polygonsWithNoCenterPoint.getFeatures():
                 idsWithProblems.add(p["AUTO"])
-                geom = p.geometry()
+                geom: QgsGeometry = p.geometry()
+                if geographicBoundsGeom is not None:
+                    centerPoint = geom.pointOnSurface()
+                    if not centerPoint.intersects(geographicBoundsGeom):
+                        continue
                 flagDict[geom.asWkb()] = self.tr("Polygon without center point.")
             currentStep += 1
             if multiStepFeedback is not None:

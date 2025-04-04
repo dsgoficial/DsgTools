@@ -162,20 +162,18 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.INVALID_POLYGON_LOCATION,
-                self.tr("Invalid Polygon Location Flags from {0}").format(
-                    self.displayName()
-                ),
+                self.tr("Invalid Polygon Location Flags"),
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.UNUSED_BOUNDARY_LINES,
-                self.tr("Unused Boundary Flags from {0}").format(self.displayName()),
+                self.tr("Unused Boundary Flags"),
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS, self.tr("Polygon Flags from {0}").format(self.displayName())
+                self.FLAGS, self.tr("Polygon Flags"),
             )
         )
 
