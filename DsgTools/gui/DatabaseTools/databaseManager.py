@@ -21,7 +21,6 @@
 """
 
 
-
 from qgis.PyQt.QtCore import QObject
 
 from DsgTools.gui.DatabaseTools.DbTools.SingleDbCreator.singleDbCreator import (

@@ -244,7 +244,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             context=context,
             is_child_algorithm=False,
         )
-        
+
         QgsProject.instance().addMapLayer(intersectedLines, True)
 
         currentStep += 1
@@ -350,7 +350,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
                 f"Created {polygonizeOutput.featureCount()} polygons from line network"
             )
         )
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Filtering small polygons"))
         polygonizeOutput = self.algRunner.runFilterExpression(
@@ -642,7 +642,9 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             feedback.pushInfo(self.tr("Building network graph from line segments"))
 
         G = nx.Graph()
-        nFeats = input.featureCount() if isinstance(input, QgsVectorLayer) else len(input)
+        nFeats = (
+            input.featureCount() if isinstance(input, QgsVectorLayer) else len(input)
+        )
         if nFeats == 0:
             return set()
         stepSize = 100 / nFeats
@@ -653,7 +655,9 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             geom = feat.geometry()
             startPoint, endPoint = geom.asPolyline()[0], geom.asPolyline()[-1]
             if not G.has_edge(startPoint, endPoint):
-                G.add_edge(startPoint, endPoint, layerIdSet=set(), featid=feat["featid"])
+                G.add_edge(
+                    startPoint, endPoint, layerIdSet=set(), featid=feat["featid"]
+                )
             G[startPoint][endPoint]["layerIdSet"].add(feat["layer_id"])
             if feedback is not None and i % 1000 == 0:
                 feedback.setProgress(int(i * stepSize))
@@ -808,74 +812,84 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         )
         return outputSet
 
-    def processBoundariesInBatches(self, intersectedLines, uniqueBoundariesIdSet, context, feedback):
+    def processBoundariesInBatches(
+        self, intersectedLines, uniqueBoundariesIdSet, context, feedback
+    ):
         """
         Process unique boundaries in batches to avoid expression length limitations.
-        
+
         Args:
             intersectedLines: Input line layer
             uniqueBoundariesIdSet: Set of feature IDs to process
             constraintLyrList: List of constraint layers
             context: Processing context
             feedback: Feedback object
-            
+
         Returns:
             QgsVectorLayer: Processed boundaries layer
         """
         # Convert set to list for indexing
         uniqueBoundariesIdList = list(uniqueBoundariesIdSet)
-        
+
         # Determine batch size - adjust based on typical ID size and system constraints
         # 1000 IDs per batch is usually safe
         BATCH_SIZE = 1000
-        
+
         # Calculate number of batches
         total_ids = len(uniqueBoundariesIdList)
         num_batches = math.ceil(total_ids / BATCH_SIZE)
-        
+
         if num_batches <= 1:
             # If small enough, process normally
-            feedback.pushInfo(self.tr(f"Processing {total_ids} boundaries in a single batch"))
+            feedback.pushInfo(
+                self.tr(f"Processing {total_ids} boundaries in a single batch")
+            )
             return self.algRunner.runFilterExpression(
                 inputLyr=intersectedLines,
                 expression=f"\"featid\" IN ({','.join(map(str, uniqueBoundariesIdList))})",
                 context=context,
-                feedback=feedback
+                feedback=feedback,
             )
-        
+
         # Process in batches
-        feedback.pushInfo(self.tr(f"Processing {total_ids} boundaries in {num_batches} batches"))
-        
+        feedback.pushInfo(
+            self.tr(f"Processing {total_ids} boundaries in {num_batches} batches")
+        )
+
         # Create a temporary layer for accumulating results
         result_layer = None
-        
+
         # Set up sub-feedback for batches
         subFeedback = QgsProcessingMultiStepFeedback(num_batches, feedback)
-        
+
         for batch_idx in range(num_batches):
             if feedback.isCanceled():
                 break
-                
+
             # Get current batch of IDs
             start_idx = batch_idx * BATCH_SIZE
             end_idx = min(start_idx + BATCH_SIZE, total_ids)
             batch_ids = uniqueBoundariesIdList[start_idx:end_idx]
-            
+
             # Update progress and info
             subFeedback.setCurrentStep(batch_idx)
-            subFeedback.pushInfo(self.tr(f"Processing batch {batch_idx + 1}/{num_batches} with {len(batch_ids)} boundaries"))
-            
+            subFeedback.pushInfo(
+                self.tr(
+                    f"Processing batch {batch_idx + 1}/{num_batches} with {len(batch_ids)} boundaries"
+                )
+            )
+
             # Create filter expression for this batch
             expression = f"\"featid\" IN ({','.join(map(str, batch_ids))})"
-            
+
             # Process this batch
             batch_layer = self.algRunner.runFilterExpression(
                 inputLyr=intersectedLines,
                 expression=expression,
                 context=context,
-                feedback=subFeedback
+                feedback=subFeedback,
             )
-            
+
             # Add features to result layer
             if result_layer is None:
                 # First batch becomes the result layer
@@ -885,11 +899,15 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
                 result_layer = self.algRunner.runMergeVectorLayers(
                     inputList=[result_layer, batch_layer],
                     context=context,
-                    feedback=subFeedback
+                    feedback=subFeedback,
                 )
-        
+
         # Return the combined layer
-        feedback.pushInfo(self.tr(f"Successfully processed all {total_ids} boundaries in {num_batches} batches"))
+        feedback.pushInfo(
+            self.tr(
+                f"Successfully processed all {total_ids} boundaries in {num_batches} batches"
+            )
+        )
         return result_layer
 
     def name(self):

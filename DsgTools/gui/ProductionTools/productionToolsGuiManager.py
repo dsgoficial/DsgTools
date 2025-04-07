@@ -21,7 +21,6 @@
 """
 
 
-
 from qgis.PyQt.QtCore import QObject
 from .Toolboxes.toolBoxesGuiManager import ToolBoxesGuiManager
 from .MapTools.mapToolsGuiManager import MapToolsGuiManager

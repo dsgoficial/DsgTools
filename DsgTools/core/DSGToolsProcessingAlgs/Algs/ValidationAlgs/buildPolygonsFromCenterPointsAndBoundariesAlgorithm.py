@@ -173,7 +173,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS, self.tr("Polygon Flags"),
+                self.FLAGS,
+                self.tr("Polygon Flags"),
             )
         )
 

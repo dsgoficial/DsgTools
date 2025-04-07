@@ -2702,7 +2702,10 @@ class LayerHandler(QObject):
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr("Removing duplicated nodes..."))
         builtPolygonLyr: QgsVectorLayer = algRunner.runRemoveDuplicateVertex(
-            inputLyr=builtPolygonLyr, tolerance=1e-7, context=context, feedback=multiStepFeedback
+            inputLyr=builtPolygonLyr,
+            tolerance=1e-7,
+            context=context,
+            feedback=multiStepFeedback,
         )
         currentStep += 1
         if multiStepFeedback is not None:
@@ -2866,8 +2869,16 @@ class LayerHandler(QObject):
             currentStep += 1
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
-            geographicBoundsGeomList = [f.geometry() for f in geographicBoundaryLyr.getFeatures()] if geographicBoundaryLyr is not None else []
-            geographicBoundsGeom: QgsGeometry = None if len(geographicBoundsGeomList) == 0 else geographicBoundsGeomList[0]
+            geographicBoundsGeomList = (
+                [f.geometry() for f in geographicBoundaryLyr.getFeatures()]
+                if geographicBoundaryLyr is not None
+                else []
+            )
+            geographicBoundsGeom: QgsGeometry = (
+                None
+                if len(geographicBoundsGeomList) == 0
+                else geographicBoundsGeomList[0]
+            )
             if len(geographicBoundsGeomList) > 1:
                 for otherGeom in geographicBoundsGeomList[1::]:
                     geographicBoundsGeom = geographicBoundsGeom.combine(otherGeom)
