@@ -313,7 +313,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
             currentStep += 1
             snapStructure[item["referenceLayer"]] = {
-                "originalLayer": lyr.clone(),
+                "originalLayer": lyr,
                 "tempLayer": insideLyr.clone(),
                 "outsideLayer": outsideLyr.clone(),
                 "snap": item["snap"],
@@ -391,7 +391,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
             if geographicBoundaryLyr is None:
                 self.layerHandler.updateOriginalLayersFromUnifiedLayer(
-                    [auxDict["originalLayer"].clone()],
+                    [auxDict["originalLayer"]],
                     tempLyr,
                     feedback=multiStepFeedback,
                     onlySelected=onlySelected,
@@ -423,7 +423,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 context=context,
             )
             originalLyr = (
-                auxDict["originalLayer"].clone()
+                auxDict["originalLayer"]
                 if isinstance(auxDict["originalLayer"], QgsVectorLayer)
                 else QgsProcessingUtils.mapLayerFromString(
                     auxDict["originalLayer"], context
@@ -431,7 +431,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
             self.layerHandler.updateOriginalLayersFromUnifiedLayer(
                 [originalLyr],
-                outputLyr.clone(),
+                outputLyr,
                 feedback=multiStepFeedback,
                 onlySelected=onlySelected,
             )
