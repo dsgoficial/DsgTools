@@ -141,7 +141,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                 feedback,
                 layerHandler,
                 algRunner,
-                inputLyr.clone(),
+                inputLyr,
                 onlySelected,
                 snap,
                 minArea,
@@ -152,7 +152,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                 feedback,
                 layerHandler,
                 algRunner,
-                inputLyr.clone(),
+                inputLyr,
                 onlySelected,
                 snap,
                 minArea,
@@ -276,7 +276,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(4)
         multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
-        layerList = [inputLyr.clone()]
+        layerList = [inputLyr]
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             layerList,
             outputLyr,
