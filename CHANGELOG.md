@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.38 - dev
+## 4.17.39 - dev
 
 Novas Funcionalidades:
 
@@ -60,7 +60,8 @@ Correção de bugs:
 - Corrige bug de retomar o estado do Workflow após carregar um projeto salvo;
 - Corrige bug de curva cortada na intersecção com drenagem no algoritmo de identificar inconsistências entre drenagens e curvas de nível;
 - Corrige bug no spellchecker de campo não encontrado;
-- Corrige imports que causam crash (from __futures__)
+- Corrige imports que causam crash (from __futures__);
+- Corrige bug na extração de pontos cotados no caso de áreas planas;
 
 ## 4.16.0 - 2024-11-27
 

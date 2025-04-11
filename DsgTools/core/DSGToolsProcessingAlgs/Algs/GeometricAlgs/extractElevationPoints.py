@@ -1866,12 +1866,16 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             candidatesPointLyr, context, is_child_algorithm=True
         )
 
-        disjointLyr = AlgRunner().runExtractByLocation(
-            candidatesPointLyr,
-            exclusionLyr,
-            predicate=[AlgRunner.Disjoint],
-            context=context,
-            feedback=multiStepFeedback,
+        disjointLyr = (
+            AlgRunner().runExtractByLocation(
+                candidatesPointLyr,
+                exclusionLyr,
+                predicate=[AlgRunner.Disjoint],
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if exclusionLyr is not None
+            else candidatesPointLyr
         )
         nFeats = disjointLyr.featureCount()
         if nFeats == 0:
@@ -2361,7 +2365,27 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 fields=fields,
                 fieldName="cota",
             )
-            pointList += newFeatList
+            if not newFeatList:
+                continue
+            tempLayer = layerHandler.createMemoryLayerWithFeatures(
+                featList=newFeatList,
+                fields=fields,
+                crs=rasterLyr.crs(),
+                wkbType=QgsWkbTypes.Point,
+                context=context,
+            )
+
+            # Apply distance-based filtering within this grid cell
+            localMinDistance = bufferDistance * 2
+            spatiallyFilteredFeats = self.filterFeaturesByDistanceAndExclusionLayer(
+                candidatesPointLyr=tempLayer,
+                exclusionLyr=None,
+                distance=localMinDistance,
+                context=context,
+                feedback=None,
+            )
+
+            pointList.extend(spatiallyFilteredFeats)
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
 
