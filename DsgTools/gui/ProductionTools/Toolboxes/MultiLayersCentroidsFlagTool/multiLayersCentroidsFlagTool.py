@@ -562,6 +562,7 @@ class MultiLayersCentroidsFlagDockWidget(
                 lyrPoint.beginEditCommand("Updating flags")
                 lyrPoint.deleteFeature(feat.id())
                 lyrPoint.endEditCommand()
+                self.lyrsNRowPointDict[row] = (lyridReference, newFeat)
             lyrPointsReference.endEditCommand()
         self.updateTable()
         lyrsPointsInsideFlagPolygonDict = self.pointsInSelectedPolygonFlags(lyrFlags)
