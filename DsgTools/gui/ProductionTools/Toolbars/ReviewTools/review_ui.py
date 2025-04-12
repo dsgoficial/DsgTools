@@ -249,9 +249,7 @@ class Ui_ReviewToolbar(object):
     def retranslateUi(self, ReviewToolbar):
         _translate = QtCore.QCoreApplication.translate
         ReviewToolbar.setWindowTitle(_translate("ReviewToolbar", "Form"))
-        self.reviewPushButton.setToolTip(
-            _translate("ReviewToolbar", "Inspect Features Tool")
-        )
+        self.reviewPushButton.setToolTip(_translate("ReviewToolbar", "Review Toolbar"))
 
 
 from qgis import core
