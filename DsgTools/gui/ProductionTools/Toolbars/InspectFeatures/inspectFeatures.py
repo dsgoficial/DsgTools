@@ -297,6 +297,10 @@ class InspectFeatures(QWidget, Ui_Form):
         maxIndex = len(featIdList) - 1
         minIndex = 0
 
+        if index > maxIndex:
+            index = minIndex
+            first = True
+
         self.idSpinBox.setMaximum(maxIndex)
         self.idSpinBox.setMinimum(minIndex)
 
@@ -306,11 +310,16 @@ class InspectFeatures(QWidget, Ui_Form):
         self.idSpinBox.setSuffix(" ({0}/{1})".format(index + 1, len(featIdList)))
         self.allLayers[lyrName] = index
 
-        # getting the new feature id
-        id = featIdList[index]
-
-        # adjustin the spin box value
-        # self.idxChanged.emit(id)
+        try:
+            id = featIdList[index]
+        except IndexError:
+            index = 0
+            self.allLayers[lyrName] = index
+            if len(featIdList) > 0:
+                id = featIdList[index]
+            else:
+                self.errorMessage()
+                return
 
         self.makeZoom(zoom, currentLayer, id)
         self.selectLayer(id, currentLayer)
