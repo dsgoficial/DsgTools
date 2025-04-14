@@ -236,6 +236,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                             ".tif", ".xml"
                         ).replace(".TIF", ".xml"),
                         productName=Path(clippedOutputPath).stem,
+                        imageSensor=imageSensor,
                     )
                     currentIndex += 1
                 currentSeamline += 1

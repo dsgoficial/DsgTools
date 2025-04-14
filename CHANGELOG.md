@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.39 - dev
+## 4.17.40 - dev
 
 Novas Funcionalidades:
 
@@ -62,6 +62,7 @@ Correção de bugs:
 - Corrige bug no spellchecker de campo não encontrado;
 - Corrige imports que causam crash (from __futures__);
 - Corrige bug na extração de pontos cotados no caso de áreas planas;
+- Corrige bug na rotina de preparo de imagens para o BDGEx;
 
 ## 4.16.0 - 2024-11-27
 
