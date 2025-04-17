@@ -35,6 +35,7 @@ from qgis.core import (
     QgsRasterLayer,
     QgsRectangle,
     QgsCoordinateReferenceSystem,
+    QgsProperty,
 )
 
 
@@ -2802,6 +2803,170 @@ class AlgRunner:
                 "ROUND_TO": roundTo,
                 "OUTPUT": outputLyr,
             },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runRotateFeatures(
+        self,
+        inputLayer,
+        angle,
+        context,
+        anchor=None,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        """
+        Rotates vector features around specified points.
+
+        Parameters:
+            inputLayer: Input vector layer
+            angle: Rotation angle in degrees (can be a fixed value or QgsProperty expression)
+            context: Processing context
+            anchor: Anchor point for rotation (can be a string expression like '$x || \',\' || $y')
+            feedback: Processing feedback object
+            outputLyr: Output layer path or URI
+            is_child_algorithm: Whether this algorithm is being run as part of a larger algorithm
+
+        Returns:
+            The output layer with rotated features
+        """
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+
+        if anchor is None:
+            anchor = QgsProperty.fromExpression("$x || ',' || $y")
+
+        parameters = {
+            "INPUT": inputLayer,
+            "ANGLE": angle,
+            "ANCHOR": anchor,
+            "OUTPUT": outputLyr,
+        }
+        output = processing.run(
+            "native:rotatefeatures",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runExtentToLayer(
+        self,
+        inputLayer,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        """
+        Creates a layer containing the extent of the input layer.
+
+        Parameters:
+            inputLayer: Input vector layer
+            context: Processing context
+            feedback: Processing feedback object
+            outputLyr: Output layer path or URI
+            is_child_algorithm: Whether this algorithm is being run as part of a larger algorithm
+
+        Returns:
+            The output layer containing the extent polygon
+        """
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+
+        parameters = {"INPUT": inputLayer, "OUTPUT": outputLyr}
+        output = processing.run(
+            "native:extenttolayer",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runDeleteDuplicateGeometries(
+        self,
+        inputLayer,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        """
+        Removes duplicate geometries from a layer.
+
+        Parameters:
+            inputLayer: Input vector layer
+            context: Processing context
+            feedback: Processing feedback object
+            outputLyr: Output layer path or URI
+            is_child_algorithm: Whether this algorithm is being run as part of a larger algorithm
+
+        Returns:
+            The output layer with duplicate geometries removed
+        """
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+
+        parameters = {"INPUT": inputLayer, "OUTPUT": outputLyr}
+        output = processing.run(
+            "native:deleteduplicategeometries",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runJoinByNearest(
+        self,
+        inputLayer,
+        joinLayer,
+        context,
+        prefix=None,
+        maxDistance=None,
+        neighbors=1,
+        joinFields=None,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        """
+        Joins attributes from the nearest feature in another layer.
+
+        Parameters:
+            inputLayer: Input vector layer
+            joinLayer: Layer with attributes to join
+            context: Processing context
+            prefix: Prefix to add to joined fields
+            maxDistance: Maximum distance to search for neighbors (None means no limit)
+            neighbors: Number of neighbors to join
+            joinFields: Fields to join (None means all fields)
+            feedback: Processing feedback object
+            outputLyr: Output layer path or URI
+            is_child_algorithm: Whether this algorithm is being run as part of a larger algorithm
+
+        Returns:
+            The output layer with joined attributes
+        """
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        joinFields = [] if joinFields is None else joinFields
+        prefix = "" if prefix is None else prefix
+
+        parameters = {
+            "INPUT": inputLayer,
+            "INPUT_2": joinLayer,
+            "FIELDS_TO_COPY": joinFields,
+            "PREFIX": prefix,
+            "MAX_DISTANCE": maxDistance,
+            "NEIGHBORS": neighbors,
+            "OUTPUT": outputLyr,
+        }
+        output = processing.run(
+            "qgis:joinbynearest",
+            parameters,
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
