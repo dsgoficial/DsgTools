@@ -73,7 +73,7 @@ class ToolBoxesGuiManager(QObject):
         self.iface.projectRead.connect(self.loadStateFromProject)
 
     def initGui(self):
-        self.qaToolBox = None
+        self.workflowToolBox = None
         self.addTool(
             self.showWorkflowToolBox,
             "validationtools.png",
@@ -185,22 +185,22 @@ class ToolBoxesGuiManager(QObject):
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.cfToolbox) """
         pass
 
-    def refreshQaToolBoxObject(self):
-        if self.qaToolBox is not None:
-            self.iface.removeDockWidget(self.qaToolBox)
-            del self.qaToolBox
-        self.qaToolBox = WorkflowDockWidget(self.iface)
-        return self.qaToolBox
+    def refreshWorkflowToolBoxObject(self):
+        if self.workflowToolBox is not None:
+            self.iface.removeDockWidget(self.workflowToolBox)
+            del self.workflowToolBox
+        self.workflowToolBox = WorkflowDockWidget(self.iface)
+        return self.workflowToolBox
 
     def showWorkflowToolBox(self):
         """
         Shows/Hides the Quality Assurance Dock on main window.
         """
-        if self.qaToolBox:
-            self.iface.removeDockWidget(self.qaToolBox)
+        if self.workflowToolBox:
+            self.iface.removeDockWidget(self.workflowToolBox)
         else:
-            self.qaToolBox = WorkflowDockWidget(self.iface)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.qaToolBox)
+            self.workflowToolBox = WorkflowDockWidget(self.iface)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.workflowToolBox)
 
     def showMultiLayersCentroidsFlagTool(self):
         if self.multiLayersCentroidsFlagToolBox is not None:
