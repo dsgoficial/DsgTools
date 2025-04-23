@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.41 - dev
+## 4.17.42 - dev
 
 Novas Funcionalidades:
 
@@ -20,6 +20,7 @@ Novas Funcionalidades:
 - Novo algoritmo de criar grid ao longo de linhas;
 - Novo algoritmo de seccionar polígonos com linhas (line on area overlayer);
 - Novo algoritmo de generalização de edificações para edição;
+- Novo algoritmo de atrair feições para âncoras (AnchoredSnapper);
 
 Melhorias:
 

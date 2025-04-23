@@ -102,6 +102,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingFo
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.prepareFilesForRasterPackagingForBDGEx import (
     PrepareRasterFilesForPackagingForBDGEx,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.anchoredSnapperAlgorithm import AnchoredSnapperAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
     FixSegmentErrorsBetweenLinesAlgorithm,
 )
@@ -791,6 +792,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             LineOnAreaOverlayerAlgorithm(),
             PolygonTilerAlgorithm(),
             BuildingGeneralizationAlgorithm(),
+            AnchoredSnapperAlgorithm(),
         ]
         return algList
 
