@@ -26,7 +26,7 @@ from qgis.core import QgsMessageLog, Qgis
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QMessageBox
 
@@ -52,6 +52,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         """Constructor."""
         super(ExploreServerWidget, self).__init__(parent)
         self.setupUi(self)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
         self.superNeeded = False
         self.dbFactory = DbFactory()
         self.factory = SqlGeneratorFactory()
@@ -182,7 +183,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Opens the View Server dialog
         """
-        createNewServer = ViewServers(self)
+        createNewServer = ViewServers(parent=self)
         result = createNewServer.exec_()
         self.populateServersCombo()
 

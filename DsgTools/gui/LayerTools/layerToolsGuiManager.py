@@ -82,8 +82,7 @@ class LayerToolsGuiManager(QObject):
         """
         Shows the dialog that loads layers from server
         """
-        dlg = LoadLayersFromServer(self.iface)
-        dlg.setWindowFlags(dlg.windowFlags() | Qt.WindowStaysOnTopHint)
+        dlg = LoadLayersFromServer(self.iface, parent=self.iface.mainWindow())
         dlg.show()
         result = dlg.exec_()
         if result:

@@ -5694,7 +5694,7 @@ Mensagens de erro para cada perfil foram geradas no log do QGIS.</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/ui_serverConfigurator.ui" line="14"/>
-        <source>Configurate Servers</source>
+        <source>Configure Servers</source>
         <translation>Configurar servidores</translation>
     </message>
     <message>
