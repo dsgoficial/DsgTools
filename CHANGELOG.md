@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.42 - dev
+## 4.17.43 - dev
 
 Novas Funcionalidades:
 
@@ -65,6 +65,7 @@ Correção de bugs:
 - Corrige imports que causam crash (from __futures__);
 - Corrige bug na extração de pontos cotados no caso de áreas planas;
 - Corrige bug na rotina de preparo de imagens para o BDGEx;
+- Corrige bug na ferramenta de medida enquanto adquire (measureTool) no caso de mudança de sistema de coordenadas no projeto;
 
 ## 4.16.0 - 2024-11-27
 

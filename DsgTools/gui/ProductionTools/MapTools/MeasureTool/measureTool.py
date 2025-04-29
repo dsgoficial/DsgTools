@@ -176,14 +176,18 @@ class EventFilter(QObject):
         self.mapCanvas = iface.mapCanvas()
         self.pointList = pointList
         self.dist_area = QgsDistanceArea()
+        self.updateDistArea()
+        QgsProject.instance().crsChanged.connect(self.updateDistArea)
+
+    def close(self):
+        QgsProject.instance().crsChanged.disconnect(self.updateDistArea)
+    
+    def updateDistArea(self):
         projCrs = QgsProject.instance().crs()
         self.dist_area.setSourceCrs(projCrs, QgsCoordinateTransformContext())
         ellipsoidAcronym = projCrs.ellipsoidAcronym()
         if ellipsoidAcronym != "":
             self.dist_area.setEllipsoid(ellipsoidAcronym)
-
-    def close(self):
-        pass
 
     def eventFilter(self, obj, event):
         if not event.spontaneous():
