@@ -532,7 +532,14 @@ class MultiLayersCentroidsFlagDockWidget(
             for i, field in enumerate(referenceFeat.fields())
             if i not in lyrPointsReference.primaryKeyAttributes()
         }
+        valid_rows = []
         for row, (lyrid, feat) in self.lyrsNRowPointDict.items():
+            if lyrid not in lyrsPointsInsideFlagPolygonDict:
+                continue
+            if any(f.id() == feat.id() for f in lyrsPointsInsideFlagPolygonDict[lyrid]):
+                valid_rows.append(row)
+        for row in valid_rows:
+            lyrid, feat = self.lyrsNRowPointDict[row]
             if row == index.row():
                 continue
             lyrPointsReference.startEditing()

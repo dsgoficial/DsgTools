@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.43 - dev
+## 4.17.44 - dev
 
 Novas Funcionalidades:
 
@@ -66,6 +66,7 @@ Correção de bugs:
 - Corrige bug na extração de pontos cotados no caso de áreas planas;
 - Corrige bug na rotina de preparo de imagens para o BDGEx;
 - Corrige bug na ferramenta de medida enquanto adquire (measureTool) no caso de mudança de sistema de coordenadas no projeto;
+- Corrige bug do Inspect Multi Layers Centroids Flags Toolbox em mudança de atributos de centroides fora do polígono selecionado;
 
 ## 4.16.0 - 2024-11-27
 
