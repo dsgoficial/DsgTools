@@ -99,7 +99,7 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
             lyrName, hasNullOrEmpty = future.result()
             if hasNullOrEmpty:
                 multiStepFeedback.pushWarning(
-                    self.tr(f"Check layer {lyrName} for empty or null values.")
+                    self.tr(f"\n\n\nCheck layer {lyrName} for empty or null values.\n\n\n")
                 )
             multiStepFeedback.setProgress(current * stepSize)
         return {}
