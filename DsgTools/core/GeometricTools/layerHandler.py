@@ -1411,8 +1411,8 @@ class LayerHandler(QObject):
                 )
             if geom.constGet() is None:
                 _deleteSet.add(id)
-            else:
-                isValid, reason = geom.constGet().isValid()
+                return flagDict, _newFeatSet, _deleteSet, feat
+            isValid, reason = geom.constGet().isValid()
             if "Too few points in geometry component" in reason:
                 _deleteSet.add(id)
             return flagDict, _newFeatSet, _deleteSet, feat
