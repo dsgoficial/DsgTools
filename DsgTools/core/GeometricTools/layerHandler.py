@@ -1409,7 +1409,10 @@ class LayerHandler(QObject):
                 flagDict.update(
                     self.checkGeomIsValid(g, parameterDict, ignoreClosed, feedback)
                 )
-            isValid, reason = geom.constGet().isValid()
+            if geom.constGet() is None:
+                _deleteSet.add(id)
+            else:
+                isValid, reason = geom.constGet().isValid()
             if "Too few points in geometry component" in reason:
                 _deleteSet.add(id)
             return flagDict, _newFeatSet, _deleteSet, feat

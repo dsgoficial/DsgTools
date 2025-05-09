@@ -112,7 +112,7 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
         idsToDeleteSet = idsToDeleteSet | set(
             f["_featid"]
             for f in cacheLyr.getFeatures()
-            if "Too few points in geometry component"
+            if f.geometry().constGet() is None or "Too few points in geometry component"
             in f.geometry().constGet().isValid()[1]
         )
         inputLyr.startEditing()
