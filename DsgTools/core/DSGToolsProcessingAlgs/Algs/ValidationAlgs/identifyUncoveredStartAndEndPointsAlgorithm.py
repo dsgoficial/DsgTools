@@ -232,7 +232,7 @@ class IdentifyUncoveredStartAndEndPointsAlgorithm(ValidationAlgorithm):
                 ),
                 fromWkb=True,
             )
-            multiStepFeedback.setCurrentStep(current * stepSize)
+            multiStepFeedback.setProgress(current * stepSize)
 
         return {
             self.FLAGS: self.flag_id,

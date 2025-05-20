@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.45 - dev
+## 4.17.46 - dev
 
 Novas Funcionalidades:
 
@@ -68,6 +68,7 @@ Correção de bugs:
 - Corrige bug na ferramenta de medida enquanto adquire (measureTool) no caso de mudança de sistema de coordenadas no projeto;
 - Corrige bug do Inspect Multi Layers Centroids Flags Toolbox em mudança de atributos de centroides fora do polígono selecionado;
 - Corrige bug na identificação e remoção de linhas com menos de 2 vértices;
+- Corrige bug no feedback do IdentifyUncoveredStartAndEndPointsAlgorithm;
 
 ## 4.16.0 - 2024-11-27
 
