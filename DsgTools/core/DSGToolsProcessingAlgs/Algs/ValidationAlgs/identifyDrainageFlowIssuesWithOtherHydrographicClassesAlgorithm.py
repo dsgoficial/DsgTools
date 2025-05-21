@@ -380,6 +380,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 waterBodyName=self.tr("water body with flow"),
                 feedback=multiStepFeedback,
                 withFlow=True,
+                oceanLyr=oceanLyr,
             )
             currentStep += 1
 
@@ -700,6 +701,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         waterBodyName,
         feedback,
         withFlow=False,
+        oceanLyr=None,
     ):
         nFeats = waterBodyLyr.featureCount()
         if nFeats == 0:
@@ -769,6 +771,9 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                     continue
                 intersectionSet.add(interWkt)
             polygonWithProblem = None if flowCheckLambda([inCount, outCount]) else geom
+            if polygonWithProblem is not None and oceanLyr is not None:
+                polygonIntersectsOcean = any(polygonWithProblem.intersects(f.geometry()) for f in oceanLyr.getFeatures())
+                polygonWithProblem = None if polygonIntersectsOcean and (inCount > 0 and outCount == 0) else polygonWithProblem
             return intersectionSet, polygonWithProblem
 
         stepSize = 100 / nFeats

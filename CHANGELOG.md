@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.46 - dev
+## 4.17.47 - dev
 
 Novas Funcionalidades:
 
@@ -69,6 +69,7 @@ Correção de bugs:
 - Corrige bug do Inspect Multi Layers Centroids Flags Toolbox em mudança de atributos de centroides fora do polígono selecionado;
 - Corrige bug na identificação e remoção de linhas com menos de 2 vértices;
 - Corrige bug no feedback do IdentifyUncoveredStartAndEndPointsAlgorithm;
+- Corrige bug de falso positivo em massa d'água adjacente ao oceano no processo de identificar erros de fluxo com outras classes da hidrografia;
 
 ## 4.16.0 - 2024-11-27
 
