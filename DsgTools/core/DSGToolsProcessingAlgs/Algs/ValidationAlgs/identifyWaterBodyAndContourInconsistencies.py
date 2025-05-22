@@ -90,7 +90,7 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
             QgsProcessingParameterExpression(
                 self.CONTOUR_INSIDE_WATER_BODY_EXPRESSION,
                 self.tr("Filter expression for cotours inside water bodies"),
-                """"dentro_de_massa_dagua" = 1""",
+                """"dentro_massa_dagua" = 1""",
                 self.INPUT_CONTOURS,
             )
         )
