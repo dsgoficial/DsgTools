@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.47 - dev
+## 4.17.48 - dev
 
 Novas Funcionalidades:
 
@@ -48,6 +48,7 @@ Melhorias:
 - Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: adicionada a opção de definir nas opções do dsgtools os campos default para serem escondidos;
 - Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: a ferramenta tem seu estado salvo no projeto e ao abrir o projeto, o estado anterior é restaurado;
 - Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: adicionado o flash feature e trocado o zoom pelo pan;
+- Adiciona verificação de ângulos nas flags de geometria inválida do Build Polygons from Center Points and Boundaries (às vezes vértices próximos a uma intersecção não calculada produz um spike no polígono resultante);
 
 Correção de bugs:
 

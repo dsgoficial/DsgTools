@@ -21,7 +21,9 @@
 """
 
 import concurrent.futures
+import itertools
 import os
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 import processing
 from PyQt5.QtCore import QCoreApplication
 
@@ -518,7 +520,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         polygonFeatList,
         invalid_polygon_sink,
     ):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        geometryHandler = GeometryHandler()
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setProgressText(
             self.tr("Checking for invalid geometries on output polygons...")
         )
@@ -538,6 +541,25 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             flagGeom=x[1]["geom"], flagText=x[1]["reason"], sink=invalid_polygon_sink
         )
         list(map(flagLambda, invalidGeomFlagDict.items()))
+        
+        multiStepFeedback.setCurrentStep(2)
+        flagText = self.tr(
+            "Out of bounds angle. This is a spike that is probably formed by a vertice that is very close to the intersection of lines"
+        )
+        outOfBoundsLambda = lambda x: self.flagFeature(
+            flagGeom=x["geom"], flagText=flagText, sink=invalid_polygon_sink
+        )
+        list(
+            map(
+                outOfBoundsLambda,
+                itertools.chain.from_iterable(
+                    map(
+                        lambda x: geometryHandler.getOutOfBoundsAngle(x, 10),
+                        polygonFeatList
+                    )
+                )
+            )
+        )
 
     def prepareInvalidPolygonFlags(self, parameters, context, inputCenterPointLyr):
         (invalid_polygon_sink, invalid_polygon_sink_id) = self.parameterAsSink(
