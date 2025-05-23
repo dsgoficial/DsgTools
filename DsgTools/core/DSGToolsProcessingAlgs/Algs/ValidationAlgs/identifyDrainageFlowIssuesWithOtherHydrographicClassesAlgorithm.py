@@ -772,8 +772,15 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 intersectionSet.add(interWkt)
             polygonWithProblem = None if flowCheckLambda([inCount, outCount]) else geom
             if polygonWithProblem is not None and oceanLyr is not None:
-                polygonIntersectsOcean = any(polygonWithProblem.intersects(f.geometry()) for f in oceanLyr.getFeatures())
-                polygonWithProblem = None if polygonIntersectsOcean and (inCount > 0 and outCount == 0) else polygonWithProblem
+                polygonIntersectsOcean = any(
+                    polygonWithProblem.intersects(f.geometry())
+                    for f in oceanLyr.getFeatures()
+                )
+                polygonWithProblem = (
+                    None
+                    if polygonIntersectsOcean and (inCount > 0 and outCount == 0)
+                    else polygonWithProblem
+                )
             return intersectionSet, polygonWithProblem
 
         stepSize = 100 / nFeats

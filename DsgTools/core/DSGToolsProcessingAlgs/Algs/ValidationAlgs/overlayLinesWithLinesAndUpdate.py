@@ -52,7 +52,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
     It also ensures that intersection points are added as vertices to reference lines
     if they don't already exist there.
     """
-    
+
     INPUT = "INPUT"
     SELECTED = "SELECTED"
     REFERENCE_LINES = "REFERENCE_LINES"
@@ -71,7 +71,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
                 [QgsProcessing.TypeVectorLine],
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SELECTED, self.tr("Process only selected features")
@@ -116,10 +116,8 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
         algRunner = AlgRunner()
 
         # Retrieve the feature sources
-        inputLyr = self.parameterAsVectorLayer(
-            parameters, self.INPUT, context
-        )
-        
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
 
         # Get reference line layers
@@ -131,11 +129,11 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
         snap_tolerance = self.parameterAsDouble(
             parameters, self.SNAP_TOLERANCE, context
         )
-        
+
         geographicBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
-        
+
         self.layerHandler = LayerHandler()
 
         self.runLineOnLineOverlayerWithoutGeographicBounds(
@@ -154,9 +152,9 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
             feedback=feedback,
             geographicBoundsLyr=geographicBoundsLyr,
         )
-        
+
         return {}
-    
+
     def runLineOnLineOverlayerWithoutGeographicBounds(
         self,
         inputLyr: QgsVectorLayer,
@@ -178,7 +176,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
         )
         currentStep += 1
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         auxReferenceLyr = self.layerHandler.createAndPopulateUnifiedVectorLayer(
             referenceLyrList,
@@ -187,7 +185,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
         )
         currentStep += 1
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         outputLinesLyr, outputReferenceLinesLyr = AlgRunner().runLineOnLineOverlayer(
             inputLyr=auxInputLyr,
@@ -197,7 +195,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
         )
         currentStep += 1
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         self.layerHandler.updateOriginalLayersFromUnifiedLayer(
             [inputLyr],
@@ -206,7 +204,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
             onlySelected=onlySelected,
         )
         currentStep += 1
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         self.layerHandler.updateOriginalLayersFromUnifiedLayer(
             referenceLyrList,
@@ -214,9 +212,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
             onlySelected=False,
         )
-        
-        
-    
+
     def runLineOnLineOverlayerWithGeographicBounds(
         self,
         inputLyr: QgsVectorLayer,

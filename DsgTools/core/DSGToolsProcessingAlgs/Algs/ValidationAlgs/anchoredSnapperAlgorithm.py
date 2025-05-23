@@ -34,7 +34,7 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
     QgsProcessingUtils,
     QgsWkbTypes,
-    QgsVectorLayer
+    QgsVectorLayer,
 )
 
 from ...algRunner import AlgRunner
@@ -64,7 +64,8 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED, self.tr("Process only selected features from input layer")
+                self.SELECTED,
+                self.tr("Process only selected features from input layer"),
             )
         )
 
@@ -73,28 +74,28 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
                 self.LINE_ANCHOR_LAYERS,
                 self.tr("Line anchor layers"),
                 QgsProcessing.TypeVectorLine,
-                optional=True
+                optional=True,
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.POLYGON_ANCHOR_LAYERS,
                 self.tr("Polygon anchor layers"),
                 QgsProcessing.TypeVectorPolygon,
-                optional=True
+                optional=True,
             )
         )
-        
+
         # New parameter for anchor layers selected features
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.ANCHOR_SELECTED, 
+                self.ANCHOR_SELECTED,
                 self.tr("Process only selected features from anchor layers"),
-                defaultValue=False
+                defaultValue=False,
             )
         )
-        
+
         param = QgsProcessingParameterDistance(
             self.TOLERANCE,
             self.tr("Snap Tolerance"),
@@ -103,7 +104,7 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
         )
         param.setMetadata({"widget_wrapper": {"decimals": 8}})
         self.addParameter(param)
-        
+
         self.modes = [
             self.tr("Prefer aligning nodes, insert extra vertices where required"),
             self.tr("Prefer closest point, insert extra vertices where required"),
@@ -120,7 +121,7 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
                 self.BEHAVIOR, self.tr("Behavior"), options=self.modes, defaultValue=0
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
@@ -136,39 +137,49 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
         """
         algRunner = AlgRunner()
         layerHandler = LayerHandler()
-        
+
         # Get parameters
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT)
             )
-        
+
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        anchorOnlySelected = self.parameterAsBool(parameters, self.ANCHOR_SELECTED, context)
-        
+        anchorOnlySelected = self.parameterAsBool(
+            parameters, self.ANCHOR_SELECTED, context
+        )
+
         # Get anchor layers
-        lineAnchorLayers = self.parameterAsLayerList(parameters, self.LINE_ANCHOR_LAYERS, context)
-        polygonAnchorLayers = self.parameterAsLayerList(parameters, self.POLYGON_ANCHOR_LAYERS, context)
-        
+        lineAnchorLayers = self.parameterAsLayerList(
+            parameters, self.LINE_ANCHOR_LAYERS, context
+        )
+        polygonAnchorLayers = self.parameterAsLayerList(
+            parameters, self.POLYGON_ANCHOR_LAYERS, context
+        )
+
         if not lineAnchorLayers and not polygonAnchorLayers:
             raise QgsProcessingException(
                 self.tr("You must provide at least one anchor layer (line or polygon)")
             )
-        
+
         snapTolerance = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
-        geographicBoundaryLyr = self.parameterAsVectorLayer(parameters, self.GEOGRAPHIC_BOUNDARY, context)
-        
+        geographicBoundaryLyr = self.parameterAsVectorLayer(
+            parameters, self.GEOGRAPHIC_BOUNDARY, context
+        )
+
         # Setup progress feedback
-        totalSteps = 8  # Updated step count 
+        totalSteps = 8  # Updated step count
         multiStepFeedback = QgsProcessingMultiStepFeedback(totalSteps, feedback)
         currentStep = 0
-        
+
         # Step 1: Create aux structure for input layer
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Creating auxiliary structure for input layer..."))
-        
+        multiStepFeedback.setProgressText(
+            self.tr("Creating auxiliary structure for input layer...")
+        )
+
         inputLyrList = [inputLyr]
         auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
             inputLyrList,
@@ -177,19 +188,21 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         currentStep += 1
-        
+
         # Step 2: Create spatial index for auxiliary layer
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Creating spatial index for input layer..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Creating spatial index for input layer...")
+        )
         algRunner.runCreateSpatialIndex(
             auxLyr, context, multiStepFeedback, is_child_algorithm=True
         )
         currentStep += 1
-        
+
         # Step 3: Prepare anchor layers - handle selected features if necessary
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Preparing anchor layers..."))
-        
+
         # Process line anchor layers - special handling for selection
         processed_lineAnchorLayers = []
         for lyr in lineAnchorLayers:
@@ -201,7 +214,7 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
                 processed_lineAnchorLayers.append(temp_lyr)
             else:
                 processed_lineAnchorLayers.append(lyr)
-        
+
         # Process polygon anchor layers - special handling for selection
         processed_polygonAnchorLayers = []
         for lyr in polygonAnchorLayers:
@@ -214,11 +227,11 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             else:
                 processed_polygonAnchorLayers.append(lyr)
         currentStep += 1
-        
+
         # Step 4: Convert polygons to lines
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Converting polygons to lines..."))
-        
+
         polygon_line_layers = []
         for poly_lyr in processed_polygonAnchorLayers:
             line_lyr = algRunner.runPolygonsToLines(
@@ -226,44 +239,46 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             )
             polygon_line_layers.append(line_lyr)
         currentStep += 1
-        
+
         # Step 5: Merge all line layers
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Merging all line layers..."))
-        
+
         all_line_layers = processed_lineAnchorLayers + polygon_line_layers
         if not all_line_layers:
-            raise QgsProcessingException(
-                self.tr("No valid anchor layers to process")
-            )
-            
+            raise QgsProcessingException(self.tr("No valid anchor layers to process"))
+
         mergedAnchorLayer = algRunner.runMergeVectorLayers(
             all_line_layers, context, feedback=multiStepFeedback
         )
         currentStep += 1
-        
+
         # Step 6: Convert lines to single parts (without exploding)
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Converting lines to single parts..."))
-        
+        multiStepFeedback.setProgressText(
+            self.tr("Converting lines to single parts...")
+        )
+
         singlePartLines = algRunner.runMultipartToSingleParts(
             mergedAnchorLayer, context, feedback=multiStepFeedback
         )
         currentStep += 1
-        
+
         # Step 7: Create spatial index on merged layer
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Creating spatial index on anchor layer..."))
-        
+        multiStepFeedback.setProgressText(
+            self.tr("Creating spatial index on anchor layer...")
+        )
+
         algRunner.runCreateSpatialIndex(
             singlePartLines, context, multiStepFeedback, is_child_algorithm=True
         )
         currentStep += 1
-        
+
         # Step 8: Run snap operation using algRunner
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Running snap operation..."))
-        
+
         snappedLyrOutput = algRunner.runSnapLayerOnLayer(
             inputLayer=auxLyr,
             referenceLayer=singlePartLines,
@@ -273,25 +288,27 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             onlySelected=False,  # We already handled selection
             feedback=multiStepFeedback,
             buildCache=False,
-            is_child_algorithm=True
+            is_child_algorithm=True,
         )
-        
+
         # Step 9: Add unshared vertices on intersections and shared edges
-        multiStepFeedback.setProgressText(self.tr("Adding unshared vertices on intersections and shared edges..."))
-        
+        multiStepFeedback.setProgressText(
+            self.tr("Adding unshared vertices on intersections and shared edges...")
+        )
+
         # Determine primitives to use in addUnsharedVertexOnSharedEdges
         primitiveDict = {
             QgsWkbTypes.PointGeometry: [],
             QgsWkbTypes.LineGeometry: [],
             QgsWkbTypes.PolygonGeometry: [],
         }
-        
+
         # Add snapped layer to appropriate dict entry
         primitiveDict[snappedLyrOutput.geometryType()].append(snappedLyrOutput)
-        
+
         # Add anchor layer to line dict
         primitiveDict[QgsWkbTypes.LineGeometry].append(singlePartLines)
-        
+
         # Run the add unshared vertex algorithm
         if primitiveDict[QgsWkbTypes.LineGeometry]:
             algRunner.runAddUnsharedVertexOnSharedEdges(
@@ -301,19 +318,19 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
                 selected=False,  # We already handled selection above
                 context=context,
                 feedback=multiStepFeedback,
-                is_child_algorithm=True
+                is_child_algorithm=True,
             )
-        
+
         # Step 10: Update original layers
         multiStepFeedback.setProgressText(self.tr("Updating original layers..."))
-        
+
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            inputLyrList, 
+            inputLyrList,
             auxLyr,  # Use the original auxLyr as it was modified in place
-            feedback=multiStepFeedback, 
-            onlySelected=onlySelected
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected,
         )
-        
+
         return {}
 
     def name(self):

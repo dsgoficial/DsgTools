@@ -181,7 +181,7 @@ class EventFilter(QObject):
 
     def close(self):
         QgsProject.instance().crsChanged.disconnect(self.updateDistArea)
-    
+
     def updateDistArea(self):
         projCrs = QgsProject.instance().crs()
         self.dist_area.setSourceCrs(projCrs, QgsCoordinateTransformContext())

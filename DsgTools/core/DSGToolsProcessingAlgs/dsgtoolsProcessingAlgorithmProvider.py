@@ -102,7 +102,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingFo
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.prepareFilesForRasterPackagingForBDGEx import (
     PrepareRasterFilesForPackagingForBDGEx,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.anchoredSnapperAlgorithm import AnchoredSnapperAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.anchoredSnapperAlgorithm import (
+    AnchoredSnapperAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
     FixSegmentErrorsBetweenLinesAlgorithm,
 )
@@ -124,7 +126,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUncoveredS
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWaterBodyAndContourInconsistencies import (
     IdentifyWaterBodyAndContourInconsistencies,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.overlayLinesWithLinesAndUpdate import OverlayLinesWithLinesAndUpdate
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.overlayLinesWithLinesAndUpdate import (
+    OverlayLinesWithLinesAndUpdate,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicateNodesAlgorithm import (
     RemoveDuplicateVertexesAlgorithm,
 )

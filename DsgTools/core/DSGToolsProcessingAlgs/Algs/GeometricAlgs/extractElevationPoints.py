@@ -647,7 +647,11 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             crs=maskLyr.crs() if maskLyr is not None else clippedRasterLyr.crs(),
             feedback=multiStepFeedback,
         )
-        maskLyr = AlgRunner().runMergeVectorLayers([maskLyr, contourBufferLyr], context) if maskLyr is not None else contourBufferLyr
+        maskLyr = (
+            AlgRunner().runMergeVectorLayers([maskLyr, contourBufferLyr], context)
+            if maskLyr is not None
+            else contourBufferLyr
+        )
         elevationPointsLayer = layerHandler.createMemoryLayerWithFeatures(
             featList=minMaxFeats,
             fields=fields,

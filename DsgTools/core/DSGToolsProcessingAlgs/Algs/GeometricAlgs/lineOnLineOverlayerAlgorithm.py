@@ -46,7 +46,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
     It also ensures that intersection points are added as vertices to reference lines
     if they don't already exist there.
     """
-    
+
     INPUT = "INPUT"
     REFERENCE_LINES = "REFERENCE_LINES"
     SNAP_TOLERANCE = "SNAP_TOLERANCE"
@@ -90,16 +90,14 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Add the output parameter for split lines
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT_SPLIT_LINES, 
-                self.tr("Split input lines")
+                self.OUTPUT_SPLIT_LINES, self.tr("Split input lines")
             )
         )
 
         # Add the output parameter for modified reference lines
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT_MODIFIED_REFERENCES, 
-                self.tr("Modified reference lines")
+                self.OUTPUT_MODIFIED_REFERENCES, self.tr("Modified reference lines")
             )
         )
 
@@ -111,9 +109,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         algRunner = AlgRunner()
 
         # Retrieve the feature sources
-        input_line_source = self.parameterAsSource(
-            parameters, self.INPUT, context
-        )
+        input_line_source = self.parameterAsSource(parameters, self.INPUT, context)
 
         # Get reference line layers
         reference_line_layers = self.parameterAsLayerList(
@@ -124,7 +120,6 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         snap_tolerance = self.parameterAsDouble(
             parameters, self.SNAP_TOLERANCE, context
         )
-
 
         # Create output sinks
         (split_lines_sink, split_lines_dest_id) = self.parameterAsSink(
@@ -137,7 +132,6 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         )
 
         # For reference lines, we'll use the fields from the first reference layer
-        
 
         # Check if inputs are valid
         if input_line_source is None:
@@ -158,15 +152,21 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 1: Merge all reference line layers into one
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Merging reference line layers...".format(current_step + 1, total_steps)
+            "Step {}/{}: Merging reference line layers...".format(
+                current_step + 1, total_steps
+            )
         )
-        
-        merged_reference_lines = algRunner.runMergeVectorLayers(
-            reference_line_layers,
-            context,
-            feedback=multiStepFeedback,
-            crs=input_line_source.sourceCrs(),
-        ) if len(reference_line_layers) > 1 else reference_line_layers[0]
+
+        merged_reference_lines = (
+            algRunner.runMergeVectorLayers(
+                reference_line_layers,
+                context,
+                feedback=multiStepFeedback,
+                crs=input_line_source.sourceCrs(),
+            )
+            if len(reference_line_layers) > 1
+            else reference_line_layers[0]
+        )
         outputFields = merged_reference_lines.fields()
         (modified_refs_sink, modified_refs_dest_id) = self.parameterAsSink(
             parameters,
@@ -181,9 +181,11 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 2: Create spatial indexes for better performance
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Creating spatial indexes...".format(current_step + 1, total_steps)
+            "Step {}/{}: Creating spatial indexes...".format(
+                current_step + 1, total_steps
+            )
         )
-        
+
         algRunner.runCreateSpatialIndex(
             parameters[self.INPUT], context, feedback=multiStepFeedback
         )
@@ -195,9 +197,11 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 3: Find intersection points between input lines and reference lines
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Finding line intersections...".format(current_step + 1, total_steps)
+            "Step {}/{}: Finding line intersections...".format(
+                current_step + 1, total_steps
+            )
         )
-        
+
         intersection_points = algRunner.runLineIntersections(
             parameters[self.INPUT],
             merged_reference_lines,
@@ -210,9 +214,11 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 4: Split input lines at intersection points
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Splitting input lines at intersections...".format(current_step + 1, total_steps)
+            "Step {}/{}: Splitting input lines at intersections...".format(
+                current_step + 1, total_steps
+            )
         )
-        
+
         snapped_initial_lines = algRunner.runSnapGeometriesToLayer(
             parameters[self.INPUT],
             intersection_points,
@@ -223,7 +229,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         )
         current_step += 1
         multiStepFeedback.setCurrentStep(current_step)
-        
+
         self_split_lines = algRunner.runSplitLinesWithLines(
             snapped_initial_lines,
             snapped_initial_lines,
@@ -233,7 +239,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         )
         current_step += 1
         multiStepFeedback.setCurrentStep(current_step)
-        
+
         split_input_lines = algRunner.runSplitLinesWithLines(
             self_split_lines,
             merged_reference_lines,
@@ -246,9 +252,11 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 5: Convert split lines to single parts (in case multipart geometries were created)
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Converting to single part geometries...".format(current_step + 1, total_steps)
+            "Step {}/{}: Converting to single part geometries...".format(
+                current_step + 1, total_steps
+            )
         )
-        
+
         single_part_lines = algRunner.runMultipartToSingleParts(
             split_input_lines,
             context,
@@ -260,9 +268,11 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 6: Snap intersection points to reference lines to add vertices
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Adding intersection vertices to reference lines...".format(current_step + 1, total_steps)
+            "Step {}/{}: Adding intersection vertices to reference lines...".format(
+                current_step + 1, total_steps
+            )
         )
-        
+
         # This operation modifies the reference lines by adding vertices at intersection points
         modified_reference_lines = algRunner.runSnapGeometriesToLayer(
             merged_reference_lines,
@@ -279,7 +289,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.pushInfo(
             "Step {}/{}: Cleaning split lines...".format(current_step + 1, total_steps)
         )
-        
+
         # Remove any null geometries that might have been created during processing
         cleaned_split_lines = algRunner.runRemoveNull(
             single_part_lines,
@@ -291,7 +301,9 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 8: Output the results
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Writing output features...".format(current_step + 1, total_steps)
+            "Step {}/{}: Writing output features...".format(
+                current_step + 1, total_steps
+            )
         )
 
         # Function to output split line features with filtered attributes
@@ -304,15 +316,19 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
 
         # Write split input lines to output
         list(map(outputSplitLineFeature, cleaned_split_lines.getFeatures()))
-        
-        # Write modified reference lines to output
-        list(map(outputModifiedReferenceFeature, modified_reference_lines.getFeatures()))
 
-        multiStepFeedback.pushInfo("Line-on-line overlay algorithm completed successfully!")
+        # Write modified reference lines to output
+        list(
+            map(outputModifiedReferenceFeature, modified_reference_lines.getFeatures())
+        )
+
+        multiStepFeedback.pushInfo(
+            "Line-on-line overlay algorithm completed successfully!"
+        )
 
         return {
             self.OUTPUT_SPLIT_LINES: split_lines_dest_id,
-            self.OUTPUT_MODIFIED_REFERENCES: modified_refs_dest_id
+            self.OUTPUT_MODIFIED_REFERENCES: modified_refs_dest_id,
         }
 
     def tr(self, string):
@@ -334,7 +350,9 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         """
         Returns the translated algorithm name.
         """
-        return self.tr("Line on Line Overlayer (overlays reference lines to input line)")
+        return self.tr(
+            "Line on Line Overlayer (overlays reference lines to input line)"
+        )
 
     def group(self):
         """

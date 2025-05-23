@@ -2982,21 +2982,27 @@ class AlgRunner:
         feedback: Optional[QgsFeedback] = None,
         outputSplitLinesLyr: Optional[QgsVectorLayer] = None,
         outputSplitReferenceLinesLyr: Optional[QgsVectorLayer] = None,
-        is_child_algorithm: bool = False
+        is_child_algorithm: bool = False,
     ) -> Union[Tuple[QgsVectorLayer, QgsVectorLayer], Tuple[str, str]]:
-        outputSplitLinesLyr = "memory:" if outputSplitLinesLyr is None else outputSplitLinesLyr
-        outputSplitReferenceLinesLyr = "memory:" if outputSplitReferenceLinesLyr is None else outputSplitReferenceLinesLyr
+        outputSplitLinesLyr = (
+            "memory:" if outputSplitLinesLyr is None else outputSplitLinesLyr
+        )
+        outputSplitReferenceLinesLyr = (
+            "memory:"
+            if outputSplitReferenceLinesLyr is None
+            else outputSplitReferenceLinesLyr
+        )
         output = processing.run(
             "dsgtools:lineonlineoverlayer",
             {
-                'INPUT': inputLyr,
-                'REFERENCE_LINES': referenceLayers,
-                'SNAP_TOLERANCE': tol,
-                'OUTPUT_SPLIT_LINES': outputSplitLinesLyr,
-                'OUTPUT_MODIFIED_REFERENCES':outputSplitReferenceLinesLyr
+                "INPUT": inputLyr,
+                "REFERENCE_LINES": referenceLayers,
+                "SNAP_TOLERANCE": tol,
+                "OUTPUT_SPLIT_LINES": outputSplitLinesLyr,
+                "OUTPUT_MODIFIED_REFERENCES": outputSplitReferenceLinesLyr,
             },
             context=context,
             feedback=feedback,
-            is_child_algorithm=is_child_algorithm
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT_SPLIT_LINES"], output["OUTPUT_MODIFIED_REFERENCES"]

@@ -541,7 +541,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             flagGeom=x[1]["geom"], flagText=x[1]["reason"], sink=invalid_polygon_sink
         )
         list(map(flagLambda, invalidGeomFlagDict.items()))
-        
+
         multiStepFeedback.setCurrentStep(2)
         flagText = self.tr(
             "Out of bounds angle. This is a spike that is probably formed by a vertice that is very close to the intersection of lines"
@@ -555,9 +555,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 itertools.chain.from_iterable(
                     map(
                         lambda x: geometryHandler.getOutOfBoundsAngle(x, 10),
-                        polygonFeatList
+                        polygonFeatList,
                     )
-                )
+                ),
             )
         )
 

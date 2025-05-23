@@ -105,7 +105,8 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
             missconstructedFeaturesIds = [
                 f.id()
                 for f in snappedLayer.getFeatures()
-                if f.geometry().constGet() is None or "Too few points in geometry component"
+                if f.geometry().constGet() is None
+                or "Too few points in geometry component"
                 in f.geometry().constGet().isValid()[1]
             ]
             if missconstructedFeaturesIds != []:
