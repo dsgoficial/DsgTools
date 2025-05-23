@@ -2099,16 +2099,19 @@ class AlgRunner:
 
     def runDetectDatasetChanges(
         self,
-        inputLayer,
-        reviewedLayer,
-        attributesList,
-        matchComparation,
-        context,
-        unchangedLayer=None,
-        addedLayer=None,
-        deletedLayer=None,
-        feedback=None,
-    ):
+        inputLayer: QgsVectorLayer,
+        reviewedLayer: QgsVectorLayer,
+        attributesList: List[str],
+        matchComparation: int,
+        context: QgsProcessingContext,
+        feedback: Optional[QgsFeedback] = None,
+        unchangedLayer: Optional[QgsVectorLayer] = None,
+        addedLayer: Optional[QgsVectorLayer] = None,
+        deletedLayer: Optional[QgsVectorLayer] = None,
+        is_child_algorithm: bool = False,
+    ) -> Union[
+        Tuple[QgsVectorLayer, QgsVectorLayer, QgsVectorLayer], Tuple[str, str, str]
+    ]:
         unchangedLayer = "memory:" if unchangedLayer is None else unchangedLayer
         addedLayer = "memory:" if addedLayer is None else addedLayer
         deletedLayer = "memory:" if deletedLayer is None else deletedLayer
@@ -2125,6 +2128,7 @@ class AlgRunner:
             },
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["UNCHANGED"], output["ADDED"], output["DELETED"]
 
