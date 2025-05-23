@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.48 - dev
+## 4.17.49 - dev
 
 Novas Funcionalidades:
 
@@ -21,6 +21,7 @@ Novas Funcionalidades:
 - Novo algoritmo de seccionar polígonos com linhas (line on area overlayer);
 - Novo algoritmo de generalização de edificações para edição;
 - Novo algoritmo de atrair feições para âncoras (AnchoredSnapper);
+- Novo algoritmo line on line overlayer (Atualiza camadas);
 
 Melhorias:
 
@@ -49,6 +50,7 @@ Melhorias:
 - Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: a ferramenta tem seu estado salvo no projeto e ao abrir o projeto, o estado anterior é restaurado;
 - Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: adicionado o flash feature e trocado o zoom pelo pan;
 - Adiciona verificação de ângulos nas flags de geometria inválida do Build Polygons from Center Points and Boundaries (às vezes vértices próximos a uma intersecção não calculada produz um spike no polígono resultante);
+- Altera o Line on Line Overlayer para o seguinte funcionamento: corta as linhas de entrada com relação a elas mesmas e às linhas de referência, criando vértices nas linhas de referência. O algoritmo tem duas saídas: as linhas de referência com vértices adicionados e as linhas de entrada cortadas.
 
 Correção de bugs:
 

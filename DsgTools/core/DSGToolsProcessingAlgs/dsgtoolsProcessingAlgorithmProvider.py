@@ -124,6 +124,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUncoveredS
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWaterBodyAndContourInconsistencies import (
     IdentifyWaterBodyAndContourInconsistencies,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.overlayLinesWithLinesAndUpdate import OverlayLinesWithLinesAndUpdate
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicateNodesAlgorithm import (
     RemoveDuplicateVertexesAlgorithm,
 )
@@ -521,7 +522,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuild
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyZAnglesBetweenFeaturesAlgorithm import (
     IdentifyZAnglesBetweenFeaturesAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.lineOnLineOverlayerAlgorithm import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.lineOnLineOverlayerAlgorithm import (
     LineOnLineOverlayerAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.mergeLinesAlgorithm import (
@@ -793,6 +794,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             PolygonTilerAlgorithm(),
             BuildingGeneralizationAlgorithm(),
             AnchoredSnapperAlgorithm(),
+            OverlayLinesWithLinesAndUpdate(),
         ]
         return algList
 
