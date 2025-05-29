@@ -9,7 +9,6 @@ Novas Funcionalidades:
 - Novo algoritmo de preparo de arquivos para empacotamento no BDGEx;
 - Novo algoritmo de realizar snap dentro de uma camada agrupando por atributo;
 - Nova caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides;
-- Nova caixa de ferramenta de inspecionar flags de área com mais de um centroide;
 - Novo algoritmo de filtrar múltiplas saídas pela moldura;
 - Novo algoritmo de corrigir atributação do atributo dentro de polígono em trechos de drenagem;
 - Novo algoritmo de identificar erros na atributação de curvas de nível;
