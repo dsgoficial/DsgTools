@@ -39,6 +39,7 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterDefinition,
     QgsWkbTypes,
+    QgsVectorLayer,
 )
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -313,8 +314,8 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             currentStep += 1
             snapStructure[item["referenceLayer"]] = {
                 "originalLayer": lyr,
-                "tempLayer": insideLyr,
-                "outsideLayer": outsideLyr,
+                "tempLayer": insideLyr.clone(),
+                "outsideLayer": outsideLyr.clone(),
                 "snap": item["snap"],
                 "insideFeatureCount": insideLyr.featureCount(),
             }
@@ -409,19 +410,27 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 context=context,
             )
             outputLyr = self.layerHandler.integrateSpatialConstrainedAlgorithmOutputAndOutsideLayer(
-                algOutputLyr=outputLyr,
+                algOutputLyr=outputLyr.clone(),
                 outsideLyr=outsideLyr,
                 tol=auxDict["snap"],
                 context=context,
+                geographicBoundaryLyr=geographicBoundaryLyr,
             )
             outputLyr = self.algRunner.runRenameField(
-                inputLayer=outputLyr,
+                inputLayer=outputLyr.clone(),
                 field="oldfeatid",
                 newName="featid",
                 context=context,
             )
+            originalLyr = (
+                auxDict["originalLayer"]
+                if isinstance(auxDict["originalLayer"], QgsVectorLayer)
+                else QgsProcessingUtils.mapLayerFromString(
+                    auxDict["originalLayer"], context
+                )
+            )
             self.layerHandler.updateOriginalLayersFromUnifiedLayer(
-                [auxDict["originalLayer"]],
+                [originalLyr],
                 outputLyr,
                 feedback=multiStepFeedback,
                 onlySelected=onlySelected,

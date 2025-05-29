@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
+
 from functools import partial
 
 from qgis.core import Qgis, QgsProject, QgsVectorLayer
@@ -339,9 +339,7 @@ class BDGExGuiManager(QObject):
             if not vlayer.isValid():
                 title = self.tr("BDGEx layers (DSGTools)")
                 msg = self.tr(
-                    "Unable to provide requested layer. Please check"
-                    " your network settings (proxy and exceptions "
-                    "too, if necessary)."
+                    "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
                 )
                 MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
             else:

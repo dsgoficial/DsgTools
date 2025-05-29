@@ -42,6 +42,7 @@ from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
     QgsProcessingAlgorithm,
+    QgsProcessingParameterEnum,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFile,
     QgsProcessingParameterFolderDestination,
@@ -64,6 +65,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
 
     INPUT_FOLDER = "INPUT_FOLDER"
     XML_TEMPLATE_FILE = "XML_TEMPLATE_FILE"
+    IMAGE_SENSOR = "IMAGE_SENSOR"
     OUTPUT_FOLDER = "OUTPUT_FOLDER"
 
     def initAlgorithm(self, config=None):
@@ -82,6 +84,19 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 fileFilter="XML (*.xml)",
             )
         )
+        self.image_sensors = [
+            self.tr("Imagens BECA"),
+            self.tr("Imagens MAXAR"),
+        ]
+
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.IMAGE_SENSOR,
+                self.tr("Sensor"),
+                options=self.image_sensors,
+                defaultValue=0,
+            )
+        )
         self.addParameter(
             QgsProcessingParameterFolderDestination(
                 self.OUTPUT_FOLDER, self.tr("Pasta para salvar os arquivos exportados")
@@ -96,6 +111,8 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             self.XML_TEMPLATE_FILE,
             context,
         )
+        idx = self.parameterAsEnum(parameters, self.IMAGE_SENSOR, context)
+        imageSensor = self.image_sensors[idx]
         self.algRunner = AlgRunner()
         self.layerHandler = LayerHandler()
         inputFiles = list(
@@ -161,12 +178,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     for fileName in fileNameList
                 )
                 matchedFeature = self.shapefilesDict[folderKey]["FEAT_DICT"][geomWkb]
-                productName = f"""{matchedFeature["source"]}"""
-                if matchedFeature["productTyp"] != NULL:
-                    productName += (
-                        f"""_{matchedFeature["productTyp"].replace(" ","_")}"""
-                    )
-                productName += f"""_{re.sub("T.+", "", matchedFeature["acquisitio"]).replace("-","")}_id_{matchedFeature['featureId']}"""
+                productName = self.getProductName(matchedFeature)
                 output_file_path = output_dir / f"{productName}{input_path.suffix}"
                 vrt = self.algRunner.runBuildVRT(
                     inputRasterList=[
@@ -220,8 +232,11 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     self.buildXML(
                         rasterLayer=clippedRasterLayer,
                         matchedFeature=matchedFeature,
-                        output_xml_file=clippedOutputPath.replace(".tif", ".xml"),
+                        output_xml_file=clippedOutputPath.replace(
+                            ".tif", ".xml"
+                        ).replace(".TIF", ".xml"),
                         productName=Path(clippedOutputPath).stem,
+                        imageSensor=imageSensor,
                     )
                     currentIndex += 1
                 currentSeamline += 1
@@ -229,6 +244,15 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         return {
             "OUTPUT_FOLDER": output_path,
         }
+
+    def getProductName(self, matchedFeature):
+        if "_filename" in [f.name() for f in matchedFeature.fields()]:
+            return matchedFeature["_filename"]
+        productName = f"""{matchedFeature["source"]}"""
+        if matchedFeature["productTyp"] != NULL:
+            productName += f"""_{matchedFeature["productTyp"].replace(" ","_")}"""
+        productName += f"""_{re.sub("T.+", "", matchedFeature["acquisitio"]).replace("-","")}_id_{matchedFeature['featureId']}"""
+        return productName
 
     def getClipPolygonLayers(
         self,
@@ -316,7 +340,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         for zipPath in Path(inputFolder).rglob("*.zip"):
             with zipfile.ZipFile(zipPath, "r") as zip_ref:
                 zip_ref.extractall(self.tempFolder)
-        for shp in Path(self.tempFolder).rglob("*.shp"):
+        for shp in itertools.chain.from_iterable(
+            [Path(self.tempFolder).rglob("*.shp"), Path(inputFolder).rglob("*.shp")]
+        ):
             if "_SEAMLINES_SHAPE" in str(shp):
                 key = str(shp.name).replace(".shp", "").replace("_SEAMLINES_SHAPE", "")
                 shapefilesDict[key]["SEAMLINES_SHAPE"] = QgsVectorLayer(
@@ -373,7 +399,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             joinnedSeamline = self.algRunner.runJoinAttributesByLocation(
                 inputLyr=valueDict["SEAMLINES_SHAPE"],
                 joinLyr=valueDict["TILE_SHAPE"],
-                predicateList=[AlgRunner.Intersect],
+                predicateList=[AlgRunner.Intersects],
                 method=0,
                 context=context,
             )
@@ -393,6 +419,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         matchedFeature: QgsFeature,
         output_xml_file: str,
         productName: str,
+        imageSensor: str,
     ) -> None:
         extent = rasterLayer.extent()
         # prefix = "".join(re.findall(r"R\d+C\d+", rasterLayer.name()))
@@ -403,6 +430,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             "Y_MAX": f"{extent.xMaximum()}",
             "NOME_PRODUTO": productName,
             "DATA_IMAGEM": re.sub("T.+", "", matchedFeature["acquisitio"]),
+            "SENSOR_IMAGEM": imageSensor,
         }
         with open(self.xml_template_path, "r") as f:
             xmlstring = f.read()

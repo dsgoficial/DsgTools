@@ -24,6 +24,7 @@ from PyQt5.QtCore import QCoreApplication
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.PyQt.QtCore import QVariant
 import json, processing
+import gc
 from qgis.core import (
     QgsFeatureSink,
     QgsProcessingAlgorithm,
@@ -136,6 +137,8 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+        gc.collect()
+        gc.disable()
         layerCsv = self.parameterAsString(parameters, self.INPUTLAYERS, context)
         algParameterDict = self.loadAlgorithmParametersDict(parameters, context)
         algName = self.parameterAsString(parameters, self.ALG_NAME, context)
@@ -163,6 +166,8 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
                 QgsWkbTypes.Point,
                 QgsProject.instance().crs(),
             )
+            gc.enable()
+            gc.collect()
             return {"OUTPUT": flag_id}
         layerList = AlgRunner().runStringCsvToLayerList(layerCsv, context)
         nSteps = len(layerList)
@@ -238,6 +243,8 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
                 QgsWkbTypes.Point,
                 QgsProject.instance().crs(),
             )
+        gc.enable()
+        gc.collect()
         return {self.OUTPUT: self.flag_id}
 
     def parseParameterDict(self, context, algParameterDict, input_id, fieldNameSet):
@@ -291,7 +298,9 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
                 inputLyr=outputLyr,
                 intersectLyr=geographicBoundaryLyr,
                 context=context,
-                predicate=[AlgRunner.Intersect if self.mode == 1 else AlgRunner.Within],
+                predicate=[
+                    AlgRunner.Intersects if self.mode == 1 else AlgRunner.Within
+                ],
             )
             if geographicBoundaryLyr is not None and self.mode != 0
             else outputLyr

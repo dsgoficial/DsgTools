@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import absolute_import
+
 
 import math
 import numpy as np
@@ -852,7 +852,9 @@ class GeometryHandler(QObject):
         geom.insertVertex(vertex, after)
         return geom
 
-    def addVertexesToGeometry(self, vertexSet: set, geom: QgsGeometry) -> QgsGeometry:
+    def addVertexesToGeometry(
+        self, vertexSet: set, geom: QgsGeometry, duplicateTol=1e-8
+    ) -> QgsGeometry:
         geomVertexSet = set(QgsGeometry(i) for i in geom.vertices())
         changedGeom = QgsGeometry(geom)  # deep copy
         for vertex in vertexSet:
@@ -862,7 +864,7 @@ class GeometryHandler(QObject):
             if vertex in geomVertexSet or closestVertexGeom.intersects(vertex):
                 continue
             changedGeom = self.addVertex(vertexPoint, changedGeom)
-        changedGeom.removeDuplicateNodes()
+        changedGeom.removeDuplicateNodes(epsilon=duplicateTol)
         return changedGeom
 
 
@@ -871,6 +873,9 @@ def convertDistance(distance, originEpsg, destinationEpsg, mapUnits=None):
     distanceArea = QgsDistanceArea()
     distanceArea.setSourceCrs(
         QgsCoordinateReferenceSystem(originEpsg), QgsCoordinateTransformContext()
+    )
+    distanceArea.setEllipsoid(
+        QgsCoordinateReferenceSystem(originEpsg).ellipsoidAcronym()
     )
     return distanceArea.convertLengthMeasurement(distance, mapUnits)
 
@@ -923,17 +928,22 @@ def make_valid(geom: QgsGeometry) -> QgsGeometry:
         newGeom = fix_geom_vertices(geom)
         newGeom.makeValid()
         return newGeom
-    partList = []
-    newGeom = None
+
     parts = geom.asGeometryCollection()
-    for idx, part in enumerate(parts):
+    if not parts:
+        return QgsGeometry()
+
+    # Initialize with the first part
+    firstPart = QgsGeometry(parts[0])
+    newGeom = fix_geom_vertices(firstPart)
+    newGeom.convertToMultiType()
+
+    # Add remaining parts using addPartGeometry
+    for part in parts[1:]:
         partGeom = QgsGeometry(part)
         newPart = fix_geom_vertices(partGeom)
-        if idx == 0:
-            newGeom = newPart
-            newGeom.convertToMultiType()
-            continue
-        newGeom.addPart(newPart)
+        newGeom.addPartGeometry(newPart)  # Use addPartGeometry instead of addPart
+
     newGeom.makeValid()
     return newGeom
 

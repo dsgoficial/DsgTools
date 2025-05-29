@@ -21,7 +21,9 @@
 """
 
 import concurrent.futures
+import itertools
 import os
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 import processing
 from PyQt5.QtCore import QCoreApplication
 
@@ -49,7 +51,6 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
     INPUT_CENTER_POINTS = "INPUT_CENTER_POINTS"
-    SELECTED = "SELECTED"
     ATTRIBUTE_BLACK_LIST = "ATTRIBUTE_BLACK_LIST"
     BOUNDARY_LINE_LAYER = "BOUNDARY_LINE_LAYER"
     CONSTRAINT_LINE_LAYERS = "CONSTRAINT_LINE_LAYERS"
@@ -76,11 +77,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 self.INPUT_CENTER_POINTS,
                 self.tr("Center Point Layer"),
                 [QgsProcessing.TypeVectorPoint],
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
@@ -168,20 +164,19 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.INVALID_POLYGON_LOCATION,
-                self.tr("Invalid Polygon Location Flags from {0}").format(
-                    self.displayName()
-                ),
+                self.tr("Invalid Polygon Location Flags"),
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.UNUSED_BOUNDARY_LINES,
-                self.tr("Unused Boundary Flags from {0}").format(self.displayName()),
+                self.tr("Unused Boundary Flags"),
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS, self.tr("Polygon Flags from {0}").format(self.displayName())
+                self.FLAGS,
+                self.tr("Polygon Flags"),
             )
         )
 
@@ -213,7 +208,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         constraintPolygonLyrList = self.parameterAsLayerList(
             parameters, self.CONSTRAINT_POLYGON_LAYERS, context
         )
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         geographicBoundaryLyr = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
@@ -278,7 +272,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 boundaryLineLyr,
                 constraintLineLyrList,
                 constraintPolygonLyrList,
-                onlySelected,
                 geographicBoundaryLyr,
                 attributeBlackList,
                 suppressPolygonWithoutCenterPointFlag,
@@ -293,7 +286,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 boundaryLineLyr,
                 constraintLineLyrList,
                 constraintPolygonLyrList,
-                onlySelected,
                 geographicBoundaryLyr,
                 attributeBlackList,
                 suppressPolygonWithoutCenterPointFlag,
@@ -528,12 +520,13 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         polygonFeatList,
         invalid_polygon_sink,
     ):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        geometryHandler = GeometryHandler()
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setProgressText(
             self.tr("Checking for invalid geometries on output polygons...")
         )
         multiStepFeedback.setCurrentStep(0)
-        invalidGeomFlagDict, _ = self.layerHandler.identifyInvalidGeometries(
+        invalidGeomFlagDict, _, __ = self.layerHandler.identifyInvalidGeometries(
             polygonFeatList,
             len(polygonFeatList),
             inputCenterPointLyr,
@@ -548,6 +541,25 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             flagGeom=x[1]["geom"], flagText=x[1]["reason"], sink=invalid_polygon_sink
         )
         list(map(flagLambda, invalidGeomFlagDict.items()))
+
+        multiStepFeedback.setCurrentStep(2)
+        flagText = self.tr(
+            "Out of bounds angle. This is a spike that is probably formed by a vertice that is very close to the intersection of lines"
+        )
+        outOfBoundsLambda = lambda x: self.flagFeature(
+            flagGeom=x["geom"], flagText=flagText, sink=invalid_polygon_sink
+        )
+        list(
+            map(
+                outOfBoundsLambda,
+                itertools.chain.from_iterable(
+                    map(
+                        lambda x: geometryHandler.getOutOfBoundsAngle(x, 10),
+                        polygonFeatList,
+                    )
+                ),
+            )
+        )
 
     def prepareInvalidPolygonFlags(self, parameters, context, inputCenterPointLyr):
         (invalid_polygon_sink, invalid_polygon_sink_id) = self.parameterAsSink(
@@ -580,7 +592,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         boundaryLineLyr,
         constraintLineLyrList,
         constraintPolygonLyrList,
-        onlySelected,
         geographicBoundaryLyr,
         attributeBlackList,
         suppressPolygonWithoutCenterPointFlag,
@@ -602,7 +613,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             if boundaryLineLyr is not None
             else constraintLineLyrList,
             constraintPolygonLyrList=constraintPolygonLyrList,
-            onlySelected=onlySelected,
             suppressPolygonWithoutCenterPointFlag=suppressPolygonWithoutCenterPointFlag,
             context=context,
             feedback=multiStepFeedback,
@@ -619,7 +629,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         boundaryLineLyr,
         constraintLineLyrList,
         constraintPolygonLyrList,
-        onlySelected,
         geographicBoundaryLyr,
         attributeBlackList,
         suppressPolygonWithoutCenterPointFlag,
@@ -642,6 +651,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 inputList=constraintLineLyrList,
                 context=context,
                 feedback=multiStepFeedback,
+                is_child_algorithm=True,
             )
             if len(constraintLineLyrList) > 0
             else None
@@ -652,6 +662,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.algRunner.runCreateSpatialIndex(
                 constraintLinesLyr, context, multiStepFeedback, is_child_algorithm=True
             )
+        if constraintLinesLyr is not None:
+            constraintLinesLyr = QgsProcessingUtils.mapLayerFromString(
+                constraintLinesLyr, context
+            )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Preparing constraint polygons"))
@@ -660,6 +674,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 inputList=constraintPolygonLyrList,
                 context=context,
                 feedback=multiStepFeedback,
+                is_child_algorithm=True,
             )
             if len(constraintPolygonLyrList) > 0
             else None
@@ -673,28 +688,16 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 multiStepFeedback,
                 is_child_algorithm=True,
             )
+        if constraintPolygonsLyr is not None:
+            constraintPolygonsLyr = QgsProcessingUtils.mapLayerFromString(
+                constraintPolygonsLyr, context
+            )
         currentStep += 1
 
-        def compute(localGeographicBoundsLyr):
-            context = QgsProcessingContext()
-            if multiStepFeedback.isCanceled():
-                return [], {}
-            localInputCenterPointLyr = self.extractFeaturesUsingGeographicBounds(
-                inputLyr=inputCenterPointLyr,
-                geographicBounds=localGeographicBoundsLyr,
-                feedback=None,
-                context=context,
-                onlySelected=onlySelected,
-            )
-            if multiStepFeedback.isCanceled():
-                return [], {}
-            localBoundaryLineLyr = self.extractFeaturesUsingGeographicBounds(
-                inputLyr=boundaryLineLyr,
-                geographicBounds=localGeographicBoundsLyr,
-                feedback=None,
-                context=context,
-                onlySelected=onlySelected,
-            )
+        def compute(
+            localInputCenterPointLyr, localBoundaryLineLyr, localGeographicBoundsLyr
+        ):
+            localContext = QgsProcessingContext()
             if multiStepFeedback.isCanceled():
                 return [], {}
             localLinesConstraintLyr = (
@@ -702,8 +705,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                     inputLyr=constraintLinesLyr,
                     geographicBounds=localGeographicBoundsLyr,
                     feedback=None,
-                    context=context,
-                    onlySelected=onlySelected,
+                    context=localContext,
                 )
                 if constraintLinesLyr is not None
                 else None
@@ -715,15 +717,14 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                     inputLyr=constraintPolygonsLyr,
                     geographicBounds=localGeographicBoundsLyr,
                     feedback=None,
-                    context=context,
-                    onlySelected=onlySelected,
+                    context=localContext,
                 )
                 if constraintPolygonsLyr is not None
                 else None
             )
             if multiStepFeedback.isCanceled():
                 return [], {}
-            return self.layerHandler.getPolygonsFromCenterPointsAndBoundariesAlt(
+            return self.layerHandler.getPolygonsFromCenterPointsAndBoundaries(
                 localInputCenterPointLyr,
                 geographicBoundaryLyr=localGeographicBoundsLyr,
                 constraintLineLyrList=[localLinesConstraintLyr, localBoundaryLineLyr]
@@ -732,9 +733,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 constraintPolygonLyrList=[localPolygonsConstraintLyr]
                 if localPolygonsConstraintLyr is not None
                 else [],
-                onlySelected=False,  # the selected features were already filtered
                 suppressPolygonWithoutCenterPointFlag=suppressPolygonWithoutCenterPointFlag,
-                context=context,
+                context=localContext,
                 feedback=None,
                 attributeBlackList=attributeBlackList,
                 algRunner=AlgRunner(),
@@ -756,7 +756,26 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 pool.shutdown(cancel_futures=True)
                 break
-            futures.add(pool.submit(compute, localGeographicBoundsLyr))
+            localInputCenterPointLyr = self.extractFeaturesUsingGeographicBounds(
+                inputLyr=inputCenterPointLyr,
+                geographicBounds=localGeographicBoundsLyr,
+                feedback=None,
+                context=context,
+            )
+            localBoundaryLineLyr = self.extractFeaturesUsingGeographicBounds(
+                inputLyr=boundaryLineLyr,
+                geographicBounds=localGeographicBoundsLyr,
+                feedback=None,
+                context=context,
+            )
+            futures.add(
+                pool.submit(
+                    compute,
+                    localInputCenterPointLyr,
+                    localBoundaryLineLyr,
+                    localGeographicBoundsLyr,
+                )
+            )
             multiStepFeedback.setProgress(current * stepSize)
 
         currentStep += 1
@@ -960,27 +979,27 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 localFlagLyr.getFeatures(), QgsFeatureSink.FastInsert
             )
 
+    @staticmethod
     def extractFeaturesUsingGeographicBounds(
-        self, inputLyr, geographicBounds, context, onlySelected=False, feedback=None
+        inputLyr, geographicBounds, context, feedback=None
     ):
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(2, feedback)
             if feedback is not None
             else None
         )
+        algRunner = AlgRunner()
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(0)
-        extractedLyr = self.algRunner.runExtractByLocation(
-            inputLyr=inputLyr
-            if not onlySelected
-            else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True),
+        extractedLyr = algRunner.runExtractByLocation(
+            inputLyr=inputLyr,
             intersectLyr=geographicBounds,
             context=context,
             feedback=multiStepFeedback,
         )
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(1)
-        self.algRunner.runCreateSpatialIndex(
+        algRunner.runCreateSpatialIndex(
             inputLyr=extractedLyr,
             context=context,
             feedback=multiStepFeedback,

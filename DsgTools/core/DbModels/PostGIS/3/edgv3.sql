@@ -7,10 +7,10 @@ SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
 	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 3.0',
-	 dbimplversion varchar(50) NOT NULL DEFAULT '1.1.3',
+	 dbimplversion varchar(50) NOT NULL DEFAULT '1.1.6',
 	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 3.0')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0','1.1.3')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0','1.1.6')#
 
 CREATE TABLE dominios.aptidao_operacional_atracadouro (
 	 code smallint NOT NULL,
@@ -956,6 +956,23 @@ INSERT INTO dominios.tipo_edif_rod (code,code_name) VALUES (99,'Outros (99)')#
 INSERT INTO dominios.tipo_edif_rod (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
 
 ALTER TABLE dominios.tipo_edif_rod OWNER TO postgres#
+
+CREATE TABLE dominios.tipo_assentamento_precario (
+	 code smallint NOT NULL,
+	 code_name text NOT NULL,
+	 CONSTRAINT tipo_assentamento_precario_pk PRIMARY KEY (code)
+)#
+
+INSERT INTO dominios.tipo_assentamento_precario (code,code_name) VALUES (1,'Cortiço (1)')#
+INSERT INTO dominios.tipo_assentamento_precario (code,code_name) VALUES (2,'Conjunto habitacional degradado (2)')#
+INSERT INTO dominios.tipo_assentamento_precario (code,code_name) VALUES (3,'Favela (3)')#
+INSERT INTO dominios.tipo_assentamento_precario (code,code_name) VALUES (4,'Loteamento irregular da periferia (4)')#
+INSERT INTO dominios.tipo_assentamento_precario (code,code_name) VALUES (5,'Mocambos (5)')#
+INSERT INTO dominios.tipo_assentamento_precario (code,code_name) VALUES (6,'Palafitas (6)')#
+INSERT INTO dominios.tipo_assentamento_precario (code,code_name) VALUES (99,'Outros (99)')#
+INSERT INTO dominios.tipo_assentamento_precario (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
+
+ALTER TABLE dominios.tipo_assentamento_precario OWNER TO postgres#
 
 CREATE TABLE dominios.tipo_area (
 	 code smallint NOT NULL,
@@ -3714,6 +3731,27 @@ ALTER TABLE edgv.cbge_area_habitacional_a
 	 CHECK (tipoarea = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.cbge_area_habitacional_a ALTER COLUMN tipoarea SET DEFAULT 9999#
+
+CREATE TABLE edgv.cbge_assentamento_precario_a(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 nome varchar(255),
+	 geometriaaproximada boolean NOT NULL,
+	 tipoassentamentoprecario smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT cbge_assentamento_precario_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX cbge_assentamento_precario_a_geom ON edgv.cbge_assentamento_precario_a USING gist (geom)#
+
+ALTER TABLE edgv.cbge_assentamento_precario_a OWNER TO postgres#
+
+ALTER TABLE edgv.cbge_assentamento_precario_a
+	 ADD CONSTRAINT cbge_assentamento_precario_a_tipoassentamentoprecario_fk FOREIGN KEY (tipoassentamentoprecario)
+	 REFERENCES dominios.tipo_assentamento_precario (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.cbge_assentamento_precario_a ALTER COLUMN tipoassentamentoprecario SET DEFAULT 9999#
 
 CREATE TABLE edgv.cbge_estacionamento_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -6820,7 +6858,7 @@ ALTER TABLE edgv.edf_posto_guarda_municipal_p
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_p
 	 ADD CONSTRAINT edf_posto_guarda_municipal_p_tipousoedif_check
-	 CHECK (tipousoedif = ANY(ARRAY[5 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 5 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_p ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -6950,7 +6988,7 @@ ALTER TABLE edgv.edf_posto_guarda_municipal_a
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_a
 	 ADD CONSTRAINT edf_posto_guarda_municipal_a_tipousoedif_check
-	 CHECK (tipousoedif = ANY(ARRAY[5 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 5 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_guarda_municipal_a ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -8576,7 +8614,7 @@ ALTER TABLE edgv.edf_posto_policia_militar_p
 
 ALTER TABLE edgv.edf_posto_policia_militar_p
 	 ADD CONSTRAINT edf_posto_policia_militar_p_tipousoedif_check
-	 CHECK (tipousoedif = ANY(ARRAY[6 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_militar_p ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -8706,7 +8744,7 @@ ALTER TABLE edgv.edf_posto_policia_militar_a
 
 ALTER TABLE edgv.edf_posto_policia_militar_a
 	 ADD CONSTRAINT edf_posto_policia_militar_a_tipousoedif_check
-	 CHECK (tipousoedif = ANY(ARRAY[6 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_militar_a ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -10334,7 +10372,7 @@ ALTER TABLE edgv.edf_posto_policia_rod_federal_p
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_p
 	 ADD CONSTRAINT edf_posto_policia_rod_federal_p_tipousoedif_check
-	 CHECK (tipousoedif = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_p ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -10464,7 +10502,7 @@ ALTER TABLE edgv.edf_posto_policia_rod_federal_a
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_a
 	 ADD CONSTRAINT edf_posto_policia_rod_federal_a_tipousoedif_check
-	 CHECK (tipousoedif = ANY(ARRAY[2 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipousoedif = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_posto_policia_rod_federal_a ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -11042,7 +11080,7 @@ ALTER TABLE edgv.edf_edif_policia_p
 
 ALTER TABLE edgv.edf_edif_policia_p
 	 ADD CONSTRAINT edf_edif_policia_p_tipousoedif_check
-	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_policia_p ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -11172,7 +11210,7 @@ ALTER TABLE edgv.edf_edif_policia_a
 
 ALTER TABLE edgv.edf_edif_policia_a
 	 ADD CONSTRAINT edf_edif_policia_a_tipousoedif_check
-	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_policia_a ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -11302,7 +11340,7 @@ ALTER TABLE edgv.edf_edif_pub_militar_p
 
 ALTER TABLE edgv.edf_edif_pub_militar_p
 	 ADD CONSTRAINT edf_edif_pub_militar_p_tipousoedif_check
-	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_pub_militar_p ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -11428,7 +11466,7 @@ ALTER TABLE edgv.edf_edif_pub_militar_a
 
 ALTER TABLE edgv.edf_edif_pub_militar_a
 	 ADD CONSTRAINT edf_edif_pub_militar_a_tipousoedif_check
-	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipousoedif = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.edf_edif_pub_militar_a ALTER COLUMN tipousoedif SET DEFAULT 9999#
 
@@ -15123,6 +15161,35 @@ ALTER TABLE edgv.laz_pista_competicao_a
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.laz_pista_competicao_a ALTER COLUMN tipopistacomp SET DEFAULT 9999#
+
+CREATE TABLE edgv.laz_arquibancada_l(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 nome varchar(255),
+	 geometriaaproximada boolean NOT NULL,
+	 operacional smallint NOT NULL,
+	 situacaofisica smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT laz_arquibancada_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX laz_arquibancada_l_geom ON edgv.laz_arquibancada_l USING gist (geom)#
+
+ALTER TABLE edgv.laz_arquibancada_l OWNER TO postgres#
+
+ALTER TABLE edgv.laz_arquibancada_l
+	 ADD CONSTRAINT laz_arquibancada_l_operacional_fk FOREIGN KEY (operacional)
+	 REFERENCES dominios.auxiliar (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.laz_arquibancada_l ALTER COLUMN operacional SET DEFAULT 9999#
+
+ALTER TABLE edgv.laz_arquibancada_l
+	 ADD CONSTRAINT laz_arquibancada_l_situacaofisica_fk FOREIGN KEY (situacaofisica)
+	 REFERENCES dominios.situacao_fisica (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.laz_arquibancada_l ALTER COLUMN situacaofisica SET DEFAULT 9999#
 
 CREATE TABLE edgv.laz_arquibancada_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -19118,6 +19185,51 @@ CREATE TABLE edgv.aux_moldura_a(
 CREATE INDEX aux_moldura_a_geom ON edgv.aux_moldura_a USING gist (geom)#
 
 ALTER TABLE edgv.aux_moldura_a OWNER TO postgres#
+
+CREATE TABLE edgv.aux_revisao_a(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 descricao varchar(255),
+	 subfase_id integer,
+	 corrigido boolean NOT NULL,
+	 justificativa varchar(255),
+	 observacao VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT aux_revisao_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX aux_revisao_a_geom ON edgv.aux_revisao_a USING gist (geom)#
+
+ALTER TABLE edgv.aux_revisao_a OWNER TO postgres#
+
+CREATE TABLE edgv.aux_revisao_l(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 descricao varchar(255),
+	 subfase_id integer,
+	 corrigido boolean NOT NULL,
+	 justificativa varchar(255),
+	 observacao VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT aux_revisao_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX aux_revisao_l_geom ON edgv.aux_revisao_l USING gist (geom)#
+
+ALTER TABLE edgv.aux_revisao_l OWNER TO postgres#
+
+CREATE TABLE edgv.aux_revisao_p(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 descricao varchar(255),
+	 subfase_id integer,
+	 corrigido boolean NOT NULL,
+	 justificativa varchar(255),
+	 observacao VARCHAR(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT aux_revisao_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX aux_revisao_p_geom ON edgv.aux_revisao_p USING gist (geom)#
+
+ALTER TABLE edgv.aux_revisao_p OWNER TO postgres#
 
 CREATE TABLE edgv.aux_obstaculo_vertical_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),

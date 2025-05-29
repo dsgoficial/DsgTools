@@ -126,8 +126,9 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Creating aux structure..."))
+        inputLyrList = [inputLyr]
         auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
-            [inputLyr],
+            inputLyrList,
             geomType=inputLyr.wkbType(),
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
@@ -174,7 +175,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Updating original layer..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            [inputLyr], snapped, feedback=multiStepFeedback, onlySelected=onlySelected
+            inputLyrList, snapped, feedback=multiStepFeedback, onlySelected=onlySelected
         )
         return {}
 

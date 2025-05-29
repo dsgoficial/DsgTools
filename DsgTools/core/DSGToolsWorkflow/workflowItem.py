@@ -183,10 +183,13 @@ class ModelExecutionOutput:
             "executionTime": self.executionTime,
             "executionMessage": self.executionMessage,
             "status": self.status,
+            "result": dict(),
         }
-        output_dict["result"] = {
-            k: self.getGeoJsonFromQgsVectorLayer(v) for k, v in self.result.items()
-        }
+        for k, v in self.result.items():
+            geojson_dict = self.getGeoJsonFromQgsVectorLayer(v)
+            if geojson_dict == {}:
+                continue
+            output_dict["result"][k] = geojson_dict
         return output_dict
 
     def loadGeojsonAsQgsVectorLayer(self, layerName: str, data: dict) -> QgsVectorLayer:
@@ -196,13 +199,15 @@ class ModelExecutionOutput:
     def getGeoJsonFromQgsVectorLayer(self, lyr: QgsVectorLayer) -> dict:
         temp_geojson = tempfile.NamedTemporaryFile(suffix=".geojson", delete=False)
         temp_geojson.close()
-        error = QgsVectorFileWriter.writeAsVectorFormat(
-            lyr, temp_geojson.name, "utf-8", lyr.crs(), "GeoJSON"
-        )
+        try:
+            error = QgsVectorFileWriter.writeAsVectorFormat(
+                lyr, temp_geojson.name, "utf-8", lyr.crs(), "GeoJSON"
+            )
+        except:
+            return {}
         with open(temp_geojson.name, "r", encoding="utf-8") as f:
             geojson_content = f.read()
         Path(temp_geojson.name).unlink()
-
         return geojson_content
 
 
@@ -226,6 +231,7 @@ class DSGToolsWorkflowItem(QObject):
     pauseAfterExecution: bool
     source: ModelSource
     metadata: Metadata
+    tooltip: str = ""
 
     workflowItemExecutionFinished = pyqtSignal(object)
 
@@ -236,6 +242,8 @@ class DSGToolsWorkflowItem(QObject):
         self.context = dataobjects.createContext(feedback=self.feedback)
         self.context.setProject(QgsProject.instance())
         self.resetItem()
+        if self.tooltip == "" and self.model.shortDescription != "":
+            self.tooltip = self.model.shortDescription()
 
     def resetItem(self):
         """Reset the workflow item."""
@@ -298,7 +306,11 @@ class DSGToolsWorkflowItem(QObject):
         return self.flags.modelCanHaveFalsePositiveFlags
 
     def getDescription(self) -> str:
-        return self.model.shortDescription()
+        return (
+            self.model.shortDescription()
+            if self.tooltip in ("", None)
+            else self.tooltip
+        )
 
     def getOutputFlags(self):
         """Get the output flags."""
@@ -460,6 +472,7 @@ class DSGToolsWorkflowItem(QObject):
                         f"Workflow item {self.displayName} {statusMsg}"
                     ),
                 )
+                self.feedback.setProgress(100)
             else:
                 self.executionOutput = ModelExecutionOutput(
                     executionMessage=self.tr(

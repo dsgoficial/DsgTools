@@ -24,9 +24,10 @@ import itertools
 
 import concurrent.futures
 import itertools
+import os
 
 
-def concurrently(handler, inputs, *, max_concurrency=5, feedback=None):
+def concurrently(handler, inputs, *, max_concurrency=None, feedback=None):
     """
     Calls the function ``handler`` on the values ``inputs``.
 
@@ -41,25 +42,54 @@ def concurrently(handler, inputs, *, max_concurrency=5, feedback=None):
     """
     # Make sure we get a consistent iterator throughout, rather than
     # getting the first element repeatedly.
-    handler_inputs = iter(inputs)
+    # Determine optimal concurrency
+    if max_concurrency is None:
+        max_concurrency = os.cpu_count() - 1 or 1
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    # Convert inputs to iterator
+    handler_inputs = iter(inputs)
+    total_submitted = 0
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_concurrency) as executor:
+        # Initial batch of tasks
         futures = {
             executor.submit(handler, input): input
             for input in itertools.islice(handler_inputs, max_concurrency)
         }
+        total_submitted += len(futures)
 
         while futures:
+            # Wait for the first task to complete
             done, _ = concurrent.futures.wait(
                 futures, return_when=concurrent.futures.FIRST_COMPLETED
             )
 
             for fut in done:
-                original_input = futures.pop(fut)
-                yield fut.result()
-            if feedback is not None and feedback.isCanceled():
-                executor.shutdown(cancel_futures=True, wait=False)
-                break
+                try:
+                    result = fut.result()
+                    if result is not None:
+                        yield result
+                except Exception as e:
+                    if feedback is not None:
+                        feedback.pushWarning(f"Error processing input: {str(e)}")
+                futures.pop(fut)
+
+            # Check for cancellation
+            if feedback is not None:
+                if feedback.isCanceled():
+                    executor.shutdown(cancel_futures=True, wait=False)
+                    break
+                # Update progress if possible
+                if hasattr(feedback, "setProgress") and total_submitted > 0:
+                    progress = (
+                        (total_submitted - len(futures)) / total_submitted
+                    ) * 100
+                    feedback.setProgress(progress)
+
+            # Submit new tasks to replace completed ones
             for input in itertools.islice(handler_inputs, len(done)):
+                if feedback is not None and feedback.isCanceled():
+                    break
                 fut = executor.submit(handler, input)
                 futures[fut] = input
+                total_submitted += 1

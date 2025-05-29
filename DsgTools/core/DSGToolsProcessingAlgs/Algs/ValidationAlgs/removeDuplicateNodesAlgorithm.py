@@ -103,6 +103,7 @@ class RemoveDuplicateVertexesAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
+        inputLyrList = [inputLyr]
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             inputLyrList,
             outputLyr,

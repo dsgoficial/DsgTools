@@ -24,6 +24,7 @@
 from typing import Any, Dict
 import numpy as np
 import numpy.ma as ma
+from osgeo import gdal
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
@@ -186,7 +187,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             inputLyr=polygonsNotOnEdge,
             joinLyr=polygonsNotOnEdge,
             joinFields=[],
-            predicateList=[AlgRunner.Intersect],
+            predicateList=[AlgRunner.Intersects],
             summaries=[0],
             feedback=multiStepFeedback,
             context=context,
@@ -282,7 +283,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             if nextFeat is None:
                 break
             self.processPixelGroup(KDTree, npRaster, transform, nextFeat, nodata)
-            rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds)
+            rasterHandler.writeOutputRaster(
+                outputRaster, npRaster.T, ds, outputType=gdal.GDT_Int16
+            )
 
             ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int16)
             transform = rasterHandler.getCoordinateTransform(ds)

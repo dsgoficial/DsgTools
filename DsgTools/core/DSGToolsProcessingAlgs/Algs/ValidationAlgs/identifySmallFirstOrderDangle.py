@@ -133,11 +133,49 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
             return {self.FLAGS: self.flag_id}
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        feedbackTotal = 2
+        feedbackTotal = 5
+        algRunner = AlgRunner()
         multiStepFeedback = QgsProcessingMultiStepFeedback(feedbackTotal, feedback)
         multiStepFeedback.setCurrentStep(0)
+        geographicBoundsLines = (
+            algRunner.runPolygonsToLines(
+                inputLyr=geographicBoundsLyr,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
+            if geographicBoundsLyr is not None
+            else inputLyr
+        )
+        multiStepFeedback.setCurrentStep(1)
+        explodedLines = (
+            algRunner.runExplodeLines(
+                inputLyr=geographicBoundsLines,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if geographicBoundsLyr is not None
+            else inputLyr
+        )
+        multiStepFeedback.setCurrentStep(2)
+        algRunner.runCreateSpatialIndex(
+            explodedLines, context, multiStepFeedback, is_child_algorithm=True
+        )
+        multiStepFeedback.setCurrentStep(3)
+        disjointInputsFromExplodedLines = (
+            algRunner.runExtractByLocation(
+                inputLyr=inputLyr,
+                intersectLyr=explodedLines,
+                predicate=AlgRunner.Disjoint,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if geographicBoundsLyr is not None
+            else inputLyr
+        )
+        multiStepFeedback.setCurrentStep(4)
         multiStepFeedback.setProgressText(self.tr("Getting Dangles..."))
-        dangleLyr = AlgRunner().runIdentifyDangles(
+        dangleLyr = algRunner.runIdentifyDangles(
             inputLayer=inputLyr,
             searchRadius=searchRadius,
             context=context,
@@ -149,34 +187,35 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
             geographicBoundsLyr=geographicBoundsLyr,
             feedback=multiStepFeedback,
         )
-
-        multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.setProgressText(self.tr("Raising flags..."))
         nDangles = dangleLyr.featureCount()
         if nDangles == 0:
             return {self.FLAGS: self.flag_id}
-        # currentValue = feedback.progress()
-        currentTotal = 100 / nDangles
-        for current, feat in enumerate(dangleLyr.getFeatures()):
-            if multiStepFeedback.isCanceled():
-                break
-            dangleGeom = feat.geometry()
-            dangleBB = dangleGeom.boundingBox()
-            request = QgsFeatureRequest().setNoAttributes().setFilterRect(dangleBB)
-            lineGeometry = [
-                i.geometry()
-                for i in inputLyr.getFeatures(request)
-                if i.geometry().intersects(dangleGeom)
-            ][0]
-            if lineGeometry.length() > minLength:
-                continue
-            self.flagFeature(
-                lineGeometry,
-                self.tr(
-                    f"First order dangle on {inputLyr.name()} smaller than {minLength}"
+        multiStepFeedback.setCurrentStep(5)
+        candidates = algRunner.runExtractByLocation(
+            inputLyr=disjointInputsFromExplodedLines,
+            intersectLyr=dangleLyr,
+            predicate=AlgRunner.Intersects,
+            context=context,
+        )
+        if candidates.featureCount() == 0:
+            return {self.FLAGS: self.flag_id}
+        multiStepFeedback.setCurrentStep(6)
+        multiStepFeedback.setProgressText(self.tr("Raising flags..."))
+        flagLambda = lambda x: self.flagFeature(
+            x.geometry(),
+            flagText=self.tr(
+                f"First order dangle on {inputLyr.name()} smaller than {minLength}"
+            ),
+        )
+        list(
+            map(
+                flagLambda,
+                filter(
+                    lambda x: x.geometry().length() < minLength,
+                    candidates.getFeatures(),
                 ),
             )
-            multiStepFeedback.setProgress(current * currentTotal)
+        )
         return {self.FLAGS: self.flag_id}
 
     def name(self):

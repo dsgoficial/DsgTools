@@ -1,5 +1,78 @@
 # CHANGELOG
 
+## 4.18.0 - 2025-05-29
+
+Novas Funcionalidades:
+
+- Novo algoritmo de conversão de modelagens no provedor de algoritmos;
+- Novo algoritmo de exportação de modelos implementados em PostGIS para shapefile no provedor de algoritmos;
+- Novo algoritmo de preparo de arquivos para empacotamento no BDGEx;
+- Novo algoritmo de realizar snap dentro de uma camada agrupando por atributo;
+- Nova caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides;
+- Novo algoritmo de filtrar múltiplas saídas pela moldura;
+- Novo algoritmo de corrigir atributação do atributo dentro de polígono em trechos de drenagem;
+- Novo algoritmo de identificar erros na atributação de curvas de nível;
+- Novo algoritmo de identificar erros de atributação no atributo dentro de polígono em trechos de drenagem;
+- Novo algoritmo de numeração de polígonos;
+- Novo algoritmo de segmentar linhas com um tamanho máximo;
+- Novo algoritmo de segmentar curvas de nível;
+- Novo algoritmo de criar grid ao longo de linhas;
+- Novo algoritmo de seccionar polígonos com linhas (line on area overlayer);
+- Novo algoritmo de generalização de edificações para edição;
+- Novo algoritmo de atrair feições para âncoras (AnchoredSnapper);
+- Novo algoritmo line on line overlayer (Atualiza camadas);
+
+Melhorias:
+
+- Atualiza o modelo EDGV 3.0 para a implementação 1.1.6;
+- Correção do comportamento do toggle layers;
+- Corrige mensagem de erro quando o BDGEx não está acessível;
+- Atualiza Create Review Grid para ficar compatível com os atributos previstos no SAP Operador 3.29.14;
+- Melhora o desempenho do algoritmo de construir polígonos por linha e centróide;
+- Caixa de Ferramentas de Controle de Qualidade renomeada para Workflow Toolbox;
+- Muda o comportamento da janela de carregamento (agora ela fica sempre no topo);
+- A Workflow Toolbox agora seta automaticamente o tipo de flag de geometria inválida para não filtrar (parâmetro do qgis necessário para rodar sem problemas os modelos);
+- O processo de gerar moldura sistemática à camada relaciona agora suporta a entradas de camadas do tipo ponto e linha;
+- Melhora nas entradas do algoritmo Fix Drainage Flow;
+- Melhora nas entradas do algoritmo Identify Drainage Flow Issues With Hydrography Elements;
+- Novo formato de exportação para os arquivos de configuração do Snap Hierárquico e Enforce Spatial Rules (os antigos ainda funcionam);
+- Configuração de tooltip adicionada na caixa de ferramentas de workflow (é retrocompatível com o formato anterior de descrição no model);
+- Melhora o comportamento do algoritmo de identificar linhas pequenas de primeira ordem (exclui casos de linhas que cruzam a moldura);
+- O processo de unir linhas agora pode receber camadas ponto e linha que impedem a união caso exista um elemento dessas camadas em um ponto de união;
+- O processo de unir linhas agora só une linhas com pontos de união dentro da moldura (quando for informada uma);
+- Melhora o desempenho do identificar Z;
+- Melhoria no processo de converter imagens e preencher metadados para carga no BDGEx (opções de sensores);
+- Melhoria no processo de criar molduras a partir de uma camada (agora aceita camada raster como entrada);
+- Melhoria no processo de desconstruir polígonos;
+- Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: adicionada a opção de esconder colunas das camadas de centroide;
+- Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: adicionada a opção de definir nas opções do dsgtools os campos default para serem escondidos;
+- Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: a ferramenta tem seu estado salvo no projeto e ao abrir o projeto, o estado anterior é restaurado;
+- Melhoria na caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides: adicionado o flash feature e trocado o zoom pelo pan;
+- Adiciona verificação de ângulos nas flags de geometria inválida do Build Polygons from Center Points and Boundaries (às vezes vértices próximos a uma intersecção não calculada produz um spike no polígono resultante);
+- Altera o Line on Line Overlayer para o seguinte funcionamento: corta as linhas de entrada com relação a elas mesmas e às linhas de referência, criando vértices nas linhas de referência. O algoritmo tem duas saídas: as linhas de referência com vértices adicionados e as linhas de entrada cortadas.
+
+Correção de bugs:
+
+- Corrige bug na ferramenta de validação do terreno;
+- Corrige bug na ferramenta de extração de ponto cotados e melhora os critérios de inserção (caso de depressão, ordenamento geográfico e de cota para gerar um resultado determinístico);
+- Corrige bug na opção de uso de thread do algoritmo de construir polígonos por linha e centróide (crashes nos QGIS mais novos);
+- Corrige bug no algoritmo de criação de polígonos por linha e centróide (crash com camada vazia de polígonos);
+- Corrige bug no carregamento com constraint string;
+- Corrige bug na correção de geometria inválida (correção de vértice);
+- Corrige bug do Match and Apply QML Styles to Layers com camadas shapefile;
+- Corrige bug no algoritmo de identificação de erros de cruzamento de curva de nível com massa d'água (adicionadas barragens para retirar falsos positivos);
+- Corrige bug de retomar o estado do Workflow após carregar um projeto salvo;
+- Corrige bug de curva cortada na intersecção com drenagem no algoritmo de identificar inconsistências entre drenagens e curvas de nível;
+- Corrige bug no spellchecker de campo não encontrado;
+- Corrige imports que causam crash (from __futures__);
+- Corrige bug na extração de pontos cotados no caso de áreas planas;
+- Corrige bug na rotina de preparo de imagens para o BDGEx;
+- Corrige bug na ferramenta de medida enquanto adquire (measureTool) no caso de mudança de sistema de coordenadas no projeto;
+- Corrige bug do Inspect Multi Layers Centroids Flags Toolbox em mudança de atributos de centroides fora do polígono selecionado;
+- Corrige bug na identificação e remoção de linhas com menos de 2 vértices;
+- Corrige bug no feedback do IdentifyUncoveredStartAndEndPointsAlgorithm;
+- Corrige bug de falso positivo em massa d'água adjacente ao oceano no processo de identificar erros de fluxo com outras classes da hidrografia;
+
 ## 4.16.0 - 2024-11-27
 
 Novas Funcionalidades:
@@ -14,6 +87,7 @@ Melhorias:
 
 - O processo de criação de moldura agora aceita múltiplos MIs ou INOMs separados por vírgula;
 - As subdivisões das molduras foram padronizadas por escala, para garantir a existência de vértices das molduras desde a escala 1:25.000 até a escala 1:250.000;
+
 
 Correção de bugs:
 

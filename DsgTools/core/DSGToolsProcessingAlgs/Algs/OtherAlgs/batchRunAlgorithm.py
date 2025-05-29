@@ -24,6 +24,7 @@ from PyQt5.QtCore import QCoreApplication
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.PyQt.QtCore import QVariant
 import json, processing
+import gc
 from qgis.core import (
     QgsFeatureSink,
     QgsProcessingAlgorithm,
@@ -100,6 +101,8 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+        gc.collect()
+        gc.disable()
         layerCsv = self.parameterAsString(parameters, self.INPUTLAYERS, context)
         algParameterDict = self.loadAlgorithmParametersDict(parameters, context)
         algName = self.parameterAsString(parameters, self.ALG_NAME, context)
@@ -109,7 +112,9 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         outputKey = self.parameterAsString(
             parameters, self.OUTPUT_LAYER_PARAMETER_NAME, context
         )
-        layerNameList = layerCsv.split(",") if layerCsv != "" else []
+        layerNameList = (
+            [i.strip() for i in layerCsv.split(",")] if layerCsv != "" else []
+        )
         nSteps = len(layerNameList)
         if not nSteps:
             _, flag_id = self.parameterAsSink(
@@ -120,6 +125,8 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                 QgsWkbTypes.Point,
                 QgsProject.instance().crs(),
             )
+            gc.enable()
+            gc.collect()
             return {"OUTPUT": flag_id}
         layerList = AlgRunner().runStringCsvToLayerList(layerCsv, context)
         nSteps = len(layerList)
@@ -183,6 +190,8 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                 QgsWkbTypes.Point,
                 QgsProject.instance().crs(),
             )
+        gc.enable()
+        gc.collect()
         return {self.OUTPUT: self.flag_id}
 
     def parseParameterDict(self, context, algParameterDict, fieldNameSet):

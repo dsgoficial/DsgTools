@@ -131,8 +131,13 @@ class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            if lyr.dataProvider().uri().table() in qmlDict:
-                lyr.loadNamedStyle(qmlDict[lyr.dataProvider().uri().table()], True)
+            lyrName = (
+                lyr.dataProvider().uri().table()
+                if lyr.dataProvider().uri().table() != ""
+                else lyr.name()
+            )
+            if lyrName in qmlDict:
+                lyr.loadNamedStyle(qmlDict[lyrName], True)
                 lyr.triggerRepaint()
             feedback.setProgress(current * progressStep)
 
@@ -143,18 +148,14 @@ class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            if (
-                lyr.dataProvider().uri().table() in layerNames
-                and inputJSONMap[layerNames.index(lyr.dataProvider().uri().table())][
-                    "qml"
-                ]
-            ):
+            lyrName = (
+                lyr.dataProvider().uri().table()
+                if lyr.dataProvider().uri().table() != ""
+                else lyr.name()
+            )
+            if lyrName in layerNames and inputJSONMap[layerNames.index(lyrName)]["qml"]:
                 doc = QDomDocument()
-                doc.setContent(
-                    inputJSONMap[layerNames.index(lyr.dataProvider().uri().table())][
-                        "qml"
-                    ]
-                )
+                doc.setContent(inputJSONMap[layerNames.index(lyrName)]["qml"])
                 lyr.importNamedStyle(doc)
                 lyr.triggerRepaint()
             feedback.setProgress(current * progressStep)

@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
+
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellChecker.datasets.ptBR import (
     PalavrasFileConfig,
     WordDatasetPtBRFileConfig,
@@ -100,7 +100,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
         )
 
         icon_path = self.iconBasePath + "DSGToolsIcon.png"
-        self.manager.add_action(
+        action = self.manager.add_action(
             icon_path,
             text=self.tr("About DSGTools"),
             callback=self.showAbout,

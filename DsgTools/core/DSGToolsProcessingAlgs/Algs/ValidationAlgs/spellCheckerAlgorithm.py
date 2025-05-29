@@ -96,7 +96,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
 
         layer.startEditing()
         attributeIndex = self.getAttributeIndex(attributeName, layer)
-        if attributeIndex < 0:
+        if attributeIndex < 0 or pkField not in [f.name() for f in layer.fields()]:
             feedback.pushWarning("Attribute index not found")
             return {self.FLAGS: flag_id}
         fieldRelation = layer.fields().field(pkField)

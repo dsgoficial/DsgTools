@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
+
 from DsgTools.gui.ProductionTools.MapTools.AuxTools.spatialFilter import SpatialFilter
 from DsgTools.gui.ProductionTools.MapTools.SelectRasterTool.selectRaster import (
     SelectRasterTool,

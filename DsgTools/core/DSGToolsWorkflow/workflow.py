@@ -113,37 +113,48 @@ class DSGToolsWorkflow(QObject):
         currentWorkflowItem = self.getCurrentWorkflowItem()
         return currentWorkflowItem.getStatus()
 
-    def setStatusDict(self, data: Dict[str, Dict[str, Any]]) -> None:
+    def setStatusFromList(self, data: List[Dict[str, Any]]) -> None:
         """
         Sets the status dict on each workflow item.
         data has the following format:
-        {
-            "workflowItemName": {
+        [
+            {
                 "executionTime": int,
                 "executionMessage": str,
-                "
             }
-        }
+        ]
         """
-        initialIdx = None
+        statusList = []
+        if isinstance(data, dict):
+            self.setCurrentWorkflowItem(0)
+            return
         for idx, workflowItem in enumerate(self.workflowItemList):
-            d = data.get(workflowItem.displayName, None)
-            if d is None:
+            if idx > len(data):
+                break
+            d = data[idx]
+            if d["workflowItem"] != workflowItem.displayName:
                 continue
-            workflowItem.setStatusFromDict(d)
-            if (
-                initialIdx is None
-                and workflowItem.getStatus() == ExecutionStatus.INITIAL
-            ):
-                initialIdx = idx - 1
+            workflowItem.setStatusFromDict(d["execution_status"])
+            status = workflowItem.getStatus()
+            statusList.append((idx, status))
+            if status == ExecutionStatus.INITIAL:
+                continue
             self.currentWorkflowItemStatusChanged.emit(idx, workflowItem)
-        self.setCurrentWorkflowItem(initialIdx if initialIdx > 0 else 0)
+        initialIdx, _ = min(
+            filter(lambda x: x[1] != ExecutionStatus.FINISHED, statusList),
+            key=lambda x: x[0],
+            default=0,
+        )
+        self.setCurrentWorkflowItem(initialIdx)
 
-    def getStatusDict(self) -> Dict[str, Dict[str, Any]]:
-        return {
-            workflowItem.displayName: workflowItem.executionStatusAsDict()
+    def getStatusList(self) -> List[Dict[str, Any]]:
+        return [
+            {
+                "workflowItem": workflowItem.displayName,
+                "execution_status": workflowItem.executionStatusAsDict(),
+            }
             for workflowItem in self.workflowItemList
-        }
+        ]
 
     def getCurrentWorkflowStepIndex(self) -> int:
         """Get the index of the current workflow step.
@@ -164,6 +175,8 @@ class DSGToolsWorkflow(QObject):
 
     def getNextWorkflowItem(self) -> DSGToolsWorkflowItem:
         nextStepIdx = self.getNextWorkflowStep()
+        if nextStepIdx is None:
+            return None
         return self.workflowItemList[nextStepIdx]
 
     def getCurrentWorkflowItem(self) -> DSGToolsWorkflowItem:

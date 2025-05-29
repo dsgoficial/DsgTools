@@ -41,6 +41,7 @@ from qgis.core import (
     QgsProcessingParameterField,
     QgsWkbTypes,
     QgsProcessingParameterExpression,
+    QgsFeatureRequest,
 )
 from DsgTools.core.GeometricTools import graphHandler
 
@@ -51,6 +52,7 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
     INPUT_CONTOURS = "INPUT_CONTOURS"
     CONTOUR_ATTR = "CONTOUR_ATTR"
     CONTOUR_INSIDE_WATER_BODY_EXPRESSION = "CONTOUR_INSIDE_WATER_BODY_EXPRESSION"
+    DAM_LAYER = "DAM_LAYER"
     FLAGS = "FLAGS"
 
     def initAlgorithm(self, config=None):
@@ -60,6 +62,7 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
                 self.tr("Input water bodies"),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=False,
+                defaultValue="cobter_massa_dagua_a",
             )
         )
 
@@ -69,6 +72,7 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
                 self.tr("Input contours"),
                 [QgsProcessing.TypeVectorLine],
                 optional=False,
+                defaultValue="elemnat_curva_nivel_l",
             )
         )
 
@@ -85,9 +89,19 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterExpression(
                 self.CONTOUR_INSIDE_WATER_BODY_EXPRESSION,
-                self.tr("Filter expression for cotours inside water bodies"),
-                """"dentro_de_massa_dagua" = 1""",
+                self.tr("Filter expression for contours inside water bodies"),
+                """"dentro_massa_dagua" = 1""",
                 self.INPUT_CONTOURS,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.DAM_LAYER,
+                self.tr("Dam Layer"),
+                [QgsProcessing.TypeVectorLine],
+                optional=True,
+                defaultValue="infra_barragem_l",
             )
         )
 
@@ -99,18 +113,26 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         algRunner = AlgRunner()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(8, feedback)
         inputContours = self.parameterAsVectorLayer(
             parameters, self.INPUT_CONTOURS, context
         )
         contourExpression = self.parameterAsExpression(
             parameters, self.CONTOUR_INSIDE_WATER_BODY_EXPRESSION, context
         )
-        self.prepareFlagSink(
-            parameters, inputContours, QgsWkbTypes.MultiLineString, context
+        inputWaterBodiesLyr = self.parameterAsVectorLayer(
+            parameters, self.INPUT_WATER_BODIES, context
         )
+        damLyr = self.parameterAsVectorLayer(parameters, self.DAM_LAYER, context)
+        self.prepareFlagSink(parameters, inputContours, QgsWkbTypes.LineString, context)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
+        if (
+            inputWaterBodiesLyr is None
+            or inputWaterBodiesLyr.featureCount() == 0
+            or inputContours.featureCount() == 0
+        ):
+            return {self.FLAGS: self.flag_id}
         inputWaterBodiesLyr = algRunner.runCreateFieldWithExpression(
             inputLyr=parameters[self.INPUT_WATER_BODIES],
             expression="$id",
@@ -118,9 +140,33 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
             fieldType=1,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True,
         )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            inputWaterBodiesLyr, context, multiStepFeedback, is_child_algorithm=True
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        # caso curva de nivel com atributo dentro_de_massa_dagua = 1 e disjunto de massa d'água
+        disjointContoursFromWaterBodies = algRunner.runExtractByLocation(
+            inputLyr=parameters[self.INPUT_CONTOURS],
+            intersectLyr=inputWaterBodiesLyr,
+            context=context,
+            predicate=AlgRunner.Disjoint,
+            feedback=multiStepFeedback,
+        )
+        flagLambda = lambda x: self.flagFeature(
+            x.geometry(),
+            flagText=self.tr(
+                "Contours with attribute inside water body that do not intersect a water body"
+            ),
+        )
+        request = QgsFeatureRequest()
+        request.setFilterExpression(expression=contourExpression)
+        list(map(flagLambda, disjointContoursFromWaterBodies.getFeatures(request)))
 
+        # daqui para baixo são intersecções de curvas dentro de massas d'água
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         clippedContours = algRunner.runClip(
@@ -134,54 +180,53 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        expectedContours = algRunner.runFilterExpression(
-            inputLyr=parameters[self.INPUT_CONTOURS],
+        clippedContours = algRunner.runMultipartToSingleParts(
+            inputLayer=clippedContours, context=context, feedback=multiStepFeedback
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        (
+            _,
+            clippedContoursWithAttributeOutsideWaterBody,
+        ) = algRunner.runFilterExpressionWithFailOutput(
+            inputLyr=clippedContours,
             expression=contourExpression,
             context=context,
             feedback=multiStepFeedback,
         )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            clippedContoursWithAttributeOutsideWaterBody,
+            context,
+            multiStepFeedback,
+            is_child_algorithm=True,
+        )
         flagLambda = lambda x: self.flagFeature(
             x.geometry(),
-            flagText=self.tr("Invalid intersection between water body and contours"),
+            flagText=self.tr(
+                "Contours with attribute outside water body that intersect a water body"
+            ),
         )
-        if expectedContours.featureCount() == 0:
-            list(map(flagLambda, clippedContours.getFeatures()))
+        if clippedContoursWithAttributeOutsideWaterBody.featureCount() == 0:
             return {self.FLAGS: self.flag_id}
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(
-            inputLyr=clippedContours,
+        if damLyr is None:
+            list(
+                map(
+                    flagLambda,
+                    clippedContoursWithAttributeOutsideWaterBody.getFeatures(),
+                )
+            )
+            return {self.FLAGS: self.flag_id}
+        flagLyr = algRunner.runExtractByLocation(
+            inputLyr=clippedContoursWithAttributeOutsideWaterBody,
+            intersectLyr=damLyr,
             context=context,
+            predicate=AlgRunner.Disjoint,
             feedback=multiStepFeedback,
-            is_child_algorithm=True,
         )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(
-            inputLyr=expectedContours,
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        flagCandidatesLyr = processing.run(
-            "native:joinattributesbylocation",
-            {
-                "INPUT": clippedContours,
-                "PREDICATE": [2],  # equal
-                "JOIN": expectedContours,
-                "JOIN_FIELDS": [],
-                "METHOD": 0,
-                "DISCARD_NONMATCHING": False,
-                "PREFIX": "",
-                "NON_MATCHING": "memory:",
-            },
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=False,
-        )["NON_MATCHING"]
-        list(map(flagLambda, flagCandidatesLyr.getFeatures()))
+        list(map(flagLambda, flagLyr.getFeatures()))
 
         return {self.FLAGS: self.flag_id}
 

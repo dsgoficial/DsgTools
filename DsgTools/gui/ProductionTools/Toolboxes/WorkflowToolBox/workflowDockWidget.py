@@ -26,6 +26,9 @@ from time import time
 from functools import partial
 from typing import Dict, List, OrderedDict, Union
 
+import processing
+from processing.core.ProcessingConfig import ProcessingConfig
+
 from qgis.PyQt import uic
 from qgis.core import (
     Qgis,
@@ -48,7 +51,7 @@ from qgis.PyQt.QtWidgets import (
     QMenu,
 )
 
-from DsgTools.gui.ProductionTools.Toolboxes.QualityAssuranceToolBox.workflowSetupDialog import (
+from DsgTools.gui.ProductionTools.Toolboxes.WorkflowToolBox.workflowSetupDialog import (
     WorkflowSetupDialog,
 )
 from DsgTools.core.DSGToolsWorkflow.workflowItem import (
@@ -63,11 +66,11 @@ from DsgTools.core.DSGToolsWorkflow.workflow import (
 
 
 FORM_CLASS, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), "qualityAssuranceDockWidget.ui")
+    os.path.join(os.path.dirname(__file__), "workflowDockWidget.ui")
 )
 
 
-class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
+class WorkflowDockWidget(QDockWidget, FORM_CLASS):
     # current execution status
 
     def __init__(self, iface, parent=None):
@@ -78,7 +81,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         :param parent: (QtWidgets.*) any widget to parent this object's
                        instance.
         """
-        super(QualityAssuranceDockWidget, self).__init__(parent)
+        super(WorkflowDockWidget, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
         self._previousWorkflow = None
@@ -126,7 +129,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             ExecutionStatus.FINISHED_WITH_FLAGS: Qgis.Warning,
             ExecutionStatus.IGNORE_FLAGS: Qgis.Warning,
         }
-        self.workflowStatusDict = defaultdict(OrderedDict)
+        self.workflowStatusDict = defaultdict(list)
         self.ignoreFlagsMenuDict = defaultdict(dict)
         self.setGuiState()
         self.workflows = dict()
@@ -139,6 +142,21 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.iface.newProjectCreated.connect(self.saveState)
         self.iface.newProjectCreated.connect(self.loadState)
         self.iface.projectRead.connect(self.loadState)
+        self.setInvalidFeatureFiltering()
+
+    def setInvalidFeatureFiltering(self):
+        currentValue = ProcessingConfig.getSetting("FILTER_INVALID_GEOMETRIES")
+        if currentValue == 0:
+            return
+        ProcessingConfig.setSettingValue("FILTER_INVALID_GEOMETRIES", 0)
+        self.iface.messageBar().pushMessage(
+            self.tr("DSGTools Workflow Toolbox"),
+            self.tr(
+                f"The processing Invalid Feature Filtering option changed to 'Do not filter (better performance)'. This feature is needed for the workflow to work properly."
+            ),
+            Qgis.Info,
+            duration=3,
+        )
 
     def generateMenu(self, pos, idx, widget, modelName, workflow: DSGToolsWorkflow):
         workflowName = workflow.displayName
@@ -229,7 +247,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 action.setChecked(False)
 
         self.iface.messageBar().pushMessage(
-            self.tr("DSGTools Q&A Toolbox"),
+            self.tr("DSGTools Workflow Toolbox"),
             self.tr(
                 f"The user has set the current workflow item of the workflow '{workflow.displayName}' as '{currentWorkflowItem.displayName}'."
             ),
@@ -558,7 +576,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             # advise user a model status has changed only if it came from a
             # signal call
             self.iface.messageBar().pushMessage(
-                self.tr("DSGTools Q&A Toolbox"),
+                self.tr("DSGTools Workflow Toolbox"),
                 self.tr(
                     f"model {workflowItem.displayName} status changed to {status}."
                 ),
@@ -610,9 +628,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             return
         self.tableWidget.setRowCount(len(workflow.workflowItemList))
         for row, workflowItem in enumerate(workflow.workflowItemList):
-            tooltip = self.tr(
-                f"Model name: {workflowItem.displayName}\n{workflowItem.getDescription()}"
-            )
+            tooltip = self.tr(f"Model name: {workflowItem.displayName}")
+            if workflowItem.getDescription() != "":
+                tooltip += f"\n\nModel description: {workflowItem.getDescription()}"
             if workflowItem.flagsCanHaveFalsePositiveResults():
                 self.prepareIgnoreFlagMenuDictItem(
                     row, workflowItem.displayName, workflow
@@ -679,9 +697,11 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         QgsProject, making it "loadable" along with saved QGIS projects.
         """
         # workflow objects cannot be serialized, so they must be passed as dict
-        workflows = {w.displayName: w.as_dict() for w in self.workflows.values()}
+        workflows: Dict[str, DSGToolsWorkflow] = {
+            w.displayName: w.as_dict() for w in self.workflows.values()
+        }
         workflowStatusDict = {
-            w.displayName: w.getStatusDict() for w in self.workflows.values()
+            w.displayName: w.getStatusList() for w in self.workflows.values()
         }
 
         QgsExpressionContextUtils.setProjectVariable(
@@ -692,7 +712,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     "workflows": workflows,
                     "current_workflow": self.comboBox.currentIndex(),
                     "show_buttons": self._showButtons,
-                    "workflow_status_dict": workflowStatusDict,
+                    "workflow_status_dict_list": workflowStatusDict,
                 }
             ),
         )
@@ -711,15 +731,19 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             )
             or "{}"
         )
-        workflows = state["workflows"] if "workflows" in state else {}
-        workflow_status_dict = state.get("workflow_status_dict", {})
+        workflows: Dict[str, DSGToolsWorkflow] = (
+            state["workflows"] if "workflows" in state else {}
+        )
+        workflow_status_dict_list = state.get("workflow_status_dict_list", {})
         self.resetComboBox()
         try:
             for idx, (name, workflowMap) in enumerate(workflows.items()):
                 self.workflows[name] = dsgtools_workflow_from_dict(workflowMap)
                 self.comboBox.addItem(name)
                 self.setWorkflowTooltip(idx + 1, self.workflows[name].metadata)
-                self.workflows[name].setStatusDict(workflow_status_dict[name])
+                self.workflows[name].setStatusFromList(
+                    workflow_status_dict_list.get(name, [])
+                )
             currentIdx = state["current_workflow"] if "current_workflow" in state else 0
             self.comboBox.setCurrentIndex(currentIdx)
             showButtons = state["show_buttons"] if "show_buttons" in state else True
@@ -885,7 +909,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             return False
         return all(
             value in (ExecutionStatus.FINISHED, ExecutionStatus.IGNORE_FLAGS)
-            for _, value in self.workflowStatusDict[modelName].items()
+            for _, value in self.workflowStatusDict[modelName]
         )
 
     def allWorkflowsAreFinishedWithoutFlags(self) -> bool:

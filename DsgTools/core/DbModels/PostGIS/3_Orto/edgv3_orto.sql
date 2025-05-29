@@ -7,10 +7,95 @@ SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
 	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 3.0 Orto',
-	 dbimplversion varchar(50) NOT NULL DEFAULT '2.4.0',
+	 dbimplversion varchar(50) NOT NULL DEFAULT '2.5.1',
 	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 3.0 Orto')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Orto','2.4.0')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Orto','2.5.1')#
+
+CREATE TABLE dominios.sigla_uf (
+	 code smallint NOT NULL,
+	 code_name text NOT NULL,
+	 CONSTRAINT sigla_uf_pk PRIMARY KEY (code)
+)#
+
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (1,'AC (1)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (2,'AL (2)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (3,'AM (3)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (4,'AP (4)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (5,'BA (5)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (6,'CE (6)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (7,'DF (7)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (8,'ES (8)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (9,'GO (9)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (10,'MA (10)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (11,'MG (11)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (12,'MS (12)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (13,'MT (13)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (14,'PA (14)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (15,'PB (15)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (16,'PE (16)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (17,'PI (17)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (18,'PR (18)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (19,'RJ (19)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (20,'RN (20)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (21,'RO (21)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (22,'RR (22)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (23,'RS (23)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (24,'SC (24)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (25,'SE (25)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (26,'SP (26)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (27,'TO (27)')#
+INSERT INTO dominios.sigla_uf (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
+
+ALTER TABLE dominios.sigla_uf OWNER TO postgres#
+
+CREATE TABLE dominios.posicao_pista (
+	 code smallint NOT NULL,
+	 code_name text NOT NULL,
+	 CONSTRAINT posicao_pista_pk PRIMARY KEY (code)
+)#
+
+INSERT INTO dominios.posicao_pista (code,code_name) VALUES (12,'Adjacentes (12)')#
+INSERT INTO dominios.posicao_pista (code,code_name) VALUES (13,'Superpostas (13)')#
+INSERT INTO dominios.posicao_pista (code,code_name) VALUES (97,'Não aplicável (97)')#
+INSERT INTO dominios.posicao_pista (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
+
+ALTER TABLE dominios.posicao_pista OWNER TO postgres#
+
+CREATE TABLE dominios.tipo_elemento_viario (
+	 code smallint NOT NULL,
+	 code_name text NOT NULL,
+	 filter text NOT NULL,
+	 CONSTRAINT tipo_elemento_viario_pk PRIMARY KEY (code)
+)#
+
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (101,'Túnel (101)','Túnel')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (102,'Túnel - Passagem subterrânea sob via (102)','Túnel')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (201,'Ponte móvel (201)','Ponte')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (202,'Ponte pênsil (202)','Ponte')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (203,'Ponte fixa (203)','Ponte')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (204,'Ponte estaiada (204)','Ponte')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (301,'Passagem elevada (301)','Passagem elevada / Viaduto')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (302,'Viaduto (302)','Passagem elevada / Viaduto')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (401,'Travessia - Vau natural (401)','Travessia')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (402,'Travessia - Vau construído (402)','Travessia')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (501,'Galeria/Bueiro (501)','Galeria/Bueiro')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (97,'Não aplicável (97)','Não aplicável')#
+INSERT INTO dominios.tipo_elemento_viario (code,code_name, filter) VALUES (9999,'A SER PREENCHIDO (9999)','A SER PREENCHIDO (9999)')#
+
+ALTER TABLE dominios.tipo_elemento_viario OWNER TO postgres#
+
+CREATE TABLE dominios.tipo_obstaculo (
+	 code smallint NOT NULL,
+	 code_name text NOT NULL,
+	 CONSTRAINT tipo_obstaculo_pk PRIMARY KEY (code)
+)#
+
+INSERT INTO dominios.tipo_obstaculo (code,code_name) VALUES (1,'Obstáculo individual (1)')#
+INSERT INTO dominios.tipo_obstaculo (code,code_name) VALUES (2,'Obstáculo múltiplo (2)')#
+INSERT INTO dominios.tipo_obstaculo (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
+
+ALTER TABLE dominios.tipo_obstaculo OWNER TO postgres#
 
 CREATE TABLE dominios.tipo_produto_residuo (
 	 code smallint NOT NULL,
@@ -191,11 +276,11 @@ CREATE TABLE dominios.tipo_extracao_mineral (
 	 CONSTRAINT tipo_extracao_mineral_pk PRIMARY KEY (code)
 )#
 
-INSERT INTO dominios.tipo_extracao_mineral (code,code_name) VALUES (1,'Poço / Água subterrânea (1)')#
+INSERT INTO dominios.tipo_extracao_mineral (code,code_name) VALUES (1,'Poço - água subterrânea (1)')#
 INSERT INTO dominios.tipo_extracao_mineral (code,code_name) VALUES (4,'Mina / Pedreira (4)')#
 INSERT INTO dominios.tipo_extracao_mineral (code,code_name) VALUES (5,'Garimpo (5)')#
 INSERT INTO dominios.tipo_extracao_mineral (code,code_name) VALUES (6,'Salina (6)')#
-INSERT INTO dominios.tipo_extracao_mineral (code,code_name) VALUES (8,'Poço / Petróleo (8)')#
+INSERT INTO dominios.tipo_extracao_mineral (code,code_name) VALUES (8,'Poço - petróleo (8)')#
 INSERT INTO dominios.tipo_extracao_mineral (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
 
 ALTER TABLE dominios.tipo_extracao_mineral OWNER TO postgres#
@@ -280,19 +365,21 @@ ALTER TABLE dominios.situacao_fisica OWNER TO postgres#
 CREATE TABLE dominios.tipo_elemento_energia (
 	 code smallint NOT NULL,
 	 code_name text NOT NULL,
+	 filter text NOT NULL,
 	 CONSTRAINT tipo_elemento_energia_pk PRIMARY KEY (code)
 )#
 
-INSERT INTO dominios.tipo_elemento_energia (code,code_name) VALUES (303,'Linha de transmissão de energia (303)')#
-INSERT INTO dominios.tipo_elemento_energia (code,code_name) VALUES (405,'Estação geradora – Eólica (405)')#
-INSERT INTO dominios.tipo_elemento_energia (code,code_name) VALUES (408,'Estação geradora – Hidrelétrica (408)')#
-INSERT INTO dominios.tipo_elemento_energia (code,code_name) VALUES (407,'Estação geradora – Maré-motriz (407)')#
-INSERT INTO dominios.tipo_elemento_energia (code,code_name) VALUES (498,'Estação geradora – Outras (498)')#
-INSERT INTO dominios.tipo_elemento_energia (code,code_name) VALUES (406,'Estação geradora – Solar (406)')#
-INSERT INTO dominios.tipo_elemento_energia (code,code_name) VALUES (409,'Estação geradora – Termelétrica (409)')#
-INSERT INTO dominios.tipo_elemento_energia (code,code_name) VALUES (1801,'Subestação de transmissão de energia elétrica (1801)')#
-INSERT INTO dominios.tipo_elemento_energia (code,code_name) VALUES (1802,'Subestação de distribuição de energia elétrica (1802)')#
-INSERT INTO dominios.tipo_elemento_energia (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
+INSERT INTO dominios.tipo_elemento_energia (code,code_name, filter) VALUES (303,'Linha de transmissão de energia (303)','Linha de energia')#
+INSERT INTO dominios.tipo_elemento_energia (code,code_name, filter) VALUES (405,'Estação geradora – Eólica (405)','Estação geradora de energia')#
+INSERT INTO dominios.tipo_elemento_energia (code,code_name, filter) VALUES (408,'Estação geradora – Hidrelétrica (408)','Estação geradora de energia')#
+INSERT INTO dominios.tipo_elemento_energia (code,code_name, filter) VALUES (407,'Estação geradora – Maré-motriz (407)','Estação geradora de energia')#
+INSERT INTO dominios.tipo_elemento_energia (code,code_name, filter) VALUES (498,'Estação geradora – Outras (498)','Estação geradora de energia')#
+INSERT INTO dominios.tipo_elemento_energia (code,code_name, filter) VALUES (406,'Estação geradora – Solar (406)','Estação geradora de energia')#
+INSERT INTO dominios.tipo_elemento_energia (code,code_name, filter) VALUES (409,'Estação geradora – Termelétrica (409)','Estação geradora de energia')#
+INSERT INTO dominios.tipo_elemento_energia (code,code_name, filter) VALUES (1401,'Torre de energia (1401)','Torre de energia')#
+INSERT INTO dominios.tipo_elemento_energia (code,code_name, filter) VALUES (1801,'Subestação de transmissão de energia elétrica (1801)','Subestação de energia')#
+INSERT INTO dominios.tipo_elemento_energia (code,code_name, filter) VALUES (1802,'Subestação de distribuição de energia elétrica (1802)','Subestação de energia')#
+INSERT INTO dominios.tipo_elemento_energia (code,code_name, filter) VALUES (9999,'A SER PREENCHIDO (9999)','A SER PREENCHIDO (9999)')#
 
 ALTER TABLE dominios.tipo_elemento_energia OWNER TO postgres#
 
@@ -329,6 +416,7 @@ INSERT INTO dominios.tipo_massa_dagua (code,code_name) VALUES (7,'Lago ou Lagoa 
 INSERT INTO dominios.tipo_massa_dagua (code,code_name) VALUES (9,'Laguna (com fluxo) (9)')#
 INSERT INTO dominios.tipo_massa_dagua (code,code_name) VALUES (10,'Represa/açude com fluxo (10)')#
 INSERT INTO dominios.tipo_massa_dagua (code,code_name) VALUES (11,'Represa/açude sem fluxo (11)')#
+INSERT INTO dominios.tipo_massa_dagua (code,code_name) VALUES (12,'Canal não operacional (sem fluxo) (12)')#
 INSERT INTO dominios.tipo_massa_dagua (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
 
 ALTER TABLE dominios.tipo_massa_dagua OWNER TO postgres#
@@ -507,6 +595,8 @@ CREATE TABLE dominios.posicao_relativa (
 
 INSERT INTO dominios.posicao_relativa (code,code_name) VALUES (2,'Superfície (2)')#
 INSERT INTO dominios.posicao_relativa (code,code_name) VALUES (3,'Elevado (3)')#
+INSERT INTO dominios.posicao_relativa (code,code_name) VALUES (4,'Emerso (4)')#
+INSERT INTO dominios.posicao_relativa (code,code_name) VALUES (5,'Submerso (5)')#
 INSERT INTO dominios.posicao_relativa (code,code_name) VALUES (6,'Subterrâneo (6)')#
 INSERT INTO dominios.posicao_relativa (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
 
@@ -546,17 +636,18 @@ ALTER TABLE dominios.administracao OWNER TO postgres#
 CREATE TABLE dominios.tipo_elemento_infraestrutura (
 	 code smallint NOT NULL,
 	 code_name text NOT NULL,
+	 filter text NOT NULL,
 	 CONSTRAINT tipo_elemento_infraestrutura_pk PRIMARY KEY (code)
 )#
 
-INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name) VALUES (1938,'Atrac - Cais (1938)')#
-INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name) VALUES (1939,'Atrac - Cais flutuante (1939)')#
-INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name) VALUES (1940,'Atrac - Trapiche (1940)')#
-INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name) VALUES (1941,'Atrac - Molhe de atracação (1941)')#
-INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name) VALUES (1942,'Atrac - Pier (1942)')#
-INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name) VALUES (1943,'Atrac - Dolfim (1943)')#
-INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name) VALUES (1944,'Atrac - Desembarcadouro (1944)')#
-INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
+INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name, filter) VALUES (1938,'Atrac - Cais (1938)','Atracadouro Terminal')#
+INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name, filter) VALUES (1939,'Atrac - Cais flutuante (1939)','Atracadouro Terminal')#
+INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name, filter) VALUES (1940,'Atrac - Trapiche (1940)','Atracadouro Terminal')#
+INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name, filter) VALUES (1941,'Atrac - Molhe de atracação (1941)','Atracadouro Terminal')#
+INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name, filter) VALUES (1942,'Atrac - Pier (1942)','Atracadouro Terminal')#
+INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name, filter) VALUES (1943,'Atrac - Dolfim (1943)','Atracadouro Terminal')#
+INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name, filter) VALUES (1944,'Atrac - Desembarcadouro (1944)','Atracadouro Terminal')#
+INSERT INTO dominios.tipo_elemento_infraestrutura (code,code_name, filter) VALUES (9999,'A SER PREENCHIDO (9999)','A SER PREENCHIDO (9999)')#
 
 ALTER TABLE dominios.tipo_elemento_infraestrutura OWNER TO postgres#
 
@@ -606,11 +697,39 @@ CREATE TABLE dominios.trafego (
 	 CONSTRAINT trafego_pk PRIMARY KEY (code)
 )#
 
+INSERT INTO dominios.trafego (code,code_name) VALUES (0,'Desconhecido (0)')#
 INSERT INTO dominios.trafego (code,code_name) VALUES (1,'Permanente (1)')#
 INSERT INTO dominios.trafego (code,code_name) VALUES (2,'Periódico (2)')#
 INSERT INTO dominios.trafego (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
 
 ALTER TABLE dominios.trafego OWNER TO postgres#
+
+CREATE TABLE dominios.tipo_sumidouro_vertedouro (
+	 code smallint NOT NULL,
+	 code_name text NOT NULL,
+	 CONSTRAINT tipo_sumidouro_vertedouro_pk PRIMARY KEY (code)
+)#
+
+INSERT INTO dominios.tipo_sumidouro_vertedouro (code,code_name) VALUES (3,'Sumidouro - Canalização, Gruta ou fenda (3)')#
+INSERT INTO dominios.tipo_sumidouro_vertedouro (code,code_name) VALUES (4,'Sumidouro - Desconhecida, Absorção (4)')#
+INSERT INTO dominios.tipo_sumidouro_vertedouro (code,code_name) VALUES (5,'Vertedouro (5)')#
+INSERT INTO dominios.tipo_sumidouro_vertedouro (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
+
+ALTER TABLE dominios.tipo_sumidouro_vertedouro OWNER TO postgres#
+
+CREATE TABLE dominios.tipo_simbolo_area (
+	 code smallint NOT NULL,
+	 code_name text NOT NULL,
+	 CONSTRAINT tipo_simbolo_area_pk PRIMARY KEY (code)
+)#
+
+INSERT INTO dominios.tipo_simbolo_area (code,code_name) VALUES (1,'Subestação de energia (1)')#
+INSERT INTO dominios.tipo_simbolo_area (code,code_name) VALUES (2,'Extração mineral (2)')#
+INSERT INTO dominios.tipo_simbolo_area (code,code_name) VALUES (3,'Extração mineral não operacional (3)')#
+INSERT INTO dominios.tipo_simbolo_area (code,code_name) VALUES (4,'Extração mineral - salina (4)')#
+INSERT INTO dominios.tipo_simbolo_area (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
+
+ALTER TABLE dominios.tipo_simbolo_area OWNER TO postgres#
 
 CREATE TABLE edgv.cobter_massa_dagua_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -623,8 +742,7 @@ CREATE TABLE edgv.cobter_massa_dagua_a(
 	 tamanho_txt real,
 	 justificativa_txt smallint NOT NULL,
 	 apresentar_simbologia smallint NOT NULL,
-	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT cobter_massa_dagua_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -661,13 +779,6 @@ ALTER TABLE edgv.cobter_massa_dagua_a
 
 ALTER TABLE edgv.cobter_massa_dagua_a ALTER COLUMN apresentar_simbologia SET DEFAULT 9999#
 
-ALTER TABLE edgv.cobter_massa_dagua_a
-	 ADD CONSTRAINT cobter_massa_dagua_a_visivel_fk FOREIGN KEY (visivel)
-	 REFERENCES dominios.booleano (code) MATCH FULL
-	 ON UPDATE NO ACTION ON DELETE NO ACTION#
-
-ALTER TABLE edgv.cobter_massa_dagua_a ALTER COLUMN visivel SET DEFAULT 9999#
-
 CREATE TABLE edgv.constr_extracao_mineral_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 nome varchar(255),
@@ -680,7 +791,7 @@ CREATE TABLE edgv.constr_extracao_mineral_a(
 	 label_x real,
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT constr_extracao_mineral_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -743,7 +854,7 @@ CREATE TABLE edgv.constr_extracao_mineral_p(
 	 label_x real,
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT constr_extracao_mineral_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -799,10 +910,10 @@ CREATE TABLE edgv.elemnat_curva_nivel_l(
 	 cota integer NOT NULL,
 	 indice smallint NOT NULL,
 	 depressao smallint NOT NULL,
-	 dentro_de_massa_dagua smallint NOT NULL,
+	 dentro_massa_dagua smallint NOT NULL,
 	 texto_edicao varchar(255),
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT elemnat_curva_nivel_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -826,11 +937,11 @@ ALTER TABLE edgv.elemnat_curva_nivel_l
 ALTER TABLE edgv.elemnat_curva_nivel_l ALTER COLUMN depressao SET DEFAULT 9999#
 
 ALTER TABLE edgv.elemnat_curva_nivel_l
-	 ADD CONSTRAINT elemnat_curva_nivel_l_dentro_de_massa_dagua_fk FOREIGN KEY (dentro_de_massa_dagua)
+	 ADD CONSTRAINT elemnat_curva_nivel_l_dentro_massa_dagua_fk FOREIGN KEY (dentro_massa_dagua)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.elemnat_curva_nivel_l ALTER COLUMN dentro_de_massa_dagua SET DEFAULT 9999#
+ALTER TABLE edgv.elemnat_curva_nivel_l ALTER COLUMN dentro_massa_dagua SET DEFAULT 9999#
 
 ALTER TABLE edgv.elemnat_curva_nivel_l
 	 ADD CONSTRAINT elemnat_curva_nivel_l_visivel_fk FOREIGN KEY (visivel)
@@ -848,7 +959,7 @@ CREATE TABLE edgv.elemnat_elemento_hidrografico_a(
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT elemnat_elemento_hidrografico_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -891,7 +1002,7 @@ CREATE TABLE edgv.elemnat_elemento_hidrografico_l(
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT elemnat_elemento_hidrografico_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -930,7 +1041,7 @@ CREATE TABLE edgv.elemnat_elemento_hidrografico_p(
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT elemnat_elemento_hidrografico_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -970,7 +1081,7 @@ CREATE TABLE edgv.elemnat_ilha_p(
 	 tamanho_txt real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT elemnat_ilha_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1010,7 +1121,7 @@ CREATE TABLE edgv.elemnat_ilha_a(
 	 tamanho_txt real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT elemnat_ilha_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1050,7 +1161,8 @@ CREATE TABLE edgv.elemnat_ponto_cotado_p(
 	 visivel smallint NOT NULL,
 	 ancora_horizontal smallint NOT NULL,
 	 ancora_vertical smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 suprimir_simbologia smallint NOT NULL,
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT elemnat_ponto_cotado_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1094,10 +1206,17 @@ ALTER TABLE edgv.elemnat_ponto_cotado_p
 
 ALTER TABLE edgv.elemnat_ponto_cotado_p ALTER COLUMN ancora_vertical SET DEFAULT 9999#
 
+ALTER TABLE edgv.elemnat_ponto_cotado_p
+	 ADD CONSTRAINT elemnat_ponto_cotado_p_suprimir_simbologia_fk FOREIGN KEY (suprimir_simbologia)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.elemnat_ponto_cotado_p ALTER COLUMN suprimir_simbologia SET DEFAULT 9999#
+
 CREATE TABLE edgv.elemnat_terreno_sujeito_inundacao_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT elemnat_terreno_sujeito_inundacao_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1124,7 +1243,7 @@ CREATE TABLE edgv.elemnat_toponimo_fisiografico_natural_p(
 	 justificativa_txt smallint NOT NULL,
 	 espacamento real,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT elemnat_toponimo_fisiografico_natural_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1166,7 +1285,7 @@ CREATE TABLE edgv.elemnat_toponimo_fisiografico_natural_l(
 	 tamanho_txt real,
 	 espacamento real,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT elemnat_toponimo_fisiografico_natural_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1199,12 +1318,13 @@ CREATE TABLE edgv.elemnat_trecho_drenagem_l(
 	 tipo smallint NOT NULL,
 	 situacao_em_poligono smallint NOT NULL,
 	 regime smallint NOT NULL,
+	 em_galeria_bueiro smallint NOT NULL,
 	 texto_edicao varchar(255),
 	 tamanho_txt real,
 	 visivel smallint NOT NULL,
 	 posicao_rotulo smallint NOT NULL,
 	 direcao_fixada smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT elemnat_trecho_drenagem_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1235,6 +1355,13 @@ ALTER TABLE edgv.elemnat_trecho_drenagem_l
 ALTER TABLE edgv.elemnat_trecho_drenagem_l ALTER COLUMN regime SET DEFAULT 9999#
 
 ALTER TABLE edgv.elemnat_trecho_drenagem_l
+	 ADD CONSTRAINT elemnat_trecho_drenagem_l_em_galeria_bueiro_fk FOREIGN KEY (em_galeria_bueiro)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.elemnat_trecho_drenagem_l ALTER COLUMN em_galeria_bueiro SET DEFAULT 9999#
+
+ALTER TABLE edgv.elemnat_trecho_drenagem_l
 	 ADD CONSTRAINT elemnat_trecho_drenagem_l_visivel_fk FOREIGN KEY (visivel)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -1260,7 +1387,13 @@ CREATE TABLE edgv.infra_barragem_l(
 	 nome varchar(255),
 	 tipo smallint NOT NULL,
 	 material_construcao smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 texto_edicao varchar(255),
+	 label_x real,
+	 label_y real,
+	 sobreposto_transportes smallint NOT NULL,
+	 largura_simbologia real,
+	 visivel smallint NOT NULL,
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT infra_barragem_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1287,12 +1420,31 @@ ALTER TABLE edgv.infra_barragem_l
 
 ALTER TABLE edgv.infra_barragem_l ALTER COLUMN material_construcao SET DEFAULT 9999#
 
+ALTER TABLE edgv.infra_barragem_l
+	 ADD CONSTRAINT infra_barragem_l_sobreposto_transportes_fk FOREIGN KEY (sobreposto_transportes)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_barragem_l ALTER COLUMN sobreposto_transportes SET DEFAULT 9999#
+
+ALTER TABLE edgv.infra_barragem_l
+	 ADD CONSTRAINT infra_barragem_l_visivel_fk FOREIGN KEY (visivel)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_barragem_l ALTER COLUMN visivel SET DEFAULT 9999#
+
 CREATE TABLE edgv.infra_barragem_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 nome varchar(255),
 	 tipo smallint NOT NULL,
 	 material_construcao smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 texto_edicao varchar(255),
+	 label_x real,
+	 label_y real,
+	 sobreposto_transportes smallint NOT NULL,
+	 visivel smallint NOT NULL,
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT infra_barragem_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1319,17 +1471,33 @@ ALTER TABLE edgv.infra_barragem_a
 
 ALTER TABLE edgv.infra_barragem_a ALTER COLUMN material_construcao SET DEFAULT 9999#
 
+ALTER TABLE edgv.infra_barragem_a
+	 ADD CONSTRAINT infra_barragem_a_sobreposto_transportes_fk FOREIGN KEY (sobreposto_transportes)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_barragem_a ALTER COLUMN sobreposto_transportes SET DEFAULT 9999#
+
+ALTER TABLE edgv.infra_barragem_a
+	 ADD CONSTRAINT infra_barragem_a_visivel_fk FOREIGN KEY (visivel)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_barragem_a ALTER COLUMN visivel SET DEFAULT 9999#
+
 CREATE TABLE edgv.infra_elemento_energia_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 nome varchar(255),
 	 tipo smallint NOT NULL,
+	 altitude real,
+	 altura real,
 	 situacao_fisica smallint NOT NULL,
 	 visivel smallint NOT NULL,
 	 texto_edicao varchar(255),
 	 label_x real,
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT infra_elemento_energia_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1345,7 +1513,7 @@ ALTER TABLE edgv.infra_elemento_energia_p
 
 ALTER TABLE edgv.infra_elemento_energia_p
 	 ADD CONSTRAINT infra_elemento_energia_p_tipo_check
-	 CHECK (tipo = ANY(ARRAY[1801 :: SMALLINT, 1802 :: SMALLINT, 405 :: SMALLINT, 408 :: SMALLINT, 407 :: SMALLINT, 498 :: SMALLINT, 406 :: SMALLINT, 409 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipo = ANY(ARRAY[1401 :: SMALLINT, 405 :: SMALLINT, 406 :: SMALLINT, 407 :: SMALLINT, 408 :: SMALLINT, 409 :: SMALLINT, 498 :: SMALLINT, 1801 :: SMALLINT, 1802 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.infra_elemento_energia_p ALTER COLUMN tipo SET DEFAULT 9999#
 
@@ -1370,6 +1538,48 @@ ALTER TABLE edgv.infra_elemento_energia_p
 
 ALTER TABLE edgv.infra_elemento_energia_p ALTER COLUMN justificativa_txt SET DEFAULT 9999#
 
+CREATE TABLE edgv.infra_elemento_energia_l(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 nome varchar(255),
+	 tipo smallint NOT NULL,
+	 altitude real,
+	 altura real,
+	 situacao_fisica smallint NOT NULL,
+	 visivel smallint NOT NULL,
+	 observacao varchar(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT infra_elemento_energia_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX infra_elemento_energia_l_geom ON edgv.infra_elemento_energia_l USING gist (geom)#
+
+ALTER TABLE edgv.infra_elemento_energia_l OWNER TO postgres#
+
+ALTER TABLE edgv.infra_elemento_energia_l
+	 ADD CONSTRAINT infra_elemento_energia_l_tipo_fk FOREIGN KEY (tipo)
+	 REFERENCES dominios.tipo_elemento_energia (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_elemento_energia_l
+	 ADD CONSTRAINT infra_elemento_energia_l_tipo_check
+	 CHECK (tipo = ANY(ARRAY[303 :: SMALLINT, 405 :: SMALLINT, 406 :: SMALLINT, 407 :: SMALLINT, 408 :: SMALLINT, 498 :: SMALLINT, 9999 :: SMALLINT]))#
+
+ALTER TABLE edgv.infra_elemento_energia_l ALTER COLUMN tipo SET DEFAULT 9999#
+
+ALTER TABLE edgv.infra_elemento_energia_l
+	 ADD CONSTRAINT infra_elemento_energia_l_situacao_fisica_fk FOREIGN KEY (situacao_fisica)
+	 REFERENCES dominios.situacao_fisica (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_elemento_energia_l ALTER COLUMN situacao_fisica SET DEFAULT 9999#
+
+ALTER TABLE edgv.infra_elemento_energia_l
+	 ADD CONSTRAINT infra_elemento_energia_l_visivel_fk FOREIGN KEY (visivel)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_elemento_energia_l ALTER COLUMN visivel SET DEFAULT 9999#
+
 CREATE TABLE edgv.infra_elemento_energia_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 nome varchar(255),
@@ -1380,7 +1590,7 @@ CREATE TABLE edgv.infra_elemento_energia_a(
 	 label_x real,
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT infra_elemento_energia_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1396,7 +1606,7 @@ ALTER TABLE edgv.infra_elemento_energia_a
 
 ALTER TABLE edgv.infra_elemento_energia_a
 	 ADD CONSTRAINT infra_elemento_energia_a_tipo_check
-	 CHECK (tipo = ANY(ARRAY[1801 :: SMALLINT, 1802 :: SMALLINT, 405 :: SMALLINT, 408 :: SMALLINT, 407 :: SMALLINT, 498 :: SMALLINT, 406 :: SMALLINT, 409 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipo = ANY(ARRAY[405 :: SMALLINT, 406 :: SMALLINT, 407 :: SMALLINT, 408 :: SMALLINT, 409 :: SMALLINT, 498 :: SMALLINT, 1801 :: SMALLINT, 1802 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.infra_elemento_energia_a ALTER COLUMN tipo SET DEFAULT 9999#
 
@@ -1421,46 +1631,6 @@ ALTER TABLE edgv.infra_elemento_energia_a
 
 ALTER TABLE edgv.infra_elemento_energia_a ALTER COLUMN justificativa_txt SET DEFAULT 9999#
 
-CREATE TABLE edgv.infra_elemento_energia_l(
-	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 nome varchar(255),
-	 tipo smallint NOT NULL,
-	 situacao_fisica smallint NOT NULL,
-	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
-	 geom geometry(MultiLinestring, [epsg]),
-	 CONSTRAINT infra_elemento_energia_l_pk PRIMARY KEY (id)
-	 WITH (FILLFACTOR = 80)
-)#
-CREATE INDEX infra_elemento_energia_l_geom ON edgv.infra_elemento_energia_l USING gist (geom)#
-
-ALTER TABLE edgv.infra_elemento_energia_l OWNER TO postgres#
-
-ALTER TABLE edgv.infra_elemento_energia_l
-	 ADD CONSTRAINT infra_elemento_energia_l_tipo_fk FOREIGN KEY (tipo)
-	 REFERENCES dominios.tipo_elemento_energia (code) MATCH FULL
-	 ON UPDATE NO ACTION ON DELETE NO ACTION#
-
-ALTER TABLE edgv.infra_elemento_energia_l
-	 ADD CONSTRAINT infra_elemento_energia_l_tipo_check
-	 CHECK (tipo = ANY(ARRAY[303 :: SMALLINT, 9999 :: SMALLINT]))#
-
-ALTER TABLE edgv.infra_elemento_energia_l ALTER COLUMN tipo SET DEFAULT 9999#
-
-ALTER TABLE edgv.infra_elemento_energia_l
-	 ADD CONSTRAINT infra_elemento_energia_l_situacao_fisica_fk FOREIGN KEY (situacao_fisica)
-	 REFERENCES dominios.situacao_fisica (code) MATCH FULL
-	 ON UPDATE NO ACTION ON DELETE NO ACTION#
-
-ALTER TABLE edgv.infra_elemento_energia_l ALTER COLUMN situacao_fisica SET DEFAULT 9999#
-
-ALTER TABLE edgv.infra_elemento_energia_l
-	 ADD CONSTRAINT infra_elemento_energia_l_visivel_fk FOREIGN KEY (visivel)
-	 REFERENCES dominios.booleano (code) MATCH FULL
-	 ON UPDATE NO ACTION ON DELETE NO ACTION#
-
-ALTER TABLE edgv.infra_elemento_energia_l ALTER COLUMN visivel SET DEFAULT 9999#
-
 CREATE TABLE edgv.infra_elemento_infraestrutura_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 nome varchar(255),
@@ -1471,7 +1641,7 @@ CREATE TABLE edgv.infra_elemento_infraestrutura_a(
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT infra_elemento_infraestrutura_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1518,7 +1688,7 @@ CREATE TABLE edgv.infra_elemento_infraestrutura_l(
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT infra_elemento_infraestrutura_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1565,7 +1735,7 @@ CREATE TABLE edgv.infra_elemento_infraestrutura_p(
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT infra_elemento_infraestrutura_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1615,9 +1785,12 @@ CREATE TABLE edgv.infra_ferrovia_l(
 	 jurisdicao smallint NOT NULL,
 	 administracao smallint NOT NULL,
 	 concessionaria varchar(255),
+	 tipo_elemento_viario smallint NOT NULL,
+	 nome_elemento_viario varchar(255),
+	 material_construcao_elemento_viario smallint NOT NULL,
 	 texto_edicao varchar(255),
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT infra_ferrovia_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1644,6 +1817,10 @@ ALTER TABLE edgv.infra_ferrovia_l
 	 ADD CONSTRAINT infra_ferrovia_l_posicao_relativa_fk FOREIGN KEY (posicao_relativa)
 	 REFERENCES dominios.posicao_relativa (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_ferrovia_l
+	 ADD CONSTRAINT infra_ferrovia_l_posicao_relativa_check
+	 CHECK (posicao_relativa = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.infra_ferrovia_l ALTER COLUMN posicao_relativa SET DEFAULT 9999#
 
@@ -1690,6 +1867,28 @@ ALTER TABLE edgv.infra_ferrovia_l
 ALTER TABLE edgv.infra_ferrovia_l ALTER COLUMN administracao SET DEFAULT 9999#
 
 ALTER TABLE edgv.infra_ferrovia_l
+	 ADD CONSTRAINT infra_ferrovia_l_tipo_elemento_viario_fk FOREIGN KEY (tipo_elemento_viario)
+	 REFERENCES dominios.tipo_elemento_viario (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_ferrovia_l
+	 ADD CONSTRAINT infra_ferrovia_l_tipo_elemento_viario_check
+	 CHECK (tipo_elemento_viario = ANY(ARRAY[101 :: SMALLINT, 102 :: SMALLINT, 201 :: SMALLINT, 202 :: SMALLINT, 203 :: SMALLINT, 204 :: SMALLINT, 301 :: SMALLINT, 302 :: SMALLINT, 97 :: SMALLINT, 9999 :: SMALLINT]))#
+
+ALTER TABLE edgv.infra_ferrovia_l ALTER COLUMN tipo_elemento_viario SET DEFAULT 9999#
+
+ALTER TABLE edgv.infra_ferrovia_l
+	 ADD CONSTRAINT infra_ferrovia_l_material_construcao_elemento_viario_fk FOREIGN KEY (material_construcao_elemento_viario)
+	 REFERENCES dominios.material_construcao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_ferrovia_l
+	 ADD CONSTRAINT infra_ferrovia_l_material_construcao_elemento_viario_check
+	 CHECK (material_construcao_elemento_viario = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 9999 :: SMALLINT]))#
+
+ALTER TABLE edgv.infra_ferrovia_l ALTER COLUMN material_construcao_elemento_viario SET DEFAULT 9999#
+
+ALTER TABLE edgv.infra_ferrovia_l
 	 ADD CONSTRAINT infra_ferrovia_l_visivel_fk FOREIGN KEY (visivel)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -1709,7 +1908,7 @@ CREATE TABLE edgv.infra_pista_pouso_a(
 	 label_x real,
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT infra_pista_pouso_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1781,7 +1980,7 @@ CREATE TABLE edgv.infra_pista_pouso_l(
 	 label_x real,
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT infra_pista_pouso_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1854,7 +2053,7 @@ CREATE TABLE edgv.infra_pista_pouso_p(
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
 	 simb_rot real,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT infra_pista_pouso_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -1870,7 +2069,7 @@ ALTER TABLE edgv.infra_pista_pouso_p
 
 ALTER TABLE edgv.infra_pista_pouso_p
 	 ADD CONSTRAINT infra_pista_pouso_p_tipo_check
-	 CHECK (tipo = ANY(ARRAY[9 :: SMALLINT, 11 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (tipo = ANY(ARRAY[11 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.infra_pista_pouso_p ALTER COLUMN tipo SET DEFAULT 9999#
 
@@ -1927,9 +2126,14 @@ CREATE TABLE edgv.infra_via_deslocamento_l(
 	 sigla varchar(255),
 	 administracao smallint NOT NULL,
 	 concessionaria varchar(255),
+	 tipo_elemento_viario smallint NOT NULL,
+	 nome_elemento_viario varchar(255),
+	 posicao_pista_elemento_viario smallint NOT NULL,
+	 material_construcao_elemento_viario smallint NOT NULL,
 	 texto_edicao varchar(255),
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 ordem_simbologia integer,
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT infra_via_deslocamento_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2000,6 +2204,35 @@ ALTER TABLE edgv.infra_via_deslocamento_l
 ALTER TABLE edgv.infra_via_deslocamento_l ALTER COLUMN administracao SET DEFAULT 9999#
 
 ALTER TABLE edgv.infra_via_deslocamento_l
+	 ADD CONSTRAINT infra_via_deslocamento_l_tipo_elemento_viario_fk FOREIGN KEY (tipo_elemento_viario)
+	 REFERENCES dominios.tipo_elemento_viario (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_via_deslocamento_l
+	 ADD CONSTRAINT infra_via_deslocamento_l_tipo_elemento_viario_check
+	 CHECK (tipo_elemento_viario = ANY(ARRAY[101 :: SMALLINT, 102 :: SMALLINT, 201 :: SMALLINT, 202 :: SMALLINT, 203 :: SMALLINT, 204 :: SMALLINT, 301 :: SMALLINT, 302 :: SMALLINT, 401 :: SMALLINT, 402 :: SMALLINT, 97 :: SMALLINT, 9999 :: SMALLINT]))#
+
+ALTER TABLE edgv.infra_via_deslocamento_l ALTER COLUMN tipo_elemento_viario SET DEFAULT 9999#
+
+ALTER TABLE edgv.infra_via_deslocamento_l
+	 ADD CONSTRAINT infra_via_deslocamento_l_posicao_pista_elemento_viario_fk FOREIGN KEY (posicao_pista_elemento_viario)
+	 REFERENCES dominios.posicao_pista (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_via_deslocamento_l ALTER COLUMN posicao_pista_elemento_viario SET DEFAULT 9999#
+
+ALTER TABLE edgv.infra_via_deslocamento_l
+	 ADD CONSTRAINT infra_via_deslocamento_l_material_construcao_elemento_viario_fk FOREIGN KEY (material_construcao_elemento_viario)
+	 REFERENCES dominios.material_construcao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_via_deslocamento_l
+	 ADD CONSTRAINT infra_via_deslocamento_l_material_construcao_elemento_viario_check
+	 CHECK (material_construcao_elemento_viario = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 9999 :: SMALLINT]))#
+
+ALTER TABLE edgv.infra_via_deslocamento_l ALTER COLUMN material_construcao_elemento_viario SET DEFAULT 9999#
+
+ALTER TABLE edgv.infra_via_deslocamento_l
 	 ADD CONSTRAINT infra_via_deslocamento_l_visivel_fk FOREIGN KEY (visivel)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -2015,7 +2248,7 @@ CREATE TABLE edgv.llp_aglomerado_rural_p(
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT llp_aglomerado_rural_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2059,7 +2292,7 @@ CREATE TABLE edgv.llp_area_pub_militar_a(
 	 tamanho_txt real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT llp_area_pub_militar_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2099,7 +2332,7 @@ CREATE TABLE edgv.llp_localidade_p(
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT llp_localidade_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2141,7 +2374,7 @@ CREATE TABLE edgv.llp_nome_local_p(
 	 label_x real,
 	 label_y real,
 	 justificativa_txt smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT llp_nome_local_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2174,7 +2407,7 @@ CREATE TABLE edgv.llp_terra_indigena_a(
 	 tamanho_txt real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT llp_terra_indigena_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2215,7 +2448,7 @@ CREATE TABLE edgv.llp_unidade_conservacao_a(
 	 tamanho_txt real,
 	 justificativa_txt smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT llp_unidade_conservacao_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2259,9 +2492,9 @@ ALTER TABLE edgv.llp_unidade_conservacao_a ALTER COLUMN visivel SET DEFAULT 9999
 CREATE TABLE edgv.llp_unidade_federacao_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 nome varchar(255),
-	 sigla varchar(255),
+	 sigla smallint NOT NULL,
 	 geometria_aproximada smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT llp_unidade_federacao_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2271,11 +2504,174 @@ CREATE INDEX llp_unidade_federacao_a_geom ON edgv.llp_unidade_federacao_a USING 
 ALTER TABLE edgv.llp_unidade_federacao_a OWNER TO postgres#
 
 ALTER TABLE edgv.llp_unidade_federacao_a
+	 ADD CONSTRAINT llp_unidade_federacao_a_sigla_fk FOREIGN KEY (sigla)
+	 REFERENCES dominios.sigla_uf (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_unidade_federacao_a ALTER COLUMN sigla SET DEFAULT 9999#
+
+ALTER TABLE edgv.llp_unidade_federacao_a
 	 ADD CONSTRAINT llp_unidade_federacao_a_geometria_aproximada_fk FOREIGN KEY (geometria_aproximada)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.llp_unidade_federacao_a ALTER COLUMN geometria_aproximada SET DEFAULT 9999#
+
+CREATE TABLE edgv.llp_pais_a(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 nome varchar(255),
+	 sigla varchar(3),
+	 geometria_aproximada smallint NOT NULL,
+	 observacao varchar(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT llp_pais_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX llp_pais_a_geom ON edgv.llp_pais_a USING gist (geom)#
+
+ALTER TABLE edgv.llp_pais_a OWNER TO postgres#
+
+ALTER TABLE edgv.llp_pais_a
+	 ADD CONSTRAINT llp_pais_a_geometria_aproximada_fk FOREIGN KEY (geometria_aproximada)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_pais_a ALTER COLUMN geometria_aproximada SET DEFAULT 9999#
+
+CREATE TABLE edgv.llp_area_sem_dados_a(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 texto_edicao varchar(255),
+	 label_x real,
+	 label_y real,
+	 tamanho_txt real,
+	 justificativa_txt smallint NOT NULL,
+	 observacao varchar(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT llp_area_sem_dados_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX llp_area_sem_dados_a_geom ON edgv.llp_area_sem_dados_a USING gist (geom)#
+
+ALTER TABLE edgv.llp_area_sem_dados_a OWNER TO postgres#
+
+ALTER TABLE edgv.llp_area_sem_dados_a
+	 ADD CONSTRAINT llp_area_sem_dados_a_justificativa_txt_fk FOREIGN KEY (justificativa_txt)
+	 REFERENCES dominios.justificativa (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_area_sem_dados_a ALTER COLUMN justificativa_txt SET DEFAULT 9999#
+
+CREATE TABLE edgv.llp_limite_legal_l(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 nome varchar(255),
+	 tipo smallint NOT NULL,
+	 geometria_aproximada smallint NOT NULL,
+	 texto_edicao varchar(255),
+	 sobreposto smallint NOT NULL,
+	 exibir_rotulo_aproximado smallint NOT NULL,
+	 observacao varchar(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT llp_limite_legal_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX llp_limite_legal_l_geom ON edgv.llp_limite_legal_l USING gist (geom)#
+
+ALTER TABLE edgv.llp_limite_legal_l OWNER TO postgres#
+
+ALTER TABLE edgv.llp_limite_legal_l
+	 ADD CONSTRAINT llp_limite_legal_l_tipo_fk FOREIGN KEY (tipo)
+	 REFERENCES dominios.tipo_limite_legal (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_limite_legal_l ALTER COLUMN tipo SET DEFAULT 9999#
+
+ALTER TABLE edgv.llp_limite_legal_l
+	 ADD CONSTRAINT llp_limite_legal_l_geometria_aproximada_fk FOREIGN KEY (geometria_aproximada)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_limite_legal_l ALTER COLUMN geometria_aproximada SET DEFAULT 9999#
+
+ALTER TABLE edgv.llp_limite_legal_l
+	 ADD CONSTRAINT llp_limite_legal_l_sobreposto_fk FOREIGN KEY (sobreposto)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_limite_legal_l ALTER COLUMN sobreposto SET DEFAULT 9999#
+
+ALTER TABLE edgv.llp_limite_legal_l
+	 ADD CONSTRAINT llp_limite_legal_l_exibir_rotulo_aproximado_fk FOREIGN KEY (exibir_rotulo_aproximado)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_limite_legal_l ALTER COLUMN exibir_rotulo_aproximado SET DEFAULT 9999#
+
+CREATE TABLE edgv.elemnat_sumidouro_vertedouro_p(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 tipo smallint NOT NULL,
+	 visivel smallint NOT NULL,
+	 simb_rot real,
+	 observacao varchar(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT elemnat_sumidouro_vertedouro_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX elemnat_sumidouro_vertedouro_p_geom ON edgv.elemnat_sumidouro_vertedouro_p USING gist (geom)#
+
+ALTER TABLE edgv.elemnat_sumidouro_vertedouro_p OWNER TO postgres#
+
+ALTER TABLE edgv.elemnat_sumidouro_vertedouro_p
+	 ADD CONSTRAINT elemnat_sumidouro_vertedouro_p_tipo_fk FOREIGN KEY (tipo)
+	 REFERENCES dominios.tipo_sumidouro_vertedouro (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.elemnat_sumidouro_vertedouro_p ALTER COLUMN tipo SET DEFAULT 9999#
+
+ALTER TABLE edgv.elemnat_sumidouro_vertedouro_p
+	 ADD CONSTRAINT elemnat_sumidouro_vertedouro_p_visivel_fk FOREIGN KEY (visivel)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.elemnat_sumidouro_vertedouro_p ALTER COLUMN visivel SET DEFAULT 9999#
+
+CREATE TABLE edgv.infra_obstaculo_vertical_p(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 nome varchar(255),
+	 altitude real,
+	 altura real,
+	 tipo smallint NOT NULL,
+	 texto_edicao varchar(255),
+	 visivel smallint NOT NULL,
+	 exibir_linha_rotulo smallint NOT NULL,
+	 observacao varchar(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT infra_obstaculo_vertical_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX infra_obstaculo_vertical_p_geom ON edgv.infra_obstaculo_vertical_p USING gist (geom)#
+
+ALTER TABLE edgv.infra_obstaculo_vertical_p OWNER TO postgres#
+
+ALTER TABLE edgv.infra_obstaculo_vertical_p
+	 ADD CONSTRAINT infra_obstaculo_vertical_p_tipo_fk FOREIGN KEY (tipo)
+	 REFERENCES dominios.tipo_obstaculo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_obstaculo_vertical_p ALTER COLUMN tipo SET DEFAULT 9999#
+
+ALTER TABLE edgv.infra_obstaculo_vertical_p
+	 ADD CONSTRAINT infra_obstaculo_vertical_p_visivel_fk FOREIGN KEY (visivel)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_obstaculo_vertical_p ALTER COLUMN visivel SET DEFAULT 9999#
+
+ALTER TABLE edgv.infra_obstaculo_vertical_p
+	 ADD CONSTRAINT infra_obstaculo_vertical_p_exibir_linha_rotulo_fk FOREIGN KEY (exibir_linha_rotulo)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.infra_obstaculo_vertical_p ALTER COLUMN exibir_linha_rotulo SET DEFAULT 9999#
 
 CREATE TABLE edgv.edicao_area_pub_militar_l(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -2284,7 +2680,7 @@ CREATE TABLE edgv.edicao_area_pub_militar_l(
 	 sobreposto smallint NOT NULL,
 	 exibir_rotulo_aproximado smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT edicao_area_pub_militar_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2321,50 +2717,6 @@ ALTER TABLE edgv.edicao_area_pub_militar_l
 
 ALTER TABLE edgv.edicao_area_pub_militar_l ALTER COLUMN visivel SET DEFAULT 9999#
 
-CREATE TABLE edgv.edicao_terra_indigena_l(
-	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 nome varchar(255),
-	 geometria_aproximada smallint NOT NULL,
-	 sobreposto smallint NOT NULL,
-	 exibir_rotulo_aproximado smallint NOT NULL,
-	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
-	 geom geometry(MultiLinestring, [epsg]),
-	 CONSTRAINT edicao_terra_indigena_l_pk PRIMARY KEY (id)
-	 WITH (FILLFACTOR = 80)
-)#
-CREATE INDEX edicao_terra_indigena_l_geom ON edgv.edicao_terra_indigena_l USING gist (geom)#
-
-ALTER TABLE edgv.edicao_terra_indigena_l OWNER TO postgres#
-
-ALTER TABLE edgv.edicao_terra_indigena_l
-	 ADD CONSTRAINT edicao_terra_indigena_l_geometria_aproximada_fk FOREIGN KEY (geometria_aproximada)
-	 REFERENCES dominios.booleano (code) MATCH FULL
-	 ON UPDATE NO ACTION ON DELETE NO ACTION#
-
-ALTER TABLE edgv.edicao_terra_indigena_l ALTER COLUMN geometria_aproximada SET DEFAULT 9999#
-
-ALTER TABLE edgv.edicao_terra_indigena_l
-	 ADD CONSTRAINT edicao_terra_indigena_l_sobreposto_fk FOREIGN KEY (sobreposto)
-	 REFERENCES dominios.booleano (code) MATCH FULL
-	 ON UPDATE NO ACTION ON DELETE NO ACTION#
-
-ALTER TABLE edgv.edicao_terra_indigena_l ALTER COLUMN sobreposto SET DEFAULT 9999#
-
-ALTER TABLE edgv.edicao_terra_indigena_l
-	 ADD CONSTRAINT edicao_terra_indigena_l_exibir_rotulo_aproximado_fk FOREIGN KEY (exibir_rotulo_aproximado)
-	 REFERENCES dominios.booleano (code) MATCH FULL
-	 ON UPDATE NO ACTION ON DELETE NO ACTION#
-
-ALTER TABLE edgv.edicao_terra_indigena_l ALTER COLUMN exibir_rotulo_aproximado SET DEFAULT 9999#
-
-ALTER TABLE edgv.edicao_terra_indigena_l
-	 ADD CONSTRAINT edicao_terra_indigena_l_visivel_fk FOREIGN KEY (visivel)
-	 REFERENCES dominios.booleano (code) MATCH FULL
-	 ON UPDATE NO ACTION ON DELETE NO ACTION#
-
-ALTER TABLE edgv.edicao_terra_indigena_l ALTER COLUMN visivel SET DEFAULT 9999#
-
 CREATE TABLE edgv.edicao_unidade_conservacao_l(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 nome varchar(255),
@@ -2373,7 +2725,7 @@ CREATE TABLE edgv.edicao_unidade_conservacao_l(
 	 sobreposto smallint NOT NULL,
 	 exibir_rotulo_aproximado smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT edicao_unidade_conservacao_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2421,62 +2773,53 @@ ALTER TABLE edgv.edicao_unidade_conservacao_l
 
 ALTER TABLE edgv.edicao_unidade_conservacao_l ALTER COLUMN visivel SET DEFAULT 9999#
 
-CREATE TABLE edgv.edicao_limite_legal_l(
+CREATE TABLE edgv.edicao_terra_indigena_l(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 nome varchar(255),
-	 tipo smallint NOT NULL,
 	 geometria_aproximada smallint NOT NULL,
-	 texto_edicao varchar(255),
 	 sobreposto smallint NOT NULL,
 	 exibir_rotulo_aproximado smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
-	 CONSTRAINT edicao_limite_legal_l_pk PRIMARY KEY (id)
+	 CONSTRAINT edicao_terra_indigena_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX edicao_limite_legal_l_geom ON edgv.edicao_limite_legal_l USING gist (geom)#
+CREATE INDEX edicao_terra_indigena_l_geom ON edgv.edicao_terra_indigena_l USING gist (geom)#
 
-ALTER TABLE edgv.edicao_limite_legal_l OWNER TO postgres#
+ALTER TABLE edgv.edicao_terra_indigena_l OWNER TO postgres#
 
-ALTER TABLE edgv.edicao_limite_legal_l
-	 ADD CONSTRAINT edicao_limite_legal_l_tipo_fk FOREIGN KEY (tipo)
-	 REFERENCES dominios.tipo_limite_legal (code) MATCH FULL
-	 ON UPDATE NO ACTION ON DELETE NO ACTION#
-
-ALTER TABLE edgv.edicao_limite_legal_l ALTER COLUMN tipo SET DEFAULT 9999#
-
-ALTER TABLE edgv.edicao_limite_legal_l
-	 ADD CONSTRAINT edicao_limite_legal_l_geometria_aproximada_fk FOREIGN KEY (geometria_aproximada)
+ALTER TABLE edgv.edicao_terra_indigena_l
+	 ADD CONSTRAINT edicao_terra_indigena_l_geometria_aproximada_fk FOREIGN KEY (geometria_aproximada)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.edicao_limite_legal_l ALTER COLUMN geometria_aproximada SET DEFAULT 9999#
+ALTER TABLE edgv.edicao_terra_indigena_l ALTER COLUMN geometria_aproximada SET DEFAULT 9999#
 
-ALTER TABLE edgv.edicao_limite_legal_l
-	 ADD CONSTRAINT edicao_limite_legal_l_sobreposto_fk FOREIGN KEY (sobreposto)
+ALTER TABLE edgv.edicao_terra_indigena_l
+	 ADD CONSTRAINT edicao_terra_indigena_l_sobreposto_fk FOREIGN KEY (sobreposto)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.edicao_limite_legal_l ALTER COLUMN sobreposto SET DEFAULT 9999#
+ALTER TABLE edgv.edicao_terra_indigena_l ALTER COLUMN sobreposto SET DEFAULT 9999#
 
-ALTER TABLE edgv.edicao_limite_legal_l
-	 ADD CONSTRAINT edicao_limite_legal_l_exibir_rotulo_aproximado_fk FOREIGN KEY (exibir_rotulo_aproximado)
+ALTER TABLE edgv.edicao_terra_indigena_l
+	 ADD CONSTRAINT edicao_terra_indigena_l_exibir_rotulo_aproximado_fk FOREIGN KEY (exibir_rotulo_aproximado)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.edicao_limite_legal_l ALTER COLUMN exibir_rotulo_aproximado SET DEFAULT 9999#
+ALTER TABLE edgv.edicao_terra_indigena_l ALTER COLUMN exibir_rotulo_aproximado SET DEFAULT 9999#
 
-ALTER TABLE edgv.edicao_limite_legal_l
-	 ADD CONSTRAINT edicao_limite_legal_l_visivel_fk FOREIGN KEY (visivel)
+ALTER TABLE edgv.edicao_terra_indigena_l
+	 ADD CONSTRAINT edicao_terra_indigena_l_visivel_fk FOREIGN KEY (visivel)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.edicao_limite_legal_l ALTER COLUMN visivel SET DEFAULT 9999#
+ALTER TABLE edgv.edicao_terra_indigena_l ALTER COLUMN visivel SET DEFAULT 9999#
 
 CREATE TABLE edgv.edicao_grid_edicao_l(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT edicao_grid_edicao_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2495,7 +2838,7 @@ CREATE TABLE edgv.edicao_articulacao_imagem_a(
 	 resolucao varchar(255),
 	 bandas varchar(255),
 	 nivel_produto varchar(255),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT edicao_articulacao_imagem_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2504,32 +2847,9 @@ CREATE INDEX edicao_articulacao_imagem_a_geom ON edgv.edicao_articulacao_imagem_
 
 ALTER TABLE edgv.edicao_articulacao_imagem_a OWNER TO postgres#
 
-CREATE TABLE edgv.edicao_area_sem_dados_a(
-	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 texto_edicao varchar(255),
-	 label_x real,
-	 label_y real,
-	 tamanho_txt real,
-	 justificativa_txt smallint NOT NULL,
-	 observacao VARCHAR(255),
-	 geom geometry(MultiPolygon, [epsg]),
-	 CONSTRAINT edicao_area_sem_dados_a_pk PRIMARY KEY (id)
-	 WITH (FILLFACTOR = 80)
-)#
-CREATE INDEX edicao_area_sem_dados_a_geom ON edgv.edicao_area_sem_dados_a USING gist (geom)#
-
-ALTER TABLE edgv.edicao_area_sem_dados_a OWNER TO postgres#
-
-ALTER TABLE edgv.edicao_area_sem_dados_a
-	 ADD CONSTRAINT edicao_area_sem_dados_a_justificativa_txt_fk FOREIGN KEY (justificativa_txt)
-	 REFERENCES dominios.justificativa (code) MATCH FULL
-	 ON UPDATE NO ACTION ON DELETE NO ACTION#
-
-ALTER TABLE edgv.edicao_area_sem_dados_a ALTER COLUMN justificativa_txt SET DEFAULT 9999#
-
 CREATE TABLE edgv.delimitador_area_sem_dados_l(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT delimitador_area_sem_dados_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2538,44 +2858,41 @@ CREATE INDEX delimitador_area_sem_dados_l_geom ON edgv.delimitador_area_sem_dado
 
 ALTER TABLE edgv.delimitador_area_sem_dados_l OWNER TO postgres#
 
-CREATE TABLE edgv.aux_validacao_a(
+CREATE TABLE edgv.aux_observacao_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 descricao varchar(255),
-	 subfase_id integer,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
-	 CONSTRAINT aux_validacao_a_pk PRIMARY KEY (id)
+	 CONSTRAINT aux_observacao_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX aux_validacao_a_geom ON edgv.aux_validacao_a USING gist (geom)#
+CREATE INDEX aux_observacao_a_geom ON edgv.aux_observacao_a USING gist (geom)#
 
-ALTER TABLE edgv.aux_validacao_a OWNER TO postgres#
+ALTER TABLE edgv.aux_observacao_a OWNER TO postgres#
 
-CREATE TABLE edgv.aux_validacao_l(
+CREATE TABLE edgv.aux_observacao_l(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 descricao varchar(255),
-	 subfase_id integer,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
-	 CONSTRAINT aux_validacao_l_pk PRIMARY KEY (id)
+	 CONSTRAINT aux_observacao_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX aux_validacao_l_geom ON edgv.aux_validacao_l USING gist (geom)#
+CREATE INDEX aux_observacao_l_geom ON edgv.aux_observacao_l USING gist (geom)#
 
-ALTER TABLE edgv.aux_validacao_l OWNER TO postgres#
+ALTER TABLE edgv.aux_observacao_l OWNER TO postgres#
 
-CREATE TABLE edgv.aux_validacao_p(
+CREATE TABLE edgv.aux_observacao_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 descricao varchar(255),
-	 subfase_id integer,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
-	 CONSTRAINT aux_validacao_p_pk PRIMARY KEY (id)
+	 CONSTRAINT aux_observacao_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX aux_validacao_p_geom ON edgv.aux_validacao_p USING gist (geom)#
+CREATE INDEX aux_observacao_p_geom ON edgv.aux_observacao_p USING gist (geom)#
 
-ALTER TABLE edgv.aux_validacao_p OWNER TO postgres#
+ALTER TABLE edgv.aux_observacao_p OWNER TO postgres#
 
 CREATE TABLE edgv.aux_revisao_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -2583,7 +2900,7 @@ CREATE TABLE edgv.aux_revisao_a(
 	 subfase_id integer,
 	 corrigido smallint NOT NULL,
 	 justificativa varchar(255),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT aux_revisao_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2605,7 +2922,7 @@ CREATE TABLE edgv.aux_revisao_l(
 	 subfase_id integer,
 	 corrigido smallint NOT NULL,
 	 justificativa varchar(255),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT aux_revisao_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2627,7 +2944,7 @@ CREATE TABLE edgv.aux_revisao_p(
 	 subfase_id integer,
 	 corrigido smallint NOT NULL,
 	 justificativa varchar(255),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT aux_revisao_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2648,7 +2965,7 @@ CREATE TABLE edgv.aux_moldura_a(
 	 nome varchar(255),
 	 mi varchar(255),
 	 inom varchar(255),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT aux_moldura_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2660,7 +2977,7 @@ ALTER TABLE edgv.aux_moldura_a OWNER TO postgres#
 CREATE TABLE edgv.aux_moldura_area_continua_a(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 nome varchar(255),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPolygon, [epsg]),
 	 CONSTRAINT aux_moldura_area_continua_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2671,7 +2988,7 @@ ALTER TABLE edgv.aux_moldura_area_continua_a OWNER TO postgres#
 
 CREATE TABLE edgv.delimitador_massa_dagua_l(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT delimitador_massa_dagua_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2682,7 +2999,7 @@ ALTER TABLE edgv.delimitador_massa_dagua_l OWNER TO postgres#
 
 CREATE TABLE edgv.delimitador_elemento_hidrografico_l(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT delimitador_elemento_hidrografico_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2696,7 +3013,7 @@ CREATE TABLE edgv.centroide_massa_dagua_p(
 	 nome varchar(255),
 	 tipo smallint NOT NULL,
 	 regime smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT centroide_massa_dagua_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2723,7 +3040,7 @@ CREATE TABLE edgv.centroide_ilha_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 nome varchar(255),
 	 tipo smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT centroide_ilha_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2743,7 +3060,7 @@ CREATE TABLE edgv.centroide_elemento_hidrografico_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 nome varchar(255),
 	 tipo smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT centroide_elemento_hidrografico_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2769,7 +3086,7 @@ CREATE TABLE edgv.edicao_identificador_trecho_rod_p(
 	 tipo smallint NOT NULL,
 	 jurisdicao smallint NOT NULL,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT edicao_identificador_trecho_rod_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2807,7 +3124,7 @@ CREATE TABLE edgv.edicao_simb_torre_energia_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 simb_rot real,
 	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT edicao_simb_torre_energia_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2826,7 +3143,7 @@ ALTER TABLE edgv.edicao_simb_torre_energia_p ALTER COLUMN visivel SET DEFAULT 99
 CREATE TABLE edgv.edicao_simb_cota_mestra_l(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 texto_edicao varchar(255),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT edicao_simb_cota_mestra_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2847,7 +3164,7 @@ CREATE TABLE edgv.edicao_texto_generico_p(
 	 cor varchar(255),
 	 cor_buffer varchar(255),
 	 tamanho_buffer real,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT edicao_texto_generico_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2872,7 +3189,7 @@ CREATE TABLE edgv.edicao_texto_generico_l(
 	 cor varchar(255),
 	 cor_buffer varchar(255),
 	 tamanho_buffer real,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT edicao_texto_generico_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2883,7 +3200,7 @@ ALTER TABLE edgv.edicao_texto_generico_l OWNER TO postgres#
 
 CREATE TABLE edgv.delimitador_limite_especial_l(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiLinestring, [epsg]),
 	 CONSTRAINT delimitador_limite_especial_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2894,7 +3211,7 @@ ALTER TABLE edgv.delimitador_limite_especial_l OWNER TO postgres#
 
 CREATE TABLE edgv.centroide_area_sem_dados_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT centroide_area_sem_dados_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2908,7 +3225,7 @@ CREATE TABLE edgv.centroide_limite_especial_p(
 	 nome varchar(255),
 	 tipo smallint NOT NULL,
 	 geometria_aproximada smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT centroide_limite_especial_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
@@ -2931,62 +3248,22 @@ ALTER TABLE edgv.centroide_limite_especial_p
 
 ALTER TABLE edgv.centroide_limite_especial_p ALTER COLUMN geometria_aproximada SET DEFAULT 9999#
 
-CREATE TABLE edgv.aux_insumo_externo_a(
+CREATE TABLE edgv.edicao_simb_area_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 nome varchar(255),
-	 fonte varchar(255),
-	 observacao VARCHAR(255),
-	 geom geometry(MultiPolygon, [epsg]),
-	 CONSTRAINT aux_insumo_externo_a_pk PRIMARY KEY (id)
-	 WITH (FILLFACTOR = 80)
-)#
-CREATE INDEX aux_insumo_externo_a_geom ON edgv.aux_insumo_externo_a USING gist (geom)#
-
-ALTER TABLE edgv.aux_insumo_externo_a OWNER TO postgres#
-
-CREATE TABLE edgv.aux_insumo_externo_l(
-	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 nome varchar(255),
-	 fonte varchar(255),
-	 observacao VARCHAR(255),
-	 geom geometry(MultiLinestring, [epsg]),
-	 CONSTRAINT aux_insumo_externo_l_pk PRIMARY KEY (id)
-	 WITH (FILLFACTOR = 80)
-)#
-CREATE INDEX aux_insumo_externo_l_geom ON edgv.aux_insumo_externo_l USING gist (geom)#
-
-ALTER TABLE edgv.aux_insumo_externo_l OWNER TO postgres#
-
-CREATE TABLE edgv.aux_insumo_externo_p(
-	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
-	 nome varchar(255),
-	 fonte varchar(255),
-	 observacao VARCHAR(255),
-	 geom geometry(MultiPoint, [epsg]),
-	 CONSTRAINT aux_insumo_externo_p_pk PRIMARY KEY (id)
-	 WITH (FILLFACTOR = 80)
-)#
-CREATE INDEX aux_insumo_externo_p_geom ON edgv.aux_insumo_externo_p USING gist (geom)#
-
-ALTER TABLE edgv.aux_insumo_externo_p OWNER TO postgres#
-
-CREATE TABLE edgv.edicao_ponto_mudanca_p(
-	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 tipo smallint NOT NULL,
 	 simb_rot real,
-	 desloc real,
-	 visivel smallint NOT NULL,
-	 observacao VARCHAR(255),
+	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
-	 CONSTRAINT edicao_ponto_mudanca_p_pk PRIMARY KEY (id)
+	 CONSTRAINT edicao_simb_area_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX edicao_ponto_mudanca_p_geom ON edgv.edicao_ponto_mudanca_p USING gist (geom)#
+CREATE INDEX edicao_simb_area_p_geom ON edgv.edicao_simb_area_p USING gist (geom)#
 
-ALTER TABLE edgv.edicao_ponto_mudanca_p OWNER TO postgres#
+ALTER TABLE edgv.edicao_simb_area_p OWNER TO postgres#
 
-ALTER TABLE edgv.edicao_ponto_mudanca_p
-	 ADD CONSTRAINT edicao_ponto_mudanca_p_visivel_fk FOREIGN KEY (visivel)
-	 REFERENCES dominios.booleano (code) MATCH FULL
+ALTER TABLE edgv.edicao_simb_area_p
+	 ADD CONSTRAINT edicao_simb_area_p_tipo_fk FOREIGN KEY (tipo)
+	 REFERENCES dominios.tipo_simbolo_area (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.edicao_ponto_mudanca_p ALTER COLUMN visivel SET DEFAULT 9999#
+ALTER TABLE edgv.edicao_simb_area_p ALTER COLUMN tipo SET DEFAULT 9999#

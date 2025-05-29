@@ -28,7 +28,7 @@ from qgis.core import (
     QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterVectorLayer,
+    QgsProcessingParameterMapLayer,
     QgsWkbTypes,
     QgsProcessingParameterEnum,
     QgsProcessingParameterNumber,
@@ -38,8 +38,14 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsField,
     QgsFields,
-    QgsProcessingParameterDefinition
+    QgsProcessingParameterDefinition,
+    QgsMapLayer,
+    QgsVectorLayer,
+    QgsGeometry,
+    QgsFeature,
 )
+
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 
 class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
@@ -55,10 +61,9 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         """
 
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
+            QgsProcessingParameterMapLayer(
                 self.INPUT,
-                self.tr("Input Polygon Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                self.tr("Input Layer (Vector or Raster)"),
             )
         )
 
@@ -89,7 +94,7 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             self.tr("Number of subdivisions on x-axis"),
             minValue=1,
             type=QgsProcessingParameterNumber.Integer,
-            optional=True
+            optional=True,
         )
         param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
 
@@ -100,7 +105,7 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             self.tr("Number of subdivisions on y-axis"),
             minValue=1,
             type=QgsProcessingParameterNumber.Integer,
-            optional=True
+            optional=True,
         )
         param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
         self.addParameter(param)
@@ -114,10 +119,46 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         featureHandler = FeatureHandler()
-        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        algRunner = AlgRunner()
+        inputLyr = self.parameterAsLayer(parameters, self.INPUT, context)
+        inputOld = inputLyr
         if inputLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT)
+            )
+
+        # Verificar se é uma camada raster
+        if inputLyr.type() == QgsMapLayer.RasterLayer:
+            # Obter o extent do raster e convertê-lo em um polígono
+            extent = inputLyr.extent()
+            rasterGeom = QgsGeometry.fromRect(extent)
+
+            # Criar uma camada temporária de polígono com esse extent
+            fields = QgsFields()
+            tempLayer = QgsVectorLayer(
+                "Polygon?crs=" + inputLyr.crs().authid(), "temp", "memory"
+            )
+            provider = tempLayer.dataProvider()
+            tempLayer.startEditing()
+            feat = QgsFeature()
+            feat.setGeometry(rasterGeom)
+            provider.addFeature(feat)
+            tempLayer.commitChanges()
+
+            # Usar essa camada temporária como entrada
+            inputLyr = tempLayer
+
+        geomTypeLyr = (
+            inputLyr.geometryType()
+            if hasattr(inputLyr, "geometryType")
+            else QgsWkbTypes.PolygonGeometry
+        )
+        if (
+            geomTypeLyr == QgsWkbTypes.PointGeometry
+            or geomTypeLyr == QgsWkbTypes.LineGeometry
+        ):
+            inputLyr = algRunner.runBuffer(
+                inputLayer=inputLyr, distance=10 ** (-5), context=context
             )
         stopScaleIdx = self.parameterAsEnum(parameters, self.STOP_SCALE, context)
         stopScale = self.scales[stopScaleIdx]
@@ -129,10 +170,10 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
 
         xSubdivisions = self.parameterAsInt(parameters, self.XSUBDIVISIONS, context)
         ySubdivisions = self.parameterAsInt(parameters, self.YSUBDIVISIONS, context)
-        
+
         default_x = 1
         default_y = 1
-        
+
         if stopScale == 50:
             default_x = 2
             default_y = 2
@@ -167,12 +208,43 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             ySubdivisions=ySubdivisions,
             feedback=feedback,
         )
-        list(
-            map(
-                lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
-                featureList,
+
+        # Função de filtro para remover MI que não intersectam com a camada original
+        def filterFunc(feat):
+            if hasattr(inputOld, "type") and inputOld.type() == QgsMapLayer.RasterLayer:
+                geom = feat.geometry()
+                extent_geom = QgsGeometry.fromRect(inputOld.extent())
+                return geom.intersects(extent_geom)
+            else:
+                geom = feat.geometry()
+                bbox = geom.boundingBox()
+                return any(
+                    geom.intersects(f.geometry()) for f in inputOld.getFeatures(bbox)
+                )
+
+        # Se a entrada original for um polígono, não precisamos filtrar
+        needsFiltering = True
+        if hasattr(inputOld, "type"):
+            if (
+                inputOld.type() == QgsMapLayer.VectorLayer
+                and inputOld.geometryType() == QgsWkbTypes.PolygonGeometry
+            ):
+                needsFiltering = False
+
+        if needsFiltering:
+            list(
+                map(
+                    lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
+                    filter(filterFunc, featureList),
+                )
             )
-        )
+        else:
+            list(
+                map(
+                    lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
+                    featureList,
+                )
+            )
 
         return {"OUTPUT": output_sink_id}
 

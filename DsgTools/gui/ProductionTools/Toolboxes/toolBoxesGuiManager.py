@@ -20,12 +20,14 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
+
 from builtins import object
 import os.path
 import sys
+import json
 
 from qgis.PyQt.QtCore import QObject, Qt
+from qgis.core import QgsProject, QgsExpressionContextUtils
 
 from .AttributeTools.code_list import CodeList
 from DsgTools.Modules.acquisitionMenu.controllers.acquisitionMenuCtrl import (
@@ -33,8 +35,11 @@ from DsgTools.Modules.acquisitionMenu.controllers.acquisitionMenuCtrl import (
 )
 from .ContourTool.calc_contour import CalcContour
 from .ComplexTools.complexWindow import ComplexWindow
-from .QualityAssuranceToolBox.qualityAssuranceDockWidget import (
-    QualityAssuranceDockWidget,
+from .WorkflowToolBox.workflowDockWidget import (
+    WorkflowDockWidget,
+)
+from .MultiLayersCentroidsFlagTool.multiLayersCentroidsFlagTool import (
+    MultiLayersCentroidsFlagDockWidget,
 )
 
 
@@ -63,12 +68,16 @@ class ToolBoxesGuiManager(QObject):
             else acquisitionMenuCtrl
         )
 
+        # Connect to project signals for state management
+        QgsProject.instance().projectSaved.connect(self.saveStateOnProject)
+        self.iface.projectRead.connect(self.loadStateFromProject)
+
     def initGui(self):
-        self.qaToolBox = None
+        self.workflowToolBox = None
         self.addTool(
-            self.showQaToolBox,
+            self.showWorkflowToolBox,
             "validationtools.png",
-            self.tr("Geospatial Data Quality Assurance Tool"),
+            self.tr("Workflow Toolbox"),
             parentButton=self.stackButton,
             setDefaultAction=True,
         )
@@ -84,8 +93,16 @@ class ToolBoxesGuiManager(QObject):
             self.acquisitionMenuCtrl.clickReclassfyMode,
             "customFeatureToolBox.png",
             self.tr("Reclassify Mode"),
-            parentButton=self.stackButton,
             withShortcut=True,
+        )
+
+        self.multiLayersCentroidsFlagToolBox = None
+        self.addTool(
+            self.showMultiLayersCentroidsFlagTool,
+            "flags_centroids.png",
+            self.tr("Inspect Multiple Layers Centroid Flags Toolbox"),
+            parentButton=self.stackButton,
+            setDefaultAction=False,
         )
 
         self.calcContour = None
@@ -104,6 +121,9 @@ class ToolBoxesGuiManager(QObject):
         self.addTool(
             self.showComplexDock, "complex.png", self.tr("Build Complex Structures")
         )
+
+        # Load state for current project
+        self.loadStateFromProject()
 
     def addTool(
         self,
@@ -129,7 +149,20 @@ class ToolBoxesGuiManager(QObject):
         return action
 
     def unload(self):
+        # Disconnect project signals
+        try:
+            QgsProject.instance().projectSaved.disconnect(self.saveStateOnProject)
+            self.iface.projectRead.disconnect(self.loadStateFromProject)
+        except:
+            pass
+
         self.acquisitionMenuCtrl.unloadPlugin()
+
+        # Unload MultiLayersCentroidsFlagDockWidget
+        if self.multiLayersCentroidsFlagToolBox:
+            self.multiLayersCentroidsFlagToolBox.unload()
+            self.iface.removeDockWidget(self.multiLayersCentroidsFlagToolBox)
+            del self.multiLayersCentroidsFlagToolBox
 
     def showCodeList(self):
         """
@@ -152,22 +185,33 @@ class ToolBoxesGuiManager(QObject):
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.cfToolbox) """
         pass
 
-    def refreshQaToolBoxObject(self):
-        if self.qaToolBox is not None:
-            self.iface.removeDockWidget(self.qaToolBox)
-            del self.qaToolBox
-        self.qaToolBox = QualityAssuranceDockWidget(self.iface)
-        return self.qaToolBox
+    def refreshWorkflowToolBoxObject(self):
+        if self.workflowToolBox is not None:
+            self.iface.removeDockWidget(self.workflowToolBox)
+            del self.workflowToolBox
+        self.workflowToolBox = WorkflowDockWidget(self.iface)
+        return self.workflowToolBox
 
-    def showQaToolBox(self):
+    def showWorkflowToolBox(self):
         """
         Shows/Hides the Quality Assurance Dock on main window.
         """
-        if self.qaToolBox:
-            self.iface.removeDockWidget(self.qaToolBox)
+        if self.workflowToolBox:
+            self.iface.removeDockWidget(self.workflowToolBox)
         else:
-            self.qaToolBox = QualityAssuranceDockWidget(self.iface)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.qaToolBox)
+            self.workflowToolBox = WorkflowDockWidget(self.iface)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.workflowToolBox)
+
+    def showMultiLayersCentroidsFlagTool(self):
+        if self.multiLayersCentroidsFlagToolBox is not None:
+            self.iface.removeDockWidget(self.multiLayersCentroidsFlagToolBox)
+        else:
+            self.multiLayersCentroidsFlagToolBox = MultiLayersCentroidsFlagDockWidget(
+                self.iface
+            )
+        self.iface.addDockWidget(
+            Qt.RightDockWidgetArea, self.multiLayersCentroidsFlagToolBox
+        )
 
     def showCalcContourToolbox(self):
         """
@@ -188,3 +232,54 @@ class ToolBoxesGuiManager(QObject):
         else:
             self.complexWindow = ComplexWindow(self.iface)
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
+
+    def saveStateOnProject(self):
+        """
+        Saves the state of all toolboxes to the project.
+        """
+        currentProject = QgsProject.instance()
+        toolStateDict = dict()
+
+        # Save MultiLayersCentroidsFlagDockWidget state if it exists
+        if self.multiLayersCentroidsFlagToolBox:
+            toolStateDict[
+                "MultiLayersCentroidsFlagDockWidget"
+            ] = self.multiLayersCentroidsFlagToolBox.getToolState()
+
+        # Save states for other toolboxes if needed in the future
+        # if self.someOtherToolBox:
+        #     toolStateDict["SomeOtherToolBox"] = self.someOtherToolBox.getToolState()
+
+        # Store the state in project variables
+        QgsExpressionContextUtils.setProjectVariable(
+            currentProject,
+            "dsgtools_toolboxes_state",
+            json.dumps(toolStateDict),
+        )
+
+    def loadStateFromProject(self):
+        """
+        Loads the state of all toolboxes from the project.
+        """
+        state = json.loads(
+            QgsExpressionContextUtils.projectScope(QgsProject.instance()).variable(
+                "dsgtools_toolboxes_state"
+            )
+            or "{}"
+        )
+
+        if state == {}:
+            return
+
+        # Load MultiLayersCentroidsFlagDockWidget state if it exists in the saved state
+        if (
+            "MultiLayersCentroidsFlagDockWidget" in state
+            and self.multiLayersCentroidsFlagToolBox
+        ):
+            self.multiLayersCentroidsFlagToolBox.setToolState(
+                state["MultiLayersCentroidsFlagDockWidget"]
+            )
+
+        # Load states for other toolboxes if needed in the future
+        # if "SomeOtherToolBox" in state and self.someOtherToolBox:
+        #     self.someOtherToolBox.setToolState(state["SomeOtherToolBox"])

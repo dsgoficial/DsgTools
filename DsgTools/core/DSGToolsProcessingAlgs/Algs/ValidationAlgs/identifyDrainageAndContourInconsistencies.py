@@ -39,6 +39,7 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsProcessingParameterField,
     QgsWkbTypes,
+    QgsGeometry,
 )
 from DsgTools.core.GeometricTools import graphHandler
 
@@ -286,8 +287,10 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                         f"Drainage line going uphill. This drainage already intercepted countour with height {f2[contourAttr]} after intercepting contour with height {f1[contourAttr]}."
                     )
                 elif diff == 0:
+                    if f1.geometry().intersects(f2.geometry()):
+                        continue
                     flagText = self.tr(
-                        f"Invalid intercection between drainage and contour lines. This drainage intercepted twice the countour with height {f2[contourAttr]}."
+                        f"Invalid intersection between drainage and contour lines. This drainage intercepted twice the countour with height {f2[contourAttr]}."
                     )
                 else:
                     flagText = self.tr(
@@ -342,14 +345,18 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         for current, feat in enumerate(nodesLayer.getFeatures()):
             if multiStepFeedback.isCanceled():
                 break
+            geomWkb = feat.geometry().asWkb()
             nodesDict[feat.id()] = feat
-            nodesWkbToIdDict[feat.geometry().asWkb()] = feat.id()
-            drainageNodeDict[feat["d_featid"]][
-                feat["vertex_pos"]
-            ] = feat.geometry().asWkb()
+            nodesWkbToIdDict[geomWkb] = feat.id()
+            drainageNodeDict[feat["d_featid"]][feat["vertex_pos"]] = geomWkb
             multiStepFeedback.setProgress(current * stepSize)
         newNodeId = max(nodesDict.keys()) + 1
         stepSize = 100 / len(drainageNodeDict)
+
+        def distance(start, end):
+            startGeom = nodesDict[start].geometry()
+            endGeom = nodesDict[end].geometry()
+            return startGeom.distance(endGeom)
 
         G = nx.DiGraph(h=None)
         addEdgeLambda = lambda x: G.add_edge(x[0], x[1])
@@ -367,7 +374,8 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                 )
                 continue
             for intersectionFeat in intersectionList:
-                newNodesWkbToIdDict[intersectionFeat.geometry().asWkb()] = newNodeId
+                intersectionWkb = intersectionFeat.geometry().asWkb()
+                newNodesWkbToIdDict[intersectionWkb] = newNodeId
                 newNodesDict[newNodeId] = intersectionFeat
                 intersectionIdList.append(newNodeId)
                 G.add_node(newNodeId, h=intersectionFeat[contourAttr])
@@ -378,12 +386,15 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             list(
                 map(
                     addEdgeLambda,
-                    graphHandler.pairwise(
-                        [
-                            nodesWkbToIdDict[startEndDict[0]],
-                            *intersectionIdList,
-                            nodesWkbToIdDict[startEndDict[-1]],
-                        ]
+                    filter(
+                        lambda x: distance(x[0], x[1]) > 0,
+                        graphHandler.pairwise(
+                            [
+                                nodesWkbToIdDict[startEndDict[0]],
+                                *intersectionIdList,
+                                nodesWkbToIdDict[startEndDict[-1]],
+                            ]
+                        ),
                     ),
                 )
             )

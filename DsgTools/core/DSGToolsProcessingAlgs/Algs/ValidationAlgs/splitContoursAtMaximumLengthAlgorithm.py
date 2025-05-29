@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2018-09-06
+        begin                : 2018-08-28
         git sha              : $Format:%H$
         copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
@@ -25,21 +25,26 @@ from PyQt5.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
     QgsProcessing,
+    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingFeatureSourceDefinition,
 )
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
+class SplitContoursAtMaximumLengthAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
-    TOLERANCE = "TOLERANCE"
+    MAX_LENGTH = "MAX_LENGTH"
 
     def initAlgorithm(self, config):
         """
@@ -47,7 +52,10 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Input contour layer"),
+                defaultValue="elemnat_curva_nivel_l",
+                types=[QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
@@ -55,15 +63,15 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
                 self.SELECTED, self.tr("Process only selected features")
             )
         )
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.TOLERANCE,
-                self.tr("Snap radius"),
-                parentParameterName=self.INPUT,
-                minValue=-1.0,
-                defaultValue=1.0,
-            )
+        param = QgsProcessingParameterDistance(
+            self.MAX_LENGTH,
+            self.tr("Maximum length"),
+            minValue=0,
+            parentParameterName=self.INPUT,
+            defaultValue=0.05,
         )
+        param.setMetadata({"widget_wrapper": {"decimals": 8}})
+        self.addParameter(param)
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -71,58 +79,65 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
         """
         layerHandler = LayerHandler()
         algRunner = AlgRunner()
+
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        if inputLyr is None:
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUT)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
-        multiStepFeedback.setCurrentStep(0)
-
-        if tol > 0:
-            multiStepFeedback.pushInfo(
-                self.tr("Identifying dangles on {layer}...").format(
-                    layer=inputLyr.name()
-                )
-            )
-            dangleLyr = algRunner.runIdentifyDangles(
-                inputLyr,
-                tol,
-                context,
-                feedback=multiStepFeedback,
-                onlySelected=onlySelected,
-            )
-
-            multiStepFeedback.setCurrentStep(1)
-            layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
-
-            multiStepFeedback.setCurrentStep(2)
-            multiStepFeedback.pushInfo(
-                self.tr("Snapping layer {layer} to dangles...").format(
-                    layer=inputLyr.name()
-                )
-            )
-            algRunner.runSnapLayerOnLayer(
-                inputLyr,
-                dangleLyr,
-                tol,
-                context,
-                feedback=multiStepFeedback,
-                onlySelected=onlySelected,
-            )
-
-        multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo(
-            self.tr("Cleanning layer {layer}...").format(layer=inputLyr.name())
-        )
-        algRunner.runDsgToolsClean(
-            inputLyr,
+        if inputLyr.featureCount() == 0 or (
+            onlySelected is True and inputLyr.selectedFeatureCount() == 0
+        ):
+            feedback.pushWarning(self.tr("Empty input"))
+            return {}
+        maxLength = self.parameterAsDouble(parameters, self.MAX_LENGTH, context)
+        self.splitLinesAtMaximumLength(
             context,
-            snap=tol,
+            feedback,
+            layerHandler,
+            algRunner,
+            inputLyr,
+            onlySelected,
+            maxLength,
+        )
+        return {}
+
+    def splitLinesAtMaximumLength(
+        self,
+        context,
+        feedback,
+        layerHandler,
+        algRunner,
+        inputLyr,
+        onlySelected,
+        maxLength,
+    ):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr("Populating temp layer..."))
+        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
+            [inputLyr],
+            geomType=inputLyr.wkbType(),
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback,
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr("Running split lines..."))
+        outputLines = algRunner.runDSGToolsSplitLinesAtMaximumLengthAlgorithm(
+            auxLyr,
+            maxLength=maxLength,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            [inputLyr],
+            outputLines,
             feedback=multiStepFeedback,
             onlySelected=onlySelected,
         )
-
-        return {}
 
     def name(self):
         """
@@ -132,34 +147,25 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "lineonlineoverlayer"
+        return "splitcontoursatmaximumlengthalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Line on line overlayer")
+        return self.tr("Split Contours at Maximum Length Algorithm")
 
     def group(self):
-        """
-        Returns the name of the group this algorithm belongs to. This string
-        should be localised.
-        """
-        return self.tr("QA Tools: Line Handling")
+        return self.tr("QA Tools: Terrain Processes")
 
     def groupId(self):
-        """
-        Returns the unique ID of the group this algorithm belongs to. This
-        string should be fixed for the algorithm, and must not be localised.
-        The group id should be unique within each provider. Group id should
-        contain lowercase alphanumeric characters only and no spaces or other
-        formatting characters.
-        """
-        return "DSGTools - QA Tools: Line Handling"
+        return "DSGTools - QA Tools: Terrain Processes"
 
     def tr(self, string):
-        return QCoreApplication.translate("LineOnLineOverlayerAlgorithm", string)
+        return QCoreApplication.translate(
+            "SplitContoursAtMaximumLengthAlgorithm", string
+        )
 
     def createInstance(self):
-        return LineOnLineOverlayerAlgorithm()
+        return SplitContoursAtMaximumLengthAlgorithm()

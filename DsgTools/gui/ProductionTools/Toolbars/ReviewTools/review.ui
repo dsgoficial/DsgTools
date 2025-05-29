@@ -56,7 +56,7 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Inspect Features Tool</string>
+      <string>Review Toolbar</string>
      </property>
      <property name="text">
       <string/>

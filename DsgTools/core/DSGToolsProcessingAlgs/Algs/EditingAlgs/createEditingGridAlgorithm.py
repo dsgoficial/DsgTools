@@ -239,22 +239,22 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         srid = gridCrs.replace("EPSG:", "")
         gridGeometry = next(gridLayer.getFeatures()).geometry()
         gridOpts = {
-                "crossX": crossX,
-                "crossY": crossY,
-                "fontSize": fontSize,
-                "font": font,
-                "fontLL": fontLL,
-                "llcolor": llcolor,
-                "linwidth_geo": 0.07,
-                "linwidth_utm": 0.05,
-                "linwidth_buffer_geo": 0,
-                "linwidth_buffer_utm": 0,
-                "geo_grid_color": llcolor,
-                "utm_grid_color": color,
-                "geo_grid_buffer_color": llcolor,
-                "utm_grid_buffer_color": color,
-                "masks_check": True,
-            }
+            "crossX": crossX,
+            "crossY": crossY,
+            "fontSize": fontSize,
+            "font": font,
+            "fontLL": fontLL,
+            "llcolor": llcolor,
+            "linwidth_geo": 0.07,
+            "linwidth_utm": 0.05,
+            "linwidth_buffer_geo": 0,
+            "linwidth_buffer_utm": 0,
+            "geo_grid_color": llcolor,
+            "utm_grid_color": color,
+            "geo_grid_buffer_color": llcolor,
+            "utm_grid_buffer_color": color,
+            "masks_check": True,
+        }
         gridGenerator.styleCreator(
             feature_geometry=gridGeometry,
             layer_bound=gridLayer,

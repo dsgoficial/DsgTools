@@ -21,8 +21,13 @@
  ***************************************************************************/
 """
 
-from qgis.gui import QgsMapLayerComboBox
+import json
+from qgis.core import Qgis
+from qgis.gui import QgsMapLayerComboBox, QgsMessageBar
+from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.utils import iface
 from qgis.PyQt.QtWidgets import QComboBox, QLineEdit, QDoubleSpinBox
+from qgis.PyQt.QtCore import QSize, QRegExp
 from processing.gui.wrappers import (
     WidgetWrapper,
     DIALOG_STANDARD,
@@ -38,6 +43,7 @@ from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget import
 class SnapHierarchyWrapper(WidgetWrapper):
     def __init__(self, *args, **kwargs):
         super(SnapHierarchyWrapper, self).__init__(*args, **kwargs)
+        self.messageBar = QgsMessageBar(self.panel)
 
     def mapLayerComboBox(self):
         """
@@ -170,7 +176,108 @@ class SnapHierarchyWrapper(WidgetWrapper):
         self.panel.showSaveLoadButtons(True)
         self.panel.extension = ".json"
         self.panel.fileType = self.tr("JSON file")
-        # self.panel.dialogType = self.dialogType
+
+        # Create message bar specifically for this panel
+        self.messageBar = QgsMessageBar(self.panel)
+
+        # Initial positioning of the message bar
+        self.messageBar.move(0, 0)
+        self.messageBar.resize(self.panel.width(), 30)
+
+        # Store the original resize event method
+        original_resize_event = self.panel.resizeEvent
+
+        # Define a new resize event method that properly handles the message bar
+        def custom_resize_event(event):
+            # Position the message bar at the top with the full width
+            self.messageBar.move(0, 0)
+            self.messageBar.resize(self.panel.width(), 30)
+
+            # Call the original resize event handler
+            if original_resize_event:
+                original_resize_event(event)
+
+        # Replace the panel's resize event with our custom handler
+        self.panel.resizeEvent = custom_resize_event
+
+        # Store original methods
+        original_load = self.panel.load
+        original_save = self.panel.save
+
+        # Capture the message bar in the closure for the save function
+        messageBar = self.messageBar
+
+        # Replace with our custom methods
+        def new_load(filepath):
+            try:
+                with open(filepath, "r", encoding="utf-8") as f:
+                    data = json.loads(f.read())
+
+                    # Convert new format to old format if needed
+                    if self._isNewFormat(data):
+                        data = self._convertNewFormatToOld(data)
+
+                    # Use original restore method with data in old format
+                    self.panel.restore(data)
+
+                    # Show success message
+                    messageBar.pushMessage(
+                        self.tr("Success"),
+                        self.tr("Snap settings successfully loaded from {0}").format(
+                            filepath
+                        ),
+                        level=Qgis.Success,
+                        duration=5,
+                    )
+            except Exception as e:
+                QMessageBox.warning(
+                    iface.mainWindow(),
+                    self.tr("Unable to import {0}").format(filepath),
+                    "Check file {0}:\n{1}".format(filepath, "\n".join(e.args)),
+                )
+                self.panel.setHeaders(self.panel.headers)
+
+        def new_save(filepath):
+            try:
+                with open(filepath, "w", encoding="utf-8") as f:
+                    # Create new format structure
+                    new_data = {
+                        "metadata": self.panel.metadata(True),
+                        "snapSettings": [],
+                    }
+
+                    # Read values directly from the table
+                    for row in range(self.panel.rowCount()):
+                        setting = {
+                            "layer": self.panel.getValue(row, 0),
+                            "snap": self.panel.getValue(row, 1),
+                            "mode": self.panel.getValue(row, 2),
+                        }
+                        new_data["snapSettings"].append(setting)
+
+                    # Save in the new format
+                    f.write(json.dumps(new_data, indent=4))
+
+                    # Show success message using the captured message bar
+                    messageBar.pushMessage(
+                        self.tr("Success"),
+                        self.tr("Snap settings successfully exported to {0}").format(
+                            filepath
+                        ),
+                        level=Qgis.Success,
+                        duration=5,
+                    )
+            except Exception as e:
+                QMessageBox.warning(
+                    iface.mainWindow(),
+                    self.tr("Unable to export {0}").format(filepath),
+                    "Check file {0}:\n{1}".format(filepath, "\n".join(e.args)),
+                )
+
+        # Apply our custom methods
+        self.panel.load = new_load
+        self.panel.save = new_save
+
         return self.panel
 
     def parentLayerChanged(self, layer=None):
@@ -238,6 +345,28 @@ class SnapHierarchyWrapper(WidgetWrapper):
 
     def postInitialize(self, wrappers):
         pass
-        # for wrapper in wrappers:
-        #     if wrapper.parameterDefinition().name() == self.parameterDefinition().parentLayerParameter():
-        #         pass
+
+    def _isNewFormat(self, data):
+        """
+        Detects if the data is in the new format.
+        :param data: (dict) The data to check
+        :return: (bool) True if new format, False otherwise
+        """
+        return isinstance(data, dict) and "snapSettings" in data
+
+    def _convertNewFormatToOld(self, data):
+        """
+        Converts data from new format to old format for compatibility.
+        :param data: (dict) Data in new format
+        :return: (dict) Data in old format
+        """
+        result = {"metadata": data.get("metadata", {})}
+
+        for i, setting in enumerate(data.get("snapSettings", [])):
+            result[str(i)] = {
+                "0": setting.get("layer", ""),
+                "1": setting.get("snap", ""),
+                "2": setting.get("mode", ""),
+            }
+
+        return result

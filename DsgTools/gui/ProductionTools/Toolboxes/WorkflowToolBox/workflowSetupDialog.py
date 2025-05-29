@@ -88,12 +88,13 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
     (
         MODEL_NAME_HEADER,
         MODEL_SOURCE_HEADER,
+        TOOLTIP_HEADER,
         FLAG_KEYS_HEADER,
         ON_FLAGS_HEADER,
         FLAG_CAN_BE_FALSE_POSITIVE_HEADER,
         PAUSE_AFTER_EXECUTION_HEADER,
         LOAD_OUTPUTS_THAT_ARE_NOT_FLAG_HEADER,
-    ) = range(7)
+    ) = range(8)
 
     def __init__(self, parent=None):
         """
@@ -121,6 +122,13 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                     "widget": self.modelWidget,
                     "setter": "setFile",
                     "getter": "getFile",
+                },
+                self.TOOLTIP_HEADER: {
+                    "header": self.tr("Tooltip"),
+                    "type": "widget",
+                    "widget": self.tooltipWidget,
+                    "setter": "setText",
+                    "getter": "toPlainText",
                 },
                 self.FLAG_KEYS_HEADER: {
                     "header": self.tr("Flag keys"),
@@ -175,6 +183,9 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         )
         self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
             self.MODEL_SOURCE_HEADER, 250
+        )
+        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
+            self.TOOLTIP_HEADER, 250
         )
         self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
             self.FLAG_KEYS_HEADER, 200
@@ -292,6 +303,19 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         le.setFrame(False)
         le.textChanged.connect(lambda x: le.setToolTip(x))
         return le
+
+    def tooltipWidget(self, text=None):
+        """
+        Gets a new instance of tooltip's setter widget.
+        :param text: (str) tooltip text to be filled.
+        :return: (QTextEdit) widget for tooltip setting.
+        """
+        widget = QtWidgets.QTextEdit()
+        widget.setPlaceholderText(self.tr("Set a tooltip for the model..."))
+        if text is not None:
+            widget.setText(text)
+        widget.setMaximumHeight(80)
+        return widget
 
     def modelWidget(self, filepath=None):
         """
@@ -466,6 +490,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         :return: (dict) parameters map.
         """
         contents = self.orderedTableWidget.row(row)
+        tooltip = contents[self.TOOLTIP_HEADER]
         output = contents[self.MODEL_SOURCE_HEADER]
         fileName, xml = output["fileName"], output["fileContent"]
         onFlagsIdx = contents[self.ON_FLAGS_HEADER]
@@ -478,6 +503,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         pauseAfterExecution = contents[self.PAUSE_AFTER_EXECUTION_HEADER]
         return {
             "displayName": name,
+            "tooltip": tooltip,
             "flags": {
                 "onFlagsRaised": self.onFlagsValueMap[onFlagsIdx],
                 "modelCanHaveFalsePositiveFlags": modelCanHaveFalsePositiveFlags,
@@ -512,6 +538,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                     "fileName": originalName,
                     "fileContent": data,
                 },
+                self.TOOLTIP_HEADER: workflowItem.tooltip,
                 self.ON_FLAGS_HEADER: {
                     "halt": self.ON_FLAGS_HALT,
                     "warn": self.ON_FLAGS_WARN,
