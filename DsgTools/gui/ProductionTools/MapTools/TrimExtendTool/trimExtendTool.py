@@ -36,6 +36,7 @@ from qgis.core import (
 
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtGui import QPixmap, QPainter, QPen, QCursor
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QMenu, QApplication
 
@@ -46,6 +47,25 @@ class TrimExtendTool(AbstractSelectionTool):
         self.toolAction = None
         self.canvas = self.iface.mapCanvas()
         super(TrimExtendTool, self).__init__(self.iface)
+        self.setCursor(self.createColoredCursor(Qt.yellow, 32))
+    
+    def createColoredCursor(self, color, size=16):
+        """Create a colored crosshair cursor"""
+        pixmap = QPixmap(size, size)
+        pixmap.fill(Qt.transparent)
+        
+        painter = QPainter(pixmap)
+        pen = QPen(color, 2)
+        painter.setPen(pen)
+        
+        # Draw crosshair
+        center = size // 2
+        painter.drawLine(center, 2, center, size - 2)
+        painter.drawLine(2, center, size - 2, center)
+        
+        painter.end()
+        
+        return QCursor(pixmap, center, center)
 
     def addTool(self, manager, callback, parentMenu, iconBasePath):
         icon_path = iconBasePath + "/trim_extend_icon.png"
