@@ -192,7 +192,7 @@ class MapToolsGuiManager(QObject):
         self.trimExtendTool = TrimExtendTool(self.iface)
         self.trimExtendTool.addTool(
             self.manager,
-            self.trimExtendTool.trimExtendFeatures,
+            self.activateTrimExtend,
             self.parentMenu,
             self.iconBasePath
         )
@@ -252,6 +252,9 @@ class MapToolsGuiManager(QObject):
 
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
+    
+    def activateTrimExtend(self):
+        self.iface.mapCanvas().setMapTool(self.trimExtendTool)
 
     def activateRasterSelectTool(self):
         self.iface.mapCanvas().setMapTool(self.rasterSelectTool)
