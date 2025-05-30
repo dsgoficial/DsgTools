@@ -25,6 +25,9 @@ from DsgTools.gui.ProductionTools.MapTools.AuxTools.spatialFilter import Spatial
 from DsgTools.gui.ProductionTools.MapTools.SelectRasterTool.selectRaster import (
     SelectRasterTool,
 )
+from DsgTools.gui.ProductionTools.MapTools.TrimExtendTool.trimExtendTool import (
+    TrimExtendTool,
+)
 
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.core import QgsVectorLayer
@@ -186,6 +189,15 @@ class MapToolsGuiManager(QObject):
         )
         self.closeLinesTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
 
+        self.trimExtendTool = TrimExtendTool(self.iface)
+        self.trimExtendTool.addTool(
+            self.manager,
+            self.trimExtendTool.trimExtendFeatures,
+            self.parentMenu,
+            self.iconBasePath
+        )
+        self.trimExtendTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
+
         # initiate tools signals
         self.initiateToolsSignals()
 
@@ -217,6 +229,7 @@ class MapToolsGuiManager(QObject):
             self.freeHandReshape.acquisitionFreeController,
             self.measureTool,
             self.closeLinesTool,
+            self.trimExtendTool,
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.connect(tool.setToolEnabled)
@@ -252,6 +265,7 @@ class MapToolsGuiManager(QObject):
             self.freeHandReshape.acquisitionFreeController,
             self.measureTool,
             self.closeLinesTool,
+            self.trimExtendTool
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.disconnect(tool.setToolEnabled)

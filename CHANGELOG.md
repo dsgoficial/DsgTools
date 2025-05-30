@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.17.49 - dev
+## 4.17.50 - dev
 
 Novas Funcionalidades:
 
@@ -22,6 +22,7 @@ Novas Funcionalidades:
 - Novo algoritmo de generalização de edificações para edição;
 - Novo algoritmo de atrair feições para âncoras (AnchoredSnapper);
 - Novo algoritmo line on line overlayer (Atualiza camadas);
+- Nova ferramenta de trim/extend;
 
 Melhorias:
 
