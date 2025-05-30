@@ -7,6 +7,9 @@
    id="svg52"
    sodipodi:docname="trim_extend_icon.svg"
    inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   inkscape:export-filename="trim_extend_icon.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,8 +27,8 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
      inkscape:zoom="35.916667"
-     inkscape:cx="12"
-     inkscape:cy="12"
+     inkscape:cx="8.7981439"
+     inkscape:cy="11.916473"
      inkscape:window-width="1920"
      inkscape:window-height="1017"
      inkscape:window-x="892"
@@ -34,71 +37,75 @@
      inkscape:current-layer="svg52" />
   <!-- Background boundary line -->
   <line
-     x1="12"
-     y1="4"
-     x2="12"
-     y2="20"
-     stroke="#666"
+     x1="16.529003"
+     y1="5.587007"
+     x2="16.529003"
+     y2="21.587008"
+     stroke="#666666"
      stroke-width="1.5"
-     stroke-dasharray="2,2"
+     stroke-dasharray="2, 2"
      id="line30" />
   <!-- Original line that gets trimmed (shown as dotted) -->
   <line
-     x1="4"
-     y1="8"
-     x2="16"
-     y2="8"
-     stroke="#999"
+     x1="10.617169"
+     y1="9.5870066"
+     x2="22.61717"
+     y2="9.5870066"
+     stroke="#999999"
      stroke-width="1"
-     stroke-dasharray="1,1"
+     stroke-dasharray="1, 1"
      opacity="0.5"
      id="line32" />
   <!-- Trimmed line (solid, stops at boundary) -->
   <line
-     x1="4"
-     y1="8"
-     x2="12"
-     y2="8"
+     x1="8.5290022"
+     y1="9.5870066"
+     x2="16.529003"
+     y2="9.5870066"
      stroke="#2563eb"
      stroke-width="2"
      id="line34" />
   <!-- Trim indicator -->
   <circle
-     cx="12"
-     cy="8"
+     cx="16.529003"
+     cy="9.5870066"
      r="1.5"
      fill="#ef4444"
-     stroke="white"
+     stroke="#ffffff"
      stroke-width="0.5"
      id="circle36" />
+  <circle
+     cx="16.593967"
+     cy="17.234341"
+     r="1.5"
+     fill="#ef4444"
+     stroke="#ffffff"
+     stroke-width="0.5"
+     id="circle36-3" />
   <!-- Original short line that gets extended (shown as dotted) -->
   <line
-     x1="16"
-     y1="16"
-     x2="10"
-     y2="16"
-     stroke="#999"
+     x1="14.904874"
+     y1="17.447796"
+     x2="8.9048719"
+     y2="17.447796"
+     stroke="#999999"
      stroke-width="1"
-     stroke-dasharray="1,1"
+     stroke-dasharray="1, 1"
      opacity="0.5"
      id="line38" />
   <!-- Extended line (solid, goes beyond original) -->
   <line
-     x1="16"
-     y1="16"
-     x2="6"
-     y2="16"
+     x1="11.563804"
+     y1="17.447798"
+     x2="1.5638052"
+     y2="17.447798"
      stroke="#059669"
      stroke-width="2"
      id="line40" />
   <!-- Extension arrow -->
-  <path
-     d="M6 16 L8 15 L8 17 Z"
-     fill="#059669"
-     id="path42" />
   <!-- Tool indicator - small scissors symbol -->
   <g
-     transform="matrix(0.3,0,0,0.3,14.825986,4.7470998)"
+     transform="matrix(0.39099799,0,0,0.38284929,6.0631908,0.24478776)"
      id="g50">
     <path
        d="M 12,12 8,8 m 4,4 -4,4 m 4,-4 8,-8 m -8,8 8,8"
