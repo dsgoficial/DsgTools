@@ -41,9 +41,9 @@ from qgis.core import (
     QgsField,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterDefinition,
+    QgsProcessingException,
 )
 import processing
-import networkx as nx
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor, ThreadPoolExecutor
 import math
@@ -277,6 +277,15 @@ class BuildingGeneralizationAlgorithm(QgsProcessingAlgorithm):
         Main implementation of the algorithm.
         """
         # Get the input parameters
+        try:
+            import networkx as nx
+        except ImportError:
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires the Python networkx library. Please install this library and try again."
+                )
+            )
+        self.graph = nx.Graph()
         building_source = self.parameterAsSource(
             parameters, self.INPUT_BUILDINGS, context
         )
@@ -454,7 +463,7 @@ class BuildingGeneralizationProcessor:
         self.spatial_index_boundaries = QgsSpatialIndex()
         self.spatial_index_blocks = QgsSpatialIndex()
 
-        self.graph = nx.Graph()  # NetworkX graph for conflict resolution
+        self.graph = None  # NetworkX graph for conflict resolution
 
     def create_rotated_square(self, center_x, center_y, size, rotation_angle):
         """
@@ -2099,6 +2108,8 @@ class BuildingGeneralizationProcessor:
         - Create final conflict check for road buffer overlaps
         - Implement special handling for unresolvable block constraints
         """
+        import networkx as nx
+
         feedback.pushInfo("Resolving visibility for unresolvable conflicts...")
 
         # Count initial unresolved conflicts
