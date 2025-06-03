@@ -104,6 +104,8 @@ class Options(QDialog, FORM_CLASS):
         algIterations = self.algIterationsQgsSpinBox.value()
         minSegmentDistance = self.minSegmentDistanceQgsSpinBox.value()
         rightAngleDecimals = self.rightAngleDecimalsQgsSpinBox.value()
+        numberSmoothingIterations = self.numberSmoothingIterationsQgsSpinBox.value()
+        fractionLineCreateNewVertices = self.fractionLineCreateNewVerticesQgsSpinBox.value()
         valueList = [
             self.blackListWidget.item(i).text()
             for i in range(self.blackListWidget.count())
@@ -127,6 +129,8 @@ class Options(QDialog, FORM_CLASS):
             decimals,
             freeHandFinalSimplifyTolerance,
             centroidFlagValueList,
+            numberSmoothingIterations,
+            fractionLineCreateNewVertices
         )
 
     def loadParametersFromConfig(self):
@@ -141,6 +145,8 @@ class Options(QDialog, FORM_CLASS):
         valueList = settings.value("valueList")
         undoPoints = settings.value("undoPoints")
         decimals = settings.value("decimals")
+        numberSmoothingIterations = settings.value("numberSmoothingIterations")
+        fractionLineCreateNewVertices = settings.value("fractionLineCreateNewVertices")
         freeHandFinalSimplifyTolerance = settings.value(
             "freeHandFinalSimplifyTolerance"
         )
@@ -162,6 +168,8 @@ class Options(QDialog, FORM_CLASS):
             decimals,
             freeHandFinalSimplifyTolerance,
             centroidFlagValueList,
+            numberSmoothingIterations,
+            fractionLineCreateNewVertices
         )
 
     def setInterfaceWithParametersFromConfig(self):
@@ -177,7 +185,13 @@ class Options(QDialog, FORM_CLASS):
             decimals,
             freeHandFinalSimplifyTolerance,
             centroidFlagValueList,
+            numberSmoothingIterations,
+            fractionLineCreateNewVertices
         ) = self.loadParametersFromConfig()
+        if numberSmoothingIterations:
+            self.numberSmoothingIterationsQgsSpinBox.setValue(int(numberSmoothingIterations))
+        if fractionLineCreateNewVertices:
+            self.fractionLineCreateNewVerticesQgsSpinBox.setValue(float(fractionLineCreateNewVertices))
         if freeHandTolerance:
             self.toleranceQgsDoubleSpinBox.setValue(float(freeHandTolerance))
         if freeHandSmoothIterations:
@@ -220,6 +234,8 @@ class Options(QDialog, FORM_CLASS):
             decimals,
             freeHandFinalSimplifyTolerance,
             centroidFlagValueList,
+            numberSmoothingIterations,
+            fractionLineCreateNewVertices
         ) = self.getParameters()
         settings = QSettings()
         settings.beginGroup("PythonPlugins/DsgTools/Options")
@@ -232,6 +248,8 @@ class Options(QDialog, FORM_CLASS):
         settings.setValue("valueList", ";".join(valueList))
         settings.setValue("undoPoints", undoPoints)
         settings.setValue("decimals", decimals)
+        settings.setValue("numberSmoothingIterations", numberSmoothingIterations)
+        settings.setValue("fractionLineCreateNewVertices", fractionLineCreateNewVertices)
         settings.setValue(
             "freeHandFinalSimplifyTolerance", freeHandFinalSimplifyTolerance
         )
@@ -282,6 +300,8 @@ class Options(QDialog, FORM_CLASS):
             decimals,
             freeHandFinalSimplifyTolerance,
             centroidFlagValueList,
+            numberSmoothingIterations,
+            fractionLineCreateNewVertices
         ) = self.loadParametersFromConfig()
         if not (
             freeHandTolerance
@@ -293,6 +313,8 @@ class Options(QDialog, FORM_CLASS):
             and decimals is not None
             and freeHandFinalSimplifyTolerance is not None
             and centroidFlagValueList
+            and numberSmoothingIterations
+            and fractionLineCreateNewVertices
         ):
             self.storeParametersInConfig()
 

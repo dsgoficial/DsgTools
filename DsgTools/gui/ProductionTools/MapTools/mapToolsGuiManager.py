@@ -40,6 +40,7 @@ from .ShortcutTool.shortcutTool import ShortcutTool
 from .AuxTools.filterTools import FilterTools
 from .AuxTools.otherTools import OtherTools
 from .AuxTools.closeLinesTool import CloseLinesTool
+from .AuxTools.smoothLinesTool import SmoothLinesTool
 from qgis.PyQt.QtCore import QObject
 
 
@@ -177,14 +178,30 @@ class MapToolsGuiManager(QObject):
             self.otherToolsStackButton,
             self.iconBasePath,
         )
+        # adding stack
+        self.lineStackButton = self.manager.createToolButton(
+            self.toolbar, "SelectedLineTools"
+        )
         self.closeLinesTool = CloseLinesTool(self.iface)
         self.closeLinesTool.addTool(
             self.manager,
             self.closeLinesTool.closeSelectedLines,
             self.parentMenu,
             self.iconBasePath,
+            parentButton=self.lineStackButton,
+            defaultButton=True
         )
         self.closeLinesTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
+
+        self.smoothLinesTool = SmoothLinesTool(self.iface)
+        self.smoothLinesTool.addTool(
+            self.manager,
+            self.smoothLinesTool.smoothSelectedLines,
+            self.parentMenu,
+            self.iconBasePath,
+            parentButton=self.lineStackButton
+        )
+        self.smoothLinesTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
 
         # initiate tools signals
         self.initiateToolsSignals()
@@ -217,6 +234,7 @@ class MapToolsGuiManager(QObject):
             self.freeHandReshape.acquisitionFreeController,
             self.measureTool,
             self.closeLinesTool,
+            self.smoothLinesTool,
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.connect(tool.setToolEnabled)
@@ -252,6 +270,7 @@ class MapToolsGuiManager(QObject):
             self.freeHandReshape.acquisitionFreeController,
             self.measureTool,
             self.closeLinesTool,
+            self.smoothLinesTool,
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.disconnect(tool.setToolEnabled)
