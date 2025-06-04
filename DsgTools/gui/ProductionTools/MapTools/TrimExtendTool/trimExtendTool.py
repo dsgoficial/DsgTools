@@ -137,7 +137,7 @@ class TrimExtendTool(AbstractSelectionTool):
         projectCrs = QgsProject.instance().crs()
         lyrCrs = self.iface.activeLayer().crs()
         if projectCrs == lyrCrs:
-            return
+            return None
         coordinateTransform = QgsCoordinateTransform(
             projectCrs,
             lyrCrs,
@@ -158,7 +158,8 @@ class TrimExtendTool(AbstractSelectionTool):
         )
         clickPoint = QgsGeometry.fromPointXY(clickPoint)
         coordinateTransform = self.crsProjectToLayer()
-        clickPoint.transform(coordinateTransform)
+        if coordinateTransform is not None:
+            clickPoint.transform(coordinateTransform)
         destinationGeom = destinationFeat.geometry()
         closestVertexToReferenceGeom, firstOrLasterVertexInreferenceFeat = self.getNearestVertexOnSelectedObject(referenceFeat, destinationFeat)
         if destinationGeom.type() == QgsWkbTypes.GeometryType.PolygonGeometry:
