@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
@@ -30,35 +30,18 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsProcessingParameterField,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
     QgsFeatureSink,
     QgsFeature,
     QgsGeometry,
     QgsPointXY,
-    QgsWkbTypes,
     QgsSpatialIndex,
     QgsRectangle,
-    QgsField,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterDefinition,
     QgsProcessingException,
 )
-import processing
-import numpy as np
 from concurrent.futures import ThreadPoolExecutor, ThreadPoolExecutor
 import math
 import random
-from shapely.geometry import (
-    Point,
-    Polygon,
-    LineString,
-    box,
-    MultiPolygon,
-    MultiLineString,
-)
-from shapely.affinity import rotate, translate
-from shapely.ops import unary_union
-import concurrent.futures
 
 
 class BuildingGeneralizationAlgorithm(QgsProcessingAlgorithm):
@@ -276,7 +259,7 @@ class BuildingGeneralizationAlgorithm(QgsProcessingAlgorithm):
         """
         Main implementation of the algorithm.
         """
-        # Get the input parameters
+        # Check for required dependencies
         try:
             import networkx as nx
         except ImportError:
@@ -285,7 +268,40 @@ class BuildingGeneralizationAlgorithm(QgsProcessingAlgorithm):
                     "This algorithm requires the Python networkx library. Please install this library and try again."
                 )
             )
+            
+        try:
+            from shapely.geometry import (
+                Point,
+                Polygon,
+                LineString,
+                box,
+                MultiPolygon,
+                MultiLineString,
+            )
+            from shapely.affinity import rotate, translate
+            from shapely.ops import unary_union
+        except ImportError:
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires the Python shapely library. Please install this library and try again."
+                )
+            )
+        
         self.graph = nx.Graph()
+        
+        # Store shapely modules for use in processor
+        self.shapely_modules = {
+            'Point': Point,
+            'Polygon': Polygon,
+            'LineString': LineString,
+            'box': box,
+            'MultiPolygon': MultiPolygon,
+            'MultiLineString': MultiLineString,
+            'rotate': rotate,
+            'translate': translate,
+            'unary_union': unary_union
+        }
+        
         building_source = self.parameterAsSource(
             parameters, self.INPUT_BUILDINGS, context
         )
@@ -345,6 +361,7 @@ class BuildingGeneralizationAlgorithm(QgsProcessingAlgorithm):
             use_parallel,
             sink,
             feedback,
+            self.shapely_modules,  # Pass shapely modules
         )
 
         # Phase 1: Data Preparation and Structure Creation
@@ -420,6 +437,7 @@ class BuildingGeneralizationProcessor:
         use_parallel,
         sink,
         feedback,
+        shapely_modules,  # Add shapely modules parameter
     ):
         """
         Initialize the processor with input parameters.
@@ -441,6 +459,9 @@ class BuildingGeneralizationProcessor:
 
         self.sink = sink
         self.feedback = feedback
+        
+        # Store shapely modules for use throughout the processor
+        self.shapely = shapely_modules
 
         # Initialize data structures
         self.buildings = (
@@ -478,13 +499,13 @@ class BuildingGeneralizationProcessor:
         - Shapely Polygon representing the rotated square
         """
         half_size = size / 2
-        square = box(
+        square = self.shapely['box'](
             center_x - half_size,
             center_y - half_size,
             center_x + half_size,
             center_y + half_size,
         )
-        rotated_square = rotate(square, rotation_angle, origin="center")
+        rotated_square = self.shapely['rotate'](square, rotation_angle, origin="center")
         return rotated_square
 
     def phase1_data_preparation(self, feedback):
@@ -537,7 +558,7 @@ class BuildingGeneralizationProcessor:
                 "rotation": rotation,
                 "visibility": visibility,
                 "importance": importance,
-                "original_center": Point(center.x(), center.y()),
+                "original_center": self.shapely['Point'](center.x(), center.y()),
             }
 
             # Add to spatial index
@@ -583,11 +604,11 @@ class BuildingGeneralizationProcessor:
                 for line in multilines:
                     line_points = [(p.x(), p.y()) for p in line]
                     if len(line_points) >= 2:  # Ensure the line has at least 2 points
-                        shapely_lines.append(LineString(line_points))
+                        shapely_lines.append(self.shapely['LineString'](line_points))
 
                 # Create a MultiLineString if we have multiple lines
                 if len(shapely_lines) > 1:
-                    shapely_line = MultiLineString(shapely_lines)
+                    shapely_line = self.shapely['MultiLineString'](shapely_lines)
                 elif len(shapely_lines) == 1:
                     shapely_line = shapely_lines[0]
                 else:
@@ -598,11 +619,11 @@ class BuildingGeneralizationProcessor:
                 line_points = [(p.x(), p.y()) for p in geometry.asPolyline()]
                 if len(line_points) < 2:  # Skip if not enough points
                     continue
-                shapely_line = LineString(line_points)
+                shapely_line = self.shapely['LineString'](line_points)
 
             # Extract buffer coordinates
             buffer_polygon = buffer_geometry.asPolygon()[0]
-            shapely_buffer = Polygon([(p.x(), p.y()) for p in buffer_polygon])
+            shapely_buffer = self.shapely['Polygon']([(p.x(), p.y()) for p in buffer_polygon])
 
             # Store road data
             self.roads[feature_id] = {
@@ -639,7 +660,7 @@ class BuildingGeneralizationProcessor:
                 polygon_rings = geometry.asPolygon()
                 if polygon_rings:
                     exterior_ring = polygon_rings[0]
-                    shapely_polygon = Polygon([(p.x(), p.y()) for p in exterior_ring])
+                    shapely_polygon = self.shapely['Polygon']([(p.x(), p.y()) for p in exterior_ring])
 
                     # Store water data
                     self.water_bodies[feature_id] = {
@@ -674,7 +695,7 @@ class BuildingGeneralizationProcessor:
                 polygon_rings = geometry.asPolygon()
                 if polygon_rings:
                     exterior_ring = polygon_rings[0]
-                    shapely_polygon = Polygon([(p.x(), p.y()) for p in exterior_ring])
+                    shapely_polygon = self.shapely['Polygon']([(p.x(), p.y()) for p in exterior_ring])
 
                     # Store boundary data
                     self.boundaries[feature_id] = {
@@ -694,7 +715,7 @@ class BuildingGeneralizationProcessor:
 
         # Create a union of all road buffers
         road_buffers = [road["buffer"] for road in self.roads.values()]
-        roads_union = unary_union(road_buffers) if road_buffers else None
+        roads_union = self.shapely['unary_union'](road_buffers) if road_buffers else None
 
         if roads_union:
             # The complement of the road union gives us the blocks
@@ -706,7 +727,7 @@ class BuildingGeneralizationProcessor:
             expanded_bbox = buildings_bbox.buffered(margin)
 
             # Create a shapely polygon from the bounding box
-            bbox_polygon = Polygon(
+            bbox_polygon = self.shapely['Polygon'](
                 [
                     (expanded_bbox.xMinimum(), expanded_bbox.yMinimum()),
                     (expanded_bbox.xMaximum(), expanded_bbox.yMinimum()),
@@ -719,10 +740,14 @@ class BuildingGeneralizationProcessor:
             blocks_multipolygon = bbox_polygon.difference(roads_union)
 
             # Extract individual polygons
-            if isinstance(blocks_multipolygon, Polygon):
-                self.blocks = [blocks_multipolygon]
-            elif isinstance(blocks_multipolygon, MultiPolygon):
+            if hasattr(blocks_multipolygon, 'geoms'):
+                # It's a MultiPolygon or GeometryCollection
                 self.blocks = list(blocks_multipolygon.geoms)
+                # Filter out non-polygons if it's a GeometryCollection
+                self.blocks = [geom for geom in self.blocks if geom.geom_type == 'Polygon']
+            elif blocks_multipolygon.geom_type == 'Polygon':
+                # It's a single Polygon
+                self.blocks = [blocks_multipolygon]
             else:
                 self.blocks = []
 
@@ -776,9 +801,12 @@ class BuildingGeneralizationProcessor:
         - Mark buildings outside geographic boundaries
         - Create conflict graph using NetworkX
         """
+        import networkx as nx
+        
         feedback.pushInfo("Initializing conflict graph...")
 
         # Create nodes for all buildings
+        self.graph = nx.Graph()
         for building_id, building in self.buildings.items():
             self.graph.add_node(
                 building_id,
@@ -1117,10 +1145,10 @@ class BuildingGeneralizationProcessor:
                     continue
 
                 line = road["line"]
-                building_point = Point(center.x(), center.y())
+                building_point = self.shapely['Point'](center.x(), center.y())
 
                 # Handle both LineString and MultiLineString
-                if isinstance(line, MultiLineString):
+                if isinstance(line, self.shapely['MultiLineString']):
                     for single_line in line.geoms:
                         # Project the building point onto the road
                         try:
@@ -1140,7 +1168,7 @@ class BuildingGeneralizationProcessor:
                             for i in range(len(coords) - 1):
                                 p1 = coords[i]
                                 p2 = coords[i + 1]
-                                segment = LineString([p1, p2])
+                                segment = self.shapely['LineString']([p1, p2])
 
                                 # Get segment length
                                 segment_length = segment.length
@@ -1206,7 +1234,7 @@ class BuildingGeneralizationProcessor:
                         for i in range(len(coords) - 1):
                             p1 = coords[i]
                             p2 = coords[i + 1]
-                            segment = LineString([p1, p2])
+                            segment = self.shapely['LineString']([p1, p2])
 
                             # Calculate distance from projected point to segment
                             segment_distance = segment.distance(projected_point)
@@ -1267,13 +1295,13 @@ class BuildingGeneralizationProcessor:
                     try:
                         # Find closest point on water boundary
                         boundary = water_geometry.boundary
-                        building_point = Point(center.x(), center.y())
+                        building_point = self.shapely['Point'](center.x(), center.y())
                         linear_ref = boundary.project(building_point)
                         closest_point_info = boundary.interpolate(linear_ref)
                         closest_point = (closest_point_info.x, closest_point_info.y)
 
                         # Calculate distance
-                        distance = building_point.distance(Point(closest_point))
+                        distance = building_point.distance(self.shapely['Point'](closest_point))
 
                         # Find the nearest line segment on the boundary
                         coords = list(boundary.coords)
@@ -1284,11 +1312,11 @@ class BuildingGeneralizationProcessor:
                             p2 = coords[i + 1]
 
                             # Create line segment
-                            segment = LineString([p1, p2])
+                            segment = self.shapely['LineString']([p1, p2])
 
                             # Check if closest point is on or very near this segment
                             if (
-                                segment.distance(Point(closest_point)) < 0.0001
+                                segment.distance(self.shapely['Point'](closest_point)) < 0.0001
                             ):  # Small threshold
                                 # Calculate angle of segment
                                 dx = p2[0] - p1[0]
@@ -1317,11 +1345,11 @@ class BuildingGeneralizationProcessor:
                                 p2 = coords[i + 1]
 
                                 # Create line segment
-                                segment = LineString([p1, p2])
+                                segment = self.shapely['LineString']([p1, p2])
 
                                 # Calculate distance to segment
                                 segment_distance = segment.distance(
-                                    Point(center.x(), center.y())
+                                    self.shapely['Point'](center.x(), center.y())
                                 )
 
                                 if segment_distance < min_segment_distance:
@@ -1566,7 +1594,7 @@ class BuildingGeneralizationProcessor:
         centroid = (building["center"].x(), building["center"].y())
         road_line = road["line"]
 
-        closest_point_info = road_line.interpolate(road_line.project(Point(centroid)))
+        closest_point_info = road_line.interpolate(road_line.project(self.shapely['Point'](centroid)))
         closest_point = (closest_point_info.x, closest_point_info.y)
 
         # Calculate direction vector from closest road point to centroid
@@ -1631,7 +1659,7 @@ class BuildingGeneralizationProcessor:
         water_boundary = water_geometry.boundary
 
         closest_point_info = water_boundary.interpolate(
-            water_boundary.project(Point(centroid))
+            water_boundary.project(self.shapely['Point'](centroid))
         )
         closest_point = (closest_point_info.x, closest_point_info.y)
 
@@ -1718,7 +1746,7 @@ class BuildingGeneralizationProcessor:
 
         # Find closest point on block boundary to building centroid
         centroid = (building["center"].x(), building["center"].y())
-        centroid_point = Point(centroid)
+        centroid_point = self.shapely['Point'](centroid)
 
         if block.contains(centroid_point):
             # Center is inside but some part of polygon is outside
@@ -2033,7 +2061,7 @@ class BuildingGeneralizationProcessor:
             return False
 
         block = self.blocks[block_id]
-        point = Point(building["center"].x(), building["center"].y())
+        point = self.shapely['Point'](building["center"].x(), building["center"].y())
 
         return not block.contains(point)
 
