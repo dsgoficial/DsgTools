@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 4.18.1 - 2025-06-04
+
+Correção de bugs:
+
+- Corrige bug no help dos processos no linux;
+- Corrige imports de bibliotecas opcionais (crash no linux);
+
 ## 4.18.0 - 2025-05-29
 
 Novas Funcionalidades:

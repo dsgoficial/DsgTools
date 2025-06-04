@@ -22,14 +22,16 @@ class HTMLHelpCreator(object):
         return json_link_dictionary
 
     def shortHelpString(self, algorithm_name):
+        try:
+            image_path = "{}/{}.png".format(self.image_repository, algorithm_name)
+            html_path = "{}/{}.html".format(self.html_repository, algorithm_name)
 
-        image_path = "{}/{}.png".format(self.image_repository, algorithm_name)
-        html_path = "{}/{}.html".format(self.html_repository, algorithm_name)
+            html_file = open(html_path, "r")
+            html_string = html_file.read()
 
-        html_file = open(html_path, "r")
-        html_string = html_file.read()
-
-        return html_string.format(image_path)
+            return html_string.format(image_path)
+        except:
+            return "No help available for this algorithm."
 
     def helpUrl(self, algorithm_name):
 
