@@ -1,6 +1,29 @@
 # CHANGELOG
 
-## 4.17.50 - dev
+## 4.19.2 - dev
+
+Novas Funcionalidades:
+
+- Nova ferramenta de trim/extend (se diferencia da ferramenta do QGIS por ter um menu de contexto e criar o vértice no destino.);
+
+Melhorias:
+
+- 
+
+Correção de bugs:
+
+- Corrige bug no processo de extração automática de ponto cotado (geração de múltiplos pontos e geração de ponto cotado mais alto por MI);
+- Corrige bug no processo de extração automática de ponto cotado (problema com camadas projetadas);
+
+
+## 4.18.1 - 2025-06-04
+
+Correção de bugs:
+
+- Corrige bug no help dos processos no linux;
+- Corrige imports de bibliotecas opcionais (crash no linux);
+
+## 4.18.0 - 2025-05-29
 
 Novas Funcionalidades:
 
@@ -9,7 +32,6 @@ Novas Funcionalidades:
 - Novo algoritmo de preparo de arquivos para empacotamento no BDGEx;
 - Novo algoritmo de realizar snap dentro de uma camada agrupando por atributo;
 - Nova caixa de ferramenta de inspecionar flags de área com múltiplas camadas de centroides;
-- Nova caixa de ferramenta de inspecionar flags de área com mais de um centroide;
 - Novo algoritmo de filtrar múltiplas saídas pela moldura;
 - Novo algoritmo de corrigir atributação do atributo dentro de polígono em trechos de drenagem;
 - Novo algoritmo de identificar erros na atributação de curvas de nível;
@@ -22,7 +44,6 @@ Novas Funcionalidades:
 - Novo algoritmo de generalização de edificações para edição;
 - Novo algoritmo de atrair feições para âncoras (AnchoredSnapper);
 - Novo algoritmo line on line overlayer (Atualiza camadas);
-- Nova ferramenta de trim/extend;
 
 Melhorias:
 
