@@ -308,23 +308,6 @@ class TrimExtendTool(AbstractSelectionTool):
             selectAll=False,
         )
         menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
-    
-    def getCallbackMultipleFeatures(self, e, dictLayerFeature, selectAll=True):
-        """
-        Sets the callback of an action with a list features as target.
-        :param e: (QMouseEvent) mouse event on canvas.
-        :param dictLayerFeature: (dict) dictionary containing layers/features to be treated.
-        :return: (tuple-of function_lambda) callbacks for triggered and hovered signals.
-        """
-        triggeredAction = partial(
-            lambda x: print("hop"),
-            dictLayerFeature=dictLayerFeature,
-        )
-        # to trigger "Hover" signal on QMenu for the multiple options
-        hoveredAction = partial(
-            self.createMultipleRubberBand, dictLayerFeature=dictLayerFeature
-        )
-        return triggeredAction, hoveredAction
 
     def getCallback(self, e, layer, feature, geomType=None, selectAll=True):
         """
