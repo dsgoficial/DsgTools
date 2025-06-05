@@ -39,6 +39,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.genericSele
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.rightAngleToolParametersAlgorithm import (
     RightAngleToolParametersAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.smoothLinesToolParametersAlgorithm import (
+    SmoothLinesToolParametersAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.appendFeaturesToLayerAlgorithm import (
     AppendFeaturesToLayerAlgorithm,
 )
@@ -747,6 +750,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifySmallObjectsOnLayersAlgorithm(),
             AppendFeaturesToLayerAlgorithm(),
             RightAngleToolParametersAlgorithm(),
+            SmoothLinesToolParametersAlgorithm(),
             GenericSelectionToolParametersAlgorithm(),
             ClipAndCopyFeaturesBetweenDatabasesAlgorithm(),
             VerifyAdjacentGeographicBoundaryDataAlgorithm(),
