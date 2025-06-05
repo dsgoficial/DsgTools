@@ -185,17 +185,15 @@ class TrimExtendTool(AbstractSelectionTool):
         destinationPointXY = destinationPointGeom.asPoint()
         _, _, positionInsertPoint, __ = destinationGeom.closestSegmentWithContext(destinationPointXY)
         closestVertexOnDestinationGeom = QgsGeometry(destinationGeom.vertexAt(positionInsertPoint))
-        if trimOrExtend == self.TRIM:
-            if closestVertexOnDestinationGeom.asPoint() != destinationPointXY:
-                destinationGeom.insertVertex(destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint)
-                destinationLyr.changeGeometry(destinationFeat.id(), destinationGeom)
-            return destinationPointXY, firstOrLasterVertexInreferenceFeat
+        if trimOrExtend == self.TRIM and closestVertexOnDestinationGeom.asPoint() != destinationPointXY:
+            destinationGeom.insertVertex(destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint)
+            destinationLyr.changeGeometry(destinationFeat.id(), destinationGeom)
         else:
             if closestVertexOnDestinationGeom.intersects(rect):
                 return closestVertexOnDestinationGeom.asPoint(), firstOrLasterVertexInreferenceFeat
             destinationGeom.insertVertex(destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint)
             destinationLyr.changeGeometry(destinationFeat.id(), destinationGeom)
-            return destinationPointXY, firstOrLasterVertexInreferenceFeat
+        return destinationPointXY, firstOrLasterVertexInreferenceFeat
     
     def getMode(self, referenceFeat: QgsFeature, destinationFeat: QgsFeature) -> int:
         geomreferenceFeat = referenceFeat.geometry()
