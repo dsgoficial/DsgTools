@@ -187,11 +187,13 @@ class TrimExtendTool(AbstractSelectionTool):
         closestVertexOnDestinationGeom = QgsGeometry(destinationGeom.vertexAt(positionInsertPoint))
         if trimOrExtend == self.TRIM and closestVertexOnDestinationGeom.asPoint() != destinationPointXY:
             destinationGeom.insertVertex(destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint)
+            destinationGeom.removeDuplicateNodes(epsilon=1e-8)
             destinationLyr.changeGeometry(destinationFeat.id(), destinationGeom)
         else:
             if closestVertexOnDestinationGeom.intersects(rect):
                 return closestVertexOnDestinationGeom.asPoint(), firstOrLasterVertexInreferenceFeat
             destinationGeom.insertVertex(destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint)
+            destinationGeom.removeDuplicateNodes(epsilon=1e-8)
             destinationLyr.changeGeometry(destinationFeat.id(), destinationGeom)
         return destinationPointXY, firstOrLasterVertexInreferenceFeat
     
