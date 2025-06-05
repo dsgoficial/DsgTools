@@ -8,9 +8,6 @@ Novas Funcionalidades:
 - Nova ferramenta de smooth (suaviza a linha selecionada);
 - Novo processo de setar os parâmetros da ferramenta de smooth (usado pelo SAP_Operador para ajustar os parâmetros vindos do SAP);
 
-Melhorias:
-
-- 
 
 Correção de bugs:
 

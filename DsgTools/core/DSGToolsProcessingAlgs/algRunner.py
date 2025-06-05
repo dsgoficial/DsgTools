@@ -709,7 +709,7 @@ class AlgRunner:
             "DISTANCE": distance,
             "DISSOLVE": dissolve,
             "END_CAP_STYLE": endCapStyle,
-            "JOIN_STYLE": endCapStyle,
+            "JOIN_STYLE": joinStyle,
             "SEGMENTS": segments,
             "MITER_LIMIT": mitterLimit,
             "OUTPUT": outputLyr,
@@ -991,14 +991,14 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runReprojectLayer(self, layer, targetCrs, output=None, ctx=None, feedback=None):
+    def runReprojectLayer(self, layer, targetCrs, output=None, context=None, feedback=None, is_child_algorithm=False):
         """
         Reprojects layer's CRS.
         :param : (QgsVectorLayer) layer to be reprojected.
         :param targetCrs: (QgsCoordinateReferenceSystem) CRS object for the
                           output layer.
         :param output: (QgsVectorLayer) layer accomodate reprojected layer.
-        :param ctx: (QgsProcessingContext) processing context in which algorithm
+        :param context: (QgsProcessingContext) processing context in which algorithm
                     should be executed.
         :param feedback: (QgsFeedback) QGIS progress tracking component.
         :return: (QgsVectorLayer) reprojected layer.
@@ -1006,8 +1006,9 @@ class AlgRunner:
         return processing.run(
             "native:reprojectlayer",
             {"INPUT": layer, "OUTPUT": output or "memory:", "TARGET_CRS": targetCrs},
-            context=ctx,
+            context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )["OUTPUT"]
 
     def runPointOnSurface(
