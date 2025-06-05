@@ -71,7 +71,15 @@ class TrimExtendTool(AbstractSelectionTool):
         
         return QCursor(pixmap, center, center)
 
-    def addTool(self, manager, callback, parentMenu, iconBasePath):
+    def addTool(self,
+            manager,
+            callback,
+            parentMenu,
+            iconBasePath,
+            parentButton=None,
+            defaultButton=False,
+    ):
+        self.parentButton = parentButton
         icon_path = iconBasePath + "/trim_extend_icon.png"
         toolTip = self.tr("DSGTools: Trim Extend")
         action = manager.add_action(
@@ -79,13 +87,16 @@ class TrimExtendTool(AbstractSelectionTool):
             text=toolTip,
             callback=callback,
             add_to_menu=False,
-            add_to_toolbar=True,
+            add_to_toolbar=False,
             withShortcut=True,
             tooltip=toolTip,
             parentToolbar=parentMenu,
+            parentButton=parentButton,
             isCheckable=True,
         )
         self.setAction(action)
+        if defaultButton:
+            self.parentButton.setDefaultAction(action)
     
     def setAction(self, action) -> None:
         self.toolAction = action

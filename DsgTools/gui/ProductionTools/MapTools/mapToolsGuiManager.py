@@ -210,8 +210,10 @@ class MapToolsGuiManager(QObject):
         self.trimExtendTool.addTool(
             self.manager,
             self.activateTrimExtend,
-            self.parentMenu,
-            self.iconBasePath
+            self.lineStackButton,
+            self.iconBasePath,
+            parentButton=self.lineStackButton,
+            defaultButton=True,
         )
         self.trimExtendTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
 
