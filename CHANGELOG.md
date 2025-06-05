@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 4.19.1 - dev
+
+Correção de bugs:
+
+- Corrige bug no processo de extração automática de ponto cotado (geração de múltiplos pontos e geração de ponto cotado mais alto por MI);
+- Corrige bug no processo de extração automática de ponto cotado (problema com camadas projetadas);
+
+
 ## 4.18.1 - 2025-06-04
 
 Correção de bugs:
