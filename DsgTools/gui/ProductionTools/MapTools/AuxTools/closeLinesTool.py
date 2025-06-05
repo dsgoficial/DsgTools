@@ -41,7 +41,16 @@ class CloseLinesTool(QgsMapTool):
         self.canvas = self.iface.mapCanvas()
         super(CloseLinesTool, self).__init__(self.canvas)
 
-    def addTool(self, manager, callback, parentMenu, iconBasePath):
+    def addTool(
+            self, 
+            manager, 
+            callback, 
+            parentMenu, 
+            iconBasePath,
+            parentButton=None,
+            defaultButton=False,
+        ):
+        self.parentButton=parentButton
         icon_path = iconBasePath + "/closedLines.png"
         toolTip = self.tr("DSGTools: Close Selected Lines")
         action = manager.add_action(
@@ -49,12 +58,15 @@ class CloseLinesTool(QgsMapTool):
             text=self.tr("DSGTools: Close Selected Lines"),
             callback=callback,
             add_to_menu=False,
-            add_to_toolbar=True,
+            add_to_toolbar=False,
             withShortcut=True,
             tooltip=toolTip,
             parentToolbar=parentMenu,
+            parentButton=parentButton,
         )
         self.setAction(action)
+        if defaultButton:
+            self.parentButton.setDefaultAction(action)
 
     def activate(self):
         """

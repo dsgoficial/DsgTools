@@ -98,5 +98,6 @@
         <file>icons/closedLines.png</file>
         <file>icons/flags_centroids.png</file>
         <file>icons/trim_extend_icon.png</file>
+        <file>icons/smoothLines.png</file>
     </qresource>
 </RCC>

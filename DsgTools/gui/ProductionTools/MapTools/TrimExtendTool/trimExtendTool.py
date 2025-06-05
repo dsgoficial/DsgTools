@@ -145,7 +145,6 @@ class TrimExtendTool(AbstractSelectionTool):
         )
         return coordinateTransform
 
-    
     def getClosestVertexInDestination(
             self, 
             referenceFeat: QgsFeature, 
@@ -156,6 +155,7 @@ class TrimExtendTool(AbstractSelectionTool):
         clickPoint = self.canvas.getCoordinateTransform().toMapCoordinates(
             clickEvent.x(), clickEvent.y()
         )
+        trimOrExtend = self.getMode(referenceFeat, destinationFeat)
         clickPoint = QgsGeometry.fromPointXY(clickPoint)
         rect = self.getCursorRect(clickEvent)
         rect = QgsGeometry.fromRect(rect)
@@ -163,12 +163,11 @@ class TrimExtendTool(AbstractSelectionTool):
         if coordinateTransform is not None:
             clickPoint.transform(coordinateTransform)
             rect.transform(coordinateTransform)
+        referenceGeom = referenceFeat.geometry()
         destinationGeom = destinationFeat.geometry()
         closestVertexToReferenceGeom, firstOrLasterVertexInreferenceFeat = self.getNearestVertexOnSelectedObject(referenceFeat, destinationFeat)
-        if destinationGeom.type() == QgsWkbTypes.GeometryType.PolygonGeometry:
-            pointInDestinationFeat = QgsGeometry(destinationGeom.constGet().boundary()).nearestPoint(clickPoint)
-        else:
-            pointInDestinationFeat = destinationGeom.nearestPoint(clickPoint)
+        boundary = QgsGeometry(destinationGeom.constGet().boundary()) if destinationGeom.type() == QgsWkbTypes.GeometryType.PolygonGeometry else destinationGeom
+        pointInDestinationFeat = boundary.nearestPoint(clickPoint) if trimOrExtend == self.EXTEND else referenceGeom.intersection(boundary)
         return pointInDestinationFeat, firstOrLasterVertexInreferenceFeat, rect
     
     def addVertexOnDestinationFeature(
@@ -178,16 +177,25 @@ class TrimExtendTool(AbstractSelectionTool):
         destinationLyr: QgsVectorLayer,
         clickEvent: QgsMapMouseEvent,
     ) -> Tuple[QgsPointXY, int]:
+        trimOrExtend = self.getMode(referenceFeat, destinationFeat)
         destinationPointGeom, firstOrLasterVertexInreferenceFeat, rect = self.getClosestVertexInDestination(referenceFeat, destinationFeat, clickEvent)
-        destinationPointXY = destinationPointGeom.asPoint()
         destinationGeom = destinationFeat.geometry()
-        _, ___, positionInsertPoint, __ = destinationGeom.closestSegmentWithContext(destinationPointXY)
+        if trimOrExtend == self.TRIM:
+            destinationPointGeom = destinationGeom.nearestPoint(destinationPointGeom)
+        destinationPointXY = destinationPointGeom.asPoint()
+        _, _, positionInsertPoint, __ = destinationGeom.closestSegmentWithContext(destinationPointXY)
         closestVertexOnDestinationGeom = QgsGeometry(destinationGeom.vertexAt(positionInsertPoint))
-        if closestVertexOnDestinationGeom.intersects(rect):
-            return closestVertexOnDestinationGeom.asPoint(), firstOrLasterVertexInreferenceFeat
-        destinationGeom.insertVertex(destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint)
-        destinationLyr.changeGeometry(destinationFeat.id(), destinationGeom)
-        return destinationPointXY, firstOrLasterVertexInreferenceFeat
+        if trimOrExtend == self.TRIM:
+            if closestVertexOnDestinationGeom.asPoint() != destinationPointXY:
+                destinationGeom.insertVertex(destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint)
+                destinationLyr.changeGeometry(destinationFeat.id(), destinationGeom)
+            return destinationPointXY, firstOrLasterVertexInreferenceFeat
+        else:
+            if closestVertexOnDestinationGeom.intersects(rect):
+                return closestVertexOnDestinationGeom.asPoint(), firstOrLasterVertexInreferenceFeat
+            destinationGeom.insertVertex(destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint)
+            destinationLyr.changeGeometry(destinationFeat.id(), destinationGeom)
+            return destinationPointXY, firstOrLasterVertexInreferenceFeat
     
     def getMode(self, referenceFeat: QgsFeature, destinationFeat: QgsFeature) -> int:
         geomreferenceFeat = referenceFeat.geometry()
@@ -223,38 +231,27 @@ class TrimExtendTool(AbstractSelectionTool):
         referenceFeat = [i for i in layer.getSelectedFeatures()][0]
         trimOrExtend = self.getMode(referenceFeat, destinationFeat)
         referenceGeom = referenceFeat.geometry()
-        destinationGeom = destinationFeat.geometry()
+        destinationPointXY, firstOrLasterVertexInreferenceFeat = self.addVertexOnDestinationFeature(
+            referenceFeat, 
+            destinationFeat, 
+            destinationLyr, 
+            clickEvent,
+        )
         if trimOrExtend == self.EXTEND:
-            newVertex, firstOrLasterVertexInreferenceFeat = self.addVertexOnDestinationFeature(
-                referenceFeat, 
-                destinationFeat, 
-                destinationLyr, 
-                clickEvent,
-            )
-            pointsGeomreferenceFeat = referenceGeom.asPolyline() if not referenceGeom.isMultipart() else referenceGeom.asMultiPolyline()[0] # tem que resolver o caso de multipart
+            pointsGeomReferenceFeat = referenceGeom.asPolyline() if not referenceGeom.isMultipart() else referenceGeom.asMultiPolyline()[0] # tem que resolver o caso de multipart
             if firstOrLasterVertexInreferenceFeat == 0:
-                pointsGeomreferenceFeat.insert(0, newVertex)
+                pointsGeomReferenceFeat.insert(0, destinationPointXY)
             else:
-                pointsGeomreferenceFeat.append(newVertex)
-            newReferenceGeom = QgsGeometry.fromPolylineXY(pointsGeomreferenceFeat)
+                pointsGeomReferenceFeat.append(destinationPointXY)
+            newReferenceGeom = QgsGeometry.fromPolylineXY(pointsGeomReferenceFeat)
         else:
-            if destinationGeom.type() == QgsWkbTypes.GeometryType.PolygonGeometry:
-                pointIntersection = referenceGeom.intersection(QgsGeometry(destinationGeom.constGet().boundary()))
-            else:
-                pointIntersection = referenceGeom.intersection(destinationGeom)
-            pointIntersection = destinationGeom.nearestPoint(pointIntersection)
-            pointIntersection = pointIntersection.asPoint()
-            _, closestPointOnDestination, positionInsertPoint, _ = destinationGeom.closestSegmentWithContext(pointIntersection)
-            if closestPointOnDestination != pointIntersection:
-                destinationGeom.insertVertex(pointIntersection.x(), pointIntersection.y(), positionInsertPoint)
-            resultProcess, newGeomsreferenceFeat, _ = referenceGeom.splitGeometry([pointIntersection], False)
+            resultProcess, newGeomsreferenceFeat, _ = referenceGeom.splitGeometry([destinationPointXY], False)
             if resultProcess == 0 and newGeomsreferenceFeat:
                 part1 = referenceGeom
                 part2 = newGeomsreferenceFeat[0]
                 newReferenceGeom = part1 if part1.length() > part2.length() else part2
             else:
                 return
-            destinationLyr.changeGeometry(destinationFeat.id(), destinationGeom)
         if QgsWkbTypes.isMultiType(layer.wkbType()):
             newReferenceGeom.convertToMultiType()
         layer.changeGeometry(referenceFeat.id(), newReferenceGeom)
