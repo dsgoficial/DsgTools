@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.2 - dev
+## 4.19.3 - dev
 
 Novas Funcionalidades:
 
@@ -12,6 +12,7 @@ Novas Funcionalidades:
 Correção de bugs:
 
 - Corrige bug no processo de extração automática de ponto cotado (geração de múltiplos pontos e geração de ponto cotado mais alto por MI);
+- Corrige bug no processo de extração automática de ponto cotado (geração de múltiplos pontos pontos cotado mais alto por MI muito próximos);
 - Corrige bug no processo de extração automática de ponto cotado (problema com camadas projetadas);
 
 

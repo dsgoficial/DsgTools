@@ -691,6 +691,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             distance=localBufferDistance,
             maskLyr=maskLyr,
             crs=maskLyr.crs() if maskLyr is not None else clippedRasterLyr.crs(),
+            context=context,
             feedback=multiStepFeedback,
         )
         minFeats = self.getMinFeatures(
@@ -1688,7 +1689,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
     def getMaxFeatures(
-        self, fields, npRaster, transform, distance, maskLyr, crs, feedback=None
+        self, fields, npRaster, transform, distance, maskLyr, crs, context, feedback=None
     ):
         featSet = set()
         maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(npRaster)
@@ -1748,7 +1749,21 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             cotaMax -= 1
             if feedback is not None and feedback.isCanceled():
                 break
-        return list(featSet)
+        candidatesPointLyr = LayerHandler().createMemoryLayerWithFeatures(
+            featList=list(featSet),
+            fields=fields,
+            crs=crs,
+            wkbType=QgsWkbTypes.Point,
+            context=context,
+        )
+        filteredPoints = self.filterFeaturesByDistanceAndExclusionLayer(
+            candidatesPointLyr=candidatesPointLyr,
+            exclusionLyr=maskLyr,
+            distance=10*distance,
+            context=context,
+            feedback=None,
+        )
+        return filteredPoints
 
     def getMinFeatures(
         self,
