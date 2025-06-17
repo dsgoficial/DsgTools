@@ -514,6 +514,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyTerrainMod
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnmergedLinesWithSameAttributeSetAlgorithm import (
     IdentifyUnmergedLinesWithSameAttributeSetAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnmergedPolygonsWithSameAttributeSetAlgorithm import (
+    IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnsharedVertexOnIntersectionsAlgorithm import (
     IdentifyUnsharedVertexOnIntersectionsAlgorithm,
 )
@@ -715,6 +718,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyMultiPartGeometriesAlgorithm(),
             IdentifyPolygonUndershootsAlgorithm(),
             IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(),
+            IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(),
             StringCsvToFirstLayerWithElementsAlgorithm(),
             IdentifyDrainageFlowIssues(),
             IdentifyDrainageAngleIssues(),
