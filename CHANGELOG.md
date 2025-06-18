@@ -1,12 +1,13 @@
 # CHANGELOG
 
-## 4.19.3 - dev
+## 4.19.4 - dev
 
 Novas Funcionalidades:
 
 - Nova ferramenta de trim/extend (se diferencia da ferramenta do QGIS por ter um menu de contexto e criar o vértice no destino.);
 - Nova ferramenta de smooth (suaviza a linha selecionada);
 - Novo processo de setar os parâmetros da ferramenta de smooth (usado pelo SAP_Operador para ajustar os parâmetros vindos do SAP);
+- Novo processo de verificar polígonos com os mesmos atributos que estão desconectados, onde pode ser verificado uma área máxima para a análise;
 
 
 Correção de bugs:
