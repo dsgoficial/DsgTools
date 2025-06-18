@@ -5,10 +5,10 @@
 [![Join the chat at https://gitter.im/DsgTools/Lobby](https://badges.gitter.im/DsgTools/Lobby.svg)](https://gitter.im/DsgTools/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![DOI](https://zenodo.org/badge/25019920.svg)](https://zenodo.org/badge/latestdoi/25019920)
 
-|branch|status|
-|-------|--------|
-|master|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=master)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|
-|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|
+|branch|status|version|
+|-------|--------|--------|
+|master|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=master)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|4.18.1|
+|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|4.19.4|
 
 ------------------------------------
 # Complemento DSGTools
