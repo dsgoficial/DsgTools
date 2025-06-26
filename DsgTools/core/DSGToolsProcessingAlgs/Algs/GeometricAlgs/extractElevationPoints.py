@@ -1975,7 +1975,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 feedback=multiStepFeedback,
             )
             if exclusionLyr is not None
-            else candidatesPointLyr
+            else candidatesPointLyrWithId
         )
         nFeats = disjointLyr.featureCount()
         if nFeats == 0:
