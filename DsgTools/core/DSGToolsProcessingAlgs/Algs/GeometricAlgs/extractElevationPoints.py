@@ -1944,7 +1944,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         feedback: QgsFeedback,
     ) -> List:
         multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(3, feedback)
+            QgsProcessingMultiStepFeedback(5, feedback)
             if feedback is not None
             else None
         )
@@ -1962,10 +1962,13 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
         if multiStepFeedback is not None:
             currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
-            candidatesPointLyrWithId, context, is_child_algorithm=True
+            candidatesPointLyrWithId, context, feedback=multiStepFeedback, is_child_algorithm=True
         )
-
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
         disjointLyr = (
             self.algRunner.runExtractByLocation(
                 candidatesPointLyrWithId,
@@ -1983,7 +1986,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(disjointLyr, context, is_child_algorithm=True)
+        self.algRunner.runCreateSpatialIndex(disjointLyr, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
         outputSet, exclusionSet = set(), set()
         stepSize = 100 / nFeats
         request = QgsFeatureRequest()
