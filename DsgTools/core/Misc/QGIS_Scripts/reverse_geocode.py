@@ -3,9 +3,6 @@
 ##addresses_txt=output file
 
 
-from future import standard_library
-
-standard_library.install_aliases()
 import urllib.request, urllib.error, urllib.parse, csv
 from processing.core.GeoAlgorithmExecutionException import (
     GeoAlgorithmExecutionException,
