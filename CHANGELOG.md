@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.5 - dev
+## 4.19.6 - dev
 
 Novas Funcionalidades:
 
@@ -8,6 +8,11 @@ Novas Funcionalidades:
 - Nova ferramenta de smooth (suaviza a linha selecionada);
 - Novo processo de setar os parâmetros da ferramenta de smooth (usado pelo SAP_Operador para ajustar os parâmetros vindos do SAP);
 - Novo processo de verificar polígonos com os mesmos atributos que estão desconectados, onde pode ser verificado uma área máxima para a análise;
+
+Melhorias:
+
+- Atualiza o modelo EDGV Topo para a versão 1.4.4;
+- Atualiza o modelo EDGV Orto para a versão 2.5.2;
 
 
 Correção de bugs:
