@@ -24,9 +24,6 @@
  ***************************************************************************/
 """
 
-from future import standard_library
-
-standard_library.install_aliases()
 import urllib.request, urllib.error, urllib.parse
 from xml.dom.minidom import parseString, Element
 
