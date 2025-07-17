@@ -2323,7 +2323,7 @@ class AlgRunner:
                 "INPUT_RASTER": inputRaster,
                 "BURN": value,
                 "ADD": False,
-                "EXTRA": False,
+                "EXTRA": '',
             },
             context=context,
             feedback=feedback,
@@ -3011,3 +3011,68 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT_SPLIT_LINES"], output["OUTPUT_MODIFIED_REFERENCES"]
+
+    def runGdalTranslate(
+        self,
+        inputRaster,
+        context,
+        outputRaster=None,
+        targetCrs=None,
+        sourceCrs=None,
+        nodata=None,
+        options=None,
+        dataType=None,
+        targetExtent=None,
+        targetResolution=None,
+        scaleParams=None,
+        outputSize=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        """
+        Runs GDAL translate algorithm to convert/copy raster data.
+        
+        :param inputRaster: (QgsRasterLayer or str) Input raster layer or path
+        :param context: (QgsProcessingContext) Processing context
+        :param outputRaster: (str) Output raster path. If None, uses "TEMPORARY_OUTPUT"
+        :param targetCrs: (QgsCoordinateReferenceSystem) Target coordinate reference system
+        :param sourceCrs: (QgsCoordinateReferenceSystem) Source coordinate reference system
+        :param nodata: (float) NoData value to assign
+        :param options: (str) Additional GDAL options
+        :param dataType: (int) Output data type (0=Use Input Type, 1=Byte, 2=Int16, 3=UInt16, 4=Int32, 5=UInt32, 6=Float32, 7=Float64)
+        :param targetExtent: (QgsRectangle or str) Target extent
+        :param targetResolution: (float) Target resolution
+        :param scaleParams: (str) Scale parameters in format "src_min,src_max,dst_min,dst_max"
+        :param outputSize: (str) Output size in format "width,height"
+        :param feedback: (QgsProcessingFeedback) Feedback object for progress reporting
+        :param is_child_algorithm: (bool) Whether this is being run as a child algorithm
+        :return: (str) Path to output raster
+        """
+        outputRaster = "TEMPORARY_OUTPUT" if outputRaster is None else outputRaster
+        options = "" if options is None else options
+        dataType = 0 if dataType is None else dataType
+        
+        parameters = {
+            "INPUT": inputRaster,
+            "OUTPUT": outputRaster,
+            "TARGET_CRS": targetCrs,
+            "SOURCE_CRS": sourceCrs,
+            "NODATA": nodata,
+            "OPTIONS": options,
+            "DATA_TYPE": dataType,
+            "PROJWIN": targetExtent,
+            "TR": targetResolution,
+            "SCALE": scaleParams,
+            "OUTSIZE": outputSize,
+            "EXTRA": "",
+        }
+        
+        output = processing.run(
+            "gdal:translate",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        
+        return output["OUTPUT"]

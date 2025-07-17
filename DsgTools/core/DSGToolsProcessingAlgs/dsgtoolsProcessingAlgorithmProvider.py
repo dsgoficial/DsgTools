@@ -105,6 +105,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingFo
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.prepareFilesForRasterPackagingForBDGEx import (
     PrepareRasterFilesForPackagingForBDGEx,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.rasterRemapAlgorithm import RasterRemapAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.rasterizePolygonsWithBuffer import RasterizePolygonsWithBufferAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.anchoredSnapperAlgorithm import (
     AnchoredSnapperAlgorithm,
 )
@@ -807,6 +809,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             BuildingGeneralizationAlgorithm(),
             AnchoredSnapperAlgorithm(),
             OverlayLinesWithLinesAndUpdate(),
+            RasterRemapAlgorithm(),
+            RasterizePolygonsWithBufferAlgorithm(),
         ]
         return algList
 
