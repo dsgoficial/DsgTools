@@ -102,6 +102,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeogra
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingForBDGEx import (
     BatchRasterPackagingForBDGEx,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.medianFilterNoDataAlgorithm import MedianFilterNoDataAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.prepareFilesForRasterPackagingForBDGEx import (
     PrepareRasterFilesForPackagingForBDGEx,
 )
@@ -811,6 +812,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             OverlayLinesWithLinesAndUpdate(),
             RasterRemapAlgorithm(),
             RasterizePolygonsWithBufferAlgorithm(),
+            MedianFilterNoDataAlgorithm(),
         ]
         return algList
 
