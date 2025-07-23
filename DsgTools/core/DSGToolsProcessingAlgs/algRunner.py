@@ -450,6 +450,23 @@ class AlgRunner:
             feedback=feedback,
         )
         return output["FLAGS"]
+    
+    def runRemoveSmallLines(
+        self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False
+    ):
+        flagLyr = "memory:" if flagLyr is None else flagLyr
+        parameters = {
+            "INPUT": inputLyr,
+            "TOLERANCE": tol,
+            "SELECTED": onlySelected,
+        }
+        output = processing.run(
+            "dsgtools:removesmalllines",
+            parameters,
+            context=context,
+            feedback=feedback,
+        )
+        return output["FLAGS"]
 
     def runIdentifySmallPolygons(
         self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False

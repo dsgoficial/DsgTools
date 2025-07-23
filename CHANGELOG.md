@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.8 - dev
+## 4.19.9 - dev
 
 Novas Funcionalidades:
 
@@ -24,6 +24,7 @@ Correção de bugs:
 - Corrige bug no processo de extração automática de ponto cotado (geração de múltiplos pontos pontos cotado mais alto por MI muito próximos);
 - Corrige bug no processo de extração automática de ponto cotado (problema com camadas projetadas);
 - Corrige bug no processo de desconstrução de polígonos (erro plotado na ferramentas de centroides);
+- Corrige bug no processo de corrigir conectividade de linhas
 
 
 ## 4.18.1 - 2025-06-04

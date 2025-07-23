@@ -45,6 +45,7 @@ from qgis.core import (
     QgsProcessingUtils,
     QgsSpatialIndex,
     QgsWkbTypes,
+    QgsProcessingException,
 )
 
 from ...algRunner import AlgRunner
@@ -52,7 +53,7 @@ from .validationAlgorithm import ValidationAlgorithm
 
 
 class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
-    INPUTLAYERS = "INPUTLAYERS"
+    INPUT_LAYERS = "INPUT_LAYERS"
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
 
@@ -62,7 +63,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUTLAYERS,
+                self.INPUT_LAYERS,
                 self.tr("Linestring Layers"),
                 QgsProcessing.TypeVectorLine,
             )
@@ -72,15 +73,14 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
                 self.SELECTED, self.tr("Process only selected features")
             )
         )
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.TOLERANCE,
-                self.tr("Snap radius"),
-                parentParameterName=self.INPUTLAYERS,
-                minValue=0,
-                defaultValue=1.0,
-            )
+        param = QgsProcessingParameterDistance(
+            self.TOLERANCE,
+            self.tr("Search Radius"),
+            parentParameterName=self.INPUT_LAYERS,
+            defaultValue=1e-6,
         )
+        param.setMetadata({"widget_wrapper": {"decimals": 8}})
+        self.addParameter(param)
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -88,62 +88,95 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         """
         layerHandler = LayerHandler()
         algRunner = AlgRunner()
-        inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
         if inputLyrList is None or inputLyrList == []:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.INPUTLAYERS)
+                self.invalidSourceError(parameters, self.INPUT_LAYERS)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
 
-        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(9, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
             inputLyrList,
-            geomType=QgsWkbTypes.MultiPolygon,
+            geomType=QgsWkbTypes.MultiLineString,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
         )
-
-        multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(
-            self.tr("Identifying dangles on {layer}...").format(layer=coverage.name())
+        currentStep += 1
+        
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runRemoveSmallLines(
+            inputLyr=coverage,
+            tol=tol,
+            context=context,
+            feedback=multiStepFeedback,
         )
-        dangleLyr = algRunner.runIdentifyDangles(
+        coverage.commitChanges()
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        outputLyr = algRunner.runSnapGeometriesToLayer(
             coverage,
+            coverage,
+            tol,
+            context,
+            feedback=multiStepFeedback,
+            behavior=AlgRunner.SnapToAnchorNodes,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        dangleLyr = algRunner.runIdentifyDangles(
+            outputLyr,
             tol,
             context,
             feedback=multiStepFeedback,
             onlySelected=onlySelected,
         )
+        currentStep += 1
+        if dangleLyr.featureCount() == 0:
+            return {}
 
-        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.setCurrentStep(currentStep)
         layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
-
-        multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo(
-            self.tr("Snapping layer {layer} to dangles...").format(
-                layer=coverage.name()
-            )
-        )
-        algRunner.runSnapLayerOnLayer(
-            coverage,
+        currentStep += 1
+        
+        multiStepFeedback.setCurrentStep(currentStep)
+        outputAfterSnapToDangleLyr = algRunner.runSnapGeometriesToLayer(
+            outputLyr,
             dangleLyr,
             tol,
             context,
             feedback=multiStepFeedback,
-            onlySelected=onlySelected,
-            behavior=0,
+            behavior=AlgRunner.PreferClosestDoNotInsertNewVertices,
         )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        fixedNodesLyr = algRunner.runRemoveDuplicateVertex(
+            inputLyr=outputAfterSnapToDangleLyr,
+            tolerance=1e-7,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        fixedNull = algRunner.runRemoveNull(
+            inputLayer=fixedNodesLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        
+        currentStep += 1
 
-        multiStepFeedback.setCurrentStep(4)
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Updating original layers..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            inputLyrList, coverage, feedback=multiStepFeedback
+            inputLyrList, fixedNull, feedback=multiStepFeedback
         )
 
-        return {self.INPUTLAYERS: inputLyrList}
+        return {}
 
     def name(self):
         """
