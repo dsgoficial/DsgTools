@@ -453,7 +453,7 @@ class AlgRunner:
     
     def runRemoveSmallLines(
         self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False
-    ):
+    ) -> None:
         flagLyr = "memory:" if flagLyr is None else flagLyr
         parameters = {
             "INPUT": inputLyr,
@@ -466,7 +466,6 @@ class AlgRunner:
             context=context,
             feedback=feedback,
         )
-        return output["FLAGS"]
 
     def runIdentifySmallPolygons(
         self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False
