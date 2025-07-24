@@ -8,7 +8,7 @@
 |branch|status|version|
 |-------|--------|--------|
 |master|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=master)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|4.18.1|
-|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|4.19.9|
+|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|4.19.10|
 
 ------------------------------------
 # Complemento DSGTools

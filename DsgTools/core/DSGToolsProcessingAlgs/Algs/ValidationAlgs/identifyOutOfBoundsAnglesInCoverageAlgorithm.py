@@ -205,11 +205,14 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             geom = feat.geometry()
             if geom.isNull():
                 continue
-            p1, p2 = (
+            t = (
                 geom.asPolyline()
                 if not geom.isMultipart()
                 else geom.asMultiPolyline()[0]
             )
+            if len(t) != 2:
+                continue
+            p1, p2 = t
             geom1 = QgsGeometry.fromPointXY(p1)
             wkb1 = geom1.asWkb()
             geom2 = QgsGeometry.fromPointXY(p2)
