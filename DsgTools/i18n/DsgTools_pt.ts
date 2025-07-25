@@ -7632,32 +7632,32 @@ Shift + clique esquerdo + arrastar do mouse: selecione um conjunto de pontos e d
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractByDE9IM.py" line="92"/>
         <source>Select features from</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar feições de</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractByDE9IM.py" line="100"/>
         <source>By comparing features from</source>
-        <translation type="unfinished"></translation>
+        <translation>Comparando com feições de</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractByDE9IM.py" line="108"/>
         <source>DE9IM</source>
-        <translation type="unfinished"></translation>
+        <translation>DE9IM</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractByDE9IM.py" line="111"/>
         <source>Output</source>
-        <translation type="unfinished">Saída</translation>
+        <translation>Saída</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractByDE9IM.py" line="206"/>
         <source>Extract features by DE9IM</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrair feições por DE9IM</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractByDE9IM.py" line="213"/>
         <source>Geometric Algorithms</source>
-        <translation type="unfinished">Algoritmos Geométricos</translation>
+        <translation>Algoritmos Geométricos</translation>
     </message>
 </context>
 <context>
@@ -7991,6 +7991,16 @@ Shift + clique esquerdo + arrastar do mouse: selecione um conjunto de pontos e d
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/fileInventoryAlgorithm.py" line="93"/>
+        <source>Search only listed formats</source>
+        <translation>Procurar apenas formatos listados</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/fileInventoryAlgorithm.py" line="93"/>
+        <source>Exclude listed formats</source>
+        <translation>Excluir formatos listados</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/fileInventoryAlgorithm.py" line="93"/>
         <source>Search type</source>
         <translation>Tipo de busca</translation>
     </message>
@@ -8032,7 +8042,7 @@ Shift + clique esquerdo + arrastar do mouse: selecione um conjunto de pontos e d
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/fileInventoryAlgorithm.py" line="201"/>
         <source>Data Management Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Gerenciamento de Dados</translation>
     </message>
 </context>
 <context>
@@ -14210,49 +14220,6 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
 </context>
 <context>
-    <name>LineOnLineOverlayerAlgorithm</name>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="48"/>
-        <source>Input layer</source>
-        <translation>Camada de entrada</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="53"/>
-        <source>Process only selected features</source>
-        <translation>Processar apenas feições selecionadas</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="58"/>
-        <source>Snap radius</source>
-        <translation>Raio de atração</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="82"/>
-        <source>Identifying dangles on {layer}...</source>
-        <translation>Identificando pontas soltas na camada {layer}...</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="99"/>
-        <source>Snapping layer {layer} to dangles...</source>
-        <translation>Atraindo a camada {layer} às pontas soltas encontradas...</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="114"/>
-        <source>Cleanning layer {layer}...</source>
-        <translation>Limpando a camada {layer}...</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="142"/>
-        <source>Line on line overlayer</source>
-        <translation>Seccionar Linhas com Linhas</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="149"/>
-        <source>QA Tools: Line Handling</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ListManagerWidget</name>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/listManagerWidget.ui" line="14"/>
@@ -19217,6 +19184,198 @@ Usuários com erro:</translation>
         <translation type="unfinished">Algoritmos Geométricos</translation>
     </message>
 </context>
+<context>
+    <name>LineOnAreaOverlayerAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnAreaOverlayerAlgorithm.py" line="45"/>
+        <source>Input polygon layer</source>
+        <translation>Camada de polígonos de entrada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnAreaOverlayerAlgorithm.py" line="52"/>
+        <source>Overlay line layers</source>
+        <translation>Camadas de linha sobrepostas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnAreaOverlayerAlgorithm.py" line="59"/>
+        <source>Fields to ignore</source>
+        <translation>Campos a serem ignorados</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnAreaOverlayerAlgorithm.py" line="66"/>
+        <source>Split polygons</source>
+        <translation>Dividir polígonos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnAreaOverlayerAlgorithm.py" line="235"/>
+        <source>Line on Area Overlayer</source>
+        <translation>Sobreposição de Linhas em Polígonos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnAreaOverlayerAlgorithm.py" line="242"/>
+        <source>Geometric Algorithms</source>
+        <translation>Algoritmos Geométricos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnAreaOverlayerAlgorithm.py" line="249"/>
+        <source>This algorithm splits polygons with overlay lines and preserves original attributes.</source>
+        <translation>Este algoritmo divide polígonos com base em linhas sobrepostas e preserva os atributos originais.</translation>
+    </message>
+</context>
+<context>
+    <name>LineOnLineOverlayerAlgorithm</name>
+    
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnLineOverlayerAlgorithm.py" line="77"/>
+        <source>Input line layer</source>
+        <translation>Camada de linhas de entrada</translation>
+    </message>
+
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnLineOverlayerAlgorithm.py" line="84"/>
+        <source>Reference line layers</source>
+        <translation>Camadas de linhas de referência</translation>
+    </message>
+
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnLineOverlayerAlgorithm.py" line="92"/>
+        <source>Snap tolerance for vertex insertion</source>
+        <translation>Tolerância de ajuste para inserção de vértices</translation>
+    </message>
+
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnLineOverlayerAlgorithm.py" line="100"/>
+        <source>Split input lines</source>
+        <translation>Linhas de entrada divididas</translation>
+    </message>
+
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnLineOverlayerAlgorithm.py" line="106"/>
+        <source>Modified reference lines</source>
+        <translation>Linhas de referência modificadas</translation>
+    </message>
+
+    <message>
+        <source>Line on Line Overlayer</source>
+        <translation>Sobreposição de Linhas sobre Linhas</translation>
+    </message>
+
+    <message>
+        <source>Geometric Algorithms</source>
+        <translation>Algoritmos Geométricos</translation>
+    </message>
+
+    <message>
+        <source>This algorithm splits input lines at every intersection with reference lines and ensures that intersection points are added as vertices to reference lines. It preserves the original attributes from the input lines in the split output.</source>
+        <translation>Este algoritmo divide as linhas de entrada em cada interseção com as linhas de referência e garante que os pontos de interseção sejam adicionados como vértices nas linhas de referência. Os atributos originais das linhas de entrada são preservados na saída dividida.</translation>
+    </message>
+</context>
+<context>
+    <name>PolygonTilerAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py" line="86"/>
+        <source>Input layer</source>
+        <translation>Camada de entrada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py" line="94"/>
+        <source>Number of rows</source>
+        <translation>Número de linhas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py" line="104"/>
+        <source>Number of columns</source>
+        <translation>Número de colunas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py" line="113"/>
+        <source>Include partial intersections</source>
+        <translation>Incluir interseções parciais</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py" line="119"/>
+        <source>Tiled output</source>
+        <translation>Saída da grade</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py" line="191"/>
+        <source>Skipping feature %1 - not a valid polygon</source>
+        <translation>Ignorando feição %1 - não é um polígono válido</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py" line="202"/>
+        <source>Warning: Very small cell size for feature %1. Consider using fewer rows/columns.</source>
+        <translation>Aviso: Tamanho de célula muito pequeno para a feição %1. Considere usar menos linhas/colunas.</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py" line="286"/>
+        <source>Created %1 tiles from %2 input features</source>
+        <translation>%1 células criadas a partir de %2 feições de entrada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py" line="130"/>
+        <source>Polygon Tiler</source>
+        <translation>Dividir Polígonos em Grade</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py" line="136"/>
+        <source>Geometric Algorithms</source>
+        <translation>Algoritmos Geométricos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py" line="144"/>
+        <source>This algorithm splits input polygons into a grid of the specified number of rows and columns.</source>
+        <translation>Este algoritmo divide polígonos em uma grade com o número especificado de linhas e colunas.</translation>
+    </message>
+</context>
+<context>
+    <name>SplitLinesAtMaximumLengthAlgorithm</name>
+
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/splitLinesAtMaximumLengthAlgorithm.py" line="59"/>
+        <source>Input line layer</source>
+        <translation>Camada de linha de entrada</translation>
+    </message>
+
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/splitLinesAtMaximumLengthAlgorithm.py" line="66"/>
+        <source>Maximum length</source>
+        <translation>Comprimento máximo</translation>
+    </message>
+
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/splitLinesAtMaximumLengthAlgorithm.py" line="73"/>
+        <source>Split lines</source>
+        <translation>Linhas divididas</translation>
+    </message>
+
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/splitLinesAtMaximumLengthAlgorithm.py" line="221"/>
+        <source>Split Lines with Maximum Length, splitting closed lines</source>
+        <translation>Dividir linhas com comprimento máximo, incluindo linhas fechadas</translation>
+    </message>
+
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/splitLinesAtMaximumLengthAlgorithm.py" line="229"/>
+        <source>Geometric Algorithms</source>
+        <translation>Algoritmos Geométricos</translation>
+    </message>
+
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/splitLinesAtMaximumLengthAlgorithm.py" line="247"/>
+        <source>This algorithm splits lines based on maximum length.
+        If the line is closed (a ring) and shorter than the maximum length, it will be split in half.
+        If the line is closed and longer than the maximum length, or if the line is open,
+        it will be split into parts no longer than the maximum length.
+        All calculations are performed in the source CRS units.</source>
+        <translation>Este algoritmo divide linhas com base em um comprimento máximo.
+        Se a linha for fechada (um anel) e menor que o comprimento máximo, ela será dividida ao meio.
+        Se for fechada e maior que o comprimento máximo, ou se for aberta,
+        será dividida em partes com comprimento não superior ao valor definido.
+        Todos os cálculos são realizados nas unidades do SRC de origem.</translation>
+    </message>
+</context>
+
 <context>
     <name>SelectFeaturesOnCurrentCanvas</name>
     <message>

@@ -351,7 +351,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         Returns the translated algorithm name.
         """
         return self.tr(
-            "Line on Line Overlayer (overlays reference lines to input line)"
+            "Line on Line Overlayer"
         )
 
     def group(self):
