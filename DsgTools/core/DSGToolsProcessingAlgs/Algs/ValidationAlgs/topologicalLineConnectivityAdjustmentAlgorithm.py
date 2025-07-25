@@ -96,7 +96,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
 
-        multiStepFeedback = QgsProcessingMultiStepFeedback(9, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(13, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
@@ -128,6 +128,15 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runRemoveSmallLines(
+            inputLyr=outputLyr,
+            tol=tol,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        outputLyr.commitChanges()
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         dangleLyr = algRunner.runIdentifyDangles(
             outputLyr,
             tol,
@@ -140,18 +149,40 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
             return {}
 
         multiStepFeedback.setCurrentStep(currentStep)
-        layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
+        dangleSnappedToGrid = algRunner.runSnapToGrid(
+            inputLayer=dangleLyr,
+            tol=tol,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runRemoveDuplicatedGeometries(
+            inputLyr=dangleSnappedToGrid,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        dangleSnappedToGrid.commitChanges()
         currentStep += 1
         
         multiStepFeedback.setCurrentStep(currentStep)
         outputAfterSnapToDangleLyr = algRunner.runSnapGeometriesToLayer(
             outputLyr,
-            dangleLyr,
+            dangleSnappedToGrid,
             tol,
             context,
             feedback=multiStepFeedback,
-            behavior=AlgRunner.PreferClosestDoNotInsertNewVertices,
+            behavior=AlgRunner.AlignNodesDoNotInsertNewVertices,
         )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runRemoveSmallLines(
+            inputLyr=outputLyr,
+            tol=tol,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        outputLyr.commitChanges()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         fixedNodesLyr = algRunner.runRemoveDuplicateVertex(
@@ -160,6 +191,15 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback
         )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runRemoveSmallLines(
+            inputLyr=outputLyr,
+            tol=tol,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        outputLyr.commitChanges()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         fixedNull = algRunner.runRemoveNull(
