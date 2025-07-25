@@ -122,7 +122,8 @@
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createReviewGridAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridAlongLineAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportFeaturesByAttributeAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/fileInventoryAlgorithm.py \
@@ -151,6 +152,7 @@
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/adjustNetworkConnectivityAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/anchoredSnapperAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/deaggregateGeometriesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/detectChangesGroupAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/detectNullGeometriesAlgorithm.py \

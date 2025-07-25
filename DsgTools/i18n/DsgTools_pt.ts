@@ -2780,90 +2780,198 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
 </context>
 <context>
     <name>CleanGeometriesAlgorithm</name>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="56"/>
         <source>Input Layer</source>
         <translation>Camada de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="63"/>
         <source>Process only selected features</source>
         <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="77"/>
+        <source>Snap Radius</source>
+        <translation>Raio de aproximação</translation>
+    </message>
+    <message>
         <source>Minimum area</source>
-        <translation>Área Mínima</translation>
+        <translation>Área mínima</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="96"/>
+        <source>Geographic Bounds Layer</source>
+        <translation>Camada de limite geográfico</translation>
+    </message>
+    <message>
         <source>{0} Flags</source>
-        <translation>{0} Flags</translation>
+        <translation>Marcadores de {0}</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="101"/>
         <source>Cleaned original layer</source>
-        <translation>Camada Original Pós-Limpeza</translation>
+        <translation>Camada original limpa</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="219"/>
+        <source>Empty input</source>
+        <translation>Camada de entrada vazia</translation>
+    </message>
+    <message>
+        <source>Spatial restriction not implemented yet for polygon layers</source>
+        <translation>Restrição espacial ainda não implementada para camadas de polígono</translation>
+    </message>
+    <message>
         <source>Populating temp layer...</source>
-        <translation>Populando camada temporária...</translation>
+        <translation>Preenchendo camada temporária...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="238"/>
         <source>Running clean...</source>
-        <translation>Executando a Limpeza Geométrica...</translation>
+        <translation>Executando limpeza...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="278"/>
         <source>Updating original layer...</source>
-        <translation>Atualizando a camada originais...</translation>
+        <translation>Atualizando camada original...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="310"/>
         <source>Features from {0} overlap</source>
-        <translation>Feições da sobreposição {0}</translation>
+        <translation>Feições de {0} se sobrepõem</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="317"/>
         <source>Gap in layer.</source>
-        <translation>Buraco na camada.</translation>
+        <translation>Lacuna na camada.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="323"/>
         <source>Clean error on layer.</source>
         <translation>Erro de limpeza na camada.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="340"/>
         <source>Clean Geometries</source>
         <translation>Limpar Geometrias</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="68"/>
-        <source>Snap Radius</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="87"/>
-        <source>Geographic Bounds Layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="121"/>
-        <source>Empty input</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="135"/>
-        <source>Spatial restriction not implemented yet for polygon layers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="347"/>
         <source>QA Tools: Snap Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos de Aproximação</translation>
+    </message>
+</context>
+<context>
+    <name>AnchoredSnapperAlgorithm</name>
+
+    <message>
+        <source>Input layer to be snapped</source>
+        <translation>Camada de entrada a ser ajustada</translation>
+    </message>
+    <message>
+        <source>Process only selected features from input layer</source>
+        <translation>Processar apenas feições selecionadas da camada de entrada</translation>
+    </message>
+    <message>
+        <source>Line anchor layers</source>
+        <translation>Camadas de ancoragem de linha</translation>
+    </message>
+    <message>
+        <source>Polygon anchor layers</source>
+        <translation>Camadas de ancoragem de polígono</translation>
+    </message>
+    <message>
+        <source>Process only selected features from anchor layers</source>
+        <translation>Processar apenas feições selecionadas das camadas de ancoragem</translation>
+    </message>
+    <message>
+        <source>Snap Tolerance</source>
+        <translation>Tolerância de aproximação</translation>
+    </message>
+    <message>
+        <source>Prefer aligning nodes, insert extra vertices where required</source>
+        <translation>Preferir alinhar nós, inserir vértices extras quando necessário</translation>
+    </message>
+    <message>
+        <source>Prefer closest point, insert extra vertices where required</source>
+        <translation>Preferir ponto mais próximo, inserir vértices extras quando necessário</translation>
+    </message>
+    <message>
+        <source>Prefer aligning nodes, don't insert new vertices</source>
+        <translation>Preferir alinhar nós, não inserir novos vértices</translation>
+    </message>
+    <message>
+        <source>Prefer closest point, don't insert new vertices</source>
+        <translation>Preferir ponto mais próximo, não inserir novos vértices</translation>
+    </message>
+    <message>
+        <source>Move end points only, prefer aligning nodes</source>
+        <translation>Mover apenas os pontos finais, preferir alinhar nós</translation>
+    </message>
+    <message>
+        <source>Move end points only, prefer closest point</source>
+        <translation>Mover apenas os pontos finais, preferir ponto mais próximo</translation>
+    </message>
+    <message>
+        <source>Snap end points to end points only</source>
+        <translation>Ajustar pontos finais apenas entre si</translation>
+    </message>
+    <message>
+        <source>Snap to anchor nodes (single layer only)</source>
+        <translation>Ajustar aos nós de ancoragem (apenas uma camada)</translation>
+    </message>
+    <message>
+        <source>Behavior</source>
+        <translation>Comportamento</translation>
+    </message>
+    <message>
+        <source>Geographic Boundary</source>
+        <translation>Limite geográfico</translation>
+    </message>
+    <message>
+        <source>You must provide at least one anchor layer (line or polygon)</source>
+        <translation>Você deve fornecer ao menos uma camada de ancoragem (linha ou polígono)</translation>
+    </message>
+    <message>
+        <source>Creating auxiliary structure for input layer...</source>
+        <translation>Criando estrutura auxiliar para a camada de entrada...</translation>
+    </message>
+    <message>
+        <source>Creating spatial index for input layer...</source>
+        <translation>Criando índice espacial para a camada de entrada...</translation>
+    </message>
+    <message>
+        <source>Preparing anchor layers...</source>
+        <translation>Preparando camadas de ancoragem...</translation>
+    </message>
+    <message>
+        <source>Converting polygons to lines...</source>
+        <translation>Convertendo polígonos em linhas...</translation>
+    </message>
+    <message>
+        <source>Merging all line layers...</source>
+        <translation>Mesclando todas as camadas de linha...</translation>
+    </message>
+    <message>
+        <source>No valid anchor layers to process</source>
+        <translation>Nenhuma camada de ancoragem válida para processar</translation>
+    </message>
+    <message>
+        <source>Converting lines to single parts...</source>
+        <translation>Convertendo linhas em partes simples...</translation>
+    </message>
+    <message>
+        <source>Creating spatial index on anchor layer...</source>
+        <translation>Criando índice espacial na camada de ancoragem...</translation>
+    </message>
+    <message>
+        <source>Running snap operation...</source>
+        <translation>Executando operação de aproximação...</translation>
+    </message>
+    <message>
+        <source>Adding unshared vertices on intersections and shared edges...</source>
+        <translation>Adicionando vértices não compartilhados em interseções e arestas compartilhadas...</translation>
+    </message>
+    <message>
+        <source>Updating original layers...</source>
+        <translation>Atualizando camadas originais...</translation>
+    </message>
+    <message>
+        <source>Anchored Snapper</source>
+        <translation>Ajuste Ancorado</translation>
+    </message>
+    <message>
+        <source>QA Tools: Snap Processes</source>
+        <translation>Ferramentas de QA: Processos de Aproximação</translation>
     </message>
 </context>
 <context>
@@ -3719,7 +3827,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="73"/>
         <source>Base scale</source>
-        <translation>Scala Base</translation>
+        <translation>Escala Base</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="82"/>
@@ -3769,27 +3877,91 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="99"/>
         <source>Index (comma-separated for multiple)</source>
-        <translation type="unfinished"></translation>
+        <translation>Índices (use vírgulas para múltiplos valores)</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="106"/>
         <source>Number of subdivisions on x-axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Número de subdivisões no eixo X</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="117"/>
         <source>Number of subdivisions on y-axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Número de subdivisões no eixo Y</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="166"/>
         <source>Invalid {index} format: {value}</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato inválido para o índice &quot;{index}&quot;: valor &quot;{value}&quot;</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="260"/>
         <source>Grid Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritimos de Grade</translation>
+    </message>
+</context>
+<context>
+    <name>CreateGridAlongLineAlgorithm</name>
+
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="59"/>
+        <source>Insert the line layer</source>
+        <translation>Insira a camada linear</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="64"/>
+        <source>Scale</source>
+        <translation>Escala</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="70"/>
+        <source>Sheet Size</source>
+        <translation>Tamanho da folha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="76"/>
+        <source>Overlap (%)</source>
+        <translation>Sobreposição (%)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="83"/>
+        <source>Start from begin (m)</source>
+        <translation>Início a partir do começo (m)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="89"/>
+        <source>Top Margin (mm)</source>
+        <translation>Margem superior (mm)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="95"/>
+        <source>Bottom Margin (mm)</source>
+        <translation>Margem inferior (mm)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="101"/>
+        <source>Left Margin (mm)</source>
+        <translation>Margem esquerda (mm)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="107"/>
+        <source>Right Margin (mm)</source>
+        <translation>Margem direita (mm)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="113"/>
+        <source>Grid Layer</source>
+        <translation>Camada de grade</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="234"/>
+        <source>Create Grid Along Line</source>
+        <translation>Criar grade ao longo da linha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GridAlgs/createGridAlongLineAlgorithm.py" line="240"/>
+        <source>Grid Algorithms</source>
+        <translation>Algoritmos de Grade</translation>
     </message>
 </context>
 <context>
@@ -3797,7 +3969,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="59"/>
         <source>Input Polygon Layer</source>
-        <translation>Camada de Polígonos de Entrada</translation>
+        <translation>Camada de entrada (Vetorial ou Raster)</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="84"/>
@@ -3817,17 +3989,17 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="93"/>
         <source>Number of subdivisions on x-axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Número de subdivisões no eixo X</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="104"/>
         <source>Number of subdivisions on y-axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Número de subdivisões no eixo Y</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="227"/>
         <source>Grid Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritimos de Grade</translation>
     </message>
 </context>
 <context>
@@ -3885,7 +4057,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="191"/>
         <source>Grid Algorithms</source>
-        <translation>Algoritmos de Grade</translation>
+        <translation>Algoritimos de Grade</translation>
     </message>
 </context>
 <context>
@@ -3997,47 +4169,47 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createReviewGridAlgorithm.py" line="56"/>
         <source>Input Polygon Layer</source>
-        <translation type="unfinished">Camada de Polígonos de Entrada</translation>
+        <translation>Camada de Polígonos de Entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createReviewGridAlgorithm.py" line="65"/>
         <source>Grid size on x-axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho da grade no eixo X</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createReviewGridAlgorithm.py" line="75"/>
         <source>Grid size on y-axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho da grade no eixo Y</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createReviewGridAlgorithm.py" line="86"/>
         <source>Related task id</source>
-        <translation type="unfinished"></translation>
+        <translation>ID da atividade relacionada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createReviewGridAlgorithm.py" line="97"/>
         <source>Work unit id</source>
-        <translation type="unfinished"></translation>
+        <translation>ID da unidade de trabalho</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createReviewGridAlgorithm.py" line="108"/>
         <source>Step id</source>
-        <translation type="unfinished"></translation>
+        <translation>ID da etapa</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createReviewGridAlgorithm.py" line="119"/>
         <source>Created Review Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Grade de revisão</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createReviewGridAlgorithm.py" line="238"/>
         <source>Create Review Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar Grade de Revisão</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createReviewGridAlgorithm.py" line="241"/>
         <source>Grid Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritimos de Grade</translation>
     </message>
 </context>
 <context>
@@ -7663,205 +7835,166 @@ Shift + clique esquerdo + arrastar do mouse: selecione um conjunto de pontos e d
 </context>
 <context>
     <name>ExtractElevationPoints</name>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="84"/>
         <source>Input DEM</source>
-        <translation type="unfinished"></translation>
+        <translation>MDE de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="90"/>
         <source>Contour Lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Curvas de nível</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="99"/>
         <source>Contour value field</source>
-        <translation type="unfinished">Campo de valor da cota</translation>
+        <translation>Campo de valor da cota</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="109"/>
         <source>Filter expression for contour that are depressions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Expressão de filtro para curvas de nível que representam depressões</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="119"/>
         <source>Contour interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervalo entre curvas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="128"/>
         <source>Geographic bounds layer</source>
-        <translation type="unfinished">Camada de limite geográfico</translation>
+        <translation>Camada de limite geográfico</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="178"/>
         <source>Scale</source>
-        <translation type="unfinished">Escala</translation>
+        <translation>Escala</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="184"/>
         <source>Water Bodies</source>
-        <translation type="unfinished"></translation>
+        <translation>Corpos d'água</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="192"/>
         <source>Area without information layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de área sem informação</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="201"/>
         <source>Drainage lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Linhas de drenagem</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="210"/>
         <source>Drainage name field</source>
-        <translation type="unfinished"></translation>
+        <translation>Campo de nome da drenagem</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="220"/>
         <source>Consider drainages without names</source>
-        <translation type="unfinished"></translation>
+        <translation>Considerar drenagens sem nome</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="228"/>
         <source>Roads</source>
-        <translation type="unfinished"></translation>
+        <translation>Vias</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="237"/>
         <source>Filter expression for main roads</source>
-        <translation type="unfinished"></translation>
+        <translation>Expressão de filtro para vias principais</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="246"/>
         <source>Filter expression for other roads</source>
-        <translation type="unfinished"></translation>
+        <translation>Expressão de filtro para outras vias</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="359"/>
         <source>Getting roads</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo vias</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="397"/>
         <source>Getting drainages</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo drenagens</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="442"/>
         <source>Evaluating region {currentStepInsideLoop-currentStep+1}/{nFeats}</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaliando região {currentStepInsideLoop-currentStep+1}/{nFeats}</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="515"/>
         <source>Clipping raster</source>
-        <translation type="unfinished"></translation>
+        <translation>Recortando raster</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="552"/>
         <source>Reading raster with numpy...</source>
-        <translation type="unfinished"></translation>
+        <translation>Lendo raster com numpy...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="598"/>
         <source>{self.currentStepText}: Running clip on area without information...</source>
-        <translation type="unfinished"></translation>
+        <translation>{self.currentStepText}: Recortando área sem informação...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="612"/>
         <source>{self.currentStepText}: Building masked raster...</source>
-        <translation type="unfinished"></translation>
+        <translation>{self.currentStepText}: Construindo raster mascarado...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="628"/>
         <source>Getting max min feats and building exclusion polygons...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo feições máximas/mínimas e construindo polígonos de exclusão...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="672"/>
         <source>Preparing contours...</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparando curvas de nível...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="695"/>
         <source>Getting elevation points from natural points...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontos cotados a partir de pontos naturais...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="732"/>
         <source>Getting elevation points from hilltops...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontos cotados a partir de topos de morro...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="771"/>
         <source>Getting elevation points from main road intersections...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontos cotados de interseções de vias principais...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="809"/>
         <source>Getting elevation points from other road intersections...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontos cotados de interseções de outras vias...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="847"/>
         <source>Getting elevation points from intersections of road and rivers with names outside polygons...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontos cotados de interseções entre vias e rios com nome fora dos polígonos...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="889"/>
         <source>Getting elevation points from intersections of road and rivers without names...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontos cotados de interseções entre vias e rios sem nome...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="975"/>
         <source>Getting elevation points from intersections of rivers with names...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontos cotados de interseções entre rios com nome...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="984"/>
         <source>Getting elevation points from intersections of rivers with and without names...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontos cotados de interseções entre rios com e sem nome...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="1027"/>
         <source>Getting elevation points from intersections of rivers without names...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontos cotados de interseções entre rios sem nome...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="1070"/>
         <source>Getting elevation points from plane areas...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontos cotados de áreas planas...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="1637"/>
         <source>Creating max feature list from pixel coordinates array...</source>
-        <translation type="unfinished"></translation>
+        <translation>Criando lista de feições máximas a partir de coordenadas de pixels...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="1710"/>
         <source>Creating min feature list from pixel coordinates array...</source>
-        <translation type="unfinished"></translation>
+        <translation>Criando lista de feições mínimas a partir de coordenadas de pixels...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="2134"/>
         <source>Finding hilltops...</source>
-        <translation type="unfinished"></translation>
+        <translation>Localizando topos de morro...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="2397"/>
         <source>Extract Spot Elevation</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrair Pontos Cotados</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="2400"/>
         <source>QA Tools: Terrain Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos de Terreno</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py" line="2406"/>
         <source>This algorithm extracts elevation points from DEM.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este algoritmo extrai pontos cotados a partir do MDE.</translation>
     </message>
 </context>
 <context>
@@ -10953,54 +11086,54 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
 <context>
     <name>IdentifyCountourStreamIntersectionAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="53"/>
-        <source>Drainage layer</source>
-        <translation>Layer de trecho de drenagem</translation>
-    </message>
-    <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="60"/>
-        <source>Contour levels layer</source>
-        <translation>Layer de curva de nível</translation>
+        <source>Drainage layer</source>
+        <translation>Camada de drenagem</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="105"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="66"/>
+        <source>Contour levels layer</source>
+        <translation>Camada de curvas de nível</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="71"/>
+        <source>Point Flags</source>
+        <translation>Flags de ponto</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="75"/>
+        <source>Line Flags</source>
+        <translation>Flags de linha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="96"/>
         <source>Verifying inconsistency</source>
         <translation>Verificando inconsistências</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="125"/>
-        <source>Doing spatial join</source>
-        <translation>Realizando spatial join</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="131"/>
-        <source>Finding flags</source>
-        <translation>Procurando por flags</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="68"/>
-        <source>Point Flags</source>
-        <translation type="unfinished">Flags do tipo ponto</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="72"/>
-        <source>Line Flags</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="109"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="99"/>
         <source>Building intermediary structures</source>
-        <translation type="unfinished"></translation>
+        <translation>Criando estruturas intermediárias</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="270"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="111"/>
+        <source>Doing spatial join</source>
+        <translation>Executando união espacial</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="115"/>
+        <source>Finding flags</source>
+        <translation>Localizando flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="224"/>
         <source>Identify Invalid Intersections Between Contour Lines and Drainage Lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Interseções Inválidas entre Curvas de Nível e Linhas de Drenagem</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="279"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="231"/>
         <source>QA Tools: Terrain Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos de Terreno</translation>
     </message>
 </context>
 <context>
@@ -11180,136 +11313,97 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
 <context>
     <name>IdentifyDrainageAndContourInconsistencies</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="55"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="58"/>
         <source>Input drainages</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de drenagens de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="64"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="65"/>
         <source>Input contours</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de curvas de nível de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="73"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="72"/>
         <source>Contour value field</source>
-        <translation type="unfinished">Campo de valor da cota</translation>
+        <translation>Campo de valor das curvas de nível</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="83"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="79"/>
         <source>Contour interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Equidistância das curvas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="93"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="86"/>
         <source>{0} Flags</source>
-        <translation type="unfinished">{0} Flags</translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="104"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="150"/>
         <source>This algorithm requires the Python networkx library. Please install this library and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este algoritmo requer a biblioteca Python networkx. Instale-a e tente novamente.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="116"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="172"/>
         <source>Building local caches and spatial indexes...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="164"/>
-        <source>Running line intersections...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="182"/>
-        <source>Building Intersection search structure...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo caches locais e índices espaciais...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="218"/>
-        <source>Finding continuity errors...</source>
-        <translation type="unfinished"></translation>
+        <source>Running line intersections...</source>
+        <translation>Executando interseções de linhas...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="227"/>
-        <source>Finding errors on confluence and ramifications...</source>
-        <translation type="unfinished"></translation>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="243"/>
+        <source>Building Intersection search structure...</source>
+        <translation>Construindo estrutura de busca de interseções...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="285"/>
-        <source>Drainage line going uphill. This drainage already intercepted countour with height {f2[contourAttr]} after intercepting contour with height {f1[contourAttr]}.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="289"/>
-        <source>Invalid intercection between drainage and contour lines. This drainage intercepted twice the countour with height {f2[contourAttr]}.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="293"/>
-        <source>Drainage line intercepted countour with height {f2[contourAttr]} after intercepting contour with height {f1[contourAttr]}. Since the contour interval is {contourInterval}, there are missing contours in this region. Check the contours for missing features.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="304"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="337"/>
         <source>Building Intersection search structure: Submitting features to thread...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estrutura de busca de interseções: Enviando feições para a thread...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="318"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="348"/>
         <source>Building Intersection search structure: Evaluating results...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estrutura de busca de interseções: Avaliando resultados...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="420"/>
-        <source>Drainage newtwork going uphill. This network branch has already intercepted countour with height {h2} after intercepting contour with height {h1}.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="424"/>
-        <source>Invalid intercection between drainage and contour lines. This network branch has already intercepted twice the countour with height {h2}.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="428"/>
-        <source>Drainage network intercepted countour with height {h2} after intercepting contour with height {h1}. Since the contour interval is {contourInterval}, there are missing contours in this region. Check the contours for missing features.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="439"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="506"/>
         <source>Finding continuity errors on graph: Submitting features to thread...</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscando erros de continuidade no grafo: Enviando feições para a thread...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="455"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="518"/>
         <source>Finding continuity errors on graph: Evaluating results...</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscando erros de continuidade no grafo: Avaliando resultados...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="529"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="726"/>
         <source>Drainage flow issue: All drainage lines are flowing {t}.</source>
-        <translation type="unfinished"></translation>
+        <translation>Problema de fluxo: Todas as linhas de drenagem estão fluindo para {t}.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="546"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="743"/>
         <source>Drainage encounter with different known height values: {h1} and {h2}.</source>
-        <translation type="unfinished"></translation>
+        <translation>Confluência de drenagens com diferentes cotas conhecidas: {h1} e {h2}.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="568"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="800"/>
         <source>Identify Drainage Flow and Contour Inconsistencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Inconsistências entre Drenagens e Curvas de Nível</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="575"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="808"/>
         <source>QA Tools: Terrain Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos de Terreno</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="588"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDrainageAndContourInconsistencies.py" line="820"/>
         <source>O algoritmo orderna ou direciona fluxo, como linhas de drenagem e confronta com as curvas de nível, verificando se as drenagens estão correndo de montante para jusante.</source>
-        <translation type="unfinished"></translation>
+        <translation>O algoritmo orderna ou direciona fluxo, como linhas de drenagem e confronta com as curvas de nível, verificando se as drenagens estão correndo de montante para jusante.</translation>
     </message>
 </context>
+
 <context>
     <name>IdentifyDrainageAngleIssues</name>
     <message>
@@ -11911,44 +12005,49 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
 <context>
     <name>IdentifyErrorsInContourAttributesAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="65"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="61"/>
         <source>Input Contours layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de curvas de nível de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="73"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="69"/>
         <source>Contour value field</source>
-        <translation type="unfinished">Campo de valor da cota</translation>
+        <translation>Campo de valor da cota</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="82"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="77"/>
         <source>Master contours expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Expressão para curvas mestras</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="102"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="87"/>
         <source>Scale</source>
-        <translation type="unfinished">Escala</translation>
+        <translation>Escala</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="107"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="93"/>
         <source>{0} Flags</source>
-        <translation type="unfinished">{0} Flags</translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="164"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="123"/>
+        <source>invalid expression</source>
+        <translation>expressão inválida</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="151"/>
         <source>Contour with height {feat[heightFieldName]} has invalid index (attributes: {attrDict})</source>
-        <translation type="unfinished"></translation>
+        <translation>Curva com cota {feat[heightFieldName]} possui índice inválido (atributos: {attrDict})</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="188"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="173"/>
         <source>Identify Errors In Contour Attributes Algorithm</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmo de Identificação de Erros nos Atributos das Curvas de Nível</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="195"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyErrorsInContourAttributesAlgorithm.py" line="180"/>
         <source>QA Tools: Terrain Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos de Terreno</translation>
     </message>
 </context>
 <context>
@@ -13313,6 +13412,11 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
 <context>
     <name>IdentifyTerrainModelErrorsAlgorithm</name>
     <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="68"/>
+        <source>Input contour layer</source>
+        <translation>Camada de curvas de nível de entrada</translation>
+    </message>
+    <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="76"/>
         <source>Process only selected features</source>
         <translation>Processar apenas feições selecionadas</translation>
@@ -13321,6 +13425,21 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="81"/>
         <source>Contour value field</source>
         <translation>Campo de valor da cota</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="90"/>
+        <source>Filter expression for contour that are depressions.</source>
+        <translation>Expressão de filtro para curvas que são depressões</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="99"/>
+        <source>Input spot elevation layer</source>
+        <translation>Camada de pontos cotados de entrada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="107"/>
+        <source>Spot elevation height value field</source>
+        <translation>Campo de valor de altitude dos pontos cotados</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="117"/>
@@ -13333,6 +13452,11 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <translation>Camada de limite geográfico</translation>
     </message>
     <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="131"/>
+        <source>Run algorithmn grouping by spatial partition</source>
+        <translation>Executar algoritmo agrupando por partições espaciais</translation>
+    </message>
+    <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="137"/>
         <source>{0} Point Flags</source>
         <translation>{0} Flags do tipo ponto</translation>
@@ -13343,69 +13467,44 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <translation>{0} Flags do tipo linha</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="473"/>
-        <source>Identify Terrain Model Errors Algorithm</source>
-        <translation>Algoritmo de Identificação de Erros na Modelagem do Terreno</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="68"/>
-        <source>Input contour layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="90"/>
-        <source>Filter expression for contour that are depressions.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="99"/>
-        <source>Input spot elevation layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="107"/>
-        <source>Spot elevation height value field</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="131"/>
-        <source>Run algorithmn grouping by spatial partition</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="147"/>
         <source>{0} Polygon Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags do tipo polígono</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="196"/>
         <source>Spot elevation height attribute must be selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>O campo de altitude dos pontos cotados deve ser selecionado.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="339"/>
         <source>Splitting geographic bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividindo os limites geográficos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="401"/>
         <source>Submitting terrain model problem identification by region tasks to thread...</source>
-        <translation type="unfinished"></translation>
+        <translation>Enviando tarefas de identificação de problemas no modelo de terreno por região para a thread...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="417"/>
         <source>Evaluating results...</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaliando resultados...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="423"/>
         <source>Identification of region {current+1}/{nRegions} is done.</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificação da região {current+1}/{nRegions} concluída.</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="473"/>
+        <source>Identify Terrain Model Errors Algorithm</source>
+        <translation>Algoritmo de Identificação de Erros no Modelo de Terreno</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py" line="480"/>
         <source>QA Tools: Terrain Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos de Terreno</translation>
     </message>
 </context>
 <context>
@@ -13722,59 +13821,48 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
 <context>
     <name>IdentifyWaterBodyAndContourInconsistencies</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="59"/>
         <source>Input water bodies</source>
-        <translation type="unfinished"></translation>
+        <translation>Massas d'água de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="69"/>
         <source>Input contours</source>
-        <translation type="unfinished"></translation>
+        <translation>Curvas de nível de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="79"/>
         <source>Contour value field</source>
-        <translation type="unfinished">Campo de valor da cota</translation>
+        <translation>Campo de valor da curva</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="89"/>
-        <source>Filter expression for cotours inside water bodies</source>
-        <translation type="unfinished"></translation>
+        <source>Filter expression for contours inside water bodies</source>
+        <translation>Expressão de filtro para curvas dentro das massas d'água</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="98"/>
         <source>Dam Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de barragens</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="108"/>
         <source>{0} Flags</source>
-        <translation type="unfinished">{0} Flags</translation>
+        <translation>Bandeiras de {0}</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="159"/>
         <source>Contours with attribute inside water body that do not intersect a water body</source>
-        <translation type="unfinished"></translation>
+        <translation>Curvas com atributo dentro de massa d'água que não intersectam uma massa d'água</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="206"/>
         <source>Contours with attribute outside water body that intersect a water body</source>
-        <translation type="unfinished"></translation>
+        <translation>Curvas com atributo fora da massa d'água que intersectam uma massa d'água</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="247"/>
         <source>Identify Water Bodies and Contour Inconsistencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Inconsistências entre Massas d'Água e Curvas de Nível</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="254"/>
         <source>QA Tools: Terrain Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos do Terreno</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="267"/>
-        <source>O algoritmo confronta massas d&apos;água com as curvas de nível, verificando se uma curva intersecta mais de uma vez uma curva de nível.</source>
-        <translation type="unfinished"></translation>
+        <source>O algoritmo confronta massas d'água com as curvas de nível, verificando se uma curva intersecta mais de uma vez uma curva de nível.</source>
+        <translation>O algoritmo confronta massas d'água com as curvas de nível, verificando se há inconsistências topológicas.</translation>
     </message>
 </context>
 <context>
@@ -20973,51 +21061,52 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
 </context>
 <context>
     <name>SplitContoursAtMaximumLengthAlgorithm</name>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/splitContoursAtMaximumLengthAlgorithm.py" line="53"/>
         <source>Input contour layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de curvas de nível de entrada</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/splitContoursAtMaximumLengthAlgorithm.py" line="61"/>
         <source>Process only selected features</source>
-        <translation type="unfinished">Processar apenas feições selecionadas</translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/splitContoursAtMaximumLengthAlgorithm.py" line="66"/>
         <source>Maximum length</source>
-        <translation type="unfinished"></translation>
+        <translation>Comprimento máximo</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/splitContoursAtMaximumLengthAlgorithm.py" line="90"/>
         <source>Empty input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada vazia</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/splitContoursAtMaximumLengthAlgorithm.py" line="116"/>
         <source>Populating temp layer...</source>
-        <translation type="unfinished">Populando camada temporária...</translation>
+        <translation>Preenchendo camada temporária...</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/splitContoursAtMaximumLengthAlgorithm.py" line="124"/>
         <source>Running split lines...</source>
-        <translation type="unfinished"></translation>
+        <translation>Executando divisão de linhas...</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/splitContoursAtMaximumLengthAlgorithm.py" line="132"/>
         <source>Updating original layer...</source>
-        <translation type="unfinished">Atualizando a camada originais...</translation>
+        <translation>Atualizando camada original...</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/splitContoursAtMaximumLengthAlgorithm.py" line="155"/>
         <source>Split Contours at Maximum Length Algorithm</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividir Curvas de Nível pelo Comprimento Máximo</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/splitContoursAtMaximumLengthAlgorithm.py" line="158"/>
         <source>QA Tools: Terrain Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos de Terreno</translation>
     </message>
+
 </context>
 <context>
     <name>SplitLinesAtMaximumLengthAlgorithm</name>
@@ -21846,37 +21935,37 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="90"/>
         <source>Geographic Bounds Layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="257"/>
-        <source>Running clean...</source>
-        <translation type="unfinished">Executando a Limpeza Geométrica...</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="270"/>
-        <source>Running douglas peucker on unified layer...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="284"/>
-        <source>Merging lines...</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de Limite Geográfico</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="244"/>
         <source>Applying spatial constraint...</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicando restrição espacial...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="257"/>
+        <source>Running clean...</source>
+        <translation>Executando a limpeza geométrica...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="270"/>
+        <source>Running douglas peucker on unified layer...</source>
+        <translation>Executando Douglas-Peucker na camada unificada...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="284"/>
+        <source>Merging lines...</source>
+        <translation>Mesclando linhas...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="308"/>
         <source>Integrating results inside and outside geographic bounds...</source>
-        <translation type="unfinished"></translation>
+        <translation>Integrando resultados dentro e fora dos limites geográficos...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="401"/>
         <source>QA Tools: Topological Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos Topológicos</translation>
     </message>
 </context>
 <context>
