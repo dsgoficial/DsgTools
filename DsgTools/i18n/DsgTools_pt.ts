@@ -244,7 +244,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../core/Factories/DbFactory/abstractDb.py" line="148"/>
         <source>Unable to read table {0}. Error message: &apos;{1}&apos;</source>
-        <translation>Incapaz de ler a tabela {0}. Mensagem de erro: '{1}'</translation>
+        <translation>Incapaz de ler a tabela {0}. Mensagem de erro: &apos;{1}&apos;</translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/abstractDb.py" line="1064"/>
@@ -2392,7 +2392,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="378"/>
         <source>&apos;{0}&apos; is an invalid value for field {1}. (Is the layer style generated from the current data model?</source>
-        <translation>'{0}' é um valor inválido para o atributo {1}. (O estilo da camada foi gerado a partir do modelo de dados atual?</translation>
+        <translation>&apos;{0}&apos; é um valor inválido para o atributo {1}. (O estilo da camada foi gerado a partir do modelo de dados atual?</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="383"/>
@@ -3835,57 +3835,57 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="60"/>
         <source>Min x coordinates</source>
-        <translation type="unfinished"></translation>
+        <translation>Coordenada X mínima do canto inferior esquerdo da grade</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="69"/>
         <source>Min y coordinates</source>
-        <translation type="unfinished"></translation>
+        <translation>Coordenada Y mínima do canto inferior esquerdo da grade</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="78"/>
         <source>Max x coordinates</source>
-        <translation type="unfinished"></translation>
+        <translation>Coordenada X máxima do canto superior direito da grade</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="87"/>
         <source>Max y coordinates</source>
-        <translation type="unfinished"></translation>
+        <translation>Coordenada Y máxima do canto superior direito da grade</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="96"/>
         <source>Number of subdivisions on x</source>
-        <translation type="unfinished"></translation>
+        <translation>Quantidade de colunas (tiles) ao longo do eixo X</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="106"/>
         <source>Number of subdivisions on y</source>
-        <translation type="unfinished"></translation>
+        <translation>Quantidade de linhas (tiles) ao longo do eixo Y</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="116"/>
         <source>CRS</source>
-        <translation type="unfinished">SRC</translation>
+        <translation>Sistema de Referência de Coordenadas da grade</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="118"/>
         <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Saída vetorial com feições poligonais</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="138"/>
         <source>Invalid CRS.</source>
-        <translation type="unfinished">SRC inválido.</translation>
+        <translation>SRC inválido.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="184"/>
         <source>Create Grid From Coordinates</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar Grade a partir de Coordenadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py" line="191"/>
         <source>Grid Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Grade</translation>
     </message>
 </context>
 <context>
@@ -4770,13 +4770,13 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="305"/>
         <source>Remove model &apos;{modelName}&apos;?</source>
-        <translation>Remover modelo '{modelName}'?</translation>
+        <translation>Remover modelo &apos;{modelName}&apos;?</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="315"/>
         <source>Unable to remove &apos;{model}&apos;:
 {error}.</source>
-        <translation>Impossível de remover '{model}':
+        <translation>Impossível de remover &apos;{model}&apos;:
 {error}.</translation>
     </message>
     <message>
@@ -5170,7 +5170,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="896"/>
         <source>Dataset conversion has failed: &apos;{0}&apos;</source>
-        <translation>Conversão falhou: '{0}'</translation>
+        <translation>Conversão falhou: &apos;{0}&apos;</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="803"/>
@@ -5354,7 +5354,7 @@ Passo de conversão {0} iniciado...
         <location filename="../core/DbTools/dbConverter.py" line="798"/>
         <source>Dataset creation error ({0}): &apos;{1}&apos;
 </source>
-        <translation>Erro de criação de fonte de dados ({0}): '{1}'
+        <translation>Erro de criação de fonte de dados ({0}): &apos;{1}&apos;
 </translation>
     </message>
     <message>
@@ -6131,11 +6131,6 @@ Mensagens de erro para cada perfil foram geradas no log do QGIS.</translation>
         <location filename="../gui/ServerTools/ui_serverDBExplorer.ui" line="29"/>
         <source>Remove Connections to Missing Databases</source>
         <translation>Remover conexões para bancos de dados faltantes</translation>
-    </message>
-    <message>
-        <location filename="../gui/ServerTools/ui_viewServers.ui" line="17"/>
-        <source>Configure Servers</source>
-        <translation>Configurar servidores</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_profile.ui" line="49"/>
@@ -7108,7 +7103,7 @@ Shift + clique esquerdo + arrastar do mouse: selecione um conjunto de pontos e d
     <message>
         <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="142"/>
         <source>Type in a DE-9IM as &apos;T*F0*F21*&apos;...</source>
-        <translation>Digite um DE-9IM como 'T * F0 * F21 *' ...</translation>
+        <translation>Digite um DE-9IM como &apos;T * F0 * F21 *&apos; ...</translation>
     </message>
     <message>
         <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="345"/>
@@ -7946,7 +7941,7 @@ Shift + clique esquerdo + arrastar do mouse: selecione um conjunto de pontos e d
     <message>
         <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="157"/>
         <source>Missing connection schema (e.g.&apos;http&apos;, etc).</source>
-        <translation>Esquema de conexão ausente (por exemplo 'http', etc).</translation>
+        <translation>Esquema de conexão ausente (por exemplo &apos;http&apos;, etc).</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="163"/>
@@ -9042,7 +9037,7 @@ Reshapes polygon or line features from mouse movement.</source>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeEdificationsAlgorithm.py" line="206"/>
-        <source>Análise 'alta prioridade - alta prioridade' completa...</source>
+        <source>Análise &apos;alta prioridade - alta prioridade&apos; completa...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9057,7 +9052,7 @@ Reshapes polygon or line features from mouse movement.</source>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeEdificationsAlgorithm.py" line="280"/>
-        <source>Chamando a função 'compute' para rodar em paralelo...</source>
+        <source>Chamando a função &apos;compute&apos; para rodar em paralelo...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9263,7 +9258,7 @@ Reshapes polygon or line features from mouse movement.</source>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeLandingStrip.py" line="90"/>
-        <source>valor da suavização do 'simplify'</source>
+        <source>valor da suavização do &apos;simplify&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9273,12 +9268,12 @@ Reshapes polygon or line features from mouse movement.</source>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeLandingStrip.py" line="141"/>
-        <source>Iniciando atribuição 'id' às feições da camada...</source>
+        <source>Iniciando atribuição &apos;id&apos; às feições da camada...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeLandingStrip.py" line="147"/>
-        <source>Atribuição de 'id' às feições da camada completa...</source>
+        <source>Atribuição de &apos;id&apos; às feições da camada completa...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9347,7 +9342,7 @@ Reshapes polygon or line features from mouse movement.</source>
 Se a área da pista de pouso for menor que a mínima ou sua largura for menor que a mínima, o algoritmo cria uma linha centra para representar a pista de pouso e elimina o polígono da camada de polígonos original.
  A camada de output são as linhas criadas correspondentes às respectivas pistas de pouso.
 Obs.1: Os parâmetros de área e largura têm unidade de medida correspondente às unidades da camada de entrada. Assim, se a camada tem uma projeção métrica, os valores de largura e área serão recebidos pelo algoritmo em metros e metros quadrados, respectivamente.
-Obs.2: O valor default da suavização do 'simplify' corresponde a uma projeção geográfica (unidades em graus). Para um sistema de referência métrico, valor de suavização deve ser corrigido, sendo multiplicado por um valor na ordem de grandeza de 10^5.</source>
+Obs.2: O valor default da suavização do &apos;simplify&apos; corresponde a uma projeção geográfica (unidades em graus). Para um sistema de referência métrico, valor de suavização deve ser corrigido, sendo multiplicado por um valor na ordem de grandeza de 10^5.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9861,13 +9856,13 @@ Obs.2: O valor default da suavização do 'simplify' corresponde a uma projeçã
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeWaterBodyAlgorithm.py" line="975"/>
-        <source>Generaliza massas d'água, ilhas, trechos de drenagem e barragens.
-Flow types expression: Escolha os números relacionados aos rios que possuem fluxo na tabela de atributos. Exemplo: 'tipo in (1,2,9,10)'.
-Scale: Escolha a escala desejada. Exemplo: '50' para 50k.
-Minimum waterbody width tolerance: Escolha o comprimento mínimo da massa d'água em graus. Exemplo: '0,000008' para 0,8mm.
-Minimum waterbody area tolerance: Escolha a área mínima da massa d'água em graus quadrados. Exemplo: '0,0000000004' para 4mm².
-Minimum island area tolerance: Escolha a área mínima da ilha em graus quadrados. Exemplo: '0,0000000004' para 4mm².
-Minimum drainage line width tolerance: Escolha o comprimento mínimo do trecho de drenagem em graus. Exemplo: '0,000008' para 0,8mm.
+        <source>Generaliza massas d&apos;água, ilhas, trechos de drenagem e barragens.
+Flow types expression: Escolha os números relacionados aos rios que possuem fluxo na tabela de atributos. Exemplo: &apos;tipo in (1,2,9,10)&apos;.
+Scale: Escolha a escala desejada. Exemplo: &apos;50&apos; para 50k.
+Minimum waterbody width tolerance: Escolha o comprimento mínimo da massa d&apos;água em graus. Exemplo: &apos;0,000008&apos; para 0,8mm.
+Minimum waterbody area tolerance: Escolha a área mínima da massa d&apos;água em graus quadrados. Exemplo: &apos;0,0000000004&apos; para 4mm².
+Minimum island area tolerance: Escolha a área mínima da ilha em graus quadrados. Exemplo: &apos;0,0000000004&apos; para 4mm².
+Minimum drainage line width tolerance: Escolha o comprimento mínimo do trecho de drenagem em graus. Exemplo: &apos;0,000008&apos; para 0,8mm.
 Select field from Drainage Lines to classify outside polygons: Escolha a coluna da tabela de atributos relacionada à situação da linha de drenagem dentro do polígono para alterá-la para fora do polígono.
 Value for outside polygon: Escolha ovalor númerico úmero relacionado à coluna escolhida anteriormente que se refere aos elementos fora do polígono.
 Value for secondary lines (inside polygons): Escolha o valor relacionado à coluna escolhida anteriormente que se refere aos elementos dentro dos polígonos (linhas de drenagem secundárias).
@@ -13721,7 +13716,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py" line="267"/>
-        <source>O algoritmo confronta massas d'água com as curvas de nível, verificando se uma curva intersecta mais de uma vez uma curva de nível.</source>
+        <source>O algoritmo confronta massas d&apos;água com as curvas de nível, verificando se uma curva intersecta mais de uma vez uma curva de nível.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -15035,7 +15030,7 @@ camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="470"/>
         <source>The field: &apos;nome&apos; must be filled in all rows. Please, check and try again.</source>
-        <translation>O campo 'nome' precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
+        <translation>O campo &apos;nome&apos; precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="492"/>
@@ -15605,7 +15600,7 @@ Usuários com erro:</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="154"/>
         <source>Testing {alg}&apos;s...</source>
-        <translation>Testando {alg}'s...</translation>
+        <translation>Testando {alg}&apos;s...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="163"/>
@@ -15678,7 +15673,7 @@ Usuários com erro:</translation>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="88"/>
         <source>Node Next to Water Body</source>
-        <translation>Nó próximo a corpo d'água</translation>
+        <translation>Nó próximo a corpo d&apos;água</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="89"/>
@@ -17686,12 +17681,12 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="1005"/>
         <source>Unable to load {0}. Error message: &apos;{1}&apos;</source>
-        <translation>Não foi possível carregar {0}. Mensagem de erro: '{1}'</translation>
+        <translation>Não foi possível carregar {0}. Mensagem de erro: &apos;{1}&apos;</translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="1036"/>
         <source>Unable to load &apos;{0}&apos;. User &apos;{1}&apos; has insufficient privileges.</source>
-        <translation>Não foi possível carregar '{0}'. O usuário '{1}' tem privilégios insuficientes.</translation>
+        <translation>Não foi possível carregar &apos;{0}&apos;. O usuário &apos;{1}&apos; tem privilégios insuficientes.</translation>
     </message>
 </context>
 <context>
@@ -19093,12 +19088,12 @@ Usuários com erro:</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="92"/>
         <source>Unable to get the routine&apos;s output from FME Manager: &apos;{0}&apos;</source>
-        <translation>Não foi possível obter a saída da rotina do FME Manager: '{0}'</translation>
+        <translation>Não foi possível obter a saída da rotina do FME Manager: &apos;{0}&apos;</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="141"/>
         <source>Unable to send processing request to FME Manager: &apos;{0}&apos;</source>
-        <translation>Não foi possível enviar a solicitação de processamento para o Gerente FME: '{0}'</translation>
+        <translation>Não foi possível enviar a solicitação de processamento para o Gerente FME: &apos;{0}&apos;</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="190"/>
@@ -19846,7 +19841,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/Factories/DbFactory/shapefileDb.py" line="496"/>
         <source>Unable to locate file &apos;[SCHEMA]_{}.shp&apos;.</source>
-        <translation>Não foi possível localizar o arquivo '[ESQUEMA]_{}.shp'.</translation>
+        <translation>Não foi possível localizar o arquivo &apos;[ESQUEMA]_{}.shp&apos;.</translation>
     </message>
 </context>
 <context>
@@ -19941,7 +19936,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="183"/>
         <source>Testing {alg}&apos;s...</source>
-        <translation>Testando {alg}'s...</translation>
+        <translation>Testando {alg}&apos;s...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="188"/>
@@ -20533,7 +20528,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1516"/>
         <source>feature ID {{fid_a}} from {layer_a} has {{size}} occurrences using the DE-9IM mask &apos;{mask}&apos; when compared to layer {layer_b}</source>
-        <translation>o ID da feição {{fid_a}} de {layer_a} tem {{size}} ocorrências usando a máscara DE-9IM '{mask}' em comparação com a camada {layer_b}</translation>
+        <translation>o ID da feição {{fid_a}} de {layer_a} tem {{size}} ocorrências usando a máscara DE-9IM &apos;{mask}&apos; em comparação com a camada {layer_b}</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1641"/>
@@ -20591,17 +20586,17 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="2130"/>
         <source>&apos;{val}&apos; is an invalid value for property &apos;{prop}&apos;</source>
-        <translation>'{val}' é um valor inválido para a propriedade '{prop}'</translation>
+        <translation>&apos;{val}&apos; é um valor inválido para a propriedade &apos;{prop}&apos;</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="2136"/>
         <source>&apos;{0}&apos; is not a valid DE-9IM mask</source>
-        <translation>'{0}' não é um formato DE-9IM válido&quot;</translation>
+        <translation>&apos;{0}&apos; não é um formato DE-9IM válido&quot;</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="2137"/>
         <source>&apos;{0}&apos; is not a valid predicate</source>
-        <translation>{0}' não é um predicado válido</translation>
+        <translation>{0}&apos; não é um predicado válido</translation>
     </message>
 </context>
 <context>
@@ -22436,7 +22431,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="840"/>
         <source>workflow &apos;{path}&apos; was not imported: &apos;{msg}&apos;</source>
-        <translation>fluxo de trbalho '{path}' não foi importado: '{msg}'</translation>
+        <translation>fluxo de trbalho &apos;{path}&apos; não foi importado: &apos;{msg}&apos;</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.py" line="864"/>
@@ -22691,7 +22686,7 @@ Last modification: {metadata.lastModified}</source>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowSetupDialog.py" line="724"/>
         <source>Unable to export workflow to &apos;{fp}&apos; ({error}).</source>
-        <translation>Impossível exportar o fluxo de trabalho para '{fp}' ({error}).</translation>
+        <translation>Impossível exportar o fluxo de trabalho para &apos;{fp}&apos; ({error}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowSetupDialog.py" line="683"/>
@@ -22701,7 +22696,7 @@ Last modification: {metadata.lastModified}</source>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowSetupDialog.py" line="683"/>
         <source>Unable to export workflow to &apos;{fp}&apos;</source>
-        <translation>Impossível exportar o fluxo de trabalho para '{fp}'</translation>
+        <translation>Impossível exportar o fluxo de trabalho para &apos;{fp}&apos;</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowSetupDialog.py" line="714"/>
@@ -22721,7 +22716,7 @@ Last modification: {metadata.lastModified}</source>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowSetupDialog.py" line="733"/>
         <source>Workflow &apos;{fp}&apos; imported!</source>
-        <translation>Fluxo de trabalho '{fp}' importado com sucesso!</translation>
+        <translation>Fluxo de trabalho &apos;{fp}&apos; importado com sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowSetupDialog.py" line="110"/>
