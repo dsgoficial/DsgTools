@@ -7566,44 +7566,45 @@ Shift + clique esquerdo + arrastar do mouse: selecione um conjunto de pontos e d
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/extendLinesToGeographicBoundsAlgorithm.py" line="52"/>
         <source>Input layer</source>
-        <translation type="unfinished">Camada de entrada</translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/extendLinesToGeographicBoundsAlgorithm.py" line="59"/>
         <source>Process only selected features</source>
-        <translation type="unfinished">Processar apenas feições selecionadas</translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/extendLinesToGeographicBoundsAlgorithm.py" line="65"/>
         <source>Geographic bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite geográfico</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/extendLinesToGeographicBoundsAlgorithm.py" line="74"/>
         <source>Extend length</source>
-        <translation type="unfinished"></translation>
+        <translation>Comprimento de extensão</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/extendLinesToGeographicBoundsAlgorithm.py" line="111"/>
         <source>Creating aux structure...</source>
-        <translation type="unfinished"></translation>
+        <translation>Criando estrutura auxiliar...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/extendLinesToGeographicBoundsAlgorithm.py" line="157"/>
         <source>Updating original layer...</source>
-        <translation type="unfinished">Atualizando a camada originais...</translation>
+        <translation>Atualizando a camada original...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/extendLinesToGeographicBoundsAlgorithm.py" line="292"/>
         <source>Extend Lines To Geographic Bounds Algorithm</source>
-        <translation type="unfinished"></translation>
+        <translation>Estender Linhas até o Limite Geográfico</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/extendLinesToGeographicBoundsAlgorithm.py" line="299"/>
         <source>QA Tools: Line Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processamento de Linhas</translation>
     </message>
 </context>
+
 <context>
     <name>ExternalFileDownloadProcessor</name>
     <message>
@@ -8292,7 +8293,7 @@ Shift + clique esquerdo + arrastar do mouse: selecione um conjunto de pontos e d
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/findSmallClosedLinesAlgorithm.py" line="220"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
 </context>
 <context>
@@ -9103,7 +9104,7 @@ Reshapes polygon or line features from mouse movement.</source>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeEdificationsAlgorithm.py" line="390"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeEdificationsAlgorithm.py" line="399"/>
@@ -9163,7 +9164,7 @@ Reshapes polygon or line features from mouse movement.</source>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeEdificationsAreaAlgorithm.py" line="174"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeEdificationsAreaAlgorithm.py" line="183"/>
@@ -9236,7 +9237,7 @@ Reshapes polygon or line features from mouse movement.</source>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeHighwaysAlgorithm.py" line="181"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
 </context>
 <context>
@@ -9344,7 +9345,7 @@ Reshapes polygon or line features from mouse movement.</source>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeLandingStrip.py" line="356"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeLandingStrip.py" line="365"/>
@@ -9358,127 +9359,152 @@ Obs.2: O valor default da suavização do &apos;simplify&apos; corresponde a uma
 </context>
 <context>
     <name>GeneralizeNetworkEdgesWithLengthAlgorithm</name>
+    
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="66"/>
         <source>Network layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de rede</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="73"/>
+        <location filename="...line=73"/>
         <source>Minimum size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho mínimo</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="82"/>
+        <location filename="...line=82"/>
         <source>Point constraint Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas de restrição (ponto)</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="90"/>
+        <location filename="...line=90"/>
         <source>Line constraint Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas de restrição (linha)</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="98"/>
+        <location filename="...line=98"/>
         <source>Polygon constraint Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas de restrição (polígono)</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="106"/>
+        <location filename="...line=106"/>
         <source>Reference layer</source>
-        <translation type="unfinished">Camada de referência</translation>
+        <translation>Camada de referência</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="114"/>
+        <location filename="...line=114"/>
         <source>Run algothimn grouping by spatial partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Executar agrupando por partição espacial</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="127"/>
+        <location filename="...line=127"/>
         <source>Remove features from input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover feições da camada de entrada</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="128"/>
+        <location filename="...line=128"/>
         <source>Modify current selection by creating new selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Modificar a seleção atual criando nova seleção</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="129"/>
+        <location filename="...line=129"/>
         <source>Modify current selection by adding to current selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar à seleção atual</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="130"/>
+        <location filename="...line=130"/>
         <source>Modify current selection by selecting within current selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar dentro da seleção atual</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="131"/>
+        <location filename="...line=131"/>
         <source>Modify current selection by removing from current selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover da seleção atual</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="134"/>
+        <location filename="...line=134"/>
         <source>Method</source>
-        <translation type="unfinished"></translation>
+        <translation>Método</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="147"/>
+        <location filename="...line=147"/>
         <source>This algorithm requires the Python networkx library. Please install this library and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este algoritmo requer a biblioteca Python networkx. Por favor, instale essa biblioteca e tente novamente.</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="181"/>
+        <location filename="...line=181"/>
         <source>Building aux structures</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estruturas auxiliares</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="280"/>
+        <location filename="...line=280"/>
         <source>Splitting geographic bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividindo os limites geográficos</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="293"/>
+        <location filename="...line=293"/>
         <source>Submitting tasks to thread...</source>
-        <translation type="unfinished"></translation>
+        <translation>Enviando tarefas para os threads...</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="305"/>
+        <location filename="...line=305"/>
         <source>Evaluating results...</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaliando resultados...</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="321"/>
+        <location filename="...line=321"/>
         <source>Deleting features</source>
-        <translation type="unfinished"></translation>
+        <translation>Removendo feições</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="348"/>
+        <location filename="...line=348"/>
         <source>Building graph aux structures</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estruturas auxiliares do grafo</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="368"/>
+        <location filename="...line=368"/>
         <source>Getting constraint points</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontos de restrição</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="383"/>
+        <location filename="...line=383"/>
         <source>Applying algorithm heurisic</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicando heurística do algoritmo</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="493"/>
+        <location filename="...line=493"/>
         <source>Generalize Network Edges With Length Algorithm</source>
-        <translation type="unfinished"></translation>
+        <translation>Generalizar Arestas da Rede por Comprimento</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="500"/>
+        <location filename="...line=500"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
 </context>
+
 <context>
     <name>GeneralizeRoundaboutsAlgorithm</name>
     <message>
@@ -9519,7 +9545,7 @@ Obs.2: O valor default da suavização do &apos;simplify&apos; corresponde a uma
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeRoundaboutsAlgorithm.py" line="136"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
 </context>
 <context>
@@ -9862,7 +9888,7 @@ Obs.2: O valor default da suavização do &apos;simplify&apos; corresponde a uma
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeWaterBodyAlgorithm.py" line="969"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeWaterBodyAlgorithm.py" line="975"/>
@@ -13437,107 +13463,128 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
 </context>
 <context>
     <name>IdentifyUnmergedLinesWithSameAttributeSetAlgorithm</name>
+
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="65"/>
         <source>Input layer</source>
-        <translation type="unfinished">Camada de entrada</translation>
+        <translation>Camada de entrada</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="74"/>
+        <location line="74"/>
         <source>Process only selected features</source>
-        <translation type="unfinished">Processar apenas feições selecionadas</translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="79"/>
+        <location line="79"/>
         <source>Fields to ignore</source>
-        <translation type="unfinished">Campos à ignorar</translation>
+        <translation>Campos a ignorar</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="90"/>
+        <location line="90"/>
         <source>Ignore virtual fields</source>
-        <translation type="unfinished">Ignorar campos virtuais</translation>
+        <translation>Ignorar campos virtuais</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="97"/>
+        <location line="97"/>
         <source>Ignore primary key fields</source>
-        <translation type="unfinished">Ignorar campos de chaves primárias</translation>
+        <translation>Ignorar campos de chave primária</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="104"/>
+        <location line="104"/>
         <source>Point Filter Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas de filtro de ponto</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="112"/>
+        <location line="112"/>
         <source>Line Filter Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas de filtro de linha</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="120"/>
+        <location line="120"/>
         <source>{0} Flags</source>
-        <translation type="unfinished">{0} Flags</translation>
+        <translation>{0} Sinalizações</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="133"/>
+        <location line="133"/>
         <source>This algorithm requires the Python networkx library. Please install this library and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este algoritmo requer a biblioteca Python networkx. Por favor, instale esta biblioteca e tente novamente.</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="167"/>
+        <location line="167"/>
         <source>Building local cache on input layer...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo cache local na camada de entrada...</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="200"/>
+        <location line="200"/>
         <source>Building graph aux structures</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estruturas auxiliares de grafo</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="219"/>
+        <location line="219"/>
         <source>Finding mergeable edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Procurando segmentos que podem ser unidos</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="230"/>
+        <location line="230"/>
         <source>Building aux structure on input point list...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estrutura auxiliar na lista de pontos de entrada...</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="243"/>
+        <location line="243"/>
         <source>Building aux structure on input line list...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estrutura auxiliar na lista de linhas de entrada...</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="283"/>
+        <location line="283"/>
         <source>Submitting identification tasks to thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Enviando tarefas de identificação para o processo paralelo</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="294"/>
+        <location line="294"/>
         <source>Evaluating results</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaliando os resultados</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="307"/>
+        <location line="307"/>
         <source>Lines with same attribute set that are not merged.</source>
-        <translation type="unfinished"></translation>
+        <translation>Linhas com mesmo conjunto de atributos que não estão unidas.</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="314"/>
+        <location line="314"/>
         <source>Raising flags</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcando sinalizações</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="333"/>
+        <location line="333"/>
         <source>Identify Unmerged Lines With Same Attribute Set</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Linhas Não Unificadas com o Mesmo Conjunto de Atributos</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="340"/>
+        <location line="340"/>
         <source>QA Tools: Line Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Manipulação de Linhas</translation>
     </message>
 </context>
+
 <context>
     <name>IdentifyUnsharedVertexOnIntersectionsAlgorithm</name>
     <message>
@@ -15276,7 +15323,7 @@ Usuários com erro:</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="72"/>
         <source>Fields to ignore</source>
-        <translation>Campos à ignorar</translation>
+        <translation>Campos a ignorar</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="83"/>
@@ -15289,81 +15336,82 @@ Usuários com erro:</translation>
         <translation>Ignorar campos de chaves primárias</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="408"/>
-        <source>Merge lines with same attribute set</source>
-        <translation>Unir Linhas com Mesmo Conjunto de Atributos</translation>
-    </message>
-    <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="97"/>
         <source>Allow closed lines on output</source>
-        <translation type="unfinished"></translation>
+        <translation>Permitir linhas fechadas na saída</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="104"/>
         <source>Point Filter Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas de filtro de pontos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="112"/>
         <source>Line Filter Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas de filtro de linhas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="120"/>
         <source>Geographic Boundary</source>
-        <translation type="unfinished">Limite geográfico</translation>
+        <translation>Limite geográfico</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="136"/>
         <source>This algorithm requires the Python networkx library. Please install this library and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este algoritmo requer a biblioteca Python networkx. Instale esta biblioteca e tente novamente.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="173"/>
         <source>Building aux structures</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estruturas auxiliares</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="220"/>
         <source>Building graph aux structures</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estruturas auxiliares de grafo</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="243"/>
         <source>Identifying constraint nodes from point layers...</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificando nós restritivos a partir das camadas de pontos...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="274"/>
         <source>Identifying constraint nodes from line layers...</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificando nós restritivos a partir das camadas de linhas...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="319"/>
         <source>Finding mergeable edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Procurando arestas passíveis de união</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="357"/>
         <source>Submitting merge task to thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Enviando tarefa de união para thread</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="366"/>
         <source>Evaluating results</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaliando resultados</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="378"/>
         <source>Saving changes on input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvando alterações na camada de entrada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="408"/>
+        <source>Merge lines with same attribute set</source>
+        <translation>Unir linhas com mesmo conjunto de atributos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="415"/>
         <source>QA Tools: Line Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Manipulação de Linhas</translation>
     </message>
 </context>
+
 <context>
     <name>MessageRaiser</name>
     <message>
@@ -18122,7 +18170,7 @@ Usuários com erro:</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyPixelsToNearestNeighborAlgorithm.py" line="147"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
 </context>
 <context>
@@ -18230,7 +18278,7 @@ Usuários com erro:</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="525"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
 </context>
 <context>
@@ -18298,7 +18346,7 @@ Usuários com erro:</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyGroupsOfPixelsToNearestNeighborAlgorithm.py" line="443"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
 </context>
 <context>
@@ -18376,7 +18424,7 @@ Usuários com erro:</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2.py" line="742"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
 </context>
 <context>
@@ -18459,7 +18507,7 @@ Usuários com erro:</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3.py" line="635"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
 </context>
 <context>
@@ -18562,7 +18610,7 @@ Usuários com erro:</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/runReclassifyPixelsWithSlidingWindow.py" line="483"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
 </context>
 <context>
@@ -21013,7 +21061,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/splitPolygonsAlgorithm.py" line="281"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
 </context>
 <context>
@@ -21026,7 +21074,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/splitPolygonsByGrid.py" line="76"/>
         <source>Generalization Algorithms</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmos de Generalização</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/splitPolygonsByGrid.py" line="89"/>
