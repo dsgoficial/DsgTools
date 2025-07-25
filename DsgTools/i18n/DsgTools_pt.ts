@@ -19256,8 +19256,8 @@ Usuários com erro:</translation>
     </message>
 
     <message>
-        <source>Line on Line Overlayer</source>
-        <translation>Sobreposição de Linhas sobre Linhas</translation>
+        <source>Line on Line Overlayer (overlays reference lines to input line)</source>
+        <translation>Sobreposição de Linhas sobre Linhas (sobreposição de linhas de referência à linha de entrada)</translation>
     </message>
 
     <message>
