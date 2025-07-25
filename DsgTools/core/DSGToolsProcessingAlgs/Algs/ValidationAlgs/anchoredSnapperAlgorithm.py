@@ -113,7 +113,6 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             self.tr("Move end points only, prefer aligning nodes"),
             self.tr("Move end points only, prefer closest point"),
             self.tr("Snap end points to end points only"),
-            self.tr("Snap to anchor nodes (single layer only)"),
         ]
 
         self.addParameter(
