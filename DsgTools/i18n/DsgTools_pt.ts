@@ -3966,40 +3966,40 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
 </context>
 <context>
     <name>CreateFramesWithConstraintAlgorithm</name>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="59"/>
-        <source>Input Polygon Layer</source>
-        <translation>Camada de entrada (Vetorial ou Raster)</translation>
+        <source>Input Layer (Vector or Raster)</source>
+        <translation>Camada de entrada (vetorial ou raster)</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="84"/>
         <source>Desired scale</source>
-        <translation>Escala Desejada</translation>
+        <translation>Escala desejada</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="114"/>
-        <source>Created Frames</source>
-        <translation>Criar Molduras</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="220"/>
-        <source>Generate Systematic Grid Related to Layer</source>
-        <translation>Gerar moldura sistemática à camada relacionada</translation>
-    </message>
-    <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="93"/>
         <source>Number of subdivisions on x-axis</source>
         <translation>Número de subdivisões no eixo X</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="104"/>
         <source>Number of subdivisions on y-axis</source>
         <translation>Número de subdivisões no eixo Y</translation>
     </message>
+
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="227"/>
+        <source>Created Frames</source>
+        <translation>Grades Criadas</translation>
+    </message>
+
+    <message>
+        <source>Generate Systematic Grid Related to Layer</source>
+        <translation>Gerar Grade Sistemática Relacionada à Camada</translation>
+    </message>
+
+    <message>
         <source>Grid Algorithms</source>
-        <translation>Algoritimos de Grade</translation>
+        <translation>Algoritmos de Grade</translation>
     </message>
 </context>
 <context>
