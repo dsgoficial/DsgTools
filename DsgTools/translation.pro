@@ -217,6 +217,7 @@
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongBuildingAnglesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedPolygonsWithSameAttributeSetAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py \

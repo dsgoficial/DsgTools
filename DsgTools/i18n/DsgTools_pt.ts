@@ -378,7 +378,7 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
     </message>
     <message>
         <source>QA Tools: Vertex Handling</source>
-        <translation>Ferramentas QA: Manipulação de Vértices</translation>
+        <translation>Ferramentas de QA: Manipulação de Vértices</translation>
     </message>
 </context>
 <context>
@@ -421,7 +421,7 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnSharedEdgesAlgorithm.py" line="244"/>
         <source>QA Tools: Vertex Handling</source>
-        <translation>Ferramentas QA: Manipulação de Vértices</translation>
+        <translation>Ferramentas de QA: Manipulação de Vértices</translation>
     </message>
 </context>
 <context>
@@ -1989,7 +1989,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="80"/>
         <source>Fields to ignore</source>
-        <translation>Campos à ignorar</translation>
+        <translation>Campos a ignorar</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="99"/>
@@ -2014,177 +2014,154 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="1004"/>
         <source>Build Polygons From Center Points and Boundaries</source>
-        <translation>Construir polígonos a partir de centroids e linhas</translation>
+        <translation>Construir polígonos a partir de pontos centrais e limites</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="91"/>
         <source>Line Boundary</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite linear</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="123"/>
         <source>Merge output polygons with same attribute set</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesclar polígonos de saída com o mesmo conjunto de atributos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="130"/>
         <source>Check output polygons for invalid geometries</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificar geometrias inválidas nos polígonos de saída</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="137"/>
         <source>Check unused boundary lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificar linhas de limite não utilizadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="144"/>
         <source>Suppress area without center point flag</source>
-        <translation type="unfinished"></translation>
+        <translation>Suprimir áreas sem ponto central</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="151"/>
         <source>Run algothimn grouping by spatial partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Executar algoritmo agrupando por partição espacial</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="162"/>
         <source>Invalid Polygon Location Flags from {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Erros de localização inválida dos polígonos de {0}</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="170"/>
         <source>Unused Boundary Flags from {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Erros de limites não utilizados de {0}</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="176"/>
         <source>Polygon Flags from {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Erros de polígonos de {0}</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="202"/>
         <source>There must be at least one boundary layer or one constraint line list.</source>
-        <translation type="unfinished"></translation>
+        <translation>É necessário ao menos uma camada de limite ou uma lista de linhas de restrição.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="311"/>
         <source>Dissolving output...</source>
-        <translation type="unfinished"></translation>
+        <translation>Dissolvendo saída...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="342"/>
         <source>Checking invalid geometries...</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificando geometrias inválidas...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="795"/>
         <source>Checking unused boundaries...</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificando limites não utilizados...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="374"/>
         <source>Building cache...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo cache...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="400"/>
         <source>Converting built polygons to lines...</source>
-        <translation type="unfinished"></translation>
+        <translation>Convertendo polígonos construídos em linhas...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="412"/>
         <source>Exploding lines...</source>
-        <translation type="unfinished"></translation>
+        <translation>Fragmentando linhas...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="422"/>
         <source>Building spatial index...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo índice espacial...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="431"/>
         <source>Exploding boundary lines...</source>
-        <translation type="unfinished"></translation>
+        <translation>Fragmentando linhas de limite...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="467"/>
         <source>Running spatial join...</source>
-        <translation type="unfinished"></translation>
+        <translation>Executando união espacial...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="488"/>
         <source>Preparing unused boundaries flags...</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparando Erros de limites não utilizados...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="523"/>
         <source>Checking for invalid geometries on output polygons...</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificando geometrias inválidas nos polígonos de saída...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="558"/>
         <source>Writing output...</source>
-        <translation type="unfinished"></translation>
+        <translation>Gravando saída...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="579"/>
         <source>Starting {0}...</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando {0}...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="582"/>
         <source>Computing polygons from center points and boundaries...</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculando polígonos a partir de pontos centrais e limites...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="810"/>
         <source>Splitting geographic bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividindo limites geográficos</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="627"/>
         <source>Preparing constraint lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparando linhas de restrição</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="650"/>
         <source>Preparing constraint polygons</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparando polígonos de restrição</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="729"/>
         <source>Submitting building polygon tasks to thread...</source>
-        <translation type="unfinished"></translation>
+        <translation>Enviando tarefas de construção de polígonos para a thread...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="944"/>
         <source>Evaluating results...</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaliando resultados...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="769"/>
         <source>Building polygons from region {current+1}/{nRegions} is done.</source>
-        <translation type="unfinished"></translation>
+        <translation>Construção de polígonos da região {current+1}/{nRegions} concluída.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="798"/>
         <source>Building aux structures: creating local cache...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estruturas auxiliares: criando cache local...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="929"/>
         <source>Submitting verifying unused boundaries tasks to thread...</source>
-        <translation type="unfinished"></translation>
+        <translation>Enviando tarefas de verificação de limites não utilizados para a thread...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="949"/>
         <source>Verifying unused boundaries from region {current+1}/{nRegions} is done.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificação de limites não utilizados da região {current+1}/{nRegions} concluída.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="1011"/>
         <source>QA Tools: Polygon Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Manipulação de Polígonos</translation>
     </message>
 </context>
 <context>
@@ -6505,12 +6482,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py" line="63"/>
         <source>Max dissolve area</source>
-        <translation>Área Máx. a ser Dissolvida</translation>
+        <translation>Área máx. a ser dissolvida</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py" line="72"/>
         <source>Fields to ignore</source>
-        <translation>Campos à ignorar</translation>
+        <translation>Campos a ignorar</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py" line="83"/>
@@ -6520,7 +6497,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py" line="90"/>
         <source>Ignore primary key fields</source>
-        <translation>Ignorar campos de chaves primárias</translation>
+        <translation>Ignorar campos de chave primária</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py" line="120"/>
@@ -6546,12 +6523,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py" line="168"/>
         <source>Dissolve Polygons With Same Attribute Set</source>
-        <translation type="unfinished"></translation>
+        <translation>Dissolver polígonos com mesmo conjunto de atributos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py" line="175"/>
         <source>QA Tools: Polygon Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Manipulação de Polígonos</translation>
     </message>
 </context>
 <context>
@@ -11980,7 +11957,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <source>QA Tools: Vertex Handling</source>
-        <translation>Ferramentas QA: Manipulação de Vértices</translation>
+        <translation>Ferramentas de QA: Manipulação de Vértices</translation>
     </message>
 </context>
 <context>
@@ -12079,7 +12056,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="77"/>
         <source>Frame Layer</source>
-        <translation>Camada deReferência</translation>
+        <translation>Camada de Referência</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="86"/>
@@ -12114,27 +12091,27 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="119"/>
         <source>Creating unified layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Criando camada unificada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="128"/>
         <source>Overlaying coverage</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobrepondo cobertura</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="133"/>
         <source>Getting gaps with geographic bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo buracos com base nos limites geográficos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="142"/>
         <source>Raising flags</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcando inconsistências</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="276"/>
         <source>QA Tools: Polygon Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Manipulação de Polígonos</translation>
     </message>
 </context>
 <context>
@@ -12189,7 +12166,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <source>QA Tools: Vertex Handling</source>
-        <translation>Ferramentas QA: Manipulação de Vértices</translation>
+        <translation>Ferramentas de QA: Manipulação de Vértices</translation>
     </message>
 </context>
 <context>
@@ -13076,14 +13053,14 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <translation>Feição {0} da camada {1} tem proporção de {2:.2f}</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="203"/>
-        <source>Identify Polygon Slivers</source>
-        <translation type="unfinished"></translation>
+    <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="203"/>
+    <source>Identify Polygon Slivers</source>
+    <translation>Identificar Polígonos Estreitos</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="210"/>
-        <source>QA Tools: Polygon Handling</source>
-        <translation type="unfinished"></translation>
+    <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="210"/>
+    <source>QA Tools: Polygon Handling</source>
+    <translation>Ferramentas de QA: Manipulação de Polígonos</translation>
     </message>
 </context>
 <context>
@@ -13091,47 +13068,126 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonUndershoots.py" line="53"/>
         <source>Input</source>
-        <translation type="unfinished">Entrada</translation>
+        <translation>Entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonUndershoots.py" line="62"/>
         <source>Reference polygons</source>
-        <translation type="unfinished"></translation>
+        <translation>Polígonos de referência</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonUndershoots.py" line="71"/>
         <source>Search radius</source>
-        <translation type="unfinished">Raio de busca</translation>
+        <translation>Raio de busca</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonUndershoots.py" line="80"/>
         <source>{0} Flags</source>
-        <translation type="unfinished">{0} Flags</translation>
+        <translation>{0} Marcas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonUndershoots.py" line="206"/>
         <source>Undershoot with the reference layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Extensão insuficiente em relação à camada de referência.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonUndershoots.py" line="216"/>
         <source>Finding boundaries...</source>
-        <translation type="unfinished"></translation>
+        <translation>Localizando limites...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonUndershoots.py" line="235"/>
         <source>Creating Spatial Indexes on boundaries</source>
-        <translation type="unfinished"></translation>
+        <translation>Criando índices espaciais nos limites</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonUndershoots.py" line="259"/>
         <source>Identify Polygon Undershoots</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Extensões Insuficientes de Polígonos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonUndershoots.py" line="266"/>
         <source>QA Tools: Polygon Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Manipulação de Polígonos</translation>
+    </message>
+</context>
+<context>
+    <name>IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm</name>
+    <message>
+        <source>Input layer</source>
+        <translation>Camada de entrada</translation>
+    </message>
+    <message>
+        <source>Process only selected features</source>
+        <translation>Processar apenas feições selecionadas</translation>
+    </message>
+    <message>
+        <source>Fields to ignore</source>
+        <translation>Campos a ignorar</translation>
+    </message>
+    <message>
+        <source>Ignore virtual fields</source>
+        <translation>Ignorar campos virtuais</translation>
+    </message>
+    <message>
+        <source>Ignore primary key fields</source>
+        <translation>Ignorar campos de chaves primárias</translation>
+    </message>
+    <message>
+        <source>Line Filter Layers</source>
+        <translation>Camadas de filtro de linhas</translation>
+    </message>
+    <message>
+        <source>Minimum area polygon filter</source>
+        <translation>Filtro de área mínima de polígonos</translation>
+    </message>
+    <message>
+        <source>{0} Flags</source>
+        <translation>{0} Marcas</translation>
+    </message>
+    <message>
+        <source>Building local cache on input layer...</source>
+        <translation>Construindo cache local na camada de entrada...</translation>
+    </message>
+    <message>
+        <source>Calculating polygon areas...</source>
+        <translation>Calculando áreas dos polígonos...</translation>
+    </message>
+    <message>
+        <source>Building boundary of polygons...</source>
+        <translation>Construindo limite dos polígonos...</translation>
+    </message>
+    <message>
+        <source>Explodes boundary lines of polygons...</source>
+        <translation>Explodindo linhas de limite dos polígonos...</translation>
+    </message>
+    <message>
+        <source>Finding the attributes that will be analyzed...</source>
+        <translation>Encontrando atributos que serão analisados...</translation>
+    </message>
+    <message>
+        <source>Creating spatial index in explode lines layer...</source>
+        <translation>Criando índice espacial na camada de linhas explodidas...</translation>
+    </message>
+    <message>
+        <source>Join attributes by location...</source>
+        <translation>Associando atributos por localização...</translation>
+    </message>
+    <message>
+        <source>Raising flags</source>
+        <translation>Marcando inconsistências</translation>
+    </message>
+    <message>
+        <source>Polygons with same attribute set that are not merged.</source>
+        <translation>Polígonos com mesmo conjunto de atributos que não foram unidos.</translation>
+    </message>
+    <message>
+        <source>Identify Unmerged Polygons With Same Attribute Set</source>
+        <translation>Identificar Polígonos Não Unidos com Mesmo Conjunto de Atributos</translation>
+    </message>
+    <message>
+        <source>QA Tools: Polygon Handling</source>
+        <translation>Ferramentas de QA: Manipulação de Polígonos</translation>
     </message>
 </context>
 <context>
@@ -13172,67 +13228,67 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="54"/>
         <source>Input layer</source>
-        <translation type="unfinished">Camada de entrada</translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="59"/>
         <source>Process only selected features</source>
-        <translation type="unfinished">Processar apenas feições selecionadas</translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="64"/>
         <source>Minimum size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho mínimo</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="73"/>
         <source>Search radius</source>
-        <translation type="unfinished">Raio de busca</translation>
+        <translation>Raio de busca</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="82"/>
         <source>Linestring Filter Layers</source>
-        <translation type="unfinished">Camada de filtro do tipo linha</translation>
+        <translation>Camadas filtro do tipo linha</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="90"/>
         <source>Polygon Filter Layers</source>
-        <translation type="unfinished">Camadas de filtro do tipo polígono</translation>
+        <translation>Camadas filtro do tipo polígono</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="98"/>
         <source>Geographic Boundary (this layer only filters the output dangles)</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite geográfico (esta camada apenas filtra as pontas soltas detectadas)</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="108"/>
         <source>{0} Flags</source>
-        <translation type="unfinished">{0} Flags</translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="163"/>
         <source>Getting Dangles...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo pontas soltas...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="189"/>
         <source>Raising flags...</source>
-        <translation type="unfinished">Preparando flags...</translation>
+        <translation>Preparando flags...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="190"/>
         <source>First order dangle on {inputLyr.name()} smaller than {minLength}</source>
-        <translation type="unfinished"></translation>
+        <translation>Ponta solta de primeira ordem na camada {inputLyr.name()} menor que {minLength}</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="222"/>
         <source>Identify Small First Order Dangles</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar pontas soltas de primeira ordem pequenas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallFirstOrderDangle.py" line="229"/>
         <source>QA Tools: Small Object Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Tratamento de pequenos objetos</translation>
     </message>
 </context>
 <context>
@@ -13270,7 +13326,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="141"/>
         <source>QA Tools: Small Object Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Tratamento de Pequenos Objetos</translation>
     </message>
 </context>
 <context>
@@ -13296,19 +13352,19 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <translation>{0} Flags</translation>
     </message>
     <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="112"/>
+        <source>Feature from layer {0} with id={1} has length of value {2:.10f}, which is lesser than the tolerance of {3} units.</source>
+        <translation>Feição da camada {0} com id={1} possui comprimento {2:.10f}, que é menor que a tolerância de {3} unidades.</translation>
+    </message>
+    <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="138"/>
         <source>Identify Small Lines</source>
         <translation>Identificar Linhas Pequenas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="112"/>
-        <source>Feature from layer {0} with id={1} has length of value {2:.10f}, which is lesser than the tolerance of {3} units.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="145"/>
         <source>QA Tools: Small Object Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Tratamento de Pequenos Objetos</translation>
     </message>
 </context>
 <context>
@@ -13316,27 +13372,27 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallObjectsOnLayersAlgorithm.py" line="58"/>
         <source>Minimum distance between layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Distância mínima entre camadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallObjectsOnLayersAlgorithm.py" line="68"/>
         <source>Line Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>Flags do tipo linha</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallObjectsOnLayersAlgorithm.py" line="71"/>
         <source>Polygon Flags</source>
-        <translation type="unfinished">Flags do tipo polígono</translation>
+        <translation>Flags do tipo polígono</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallObjectsOnLayersAlgorithm.py" line="178"/>
         <source>Identify Small Objects On Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Pequenos Objetos em Camadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallObjectsOnLayersAlgorithm.py" line="185"/>
         <source>QA Tools: Small Object Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Tratamento de Pequenos Objetos</translation>
     </message>
 </context>
 <context>
@@ -13362,19 +13418,19 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <translation>{0} Flags</translation>
     </message>
     <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="112"/>
+        <source>Feature from layer {0} with id={1} has area of value {2:.10f}, which is lesser than the tolerance of {3} square units.</source>
+        <translation>Feição da camada {0} com id={1} possui área {2:.10f}, que é menor que a tolerância de {3} unidades quadradas.</translation>
+    </message>
+    <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="136"/>
         <source>Identify Small Polygons</source>
         <translation>Identificar Polígonos Pequenos</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="112"/>
-        <source>Feature from layer {0} with id={1} has area of value {2:.10f}, which is lesser than the tolerance of {3} square units.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="143"/>
         <source>QA Tools: Small Object Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Tratamento de Pequenos Objetos</translation>
     </message>
 </context>
 <context>
@@ -13810,7 +13866,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <source>{0} Flags</source>
-        <translation>Bandeiras de {0}</translation>
+        <translation>Erros de {0}</translation>
     </message>
     <message>
         <source>Contours with attribute inside water body that do not intersect a water body</source>
@@ -20232,87 +20288,87 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="57"/>
         <source>Input Polygon Layer</source>
-        <translation type="unfinished">Camada de Polígonos de Entrada</translation>
+        <translation>Camada de Polígonos de Entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="65"/>
         <source>Process only selected features</source>
-        <translation type="unfinished">Processar apenas feições selecionadas</translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="71"/>
         <source>Dissolve Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Dissolver Saída</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="77"/>
         <source>Fields to consider on dissolve</source>
-        <translation type="unfinished"></translation>
+        <translation>Campos a considerar na dissolução</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="88"/>
         <source>Max hole area to eliminate</source>
-        <translation type="unfinished"></translation>
+        <translation>Área máxima do buraco a eliminar</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="98"/>
         <source>Output</source>
-        <translation type="unfinished">Saída</translation>
+        <translation>Saída</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="132"/>
         <source>Building Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo Cache</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="142"/>
         <source>Building Spatial Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo Índice Espacial</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="151"/>
         <source>Point on surface layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de pontos na superfície</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="156"/>
         <source>Building Spatial Index on point on surface layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo índice espacial na camada de pontos na superfície</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="166"/>
         <source>Extracting Donut Holes</source>
-        <translation type="unfinished"></translation>
+        <translation>Extraindo buracos (donuts)</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="173"/>
         <source>Submitting to thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Enviando para thread</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="216"/>
         <source>Evaluating Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaliando resultados</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="249"/>
         <source>Dissolving Polygons</source>
-        <translation type="unfinished"></translation>
+        <translation>Dissolvendo polígonos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="268"/>
         <source>Building Outputs</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo saídas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="292"/>
         <source>Small Hole Remover Algorithm</source>
-        <translation type="unfinished"></translation>
+        <translation>Algoritmo de Remoção de Pequenos Buracos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py" line="299"/>
         <source>QA Tools: Small Object Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Tratamento de Pequenos Objetos</translation>
     </message>
 </context>
 <context>
@@ -21656,7 +21712,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="296"/>
         <source>Updating original layer...</source>
-        <translation>Atualizando a camada originais...</translation>
+        <translation>Atualizando a camada original...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="331"/>
@@ -21671,7 +21727,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="365"/>
         <source>Topological Clean Polygons</source>
-        <translation>Limpeza Topológicas de Polígonos</translation>
+        <translation>Limpeza Topológica de Polígonos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="120"/>
@@ -21681,32 +21737,32 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="346"/>
         <source>Clean error on unified layer.</source>
-        <translation>Limpando erro na camada unificada.</translation>
+        <translation>Erro ao limpar a camada unificada.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="88"/>
         <source>Geographic Bounds Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de Limites Geográficos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="131"/>
         <source>Spatial restriction not implemented yet for polygon layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Restrição espacial ainda não implementada para camadas de polígonos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="244"/>
         <source>Applying spatial constraint...</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicando restrição espacial...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="270"/>
         <source>Integrating results inside and outside geographic bounds...</source>
-        <translation type="unfinished"></translation>
+        <translation>Integrando resultados dentro e fora dos limites geográficos...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="372"/>
         <source>QA Tools: Topological Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos Topológicos</translation>
     </message>
 </context>
 <context>
@@ -21739,27 +21795,27 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanLinesAlgorithm.py" line="162"/>
         <source>Topological Clean Linestrings</source>
-        <translation>Limpeza Topológicas de Linhas</translation>
+        <translation>Limpeza Topológica de Linhas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanLinesAlgorithm.py" line="100"/>
         <source>Geographic Bounds Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de Limite Geográfico</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanLinesAlgorithm.py" line="131"/>
         <source>Gap in coverage.</source>
-        <translation type="unfinished">Buraco na cobertura terrestre.</translation>
+        <translation>Buraco na cobertura terrestre.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanLinesAlgorithm.py" line="142"/>
         <source>Features from {0} overlap</source>
-        <translation type="unfinished"></translation>
+        <translation>Feições de {0} sobrepostas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanLinesAlgorithm.py" line="169"/>
         <source>QA Tools: Topological Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos Topológicos</translation>
     </message>
 </context>
 <context>
