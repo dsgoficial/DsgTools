@@ -345,49 +345,40 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
 <context>
     <name>AddUnsharedVertexOnIntersectionsAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnIntersectionsAlgorithm.py" line="54"/>
         <source>Point Layers</source>
-        <translation type="unfinished">Camadas do Tipo Ponto</translation>
+        <translation>Camadas do Tipo Ponto</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnIntersectionsAlgorithm.py" line="62"/>
         <source>Linestring Layers</source>
-        <translation type="unfinished">Camadas do tipo linha</translation>
+        <translation>Camadas do tipo linha</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnIntersectionsAlgorithm.py" line="70"/>
         <source>Polygon Layers</source>
-        <translation type="unfinished">Camadas do tipo polígono</translation>
+        <translation>Camadas do tipo polígono</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnIntersectionsAlgorithm.py" line="79"/>
         <source>Process only selected features</source>
-        <translation type="unfinished">Processar apenas feições selecionadas</translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnIntersectionsAlgorithm.py" line="85"/>
         <source>Search Radius</source>
-        <translation type="unfinished">Raio de busca</translation>
+        <translation>Raio de busca</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnIntersectionsAlgorithm.py" line="91"/>
         <source>Geographic Boundary</source>
-        <translation type="unfinished">Limite geográfico</translation>
+        <translation>Limite geográfico</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnIntersectionsAlgorithm.py" line="144"/>
         <source>Select at least one layer</source>
-        <translation type="unfinished">Selecione ao menos uma camada</translation>
+        <translation>Selecione ao menos uma camada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnIntersectionsAlgorithm.py" line="235"/>
         <source>Add Unshared Vertex on Intersections</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar vértice não compartilhado em interseções</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnIntersectionsAlgorithm.py" line="242"/>
         <source>QA Tools: Vertex Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas QA: Manipulação de Vértices</translation>
     </message>
 </context>
 <context>
@@ -395,42 +386,42 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnSharedEdgesAlgorithm.py" line="62"/>
         <source>Linestring Layers</source>
-        <translation type="unfinished">Camadas do tipo linha</translation>
+        <translation>Camadas do tipo linha</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnSharedEdgesAlgorithm.py" line="70"/>
         <source>Polygon Layers</source>
-        <translation type="unfinished">Camadas do tipo polígono</translation>
+        <translation>Camadas do tipo polígono</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnSharedEdgesAlgorithm.py" line="79"/>
         <source>Process only selected features</source>
-        <translation type="unfinished">Processar apenas feições selecionadas</translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnSharedEdgesAlgorithm.py" line="84"/>
         <source>Search Radius</source>
-        <translation type="unfinished">Raio de busca</translation>
+        <translation>Raio de busca</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnSharedEdgesAlgorithm.py" line="90"/>
         <source>Geographic Boundary</source>
-        <translation type="unfinished">Limite geográfico</translation>
+        <translation>Limite geográfico</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnSharedEdgesAlgorithm.py" line="111"/>
         <source>Select at least one layer</source>
-        <translation type="unfinished">Selecione ao menos uma camada</translation>
+        <translation>Selecione ao menos uma camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnSharedEdgesAlgorithm.py" line="237"/>
         <source>Add Unshared Vertex on Shared Edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar vértice não compartilhado em arestas compartilhadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnSharedEdgesAlgorithm.py" line="244"/>
         <source>QA Tools: Vertex Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas QA: Manipulação de Vértices</translation>
     </message>
 </context>
 <context>
@@ -11952,54 +11943,44 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
 <context>
     <name>IdentifyDuplicatedVertexesAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedVertexesAlgorithm.py" line="62"/>
         <source>Input layer</source>
-        <translation type="unfinished">Camada de entrada</translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedVertexesAlgorithm.py" line="70"/>
         <source>Process only selected features</source>
-        <translation type="unfinished">Processar apenas feições selecionadas</translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedVertexesAlgorithm.py" line="76"/>
         <source>{0} Flags</source>
-        <translation type="unfinished">{0} Flags</translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedVertexesAlgorithm.py" line="97"/>
         <source>Building aux structure...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estrutura auxiliar...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedVertexesAlgorithm.py" line="107"/>
         <source>Extracting vertexes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Extraindo vértices...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedVertexesAlgorithm.py" line="112"/>
         <source>Building search structure...</source>
-        <translation type="unfinished">Construindo estrutura de busca...</translation>
+        <translation>Construindo estrutura de busca...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedVertexesAlgorithm.py" line="119"/>
         <source>Searching duplicated vertexes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Procurando vértices duplicados...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedVertexesAlgorithm.py" line="122"/>
         <source>Raising flags (if any)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerando flags (se houver)...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedVertexesAlgorithm.py" line="184"/>
         <source>Identify Duplicated Vertexes</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Vértices Duplicados</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedVertexesAlgorithm.py" line="191"/>
         <source>QA Tools: Vertex Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas QA: Manipulação de Vértices</translation>
     </message>
 </context>
 <context>
@@ -12159,69 +12140,56 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
 <context>
     <name>IdentifyGeometriesWithLargeVertexDensityAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="57"/>
         <source>Input layer</source>
-        <translation type="unfinished">Camada de entrada</translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="65"/>
         <source>Process only selected features</source>
-        <translation type="unfinished">Processar apenas feições selecionadas</translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="71"/>
         <source>Search Radius</source>
-        <translation type="unfinished">Raio de busca</translation>
+        <translation>Raio de busca</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="77"/>
         <source>{0} Flags</source>
-        <translation type="unfinished">{0} Flags</translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="102"/>
         <source>Building aux structure...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estrutura auxiliar...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="112"/>
         <source>Extracting vertexes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Extraindo vértices...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="117"/>
         <source>Building spatial index on extracted vertexes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo índice espacial nos vértices extraídos...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="127"/>
         <source>Searching close vertexes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Procurando vértices próximos...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="132"/>
         <source>Raising flags (if any)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerando flags (se houver)...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="165"/>
         <source>Submitting to thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Enviando para thread</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="203"/>
         <source>Evaluating Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaliando resultados</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="231"/>
         <source>Identify Geometries With Large Vertex Density</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Geometrias com Alta Densidade de Vértices</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGeometriesWithLargeVertexDensityAlgorithm.py" line="238"/>
         <source>QA Tools: Vertex Handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas QA: Manipulação de Vértices</translation>
     </message>
 </context>
 <context>
@@ -20446,44 +20414,36 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
 <context>
     <name>SnapFeaturesInsideLayerWithGroupByAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapFeaturesInsideLayerWithGroupByAlgorithm.py" line="53"/>
         <source>Input layer</source>
-        <translation type="unfinished">Camada de entrada</translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapFeaturesInsideLayerWithGroupByAlgorithm.py" line="60"/>
         <source>Process only selected features</source>
-        <translation type="unfinished">Processar apenas feições selecionadas</translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapFeaturesInsideLayerWithGroupByAlgorithm.py" line="66"/>
         <source>Field to group by</source>
-        <translation type="unfinished"></translation>
+        <translation>Campo para agrupar por</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapFeaturesInsideLayerWithGroupByAlgorithm.py" line="77"/>
         <source>Search Radius</source>
-        <translation type="unfinished">Raio de busca</translation>
+        <translation>Raio de busca</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapFeaturesInsideLayerWithGroupByAlgorithm.py" line="108"/>
         <source>Creating aux structure...</source>
-        <translation type="unfinished"></translation>
+        <translation>Criando estrutura auxiliar...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapFeaturesInsideLayerWithGroupByAlgorithm.py" line="184"/>
         <source>Updating original layer...</source>
-        <translation type="unfinished">Atualizando a camada originais...</translation>
+        <translation>Atualizando a camada original...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapFeaturesInsideLayerWithGroupByAlgorithm.py" line="205"/>
         <source>Snap Features Inside Layer With Group By Algorithm</source>
-        <translation type="unfinished"></translation>
+        <translation>Snap de Feições Dentro da Camada com Agrupamento</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapFeaturesInsideLayerWithGroupByAlgorithm.py" line="212"/>
         <source>QA Tools: Snap Processes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de QA: Processos de Aproximação</translation>
     </message>
 </context>
 <context>
