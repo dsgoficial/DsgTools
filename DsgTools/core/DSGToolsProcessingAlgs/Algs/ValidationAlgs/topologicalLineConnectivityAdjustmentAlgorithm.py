@@ -266,7 +266,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         self.algRunner.runCreateSpatialIndex(dangleBuffer, context, feedback=multiStepFeedback)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        danglesWithId = self.algRunner.runCreateFieldWithExpression(
+        lineLyrWithId = self.algRunner.runCreateFieldWithExpression(
             inputLyr=lineLyr,
             expression="$id",
             fieldName="line_featid",
@@ -277,7 +277,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         candidateLines = self.algRunner.runExtractByLocation(
-            inputLyr=lineLyr,
+            inputLyr=lineLyrWithId,
             intersectLyr=dangleBuffer,
             predicate=AlgRunner.Intersects,
             context=context,
