@@ -300,7 +300,9 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
             inputLyr=dangleBuffer,
             joinLyr=verticeLyr,
             predicateList=[AlgRunner.Intersects],
-            joinFields=['line_featid','vertex_index','vertex_part','vertex_part_index','distance','angle']
+            joinFields=['line_featid','vertex_index','vertex_part','vertex_part_index','distance','angle'],
+            context=context,
+            feedback=multiStepFeedback,
         )
         nFeats = joinned.featureCount()
         if nFeats == 0:
