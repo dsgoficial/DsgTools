@@ -81,7 +81,7 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
             inputLyr, onlySelected=onlySelected
         )
         if total == 0:
-            return {self.OUTPUT: inputLyr}
+            return {}
         stepSize = 100 / total
         inputLyr.startEditing()
         inputLyr.beginEditCommand(self.tr("Removing small lines"))
