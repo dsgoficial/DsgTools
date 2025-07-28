@@ -563,7 +563,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         return flagDict
 
     def tr(self, string):
-        return QCoreApplication.translate("Processing", string)
+        return QCoreApplication.translate("IdentifyDrainageAndContourInconsistencies", string)
 
     def createInstance(self):
         return IdentifyDrainageAndContourInconsistencies()

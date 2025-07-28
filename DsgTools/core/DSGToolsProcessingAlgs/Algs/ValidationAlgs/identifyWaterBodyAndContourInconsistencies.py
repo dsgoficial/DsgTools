@@ -23,6 +23,7 @@
 from itertools import product
 import os
 import concurrent.futures
+import string
 import processing
 
 from collections import defaultdict
@@ -231,7 +232,8 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
         return {self.FLAGS: self.flag_id}
 
     def tr(self, string):
-        return QCoreApplication.translate("Processing", string)
+        return QCoreApplication.translate("IdentifyWaterBodyAndContourInconsistencies", string)
+
 
     def createInstance(self):
         return IdentifyWaterBodyAndContourInconsistencies()
