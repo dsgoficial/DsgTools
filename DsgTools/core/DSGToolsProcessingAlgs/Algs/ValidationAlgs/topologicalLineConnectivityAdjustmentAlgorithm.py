@@ -276,6 +276,9 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(lineLyrWithId, context, feedback=multiStepFeedback)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         candidateLines = self.algRunner.runExtractByLocation(
             inputLyr=lineLyrWithId,
             intersectLyr=dangleBuffer,
