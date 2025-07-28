@@ -309,7 +309,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
             return
         stepSize = 100/nFeats
         lineLyr.startEditing()
-        lineLyr.beginEditCommand()
+        lineLyr.beginEditCommand("updating lines")
         for current, feat in enumerate(joinned.getFeatures()):
             if multiStepFeedback.isCanceled():
                 return
