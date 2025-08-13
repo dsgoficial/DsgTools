@@ -315,7 +315,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         lineLyr.beginEditCommand("updating lines")
         for current, feat in enumerate(joinned.getFeatures()):
             if multiStepFeedback.isCanceled():
-                return
+                break
             lineFeat = lineLyr.getFeature(feat["line_featid"])
             lineGeom = lineFeat.geometry()
             danglePoint = danglePointDict[feat["dangle_featid"]]
