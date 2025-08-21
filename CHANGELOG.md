@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.10 - dev
+## 4.19.11 - dev
 
 Novas Funcionalidades:
 
@@ -11,6 +11,7 @@ Novas Funcionalidades:
 - Novo processo de reclassificar raster de acordo com um json de mapeamento (Remap raster values from json);
 - Novo processo de rasterizar valores fixos em raster em pixels dentro do buffer de polígonos (Rasterize Polygons with Buffer). Pode ser utilizado com buffer negativo;
 - Novo processo de filtro da mediana desconsiderando os nodata;
+- Novo processo de unir zips de shapefiles em um único geopackage (útil para consolidar dados baixados do BDGEx);
 
 Melhorias:
 

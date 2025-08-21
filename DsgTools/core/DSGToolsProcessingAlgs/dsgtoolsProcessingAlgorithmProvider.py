@@ -90,6 +90,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitLinesAtMaximum
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import (
     BuildZipPackageAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.mergeShapefileZipFilesInSingleGeopackage import MergeShapefileZipFilesInSingleGeopackage
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGeographicBoundsConstraint import (
     BatchRunAlgorithmWithGeographicBoundsConstraint,
 )
@@ -813,6 +814,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RasterRemapAlgorithm(),
             RasterizePolygonsWithBufferAlgorithm(),
             MedianFilterNoDataAlgorithm(),
+            MergeShapefileZipFilesInSingleGeopackage(),
         ]
         return algList
 
