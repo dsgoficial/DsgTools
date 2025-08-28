@@ -318,6 +318,8 @@ class GeometryHandler(QObject):
             minAngle, maxAngle = invalidRange
         line = part.asPolyline()
         nVertex = len(line) - 1
+        if nVertex < 2:
+            return
         for i in range(1, nVertex):
             vertexAngle = (
                 line[i].azimuth(line[i - 1]) - line[i].azimuth(line[i + 1]) + 360

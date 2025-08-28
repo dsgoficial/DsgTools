@@ -8,7 +8,7 @@
 |branch|status|version|
 |-------|--------|--------|
 |master|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=master)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|4.18.1|
-|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|4.19.5|
+|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|4.19.11|
 
 ------------------------------------
 # Complemento DSGTools
@@ -25,7 +25,7 @@ Este projeto visa cumprir a missão estabelecida no Plano Estratégico do Exérc
 
 ## Principais Funcionalidades
 
-O plugin está na versão 4.17.27 e possui as seguintes funcionalidades:
+A versão atual do complemento possui as seguintes funcionalidades:
 
 ### Gestão de Bancos de Dados
 - Criação de bancos de dados em Spatialite e PostGIS de acordo com os modelos EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto e EDGV 3.0 Topo

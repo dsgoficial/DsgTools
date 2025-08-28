@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.5 - dev
+## 4.19.11 - dev
 
 Novas Funcionalidades:
 
@@ -8,6 +8,15 @@ Novas Funcionalidades:
 - Nova ferramenta de smooth (suaviza a linha selecionada);
 - Novo processo de setar os parâmetros da ferramenta de smooth (usado pelo SAP_Operador para ajustar os parâmetros vindos do SAP);
 - Novo processo de verificar polígonos com os mesmos atributos que estão desconectados, onde pode ser verificado uma área máxima para a análise;
+- Novo processo de reclassificar raster de acordo com um json de mapeamento (Remap raster values from json);
+- Novo processo de rasterizar valores fixos em raster em pixels dentro do buffer de polígonos (Rasterize Polygons with Buffer). Pode ser utilizado com buffer negativo;
+- Novo processo de filtro da mediana desconsiderando os nodata;
+- Novo processo de unir zips de shapefiles em um único geopackage (útil para consolidar dados baixados do BDGEx);
+
+Melhorias:
+
+- Atualiza o modelo EDGV Topo para a versão 1.4.4;
+- Atualiza o modelo EDGV Orto para a versão 2.5.2;
 
 
 Correção de bugs:
@@ -16,6 +25,8 @@ Correção de bugs:
 - Corrige bug no processo de extração automática de ponto cotado (geração de múltiplos pontos pontos cotado mais alto por MI muito próximos);
 - Corrige bug no processo de extração automática de ponto cotado (problema com camadas projetadas);
 - Corrige bug no processo de desconstrução de polígonos (erro plotado na ferramentas de centroides);
+- Corrige bug no processo de corrigir conectividade de linhas;
+- Corrige bug no processo de identificação de erros de ângulos pequenos na cobertura;
 
 
 ## 4.18.1 - 2025-06-04

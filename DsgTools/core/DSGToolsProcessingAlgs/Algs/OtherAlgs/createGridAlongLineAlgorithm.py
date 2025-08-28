@@ -65,7 +65,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT_LAYER,
-                self.tr("Insira a camada de linha"),
+                self.tr("Insert the line layer"),
                 [QgsProcessing.TypeVectorLine],
             )
         )
@@ -73,7 +73,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.SCALE,
-                self.tr("Escala"),
+                self.tr("Scale"),
                 options=["1:1000", "1:2000", "1:5000", "1:10000"],
                 defaultValue=1,
             )
@@ -82,7 +82,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PAPER_SIZE,
-                self.tr("Tamanho da Folha"),
+                self.tr("Sheet Size"),
                 options=["A4", "A3"],
                 defaultValue=0,
             )
@@ -91,7 +91,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.OVERLAP,
-                self.tr("Sobreposição (%)"),
+                self.tr("Overlap (%)"),
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0,
                 maxValue=100,
@@ -110,7 +110,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MARGINS_TOP,
-                "Margem Superior (mm)",
+                self.tr("Top Margin (mm)"),
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0,
                 defaultValue=10,
@@ -120,7 +120,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MARGINS_BOTTOM,
-                "Margem Inferior (mm)",
+                self.tr("Bottom Margin (mm)"),
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0,
                 defaultValue=10,
@@ -130,7 +130,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MARGINS_LEFT,
-                "Margem Esquerda (mm)",
+                self.tr("Left Margin (mm)"),
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0,
                 defaultValue=10,
@@ -140,7 +140,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MARGINS_RIGHT,
-                "Margem Direita (mm)",
+                self.tr("Right Margin (mm)"),
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0,
                 defaultValue=10,
@@ -149,7 +149,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT, "Camada de Molduras", QgsProcessing.TypeVectorPolygon
+                self.OUTPUT, self.tr("Grid Layer"), QgsProcessing.TypeVectorPolygon
             )
         )
 

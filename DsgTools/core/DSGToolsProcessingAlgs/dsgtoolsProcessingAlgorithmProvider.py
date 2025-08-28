@@ -94,6 +94,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitLinesAtMaximum
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import (
     BuildZipPackageAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.mergeShapefileZipFilesInSingleGeopackage import (
+    MergeShapefileZipFilesInSingleGeopackage,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGeographicBoundsConstraint import (
     BatchRunAlgorithmWithGeographicBoundsConstraint,
 )
@@ -106,8 +109,17 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeogra
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingForBDGEx import (
     BatchRasterPackagingForBDGEx,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.medianFilterNoDataAlgorithm import (
+    MedianFilterNoDataAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.prepareFilesForRasterPackagingForBDGEx import (
     PrepareRasterFilesForPackagingForBDGEx,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.rasterRemapAlgorithm import (
+    RasterRemapAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.rasterizePolygonsWithBuffer import (
+    RasterizePolygonsWithBufferAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.anchoredSnapperAlgorithm import (
     AnchoredSnapperAlgorithm,
@@ -811,6 +823,10 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             BuildingGeneralizationAlgorithm(),
             AnchoredSnapperAlgorithm(),
             OverlayLinesWithLinesAndUpdate(),
+            RasterRemapAlgorithm(),
+            RasterizePolygonsWithBufferAlgorithm(),
+            MedianFilterNoDataAlgorithm(),
+            MergeShapefileZipFilesInSingleGeopackage(),
             BuildMergedDataWithFieldRefactorAlgorithm(),
         ]
         return algList

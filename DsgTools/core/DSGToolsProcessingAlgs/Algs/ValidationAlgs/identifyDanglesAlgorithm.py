@@ -163,7 +163,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
 
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        feedbackTotal = 4
+        feedbackTotal = 12
         feedbackTotal += 1 if lineFilterLyrList or polygonFilterLyrList else 0
         feedbackTotal += 1 if not inputIsBoundaryLayer else 0
         # feedbackTotal += 2 if cacheInput else 0

@@ -91,14 +91,21 @@ class ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Reading input numpy array"))
 
         ds = gdal.Open(str(inputRaster.source()))
-        npRaster = np.array(ds.GetRasterBand(1).ReadAsArray(), dtype=np.int8)
+        # Read the array without specifying dtype to preserve original data type
+        npRaster = ds.GetRasterBand(1).ReadAsArray()
+        # Get the original data type from the array
+        original_dtype = npRaster.dtype
+        # Convert to numpy array with original dtype
+        npRaster = np.array(npRaster, dtype=original_dtype)
+        
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr("Masking values"))
         stepSize = 100 / nValues
         for current, v in enumerate(valueList):
             if multiStepFeedback.isCanceled():
                 return {self.OUTPUT: outputRaster}
-            npRaster = ma.masked_array(npRaster, npRaster == v, dtype=np.int8)
+            # Use original dtype for masked array
+            npRaster = ma.masked_array(npRaster, npRaster == v, dtype=original_dtype)
             multiStepFeedback.setProgress(current * stepSize)
 
         multiStepFeedback.setCurrentStep(2)
