@@ -21,6 +21,10 @@
  ***************************************************************************/
 """
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.buildMergedDataAlgorithm import (
+    BuildMergedDataWithFieldRefactorAlgorithm,
+    ParameterLayersConfigType,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.clipAndCopyFeaturesBetweenDatabasesAlgorithm import (
     ClipAndCopyFeaturesBetweenDatabasesAlgorithm,
 )
@@ -807,6 +811,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             BuildingGeneralizationAlgorithm(),
             AnchoredSnapperAlgorithm(),
             OverlayLinesWithLinesAndUpdate(),
+            BuildMergedDataWithFieldRefactorAlgorithm(),
         ]
         return algList
 
@@ -836,6 +841,10 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         self.parameterDbConversionType = ParameterDbConversionType()
         QgsApplication.instance().processingRegistry().addParameterType(
             self.parameterDbConversionType
+        )
+        self.parameterLayersConfigType = ParameterLayersConfigType()
+        QgsApplication.instance().processingRegistry().addParameterType(
+            self.parameterLayersConfigType
         )
         self.refreshAlgorithms()
         return True
