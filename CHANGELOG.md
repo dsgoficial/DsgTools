@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.11 - dev
+## 4.19.12 - dev
 
 Novas Funcionalidades:
 
@@ -12,6 +12,7 @@ Novas Funcionalidades:
 - Novo processo de rasterizar valores fixos em raster em pixels dentro do buffer de polígonos (Rasterize Polygons with Buffer). Pode ser utilizado com buffer negativo;
 - Novo processo de filtro da mediana desconsiderando os nodata;
 - Novo processo de unir zips de shapefiles em um único geopackage (útil para consolidar dados baixados do BDGEx);
+- Novo processo de unir dados de diferentes fontes em uma mesma camada chamado Build Merged Data with Field Refactor, criando um campo numérico e um nome. Algoritmo usado para consolidar dados de diversas fontes e transformar em uma única camada com atributos para montar máscaras de um raster binário.
 
 Melhorias:
 
