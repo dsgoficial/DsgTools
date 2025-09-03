@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 import json
+import os
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QColor
 from qgis.PyQt.Qt import QVariant
@@ -138,18 +139,34 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
         return {}
 
     def loadRulesFromFile(self, parameters, context):
-        inputText = json.loads(self.parameterAsString(parameters, self.TEXT, context))
-        if inputText != {}:
-            return inputText
-        inputFile = self.parameterAsFile(
-            parameters,
-            self.FILE,
-            context,
-        )
-
-        with open(inputFile, "r") as f:
-            rulesData = json.load(f)
-        return rulesData
+        # Primeiro tenta carregar do texto
+        inputText = self.parameterAsString(parameters, self.TEXT, context)
+        if inputText and inputText.strip() != "{}":
+            try:
+                return json.loads(inputText)
+            except json.JSONDecodeError as e:
+                raise QgsProcessingException(f"Erro ao decodificar JSON do texto: {str(e)}")
+        
+        # Se não há texto válido, tenta carregar do arquivo
+        inputFile = self.parameterAsFile(parameters, self.FILE, context)
+        
+        # Verifica se o arquivo foi fornecido
+        if not inputFile or inputFile.strip() == "":
+            raise QgsProcessingException("Nenhum texto JSON ou arquivo foi fornecido.")
+        
+        # Verifica se o arquivo existe
+        if not os.path.exists(inputFile):
+            raise QgsProcessingException(f"Arquivo não encontrado: {inputFile}")
+        
+        # Carrega o arquivo com encoding adequado
+        try:
+            with open(inputFile, "r", encoding="utf-8") as f:
+                rulesData = json.load(f)
+            return rulesData
+        except json.JSONDecodeError as e:
+            raise QgsProcessingException(f"Erro ao decodificar JSON do arquivo: {str(e)}")
+        except Exception as e:
+            raise QgsProcessingException(f"Erro ao ler o arquivo: {str(e)}")
 
     def buildRuleDict(self, inputData, inputLyrNamesWithSchemaList):
         ruleDict = defaultdict(lambda: defaultdict(list))

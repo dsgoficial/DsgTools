@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.13 - dev
+## 4.19.14 - dev
 
 Novas Funcionalidades:
 
@@ -29,6 +29,7 @@ Correção de bugs:
 - Corrige bug no processo de desconstrução de polígonos (erro plotado na ferramentas de centroides);
 - Corrige bug no processo de corrigir conectividade de linhas;
 - Corrige bug no processo de identificação de erros de ângulos pequenos na cobertura;
+- Corrige bug no carregamento de arquivo json no assign format rules;
 
 
 ## 4.18.1 - 2025-06-04
