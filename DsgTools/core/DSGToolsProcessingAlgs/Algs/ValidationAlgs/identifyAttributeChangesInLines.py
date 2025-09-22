@@ -56,14 +56,14 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                "INPUT_LAYER",
+                self.INPUT_LAYER,
                 self.tr("Input Layer"),
                 types=[QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterField(
-                "INPUT_FIELDS",
+                self.INPUT_FIELDS,
                 self.tr("Fields to consider"),
                 type=QgsProcessingParameterField.Any,
                 parentLayerParameterName="INPUT_LAYER",
@@ -73,7 +73,7 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                "INPUT_ANGLE",
+                self.INPUT_ANGLE,
                 self.tr("Maximum angle between lines"),
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0,
@@ -82,7 +82,7 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                "INPUT_MAX_SIZE",
+                self.INPUT_MAX_SIZE,
                 self.tr("Maximum size"),
                 type=QgsProcessingParameterNumber.Double,
                 optional=True,
@@ -97,10 +97,10 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        layer = self.parameterAsVectorLayer(parameters, "INPUT_LAYER", context)
-        inputFields = self.parameterAsFields(parameters, "INPUT_FIELDS", context)
-        angle = self.parameterAsDouble(parameters, "INPUT_ANGLE", context)
-        maxLength = self.parameterAsDouble(parameters, "INPUT_MAX_SIZE", context)
+        layer = self.parameterAsVectorLayer(parameters, self.INPUT_LAYER, context)
+        inputFields = self.parameterAsFields(parameters, self.INPUT_FIELDS, context)
+        angle = self.parameterAsDouble(parameters, self.INPUT_ANGLE, context)
+        maxLength = self.parameterAsDouble(parameters, self.INPUT_MAX_SIZE, context)
         algRunner = AlgRunner()
         self.prepareFlagSink(parameters, layer, QgsWkbTypes.MultiPoint, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
@@ -125,9 +125,9 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 return {self.FLAGS: self.flag_id}
             featGeom = feature.geometry()
-            for geometry in featGeom.constGet():
-                ptFin = QgsGeometry.fromPointXY(QgsPointXY(geometry[-1]))
-                lineTouched = self.linesTouchedOnPoint(inputLyr, feature, ptFin)
+            geometry = featGeom.constGet()
+            ptFin = QgsGeometry.fromPointXY(QgsPointXY(geometry[-1]))
+            lineTouched = self.linesTouchedOnPoint(inputLyr, feature, ptFin)
             if len(lineTouched) == 0:
                 continue
             smallerAngle = 360
@@ -257,9 +257,9 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
             lineAndPointArray = []
             for line in lineLayer.getFeatures():
                 lineGeom = line.geometry()
-                for geometry in lineGeom.constGet():
-                    ptFin = QgsGeometry.fromPointXY(QgsPointXY(geometry[-1]))
-                    ptIni = QgsGeometry.fromPointXY(QgsPointXY(geometry[0]))
+                geometry = lineGeom.constGet()
+                ptFin = QgsGeometry.fromPointXY(QgsPointXY(geometry[-1]))
+                ptIni = QgsGeometry.fromPointXY(QgsPointXY(geometry[0]))
                 if ptFin.intersects(point[0]):
                     lineAndPointArray.append([line, ptFin])
                 if ptIni.intersects(point[0]):
