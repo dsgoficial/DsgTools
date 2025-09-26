@@ -33,6 +33,7 @@ from qgis.core import (
     QgsProcessingParameterField,
     QgsProcessingParameterNumber,
     QgsGeometry,
+    QgsLineString,
     QgsExpression,
     QgsWkbTypes,
     QgsVectorLayer,
@@ -126,7 +127,11 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
                 return {self.FLAGS: self.flag_id}
             featGeom = feature.geometry()
             geometry = featGeom.constGet()
-            ptFin = QgsGeometry.fromPointXY(QgsPointXY(geometry[-1]))
+            if featGeom.isMultipart():
+                for line in geometry:
+                    ptFin = QgsGeometry.fromPointXY(QgsPointXY(line[-1]))
+            else:
+                ptFin = QgsGeometry.fromPointXY(QgsPointXY(geometry[-1]))
             lineTouched = self.linesTouchedOnPoint(inputLyr, feature, ptFin)
             if len(lineTouched) == 0:
                 continue
@@ -202,12 +207,19 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
         return lines
 
     def adjacentPoint(self, line: QgsFeature, point) -> QgsPointXY:
-        vertexPoint = line.geometry().closestVertexWithContext(point)[1]
-        adjpoints = line.geometry().adjacentVertices(vertexPoint)
+        if isinstance(line, QgsFeature):
+            geometry = line.geometry()
+        elif isinstance(line, QgsLineString):
+            geometry = QgsGeometry(line)
+        else:
+            print('oi')
+            pass
+        vertexPoint = geometry.closestVertexWithContext(point)[1]
+        adjpoints = geometry.adjacentVertices(vertexPoint)
         adjptvertex = adjpoints[0]
         if adjptvertex < 0:
             adjptvertex = adjpoints[1]
-        adjpt = line.geometry().vertexAt(adjptvertex)
+        adjpt = geometry.vertexAt(adjptvertex)
         return QgsPointXY(adjpt)
 
     def anglesBetweenLines(
@@ -258,8 +270,13 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
             for line in lineLayer.getFeatures():
                 lineGeom = line.geometry()
                 geometry = lineGeom.constGet()
-                ptFin = QgsGeometry.fromPointXY(QgsPointXY(geometry[-1]))
-                ptIni = QgsGeometry.fromPointXY(QgsPointXY(geometry[0]))
+                if lineGeom.isMultipart():
+                    for l in geometry:
+                        ptFin = QgsGeometry.fromPointXY(QgsPointXY(l[-1]))
+                        ptIni = QgsGeometry.fromPointXY(QgsPointXY(l[0]))
+                else:
+                    ptFin = QgsGeometry.fromPointXY(QgsPointXY(geometry[-1]))
+                    ptIni = QgsGeometry.fromPointXY(QgsPointXY(geometry[0]))
                 if ptFin.intersects(point[0]):
                     lineAndPointArray.append([line, ptFin])
                 if ptIni.intersects(point[0]):
