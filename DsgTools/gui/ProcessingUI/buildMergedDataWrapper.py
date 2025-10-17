@@ -583,17 +583,17 @@ class BuildMergedDataWrapper(WidgetWrapper):
                     )
                 return False
 
-            if classIndex in classIndices:
-                if pushAlert:
-                    self.messageBar.pushMessage(
-                        self.tr("Duplicate class index {0} in row {1}.").format(
-                            classIndex, row + 1
-                        ),
-                        level=Qgis.Warning,
-                        duration=5,
-                    )
-                return False
-            classIndices.append(classIndex)
+            # if classIndex in classIndices:
+            #     if pushAlert:
+            #         self.messageBar.pushMessage(
+            #             self.tr("Duplicate class index {0} in row {1}.").format(
+            #                 classIndex, row + 1
+            #             ),
+            #             level=Qgis.Warning,
+            #             duration=5,
+            #         )
+            #     return False
+            # classIndices.append(classIndex)
 
         return True
 
