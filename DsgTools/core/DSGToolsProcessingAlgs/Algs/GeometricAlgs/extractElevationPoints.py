@@ -1734,7 +1734,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(
                 npRasterCopy
             )
-            if maxCoordinatesArray == []:
+            if maxCoordinatesArray.size == 0:
                 return list(featSet)
             maxFeatList = (
                 rasterHandler.createFeatureListWithPixelValuesFromPixelCoordinatesArray(
@@ -1818,7 +1818,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             minCoordinatesArray = rasterHandler.getMinCoordinatesFromNpArray(
                 npRasterCopy
             )
-            if len(minCoordinatesArray) == 0:
+            if minCoordinatesArray.size == 0:
                 break
             minFeatList = (
                 rasterHandler.createFeatureListWithPixelValuesFromPixelCoordinatesArray(
