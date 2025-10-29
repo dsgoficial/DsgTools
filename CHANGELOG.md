@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.14 - dev
+## 4.19.15 - dev
 
 Novas Funcionalidades:
 
@@ -19,6 +19,7 @@ Melhorias:
 - Atualiza o modelo EDGV Topo para a versão 1.4.4;
 - Atualiza o modelo EDGV Orto para a versão 2.5.2;
 - Adiciona modo de tamanho fixo e overlap no PolygonTiler;
+- Melhora o funcionamento do Adjust Network Connectivity;
 
 
 Correção de bugs:

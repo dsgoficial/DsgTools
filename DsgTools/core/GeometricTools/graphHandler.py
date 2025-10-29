@@ -1728,3 +1728,225 @@ def connectedEdgesFeatIds(
                     connected_featids.add(connected_featid)
 
     return connected_featids
+
+def consolidate_network_nodes(
+    nx: Any,
+    edgesLayer: QgsVectorLayer,
+    tolerance: float,
+    context: Optional[QgsProcessingContext] = None,
+    feedback: Optional[QgsFeedback] = None,
+) -> Tuple[Dict[QByteArray, QgsPointXY], Dict[int, QgsPointXY]]:
+    from scipy.spatial import cKDTree
+    import numpy as np
+    from qgis.core import QgsProcessingUtils
+    
+    multiStepFeedback = (
+        QgsProcessingMultiStepFeedback(5, feedback) if feedback is not None else None
+    )
+    context = context if context is not None else QgsProcessingContext()
+    
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo("Preparing edge layer with feature IDs...")
+    
+    edgesWithFeatId, nodesLayer = buildAuxLayersPriorGraphBuilding(
+        networkLayer=edgesLayer,
+        context=context,
+        feedback=multiStepFeedback,
+    )
+    
+    # ✅ CRIAR MAPEAMENTO featid → FID
+    featidToFid = {}
+    for feat in edgesWithFeatId.getFeatures():
+        featidToFid[feat['featid']] = feat.id()  # Mapeia valor do campo → FID
+    
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo("Building graph structures...")
+    
+    (
+        nodeDict,
+        nodeIdDict,
+        edgeDict,
+        hashDict,
+        G,
+    ) = buildAuxStructures(
+        nx,
+        nodesLayer=nodesLayer,
+        edgesLayer=edgesWithFeatId,
+        feedback=multiStepFeedback,
+        graphType=GraphType.GRAPH,
+        useWkt=False,
+        computeNodeLayerIdDict=False,
+        addEdgeLength=False,
+    )
+    
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo("Building spatial index of nodes...")
+    
+    # Extract all unique node coordinates IN ORDER
+    nodeCoordsList = []
+    nodeWkbList = []
+    
+    for auxId in sorted(nodeIdDict.keys()):
+        wkb = nodeIdDict[auxId]
+        geom = QgsGeometry()
+        geom.fromWkb(wkb)
+        point = geom.asPoint()
+        nodeCoordsList.append([point.x(), point.y()])
+        nodeWkbList.append(wkb)
+    
+    if len(nodeCoordsList) == 0:
+        return {}, {}
+    
+    coordsArray = np.array(nodeCoordsList)
+    
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.pushInfo("Finding nearby nodes to consolidate...")
+    
+    tree = cKDTree(coordsArray)
+    pairs = tree.query_pairs(tolerance)
+    
+    parent = {i: i for i in range(len(nodeCoordsList))}
+    
+    def find(x):
+        if parent[x] != x:
+            parent[x] = find(parent[x])
+        return parent[x]
+    
+    def union(x, y):
+        px, py = find(x), find(y)
+        if px != py:
+            parent[px] = py
+    
+    for i, j in pairs:
+        union(i, j)
+    
+    from collections import defaultdict
+    clusters = defaultdict(list)
+    for i in range(len(nodeCoordsList)):
+        root = find(i)
+        clusters[root].append(i)
+    
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(4)
+        multiStepFeedback.pushInfo("Computing consolidated coordinates...")
+    
+    nodeConsolidationDict = {}
+    edgeFeatIdToNodeDict = defaultdict(dict)
+    
+    nClusters = len(clusters)
+    if nClusters == 0:
+        return nodeConsolidationDict, edgeFeatIdToNodeDict
+    
+    stepSize = 100 / nClusters
+    
+    for current, (root, indices) in enumerate(clusters.items()):
+        if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+            break
+        
+        clusterCoords = coordsArray[indices]
+        centroid = clusterCoords.mean(axis=0)
+        consolidatedPoint = QgsPointXY(centroid[0], centroid[1])
+        
+        for idx in indices:
+            originalWkb = nodeWkbList[idx]
+            nodeConsolidationDict[originalWkb] = consolidatedPoint
+        
+        if multiStepFeedback is not None:
+            multiStepFeedback.setProgress(current * stepSize)
+    
+    # ✅ USAR MAPEAMENTO CORRETO
+    for featidValue, vertexHashList in hashDict.items():
+        # featidValue é o valor do campo 'featid'
+        # Precisamos do FID da feature original em edgesLayer
+        
+        # Buscar FID correspondente no layer original
+        originalFid = None
+        for feat in edgesLayer.getFeatures():
+            if feat.id() == featidValue:  # O featid foi criado com $id, então é igual ao FID original
+                originalFid = feat.id()
+                break
+        
+        if originalFid is None:
+            continue
+        
+        # Processar primeiro vértice (posição 0 na lista)
+        if len(vertexHashList) > 0 and vertexHashList[0]:
+            wkb = vertexHashList[0]
+            if wkb in nodeConsolidationDict:
+                edgeFeatIdToNodeDict[originalFid][0] = nodeConsolidationDict[wkb]
+        
+        # Processar último vértice (posição 1 ou -1 na lista)
+        if len(vertexHashList) > 1 and vertexHashList[-1]:
+            wkb = vertexHashList[-1]
+            if wkb in nodeConsolidationDict:
+                edgeFeatIdToNodeDict[originalFid][-1] = nodeConsolidationDict[wkb]
+    
+    return nodeConsolidationDict, edgeFeatIdToNodeDict
+
+def apply_node_consolidation_to_layer(
+    inputLayer: QgsVectorLayer,
+    edgeFeatIdToNodeDict: Dict[int, Dict[int, QgsPointXY]],
+    feedback: Optional[QgsFeedback] = None,
+) -> None:
+    """
+    Apply consolidated node coordinates to line features in the layer.
+    
+    This modifies the input layer in place, updating the first and last vertices
+    of line features to use the exact consolidated coordinates.
+    
+    Args:
+        inputLayer: QgsVectorLayer containing line features to update.
+        edgeFeatIdToNodeDict: Dictionary mapping feature ID to dict of vertex_pos -> consolidated QgsPointXY.
+        feedback: Optional QgsFeedback object to provide feedback during processing.
+    
+    Note:
+        This function modifies the input layer directly. The layer should be in edit mode
+        before calling this function.
+    """
+    if not edgeFeatIdToNodeDict:
+        return
+    
+    nFeatures = len(edgeFeatIdToNodeDict)
+    if nFeatures == 0:
+        return
+    
+    stepSize = 100 / nFeatures if feedback is not None else 0
+    
+    for current, (featid, nodeDict) in enumerate(edgeFeatIdToNodeDict.items()):
+        if feedback is not None and feedback.isCanceled():
+            break
+        
+        feat = inputLayer.getFeature(featid)
+        if not feat.isValid():
+            continue
+        
+        geom = feat.geometry()
+        if geom.isNull() or geom.isEmpty():
+            continue
+        
+        # Get the line geometry
+        vertices = list(geom.vertices())
+        
+        if len(vertices) < 2:
+            continue
+        
+        # Update first vertex (vertex_pos = 0)
+        if 0 in nodeDict:
+            consolidatedPoint = nodeDict[0]
+            geom.moveVertex(consolidatedPoint.x(), consolidatedPoint.y(), 0)
+        
+        # Update last vertex (vertex_pos = -1 or last index)
+        lastIdx = len(vertices) - 1
+        if lastIdx in nodeDict or -1 in nodeDict:
+            consolidatedPoint = nodeDict[-1]
+            geom.moveVertex(consolidatedPoint.x(), consolidatedPoint.y(), lastIdx)
+        # Apply the modified geometry
+        newGeom = QgsGeometry(geom)
+        inputLayer.changeGeometry(featid, newGeom)
+        
+        if feedback is not None:
+            feedback.setProgress(current * stepSize)
