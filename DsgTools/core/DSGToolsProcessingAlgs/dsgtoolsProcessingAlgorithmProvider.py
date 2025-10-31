@@ -70,6 +70,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGrou
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3 import (
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3,
 )
+# from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsNextToTerrainLinesAlgorithm import ReclassifyPixelsNextToTerrainLinesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsToNearestNeighborAlgorithm import (
     ReclassifyAdjacentPixelsToNearestNeighborAlgorithm,
 )
@@ -82,6 +83,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractMiddleVertex
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.lineOnAreaOverlayer import (
     LineOnAreaOverlayerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.nurbfitSmoothingAlgorithm import NURBFitSmoothingAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.polygonTiler import (
     PolygonTilerAlgorithm,
 )
@@ -828,6 +830,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             MedianFilterNoDataAlgorithm(),
             MergeShapefileZipFilesInSingleGeopackage(),
             BuildMergedDataWithFieldRefactorAlgorithm(),
+            # ReclassifyPixelsNextToTerrainLinesAlgorithm(),
+            NURBFitSmoothingAlgorithm(),
         ]
         return algList
 
