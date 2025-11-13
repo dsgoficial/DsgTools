@@ -486,11 +486,12 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(ValidationAlgorithm):
             pixel_area = d.measureArea(sample_pixel)
         else:
             # For projected coordinates, convert to square meters based on the CRS units
-            units = crs.mapUnits()
-            conversion_factor = QgsUnitTypes.fromUnitToUnitFactor(
-                units, QgsUnitTypes.SquareMeters
-            )
-            pixel_area = pixel_width * pixel_height * conversion_factor
+            # units = crs.mapUnits()
+            # conversion_factor = QgsUnitTypes.fromUnitToUnitFactor(
+            #     units, QgsUnitTypes.SquareMeters
+            # )
+            # pixel_area = pixel_width * pixel_height * conversion_factor
+            pixel_area = pixel_width * pixel_height
 
         # Count occurrences of each value
         unique_values, counts = np.unique(npView[np.isnan(mask)], return_counts=True)
