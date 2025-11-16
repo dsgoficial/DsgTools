@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.16 - dev
+## 4.19.17 - dev
 
 Novas Funcionalidades:
 
@@ -14,6 +14,7 @@ Novas Funcionalidades:
 - Novo processo de unir zips de shapefiles em um único geopackage (útil para consolidar dados baixados do BDGEx);
 - Novo processo de unir dados de diferentes fontes em uma mesma camada chamado Build Merged Data with Field Refactor, criando um campo numérico e um nome. Algoritmo usado para consolidar dados de diversas fontes e transformar em uma única camada com atributos para montar máscaras de um raster binário;
 - Novo processo de smooth (NURBFit);
+- Novo algoritmo de generalização em raster com hierarquia de decisão e restrições de tamanho (ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4);
 
 Melhorias:
 
