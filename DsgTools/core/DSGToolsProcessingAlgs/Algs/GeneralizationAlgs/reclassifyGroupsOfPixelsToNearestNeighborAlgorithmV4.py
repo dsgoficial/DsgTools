@@ -655,6 +655,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4(ValidationAlgorithm):
             innerFeedback = QgsProcessingMultiStepFeedback(nGroups, feedback)
             crs = inputRaster.crs()
             
+            # Calculate pixel resolution for buffer calculation
+            pixel_resolution = abs(transform.a)  # Resolution in meters/pixel
+            
             for currentComponent, component in enumerate(connected_components):
                 innerFeedback.setCurrentStep(currentComponent)
                 if innerFeedback.isCanceled():
@@ -673,11 +676,17 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4(ValidationAlgorithm):
                     [f.geometry() for f in polygonDict.values()]
                 )
                 
+                # CORREÇÃO: Buffer adaptativo baseado no threshold
+                # Polígonos menores precisam de buffer maior para encontrar vizinhos
+                # Especialmente importante quando há restrições de classe
+                # buffer_pixels = max(10, int(np.sqrt(threshold / pixel_resolution**2)))
+                buffer_pixels = 10
+                
                 currentView, _, window = rasterHandler.getNumpyViewAndMaskFromPolygon(
                     npRaster=npRaster,
                     transform=transform,
                     geom=combined_geometry,
-                    pixelBuffer=2,
+                    pixelBuffer=buffer_pixels,
                     returnWindow=True,
                 )
                 
@@ -705,7 +714,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4(ValidationAlgorithm):
                     if G.nodes[currentNode]["area"] > threshold:
                         continue
                     
-                    # CORREÇÃO: Processar diretamente na view da janela
+                    # Processar diretamente na view da janela
                     self.processPixelGroupInPlace(
                         KDTree, currentView, window_transform, feat, nodata, 
                         classRestrictions, nonGrowingClasses
