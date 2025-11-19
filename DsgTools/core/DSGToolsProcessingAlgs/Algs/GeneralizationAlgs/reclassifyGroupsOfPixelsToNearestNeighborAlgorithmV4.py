@@ -21,6 +21,7 @@
 """
 
 
+import os
 from typing import Any, Dict, List, Tuple
 import json
 import numpy as np
@@ -444,8 +445,14 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4(ValidationAlgorithm):
         
         # Initial polygonize
         feedback.pushInfo(self.tr("Running initial polygonize for this phase"))
+        if phaseIdx == 0:
+            inputToConsider = inputRaster
+        elif not os.path.exists(outputRaster):
+            inputToConsider = inputRaster
+        else:
+            inputToConsider = outputRaster
         polygonLayer = self.algRunner.runGdalPolygonize(
-            inputRaster=inputRaster if phaseIdx == 0 else outputRaster,
+            inputRaster=inputToConsider,
             context=context,
             feedback=feedback,
         )
