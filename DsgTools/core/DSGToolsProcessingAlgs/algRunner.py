@@ -3144,3 +3144,21 @@ class AlgRunner:
         if reclassifiedPolygonsLyr is not None:
             return output["OUTPUT"], output["RECLASSIFIED_POLYGONS"]
         return output["OUTPUT"]
+
+    def runAdjustNetworkConnectivityAlgorithm(self,
+        inputLyr: QgsVectorLayer,
+        tol: float,
+        context: QgsProcessingContext,
+        selected: Optional[bool]=False,
+        feedback: Optional[QgsFeedback]=None
+    ) -> None:
+        processing.run(
+            "dsgtools:adjustnetworkconnectivity",
+            {
+                "INPUT": inputLyr,
+                "SELECTED": selected,
+                "TOLERANCE": tol,
+            },
+            context=context,
+            feedback=feedback
+        )

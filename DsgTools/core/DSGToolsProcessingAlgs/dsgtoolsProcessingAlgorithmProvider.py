@@ -108,6 +108,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.mergeShapefil
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGeographicBoundsConstraint import (
     BatchRunAlgorithmWithGeographicBoundsConstraint,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.cqdgGridGenerator import ETCQDGGridGenerator
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
     CreateGridFromCoordinatesAlgorithm,
 )
@@ -839,6 +840,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             # ReclassifyPixelsNextToTerrainLinesAlgorithm(),
             NURBFitSmoothingAlgorithm(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4(),
+            ETCQDGGridGenerator(),
         ]
         return algList
 
