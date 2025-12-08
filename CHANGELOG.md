@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.18 - dev
+## 4.19.19 - dev
 
 Novas Funcionalidades:
 
@@ -23,6 +23,7 @@ Melhorias:
 - Atualiza o modelo EDGV Orto para a versão 2.5.2;
 - Adiciona modo de tamanho fixo e overlap no PolygonTiler;
 - Melhora o funcionamento do Adjust Network Connectivity;
+- Adiciona múltiplas entradas e a possibilidade de usar ponto como âncora no AnchoredSnapper;
 
 
 Correção de bugs:
