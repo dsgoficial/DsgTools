@@ -19,7 +19,9 @@
  *                                                                         *
  ***************************************************************************/
 """
+import numpy as np
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from enum import Enum
 from itertools import tee
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
@@ -37,6 +39,7 @@ from qgis.core import (
     QgsProcessingContext,
     QgsWkbTypes,
     QgsPointXY,
+    QgsFeatureRequest,
 )
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
@@ -1729,22 +1732,122 @@ def connectedEdgesFeatIds(
 
     return connected_featids
 
+def extract_coordinates_chunk(chunk_data: List[Tuple[int, QByteArray]]) -> List[Tuple[int, float, float, QByteArray]]:
+    """
+    Extrai coordenadas de um chunk de nós.
+    Roda em thread separada - retorna dados para main thread processar.
+    
+    Args:
+        chunk_data: Lista de tuplas (auxId, wkb)
+    
+    Returns:
+        Lista de tuplas (auxId, x, y, wkb) ou None se inválido
+    """
+    results = []
+    for auxId, wkb in chunk_data:
+        geom = QgsGeometry()
+        geom.fromWkb(wkb)
+        if not geom.isNull():
+            point = geom.asPoint()
+            results.append((auxId, point.x(), point.y(), wkb))
+    return results
+
+
+def process_clusters_chunk(
+    chunk_data: List[Tuple[int, List[int]]],
+    coordsArray: np.ndarray,
+    nodeWkbList: List[QByteArray]
+) -> Dict[QByteArray, Tuple[float, float]]:
+    """
+    Processa um chunk de clusters e calcula centroides.
+    Roda em thread separada - retorna dicionário para main thread.
+    
+    Args:
+        chunk_data: Lista de tuplas (root, indices)
+        coordsArray: Array numpy com todas as coordenadas
+        nodeWkbList: Lista com todos os WKBs
+    
+    Returns:
+        Dicionário mapeando WKB -> (x, y) do centroide
+    """
+    local_dict = {}
+    
+    for root, indices in chunk_data:
+        clusterCoords = coordsArray[indices]
+        centroid = clusterCoords.mean(axis=0)
+        
+        for idx in indices:
+            originalWkb = nodeWkbList[idx]
+            local_dict[originalWkb] = (centroid[0], centroid[1])
+    
+    return local_dict
+
+
+def process_hash_chunk(
+    chunk_data: List[Tuple[int, List]],
+    featid_to_original_fid: Dict[int, int],
+    nodeConsolidationDict: Dict[QByteArray, Tuple[float, float]]
+) -> Dict[int, Dict[int, Tuple[float, float]]]:
+    """
+    Processa um chunk do hashDict mapeando vértices consolidados.
+    Roda em thread separada - retorna dicionário para main thread.
+    
+    Args:
+        chunk_data: Lista de tuplas (featidValue, vertexHashList)
+        featid_to_original_fid: Mapeamento de IDs
+        nodeConsolidationDict: Dicionário de consolidação
+    
+    Returns:
+        Dicionário mapeando originalFid -> {vertex_pos: (x, y)}
+    """
+    local_dict = {}
+    
+    for featidValue, vertexHashList in chunk_data:
+        originalFid = featid_to_original_fid.get(featidValue)
+        if originalFid is None:
+            continue
+        
+        vertex_updates = {}
+        
+        # Primeiro vértice
+        if len(vertexHashList) > 0 and vertexHashList[0]:
+            wkb = vertexHashList[0]
+            if wkb in nodeConsolidationDict:
+                vertex_updates[0] = nodeConsolidationDict[wkb]
+        
+        # Último vértice
+        if len(vertexHashList) > 1 and vertexHashList[-1]:
+            wkb = vertexHashList[-1]
+            if wkb in nodeConsolidationDict:
+                vertex_updates[-1] = nodeConsolidationDict[wkb]
+        
+        if vertex_updates:
+            local_dict[originalFid] = vertex_updates
+    
+    return local_dict
+
+
 def consolidate_network_nodes(
     nx: Any,
     edgesLayer: QgsVectorLayer,
     tolerance: float,
     context: Optional[QgsProcessingContext] = None,
     feedback: Optional[QgsFeedback] = None,
+    max_workers: Optional[int] = None,
 ) -> Tuple[Dict[QByteArray, QgsPointXY], Dict[int, QgsPointXY]]:
-    from scipy.spatial import cKDTree
-    import numpy as np
-    from qgis.core import QgsProcessingUtils
+    """
+    Versão otimizada com ThreadPoolExecutor em operações CPU-bound.
     
+    Args:
+        max_workers: Número de threads (None = usar cpu_count)
+    """
+    from scipy.spatial import cKDTree
     multiStepFeedback = (
         QgsProcessingMultiStepFeedback(5, feedback) if feedback is not None else None
     )
     context = context if context is not None else QgsProcessingContext()
     
+    # Step 0: Preparar layer
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo("Preparing edge layer with feature IDs...")
@@ -1755,11 +1858,15 @@ def consolidate_network_nodes(
         feedback=multiStepFeedback,
     )
     
-    # ✅ CRIAR MAPEAMENTO featid → FID
-    featidToFid = {}
-    for feat in edgesWithFeatId.getFeatures():
-        featidToFid[feat['featid']] = feat.id()  # Mapeia valor do campo → FID
+    # ✅ Criar mapeamento featid→originalFid UMA VEZ
+    if multiStepFeedback is not None:
+        multiStepFeedback.pushInfo("Creating feature ID mapping...")
     
+    featid_to_original_fid = {}
+    for feat in edgesLayer.getFeatures():
+        featid_to_original_fid[feat.id()] = feat.id()
+    
+    # Step 1: Construir estruturas do grafo
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo("Building graph structures...")
@@ -1781,15 +1888,219 @@ def consolidate_network_nodes(
         addEdgeLength=False,
     )
     
+    # Step 2: Extrair coordenadas dos nós (PARALELIZADO)
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo("Building spatial index of nodes...")
+        multiStepFeedback.pushInfo("Extracting node coordinates (parallel)...")
     
-    # Extract all unique node coordinates IN ORDER
+    n_nodes = len(nodeIdDict)
+    if n_nodes == 0:
+        return {}, {}
+    
+    # 🚀 PARALELIZAÇÃO 1: Extração de coordenadas
+    # Dividir nodeIdDict em chunks
+    node_items = list(nodeIdDict.items())
+    chunk_size = max(100, n_nodes // (max_workers or 4))
+    chunks = [node_items[i:i+chunk_size] for i in range(0, len(node_items), chunk_size)]
+    
+    coordsArray = np.empty((n_nodes, 2), dtype=np.float64)
+    nodeWkbList = []
+    auxId_to_idx = {}
+    
+    current_idx = 0
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # Submeter chunks para processamento paralelo
+        future_to_chunk = {
+            executor.submit(extract_coordinates_chunk, chunk): chunk 
+            for chunk in chunks
+        }
+        
+        # Coletar resultados na main thread
+        for future in as_completed(future_to_chunk):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                return {}, {}
+            
+            results = future.result()
+            for auxId, x, y, wkb in results:
+                coordsArray[current_idx] = [x, y]
+                nodeWkbList.append(wkb)
+                auxId_to_idx[auxId] = current_idx
+                current_idx += 1
+    
+    # Ajustar tamanho do array se necessário
+    if current_idx < n_nodes:
+        coordsArray = coordsArray[:current_idx]
+    
+    # Step 3: Construir índice espacial
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.pushInfo("Finding nearby nodes to consolidate...")
+    
+    tree = cKDTree(coordsArray)
+    pairs = tree.query_pairs(tolerance)
+    
+    # Union-Find
+    parent = {i: i for i in range(len(nodeWkbList))}
+    
+    def find(x):
+        if parent[x] != x:
+            parent[x] = find(parent[x])
+        return parent[x]
+    
+    def union(x, y):
+        px, py = find(x), find(y)
+        if px != py:
+            parent[px] = py
+    
+    for i, j in pairs:
+        union(i, j)
+    
+    clusters = defaultdict(list)
+    for i in range(len(nodeWkbList)):
+        root = find(i)
+        clusters[root].append(i)
+    
+    # Step 4: Calcular centroides (PARALELIZADO)
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(4)
+        multiStepFeedback.pushInfo("Computing consolidated coordinates (parallel)...")
+    
+    nodeConsolidationDict = {}
+    edgeFeatIdToNodeDict = defaultdict(dict)
+    
+    nClusters = len(clusters)
+    if nClusters == 0:
+        return nodeConsolidationDict, edgeFeatIdToNodeDict
+    
+    # 🚀 PARALELIZAÇÃO 2: Processamento de clusters
+    cluster_items = list(clusters.items())
+    chunk_size = max(10, nClusters // (max_workers or 4))
+    cluster_chunks = [
+        cluster_items[i:i+chunk_size] 
+        for i in range(0, len(cluster_items), chunk_size)
+    ]
+    
+    # Dicionário temporário com tuplas (x, y) em vez de QgsPointXY
+    temp_consolidation_dict = {}
+    
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_chunk = {
+            executor.submit(
+                process_clusters_chunk, 
+                chunk, 
+                coordsArray, 
+                nodeWkbList
+            ): chunk 
+            for chunk in cluster_chunks
+        }
+        
+        # Coletar resultados na main thread
+        for future in as_completed(future_to_chunk):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            
+            local_dict = future.result()
+            temp_consolidation_dict.update(local_dict)
+    
+    # Converter tuplas para QgsPointXY na main thread
+    if multiStepFeedback is not None:
+        multiStepFeedback.pushInfo("Converting to QgsPointXY objects...")
+    
+    for wkb, (x, y) in temp_consolidation_dict.items():
+        nodeConsolidationDict[wkb] = QgsPointXY(x, y)
+    
+    # 🚀 PARALELIZAÇÃO 3: Mapear nós consolidados para edges
+    if multiStepFeedback is not None:
+        multiStepFeedback.pushInfo("Mapping consolidated nodes to edges (parallel)...")
+    
+    hash_items = list(hashDict.items())
+    chunk_size = max(100, len(hash_items) // (max_workers or 4))
+    hash_chunks = [
+        hash_items[i:i+chunk_size] 
+        for i in range(0, len(hash_items), chunk_size)
+    ]
+    
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_chunk = {
+            executor.submit(
+                process_hash_chunk,
+                chunk,
+                featid_to_original_fid,
+                temp_consolidation_dict  # Usar dicionário com tuplas
+            ): chunk
+            for chunk in hash_chunks
+        }
+        
+        # Coletar resultados na main thread
+        for future in as_completed(future_to_chunk):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            
+            local_dict = future.result()
+            # Merge e converter para QgsPointXY na main thread
+            for featid, vertex_dict in local_dict.items():
+                for vertex_pos, (x, y) in vertex_dict.items():
+                    edgeFeatIdToNodeDict[featid][vertex_pos] = QgsPointXY(x, y)
+    
+    return nodeConsolidationDict, edgeFeatIdToNodeDict
+
+
+# ✅ VERSÃO ALTERNATIVA: Paralelização apenas onde mais importa
+def consolidate_network_nodes_selective(
+    nx: Any,
+    edgesLayer: QgsVectorLayer,
+    tolerance: float,
+    context: Optional[QgsProcessingContext] = None,
+    feedback: Optional[QgsFeedback] = None,
+    max_workers: Optional[int] = None,
+) -> Tuple[Dict[QByteArray, QgsPointXY], Dict[int, QgsPointXY]]:
+    """
+    Versão com paralelização SELETIVA apenas no gargalo principal:
+    - Mapeamento hashDict (que era O(N*M) no código original)
+    
+    Use esta versão se a paralelização completa causar overhead excessivo.
+    """
+    from scipy.spatial import cKDTree
+    multiStepFeedback = (
+        QgsProcessingMultiStepFeedback(5, feedback) if feedback is not None else None
+    )
+    context = context if context is not None else QgsProcessingContext()
+    
+    # Steps 0-3: Igual ao original otimizado (sem paralelização)
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(0)
+    
+    edgesWithFeatId, nodesLayer = buildAuxLayersPriorGraphBuilding(
+        networkLayer=edgesLayer,
+        context=context,
+        feedback=multiStepFeedback,
+    )
+    
+    featid_to_original_fid = {feat.id(): feat.id() for feat in edgesLayer.getFeatures()}
+    
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(1)
+    
+    (nodeDict, nodeIdDict, edgeDict, hashDict, G) = buildAuxStructures(
+        nx,
+        nodesLayer=nodesLayer,
+        edgesLayer=edgesWithFeatId,
+        feedback=multiStepFeedback,
+        graphType=GraphType.GRAPH,
+        useWkt=False,
+        computeNodeLayerIdDict=False,
+        addEdgeLength=False,
+    )
+    
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(2)
+    
+    # Extração sequencial (código original otimizado)
     nodeCoordsList = []
     nodeWkbList = []
-    
-    for auxId in sorted(nodeIdDict.keys()):
+    for auxId in nodeIdDict.keys():
+        if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+            return {}, {}
         wkb = nodeIdDict[auxId]
         geom = QgsGeometry()
         geom.fromWkb(wkb)
@@ -1797,14 +2108,10 @@ def consolidate_network_nodes(
         nodeCoordsList.append([point.x(), point.y()])
         nodeWkbList.append(wkb)
     
-    if len(nodeCoordsList) == 0:
-        return {}, {}
-    
     coordsArray = np.array(nodeCoordsList)
     
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo("Finding nearby nodes to consolidate...")
     
     tree = cKDTree(coordsArray)
     pairs = tree.query_pairs(tolerance)
@@ -1824,7 +2131,6 @@ def consolidate_network_nodes(
     for i, j in pairs:
         union(i, j)
     
-    from collections import defaultdict
     clusters = defaultdict(list)
     for i in range(len(nodeCoordsList)):
         root = find(i)
@@ -1832,58 +2138,51 @@ def consolidate_network_nodes(
     
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(4)
-        multiStepFeedback.pushInfo("Computing consolidated coordinates...")
     
+    # Consolidação sequencial
     nodeConsolidationDict = {}
-    edgeFeatIdToNodeDict = defaultdict(dict)
-    
-    nClusters = len(clusters)
-    if nClusters == 0:
-        return nodeConsolidationDict, edgeFeatIdToNodeDict
-    
-    stepSize = 100 / nClusters
-    
-    for current, (root, indices) in enumerate(clusters.items()):
-        if multiStepFeedback is not None and multiStepFeedback.isCanceled():
-            break
-        
+    for root, indices in clusters.items():
         clusterCoords = coordsArray[indices]
         centroid = clusterCoords.mean(axis=0)
         consolidatedPoint = QgsPointXY(centroid[0], centroid[1])
-        
         for idx in indices:
-            originalWkb = nodeWkbList[idx]
-            nodeConsolidationDict[originalWkb] = consolidatedPoint
-        
-        if multiStepFeedback is not None:
-            multiStepFeedback.setProgress(current * stepSize)
+            nodeConsolidationDict[nodeWkbList[idx]] = consolidatedPoint
     
-    # ✅ USAR MAPEAMENTO CORRETO
-    for featidValue, vertexHashList in hashDict.items():
-        # featidValue é o valor do campo 'featid'
-        # Precisamos do FID da feature original em edgesLayer
+    # 🚀 PARALELIZAÇÃO APENAS NO GARGALO PRINCIPAL
+    edgeFeatIdToNodeDict = defaultdict(dict)
+    
+    hash_items = list(hashDict.items())
+    chunk_size = max(100, len(hash_items) // (max_workers or 4))
+    hash_chunks = [
+        hash_items[i:i+chunk_size] 
+        for i in range(0, len(hash_items), chunk_size)
+    ]
+    
+    # Criar versão com tuplas para thread-safety
+    temp_consolidation = {
+        wkb: (pt.x(), pt.y()) 
+        for wkb, pt in nodeConsolidationDict.items()
+    }
+    
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_chunk = {
+            executor.submit(
+                process_hash_chunk,
+                chunk,
+                featid_to_original_fid,
+                temp_consolidation
+            ): chunk
+            for chunk in hash_chunks
+        }
         
-        # Buscar FID correspondente no layer original
-        originalFid = None
-        for feat in edgesLayer.getFeatures():
-            if feat.id() == featidValue:  # O featid foi criado com $id, então é igual ao FID original
-                originalFid = feat.id()
+        for future in as_completed(future_to_chunk):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
-        
-        if originalFid is None:
-            continue
-        
-        # Processar primeiro vértice (posição 0 na lista)
-        if len(vertexHashList) > 0 and vertexHashList[0]:
-            wkb = vertexHashList[0]
-            if wkb in nodeConsolidationDict:
-                edgeFeatIdToNodeDict[originalFid][0] = nodeConsolidationDict[wkb]
-        
-        # Processar último vértice (posição 1 ou -1 na lista)
-        if len(vertexHashList) > 1 and vertexHashList[-1]:
-            wkb = vertexHashList[-1]
-            if wkb in nodeConsolidationDict:
-                edgeFeatIdToNodeDict[originalFid][-1] = nodeConsolidationDict[wkb]
+            
+            local_dict = future.result()
+            for featid, vertex_dict in local_dict.items():
+                for vertex_pos, (x, y) in vertex_dict.items():
+                    edgeFeatIdToNodeDict[featid][vertex_pos] = QgsPointXY(x, y)
     
     return nodeConsolidationDict, edgeFeatIdToNodeDict
 
@@ -1913,14 +2212,17 @@ def apply_node_consolidation_to_layer(
     nFeatures = len(edgeFeatIdToNodeDict)
     if nFeatures == 0:
         return
-    
+    request = QgsFeatureRequest().setFilterFids(list(edgeFeatIdToNodeDict.keys()))
     stepSize = 100 / nFeatures if feedback is not None else 0
     
-    for current, (featid, nodeDict) in enumerate(edgeFeatIdToNodeDict.items()):
+    for current, feat in enumerate(inputLayer.getFeatures(request)):
         if feedback is not None and feedback.isCanceled():
             break
         
-        feat = inputLayer.getFeature(featid)
+        featid = feat.id()
+        nodeDict = edgeFeatIdToNodeDict.get(featid)
+        if not nodeDict:
+            continue
         if not feat.isValid():
             continue
         
@@ -1929,24 +2231,28 @@ def apply_node_consolidation_to_layer(
             continue
         
         # Get the line geometry
-        vertices = list(geom.vertices())
+        line = geom.constGet()
+        vertexCount = line.nCoordinates()
         
-        if len(vertices) < 2:
+        if vertexCount < 2:
             continue
         
+        modified = False
         # Update first vertex (vertex_pos = 0)
         if 0 in nodeDict:
             consolidatedPoint = nodeDict[0]
-            geom.moveVertex(consolidatedPoint.x(), consolidatedPoint.y(), 0)
+            if geom.moveVertex(consolidatedPoint.x(), consolidatedPoint.y(), 0):
+                modified = True
         
         # Update last vertex (vertex_pos = -1 or last index)
-        lastIdx = len(vertices) - 1
+        lastIdx = vertexCount - 1
         if lastIdx in nodeDict or -1 in nodeDict:
             consolidatedPoint = nodeDict[-1]
-            geom.moveVertex(consolidatedPoint.x(), consolidatedPoint.y(), lastIdx)
+            if geom.moveVertex(consolidatedPoint.x(), consolidatedPoint.y(), lastIdx):
+                modified = True
         # Apply the modified geometry
-        newGeom = QgsGeometry(geom)
-        inputLayer.changeGeometry(featid, newGeom)
+        if modified:
+            inputLayer.changeGeometry(featid, geom)
         
         if feedback is not None:
             feedback.setProgress(current * stepSize)
