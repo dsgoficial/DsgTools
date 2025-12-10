@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from collections import defaultdict
 from PyQt5.QtCore import QCoreApplication
 
 import math
@@ -148,25 +149,50 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         outputLyr.commitChanges()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Running adjust network connectivity..."))
+        self.algRunner.runAdjustNetworkConnectivityAlgorithm(
+            inputLyr=outputLyr,
+            tol=tol,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        outputLyr.commitChanges()
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Running identify dangles after removing small lines post snap on unified layer..."))
         dangleLyr = self.algRunner.runIdentifyDangles(
             outputLyr,
             tol,
             context,
-            ignoreDanglesOnUnsegmentedLines=True,
-            inputIsBoundaryLayer=True,
+            ignoreDanglesOnUnsegmentedLines=False,
+            inputIsBoundaryLayer=False,
             feedback=multiStepFeedback,
             onlySelected=onlySelected,
         )
         currentStep += 1
         if dangleLyr.featureCount() == 0:
+            multiStepFeedback.pushInfo(self.tr("No more remaining dangles. Ending process."))
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Updating original layers..."))
+            layerHandler.updateOriginalLayersFromUnifiedLayer(
+                inputLyrList, outputLyr, feedback=multiStepFeedback
+            )
             return {}
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Removing duplicated dangles..."))
+        dangleSnappedToGrid = self.algRunner.runSnapToGrid(
+            inputLayer=dangleLyr,
+            tol=tol,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         dangleSnappedToItself = self.algRunner.runSnapGeometriesToLayer(
-            dangleLyr,
-            dangleLyr,
+            dangleSnappedToGrid,
+            dangleSnappedToGrid,
             tol,
             context,
             feedback=multiStepFeedback,
@@ -182,122 +208,22 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         dangleSnappedToItself.commitChanges()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        layerHandler.filterDangles(dangleSnappedToItself, tol, feedback=multiStepFeedback)
-        currentStep += 1
-        dangleSnappedToItself.commitChanges()
-        
-        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Removing duplicated dangles after duplicate filter..."))
-        outputAfterSnapToDangleLyr = self.algRunner.runSnapGeometriesToLayer(
-            outputLyr,
-            dangleSnappedToItself,
-            tol,
-            context,
-            feedback=multiStepFeedback,
-            behavior=self.algRunner.AlignNodesDoNotInsertNewVertices,
-        )
+        layerHandler.filterDangles(dangleSnappedToItself, tol, feedback=multiStepFeedback)
+        dangleSnappedToItself.commitChanges()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Removing small lines post snap..."))
-        self.algRunner.runRemoveSmallLines(
-            inputLyr=outputAfterSnapToDangleLyr,
-            tol=tol,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        outputLyr.commitChanges()
-        
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Removing duplicated vertices..."))
-        fixedNodesLyr = self.algRunner.runRemoveDuplicateVertex(
-            inputLyr=outputAfterSnapToDangleLyr,
-            tolerance=1e-8,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Removing small lines post vertex removal..."))
-        self.algRunner.runRemoveSmallLines(
-            inputLyr=fixedNodesLyr,
-            tol=tol,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        fixedNodesLyr.commitChanges()
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Removing null geometries..."))
-        fixedNull = self.algRunner.runRemoveNull(
-            inputLayer=fixedNodesLyr,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Running identify dangles after removing null geometries..."))
-        intermediateDangles = self.algRunner.runIdentifyDangles(
-            fixedNull,
-            tol,
-            context,
-            ignoreDanglesOnUnsegmentedLines=True,
-            inputIsBoundaryLayer=False,
-            feedback=multiStepFeedback,
-            onlySelected=False,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        layerHandler.filterDangles(intermediateDangles, tol, feedback=multiStepFeedback)
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        if intermediateDangles.featureCount() == 0:
-            multiStepFeedback.pushInfo(self.tr("No more remaining dangles. Ending process."))
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr("Updating original layers..."))
-            layerHandler.updateOriginalLayersFromUnifiedLayer(
-                inputLyrList, fixedNull, feedback=multiStepFeedback
-            )
-            return {}
-        multiStepFeedback.pushInfo(self.tr(f"{intermediateDangles.featureCount()} remaining. Fixing dangles with individual snap..."))
+        multiStepFeedback.pushInfo(self.tr("Performing individual snap on remaining dangles..."))
         fixedLines = self.fixDanglesWithIndividualSnap(
-            dangleLyr=intermediateDangles,
-            lineLyr=fixedNull,
+            dangleLyr=dangleSnappedToItself,
+            lineLyr=outputLyr,
             context=context,
             feedback=multiStepFeedback,
             tol=tol,
         )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Running identify dangles after individual snap..."))
-        finalDangles = self.algRunner.runIdentifyDangles(
-            fixedLines,
-            tol,
-            context,
-            ignoreDanglesOnUnsegmentedLines=True,
-            inputIsBoundaryLayer=False,
-            feedback=multiStepFeedback,
-            onlySelected=False,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        layerHandler.filterDangles(finalDangles, tol, feedback=multiStepFeedback)
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        if finalDangles.featureCount() == 0:
-            multiStepFeedback.pushInfo(self.tr("No more remaining dangles on final process. Ending process."))
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr("Updating original layers..."))
-            layerHandler.updateOriginalLayersFromUnifiedLayer(
-                inputLyrList, fixedLines, feedback=multiStepFeedback
-            )
-            return {}
-        multiStepFeedback.pushInfo(self.tr(f"{finalDangles.featureCount()} remaining. Final fix remaining dangles..."))
+        multiStepFeedback.pushInfo(self.tr(f"{dangleSnappedToItself.featureCount()} remaining. Final fix remaining dangles..."))
         self.fixRemainingDangles(
-            dangleLyr=finalDangles,
+            dangleLyr=dangleSnappedToItself,
             lineLyr=fixedLines,
             context=context,
             feedback=multiStepFeedback,
@@ -307,10 +233,33 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Updating original layers..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            inputLyrList, fixedNull, feedback=multiStepFeedback
+            inputLyrList, fixedLines, feedback=multiStepFeedback
         )
 
         return {}
+    
+    def fixDanglesWithIndividualSnap(self, dangleLyr: QgsVectorLayer, lineLyr: QgsVectorLayer, context: QgsProcessingContext, feedback: QgsFeedback, tol: float):
+        nDangles = dangleLyr.featureCount()
+        if nDangles == 0:
+            return lineLyr
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nDangles, feedback)
+        layerHandler = LayerHandler()
+        currentLyr = lineLyr
+        for currentStep, dangleFeat in enumerate(dangleLyr.getFeatures()):
+            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback.isCanceled():
+                break
+            currentDangleLyr = layerHandler.createMemoryLayerWithFeature(
+                dangleLyr, dangleFeat, context
+            )
+            currentLyr = self.algRunner.runSnapGeometriesToLayer(
+                inputLayer=currentLyr,
+                referenceLayer=currentDangleLyr,
+                tol=tol,
+                behavior=AlgRunner.AlignNodesDoNotInsertNewVertices,
+                context=context,
+            )
+        return currentLyr
     
     def fixRemainingDangles(self, dangleLyr: QgsVectorLayer, lineLyr: QgsVectorLayer, context: QgsProcessingContext, feedback: QgsFeedback, tol: float):
         multiStepFeedback = QgsProcessingMultiStepFeedback(10, feedback)
@@ -329,7 +278,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         danglePointDict = {f["dangle_featid"]: f.geometry().asPoint() for f in danglesWithId.getFeatures()}
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        dangleBuffer = self.algRunner.runBuffer(danglesWithId, distance=tol, dissolve=True, context=context, feedback=multiStepFeedback)
+        dangleBuffer = self.algRunner.runBuffer(danglesWithId, distance=2*tol, dissolve=True, context=context, feedback=multiStepFeedback)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(dangleBuffer, context, feedback=multiStepFeedback)
@@ -376,49 +325,39 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
+        
         nFeats = joinned.featureCount()
         if nFeats == 0:
             return
+        joinnedDict = defaultdict(set)
+        for feat in joinned.getFeatures():
+            joinnedDict[feat.id()].add(feat['line_featid'])
+        lineLyrDict = {f['line_featid']:f for f in lineLyrWithId.getFeatures()}
         stepSize = 100/nFeats
         lineLyr.startEditing()
-        lineLyr.beginEditCommand("updating lines")
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         for current, feat in enumerate(joinned.getFeatures()):
             if multiStepFeedback.isCanceled():
                 break
-            lineFeat = lineLyr.getFeature(feat["line_featid"])
+            if len(joinnedDict[feat.id()]) == 1:
+                multiStepFeedback.setProgress(current * stepSize)
+                continue
+            lineFeat = lineLyrDict.get(feat["line_featid"], None)
+            if lineFeat is None:
+                multiStepFeedback.setProgress(current * stepSize)
+                continue
             lineGeom = lineFeat.geometry()
             danglePoint = danglePointDict[feat["dangle_featid"]]
+            if danglePoint.distance(feat.geometry()) > tol:
+                multiStepFeedback.setProgress(current * stepSize)
+                continue
             lineGeom.moveVertex(danglePoint.x(), danglePoint.y(), feat["vertex_index"])
-            lineLyr.changeGeometry(feat["line_featid"], lineGeom)
+            lineLyr.dataProvider().changeGeometryValues({feat["line_featid"]: lineGeom})
+            lineFeat.setGeometry(lineGeom)
+            lineLyrDict[feat["line_featid"]] = lineFeat
             multiStepFeedback.setProgress(current * stepSize)
-        
-        lineLyr.endEditCommand()
         lineLyr.commitChanges()
-    
-    def fixDanglesWithIndividualSnap(self, dangleLyr: QgsVectorLayer, lineLyr: QgsVectorLayer, context: QgsProcessingContext, feedback: QgsFeedback, tol: float):
-        nDangles = dangleLyr.featureCount()
-        if nDangles == 0:
-            return
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nDangles, feedback)
-        layerHandler = LayerHandler()
-        currentLyr = lineLyr
-        for currentStep, dangleFeat in enumerate(dangleLyr.getFeatures()):
-            multiStepFeedback.setCurrentStep(currentStep)
-            if multiStepFeedback.isCanceled():
-                break
-            currentDangleLyr = layerHandler.createMemoryLayerWithFeature(
-                dangleLyr, dangleFeat, context
-            )
-            currentLyr = self.algRunner.runSnapGeometriesToLayer(
-                inputLayer=currentLyr,
-                referenceLayer=currentDangleLyr,
-                tol=tol,
-                behavior=AlgRunner.AlignNodesInsertExtraVerticesWhereRequired,
-                context=context,
-            )
-        return currentLyr
 
     def name(self):
         """

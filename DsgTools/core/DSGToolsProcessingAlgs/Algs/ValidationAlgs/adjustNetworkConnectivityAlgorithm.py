@@ -200,6 +200,10 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             )
             return {}
         
+        # Verificar se o campo 'featid' já existe no inputLyr
+        fieldNames = [field.name() for field in inputLyr.fields()]
+        idFieldName = 'featid' if 'featid' not in fieldNames else 'temp_featid'
+        
         # Passar o layer original (inputLyr) não o QgsProcessingFeatureSourceDefinition
         nodeConsolidationDict, edgeFeatIdToNodeDict = graphHandler.consolidate_network_nodes(
             nx=nx,
@@ -207,6 +211,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             tolerance=tol,
             context=context,
             feedback=multiStepFeedback,
+            idFieldName=idFieldName,  # Passar o nome do campo
         )
         
         multiStepFeedback.setCurrentStep(9)

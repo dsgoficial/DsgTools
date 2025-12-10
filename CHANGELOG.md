@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.19 - dev
+## 4.19.20 - dev
 
 Novas Funcionalidades:
 
@@ -24,6 +24,7 @@ Melhorias:
 - Adiciona modo de tamanho fixo e overlap no PolygonTiler;
 - Melhora o funcionamento do Adjust Network Connectivity;
 - Adiciona múltiplas entradas e a possibilidade de usar ponto como âncora no AnchoredSnapper;
+- Adicionada a opção de group by no processo de numerar polígonos;
 
 
 Correção de bugs:

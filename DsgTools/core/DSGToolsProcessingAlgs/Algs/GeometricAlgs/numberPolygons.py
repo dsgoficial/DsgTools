@@ -10,14 +10,6 @@
         copyright            : (C) 2025 by Edson Tadeu - Cartographic Engineer @ Brazilian Army
         email                : tadeu.edson@eb.mil.br
  ***************************************************************************/
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
 """
 
 from qgis.core import (
@@ -29,15 +21,10 @@ from qgis.core import (
     QgsProcessingParameterEnum,
     QgsProcessingParameterString,
     QgsProcessingParameterFeatureSink,
-    QgsProject,
-    QgsFeatureRequest,
-    QgsProcessingUtils,
-    QgsVectorLayer,
     QgsField,
     QgsFeature,
 )
 from qgis.PyQt.QtCore import QVariant, QCoreApplication
-import processing
 
 
 class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
@@ -46,6 +33,7 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
     ATTRIBUTE_NAME = "ATTRIBUTE_NAME"
     OUTPUT_LAYER = "OUTPUT_LAYER"
     DIRECTION = "DIRECTION"
+    GROUP_BY_FIELD = "GROUP_BY_FIELD"  # Novo parâmetro
 
     def initAlgorithm(self, config):
 
@@ -69,6 +57,18 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=0,
             )
         )
+        
+        # Novo parâmetro opcional de agrupamento
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.GROUP_BY_FIELD,
+                self.tr("Campo para agrupar (opcional)"),
+                parentLayerParameterName=self.INPUT_LAYER,
+                optional=True,
+                allowMultiple=False,
+            )
+        )
+        
         self.addParameter(
             QgsProcessingParameterString(
                 self.ATTRIBUTE_NAME,
@@ -87,11 +87,17 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         layer = self.parameterAsVectorLayer(parameters, self.INPUT_LAYER, context)
         direction = self.parameterAsEnum(parameters, self.DIRECTION, context)
         attr_name = self.parameterAsString(parameters, self.ATTRIBUTE_NAME, context)
-
-        total = 100.0 / layer.featureCount() if layer.featureCount() else 0
+        group_by_field = self.parameterAsString(parameters, self.GROUP_BY_FIELD, context)
 
         if not layer:
             raise QgsProcessingException("Invalid input layer")
+
+        # Validar campo de agrupamento se fornecido
+        if group_by_field:
+            field_index = layer.fields().indexFromName(group_by_field)
+            if field_index == -1:
+                raise QgsProcessingException(f"Campo '{group_by_field}' não encontrado")
+            feedback.pushInfo(f"Ordenando por campo: {group_by_field}")
 
         fields = layer.fields()
         fields.append(QgsField(attr_name, QVariant.Int))
@@ -106,29 +112,76 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         )
 
         features = list(layer.getFeatures())
+        
+        # Ordenar features considerando grupo (se houver) e direção
+        sorted_features = self._sort_features(features, direction, group_by_field)
+        
+        total = 100.0 / len(sorted_features) if sorted_features else 0
+        feedback.setProgressText("Numerando os polígonos conforme direção dada...\n")
 
+        for i, feature in enumerate(sorted_features, start=1):
+            new_feature = QgsFeature(fields)
+            new_feature.setGeometry(feature.geometry())
+            new_feature.setAttributes(feature.attributes() + [i])
+            sink.addFeature(new_feature, QgsFeatureSink.FastInsert)
+            feedback.setProgress(int(i * total))
+
+        return {self.OUTPUT_LAYER: dest_id}
+
+    def _sort_features(self, features, direction, group_by_field=None):
+        """
+        Ordena uma lista de features baseado na direção especificada
+        e opcionalmente por um campo de agrupamento
+        """
         # Ordenação do Norte para o Sul e do Oeste para o Leste
         if direction == 0:
-            features.sort(
-                key=lambda f: (
-                    -f.geometry().centroid().asPoint().y(),
-                    f.geometry().centroid().asPoint().x(),
+            if group_by_field:
+                features.sort(
+                    key=lambda f: (
+                        f.attribute(group_by_field),
+                        -f.geometry().centroid().asPoint().y(),
+                        f.geometry().centroid().asPoint().x(),
+                    )
                 )
-            )
+            else:
+                features.sort(
+                    key=lambda f: (
+                        -f.geometry().centroid().asPoint().y(),
+                        f.geometry().centroid().asPoint().x(),
+                    )
+                )
 
         # Ordenação do Norte para o Sul e do Leste para o Oeste
         elif direction == 1:
-            features.sort(
-                key=lambda f: (
-                    -f.geometry().centroid().asPoint().y(),
-                    -f.geometry().centroid().asPoint().x(),
+            if group_by_field:
+                features.sort(
+                    key=lambda f: (
+                        f.attribute(group_by_field),
+                        -f.geometry().centroid().asPoint().y(),
+                        -f.geometry().centroid().asPoint().x(),
+                    )
                 )
-            )
+            else:
+                features.sort(
+                    key=lambda f: (
+                        -f.geometry().centroid().asPoint().y(),
+                        -f.geometry().centroid().asPoint().x(),
+                    )
+                )
 
         # Ordenação do Sul para o Norte e do Leste para o Oeste
         elif direction == 2:
-            features.sort(
-                key=lambda f: (
+            if group_by_field:
+                features.sort(
+                    key=lambda f: (
+                        f.attribute(group_by_field),
+                        f.geometry().centroid().asPoint().y(),
+                        -f.geometry().centroid().asPoint().x(),
+                    )
+                )
+            else:
+                features.sort(
+                    key=lambda f: (
                     f.geometry().centroid().asPoint().y(),
                     -f.geometry().centroid().asPoint().x(),
                 )
@@ -136,65 +189,34 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
 
         # Ordenação do Sul para o Norte e do Oeste para o Leste
         elif direction == 3:
-            features.sort(
-                key=lambda f: (
-                    f.geometry().centroid().asPoint().y(),
-                    f.geometry().centroid().asPoint().x(),
+            if group_by_field:
+                features.sort(
+                    key=lambda f: (
+                        f.attribute(group_by_field),
+                        f.geometry().centroid().asPoint().y(),
+                        f.geometry().centroid().asPoint().x(),
+                    )
                 )
-            )
-
-        feedback.setProgressText("Numerando os polígonos conforme direção dada...\n")
-
-        for i, feature in enumerate(features, start=1):
-            new_feature = QgsFeature(fields)
-            new_feature.setGeometry(feature.geometry())
-            new_feature.setAttributes(feature.attributes() + [i])
-            sink.addFeature(new_feature, QgsFeatureSink.FastInsert)
-            feedback.setProgress(int(i * total))
-
-        """
-        centroides = processing.run("native:centroids",
-                                    {'INPUT': layer,
-                                    'ALL_PARTS':False,
-                                    'OUTPUT':'TEMPORARY_OUTPUT'})['OUTPUT']
-        centroides.setName("Centroides")
-        QgsProject.instance().addMapLayer(centroides)
-        """
-
-        return {self.OUTPUT_LAYER: dest_id}
+            else:
+                features.sort(
+                    key=lambda f: (
+                        f.geometry().centroid().asPoint().y(),
+                        f.geometry().centroid().asPoint().x(),
+                    )
+                )
+        
+        return features
 
     def name(self):
-        """
-        Returns the algorithm name, used for identifying the algorithm. This
-        string should be fixed for the algorithm, and must not be localised.
-        The name should be unique within each provider. Names should contain
-        lowercase alphanumeric characters only and no spaces or other
-        formatting characters.
-        """
         return "numberpolygons"
 
     def displayName(self):
-        """
-        Returns the translated algorithm name, which should be used for any
-        user-visible display of the algorithm name.
-        """
         return self.tr("Number Polygons")
 
     def group(self):
-        """
-        Returns the name of the group this algorithm belongs to. This string
-        should be localised.
-        """
         return self.tr("Geometric Algorithms")
 
     def groupId(self):
-        """
-        Returns the unique ID of the group this algorithm belongs to. This
-        string should be fixed for the algorithm, and must not be localised.
-        The group id should be unique within each provider. Group id should
-        contain lowercase alphanumeric characters only and no spaces or other
-        formatting characters.
-        """
         return "DSGTools - Geometric Algorithms"
 
     def tr(self, string):

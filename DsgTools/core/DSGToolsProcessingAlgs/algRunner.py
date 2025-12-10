@@ -578,7 +578,14 @@ class AlgRunner:
         )
         return output if returnProcessingDict else output["FLAGS"]
 
-    def runSnapToGrid(self, inputLayer, tol, context, feedback=None, outputLyr=None):
+    def runSnapToGrid(self,
+        inputLayer: QgsVectorLayer,
+        tol: float,
+        context: QgsProcessingContext,
+        feedback: Optional[QgsFeedback]=None,
+        outputLyr: Optional[QgsVectorLayer]=None,
+        is_child_algorithm: Optional[bool]=False,
+    ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
             "INPUT": inputLayer,
@@ -589,9 +596,31 @@ class AlgRunner:
             "OUTPUT": outputLyr,
         }
         output = processing.run(
-            "native:snappointstogrid", parameters, context=context, feedback=feedback
+            "native:snappointstogrid",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+    
+    def runDSGToolsSnapToGridAndUpdate(self,
+        inputLayer: QgsVectorLayer,
+        tol: float,
+        context: QgsProcessingContext,
+        onlySelected: Optional[bool] = False,
+        feedback: Optional[QgsFeedback] = None,
+    ) -> None:
+        processing.run(
+            "dsgtools:snaptogridandupdate",
+            {
+                "INPUT": inputLayer,
+                "SELECTED": onlySelected,
+                "TOLERANCE": tol,
+            },
+            context=context,
+            feedback=feedback,
+        )
 
     def runRemoveNull(self, inputLayer, context, feedback=None, outputLyr=None):
         outputLyr = "memory:" if outputLyr is None else outputLyr

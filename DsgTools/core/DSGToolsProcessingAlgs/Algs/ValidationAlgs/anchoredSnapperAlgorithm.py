@@ -293,28 +293,28 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             )
 
         # Add unshared vertices for line and polygon geometries
-        if geomType in [QgsWkbTypes.LineGeometry, QgsWkbTypes.PolygonGeometry]:
-            primitiveDict = {
-                QgsWkbTypes.PointGeometry: [],
-                QgsWkbTypes.LineGeometry: [],
-                QgsWkbTypes.PolygonGeometry: [],
-            }
+        # if geomType in [QgsWkbTypes.LineGeometry, QgsWkbTypes.PolygonGeometry]:
+        #     primitiveDict = {
+        #         QgsWkbTypes.PointGeometry: [],
+        #         QgsWkbTypes.LineGeometry: [],
+        #         QgsWkbTypes.PolygonGeometry: [],
+        #     }
 
-            primitiveDict[snappedLyr.geometryType()].append(snappedLyr)
+        #     primitiveDict[snappedLyr.geometryType()].append(snappedLyr)
             
-            if mergedLineAnchor:
-                primitiveDict[QgsWkbTypes.LineGeometry].append(mergedLineAnchor)
+        #     if mergedLineAnchor:
+        #         primitiveDict[QgsWkbTypes.LineGeometry].append(mergedLineAnchor)
 
-            if primitiveDict[QgsWkbTypes.LineGeometry]:
-                algRunner.runAddUnsharedVertexOnSharedEdges(
-                    inputLinesList=primitiveDict[QgsWkbTypes.LineGeometry],
-                    inputPolygonsList=primitiveDict[QgsWkbTypes.PolygonGeometry],
-                    searchRadius=snapTolerance,
-                    selected=False,
-                    context=context,
-                    feedback=feedback,
-                    is_child_algorithm=True,
-                )
+        #     if primitiveDict[QgsWkbTypes.LineGeometry]:
+        #         algRunner.runAddUnsharedVertexOnSharedEdges(
+        #             inputLinesList=primitiveDict[QgsWkbTypes.LineGeometry],
+        #             inputPolygonsList=primitiveDict[QgsWkbTypes.PolygonGeometry],
+        #             searchRadius=snapTolerance,
+        #             selected=False,
+        #             context=context,
+        #             feedback=feedback,
+        #             is_child_algorithm=True,
+        #         )
 
         # Update original layers
         layerHandler.updateOriginalLayersFromUnifiedLayer(

@@ -23,7 +23,7 @@
 
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.core import (QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingParameterVectorLayer,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterFeatureSink,
                        QgsFeature, QgsGeometry, QgsPointXY,
@@ -192,7 +192,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
+            QgsProcessingParameterFeatureSource(
                 self.INPUT_MOLDURA,
                 self.tr('Camada de Moldura (MI)'),
                 [QgsProcessing.TypeVectorPolygon]
@@ -242,7 +242,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         # Obter parâmetros
-        moldura_layer = self.parameterAsVectorLayer(parameters, self.INPUT_MOLDURA, context)
+        moldura_layer = self.parameterAsSource(parameters, self.INPUT_MOLDURA, context)
         escala_idx = self.parameterAsEnum(parameters, self.ESCALA, context)
         lqa_idx = self.parameterAsEnum(parameters, self.LQA, context)
         tipo_lote = self.parameterAsEnum(parameters, self.TIPO_LOTE, context)
@@ -258,7 +258,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         grid_size = 4 * escala / 100  # 4 cm na escala
         
         # Obter CRS original
-        original_crs = moldura_layer.crs()
+        original_crs = moldura_layer.sourceCrs()
         
         feedback.pushInfo(f'Sistema de referência original: {original_crs.authid()}')
         feedback.pushInfo(f'Escala: 1:{escala}')
