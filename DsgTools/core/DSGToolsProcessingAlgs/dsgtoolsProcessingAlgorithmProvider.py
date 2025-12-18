@@ -112,6 +112,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.cqdgGridGenerator impor
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
     CreateGridFromCoordinatesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.etcqdgSegmentationEvaluator import ETCQDGSegmentationEvaluator
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeographicBoundary import (
     FilterLayerListByGeographicBoundary,
 )
@@ -841,6 +842,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             NURBFitSmoothingAlgorithm(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4(),
             ETCQDGGridGenerator(),
+            ETCQDGSegmentationEvaluator(),
         ]
         return algList
 
