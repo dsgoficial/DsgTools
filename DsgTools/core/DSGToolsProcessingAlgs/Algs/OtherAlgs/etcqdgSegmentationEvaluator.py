@@ -54,75 +54,6 @@ from qgis.core import (
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
-# --- FUNÇÃO WORKER (Mantida idêntica - Thread Safe) ---
-def process_tile_worker(data):
-    try:
-        import rasterio
-        from rasterio.mask import mask
-        from rasterio.features import rasterize
-        from DsgTools.core.GeometricTools.rasterHandler import calculateSegmentationMetrics
-        
-        reprojected_raster_path = data['raster_path']
-        tile_mask_geom = data['tile_geom']
-        gt_shapes = data['gt_shapes']
-        predicted_path = data['pred_path']
-        gt_path = data['gt_path']
-        nodata = data['nodata']
-        class_names = data['class_names']
-        
-        # 1. CLIP DO RASTER PREDITO
-        with rasterio.open(reprojected_raster_path) as src:
-            out_image, out_transform = mask(src, [tile_mask_geom], crop=True, nodata=nodata)
-            out_meta = src.meta.copy()
-            
-        out_meta.update({
-            "driver": "GTiff",
-            "height": out_image.shape[1],
-            "width": out_image.shape[2],
-            "transform": out_transform,
-            "nodata": nodata,
-            "compress": "lzw"
-        })
-        
-        with rasterio.open(predicted_path, "w", **out_meta) as dest:
-            dest.write(out_image)
-            
-        # 2. RASTERIZAR GROUND TRUTH
-        height, width = out_image.shape[1], out_image.shape[2]
-        
-        if not gt_shapes:
-            raster_array = np.full((height, width), nodata, dtype=np.uint8)
-        else:
-            raster_array = rasterize(
-                shapes=gt_shapes,
-                out_shape=(height, width),
-                transform=out_transform,
-                fill=nodata,
-                dtype=np.uint8, 
-                all_touched=True
-            )
-            
-        with rasterio.open(gt_path, 'w', driver='GTiff', height=height, width=width,
-                           count=1, dtype=raster_array.dtype, crs=out_meta['crs'], 
-                           transform=out_transform, nodata=nodata, compress='lzw') as dst:
-            dst.write(raster_array, 1)
-
-        # 3. CALCULAR MÉTRICAS
-        metrics = calculateSegmentationMetrics(gt_path, predicted_path, nodata, class_names)
-        
-        return {
-            'status': 'success',
-            'mi': data['mi'],
-            'quadricula': data['quadricula'],
-            'metrics': metrics,
-            'gt_path': gt_path,
-            'pred_path': predicted_path
-        }
-
-    except Exception as e:
-        return {'status': 'error', 'mi': data['mi'], 'quadricula': data['quadricula'], 'error': str(e)}
-
-# --- CLASSE DO ALGORITMO ---
 class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
     INPUT_TILES = "INPUT_TILES"
     INPUT_MASK_LAYER = "INPUT_MASK_LAYER"
@@ -243,6 +174,12 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 self.OUTPUT_FOLDER, self.tr("Pasta de Destino")
             )
         )
+        self.addParameter(
+            QgsProcessingParameterVectorDestination(
+                self.OUTPUT_LAYER,
+                self.tr("Camada de Saída (Tiles com Métricas)"),
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         # 1. Parâmetros
@@ -310,9 +247,9 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
             total_tiles_count += 1
         
         total_steps = 1 + (total_tiles_count + len(tiles_by_mi)) + 1
-        multi_step_feedback = QgsProcessingMultiStepFeedback(total_steps, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(total_steps, feedback)
         current_step_index = 0
-        multi_step_feedback.setCurrentStep(current_step_index)
+        multiStepFeedback.setCurrentStep(current_step_index)
         current_step_index += 1
 
         global_counts = {}
@@ -336,11 +273,12 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
 
         try:
             for mi, tile_features in tiles_by_mi.items():
-                if multi_step_feedback.isCanceled(): break
+                if multiStepFeedback.isCanceled():
+                    break
 
                 # --- OTIMIZAÇÃO: PROCESSAMENTO EM LOTE POR MI ---
-                multi_step_feedback.setCurrentStep(current_step_index)
-                multi_step_feedback.pushInfo(f"Processando MI: {mi} (Preparando geometrias em lote...)")
+                multiStepFeedback.setCurrentStep(current_step_index)
+                multiStepFeedback.pushInfo(f"Processando MI: {mi} (Preparando geometrias em lote...)")
                 
                 mi_gt_folder = os.path.join(ground_truth_folder, mi)
                 mi_pred_folder = os.path.join(predicted_folder, mi)
@@ -350,19 +288,23 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 fuso_utm = tile_features[0]["fuso_utm"]
                 utm_crs = QgsCoordinateReferenceSystem(fuso_utm)
                 if not utm_crs.isValid():
-                    multi_step_feedback.reportError(f"Fuso UTM inválido. Pulando MI {mi}.")
+                    multiStepFeedback.reportError(f"Fuso UTM inválido. Pulando MI {mi}.")
                     current_step_index += 1 + len(tile_features)
                     continue
 
                 # 1. Criar camada temporária com TODOS os tiles deste MI
                 mi_tiles_layer = QgsVectorLayer(f"Polygon?crs={tiles_crs.authid()}", f"tiles_{mi}", "memory")
+                miDataProvider = mi_tiles_layer.dataProvider()
+                miDataProvider.addAttributes(tile_features[0].fields())
+                mi_tiles_layer.updateFields()
                 mi_tiles_layer.dataProvider().addFeatures(tile_features)
                 
                 # 2. Preparar Máscara e Tiles (REPROJEÇÃO EM LOTE)
                 # Reprojetar Tiles do MI para UTM (1 chamada)
                 reprojected_tiles_layer = algRunner.runReprojectLayer(
-                    layer=mi_tiles_layer, targetCrs=utm_crs, context=context, feedback=multi_step_feedback
+                    layer=mi_tiles_layer, targetCrs=utm_crs, context=context, feedback=multiStepFeedback
                 )
+                algRunner.runCreateSpatialIndex(reprojected_tiles_layer, context=context)
                 
                 # Recortar e Reprojetar Máscara Global para o MI (1 chamada de Extract, 1 de Reproject)
                 # Usamos extract by extent para pegar só o que interessa da máscara global
@@ -373,45 +315,39 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 
                 # Filtra máscara global para a área do MI
                 mask_clipped_layer = algRunner.runExtractByExtent(
-                    inputLyr=mask_layer_ref, extent=mi_extent_mask_crs, context=context, feedback=multi_step_feedback
+                    inputLayer=mask_layer_ref, extent=mi_extent_mask_crs, context=context, feedback=multiStepFeedback
                 )
                 
                 # Reprojeta máscara filtrada para UTM
                 reprojected_mask_layer = algRunner.runReprojectLayer(
-                    layer=mask_clipped_layer, targetCrs=utm_crs, context=context, feedback=multi_step_feedback
+                    layer=mask_clipped_layer, targetCrs=utm_crs, context=context, feedback=multiStepFeedback
                 )
-
-                # 3. INTERSECTION EM LOTE (Native Processing)
-                # Isso corta a máscara nas bordas dos tiles e anexa os atributos (incluindo quadricula)
-                # Usamos native:intersection pois é otimizado com spatial index
-                intersect_params = {
-                    'INPUT': reprojected_mask_layer,
-                    'OVERLAY': reprojected_tiles_layer,
-                    'INPUT_FIELDS': [class_field], # Manter campo de classe
-                    'OVERLAY_FIELDS': ['quadricula', 'mi'], # Manter identificadores do tile
-                    'OUTPUT': 'memory:intersected'
-                }
                 
-                # Executa Interseção
-                try:
-                    res_intersect = processing.run("native:intersection", intersect_params, context=context, feedback=multi_step_feedback)
-                    intersected_layer = res_intersect['OUTPUT']
-                except Exception as e:
-                    multi_step_feedback.reportError(f"Erro na interseção do MI {mi}: {e}")
-                    current_step_index += 1 + len(tile_features)
-                    continue
+                algRunner.runCreateSpatialIndex(reprojected_mask_layer, context=context)
+                intersected_layer = algRunner.runExtractByLocation(
+                    inputLyr=reprojected_mask_layer,
+                    intersectLyr=reprojected_tiles_layer,
+                    context=context,
+                    predicate=[0],
+                    feedback=multiStepFeedback
+                )
+                
+                intersected_layer = algRunner.runJoinAttributesByLocation(
+                    inputLyr=intersected_layer,
+                    joinLyr=reprojected_tiles_layer,
+                    predicateList=[0],
+                    method=1,
+                    context=context,
+                    feedback=multiStepFeedback,
+                )
 
                 # 4. Construir Dicionário de Formas (Memória)
                 # Agrupa polígonos por tile_id para acesso O(1) no loop
                 gt_shapes_by_tile = defaultdict(list)
                 
-                # Identificar índices dos campos no resultado da interseção
-                idx_class = intersected_layer.fields().indexOf(class_field)
-                idx_quad = intersected_layer.fields().indexOf("quadricula")
-                
                 for feat in intersected_layer.getFeatures():
-                    v_class = feat[idx_class]
-                    v_quad = feat[idx_quad]
+                    v_class = feat[class_field]
+                    v_quad = feat["quadricula"]
                     
                     if v_class is not None and v_quad:
                         tile_id_key = f"{mi}_{v_quad}"
@@ -440,7 +376,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
 
                 # Clip Raster
                 clipped_raster = algRunner.runRasterClipByExtent(
-                    inputRaster=segmentation_raster, extent=buffered_extent, nodata=None, context=context, feedback=multi_step_feedback
+                    inputRaster=segmentation_raster, extent=buffered_extent, nodata=None, context=context, feedback=multiStepFeedback
                 )
                 if isinstance(clipped_raster, str): pass 
                 elif hasattr(clipped_raster, 'source'): clipped_raster = clipped_raster.source()
@@ -448,7 +384,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 # Warp Raster
                 if seg_raster_crs != utm_crs:
                     reprojected_raster = algRunner.runGdalWarp(
-                        rasterLayer=clipped_raster, targetCrs=utm_crs, context=context, resampling=0, feedback=multi_step_feedback
+                        rasterLayer=clipped_raster, targetCrs=utm_crs, context=context, resampling=0, feedback=multiStepFeedback
                     )
                 else:
                     reprojected_raster = clipped_raster
@@ -458,15 +394,15 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 current_step_index += 1
 
                 # --- LOOP DE SUBMISSÃO (Agora muito rápido) ---
-                multi_step_feedback.pushInfo(f"Enviando tiles do MI {mi} para threads...")
+                multiStepFeedback.pushInfo(f"Enviando tiles do MI {mi} para threads...")
                 
                 # Iterar sobre a camada de tiles JÁ reprojetada (para pegar a geometria de corte correta em UTM)
                 for tile_feat_utm in reprojected_tiles_layer.getFeatures():
-                    if multi_step_feedback.isCanceled():
+                    if multiStepFeedback.isCanceled():
                         executor.shutdown(wait=False, cancel_futures=True)
                         break
                     
-                    multi_step_feedback.setCurrentStep(current_step_index)
+                    multiStepFeedback.setCurrentStep(current_step_index)
                     
                     quadricula = tile_feat_utm["quadricula"]
                     tile_id = f"{mi}_{quadricula}"
@@ -499,7 +435,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                         futures_map[future] = tile_id
                         
                     except Exception as e:
-                        multi_step_feedback.reportError(f"Erro tile {quadricula}: {e}")
+                        multiStepFeedback.reportError(f"Erro tile {quadricula}: {e}")
 
                     current_step_index += 1
                 
@@ -511,11 +447,11 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 intersected_layer = None
 
             # --- Collect Results ---
-            multi_step_feedback.pushInfo(f"\nColetando resultados...")
+            multiStepFeedback.pushInfo(f"\nColetando resultados...")
             
             for future in concurrent.futures.as_completed(futures_map):
                 tile_id = futures_map[future]
-                if multi_step_feedback.isCanceled():
+                if multiStepFeedback.isCanceled():
                     executor.shutdown(wait=False, cancel_futures=True)
                     break
                 
@@ -574,48 +510,54 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                             sink.addFeature(new_feat)
 
                     else:
-                        multi_step_feedback.reportError(f"Erro no worker {tile_id}: {result.get('error')}")
+                        multiStepFeedback.reportError(f"Erro no worker {tile_id}: {result.get('error')}")
 
                 except Exception as exc:
-                    multi_step_feedback.reportError(f"Exceção {tile_id}: {exc}")
+                    multiStepFeedback.reportError(f"Exceção {tile_id}: {exc}")
 
         finally:
             executor.shutdown(wait=False)
 
         # --- Final Report Completo (Todas as Métricas) ---
-        multi_step_feedback.setCurrentStep(total_steps - 1)
+        multiStepFeedback.setCurrentStep(total_steps - 1)
         global_metrics = self._calculateFinalMetricsFromCounts(global_counts, global_correct_pixels, global_total_pixels, class_names)
 
-        multi_step_feedback.pushInfo("\n" + "="*80)
-        multi_step_feedback.pushInfo(f"RESUMO FINAL ({processed_count} tiles)")
-        multi_step_feedback.pushInfo("-" * 80)
+        multiStepFeedback.pushInfo("\n" + "="*80)
+        multiStepFeedback.pushInfo(f"RESUMO FINAL ({processed_count} tiles)")
+        multiStepFeedback.pushInfo("-" * 80)
         
         # Métricas Globais Formatadas
-        multi_step_feedback.pushInfo(f"Acurácia Global:   {global_metrics.get('accuracy', 0):.2%}")
-        multi_step_feedback.pushInfo(f"Mean IoU:          {global_metrics.get('mean_iou', 0):.4f}")
-        multi_step_feedback.pushInfo(f"Mean F1-Score:     {global_metrics.get('f1_score', 0):.4f}")
-        multi_step_feedback.pushInfo(f"Mean Precision:    {global_metrics.get('precision', 0):.4f}")
-        multi_step_feedback.pushInfo(f"Mean Recall:       {global_metrics.get('recall', 0):.4f}")
+        multiStepFeedback.pushInfo(f"Acurácia Global:   {global_metrics.get('accuracy', 0):.2%}")
+        multiStepFeedback.pushInfo(f"Mean IoU:          {global_metrics.get('mean_iou', 0):.4f}")
+        multiStepFeedback.pushInfo(f"Mean F1-Score:     {global_metrics.get('f1_score', 0):.4f}")
+        multiStepFeedback.pushInfo(f"Mean Precision:    {global_metrics.get('precision', 0):.4f}")
+        multiStepFeedback.pushInfo(f"Mean Recall:       {global_metrics.get('recall', 0):.4f}")
         
         # Tabela Detalhada Por Classe
-        multi_step_feedback.pushInfo("-" * 80)
-        header_fmt = "{:<30} | {:<8} | {:<8} | {:<8} | {:<8}"
-        multi_step_feedback.pushInfo(header_fmt.format("CLASSE", "IoU", "F1", "PRECIS", "RECALL"))
-        multi_step_feedback.pushInfo("-" * 80)
-        
+        lines = []
+        lines.append("-" * 80)
+        lines.append(f"{'CLASSE':<30} | {'IoU':>8} | {'F1':>8} | {'PRECISION':>8} | {'RECALL':>8}")
+        lines.append("-" * 80)
+
         for cls_id in sorted(class_names.keys()):
             c_name = class_names[cls_id]
+            display_name = f"{cls_id}-{c_name}"
+            if len(display_name) > 29:
+                display_name = display_name[:26] + "..."
+            
             prefix = f"class_{cls_id}_{c_name}"
-            d_name = f"{cls_id}-{c_name}"[:29]
             
             iou = global_metrics.get(f"{prefix}_iou", 0)
             f1 = global_metrics.get(f"{prefix}_f1_score", 0)
             prec = global_metrics.get(f"{prefix}_precision", 0)
             rec = global_metrics.get(f"{prefix}_recall", 0)
             
-            multi_step_feedback.pushInfo(header_fmt.format(d_name, f"{iou:.4f}", f"{f1:.4f}", f"{prec:.4f}", f"{rec:.4f}"))
+            lines.append(f"{display_name:<30} | {iou:>8.4f} | {f1:>8.4f} | {prec:>8.4f} | {rec:>8.4f}")
+
+        lines.append("=" * 80)
+        multiStepFeedback.pushInfo("\n".join(lines))
             
-        multi_step_feedback.pushInfo("="*80 + "\n")
+        multiStepFeedback.pushInfo("="*80 + "\n")
 
         # Export CSVs (Mantido)
         def write_csv_safe(path, data_list):
@@ -676,3 +618,70 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
         m["precision"] = sum(precs)/len(precs) if precs else 0
         m["recall"] = sum(recs)/len(recs) if recs else 0
         return m
+
+def process_tile_worker(data):
+    try:
+        import rasterio
+        from rasterio.mask import mask
+        from rasterio.features import rasterize
+        from DsgTools.core.GeometricTools.rasterHandler import calculateSegmentationMetrics
+        
+        reprojected_raster_path = data['raster_path']
+        tile_mask_geom = data['tile_geom']
+        gt_shapes = data['gt_shapes']
+        predicted_path = data['pred_path']
+        gt_path = data['gt_path']
+        nodata = data['nodata']
+        class_names = data['class_names']
+        
+        # 1. CLIP DO RASTER PREDITO
+        with rasterio.open(reprojected_raster_path) as src:
+            out_image, out_transform = mask(src, [tile_mask_geom], crop=True, nodata=nodata)
+            out_meta = src.meta.copy()
+            
+        out_meta.update({
+            "driver": "GTiff",
+            "height": out_image.shape[1],
+            "width": out_image.shape[2],
+            "transform": out_transform,
+            "nodata": nodata,
+            "compress": "lzw"
+        })
+        
+        with rasterio.open(predicted_path, "w", **out_meta) as dest:
+            dest.write(out_image)
+            
+        # 2. RASTERIZAR GROUND TRUTH
+        height, width = out_image.shape[1], out_image.shape[2]
+        
+        if not gt_shapes:
+            raster_array = np.full((height, width), nodata, dtype=np.uint8)
+        else:
+            raster_array = rasterize(
+                shapes=gt_shapes,
+                out_shape=(height, width),
+                transform=out_transform,
+                fill=nodata,
+                dtype=np.uint8, 
+                all_touched=True
+            )
+            
+        with rasterio.open(gt_path, 'w', driver='GTiff', height=height, width=width,
+                           count=1, dtype=raster_array.dtype, crs=out_meta['crs'], 
+                           transform=out_transform, nodata=nodata, compress='lzw') as dst:
+            dst.write(raster_array, 1)
+
+        # 3. CALCULAR MÉTRICAS
+        metrics = calculateSegmentationMetrics(gt_path, predicted_path, nodata, class_names)
+        
+        return {
+            'status': 'success',
+            'mi': data['mi'],
+            'quadricula': data['quadricula'],
+            'metrics': metrics,
+            'gt_path': gt_path,
+            'pred_path': predicted_path
+        }
+
+    except Exception as e:
+        return {'status': 'error', 'mi': data['mi'], 'quadricula': data['quadricula'], 'error': str(e)}

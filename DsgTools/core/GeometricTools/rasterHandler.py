@@ -703,6 +703,7 @@ def calculateSegmentationMetrics(
 ) -> dict:
     """
     Calcula métricas e retorna contadores brutos (TP, FP, FN).
+    Wrapper que lê arquivos e chama calculateSegmentationMetricsFromArrays.
     """
     try:
         import rasterio
@@ -711,97 +712,15 @@ def calculateSegmentationMetrics(
     
     import numpy as np
     
-    if class_names is None:
-        class_names = {}
-    
     with rasterio.open(ground_truth_path) as gt_src:
         ground_truth = gt_src.read(1)
     
     with rasterio.open(prediction_path) as pred_src:
         prediction = pred_src.read(1)
     
-    if ground_truth.shape != prediction.shape:
-        raise ValueError(f"Dimensões diferentes: {ground_truth.shape} vs {prediction.shape}")
-    
-    # Máscara de pixels válidos
-    valid_mask = (ground_truth != nodata_value) & (prediction != nodata_value)
-    
-    # Estrutura para retorno
-    result = {}
-    
-    # Contadores brutos para acumulação global
-    # Estrutura: {class_id: {'tp': int, 'fp': int, 'fn': int}}
-    counts = {} 
-    
-    if not valid_mask.any():
-        result = {
-            "accuracy": 0.0,
-            "mean_iou": 0.0,
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1_score": 0.0,
-            "total_pixels": 0,
-            "correct_pixels": 0,
-            "raw_counts": {} # Retorna vazio se não há dados
-        }
-        return result
-    
-    gt_valid = ground_truth[valid_mask]
-    pred_valid = prediction[valid_mask]
-    
-    # Classes presentes neste tile
-    classes = np.unique(np.concatenate([gt_valid, pred_valid]))
-    
-    # Contadores gerais do tile
-    total_pixels = len(gt_valid)
-    correct_pixels = np.sum(gt_valid == pred_valid)
-    accuracy = correct_pixels / total_pixels if total_pixels > 0 else 0
-    
-    result["accuracy"] = float(accuracy)
-    result["total_pixels"] = int(total_pixels)
-    result["correct_pixels"] = int(correct_pixels)
-    
-    ious, precisions, recalls, f1_scores = [], [], [], []
-    
-    for cls in classes:
-        c = int(cls)
-        # Cálculos vetorizados usando numpy
-        tp = np.sum((gt_valid == c) & (pred_valid == c))
-        fp = np.sum((gt_valid != c) & (pred_valid == c))
-        fn = np.sum((gt_valid == c) & (pred_valid != c))
-        
-        # Armazena contadores brutos para uso global
-        counts[c] = {'tp': int(tp), 'fp': int(fp), 'fn': int(fn)}
-        
-        # Métricas locais (deste tile)
-        union = tp + fp + fn
-        iou = tp / union if union > 0 else 0.0
-        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
-        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
-        f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
-        
-        ious.append(iou)
-        precisions.append(precision)
-        recalls.append(recall)
-        f1_scores.append(f1)
-        
-        # Salva métricas individuais no dict
-        class_name = class_names.get(c, f"Classe_{c}")
-        prefix = f"class_{c}_{class_name}"
-        result[f"{prefix}_iou"] = float(iou)
-        result[f"{prefix}_precision"] = float(precision)
-        result[f"{prefix}_recall"] = float(recall)
-        result[f"{prefix}_f1_score"] = float(f1)
-
-    result["mean_iou"] = float(np.mean(ious)) if ious else 0.0
-    result["precision"] = float(np.mean(precisions)) if precisions else 0.0
-    result["recall"] = float(np.mean(recalls)) if recalls else 0.0
-    result["f1_score"] = float(np.mean(f1_scores)) if f1_scores else 0.0
-    
-    # O PULO DO GATO: Retornar o dicionário de contadores dentro do resultado
-    result["raw_counts"] = counts
-    
-    return result
+    return calculateSegmentationMetricsFromArrays(
+        ground_truth, prediction, nodata_value, class_names
+    )
 
 def rasterizePolygonsToArray(
     vectorLayer: QgsVectorLayer,
@@ -1035,3 +954,86 @@ def clipRasterByVectorMask(
         raise QgsProcessingException(
             f"Erro ao clipar raster: {str(e)}\n{traceback.format_exc()}"
         )
+
+def calculateSegmentationMetricsFromArrays(
+    ground_truth_array: np.ndarray,
+    prediction_array: np.ndarray,
+    nodata_value: int = -9999,
+    class_names: dict = None,
+) -> dict:
+    """
+    Calcula métricas diretamente dos arrays numpy (SEM I/O).
+    Versão otimizada para processar tiles em memória.
+    """
+    if class_names is None:
+        class_names = {}
+    
+    if ground_truth_array.shape != prediction_array.shape:
+        raise ValueError(f"Dimensões diferentes: {ground_truth_array.shape} vs {prediction_array.shape}")
+    
+    valid_mask = (ground_truth_array != nodata_value) & (prediction_array != nodata_value)
+    
+    result = {}
+    counts = {}
+    
+    if not valid_mask.any():
+        result = {
+            "accuracy": 0.0,
+            "mean_iou": 0.0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "total_pixels": 0,
+            "correct_pixels": 0,
+            "raw_counts": {}
+        }
+        return result
+    
+    gt_valid = ground_truth_array[valid_mask]
+    pred_valid = prediction_array[valid_mask]
+    
+    classes = np.unique(np.concatenate([gt_valid, pred_valid]))
+    
+    total_pixels = len(gt_valid)
+    correct_pixels = np.sum(gt_valid == pred_valid)
+    accuracy = correct_pixels / total_pixels if total_pixels > 0 else 0
+    
+    result["accuracy"] = float(accuracy)
+    result["total_pixels"] = int(total_pixels)
+    result["correct_pixels"] = int(correct_pixels)
+    
+    ious, precisions, recalls, f1_scores = [], [], [], []
+    
+    for cls in classes:
+        c = int(cls)
+        tp = np.sum((gt_valid == c) & (pred_valid == c))
+        fp = np.sum((gt_valid != c) & (pred_valid == c))
+        fn = np.sum((gt_valid == c) & (pred_valid != c))
+        
+        counts[c] = {'tp': int(tp), 'fp': int(fp), 'fn': int(fn)}
+        
+        union = tp + fp + fn
+        iou = tp / union if union > 0 else 0.0
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+        f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
+        
+        ious.append(iou)
+        precisions.append(precision)
+        recalls.append(recall)
+        f1_scores.append(f1)
+        
+        class_name = class_names.get(c, f"Classe_{c}")
+        prefix = f"class_{c}_{class_name}"
+        result[f"{prefix}_iou"] = float(iou)
+        result[f"{prefix}_precision"] = float(precision)
+        result[f"{prefix}_recall"] = float(recall)
+        result[f"{prefix}_f1_score"] = float(f1)
+
+    result["mean_iou"] = float(np.mean(ious)) if ious else 0.0
+    result["precision"] = float(np.mean(precisions)) if precisions else 0.0
+    result["recall"] = float(np.mean(recalls)) if recalls else 0.0
+    result["f1_score"] = float(np.mean(f1_scores)) if f1_scores else 0.0
+    result["raw_counts"] = counts
+    
+    return result
