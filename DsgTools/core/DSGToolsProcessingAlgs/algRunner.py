@@ -113,6 +113,7 @@ class AlgRunner:
         self,
         inputLyr,
         context,
+        separateDisjoint=True,
         feedback=None,
         outputLyr=None,
         field=None,
@@ -122,7 +123,7 @@ class AlgRunner:
         field = [] if field is None else field
         parameters = {"INPUT": inputLyr, "FIELD": field, "OUTPUT": outputLyr}
         if Qgis.QGIS_VERSION_INT >= 32800:
-            parameters["SEPARATE_DISJOINT"] = True
+            parameters["SEPARATE_DISJOINT"] = separateDisjoint
         output = processing.run(
             "native:dissolve",
             parameters,
