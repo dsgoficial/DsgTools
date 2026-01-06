@@ -423,6 +423,14 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                     context=context,
                     feedback=multiStepFeedback,
                 )
+                
+                intersected_layer = algRunner.runDissolve(
+                    inputLyr=intersected_layer,
+                    context=context,
+                    field=["quadricula", class_field],
+                    feedback=multiStepFeedback,
+                    separateDisjoint=False,
+                )
 
                 # 4. Construir Dicionário de Formas (Memória)
                 gt_shapes_by_tile = defaultdict(list)

@@ -37,6 +37,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.convertDatabas
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.exportPostGISDataToShapefile import (
     ExportPostGISDataToShapefile,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.etcqdgSegmentationEvaluatorFromRaster import ETCQDGSegmentationEvaluatorFromRaster
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.genericSelectionToolParametersAlgorithm import (
     GenericSelectionToolParametersAlgorithm,
 )
@@ -108,11 +109,11 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.mergeShapefil
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGeographicBoundsConstraint import (
     BatchRunAlgorithmWithGeographicBoundsConstraint,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.cqdgGridGenerator import ETCQDGGridGenerator
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.cqdgGridGenerator import ETCQDGGridGenerator
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
     CreateGridFromCoordinatesAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.etcqdgSegmentationEvaluator import ETCQDGSegmentationEvaluator
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.etcqdgSegmentationEvaluator import ETCQDGSegmentationEvaluator
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeographicBoundary import (
     FilterLayerListByGeographicBoundary,
 )
@@ -337,7 +338,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeomet
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.loadTrackerAlgorithm import (
     LoadTrackerAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.pecCalculatorAlgorithm import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.pecCalculatorAlgorithm import (
     PecCalculatorAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm import (
@@ -843,6 +844,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4(),
             ETCQDGGridGenerator(),
             ETCQDGSegmentationEvaluator(),
+            ETCQDGSegmentationEvaluatorFromRaster(),
         ]
         return algList
 

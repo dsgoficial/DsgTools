@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.21 - dev
+## 4.19.22 - dev
 
 Novas Funcionalidades:
 
@@ -16,7 +16,8 @@ Novas Funcionalidades:
 - Novo processo de smooth (NURBFit);
 - Novo algoritmo de generalização em raster com hierarquia de decisão e restrições de tamanho (ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4);
 - Novo algoritmo de gerar grades para avaliação segundo ET-CQDG;
-- Novo algoritmo de avaliar segmentação de acordo com a ET-CQDG;
+- Novo algoritmo de avaliar segmentação a partir de vetor (montando o raster de verdade de campo) de acordo com a ET-CQDG;
+- Novo algoritmo de avaliar segmentação a partir de raster de verdade de campo de acordo com a ET-CQDG;
 
 Melhorias:
 
