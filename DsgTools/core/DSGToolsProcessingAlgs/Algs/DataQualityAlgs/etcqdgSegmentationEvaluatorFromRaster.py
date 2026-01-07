@@ -329,6 +329,10 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             output_fields.append(QgsField(f"{prefix}_f1", QVariant.Double))
             output_fields.append(QgsField(f"{prefix}_prec", QVariant.Double))
             output_fields.append(QgsField(f"{prefix}_rec", QVariant.Double))
+            # Adicionar campos para matriz de confusão
+            output_fields.append(QgsField(f"{prefix}_tp", QVariant.Int))
+            output_fields.append(QgsField(f"{prefix}_fp", QVariant.Int))
+            output_fields.append(QgsField(f"{prefix}_fn", QVariant.Int))
 
         return output_fields
 
@@ -479,7 +483,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                     result = future.result()
                     if result["status"] == "success":
                         m = result["metrics"]
-                        raw = m.pop("raw_counts", {})
+                        raw = m.get("raw_counts", {})  # Usar get ao invés de pop para preservar
                         self._updateCounts(global_counts, raw)
                         self._updateCounts(mi_accumulators[result["mi"]]["counts"], raw)
 
@@ -515,6 +519,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                                 c_px,
                                 sorted_classes,
                                 class_names,
+                                raw,  # Passar raw_counts para a feature
                             )
                             featsToAdd.append(new_feat)
 
@@ -683,7 +688,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
         geom.transform(xform)
         return geom
 
-    def _createOutputFeature(self, cached, output_fields, output_fields_names, experiment_name, result, m, t_px, c_px, sorted_classes, class_names):
+    def _createOutputFeature(self, cached, output_fields, output_fields_names, experiment_name, result, m, t_px, c_px, sorted_classes, class_names, raw_counts):
         """Cria feature de saída com métricas"""
         new_feat = QgsFeature(output_fields)
         new_feat.setGeometry(cached.geometry())
@@ -712,6 +717,16 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             new_feat.setAttribute(f"{dest_prefix}_f1", m.get(f"{src_prefix}_f1_score"))
             new_feat.setAttribute(f"{dest_prefix}_prec", m.get(f"{src_prefix}_precision"))
             new_feat.setAttribute(f"{dest_prefix}_rec", m.get(f"{src_prefix}_recall"))
+            
+            # Adicionar valores de TP, FP, FN para matriz de confusão
+            if cid in raw_counts:
+                new_feat.setAttribute(f"{dest_prefix}_tp", raw_counts[cid]["tp"])
+                new_feat.setAttribute(f"{dest_prefix}_fp", raw_counts[cid]["fp"])
+                new_feat.setAttribute(f"{dest_prefix}_fn", raw_counts[cid]["fn"])
+            else:
+                new_feat.setAttribute(f"{dest_prefix}_tp", 0)
+                new_feat.setAttribute(f"{dest_prefix}_fp", 0)
+                new_feat.setAttribute(f"{dest_prefix}_fn", 0)
 
         return new_feat
 
