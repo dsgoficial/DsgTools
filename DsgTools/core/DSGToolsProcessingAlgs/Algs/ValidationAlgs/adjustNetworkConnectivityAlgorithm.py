@@ -31,6 +31,7 @@ from qgis.core import (
     QgsProcessingParameterDistance,
     QgsProcessingParameterVectorLayer,
     QgsProject,
+    QgsProcessingFeatureSourceDefinition,
 )
 
 from ...algRunner import AlgRunner
@@ -77,7 +78,10 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         if inputLyr is None or inputLyr.featureCount() == 0:
             return {}
-        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
+        
+        # Atualizado: de 10 para 11 passos (5 passos na consolidação ao invés de 4)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(11, feedback)
+        
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(
             self.tr("Identifying dangles on {layer}...").format(layer=inputLyr.name())
@@ -96,6 +100,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         if multiStepFeedback.isCanceled():
             return {}
         layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
+        
         multiStepFeedback.setCurrentStep(2)
         if multiStepFeedback.isCanceled():
             return {}
@@ -105,6 +110,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
+        
         multiStepFeedback.setCurrentStep(3)
         if multiStepFeedback.isCanceled():
             return {}
@@ -134,6 +140,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
+        
         multiStepFeedback.setCurrentStep(5)
         if multiStepFeedback.isCanceled():
             return {}
@@ -151,6 +158,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             behavior=algRunner.PreferClosestDoNotInsertNewVertices,
             is_child_algorithm=True,
         )
+        
         multiStepFeedback.setCurrentStep(6)
         if multiStepFeedback.isCanceled():
             return {}
@@ -163,8 +171,84 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             behavior=algRunner.PreferClosestInsertExtraVerticesWhereRequired,
         )
-        return {}
+        
+        # NOVOS PASSOS: Consolidação de coordenadas de nós
+        multiStepFeedback.setCurrentStep(7)
+        if multiStepFeedback.isCanceled():
+            return {}
+        multiStepFeedback.pushInfo(
+            self.tr("Building network structure for coordinate consolidation...")
+        )
+        
+        # Extrair vértices do layer após o snap
+        # Precisamos passar o layer com selected features se onlySelected=True
+        edgesForConsolidation = inputLyr if not onlySelected else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True)
+        
+        multiStepFeedback.setCurrentStep(8)
+        if multiStepFeedback.isCanceled():
+            return {}
+        multiStepFeedback.pushInfo(
+            self.tr("Consolidating node coordinates to ensure exact matches...")
+        )
+        
+        try:
+            import networkx as nx
+            from DsgTools.core.GeometricTools import graphHandler
+        except ImportError as e:
+            multiStepFeedback.pushWarning(
+                self.tr("Required library not available ({error}). Skipping coordinate consolidation step.").format(error=str(e))
+            )
+            return {}
+        
+        # Verificar se o campo 'featid' já existe no inputLyr
+        fieldNames = [field.name() for field in inputLyr.fields()]
+        idFieldName = 'featid' if 'featid' not in fieldNames else 'temp_featid'
+        
+        # Passar o layer original (inputLyr) não o QgsProcessingFeatureSourceDefinition
+        nodeConsolidationDict, edgeFeatIdToNodeDict = graphHandler.consolidate_network_nodes(
+            nx=nx,
+            edgesLayer=inputLyr,  # Sempre passar o layer original
+            tolerance=tol,
+            context=context,
+            feedback=multiStepFeedback,
+            idFieldName=idFieldName,  # Passar o nome do campo
+        )
+        
+        multiStepFeedback.setCurrentStep(9)
+        if multiStepFeedback.isCanceled():
+            return {}
+        
+        if edgeFeatIdToNodeDict:
+            multiStepFeedback.pushInfo(
+                self.tr("Applying consolidated coordinates to {count} features...").format(
+                    count=len(edgeFeatIdToNodeDict)
+                )
+            )
+            
+            # Aplicar as coordenadas consolidadas
+            if not inputLyr.isEditable():
+                inputLyr.startEditing()
+            
+            inputLyr.beginEditCommand(
+                self.tr("Consolidating node coordinates on {layer}").format(
+                    layer=inputLyr.name()
+                )
+            )
+            
+            graphHandler.apply_node_consolidation_to_layer(
+                inputLayer=inputLyr,
+                edgeFeatIdToNodeDict=edgeFeatIdToNodeDict,
+                feedback=multiStepFeedback,
+            )
+            
+            inputLyr.endEditCommand()
+        else:
+            multiStepFeedback.pushInfo(
+                self.tr("No node consolidation needed - all coordinates already match exactly.")
+            )
 
+        
+        return {}
     def name(self):
         """
         Returns the algorithm name, used for identifying the algorithm. This

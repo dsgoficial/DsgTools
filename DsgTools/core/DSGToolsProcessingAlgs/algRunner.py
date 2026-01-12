@@ -113,6 +113,7 @@ class AlgRunner:
         self,
         inputLyr,
         context,
+        separateDisjoint=True,
         feedback=None,
         outputLyr=None,
         field=None,
@@ -122,7 +123,7 @@ class AlgRunner:
         field = [] if field is None else field
         parameters = {"INPUT": inputLyr, "FIELD": field, "OUTPUT": outputLyr}
         if Qgis.QGIS_VERSION_INT >= 32800:
-            parameters["SEPARATE_DISJOINT"] = True
+            parameters["SEPARATE_DISJOINT"] = separateDisjoint
         output = processing.run(
             "native:dissolve",
             parameters,
@@ -450,6 +451,22 @@ class AlgRunner:
             feedback=feedback,
         )
         return output["FLAGS"]
+    
+    def runRemoveSmallLines(
+        self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False
+    ) -> None:
+        flagLyr = "memory:" if flagLyr is None else flagLyr
+        parameters = {
+            "INPUT": inputLyr,
+            "TOLERANCE": tol,
+            "SELECTED": onlySelected,
+        }
+        output = processing.run(
+            "dsgtools:removesmalllines",
+            parameters,
+            context=context,
+            feedback=feedback,
+        )
 
     def runIdentifySmallPolygons(
         self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False
@@ -562,7 +579,14 @@ class AlgRunner:
         )
         return output if returnProcessingDict else output["FLAGS"]
 
-    def runSnapToGrid(self, inputLayer, tol, context, feedback=None, outputLyr=None):
+    def runSnapToGrid(self,
+        inputLayer: QgsVectorLayer,
+        tol: float,
+        context: QgsProcessingContext,
+        feedback: Optional[QgsFeedback]=None,
+        outputLyr: Optional[QgsVectorLayer]=None,
+        is_child_algorithm: Optional[bool]=False,
+    ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
             "INPUT": inputLayer,
@@ -573,9 +597,31 @@ class AlgRunner:
             "OUTPUT": outputLyr,
         }
         output = processing.run(
-            "native:snappointstogrid", parameters, context=context, feedback=feedback
+            "native:snappointstogrid",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+    
+    def runDSGToolsSnapToGridAndUpdate(self,
+        inputLayer: QgsVectorLayer,
+        tol: float,
+        context: QgsProcessingContext,
+        onlySelected: Optional[bool] = False,
+        feedback: Optional[QgsFeedback] = None,
+    ) -> None:
+        processing.run(
+            "dsgtools:snaptogridandupdate",
+            {
+                "INPUT": inputLayer,
+                "SELECTED": onlySelected,
+                "TOLERANCE": tol,
+            },
+            context=context,
+            feedback=feedback,
+        )
 
     def runRemoveNull(self, inputLayer, context, feedback=None, outputLyr=None):
         outputLyr = "memory:" if outputLyr is None else outputLyr
@@ -709,7 +755,7 @@ class AlgRunner:
             "DISTANCE": distance,
             "DISSOLVE": dissolve,
             "END_CAP_STYLE": endCapStyle,
-            "JOIN_STYLE": endCapStyle,
+            "JOIN_STYLE": joinStyle,
             "SEGMENTS": segments,
             "MITER_LIMIT": mitterLimit,
             "OUTPUT": outputLyr,
@@ -991,14 +1037,14 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runReprojectLayer(self, layer, targetCrs, output=None, ctx=None, feedback=None):
+    def runReprojectLayer(self, layer, targetCrs, output=None, context=None, feedback=None, is_child_algorithm=False):
         """
         Reprojects layer's CRS.
         :param : (QgsVectorLayer) layer to be reprojected.
         :param targetCrs: (QgsCoordinateReferenceSystem) CRS object for the
                           output layer.
         :param output: (QgsVectorLayer) layer accomodate reprojected layer.
-        :param ctx: (QgsProcessingContext) processing context in which algorithm
+        :param context: (QgsProcessingContext) processing context in which algorithm
                     should be executed.
         :param feedback: (QgsFeedback) QGIS progress tracking component.
         :return: (QgsVectorLayer) reprojected layer.
@@ -1006,8 +1052,9 @@ class AlgRunner:
         return processing.run(
             "native:reprojectlayer",
             {"INPUT": layer, "OUTPUT": output or "memory:", "TARGET_CRS": targetCrs},
-            context=ctx,
+            context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )["OUTPUT"]
 
     def runPointOnSurface(
@@ -2322,7 +2369,7 @@ class AlgRunner:
                 "INPUT_RASTER": inputRaster,
                 "BURN": value,
                 "ADD": False,
-                "EXTRA": False,
+                "EXTRA": '',
             },
             context=context,
             feedback=feedback,
@@ -3010,3 +3057,138 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT_SPLIT_LINES"], output["OUTPUT_MODIFIED_REFERENCES"]
+
+    def runGdalTranslate(
+        self,
+        inputRaster,
+        context,
+        outputRaster=None,
+        targetCrs=None,
+        sourceCrs=None,
+        nodata=None,
+        options=None,
+        dataType=None,
+        targetExtent=None,
+        targetResolution=None,
+        scaleParams=None,
+        outputSize=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        """
+        Runs GDAL translate algorithm to convert/copy raster data.
+        
+        :param inputRaster: (QgsRasterLayer or str) Input raster layer or path
+        :param context: (QgsProcessingContext) Processing context
+        :param outputRaster: (str) Output raster path. If None, uses "TEMPORARY_OUTPUT"
+        :param targetCrs: (QgsCoordinateReferenceSystem) Target coordinate reference system
+        :param sourceCrs: (QgsCoordinateReferenceSystem) Source coordinate reference system
+        :param nodata: (float) NoData value to assign
+        :param options: (str) Additional GDAL options
+        :param dataType: (int) Output data type (0=Use Input Type, 1=Byte, 2=Int16, 3=UInt16, 4=Int32, 5=UInt32, 6=Float32, 7=Float64)
+        :param targetExtent: (QgsRectangle or str) Target extent
+        :param targetResolution: (float) Target resolution
+        :param scaleParams: (str) Scale parameters in format "src_min,src_max,dst_min,dst_max"
+        :param outputSize: (str) Output size in format "width,height"
+        :param feedback: (QgsProcessingFeedback) Feedback object for progress reporting
+        :param is_child_algorithm: (bool) Whether this is being run as a child algorithm
+        :return: (str) Path to output raster
+        """
+        outputRaster = "TEMPORARY_OUTPUT" if outputRaster is None else outputRaster
+        options = "" if options is None else options
+        dataType = 0 if dataType is None else dataType
+        
+        parameters = {
+            "INPUT": inputRaster,
+            "OUTPUT": outputRaster,
+            "TARGET_CRS": targetCrs,
+            "SOURCE_CRS": sourceCrs,
+            "NODATA": nodata,
+            "OPTIONS": options,
+            "DATA_TYPE": dataType,
+            "PROJWIN": targetExtent,
+            "TR": targetResolution,
+            "SCALE": scaleParams,
+            "OUTSIZE": outputSize,
+            "EXTRA": "",
+        }
+        
+        output = processing.run(
+            "gdal:translate",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        
+        return output["OUTPUT"]
+
+    def runReclassifyGroupsOfPixelsToNearestNeighborV3(
+        self,
+        inputRaster: QgsRasterLayer,
+        minArea: float,
+        nodataValue: int,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        reclassifiedPolygonsLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> Union[QgsRasterLayer, Tuple[QgsRasterLayer, QgsVectorLayer]]:
+        """
+        Runs the Reclassify Groups of Pixels to Nearest Neighbor Algorithm V3.
+        
+        This algorithm reclassifies groups of pixels smaller than a minimum area
+        to the value of their nearest neighbor.
+        
+        :param inputRaster: Input raster layer to be reclassified
+        :param minArea: Minimum area in square meters. Groups smaller than this will be reclassified
+        :param nodataValue: Value to be treated as NODATA
+        :param context: Processing context
+        :param outputLyr: Output raster path or URI
+        :param reclassifiedPolygonsLyr: Optional output for reclassified polygon features
+        :param feedback: Feedback object for progress reporting
+        :param is_child_algorithm: Whether this is being run as a child algorithm
+        :return: Output raster layer, or tuple of (output raster, reclassified polygons) if 
+                 reclassifiedPolygonsLyr is provided
+        """
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        
+        parameters = {
+            "INPUT": inputRaster,
+            "MIN_AREA": minArea,
+            "NODATA_VALUE": nodataValue,
+            "OUTPUT": outputLyr,
+        }
+        
+        if reclassifiedPolygonsLyr is not None:
+            parameters["RECLASSIFIED_POLYGONS"] = reclassifiedPolygonsLyr
+        
+        output = processing.run(
+            "dsgtools:reclassifygroupsofpixelstonearestneighboralgorithmv3",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        
+        if reclassifiedPolygonsLyr is not None:
+            return output["OUTPUT"], output["RECLASSIFIED_POLYGONS"]
+        return output["OUTPUT"]
+
+    def runAdjustNetworkConnectivityAlgorithm(self,
+        inputLyr: QgsVectorLayer,
+        tol: float,
+        context: QgsProcessingContext,
+        selected: Optional[bool]=False,
+        feedback: Optional[QgsFeedback]=None
+    ) -> None:
+        processing.run(
+            "dsgtools:adjustnetworkconnectivity",
+            {
+                "INPUT": inputLyr,
+                "SELECTED": selected,
+                "TOLERANCE": tol,
+            },
+            context=context,
+            feedback=feedback
+        )

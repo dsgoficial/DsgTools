@@ -33,6 +33,7 @@ from qgis.core import (
     QgsProcessingParameterField,
     QgsProcessingParameterNumber,
     QgsGeometry,
+    QgsLineString,
     QgsExpression,
     QgsWkbTypes,
     QgsVectorLayer,
@@ -56,14 +57,14 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                "INPUT_LAYER",
+                self.INPUT_LAYER,
                 self.tr("Input Layer"),
                 types=[QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterField(
-                "INPUT_FIELDS",
+                self.INPUT_FIELDS,
                 self.tr("Fields to consider"),
                 type=QgsProcessingParameterField.Any,
                 parentLayerParameterName="INPUT_LAYER",
@@ -73,7 +74,7 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                "INPUT_ANGLE",
+                self.INPUT_ANGLE,
                 self.tr("Maximum angle between lines"),
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0,
@@ -82,7 +83,7 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                "INPUT_MAX_SIZE",
+                self.INPUT_MAX_SIZE,
                 self.tr("Maximum size"),
                 type=QgsProcessingParameterNumber.Double,
                 optional=True,
@@ -97,10 +98,10 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        layer = self.parameterAsVectorLayer(parameters, "INPUT_LAYER", context)
-        inputFields = self.parameterAsFields(parameters, "INPUT_FIELDS", context)
-        angle = self.parameterAsDouble(parameters, "INPUT_ANGLE", context)
-        maxLength = self.parameterAsDouble(parameters, "INPUT_MAX_SIZE", context)
+        layer = self.parameterAsVectorLayer(parameters, self.INPUT_LAYER, context)
+        inputFields = self.parameterAsFields(parameters, self.INPUT_FIELDS, context)
+        angle = self.parameterAsDouble(parameters, self.INPUT_ANGLE, context)
+        maxLength = self.parameterAsDouble(parameters, self.INPUT_MAX_SIZE, context)
         algRunner = AlgRunner()
         self.prepareFlagSink(parameters, layer, QgsWkbTypes.MultiPoint, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
@@ -125,9 +126,13 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 return {self.FLAGS: self.flag_id}
             featGeom = feature.geometry()
-            for geometry in featGeom.constGet():
+            geometry = featGeom.constGet()
+            if featGeom.isMultipart():
+                for line in geometry:
+                    ptFin = QgsGeometry.fromPointXY(QgsPointXY(line[-1]))
+            else:
                 ptFin = QgsGeometry.fromPointXY(QgsPointXY(geometry[-1]))
-                lineTouched = self.linesTouchedOnPoint(inputLyr, feature, ptFin)
+            lineTouched = self.linesTouchedOnPoint(inputLyr, feature, ptFin)
             if len(lineTouched) == 0:
                 continue
             smallerAngle = 360
@@ -202,12 +207,19 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
         return lines
 
     def adjacentPoint(self, line: QgsFeature, point) -> QgsPointXY:
-        vertexPoint = line.geometry().closestVertexWithContext(point)[1]
-        adjpoints = line.geometry().adjacentVertices(vertexPoint)
+        if isinstance(line, QgsFeature):
+            geometry = line.geometry()
+        elif isinstance(line, QgsLineString):
+            geometry = QgsGeometry(line)
+        else:
+            print('oi')
+            pass
+        vertexPoint = geometry.closestVertexWithContext(point)[1]
+        adjpoints = geometry.adjacentVertices(vertexPoint)
         adjptvertex = adjpoints[0]
         if adjptvertex < 0:
             adjptvertex = adjpoints[1]
-        adjpt = line.geometry().vertexAt(adjptvertex)
+        adjpt = geometry.vertexAt(adjptvertex)
         return QgsPointXY(adjpt)
 
     def anglesBetweenLines(
@@ -257,7 +269,12 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
             lineAndPointArray = []
             for line in lineLayer.getFeatures():
                 lineGeom = line.geometry()
-                for geometry in lineGeom.constGet():
+                geometry = lineGeom.constGet()
+                if lineGeom.isMultipart():
+                    for l in geometry:
+                        ptFin = QgsGeometry.fromPointXY(QgsPointXY(l[-1]))
+                        ptIni = QgsGeometry.fromPointXY(QgsPointXY(l[0]))
+                else:
                     ptFin = QgsGeometry.fromPointXY(QgsPointXY(geometry[-1]))
                     ptIni = QgsGeometry.fromPointXY(QgsPointXY(geometry[0]))
                 if ptFin.intersects(point[0]):

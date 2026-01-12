@@ -25,6 +25,9 @@ from DsgTools.gui.ProductionTools.MapTools.AuxTools.spatialFilter import Spatial
 from DsgTools.gui.ProductionTools.MapTools.SelectRasterTool.selectRaster import (
     SelectRasterTool,
 )
+from DsgTools.gui.ProductionTools.MapTools.TrimExtendTool.trimExtendTool import (
+    TrimExtendTool,
+)
 
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.core import QgsVectorLayer
@@ -37,6 +40,7 @@ from .FreeHandTool.freeHandMain import FreeHandMain
 from .FreeHandTool.freeHandReshape import FreeHandReshape
 from .LabelTogglingTool.labelTogglingTool import LabelTogglingTool
 from .ShortcutTool.shortcutTool import ShortcutTool
+from .AuxTools.smoothLinesTool import SmoothLinesTool
 from .AuxTools.filterTools import FilterTools
 from .AuxTools.otherTools import OtherTools
 from .AuxTools.closeLinesTool import CloseLinesTool
@@ -177,14 +181,41 @@ class MapToolsGuiManager(QObject):
             self.otherToolsStackButton,
             self.iconBasePath,
         )
+        # adding stack
+        self.lineStackButton = self.manager.createToolButton(
+            self.toolbar, "SelectedLineTools"
+        )
         self.closeLinesTool = CloseLinesTool(self.iface)
         self.closeLinesTool.addTool(
             self.manager,
             self.closeLinesTool.closeSelectedLines,
             self.parentMenu,
             self.iconBasePath,
+            parentButton=self.lineStackButton,
+            defaultButton=True,
         )
         self.closeLinesTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
+
+        self.smoothLinesTool = SmoothLinesTool(self.iface)
+        self.smoothLinesTool.addTool(
+            self.manager,
+            self.smoothLinesTool.smoothSelectedLines,
+            self.parentMenu,
+            self.iconBasePath,
+            parentButton=self.lineStackButton,
+        )
+        self.smoothLinesTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
+
+        self.trimExtendTool = TrimExtendTool(self.iface)
+        self.trimExtendTool.addTool(
+            self.manager,
+            self.activateTrimExtend,
+            self.lineStackButton,
+            self.iconBasePath,
+            parentButton=self.lineStackButton,
+            defaultButton=True,
+        )
+        self.trimExtendTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
 
         # initiate tools signals
         self.initiateToolsSignals()
@@ -217,6 +248,8 @@ class MapToolsGuiManager(QObject):
             self.freeHandReshape.acquisitionFreeController,
             self.measureTool,
             self.closeLinesTool,
+            self.trimExtendTool,
+            self.smoothLinesTool,
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.connect(tool.setToolEnabled)
@@ -239,6 +272,9 @@ class MapToolsGuiManager(QObject):
 
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
+    
+    def activateTrimExtend(self):
+        self.iface.mapCanvas().setMapTool(self.trimExtendTool)
 
     def activateRasterSelectTool(self):
         self.iface.mapCanvas().setMapTool(self.rasterSelectTool)
@@ -252,6 +288,8 @@ class MapToolsGuiManager(QObject):
             self.freeHandReshape.acquisitionFreeController,
             self.measureTool,
             self.closeLinesTool,
+            self.trimExtendTool,
+            self.smoothLinesTool,
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.disconnect(tool.setToolEnabled)

@@ -245,7 +245,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             is_child_algorithm=False,
         )
 
-        QgsProject.instance().addMapLayer(intersectedLines, True)
+        # QgsProject.instance().addMapLayer(intersectedLines, True)
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -349,15 +349,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             self.tr(
                 f"Created {polygonizeOutput.featureCount()} polygons from line network"
             )
-        )
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Filtering small polygons"))
-        polygonizeOutput = self.algRunner.runFilterExpression(
-            inputLyr=polygonizeOutput,
-            expression=f"$area > 1",
-            context=context,
-            feedback=multiStepFeedback,
         )
 
         currentStep += 1

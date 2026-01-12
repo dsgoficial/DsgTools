@@ -5,10 +5,10 @@
 [![Join the chat at https://gitter.im/DsgTools/Lobby](https://badges.gitter.im/DsgTools/Lobby.svg)](https://gitter.im/DsgTools/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![DOI](https://zenodo.org/badge/25019920.svg)](https://zenodo.org/badge/latestdoi/25019920)
 
-|branch|status|
-|-------|--------|
-|master|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=master)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|
-|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|
+|branch|status|version|
+|-------|--------|--------|
+|master|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=master)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|4.20.0|
+|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|4.21.0|
 
 ------------------------------------
 # Complemento DSGTools
@@ -25,7 +25,7 @@ Este projeto visa cumprir a missão estabelecida no Plano Estratégico do Exérc
 
 ## Principais Funcionalidades
 
-O plugin está na versão 4.17.27 e possui as seguintes funcionalidades:
+A versão atual do complemento possui as seguintes funcionalidades:
 
 ### Gestão de Bancos de Dados
 - Criação de bancos de dados em Spatialite e PostGIS de acordo com os modelos EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto e EDGV 3.0 Topo
