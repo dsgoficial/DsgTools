@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.22 - dev
+## 4.20.0 - 2026-01-12
 
 Novas Funcionalidades:
 
