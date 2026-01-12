@@ -38,6 +38,7 @@ Correção de bugs:
 - Corrige bug no processo de corrigir conectividade de linhas;
 - Corrige bug no processo de identificação de erros de ângulos pequenos na cobertura;
 - Corrige bug no carregamento de arquivo json no assign format rules;
+- Corrige bug no processo de identificação de mudança de atributos em linhas (permitir a entrada de camada LineString e MultiLineString);
 
 
 ## 4.18.1 - 2025-06-04
