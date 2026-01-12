@@ -769,7 +769,7 @@ class LayerHandler(QObject):
         """
         bbDict = defaultdict(list)
         if feedback is not None:
-            feedback.setProgressText(self.tr("Building duplicated search structure..."))
+            feedback.pushInfo(self.tr("Building duplicated search structure..."))
 
         def _buildBBDictEntry(feat, columns):
             if feedback.isCanceled():

@@ -37,6 +37,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.convertDatabas
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.exportPostGISDataToShapefile import (
     ExportPostGISDataToShapefile,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.etcqdgSegmentationEvaluatorFromRaster import ETCQDGSegmentationEvaluatorFromRaster
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.genericSelectionToolParametersAlgorithm import (
     GenericSelectionToolParametersAlgorithm,
 )
@@ -70,6 +71,11 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGrou
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3 import (
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3,
 )
+
+# from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsNextToTerrainLinesAlgorithm import ReclassifyPixelsNextToTerrainLinesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4 import (
+    ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsToNearestNeighborAlgorithm import (
     ReclassifyAdjacentPixelsToNearestNeighborAlgorithm,
 )
@@ -81,6 +87,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractMiddleVertex
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.lineOnAreaOverlayer import (
     LineOnAreaOverlayerAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.nurbfitSmoothingAlgorithm import (
+    NURBFitSmoothingAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.polygonTiler import (
     PolygonTilerAlgorithm,
@@ -100,9 +109,11 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.mergeShapefil
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGeographicBoundsConstraint import (
     BatchRunAlgorithmWithGeographicBoundsConstraint,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.cqdgGridGenerator import ETCQDGGridGenerator
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
     CreateGridFromCoordinatesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.etcqdgSegmentationEvaluator import ETCQDGSegmentationEvaluator
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeographicBoundary import (
     FilterLayerListByGeographicBoundary,
 )
@@ -327,7 +338,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeomet
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.loadTrackerAlgorithm import (
     LoadTrackerAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.pecCalculatorAlgorithm import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.pecCalculatorAlgorithm import (
     PecCalculatorAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm import (
@@ -828,6 +839,12 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             MedianFilterNoDataAlgorithm(),
             MergeShapefileZipFilesInSingleGeopackage(),
             BuildMergedDataWithFieldRefactorAlgorithm(),
+            # ReclassifyPixelsNextToTerrainLinesAlgorithm(),
+            NURBFitSmoothingAlgorithm(),
+            ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4(),
+            ETCQDGGridGenerator(),
+            ETCQDGSegmentationEvaluator(),
+            ETCQDGSegmentationEvaluatorFromRaster(),
         ]
         return algList
 

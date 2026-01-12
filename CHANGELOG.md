@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.19.15 - dev
+## 4.20.0 - 2026-01-12
 
 Novas Funcionalidades:
 
@@ -12,13 +12,21 @@ Novas Funcionalidades:
 - Novo processo de rasterizar valores fixos em raster em pixels dentro do buffer de polígonos (Rasterize Polygons with Buffer). Pode ser utilizado com buffer negativo;
 - Novo processo de filtro da mediana desconsiderando os nodata;
 - Novo processo de unir zips de shapefiles em um único geopackage (útil para consolidar dados baixados do BDGEx);
-- Novo processo de unir dados de diferentes fontes em uma mesma camada chamado Build Merged Data with Field Refactor, criando um campo numérico e um nome. Algoritmo usado para consolidar dados de diversas fontes e transformar em uma única camada com atributos para montar máscaras de um raster binário.
+- Novo processo de unir dados de diferentes fontes em uma mesma camada chamado Build Merged Data with Field Refactor, criando um campo numérico e um nome. Algoritmo usado para consolidar dados de diversas fontes e transformar em uma única camada com atributos para montar máscaras de um raster binário;
+- Novo processo de smooth (NURBFit);
+- Novo algoritmo de generalização em raster com hierarquia de decisão e restrições de tamanho (ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4);
+- Novo algoritmo de gerar grades para avaliação segundo ET-CQDG;
+- Novo algoritmo de avaliar segmentação a partir de vetor (montando o raster de verdade de campo) de acordo com a ET-CQDG;
+- Novo algoritmo de avaliar segmentação a partir de raster de verdade de campo de acordo com a ET-CQDG;
 
 Melhorias:
 
 - Atualiza o modelo EDGV Topo para a versão 1.4.4;
 - Atualiza o modelo EDGV Orto para a versão 2.5.2;
 - Adiciona modo de tamanho fixo e overlap no PolygonTiler;
+- Melhora o funcionamento do Adjust Network Connectivity;
+- Adiciona múltiplas entradas e a possibilidade de usar ponto como âncora no AnchoredSnapper;
+- Adicionada a opção de group by no processo de numerar polígonos;
 
 
 Correção de bugs:

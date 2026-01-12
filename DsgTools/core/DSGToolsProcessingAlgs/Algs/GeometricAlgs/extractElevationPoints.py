@@ -399,7 +399,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 feedback=multiStepFeedback,
                 context=context,
             )
-        
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
@@ -452,7 +452,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             is_child_algorithm=True,
         )
-        
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
@@ -1734,7 +1734,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(
                 npRasterCopy
             )
-            if maxCoordinatesArray == []:
+            if maxCoordinatesArray.size == 0:
                 return list(featSet)
             maxFeatList = (
                 rasterHandler.createFeatureListWithPixelValuesFromPixelCoordinatesArray(
@@ -1818,7 +1818,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             minCoordinatesArray = rasterHandler.getMinCoordinatesFromNpArray(
                 npRasterCopy
             )
-            if len(minCoordinatesArray) == 0:
+            if minCoordinatesArray.size == 0:
                 break
             minFeatList = (
                 rasterHandler.createFeatureListWithPixelValuesFromPixelCoordinatesArray(
@@ -1951,7 +1951,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep = 0
             multiStepFeedback.setCurrentStep(currentStep)
-        
+
         candidatesPointLyrWithId = self.algRunner.runCreateFieldWithExpression(
             inputLyr=candidatesPointLyr,
             expression="$id",
@@ -2429,8 +2429,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
         candidateGridLyr = self.algRunner.runExtractByLocation(
-            inputLyr=contourLyr,
-            intersectLyr=planeGrid,
+            inputLyr=planeGrid,
+            intersectLyr=contourLyr,
             predicate=[2],
             context=context,
             feedback=multiStepFeedback,

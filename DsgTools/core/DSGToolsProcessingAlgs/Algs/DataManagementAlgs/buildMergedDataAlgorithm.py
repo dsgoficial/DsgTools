@@ -107,15 +107,20 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
 
     def group(self):
         """
-        Returns the name of the group this algorithm belongs to.
+        Returns the name of the group this algorithm belongs to. This string
+        should be localised.
         """
-        return self.tr("Data Management Tools")
+        return self.tr("Data Management Algorithms")
 
     def groupId(self):
         """
-        Returns the unique ID of the group this algorithm belongs to.
+        Returns the unique ID of the group this algorithm belongs to. This
+        string should be fixed for the algorithm, and must not be localised.
+        The group id should be unique within each provider. Group id should
+        contain lowercase alphanumeric characters only and no spaces or other
+        formatting characters.
         """
-        return "DSGTools - Data Management Tools"
+        return "DSGTools - Data Management Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate(
