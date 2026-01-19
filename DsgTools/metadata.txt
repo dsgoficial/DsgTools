@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=3.22
 description=Brazilian Army Cartographic Production Tools
-version=4.20.0
+version=4.20.1
 author=Brazilian Army Geographic Service
 email=dsgtools@dsg.eb.mil.br
 about=
@@ -44,6 +44,9 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+	4.20.1:
+		Correção de bugs:
+			- Corrige import da networkx;
 	4.20.0:
 		Novas Funcionalidades:
 			- Nova ferramenta de trim/extend (se diferencia da ferramenta do QGIS por ter um menu de contexto e criar o vértice no destino.);

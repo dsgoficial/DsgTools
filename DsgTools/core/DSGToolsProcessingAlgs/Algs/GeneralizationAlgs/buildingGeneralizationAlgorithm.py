@@ -41,9 +41,9 @@ from qgis.core import (
     QgsField,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterDefinition,
+    QgsProcessingException,
 )
 import processing
-import networkx as nx
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor, ThreadPoolExecutor
 import math
@@ -320,6 +320,15 @@ class BuildingGeneralizationAlgorithm(QgsProcessingAlgorithm):
             building_source.sourceCrs(),
         )
 
+        try:
+            import networkx as nx
+        except ImportError:
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires the Python networkx library. Please install this library and try again."
+                )
+            )
+
         # Create an instance of our main processor
         processor = BuildingGeneralizationProcessor(
             building_source,
@@ -336,6 +345,7 @@ class BuildingGeneralizationAlgorithm(QgsProcessingAlgorithm):
             use_parallel,
             sink,
             feedback,
+            nx,
         )
 
         # Phase 1: Data Preparation and Structure Creation
@@ -411,6 +421,7 @@ class BuildingGeneralizationProcessor:
         use_parallel,
         sink,
         feedback,
+        nx,
     ):
         """
         Initialize the processor with input parameters.
@@ -453,6 +464,7 @@ class BuildingGeneralizationProcessor:
         self.spatial_index_water = QgsSpatialIndex()
         self.spatial_index_boundaries = QgsSpatialIndex()
         self.spatial_index_blocks = QgsSpatialIndex()
+        self.nx = nx
 
         self.graph = nx.Graph()  # NetworkX graph for conflict resolution
 
@@ -1130,7 +1142,7 @@ class BuildingGeneralizationProcessor:
                             # Find which segment contains the projected point
                             segment_angle = None
                             valid_interior_found = False
-                            
+
                             for i in range(len(coords) - 1):
                                 p1 = coords[i]
                                 p2 = coords[i + 1]
@@ -1147,16 +1159,18 @@ class BuildingGeneralizationProcessor:
                                     # Calculate normalized position along segment (0-1)
                                     if segment_length > 0:
                                         t = segment.project(
-                                            Point(projected_point.x, projected_point.y), 
-                                            normalized=True
+                                            Point(projected_point.x, projected_point.y),
+                                            normalized=True,
                                         )
-                                        
+
                                         # Only accept projections strictly inside segment (not at endpoints)
                                         if 0.01 < t < 0.99:
                                             # Calculate angle of segment at the projected point
                                             dx = p2[0] - p1[0]
                                             dy = p2[1] - p1[1]
-                                            segment_angle = math.degrees(math.atan2(dy, dx))
+                                            segment_angle = math.degrees(
+                                                math.atan2(dy, dx)
+                                            )
 
                                             road_candidates.append(
                                                 {
@@ -1210,7 +1224,7 @@ class BuildingGeneralizationProcessor:
                         # Find which segment contains the projected point
                         segment_angle = None
                         valid_interior_found = False
-                        
+
                         for i in range(len(coords) - 1):
                             p1 = coords[i]
                             p2 = coords[i + 1]
@@ -1225,10 +1239,10 @@ class BuildingGeneralizationProcessor:
                                 segment_length = segment.length
                                 if segment_length > 0:
                                     t = segment.project(
-                                        Point(projected_point.x, projected_point.y), 
-                                        normalized=True
+                                        Point(projected_point.x, projected_point.y),
+                                        normalized=True,
                                     )
-                                    
+
                                     # Only accept projections strictly inside segment (not at endpoints)
                                     if 0.01 < t < 0.99:
                                         # Calculate angle of segment at the projected point
@@ -1309,16 +1323,15 @@ class BuildingGeneralizationProcessor:
 
                             # Check if closest point is on or very near this segment
                             segment_distance = segment.distance(Point(closest_point))
-                            
+
                             if segment_distance < 0.0001:  # Small threshold
                                 # Calculate normalized position along segment (0-1)
                                 segment_length = segment.length
                                 if segment_length > 0:
                                     t = segment.project(
-                                        Point(closest_point), 
-                                        normalized=True
+                                        Point(closest_point), normalized=True
                                     )
-                                    
+
                                     # Only accept projections strictly inside segment (not at endpoints)
                                     if 0.01 < t < 0.99:
                                         # Calculate angle of segment
@@ -1385,7 +1398,7 @@ class BuildingGeneralizationProcessor:
                 interior_candidates = [
                     c for c in road_candidates if c.get("interior_projection", False)
                 ]
-                
+
                 if interior_candidates:
                     # Sort interior candidates: roads first, then by distance
                     interior_candidates.sort(
@@ -1398,7 +1411,7 @@ class BuildingGeneralizationProcessor:
                         key=lambda x: (0 if x["type"] == "road" else 1, x["distance"])
                     )
                     closest_feature = road_candidates[0]
-                
+
                 min_distance = closest_feature["distance"]
                 best_angle = closest_feature["angle"] + 90  # Perpendicular angle
                 feature_type = closest_feature["type"]
@@ -2278,7 +2291,7 @@ class BuildingGeneralizationProcessor:
         ]
 
         # Create subgraph of only visible buildings
-        visible_graph = nx.Graph()
+        visible_graph = self.nx.Graph()
 
         for building_id in visible_buildings:
             visible_graph.add_node(
@@ -2303,7 +2316,7 @@ class BuildingGeneralizationProcessor:
                 visible_graph.add_edge(building_id, other_id)
 
         # Find connected components (conflict chains)
-        connected_components = list(nx.connected_components(visible_graph))
+        connected_components = list(self.nx.connected_components(visible_graph))
 
         chain_resolution_count = 0
 
