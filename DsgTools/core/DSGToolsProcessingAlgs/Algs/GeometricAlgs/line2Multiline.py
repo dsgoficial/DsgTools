@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 
-from collections import defaultdict
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.core import (
     QgsProcessing,
@@ -37,9 +36,45 @@ from qgis.core import (
     QgsFields,
     QgsField,
     QgsMultiLineString,
+    QgsSpatialIndex,
 )
 
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+
+class UnionFind:
+    """Estrutura Union-Find (Disjoint Set Union) com compressão de caminho
+    e union by rank para encontrar componentes conectados em tempo quase-linear.
+    """
+
+    __slots__ = ("parent", "rank")
+
+    def __init__(self):
+        self.parent = {}
+        self.rank = {}
+
+    def make_set(self, x):
+        if x not in self.parent:
+            self.parent[x] = x
+            self.rank[x] = 0
+
+    def find(self, x):
+        # Compressão de caminho iterativa (evita recursão profunda)
+        root = x
+        while self.parent[root] != root:
+            root = self.parent[root]
+        while self.parent[x] != root:
+            self.parent[x], x = root, self.parent[x]
+        return root
+
+    def union(self, x, y):
+        rx, ry = self.find(x), self.find(y)
+        if rx == ry:
+            return
+        # Union by rank
+        if self.rank[rx] < self.rank[ry]:
+            rx, ry = ry, rx
+        self.parent[ry] = rx
+        if self.rank[rx] == self.rank[ry]:
+            self.rank[rx] += 1
 
 
 class Line2Multiline(QgsProcessingAlgorithm):
@@ -50,149 +85,116 @@ class Line2Multiline(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT, self.tr("Select line layer"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Select line layer"),
+                [QgsProcessing.TypeVectorLine],
             )
         )
-
         self.addParameter(
             QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Output"))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        self.algRunner = AlgRunner()
-        lines = self.parameterAsSource(parameters, self.INPUT, context)
+        source = self.parameterAsSource(parameters, self.INPUT, context)
+        if source is None:
+            return {self.OUTPUT: None}
 
         fields = QgsFields()
-        fields.append(QgsField("length", QVariant.String))
-        (sink_l, sinkId_l) = self.parameterAsSink(
+        fields.append(QgsField("length", QVariant.Double))
+
+        (sink, sink_id) = self.parameterAsSink(
             parameters,
             self.OUTPUT,
             context,
             fields,
             QgsWkbTypes.MultiLineString,
-            lines.sourceCrs(),
+            source.sourceCrs(),
         )
-        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
-        currentStep = 0
-        multiStepFeedback.setCurrentStep(currentStep)
 
-        lines = self.algRunner.runAddAutoIncrementalField(
-            inputLyr=parameters[self.INPUT],
-            context=context,
-            feedback=multiStepFeedback,
-            fieldName="AUTO",
-        )
-        currentStep += 1
+        total = source.featureCount()
+        if total == 0:
+            return {self.OUTPUT: sink_id}
 
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(
-            inputLyr=lines,
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
-        )
-        currentStep += 1
+        multi_feedback = QgsProcessingMultiStepFeedback(3, feedback)
 
-        multiStepFeedback.setCurrentStep(currentStep)
-        spatialJoinOutput = self.algRunner.runJoinAttributesByLocation(
-            inputLyr=lines,
-            joinLyr=lines,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        currentStep += 1
+        # -- Passo 1: carregar geometrias e construir índice espacial ----------
+        multi_feedback.setCurrentStep(0)
+        geometries = {}  # fid -> QgsGeometry
+        spatial_index = QgsSpatialIndex()
+        step_size = 100.0 / total
 
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.populateAuxStructure(lines, feedback=multiStepFeedback)
-        currentStep += 1
+        for current, feat in enumerate(source.getFeatures()):
+            if multi_feedback.isCanceled():
+                return {self.OUTPUT: sink_id}
+            fid = feat.id()
+            geom = feat.geometry()
+            if geom.isNull() or geom.isEmpty():
+                continue
+            geometries[fid] = geom
+            spatial_index.addFeature(feat)
+            multi_feedback.setProgress(current * step_size)
 
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.buildMatchingFeaturesDict(spatialJoinOutput, feedback=multiStepFeedback)
-        currentStep += 1
+        # -- Passo 2: encontrar componentes conectados via Union-Find ---------
+        multi_feedback.setCurrentStep(1)
+        uf = UnionFind()
+        fids = list(geometries.keys())
+        n_geoms = len(fids)
+        if n_geoms == 0:
+            return {self.OUTPUT: sink_id}
 
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.processFeatures(fields, sink_l, feedback=multiStepFeedback)
+        step_size = 100.0 / n_geoms
+        for current, fid in enumerate(fids):
+            if multi_feedback.isCanceled():
+                return {self.OUTPUT: sink_id}
+            uf.make_set(fid)
+            geom = geometries[fid]
+            bbox = geom.boundingBox()
+            candidates = spatial_index.intersects(bbox)
+            for cand_fid in candidates:
+                if cand_fid == fid:
+                    continue
+                # Só faz union se realmente se tocam/intersectam
+                if geom.touches(geometries[cand_fid]) or geom.intersects(
+                    geometries[cand_fid]
+                ):
+                    uf.make_set(cand_fid)
+                    uf.union(fid, cand_fid)
+            multi_feedback.setProgress(current * step_size)
 
-        return {self.OUTPUT: sinkId_l}
+        # -- Passo 3: agrupar por componente e gerar multilinhas --------------
+        multi_feedback.setCurrentStep(2)
+        components = {}
+        for fid in fids:
+            root = uf.find(fid)
+            if root not in components:
+                components[root] = []
+            components[root].append(fid)
 
-    def processFeatures(self, fields, sink_l, feedback):
-        nFeats = len(self.ids_in_stack)
-        if nFeats == 0:
-            return
-        stepSize = 100 / nFeats
-        current = 0
-        while len(self.ids_in_stack) > 0:
-            if feedback.isCanceled():
-                break
-            currentid = self.ids_in_stack.pop()
-            current = nFeats - len(self.ids_in_stack)
+        n_components = len(components)
+        if n_components == 0:
+            return {self.OUTPUT: sink_id}
+        step_size = 100.0 / n_components
 
-            mls_array = self.aggregate(currentid, feedback=feedback)
+        for current, member_fids in enumerate(components.values()):
+            if multi_feedback.isCanceled():
+                return {self.OUTPUT: sink_id}
 
             mls = QgsMultiLineString()
-            for el in mls_array:
-                mls.addGeometry(QgsLineString(list(el.vertices())))
-            self.addSink(QgsGeometry(mls), sink_l, fields)
-            feedback.setProgress(current * stepSize)
+            for fid in member_fids:
+                geom = geometries[fid]
+                # Suporta tanto geometrias simples quanto multi
+                for part in geom.parts():
+                    mls.addGeometry(part.clone())
 
-    def buildMatchingFeaturesDict(self, spatialJoinOutput, feedback):
-        self.matching_features = defaultdict(list)
-        nFeats = spatialJoinOutput.featureCount()
-        if nFeats == 0:
-            return
-        stepSize = 100 / nFeats
-        for current, feat in enumerate(spatialJoinOutput.getFeatures()):
-            if feedback.isCanceled():
-                break
-            if feat["AUTO"] == feat["AUTO_2"]:
-                continue
-            self.matching_features[feat["AUTO"]].append(feat["AUTO_2"])
-            feedback.setProgress(current * stepSize)
+            out_geom = QgsGeometry(mls)
+            new_feat = QgsFeature(fields)
+            new_feat.setGeometry(out_geom)
+            new_feat["length"] = out_geom.length()
+            sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
 
-    def populateAuxStructure(self, lines, feedback):
-        self.id_to_feature = {}
-        self.ids_in_stack = set()
-        nFeats = lines.featureCount()
-        if nFeats == 0:
-            return
-        stepSize = 100 / nFeats
-        for current, currentFeature in enumerate(lines.getFeatures()):
-            if feedback.isCanceled():
-                break
-            self.id_to_feature[currentFeature["AUTO"]] = currentFeature
-            self.ids_in_stack.add(currentFeature["AUTO"])
-            feedback.setProgress(current * stepSize)
+            multi_feedback.setProgress(current * step_size)
 
-    def aggregate(self, featureId, feedback):
-        stack = [featureId]
-        mls_array = []
-
-        while stack:
-            current_id = stack.pop()
-            currentfeature = self.id_to_feature[current_id]
-            currentgeom = currentfeature.geometry()
-            mls_array.append(currentgeom)
-
-            if feedback.isCanceled():
-                return mls_array
-
-            matching_features_ids = set(
-                el
-                for el in self.matching_features[current_id]
-                if el in self.ids_in_stack
-            )
-
-            self.ids_in_stack = self.ids_in_stack - matching_features_ids
-
-            stack.extend(matching_features_ids)
-
-        return mls_array
-
-    def addSink(self, geom, sink, fields):
-        newFeat = QgsFeature(fields)
-        newFeat.setGeometry(geom)
-        newFeat["length"] = geom.length()
-        sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+        return {self.OUTPUT: sink_id}
 
     def tr(self, string):
         return QCoreApplication.translate("Processing", string)
@@ -207,20 +209,9 @@ class Line2Multiline(QgsProcessingAlgorithm):
         return self.tr("Convert Line to Multiline")
 
     def group(self):
-        """
-        Returns the name of the group this algorithm belongs to. This string
-        should be localised.
-        """
         return self.tr("Geometric Algorithms")
 
     def groupId(self):
-        """
-        Returns the unique ID of the group this algorithm belongs to. This
-        string should be fixed for the algorithm, and must not be localised.
-        The group id should be unique within each provider. Group id should
-        contain lowercase alphanumeric characters only and no spaces or other
-        formatting characters.
-        """
         return "DSGTools - Geometric Algorithms"
 
     def shortHelpString(self):
