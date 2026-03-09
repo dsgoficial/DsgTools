@@ -562,6 +562,83 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     pairs.add((candidateId, cellId))
         return pairs
 
+    def _getCellBoundaryAsLine(self, geom):
+        """
+        Returns all rings of a polygon geometry collected as line geometries.
+        Used to extract the full cell boundary for external border computation.
+        """
+        flatType = QgsWkbTypes.flatType(geom.wkbType())
+        rings = []
+        if flatType == QgsWkbTypes.Polygon:
+            rings = geom.asPolygon()
+        elif flatType == QgsWkbTypes.MultiPolygon:
+            for poly in geom.asMultiPolygon():
+                rings.extend(poly)
+        parts = [QgsGeometry.fromPolylineXY(ring) for ring in rings if ring]
+        if not parts:
+            return QgsGeometry()
+        if len(parts) == 1:
+            return parts[0]
+        return QgsGeometry.collectGeometry(parts)
+
+    def _computeExternalBorderBuffers(self, cellFeatDict, searchRadius):
+        """
+        For each data cell computes the part of its boundary that is NOT shared
+        with any other data cell (the "external border"), then returns a buffer
+        of that external border with radius ``searchRadius``.
+
+        This is used to suppress spurious "missing connection" flags for
+        features whose endpoints sit at the dataset boundary (where no adjacent
+        cell with data exists on the other side).
+
+        Returns:
+            dict: {cell_id: QgsGeometry}  — empty geometry when the whole
+                  boundary is shared (cell is completely surrounded by data).
+        """
+        localIdx = QgsSpatialIndex()
+        for cell in cellFeatDict.values():
+            localIdx.addFeature(cell)
+
+        result = {}
+        for cellId, cell in cellFeatDict.items():
+            cellGeom = cell.geometry()
+
+            sharedParts = []
+            for neighborId in localIdx.intersects(cellGeom.boundingBox()):
+                if neighborId == cellId:
+                    continue
+                neighborGeom = cellFeatDict[neighborId].geometry()
+                if cellGeom.touches(neighborGeom):
+                    shared = cellGeom.intersection(neighborGeom)
+                    if shared and not shared.isEmpty():
+                        sharedParts.append(shared)
+
+            cellBoundaryLine = self._getCellBoundaryAsLine(cellGeom)
+
+            if not sharedParts:
+                externalBoundary = cellBoundaryLine
+            else:
+                sharedUnion = (
+                    QgsGeometry.collectGeometry(sharedParts)
+                    if len(sharedParts) > 1
+                    else sharedParts[0]
+                )
+                # Tiny buffer on the shared union to absorb floating-point gaps
+                externalBoundary = cellBoundaryLine.difference(
+                    sharedUnion.buffer(1e-9, 3)
+                )
+
+            if (
+                externalBoundary
+                and not externalBoundary.isEmpty()
+                and externalBoundary.length() > 0
+            ):
+                result[cellId] = externalBoundary.buffer(searchRadius, 5)
+            else:
+                result[cellId] = QgsGeometry()
+
+        return result
+
     def _performEdgeMatching(
         self,
         adjacentPairs,
@@ -579,6 +656,11 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         shared edge, buffers it by searchRadius, and runs edge matching for
         lines, points, and polygons — in both directions (A→B and B→A) so
         that missing features on either side are always flagged.
+
+        Features whose endpoints lie near the dataset's external border (i.e.
+        the portion of a cell boundary not shared with any other data cell) are
+        excluded from "missing connection" flags, because there is no adjacent
+        cell to connect to on that side.
         """
         nPairs = len(adjacentPairs)
         if nPairs == 0:
@@ -586,6 +668,12 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                 self.tr("No adjacent pairs with data on both sides found.")
             )
             return
+
+        # Precompute external border buffers once for all data cells
+        feedback.pushInfo(self.tr("  Precomputing external border buffers..."))
+        cellExternalBorders = self._computeExternalBorderBuffers(
+            cellFeatDict, searchRadius
+        )
 
         stepSize = 100.0 / nPairs
 
@@ -611,6 +699,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
             bufferZone = sharedEdge.buffer(searchRadius, 5)
             if bufferZone is None or bufferZone.isEmpty():
                 continue
+
+            extBufA = cellExternalBorders.get(cellIdA, QgsGeometry())
+            extBufB = cellExternalBorders.get(cellIdB, QgsGeometry())
 
             feedback.pushInfo(self.tr(f"  Matching cells {cellIdA} ↔ {cellIdB}..."))
 
@@ -638,6 +729,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                             fields,
                             pointFlagSink,
                             layerName,
+                            extBufA,
                         )
                         self._matchLines(
                             lyrB,
@@ -648,6 +740,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                             fields,
                             pointFlagSink,
                             layerName,
+                            extBufB,
                         )
                     elif geomTypeKey == "points":
                         self._matchPoints(
@@ -659,6 +752,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                             fields,
                             pointFlagSink,
                             layerName,
+                            extBufA,
                         )
                         self._matchPoints(
                             lyrB,
@@ -669,6 +763,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                             fields,
                             pointFlagSink,
                             layerName,
+                            extBufB,
                         )
                     elif geomTypeKey == "polygons":
                         self._matchPolygons(
@@ -682,6 +777,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                             pointFlagSink,
                             lineFlagSink,
                             layerName,
+                            extBufA,
                         )
                         self._matchPolygons(
                             lyrB,
@@ -694,6 +790,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                             pointFlagSink,
                             lineFlagSink,
                             layerName,
+                            extBufB,
                         )
 
     # -------------------------------------------------------------------------
@@ -737,6 +834,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         fields,
         sink,
         layerName,
+        externalBorderBuffer=None,
     ):
         """
         For each line endpoint from lyrA that lies within the buffer zone,
@@ -745,12 +843,18 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         Flags:
           - "missing neighbor"  : no lyrB endpoint found within searchRadius
           - "continuity error"  : matching endpoint found but attributes differ
+
+        ``externalBorderBuffer`` (optional): buffered external boundary of the
+        source cell.  Endpoints within this zone are skipped for "missing
+        neighbor" flags because no adjacent data cell exists on that side.
         """
         endpointsA = self._getLineEndpointsInBuffer(lyrA, bufferZone)
         endpointsB = self._getLineEndpointsInBuffer(lyrB, bufferZone)
 
         if not endpointsA:
             return
+
+        hasExtBuf = externalBorderBuffer and not externalBorderBuffer.isEmpty()
 
         # Spatial index for lyrB endpoints
         bIdxMap = {}
@@ -767,6 +871,10 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
             candidates = bSpatialIdx.intersects(searchBbox)
 
             if not candidates:
+                # Suppress flag if the endpoint is near the dataset's external
+                # border (no adjacent data cell on that side).
+                if hasExtBuf and ptA.within(externalBorderBuffer):
+                    continue
                 self._addFlag(
                     ptA,
                     self.tr(
@@ -787,6 +895,8 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     bestId = cId
 
             if bestId is None:
+                if hasExtBuf and ptA.within(externalBorderBuffer):
+                    continue
                 self._addFlag(
                     ptA,
                     self.tr(
@@ -822,6 +932,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         fields,
         sink,
         layerName,
+        externalBorderBuffer=None,
     ):
         """
         For each point feature from lyrA that lies within the buffer zone,
@@ -830,6 +941,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         Flags:
           - "missing neighbor"  : no lyrB point found within searchRadius
           - "continuity error"  : matching point found but attributes differ
+
+        ``externalBorderBuffer`` (optional): suppresses "missing neighbor" flags
+        for points that sit on the dataset's external border.
         """
         bbox = bufferZone.boundingBox()
 
@@ -847,6 +961,8 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         if not pointsA:
             return
 
+        hasExtBuf = externalBorderBuffer and not externalBorderBuffer.isEmpty()
+
         # Spatial index for lyrB points
         bIdxMap = {}
         bSpatialIdx = QgsSpatialIndex()
@@ -863,6 +979,8 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
             candidates = bSpatialIdx.intersects(searchBbox)
 
             if not candidates:
+                if hasExtBuf and ptA.within(externalBorderBuffer):
+                    continue
                 self._addFlag(
                     ptA,
                     self.tr(f"[{layerName}] Point without neighbor at boundary."),
@@ -880,6 +998,8 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     bestId = cId
 
             if bestId is None:
+                if hasExtBuf and ptA.within(externalBorderBuffer):
+                    continue
                 self._addFlag(
                     ptA,
                     self.tr(f"[{layerName}] Point without neighbor at boundary."),
@@ -915,6 +1035,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         pointSink,
         lineSink,
         layerName,
+        externalBorderBuffer=None,
     ):
         """
         For each polygon in lyrA that intersects the buffer zone:
@@ -929,11 +1050,14 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
            - Match with attr diff → LINE flag on segA  ("continuity error")
 
         2. Vertex checking (POINT flags):
-           For every polygon vertex of lyrA that lies within clippedEdgeZone
-           (i.e. on or very near the shared cell edge), checks whether any lyrB
-           boundary segment is within searchRadius. Natural boundary vertices
-           that are inside bufferZone but NOT on the shared edge are excluded.
+           For every polygon vertex of lyrA that intersects the sharedEdge,
+           checks whether any lyrB boundary segment is within searchRadius.
            - No nearby B boundary → POINT flag on the vertex
+           - Suppressed if the vertex is within ``externalBorderBuffer``
+             (i.e. no adjacent data cell exists on that side of the dataset).
+
+        ``externalBorderBuffer`` (optional): suppresses "missing connection"
+        POINT flags for vertices that sit on the dataset's external border.
         """
         bbox = bufferZone.boundingBox()
 
@@ -950,6 +1074,8 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
 
         if not polysA:
             return
+
+        hasExtBuf = externalBorderBuffer and not externalBorderBuffer.isEmpty()
 
         # Tight buffer: only captures polygon boundary segments that actually
         # lie on/along the shared cell edge (the clipped portion), not natural
@@ -1025,6 +1151,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     for cId in bSegSpatialIdx.intersects(ptSearchBbox)
                 )
                 if not hasBNeighbor:
+                    # Suppress if the vertex is on the dataset's external border
+                    if hasExtBuf and pt.within(externalBorderBuffer):
+                        continue
                     self._addFlag(
                         pt,
                         self.tr(
