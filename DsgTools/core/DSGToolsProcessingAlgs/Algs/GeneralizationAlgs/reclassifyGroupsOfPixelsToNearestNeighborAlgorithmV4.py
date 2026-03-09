@@ -1072,8 +1072,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4(ValidationAlgorithm):
         else:
             # For projected coordinates
             units = crs.mapUnits()
+            areaUnit = QgsUnitTypes.distanceToAreaUnit(units)
             conversion_factor = QgsUnitTypes.fromUnitToUnitFactor(
-                units, QgsUnitTypes.SquareMeters
+                areaUnit, QgsUnitTypes.AreaSquareMeters
             )
             pixel_area = pixel_width * pixel_height * conversion_factor
 
