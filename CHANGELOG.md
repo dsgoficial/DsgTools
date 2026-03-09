@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 4.21.1 - dev
+
+Novas Funcionalidades:
+
+- Novo algoritmo de verificar ligação de shapefiles;
+
+Melhorias:
+
+- Adiciona opção de extrair somente os topos de morro e depressões no algoritmo de extração de pontos cotados;
+- Melhoria de desempenho no converte linha para multilinha;
+
+Correções de bug:
+
+- Corrige bugs no algoritmo de suavização nurbfit;
+
 ## 4.20.0 - 2026-01-12
 
 Novas Funcionalidades:
