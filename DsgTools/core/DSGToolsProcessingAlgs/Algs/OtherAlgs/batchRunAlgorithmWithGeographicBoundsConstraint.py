@@ -20,9 +20,8 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from qgis.PyQt.QtCore import QVariant
 import json, processing
 import gc
 from qgis.core import (
@@ -61,8 +60,8 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
         self.flagSink = None
         self.flag_id = None
         self.flagFields = QgsFields()
-        self.flagFields.append(QgsField("alg_name", QVariant.String))
-        self.flagFields.append(QgsField("layer_name", QVariant.String))
+        self.flagFields.append(QgsField("alg_name", QMetaType.Type.QString))
+        self.flagFields.append(QgsField("layer_name", QMetaType.Type.QString))
 
     def initAlgorithm(self, config=None):
         """

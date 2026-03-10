@@ -28,7 +28,7 @@ from pathlib import Path
 from typing import List
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingMultiStepFeedback,
@@ -218,11 +218,11 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                     fields = source_layer.fields()
 
                     # Add new fields for metadata
-                    fields.append(QgsField("sensorVeh", QVariant.String))
-                    fields.append(QgsField("acquisitio", QVariant.String))
-                    fields.append(QgsField("catIdent", QVariant.String))
-                    fields.append(QgsField("relDir", QVariant.String))
-                    fields.append(QgsField("_filename", QVariant.String))
+                    fields.append(QgsField("sensorVeh", QMetaType.Type.QString))
+                    fields.append(QgsField("acquisitio", QMetaType.Type.QString))
+                    fields.append(QgsField("catIdent", QMetaType.Type.QString))
+                    fields.append(QgsField("relDir", QMetaType.Type.QString))
+                    fields.append(QgsField("_filename", QMetaType.Type.QString))
 
                     # Create the writer
                     writer = QgsVectorFileWriter(

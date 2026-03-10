@@ -68,7 +68,7 @@ class SnapChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         self.layerComboBox.clear()
         self.layerComboBox.addItem(self.tr("Select a layer"))
         self.layerComboBox.addItems(refreshList)
-        idx = self.layerComboBox.findText(currentText, flags=Qt.MatchExactly)
+        idx = self.layerComboBox.findText(currentText, flags=Qt.MatchFlag.MatchExactly)
         self.layerComboBox.setCurrentIndex(idx)
 
     def getSelectedItem(self):
@@ -106,7 +106,7 @@ class SnapChooserWidget(QtWidgets.QWidget, FORM_CLASS):
                 raise Exception(self.tr("Invalid Snap Chooser Widget json config!"))
             # set layer combo
             idx = self.layerComboBox.findText(
-                parameterDict["layerName"], flags=Qt.MatchExactly
+                parameterDict["layerName"], flags=Qt.MatchFlag.MatchExactly
             )
             self.layerComboBox.setCurrentIndex(idx)
             # set snap double spin box

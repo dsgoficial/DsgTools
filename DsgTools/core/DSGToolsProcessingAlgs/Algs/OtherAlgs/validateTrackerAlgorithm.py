@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from datetime import datetime
 from qgis.core import (
     QgsProcessing,
@@ -132,11 +132,11 @@ class ValidateTrackerAlgorithm(QgsProcessingAlgorithm):
         feedback=None,
     ):
         dictExpectedType = {
-            elevation: QVariant.Double,
-            creation_time: QVariant.DateTime,
-            trackid: QVariant.Int,
-            tracksegid: QVariant.Int,
-            tracksegpointid: QVariant.Int,
+            elevation: QMetaType.Type.Double,
+            creation_time: QMetaType.Type.QDateTime,
+            trackid: QMetaType.Type.Int,
+            tracksegid: QMetaType.Type.Int,
+            tracksegpointid: QMetaType.Type.Int,
         }
         fields = inputLyr.fields()
         dictActualType = {
@@ -192,13 +192,13 @@ class ValidateTrackerAlgorithm(QgsProcessingAlgorithm):
                 self.invalidSourceError(parameters, self.INPUT)
             )
         toleranceDays = self.parameterAsInt(parameters, self.TOLERANCE, context)
-        elevacao = self.parameterAsFields(parameters, self.ELEVATION_FIELD, context)[0]
-        creation = self.parameterAsFields(parameters, self.CREATION_FIELD, context)[0]
-        trackid = self.parameterAsFields(parameters, self.TRACKID_FIELD, context)[0]
-        tracksegid = self.parameterAsFields(parameters, self.TRACKSEGID_FIELD, context)[
+        elevacao = self.parameterAsStrings(parameters, self.ELEVATION_FIELD, context)[0]
+        creation = self.parameterAsStrings(parameters, self.CREATION_FIELD, context)[0]
+        trackid = self.parameterAsStrings(parameters, self.TRACKID_FIELD, context)[0]
+        tracksegid = self.parameterAsStrings(parameters, self.TRACKSEGID_FIELD, context)[
             0
         ]
-        tracksegpointid = self.parameterAsFields(
+        tracksegpointid = self.parameterAsStrings(
             parameters, self.TRACKSEGPOINTID_FIELD, context
         )[0]
         multiStepFeedback.setCurrentStep(1)

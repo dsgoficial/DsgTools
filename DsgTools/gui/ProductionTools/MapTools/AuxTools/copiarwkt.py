@@ -27,11 +27,10 @@ from qgis.core import (
     QgsCoordinateTransform,
     QgsCoordinateTransformContext,
 )
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.Qt import QApplication
-from PyQt5 import uic
+from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QMessageBox, QApplication
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt import uic
 from qgis.utils import iface
 import os
 
@@ -59,7 +58,7 @@ def copywkt():
         iface.messageBar().pushMessage(
             "Warning",
             "Selecione uma camada antes de rodar o processo",
-            level=Qgis.Warning,
+            level=Qgis.MessageLevel.Warning,
             duration=5,
         )
 
@@ -77,7 +76,7 @@ def copywkt():
         " As coordenadas das feições selecionadas foram copiadas em WKT para o sistema {}".format(
             destCrs.authid()
         ),
-        level=Qgis.Success,
+        level=Qgis.MessageLevel.Success,
         duration=5,
     )
 
@@ -85,7 +84,7 @@ def copywkt():
 def callDialog(crsvalue):
     getCrsDialog = GetCrsDialog()
     getCrsDialog.setCrsValue(crsvalue)
-    result = getCrsDialog.exec_()
+    result = getCrsDialog.exec()
     crs = getCrsDialog.getCrs()
     if result and not crs.isValid():
         errorAction()
@@ -98,7 +97,7 @@ def errorAction():
         iface.mainWindow(),
         "CRS Invalido",
         "Se deseja mudar o CRS, selecione um CRS valido",
-        QMessageBox.Ok,
+        QMessageBox.StandardButton.Ok,
     )
     return False
 

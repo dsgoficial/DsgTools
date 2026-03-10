@@ -21,7 +21,7 @@
 """
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
@@ -67,7 +67,7 @@ class StreamOrder(QgsProcessingAlgorithm):
         algRunner = AlgRunner()
         networkLayer = self.parameterAsSource(parameters, self.INPUT, context)
         fields = networkLayer.fields()
-        fields.append(QgsField("stream_order", QVariant.Int))
+        fields.append(QgsField("stream_order", QMetaType.Type.Int))
         (sink, sink_id) = self.parameterAsSink(
             parameters,
             self.OUTPUT,

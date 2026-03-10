@@ -64,11 +64,11 @@ class CodeNameCustomizationWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         if uiParameterJsonDict:
             domainIdx = self.domainComboBox.findText(
-                uiParameterJsonDict["domainComboBox"], flags=Qt.MatchExactly
+                uiParameterJsonDict["domainComboBox"], flags=Qt.MatchFlag.MatchExactly
             )
             self.domainComboBox.setCurrentIndex(domainIdx)
             oldIdx = self.oldCodeNameComboBox.findText(
-                uiParameterJsonDict["oldCodeNameComboBox"], flags=Qt.MatchExactly
+                uiParameterJsonDict["oldCodeNameComboBox"], flags=Qt.MatchFlag.MatchExactly
             )
             self.oldCodeNameComboBox.setCurrentIndex(oldIdx)
             self.newCodeNameLineEdit.setText(uiParameterJsonDict["newCodeNameLineEdit"])

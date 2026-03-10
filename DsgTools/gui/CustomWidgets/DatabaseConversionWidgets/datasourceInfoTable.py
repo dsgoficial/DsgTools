@@ -96,7 +96,7 @@ class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
         )
         # set resize policy for each column
         [
-            header.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeToContents)
+            header.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
             for i in range(self.COLUMN_COUNT)
         ]
         # connect header double click signal to order by that column
@@ -112,7 +112,7 @@ class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
         """
         item = QtWidgets.QTableWidgetItem()
         item.setText(text)
-        item.setFlags(Qt.ItemIsEditable)  # not editable
+        item.setFlags(Qt.ItemFlag.ItemIsEditable)  # not editable
         self.tableWidget.setItem(row, col, item)
         return item
 

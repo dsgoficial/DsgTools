@@ -126,7 +126,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
 
     def setServerDb(self, serverAbstractDb):
         self.serverAbstractDb = serverAbstractDb
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         try:
             if self.serverAbstractDb:
                 dbList = self.serverAbstractDb.getEDGVDbsFromServer(
@@ -201,11 +201,11 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
             self.problemOccurred.emit(
                 self.tr("A problem occurred! Check log for details.")
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
 
     @pyqtSlot(bool)
     def on_serverPushButton_clicked(self):
-        self.viewServers.exec_()
+        self.viewServers.exec()
 
     def serverIsValid(self):
         """
@@ -271,7 +271,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         Exhibits information about selected database.
         """
         contents = self.abstractDb.databaseInfo() if self.abstractDb else []
-        DatasourceInfoTable(contents=contents).exec_()
+        DatasourceInfoTable(contents=contents).exec()
 
     def setHost(self, hostname):
         """

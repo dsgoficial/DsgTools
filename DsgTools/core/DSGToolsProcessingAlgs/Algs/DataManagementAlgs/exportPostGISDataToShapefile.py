@@ -36,7 +36,7 @@ from DsgTools.core.DbTools.dbConversionHandler import (
     write_output_features,
 )
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessingException,
     QgsWkbTypes,
@@ -128,14 +128,14 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS,
                 self.tr("Geographic Bounds"),
-                [QgsWkbTypes.PolygonGeometry],
+                [QgsWkbTypes.GeometryType.PolygonGeometry],
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS,
                 self.tr("Geographic Bounds"),
-                [QgsWkbTypes.PolygonGeometry],
+                [QgsWkbTypes.GeometryType.PolygonGeometry],
             )
         )
         self.addParameter(
@@ -210,7 +210,7 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
         geographicBoundLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDS, context
         )
-        miField = self.parameterAsFields(
+        miField = self.parameterAsStrings(
             parameters, self.GEOGRAPHIC_BOUNDS_NAME_FIELD, context
         )[0]
         templatePath = self.parameterAsString(

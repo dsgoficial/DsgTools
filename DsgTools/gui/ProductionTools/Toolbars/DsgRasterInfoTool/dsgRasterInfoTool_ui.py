@@ -39,7 +39,7 @@ class Ui_DsgRasterInfoTool(object):
         DsgRasterInfoTool.setObjectName(_fromUtf8("DsgRasterInfoTool"))
         DsgRasterInfoTool.resize(309, 49)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.MinimumExpanding
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -52,7 +52,7 @@ class Ui_DsgRasterInfoTool(object):
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.rasterInfoPushButton = QtWidgets.QPushButton(DsgRasterInfoTool)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -66,8 +66,8 @@ class Ui_DsgRasterInfoTool(object):
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap(_fromUtf8(":/plugins/DsgTools/icons/rasterToolTip.png")),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.rasterInfoPushButton.setIcon(icon)
         self.rasterInfoPushButton.setIconSize(QtCore.QSize(16, 16))
@@ -75,12 +75,12 @@ class Ui_DsgRasterInfoTool(object):
         self.rasterInfoPushButton.setObjectName(_fromUtf8("rasterInfoPushButton"))
         self.gridLayout.addWidget(self.rasterInfoPushButton, 0, 0, 1, 1)
         self.splitter = QtWidgets.QSplitter(DsgRasterInfoTool)
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.splitter.setObjectName(_fromUtf8("splitter"))
         self.rasterComboBox = QgsMapLayerComboBox(self.splitter)
-        self.rasterComboBox.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.rasterComboBox.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -93,7 +93,7 @@ class Ui_DsgRasterInfoTool(object):
         self.rasterComboBox.setObjectName(_fromUtf8("rasterComboBox"))
         self.refreshPushButton = QtWidgets.QPushButton(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -107,15 +107,15 @@ class Ui_DsgRasterInfoTool(object):
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap(":/plugins/DsgTools/icons/reload.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.refreshPushButton.setIcon(icon)
         self.refreshPushButton.setIconSize(QtCore.QSize(16, 16))
         self.refreshPushButton.setObjectName("refreshPushButton")
         self.bandTooltipButton = QtWidgets.QPushButton(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -130,8 +130,8 @@ class Ui_DsgRasterInfoTool(object):
         icon1 = QtGui.QIcon()
         icon1.addPixmap(
             QtGui.QPixmap(_fromUtf8(":/plugins/DsgTools/icons/band_tooltip.png")),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.bandTooltipButton.setIcon(icon1)
         self.bandTooltipButton.setIconSize(QtCore.QSize(16, 16))
@@ -139,7 +139,7 @@ class Ui_DsgRasterInfoTool(object):
         self.bandTooltipButton.setObjectName(_fromUtf8("bandTooltipButton"))
         self.dynamicHistogramButton = QtWidgets.QPushButton(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -156,8 +156,8 @@ class Ui_DsgRasterInfoTool(object):
             QtGui.QPixmap(
                 _fromUtf8(":/plugins/DsgTools/icons/dynamic_histogram_viewer.png")
             ),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.dynamicHistogramButton.setIcon(icon2)
         self.dynamicHistogramButton.setIconSize(QtCore.QSize(16, 16))
@@ -166,7 +166,7 @@ class Ui_DsgRasterInfoTool(object):
         self.gridLayout.addWidget(self.splitter, 0, 1, 1, 1)
         self.valueSetterButton = QtWidgets.QPushButton(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -181,8 +181,8 @@ class Ui_DsgRasterInfoTool(object):
         icon2 = QtGui.QIcon()
         icon2.addPixmap(
             QtGui.QPixmap(_fromUtf8(":/plugins/DsgTools/icons/valueSetter.png")),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.valueSetterButton.setIcon(icon2)
         self.valueSetterButton.setIconSize(QtCore.QSize(40, 40))

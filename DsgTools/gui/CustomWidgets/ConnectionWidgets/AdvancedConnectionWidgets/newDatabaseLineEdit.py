@@ -178,7 +178,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
             self.problemOccurred.emit(
                 self.tr("A problem occurred! Check log for details.")
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
 
     def validate(self):
         """
@@ -229,7 +229,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         # model of implementation for reimplementation
         fd = QFileDialog()
         fd.setDirectory(QDir.homePath())
-        fd.setFileMode(QFileDialog.AnyFile)
+        fd.setFileMode(QFileDialog.FileMode.AnyFile)
         filename, __ = fd.getSaveFileName(caption=self.caption, filter=self.filter)
         if filename:
             self.dsLineEdit.setText(filename)

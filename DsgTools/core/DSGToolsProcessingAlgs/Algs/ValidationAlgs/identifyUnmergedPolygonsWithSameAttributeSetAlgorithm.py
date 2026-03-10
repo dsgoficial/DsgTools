@@ -28,7 +28,7 @@ from typing import Dict, Set, List, Tuple
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools import graphHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsFeatureRequest,
     QgsGeometry,
@@ -150,7 +150,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.LineString, context)
         if inputLyr is None or inputLyr.featureCount() == 0:
             return {"FLAGS": self.flag_id}
-        attributeBlackList = self.parameterAsFields(
+        attributeBlackList = self.parameterAsStrings(
             parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
         
@@ -316,7 +316,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
             if feedback.isCanceled():
                 break
             bbox = geomFlag.boundingBox()
-            if lineFilterLyr is not None and any(geomFlag.intersection(f.geometry()).type() == QgsWkbTypes.LineGeometry and geomFlag.intersection(f.geometry()).length() > 0 for f in lineFilterLyr.getFeatures(bbox)):
+            if lineFilterLyr is not None and any(geomFlag.intersection(f.geometry()).type() == QgsWkbTypes.GeometryType.LineGeometry and geomFlag.intersection(f.geometry()).length() > 0 for f in lineFilterLyr.getFeatures(bbox)):
                 continue
             flagLinesGeomList.append(geomFlag)
             feedback.setProgress(size * current)
@@ -401,7 +401,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
             boundary1 = self.getBoundaryOfPolygon(feat1)
             boundary2 = self.getBoundaryOfPolygon(feat2)
             flagGeomIntersection: QgsGeometry = boundary1.intersection(boundary2)
-            if flagGeomIntersection.isNull() or flagGeomIntersection.isEmpty() or flagGeomIntersection.type() != QgsWkbTypes.LineGeometry:
+            if flagGeomIntersection.isNull() or flagGeomIntersection.isEmpty() or flagGeomIntersection.type() != QgsWkbTypes.GeometryType.LineGeometry:
                 continue
             flagLinesGeomSet.add(flagGeomIntersection)
             feedback.setProgress(size * current)

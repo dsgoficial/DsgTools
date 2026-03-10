@@ -20,9 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtGui import QColor
-from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtCore import QMetaType
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
@@ -201,7 +201,7 @@ class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
                 )
         expressionString += """ELSE ''\nEND"""
         lyr.addExpressionField(
-            expressionString, QgsField("attribute_error_description", QVariant.String)
+            expressionString, QgsField("attribute_error_description", QMetaType.Type.QString)
         )
 
     def cleanRules(self, inputLayerList):

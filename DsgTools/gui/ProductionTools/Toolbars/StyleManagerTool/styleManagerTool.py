@@ -22,11 +22,11 @@
 """
 from builtins import range
 import os
-from qgis.PyQt.QtWidgets import QMessageBox, QApplication
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QWidget
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
-from qgis.PyQt.Qt import QWidget, QObject
+
 
 from qgis.core import (
     QgsMapLayer,
@@ -95,7 +95,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             dbName = self.dbComboBox.currentText()
             styleName = self.styleComboBox.currentText()
             lyrList = self.getLayers(dbName)
@@ -138,7 +138,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             QgsMessageLog.logMessage(
                 self.tr("Error setting style ") + styleName + ": " + ":".join(e.args),
                 "DSGTools Plugin",
-                Qgis.Critical,
+                Qgis.MessageLevel.Critical,
             )
             QApplication.restoreOverrideCursor()
 

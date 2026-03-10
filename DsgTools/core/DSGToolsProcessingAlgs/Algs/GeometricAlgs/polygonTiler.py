@@ -39,7 +39,7 @@ from qgis.core import (
     QgsExpression,
     QgsExpressionContext,
 )
-from PyQt5.QtCore import QVariant
+from qgis.PyQt.QtCore import QMetaType
 import math
 
 
@@ -220,9 +220,9 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
 
         # Get the fields from the source layer and add tile identification fields
         self.fields = source.fields()
-        self.fields.append(QgsField("_tile_row", QVariant.Int))
-        self.fields.append(QgsField("_tile_col", QVariant.Int))
-        self.fields.append(QgsField("_tile_id", QVariant.String))
+        self.fields.append(QgsField("_tile_row", QMetaType.Type.Int))
+        self.fields.append(QgsField("_tile_col", QMetaType.Type.Int))
+        self.fields.append(QgsField("_tile_id", QMetaType.Type.QString))
 
         # Create the output feature sink
         (sink, dest_id) = self.parameterAsSink(
@@ -250,7 +250,7 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
             geom = feature.geometry()
 
             # Skip invalid, empty, or non-polygon geometries
-            if geom.isEmpty() or geom.type() != QgsWkbTypes.PolygonGeometry:
+            if geom.isEmpty() or geom.type() != QgsWkbTypes.GeometryType.PolygonGeometry:
                 feedback.pushInfo(
                     self.tr(f"Skipping feature {feature.id()} - not a valid polygon")
                 )

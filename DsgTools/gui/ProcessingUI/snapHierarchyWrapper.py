@@ -27,7 +27,7 @@ from qgis.gui import QgsMapLayerComboBox, QgsMessageBar
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.utils import iface
 from qgis.PyQt.QtWidgets import QComboBox, QLineEdit, QDoubleSpinBox
-from qgis.PyQt.QtCore import QSize, QRegExp
+from qgis.PyQt.QtCore import QSize
 from processing.gui.wrappers import (
     WidgetWrapper,
     DIALOG_STANDARD,
@@ -226,7 +226,7 @@ class SnapHierarchyWrapper(WidgetWrapper):
                         self.tr("Snap settings successfully loaded from {0}").format(
                             filepath
                         ),
-                        level=Qgis.Success,
+                        level=Qgis.MessageLevel.Success,
                         duration=5,
                     )
             except Exception as e:
@@ -264,7 +264,7 @@ class SnapHierarchyWrapper(WidgetWrapper):
                         self.tr("Snap settings successfully exported to {0}").format(
                             filepath
                         ),
-                        level=Qgis.Success,
+                        level=Qgis.MessageLevel.Success,
                         duration=5,
                     )
             except Exception as e:

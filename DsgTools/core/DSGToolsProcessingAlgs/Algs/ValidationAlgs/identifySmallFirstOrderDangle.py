@@ -23,7 +23,7 @@
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingParameterFeatureSink,

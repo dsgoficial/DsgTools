@@ -27,6 +27,7 @@ import os
 # Qt imports
 from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtWidgets import QMessageBox
 
 # DSGTools imports
 from DsgTools.gui.DatabaseTools.UserTools.create_profile import CreateProfile
@@ -89,7 +90,7 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
         else:
             profile = os.path.join(self.folder, self.jsonCombo.currentText() + ".json")
             self.readJsonFile(profile)
-        self.treeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.treeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
 
     def createItem(self, parent, text):
         """
@@ -97,12 +98,12 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
         """
         item = QtWidgets.QTreeWidgetItem(parent)
         item.setFlags(
-            QtCore.Qt.ItemIsEnabled
-            | QtCore.Qt.ItemIsTristate
-            | QtCore.Qt.ItemIsUserCheckable
+            QtCore.Qt.ItemFlag.ItemIsEnabled
+            | QtCore.Qt.ItemFlag.ItemIsTristate
+            | QtCore.Qt.ItemFlag.ItemIsUserCheckable
         )
-        item.setCheckState(1, QtCore.Qt.Unchecked)
-        item.setCheckState(2, QtCore.Qt.Unchecked)
+        item.setCheckState(1, QtCore.Qt.CheckState.Unchecked)
+        item.setCheckState(2, QtCore.Qt.CheckState.Unchecked)
         item.setText(0, text)
         return item
 
@@ -203,7 +204,7 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
         """
         dlg = CreateProfile()
         dlg.profileCreated.connect(self.getProfiles)
-        dlg.exec_()
+        dlg.exec()
 
     @pyqtSlot(bool)
     def on_clearButton_clicked(self):
@@ -270,9 +271,9 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
                     self.tr("Do you really want to remove profile ")
                     + profileName
                     + "?",
-                    QMessageBox.Ok | QMessageBox.Cancel,
+                    QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
                 )
-                == QMessageBox.Cancel
+                == QMessageBox.StandardButton.Cancel
             ):
                 return
             try:

@@ -51,8 +51,8 @@ class AddAttributeWidget(QtWidgets.QWidget, FORM_CLASS):
         super(self.__class__, self).__init__(parent)
         self.abstractDb = abstractDb
         self.setupUi(self)
-        regex = QtCore.QRegExp("[a-z]*")
-        validator = QtGui.QRegExpValidator(regex, self.nameLineEdit)
+        regex = QtCore.QRegularExpression("[a-z]*")
+        validator = QtGui.QRegularExpressionValidator(regex, self.nameLineEdit)
         self.nameLineEdit.setValidator(validator)
         self.domainSetter = None
         self.jsonBuilder = CustomJSONBuilder()
@@ -73,7 +73,7 @@ class AddAttributeWidget(QtWidgets.QWidget, FORM_CLASS):
             self.nameLineEdit.setText(uiParameterJsonDict["nameLineEdit"])
             if uiParameterJsonDict["references"]:
                 idx = self.typeComboBox.findText(
-                    self.tr("EDGV Domain"), flags=Qt.MatchExactly
+                    self.tr("EDGV Domain"), flags=Qt.MatchFlag.MatchExactly
                 )
                 self.typeComboBox.setCurrentIndex(idx)
                 self.instantiateDomainSetter(uiParameterJsonDict["references"])
@@ -84,7 +84,7 @@ class AddAttributeWidget(QtWidgets.QWidget, FORM_CLASS):
             if uiParameterJsonDict["notNullcheckBox"]:
                 self.notNullcheckBox.setCheckState(2)
             idx = self.defaultComboBox.findText(
-                uiParameterJsonDict["defaultComboBox"], flags=Qt.MatchExactly
+                uiParameterJsonDict["defaultComboBox"], flags=Qt.MatchFlag.MatchExactly
             )
             self.defaultComboBox.setCurrentIndex(idx)
 
@@ -98,7 +98,7 @@ class AddAttributeWidget(QtWidgets.QWidget, FORM_CLASS):
     @pyqtSlot(int)
     def on_typeComboBox_currentIndexChanged(self, idx):
         edgvDomainIdx = self.typeComboBox.findText(
-            self.tr("EDGV Domain"), flags=Qt.MatchExactly
+            self.tr("EDGV Domain"), flags=Qt.MatchFlag.MatchExactly
         )
         if idx == edgvDomainIdx:
             self.enableItems(True)
@@ -119,7 +119,7 @@ class AddAttributeWidget(QtWidgets.QWidget, FORM_CLASS):
         self.domainSetter = DomainSetter(self.abstractDb, uiParameterJsonDict)
         self.domainSetter.domainChanged.connect(self.populateDefaultCombo)
         if not uiParameterJsonDict:
-            self.domainSetter.exec_()
+            self.domainSetter.exec()
         else:
             self.domainSetter.applyChanges()
 

@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
@@ -129,7 +129,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         if (
-            inputLyr.wkbType() == QgsWkbTypes.PolygonGeometry
+            inputLyr.wkbType() == QgsWkbTypes.GeometryType.PolygonGeometry
             and geographicBoundsLyr is not None
         ):
             raise NotImplementedError(

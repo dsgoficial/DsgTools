@@ -40,7 +40,7 @@ class DsgLineTool(QgsMapTool):
         self.canvas = canvas
         self.rubberBand = None
         self.geometryType = (
-            QgsWkbTypes.LineGeometry if geometryType is None else geometryType
+            QgsWkbTypes.GeometryType.LineGeometry if geometryType is None else geometryType
         )
         self.reset()
 
@@ -90,11 +90,11 @@ class DsgLineTool(QgsMapTool):
         Reimplementation to add a vertex to the rubber band or to finish the rubber band according to the button used
         """
         point = self.snapPoint(e.pos())
-        if e.button() == Qt.RightButton:
+        if e.button() == Qt.MouseButton.RightButton:
             geom = self.rubberBand.asGeometry()
             self.reset()
             self.lineCreated.emit(geom)
-        elif e.button() == Qt.LeftButton:
+        elif e.button() == Qt.MouseButton.LeftButton:
             self.isEmittingPoint = True
 
         self.rubberBand.addPoint(point, True)
@@ -123,5 +123,5 @@ class DsgLineTool(QgsMapTool):
 class DsgPolygonTool(DsgLineTool):
     def __init__(self, canvas):
         super(DsgPolygonTool, self).__init__(
-            canvas, geometryType=QgsWkbTypes.PolygonGeometry
+            canvas, geometryType=QgsWkbTypes.GeometryType.PolygonGeometry
         )

@@ -31,7 +31,7 @@ from DsgTools.core.GeometricTools import geometryHandler, rasterHandler
 from DsgTools.core.GeometricTools.affine import Affine
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
-from PyQt5.QtCore import QCoreApplication, QVariant, QByteArray
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType, QByteArray
 from qgis.core import (
     QgsFeature,
     QgsFeatureSink,
@@ -281,7 +281,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         contourLyr = self.parameterAsVectorLayer(
             parameters, self.CONTOUR_LINES, context
         )
-        heightFieldName = self.parameterAsFields(
+        heightFieldName = self.parameterAsStrings(
             parameters, self.CONTOUR_ATTR, context
         )[0]
         contourHeightInterval = self.parameterAsDouble(
@@ -308,7 +308,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         drainagesLyr = self.parameterAsVectorLayer(
             parameters, self.DRAINAGE_LINES, context
         )
-        drainageNameAttribute = self.parameterAsFields(
+        drainageNameAttribute = self.parameterAsStrings(
             parameters, self.DRAINAGE_LINES_NAME_ATTRIBUTE, context
         )[0]
         getDrainagesWithoutName = self.parameterAsBool(
@@ -341,13 +341,13 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         self.contourBufferLength = self.contourBufferLengths[scale]
 
         fields = QgsFields()
-        fields.append(QgsField("cota", QVariant.Int))
-        fields.append(QgsField("cota_mais_alta", QVariant.Int))
-        fields.append(QgsField("cota_comprovada", QVariant.Int))
-        fields.append(QgsField("ancora_horizontal", QVariant.Int))
-        fields.append(QgsField("ancora_vertical", QVariant.Int))
-        fields.append(QgsField("suprimir_simbologia", QVariant.Int))
-        fields.append(QgsField("visivel", QVariant.Int))
+        fields.append(QgsField("cota", QMetaType.Type.Int))
+        fields.append(QgsField("cota_mais_alta", QMetaType.Type.Int))
+        fields.append(QgsField("cota_comprovada", QMetaType.Type.Int))
+        fields.append(QgsField("ancora_horizontal", QMetaType.Type.Int))
+        fields.append(QgsField("ancora_vertical", QMetaType.Type.Int))
+        fields.append(QgsField("suprimir_simbologia", QMetaType.Type.Int))
+        fields.append(QgsField("visivel", QMetaType.Type.Int))
         self.defaultAttrMap = {
             "cota_mais_alta": 2,
             "cota_comprovada": 2,
@@ -2113,7 +2113,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             geom = feat.geometry()
             buffer = (
                 geom.buffer(distance, 10, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1)
-                if geom.type() == QgsWkbTypes.PointGeometry
+                if geom.type() == QgsWkbTypes.GeometryType.PointGeometry
                 else geom
             )
             newFeat = QgsVectorLayerUtils.createFeature(exclusionLyr, buffer)

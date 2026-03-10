@@ -83,7 +83,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.page(2).setTitle(self.tr("Conversion Map and Summary"))
         # set policy to make cell size adjust to content
         self.tableWidget.setSizeAdjustPolicy(
-            QtWidgets.QAbstractScrollArea.AdjustToContents
+            QtWidgets.QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents
         )
 
     def connectToolSignals(self):
@@ -113,7 +113,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # erase all options settled
         self.refreshPushButton.clicked.connect(self.setTableInitialState)
         # conversion mapping start
-        self.button(QtWidgets.QWizard.FinishButton).clicked.connect(
+        self.button(QtWidgets.QWizard.WizardButton.FinishButton).clicked.connect(
             self.startConversion
         )
 
@@ -142,7 +142,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             self.updateOutputInformation
         )
         self.refreshPushButton.clicked.disconnect(self.setTableInitialState)
-        self.button(QtWidgets.QWizard.FinishButton).clicked.disconnect(
+        self.button(QtWidgets.QWizard.WizardButton.FinishButton).clicked.disconnect(
             self.startConversion
         )
 
@@ -565,7 +565,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             edgvOut = edgvOut[5:] if "EDGV" in edgvOut else edgvOut
             itemEdgvOut = QtWidgets.QTableWidgetItem()
             itemEdgvOut.setText(edgvOut)
-            itemEdgvOut.setFlags(Qt.ItemIsEditable)  # not editable
+            itemEdgvOut.setFlags(Qt.ItemFlag.ItemIsEditable)  # not editable
             # add both to table
             self.tableWidget.setCellWidget(row, DatasourceConversion.outCrs, outCrs)
             self.tableWidget.setItem(row, DatasourceConversion.OutEdgv, itemEdgvOut)
@@ -584,7 +584,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         item = QtWidgets.QTableWidgetItem()
         item.setText(text)
         if not isEditable:
-            item.setFlags(Qt.ItemIsEditable)  # not editable
+            item.setFlags(Qt.ItemFlag.ItemIsEditable)  # not editable
         return item
 
     def addItemToTable(self, col, row, text="", isEditable=True):
@@ -750,8 +750,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             msgBar.resize(
                 QSize(self.geometry().size().width(), msgBar.geometry().height())
             )
-            msgBar.pushMessage(self.tr("Warning!"), msg, level=Qgis.Warning, duration=5)
-            QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.Critical)
+            msgBar.pushMessage(self.tr("Warning!"), msg, level=Qgis.MessageLevel.Warning, duration=5)
+            QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.MessageLevel.Critical)
         return msg == ""
 
     def validateCurrentPage(self):
@@ -878,14 +878,14 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         summaryDlg.cancelPushButton.hide()
         summaryDlg.progressBar.hide()
         try:
-            QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             if not conv.run():
                 # advise conversion has failed
                 msg = self.tr(
                     "Dataset conversion has finished with some errors. Check conversion log for details."
                 )
                 iface.messageBar().pushMessage(
-                    self.tr("Warning!"), msg, level=Qgis.Warning, duration=5
+                    self.tr("Warning!"), msg, level=Qgis.MessageLevel.Warning, duration=5
                 )
             else:
                 self.resetInterface()
@@ -897,10 +897,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                 ", ".join(map(str, e.args))
             )
             iface.messageBar().pushMessage(
-                self.tr("Warning!"), msg, level=Qgis.Warning, duration=5
+                self.tr("Warning!"), msg, level=Qgis.MessageLevel.Warning, duration=5
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
-        summaryDlg.exec_()
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+        summaryDlg.exec()
 
     def startConversion(self, exportMap=False):
         """
@@ -925,7 +925,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Changes the default icon for stack button and opens dialog.
         """
         self.parentButton.setDefaultAction(self.sender())
-        self.exec_()
+        self.exec()
 
     def initGui(self):
         """

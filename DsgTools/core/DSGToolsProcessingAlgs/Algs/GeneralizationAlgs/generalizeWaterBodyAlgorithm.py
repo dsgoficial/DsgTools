@@ -27,7 +27,7 @@
 # nao usar $area para ficar tudo no sistema da camada
 # nao deixar tamanho hardcoded
 import os
-from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
@@ -902,7 +902,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
 
         multiStepFeedback.setProgressText(self.tr("Generating output layer."))
         polygon_fields = QgsFields()
-        polygon_fields.append(QgsField("layer", QVariant.String))
+        polygon_fields.append(QgsField("layer", QMetaType.Type.QString))
 
         polygon_output_sink, polygon_output_id = self.parameterAsSink(
             parameters,

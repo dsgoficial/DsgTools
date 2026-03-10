@@ -87,7 +87,7 @@ class ManageServerUsers(QtWidgets.QDialog, FORM_CLASS):
             )
             return
         dlg = CreateUser(abstractDb=self.abstractDb)
-        dlg.exec_()
+        dlg.exec()
         self.populateUsers()
 
     @pyqtSlot(bool)
@@ -110,9 +110,9 @@ class ManageServerUsers(QtWidgets.QDialog, FORM_CLASS):
                 self.tr("Question"),
                 self.tr("Do you really want to remove users: ")
                 + ", ".join(selectedUserNames),
-                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
-            == QMessageBox.Cancel
+            == QMessageBox.StandardButton.Cancel
         ):
             return
         exceptionDict = dict()
@@ -142,7 +142,7 @@ class ManageServerUsers(QtWidgets.QDialog, FORM_CLASS):
             )
             return
         dlg = AlterUserPassword(userList=selectedUserNames, abstractDb=self.abstractDb)
-        dlg.exec_()
+        dlg.exec()
 
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
@@ -169,6 +169,6 @@ class ManageServerUsers(QtWidgets.QDialog, FORM_CLASS):
                         user=errorDb, exception=exceptionDict[errorDb]
                     ),
                     "DSGTools Plugin",
-                    Qgis.Critical,
+                    Qgis.MessageLevel.Critical,
                 )
         return msg

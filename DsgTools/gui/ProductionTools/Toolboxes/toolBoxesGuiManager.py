@@ -172,7 +172,7 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.codeList)
         else:
             self.codeList = CodeList(self.iface)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
+        self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.codeList)
 
     def showCustomFeatureToolbox(self):
         """
@@ -182,7 +182,7 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.cfToolbox)
         else:
             self.cfToolbox = CustomFeatureTool()
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.cfToolbox) """
+        self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.cfToolbox) """
         pass
 
     def refreshWorkflowToolBoxObject(self):
@@ -200,7 +200,7 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.workflowToolBox)
         else:
             self.workflowToolBox = WorkflowDockWidget(self.iface)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.workflowToolBox)
+        self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.workflowToolBox)
 
     def showMultiLayersCentroidsFlagTool(self):
         if self.multiLayersCentroidsFlagToolBox is not None:
@@ -210,7 +210,7 @@ class ToolBoxesGuiManager(QObject):
                 self.iface
             )
         self.iface.addDockWidget(
-            Qt.RightDockWidgetArea, self.multiLayersCentroidsFlagToolBox
+            Qt.DockWidgetArea.RightDockWidgetArea, self.multiLayersCentroidsFlagToolBox
         )
 
     def showCalcContourToolbox(self):
@@ -221,7 +221,7 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.calcContour)
         else:
             self.calcContour = CalcContour(self.iface)
-        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.calcContour)
+        self.iface.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.calcContour)
 
     def showComplexDock(self):
         """
@@ -231,7 +231,7 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.complexWindow)
         else:
             self.complexWindow = ComplexWindow(self.iface)
-        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)
+        self.iface.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.complexWindow)
 
     def saveStateOnProject(self):
         """

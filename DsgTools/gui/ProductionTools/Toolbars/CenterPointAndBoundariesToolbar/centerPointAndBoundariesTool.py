@@ -175,7 +175,7 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
                 i
                 for i in QgsProject.instance().mapLayers().values()
                 if isinstance(i, QgsVectorLayer)
-                and i.geometryType() == QgsWkbTypes.LineGeometry
+                and i.geometryType() == QgsWkbTypes.GeometryType.LineGeometry
             ],
             key=lambda x: x.id(),
         )

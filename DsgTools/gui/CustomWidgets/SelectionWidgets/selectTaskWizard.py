@@ -57,7 +57,7 @@ class SelectTaskWizard(QtWidgets.QDialog, FORM_CLASS):
     @pyqtSlot(name="on_createNewRadioButton_toggled")
     @pyqtSlot(name="on_installRadioButton_toggled")
     def manageCombos(self):
-        if self.installRadioButton.checkState() == Qt.Checked:
+        if self.installRadioButton.checkState() == Qt.CheckState.Checked:
             self.hideSettings(False)
             self.populateSettingCombo(self.settingList)
         else:
@@ -67,14 +67,14 @@ class SelectTaskWizard(QtWidgets.QDialog, FORM_CLASS):
     def validateCurrentPage(self):
         if self.currentId() == 0:
             if (
-                self.importRadioButton.checkState() == Qt.Unchecked()
-                and self.createNewRadioButton.checkState() == Qt.Unchecked()
-                and self.installRadioButton.checkState() == Qt.Unchecked()
+                self.importRadioButton.checkState() == Qt.CheckState.Unchecked()
+                and self.createNewRadioButton.checkState() == Qt.CheckState.Unchecked()
+                and self.installRadioButton.checkState() == Qt.CheckState.Unchecked()
             ):
                 errorMsg = self.tr("An option must be chosen!\n")
                 QMessageBox.warning(self, self.tr("Error!"), errorMsg)
                 return False
-            if self.installRadioButton.checkState() == Qt.Checked():
+            if self.installRadioButton.checkState() == Qt.CheckState.Checked():
                 if self.settingComboBox.currentIndex() == 0:
                     errorMsg = self.tr("A setting must be chosen!\n")
                     QMessageBox.warning(self, self.tr("Error!"), errorMsg)

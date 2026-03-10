@@ -408,7 +408,7 @@ class PostgisDb(AbstractDb):
             QgsMessageLog.logMessage(
                 self.tr("Operation not defined for this database version!"),
                 "DSGTools Plugin",
-                Qgis.Critical,
+                Qgis.MessageLevel.Critical,
             )
             return None
 
@@ -445,7 +445,7 @@ class PostgisDb(AbstractDb):
             QgsMessageLog.logMessage(
                 self.tr("Operation not defined for this database version!"),
                 "DSGTools Plugin",
-                Qgis.Critical,
+                Qgis.MessageLevel.Critical,
             )
             return
 
@@ -636,7 +636,7 @@ class PostgisDb(AbstractDb):
         """
         sql = self.gen.disassociateComplexFromComplex(aggregated_class, link_column, id)
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem disassociating complex from complex: ")
                 + "\n"
@@ -727,7 +727,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
 
         if permissionManager:
-            if not query.exec_(sql):
+            if not query.exec(sql):
                 raise Exception(
                     self.tr("Problem assigning profile: ")
                     + role
@@ -743,7 +743,7 @@ class PostgisDb(AbstractDb):
             pass
 
         for inner in split:
-            if not query.exec_(inner):
+            if not query.exec(inner):
                 if "42710" in query.lastError().text():
                     # In this case the role is already created (duplicate object error). We just need to proceed executing the grants.
                     continue
@@ -766,7 +766,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
 
         for inner in split:
-            if not query.exec_(inner):
+            if not query.exec(inner):
                 if "2BP01" in query.lastError().text():
                     # In this case the role is still used by other databases, therefore it shouldn't be dropped.
                     continue
@@ -788,7 +788,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.alterUserPass(user, newpassword)
         query = QSqlQuery(self.db)
 
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem altering user's password: ")
                 + user
@@ -807,7 +807,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.createUser(user, password, isSuperUser)
         query = QSqlQuery(self.db)
 
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem creating user: ")
                 + user
@@ -824,7 +824,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.removeUser(user)
         query = QSqlQuery(self.db)
 
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem removing user: ")
                 + user
@@ -842,7 +842,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.grantRole(user, role)
         query = QSqlQuery(self.db)
 
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem granting profile: ")
                 + role
@@ -860,7 +860,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.revokeRole(user, role)
         query = QSqlQuery(self.db)
 
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem revoking profile: ")
                 + role
@@ -1007,17 +1007,17 @@ class PostgisDb(AbstractDb):
                             database, db.lastError().databaseText()
                         ),
                         "DSGTools Plugin",
-                        Qgis.Warning,
+                        Qgis.MessageLevel.Warning,
                     )
                     continue
 
                 query2 = QSqlQuery(db)
-                if query2.exec_(self.gen.getGeometryTablesCount()):
+                if query2.exec(self.gen.getGeometryTablesCount()):
                     while query2.next():
                         count = query2.value(0)
                         if count > 0:
                             query3 = QSqlQuery(db)
-                            if query3.exec_(
+                            if query3.exec(
                                 self.gen.getEDGVVersionAndImplementationVersion()
                             ):
                                 while query3.next():
@@ -1039,7 +1039,7 @@ class PostgisDb(AbstractDb):
                                         " has insufficient privileges."
                                     ).format(database, db.userName()),
                                     "DSGTools Plugin",
-                                    Qgis.Warning,
+                                    Qgis.MessageLevel.Warning,
                                 )
                             else:
                                 edvgDbList.append((database, "Non_EDGV", -1))
@@ -1084,7 +1084,7 @@ class PostgisDb(AbstractDb):
         """
         self.checkAndOpenDb()
         query = QSqlQuery(self.db)
-        if query.exec_(self.gen.isSuperUser(self.db.userName())):
+        if query.exec(self.gen.isSuperUser(self.db.userName())):
             query.next()
             value = query.value(0)
             return value
@@ -1118,7 +1118,7 @@ class PostgisDb(AbstractDb):
             self.dropAllConections(candidateName)
             sql = self.gen.dropDatabase(candidateName)
             query = QSqlQuery(self.db)
-            if not query.exec_(sql):
+            if not query.exec(sql):
                 raise Exception(
                     self.tr("Problem dropping database: ") + query.lastError().text()
                 )
@@ -1153,7 +1153,7 @@ class PostgisDb(AbstractDb):
                     self.db.transaction()
                 query = QSqlQuery(self.db)
                 for command in commands:
-                    if not query.exec_(command):
+                    if not query.exec(command):
                         if useTransaction:
                             self.db.rollback()
                         raise Exception(
@@ -1264,7 +1264,7 @@ class PostgisDb(AbstractDb):
                     record[4],
                     flagSRID,
                 )
-                if not query.exec_(sql):
+                if not query.exec(sql):
                     if useTransaction:
                         self.db.rollback()
                     raise Exception(
@@ -1290,7 +1290,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         self.db.transaction()
         for inner in sqlList:
-            if not query.exec_(inner):
+            if not query.exec(inner):
                 self.db.rollback()
                 raise Exception(
                     self.tr("Problem deleting flags: ") + query.lastError().text()
@@ -1319,7 +1319,7 @@ class PostgisDb(AbstractDb):
             if useTransaction:
                 self.db.transaction()
             for sql2 in sqlList:
-                if not query2.exec_(sql2):
+                if not query2.exec(sql2):
                     if useTransaction:
                         self.db.rollback()
                     raise Exception(
@@ -1371,7 +1371,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         sql = self.gen.setValidationStatusQuery(processName, log, status)
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem setting status: ") + query.lastError().text()
             )
@@ -1634,7 +1634,7 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
         for sql2 in sqlList:
             query = QSqlQuery(self.db)
-            if not query.exec_(sql2):
+            if not query.exec(sql2):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
@@ -1679,7 +1679,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if useTransaction:
             self.db.transaction()
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -1787,7 +1787,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if useTransaction:
             self.db.transaction()
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -1881,7 +1881,7 @@ class PostgisDb(AbstractDb):
         if useTransaction:
             self.db.transaction()
         for sql in sqls:
-            if not query.exec_(sql):
+            if not query.exec(sql):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
@@ -1891,7 +1891,7 @@ class PostgisDb(AbstractDb):
             tableSchema, tableName, list(tuplas.keys())
         )
         query2 = QSqlQuery(self.db)
-        if not query2.exec_(sqlDel):
+        if not query2.exec(sqlDel):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -1939,7 +1939,7 @@ class PostgisDb(AbstractDb):
             sqlList = sqltext.split("#")
             query = QSqlQuery(self.db)
             for sql2 in sqlList:
-                if not query.exec_(sql2):
+                if not query.exec(sql2):
                     if useTransaction:
                         self.db.rollback()
                     raise Exception(
@@ -1999,7 +1999,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if useTransaction:
             self.db.transaction()
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -2044,7 +2044,7 @@ class PostgisDb(AbstractDb):
                 fullTableName = cl
             # making the query using table schema and table name
             sql = self.gen.dropCentroid(fullTableName)
-            if not query.exec_(sql):
+            if not query.exec(sql):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
@@ -2124,7 +2124,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         for cl in classList:
             sql = self.gen.snapToGrid(cl, tol, srid, geometryColumn)
-            if not query.exec_(sql):
+            if not query.exec(sql):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
@@ -2152,7 +2152,7 @@ class PostgisDb(AbstractDb):
                 cl, frameTable, tol, geometryColumn, keyColumn, frameGeometryColumn
             )
             for sql in sqls.split("#"):
-                if not query.exec_(sql):
+                if not query.exec(sql):
                     self.db.rollback()
                     raise Exception(
                         self.tr("Problem snapping to frame: ")
@@ -2181,7 +2181,7 @@ class PostgisDb(AbstractDb):
             sql = self.gen.densifyFrame(
                 cl, frameTable, snapTolerance, geometryColumn, frameGeometryColumn
             )
-            if not query.exec_(sql):
+            if not query.exec(sql):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
@@ -2203,7 +2203,7 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
         query = QSqlQuery(self.db)
         sql = self.gen.makeRecursiveSnapFunction(geometryColumn, keyColumn)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -2212,7 +2212,7 @@ class PostgisDb(AbstractDb):
             )
         for cl in classList:
             sql = self.gen.executeRecursiveSnap(cl, tol)
-            if not query.exec_(sql):
+            if not query.exec(sql):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
@@ -2250,7 +2250,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.createTempTable(tableName)
         sqls = sql.split("#")
         for s in sqls:
-            if not query.exec_(s):
+            if not query.exec(s):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
@@ -2258,7 +2258,7 @@ class PostgisDb(AbstractDb):
                     + query.lastError().text()
                 )
         indexSql = self.gen.createSpatialIndex(tableName, geomColumnName)
-        if not query.exec_(indexSql):
+        if not query.exec(indexSql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -2278,7 +2278,7 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
         query = QSqlQuery(self.db)
         sql = self.gen.dropTempTable(tableName)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -2293,7 +2293,7 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
         createSql = self.gen.createStyleTable()
         query = QSqlQuery(self.db)
-        if not query.exec_(createSql):
+        if not query.exec(createSql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -2317,7 +2317,7 @@ class PostgisDb(AbstractDb):
                 self.db.transaction()
             createSql = self.gen.createStyleTable()
             query = QSqlQuery(self.db)
-            if not query.exec_(createSql):
+            if not query.exec(createSql):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
@@ -2375,7 +2375,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.importStyle(
             styleName, table_name, parsedQml, tableSchema, dbName
         )
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -2396,7 +2396,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         parsedQml = self.utils.parseStyle(qml)
         sql = self.gen.updateStyle(styleName, table_name, parsedQml, tableSchema)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -2416,7 +2416,7 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
         query = QSqlQuery(self.db)
         sql = self.gen.deleteStyle(styleName)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -2529,7 +2529,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if useTransaction:
             self.db.transaction()
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -2555,7 +2555,7 @@ class PostgisDb(AbstractDb):
             QgsMessageLog.logMessage(
                 self.tr("Operation not defined for this database version!"),
                 "DSGTools Plugin",
-                Qgis.Critical,
+                Qgis.MessageLevel.Critical,
             )
             return
 
@@ -3356,7 +3356,7 @@ class PostgisDb(AbstractDb):
             progress.step()
         sql = self.gen.createFromTemplate(dbName, templateName)
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem creating from template: ") + query.lastError().text()
             )
@@ -3411,7 +3411,7 @@ class PostgisDb(AbstractDb):
         for view in viewList:
             viewSql = self.gen.dropView(view)
             query = QSqlQuery(self.db)
-            if not query.exec_(viewSql):
+            if not query.exec(viewSql):
                 if useTransaction:
                     self.db.rollback()
                 if threading:
@@ -3426,7 +3426,7 @@ class PostgisDb(AbstractDb):
         for tableDict in tableDictList:
             sridSql = self.gen.updateDbSRID(tableDict, srid)
             query = QSqlQuery(self.db)
-            if not query.exec_(sridSql):
+            if not query.exec(sridSql):
                 if useTransaction:
                     self.db.rollback()
                 if threading:
@@ -3442,7 +3442,7 @@ class PostgisDb(AbstractDb):
                 viewName, viewDefinitionDict[viewName]
             )
             query = QSqlQuery(self.db)
-            if not query.exec_(createViewSql):
+            if not query.exec(createViewSql):
                 if useTransaction:
                     self.db.rollback()
                 if threading:
@@ -3495,7 +3495,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         sql = self.gen.getCreateDatabase(dbName)
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem creating database: ") + query.lastError().text()
             )
@@ -3526,7 +3526,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if useTransaction:
             self.db.transaction()
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -3686,7 +3686,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         for command in commands:
             command = command.strip()
-            if command and not query.exec_(command):
+            if command and not query.exec(command):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
@@ -3709,7 +3709,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.alterSearchPath(dbName, version)
         self.db.transaction()
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             self.db.rollback()
             raise Exception(
                 self.tr("Problem altering search path: ") + query.lastError().text()
@@ -3738,7 +3738,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         sql = self.gen.reasignAndDropUser(user)
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem removing user: ")
                 + user
@@ -3758,7 +3758,7 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
         query = QSqlQuery(self.db)
         sql = self.gen.deleteFeatureFlagsFromDb(layer, str(featureId), processName)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -3778,7 +3778,7 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
         query = QSqlQuery(self.db)
         sql = self.gen.removeEmptyGeomtriesFromDb(layer, geometryColumn)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -3803,7 +3803,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         sql = self.gen.getCreateDatabase("dsgtools_admindb")
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem creating database: ") + query.lastError().text()
             )
@@ -3854,7 +3854,7 @@ class PostgisDb(AbstractDb):
             )
         sql = self.gen.insertIntoPermissionProfile(name, jsondict, edgvversion)
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem inserting into permission profile: ")
                 + query.lastError().text()
@@ -3868,7 +3868,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         sql = self.gen.dropRoleOnDatabase(roleName)
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem dropping profile: ")
                 + roleName
@@ -3916,7 +3916,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         sql = self.gen.deletePermissionProfile(name, edgvversion)
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem deleting permission profile: ")
                 + query.lastError().text()
@@ -3954,7 +3954,7 @@ class PostgisDb(AbstractDb):
             "Permission", name, edgvVersion, newjsondict
         )
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem updating permission profile: ")
                 + query.lastError().text()
@@ -4269,7 +4269,7 @@ class PostgisDb(AbstractDb):
             settingType, name, jsondict, edgvversion
         )
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem inserting property ")
                 + settingType
@@ -4331,7 +4331,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         sql = self.gen.deleteSettingFromAdminDb(settingType, name, edgvversion)
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             raise Exception(
                 self.tr("Problem deleting permission setting: ")
                 + query.lastError().text()
@@ -4345,7 +4345,7 @@ class PostgisDb(AbstractDb):
                 self.db.transaction()
             sql = self.gen.upgradePostgis(updateDict)
             query = QSqlQuery(self.db)
-            if not query.exec_(sql):
+            if not query.exec(sql):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
@@ -4414,7 +4414,7 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
         createSql = self.gen.createPropertyTable(settingType, isAdminDb=isAdminDb)
         query = QSqlQuery(self.db)
-        if not query.exec_(createSql):
+        if not query.exec(createSql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -4469,7 +4469,7 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
         createSql = self.gen.insertRecordInsidePropertyTable(settingType, settingDict)
         query = QSqlQuery(self.db)
-        if not query.exec_(createSql):
+        if not query.exec(createSql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -4513,7 +4513,7 @@ class PostgisDb(AbstractDb):
             settingType, recDict, dbOid
         )
         query = QSqlQuery(self.db)
-        if not query.exec_(createSql):
+        if not query.exec(createSql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -4533,7 +4533,7 @@ class PostgisDb(AbstractDb):
             settingType, configName, edgvVersion
         )
         query = QSqlQuery(self.db)
-        if not query.exec_(createSql):
+        if not query.exec(createSql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -4555,7 +4555,7 @@ class PostgisDb(AbstractDb):
             settingType, configName, edgvVersion, jsonDict
         )
         query = QSqlQuery(self.db)
-        if not query.exec_(createSql):
+        if not query.exec(createSql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -4575,7 +4575,7 @@ class PostgisDb(AbstractDb):
             settingType, configName, edgvVersion, dbName=dbName
         )
         query = QSqlQuery(self.db)
-        if not query.exec_(createSql):
+        if not query.exec(createSql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -4605,7 +4605,7 @@ class PostgisDb(AbstractDb):
         if self.checkSuperUser():
             sql = self.gen.dropAllConections(dbName)
             query = QSqlQuery(self.db)
-            if not query.exec_(sql):
+            if not query.exec(sql):
                 raise Exception(
                     self.tr("Problem dropping database conections: ")
                     + query.lastError().text()
@@ -4674,7 +4674,7 @@ class PostgisDb(AbstractDb):
         # complete table name
         tableName = "validation.coverage"
         sql = self.gen.createCoverageTempTable(srid)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
@@ -4707,7 +4707,7 @@ class PostgisDb(AbstractDb):
             for i in range(len(attributes)):
                 query.bindValue(prepareValues[i], values[i])
             # actual query execution
-            if not query.exec_():
+            if not query.exec():
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
@@ -4715,7 +4715,7 @@ class PostgisDb(AbstractDb):
                     + query.lastError().text()
                 )
         indexSql = self.gen.createSpatialIndex(tableName, "geom")
-        if not query.exec_(indexSql):
+        if not query.exec(indexSql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(

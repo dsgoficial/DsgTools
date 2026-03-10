@@ -26,7 +26,7 @@ import shutil
 # Import the PyQt and QGIS libraries
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot
-from qgis.PyQt.QtWidgets import QListWidgetItem, QDialog, QAbstractButton
+from qgis.PyQt.QtWidgets import QDialogButtonBox, QListWidgetItem, QDialog, QAbstractButton
 
 from processing.core.Processing import Processing
 from qgis.core import QgsMessageLog
@@ -123,7 +123,7 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
         """
         Clears the selection
         """
-        if self.buttonBox.standardButton(button) == QDialogButtonBox.Reset:
+        if self.buttonBox.standardButton(button) == QDialogButtonBox.StandardButton.Reset:
             self.modelsList.clearSelection()
             self.scriptsList.clearSelection()
 

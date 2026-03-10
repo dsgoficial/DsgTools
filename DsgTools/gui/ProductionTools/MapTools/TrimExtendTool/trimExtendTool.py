@@ -51,12 +51,12 @@ class TrimExtendTool(AbstractSelectionTool):
         self.toolAction = None
         self.canvas = self.iface.mapCanvas()
         super(TrimExtendTool, self).__init__(self.iface)
-        self.setCursor(self.createColoredCursor(Qt.yellow, 32))
+        self.setCursor(self.createColoredCursor(Qt.GlobalColor.yellow, 32))
     
     def createColoredCursor(self, color, size=16):
         """Create a colored crosshair cursor"""
         pixmap = QPixmap(size, size)
-        pixmap.fill(Qt.transparent)
+        pixmap.fill(Qt.GlobalColor.transparent)
         
         painter = QPainter(pixmap)
         pen = QPen(color, 2)
@@ -112,7 +112,7 @@ class TrimExtendTool(AbstractSelectionTool):
         if (
             not layer
             or not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() != QgsWkbTypes.LineGeometry
+            or layer.geometryType() != QgsWkbTypes.GeometryType.LineGeometry
             or not layer.isEditable()
         ):
             enabled = False
@@ -226,7 +226,7 @@ class TrimExtendTool(AbstractSelectionTool):
             self.iface.messageBar().pushMessage(
                 self.tr("Error"),
                 self.tr("The reference system of origin layer is difference of destination layer"),
-                level=Qgis.Critical,
+                level=Qgis.MessageLevel.Critical,
                 duration=5
             )
             return
@@ -235,7 +235,7 @@ class TrimExtendTool(AbstractSelectionTool):
             self.iface.messageBar().pushMessage(
                 self.tr("Error"),
                 self.tr("Select only one feature on the origin layer"),
-                level=Qgis.Critical, 
+                level=Qgis.MessageLevel.Critical, 
                 duration=5
             )
             return
@@ -271,7 +271,7 @@ class TrimExtendTool(AbstractSelectionTool):
         super().createContextMenu(
             e=e,
             geometryFilter=[
-                QgsWkbTypes.LineGeometry, QgsWkbTypes.PolygonGeometry
+                QgsWkbTypes.GeometryType.LineGeometry, QgsWkbTypes.GeometryType.PolygonGeometry
             ] 
         )
     
@@ -318,7 +318,7 @@ class TrimExtendTool(AbstractSelectionTool):
             genericAction=None,
             selectAll=False,
         )
-        menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
+        menu.exec(self.canvas.viewport().mapToGlobal(e.pos()))
 
     def getCallback(self, e, layer, feature, geomType=None, selectAll=True):
         """

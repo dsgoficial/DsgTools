@@ -21,7 +21,7 @@
 """
 
 import json
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessingParameterDefinition,
     QgsProcessingParameterType,

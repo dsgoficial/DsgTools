@@ -21,7 +21,7 @@
 """
 
 
-from PyQt5.QtCore import QCoreApplication, QRegExp
+from qgis.PyQt.QtCore import QCoreApplication, QRegularExpression
 from qgis.core import (
     QgsGeometry,
     QgsProcessing,
@@ -32,7 +32,7 @@ from qgis.core import (
     QgsProcessingParameterString,
     Qgis,
 )
-from qgis.PyQt.QtGui import QRegExpValidator
+from qgis.PyQt.QtGui import QRegularExpressionValidator
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -49,11 +49,10 @@ class ValidationString(QgsProcessingParameterString):
         super().__init__(name, description)
 
     def checkValueIsAcceptable(self, value, context=None):
-        regex = QRegExp("[FfTt012\*]{9}")
-        acceptable = QRegExpValidator.Acceptable
+        regex = QRegularExpression("^[FfTt012\\*]{9}$")
         return (
             isinstance(value, str)
-            and QRegExpValidator(regex).validate(value, 9)[0] == acceptable
+            and regex.match(value).hasMatch()
         )
 
 

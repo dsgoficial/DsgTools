@@ -25,7 +25,7 @@ import itertools
 import os
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 import processing
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
@@ -211,7 +211,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         geographicBoundaryLyr = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
-        attributeBlackList = self.parameterAsFields(
+        attributeBlackList = self.parameterAsStrings(
             parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
         fields = self.layerHandler.getFieldsFromAttributeBlackList(

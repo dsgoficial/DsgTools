@@ -21,8 +21,7 @@
  ***************************************************************************/
 """
 # Import the PyQt and QGIS libraries
-from qgis.PyQt.Qt import QObject
-from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtCore import pyqtSlot, QObject
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 
 from qgis.core import QgsMessageLog
@@ -198,11 +197,11 @@ class PostgisDbThread(GenericThread):
 
             for command in commands:
                 if not self.stopped[0]:
-                    if not query.exec_(command):
+                    if not query.exec(command):
                         QgsMessageLog.logMessage(
                             self.messenger.getProblemMessage(command, query),
                             "DSGTools Plugin",
-                            Qgis.Critical,
+                            Qgis.MessageLevel.Critical,
                         )
                         self.db.rollback()
                         self.db.close()
@@ -218,7 +217,7 @@ class PostgisDbThread(GenericThread):
                     QgsMessageLog.logMessage(
                         self.messenger.getUserCanceledFeedbackMessage(),
                         "DSGTools Plugin",
-                        Qgis.Info,
+                        Qgis.MessageLevel.Info,
                     )
                     return (-1, self.messenger.getUserCanceledFeedbackMessage())
 
@@ -245,11 +244,11 @@ class PostgisDbThread(GenericThread):
                 )
 
             if sql:
-                if not query.exec_(sql):
+                if not query.exec(sql):
                     QgsMessageLog.logMessage(
                         self.messenger.getProblemMessage(command, query),
                         "DSGTools Plugin",
-                        Qgis.Critical,
+                        Qgis.MessageLevel.Critical,
                     )
                     return (0, self.messenger.getProblemFeedbackMessage())
             # this commit was missing, so alter database statement was not commited.
@@ -280,7 +279,7 @@ class PostgisDbThread(GenericThread):
                 QgsMessageLog.logMessage(
                     self.messenger.getProblemMessage(errorTuple[0], errorTuple[1]),
                     "DSGTools Plugin",
-                    Qgis.Critical,
+                    Qgis.MessageLevel.Critical,
                 )
                 return (0, self.messenger.getProblemFeedbackMessage())
             self.signals.stepProcessed.emit(self.getId())
@@ -288,11 +287,11 @@ class PostgisDbThread(GenericThread):
             QgsMessageLog.logMessage(
                 self.messenger.getUserCanceledFeedbackMessage(),
                 "DSGTools Plugin",
-                Qgis.Info,
+                Qgis.MessageLevel.Info,
             )
             return (-1, self.messenger.getUserCanceledFeedbackMessage())
         QgsMessageLog.logMessage(
-            self.messenger.getSuccessFeedbackMessage(), "DSGTools Plugin", Qgis.Info
+            self.messenger.getSuccessFeedbackMessage(), "DSGTools Plugin", Qgis.MessageLevel.Info
         )
         return (1, self.messenger.getSuccessFeedbackMessage())
 
@@ -316,4 +315,4 @@ class PostgisDbThread(GenericThread):
             return False
         sql = self.gen.dropDatabase(db.databaseName())
         query = QSqlQuery(pgDB)
-        return query.exec_(sql)
+        return query.exec(sql)

@@ -23,7 +23,7 @@
 import math
 from itertools import product
 
-from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsFeature,
     QgsFeatureRequest,
@@ -146,7 +146,7 @@ class SplitPolygons(QgsProcessingAlgorithm):
 
         # Add a new field called "priority" to the output layer's fields
         fields = source.fields()
-        fields.append(QgsField("priority", QVariant.Int))
+        fields.append(QgsField("priority", QMetaType.Type.Int))
 
         (sink, dest_id) = self.parameterAsSink(
             parameters,

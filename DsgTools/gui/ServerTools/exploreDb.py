@@ -60,7 +60,7 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
         # signal connections
         self.serverWidget.abstractDbLoaded.connect(self.checkSuperUser)
         self.serverWidget.clearWidgets.connect(self.clearAll)
-        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeWidget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.createMenuAssigned)
 
     def populateListWithDatabasesFromServer(self):
@@ -77,7 +77,7 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
         for (dbname, dbversion) in dbList:
             item = QListWidgetItem(self.dbListWidget)
             item.setText(dbname + " (EDGV v. " + dbversion + ")")
-            item.setData(Qt.UserRole, dbname)
+            item.setData(Qt.ItemDataRole.UserRole, dbname)
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -125,7 +125,7 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
         Creates a tree widget item
         """
         item = QtWidgets.QTreeWidgetItem(parent)
-        item.setFlags(QtCore.Qt.ItemIsEnabled)
+        item.setFlags(QtCore.Qt.ItemFlag.ItemIsEnabled)
         item.setText(column, text)
         return item
 
@@ -170,7 +170,7 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
         item = self.treeWidget.itemAt(position)
         if item:
             menu.addAction(self.tr("Show properties"), self.showAssignedProperties)
-        menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+        menu.exec(self.treeWidget.viewport().mapToGlobal(position))
 
     def showAssignedProperties(self):
         """
@@ -186,7 +186,7 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
             QMessageBox.critical(self, self.tr("Critical!"), ":".join(e.args))
 
         dlg = PermissionProperties(permissionsDict)
-        dlg.exec_()
+        dlg.exec()
 
     @pyqtSlot(bool)
     def on_dropDatabasePushButton_clicked(self):
@@ -202,12 +202,12 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
                 self.tr("Question"),
                 self.tr("Do you really want to drop database: ")
                 + currentItem.text().split(" ")[0],
-                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
-            == QMessageBox.Cancel
+            == QMessageBox.StandardButton.Cancel
         ):
             return
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         localDbName = self.localDb.getDatabaseName()
         self.renewDb()
         try:
@@ -236,7 +236,7 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
             )
             return
         dlg = CreateView(self.localDb, self.dbListWidget.currentItem().text())
-        dlg.exec_()
+        dlg.exec()
         pass
 
     def clearQSettings(self, database):
@@ -262,5 +262,5 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
             )
             return
         dlg = ManageDBAuxiliarStructure(self.localDb)
-        dlg.exec_()
+        dlg.exec()
         pass

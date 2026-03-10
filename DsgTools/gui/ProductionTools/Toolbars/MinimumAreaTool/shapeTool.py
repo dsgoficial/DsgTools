@@ -67,7 +67,7 @@ class ShapeTool(QgsMapTool):
         self.param = param
         self.type = type
         self.cursor = None
-        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
         self.setColor(color)
         self.reset()
         self.rotAngle = 0
@@ -89,7 +89,7 @@ class ShapeTool(QgsMapTool):
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
         try:
-            self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
+            self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         except:
             pass
 
@@ -180,7 +180,7 @@ class ShapeTool(QgsMapTool):
         y = startPoint.y()
         if self.type == self.tr("distance"):
             r = self.getAdjustedSize(self.param)
-            self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
+            self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
             for itheta in range(nPoints + 1):
                 theta = itheta * (2.0 * pi / nPoints)
                 self.rubberBand.addPoint(
@@ -189,7 +189,7 @@ class ShapeTool(QgsMapTool):
             self.rubberBand.show()
         else:
             r = self.getAdjustedSize(sqrt(self.param / pi))
-            self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
+            self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
             for itheta in range(nPoints + 1):
                 theta = itheta * (2.0 * pi / nPoints)
                 self.rubberBand.addPoint(
@@ -205,7 +205,7 @@ class ShapeTool(QgsMapTool):
             param = sqrt(param) / 2
         # param = self.convertDistance( param )
 
-        self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
+        self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         x = startPoint.x()  # center point x
         y = startPoint.y()  # center point y
         # rotation angle is always applied in reference to center point

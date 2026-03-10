@@ -23,7 +23,7 @@
 import fnmatch
 import json
 from typing import Any, Dict, List, Optional
-from PyQt5.QtCore import QVariant, QDateTime
+from qgis.PyQt.QtCore import QMetaType, QDateTime
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.DbTools.dbConversionHandler import (
     FeatureProcessor,
@@ -72,8 +72,8 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
 
     def fieldsFlag(self) -> QgsFields:
         fields = QgsFields()
-        fields.append(QgsField("layer_name", QVariant.String))
-        fields.append(QgsField("attribute_map", QVariant.String))
+        fields.append(QgsField("layer_name", QMetaType.Type.QString))
+        fields.append(QgsField("attribute_map", QMetaType.Type.QString))
         return fields
 
     def buildFlagFeat(self, featMap: Dict[str, Any]) -> QgsFeature:

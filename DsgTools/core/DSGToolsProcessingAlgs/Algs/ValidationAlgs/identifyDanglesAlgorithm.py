@@ -28,7 +28,7 @@ from typing import DefaultDict, Dict, Tuple, Union
 import processing
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsFeatureRequest,
     QgsGeometry,

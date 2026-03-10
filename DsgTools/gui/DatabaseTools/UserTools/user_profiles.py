@@ -60,15 +60,13 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
         self.widget.tabWidget.setTabEnabled(1, False)
         self.widget.serverWidget.superNeeded = True
         # Objects Connections
-        QtCore.QObject.connect(
-            self.widget, QtCore.SIGNAL(("connectionChanged()")), self.populateUsers
-        )
+        self.widget.connectionChanged.connect(self.populateUsers)
 
-        self.installedProfiles.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.installedProfiles.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.installedProfiles.customContextMenuRequested.connect(
             self.createMenuInstalled
         )
-        self.assignedProfiles.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.assignedProfiles.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.assignedProfiles.customContextMenuRequested.connect(
             self.createMenuAssigned
         )
@@ -84,7 +82,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
         if item:
             menu.addAction(self.tr("Show properties"), self.showInstalledProperties)
 
-        menu.exec_(self.installedProfiles.viewport().mapToGlobal(position))
+        menu.exec(self.installedProfiles.viewport().mapToGlobal(position))
 
     def showInstalledProperties(self):
         """
@@ -103,7 +101,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
             QMessageBox.critical(self, self.tr("Critical!"), ":".join(e.args))
 
         dlg = PermissionProperties(permissionsDict)
-        dlg.exec_()
+        dlg.exec()
 
     def createMenuAssigned(self, position):
         """
@@ -116,7 +114,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
         if item:
             menu.addAction(self.tr("Show properties"), self.showAssignedProperties)
 
-        menu.exec_(self.assignedProfiles.viewport().mapToGlobal(position))
+        menu.exec(self.assignedProfiles.viewport().mapToGlobal(position))
 
     def showAssignedProperties(self):
         """
@@ -135,7 +133,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
             QMessageBox.critical(self, self.tr("Critical!"), ":".join(e.args))
 
         dlg = PermissionProperties(permissionsDict)
-        dlg.exec_()
+        dlg.exec()
 
     def populateUsers(self):
         """
@@ -189,7 +187,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
             self.widget.serverWidget.serversCombo.currentIndex(),
             self.widget.comboBoxPostgis.currentIndex(),
         )
-        dlg.exec_()
+        dlg.exec()
         self.getProfiles(self.comboBox.currentText())
 
     @pyqtSlot(bool)
@@ -203,7 +201,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
             )
             return
         dlg = CreateUser(self.comboBox.currentText(), self.widget.abstractDb)
-        dlg.exec_()
+        dlg.exec()
         self.populateUsers()
 
     @pyqtSlot(bool)
@@ -253,7 +251,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
             )
             return
         dlg = AlterUserPassword(user, self.widget.abstractDb)
-        dlg.exec_()
+        dlg.exec()
 
     @pyqtSlot(int)
     def on_comboBox_currentIndexChanged(self):

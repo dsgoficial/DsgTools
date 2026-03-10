@@ -27,8 +27,7 @@ import csv
 import shutil
 from osgeo import gdal, ogr
 
-from qgis.PyQt.Qt import QObject, QVariant
-from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtCore import QMetaType, pyqtSlot, QObject
 
 # Import the PyQt and QGIS libraries
 from qgis.core import (
@@ -103,13 +102,11 @@ class InventoryThread(GenericThread):
 
         self.messenger = InventoryMessages(self)
         self.files = list()
-        gdal.DontUseExceptions()
-        ogr.DontUseExceptions()
         self.layer_attributes = [
-            QgsField("filename", QVariant.String),
-            QgsField("date", QVariant.String),
-            QgsField("size", QVariant.String),
-            QgsField("extension", QVariant.String),
+            QgsField("filename", QMetaType.Type.QString),
+            QgsField("date", QMetaType.Type.QString),
+            QgsField("size", QMetaType.Type.QString),
+            QgsField("extension", QMetaType.Type.QString),
         ]
         self.qgsattr = QgsFields()
         for i in self.layer_attributes:
@@ -186,7 +183,19 @@ class InventoryThread(GenericThread):
                 if extension not in format_set:
                     continue
                 full_path = self.get_full_path(current_file, root)
-                if gdal.Open(full_path) or ogr.Open(full_path):
+                is_geo = False
+                try:
+                    if gdal.Open(full_path):
+                        is_geo = True
+                except Exception:
+                    pass
+                if not is_geo:
+                    try:
+                        if ogr.Open(full_path):
+                            is_geo = True
+                    except Exception:
+                        pass
+                if is_geo:
                     bbox_geom, attributes = self.computeBoxAndAttributes(
                         None, full_path, extension, insertIntoMemory=False
                     )
@@ -272,8 +281,14 @@ class InventoryThread(GenericThread):
                             self.writeLine(outwriter, line, extension)
                         else:
                             # check if GDAL/OGR recognizes the file
-                            gdalSrc = gdal.Open(line)
-                            ogrSrc = ogr.Open(line)
+                            try:
+                                gdalSrc = gdal.Open(line)
+                            except Exception:
+                                gdalSrc = None
+                            try:
+                                ogrSrc = ogr.Open(line)
+                            except Exception:
+                                ogrSrc = None
                             if gdalSrc or ogrSrc:
                                 # if only geo mode
                                 if self.isOnlyGeo:
@@ -404,8 +419,14 @@ class InventoryThread(GenericThread):
             newFileName = newFileName.replace("/", os.sep)
 
             try:
-                gdalSrc = gdal.Open(fileName)
-                ogrSrc = ogr.Open(fileName)
+                try:
+                    gdalSrc = gdal.Open(fileName)
+                except Exception:
+                    gdalSrc = None
+                try:
+                    ogrSrc = ogr.Open(fileName)
+                except Exception:
+                    ogrSrc = None
                 if ogrSrc:
                     self.copyOGRDataSource(ogrSrc, newFileName)
                 elif gdalSrc:
@@ -433,8 +454,14 @@ class InventoryThread(GenericThread):
         file_ = file_name.split(os.sep)[-1]
         newFileName = os.path.join(destination_folder, file_)
         newFileName = newFileName.replace("/", os.sep)
-        gdalSrc = gdal.Open(fileName)
-        ogrSrc = ogr.Open(fileName)
+        try:
+            gdalSrc = gdal.Open(file_name)
+        except Exception:
+            gdalSrc = None
+        try:
+            ogrSrc = ogr.Open(file_name)
+        except Exception:
+            ogrSrc = None
         if ogrSrc:
             self.copyOGRDataSource(ogrSrc, newFileName)
         elif gdalSrc:
@@ -527,8 +554,14 @@ class InventoryThread(GenericThread):
         Makes a ogr polygon to represent the extent (i.e. bounding box)
         filename: file name
         """
-        gdalSrc = gdal.Open(filename)
-        ogrSrc = ogr.Open(filename)
+        try:
+            gdalSrc = gdal.Open(filename)
+        except Exception:
+            gdalSrc = None
+        try:
+            ogrSrc = ogr.Open(filename)
+        except Exception:
+            ogrSrc = None
         if ogrSrc:
             poly = ogr.Geometry(ogr.wkbPolygon)
             spatialRef = None

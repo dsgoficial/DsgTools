@@ -22,7 +22,7 @@
 """
 
 from collections import defaultdict
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler

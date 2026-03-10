@@ -90,7 +90,7 @@ class DbProfileManager(QtWidgets.QDialog, FORM_CLASS):
         header = self.tr("Grant / Revoke operation complete: ")
         successList = []
         errorDict = dict()
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         for profileName in permissionsToGrant:
             try:
                 self.permissionManager.grantPermission(
@@ -137,6 +137,6 @@ class DbProfileManager(QtWidgets.QDialog, FORM_CLASS):
                     + ": "
                     + exceptionDict[errorDb],
                     "DSGTools Plugin",
-                    Qgis.Critical,
+                    Qgis.MessageLevel.Critical,
                 )
         return msg

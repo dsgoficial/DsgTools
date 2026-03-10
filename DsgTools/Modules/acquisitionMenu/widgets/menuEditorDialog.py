@@ -1,5 +1,5 @@
 import os, sys, copy
-from PyQt5 import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 import json
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 from qgis.PyQt.QtWidgets import QMessageBox
@@ -184,9 +184,9 @@ class MenuEditorDialog(QtWidgets.QDialog):
                 self,
                 self.tr("Question"),
                 self.tr("Do you really want to delete?"),
-                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
-            == QMessageBox.Cancel
+            == QMessageBox.StandardButton.Cancel
         ):
             return
         self.menuWidget.setMenuName("")

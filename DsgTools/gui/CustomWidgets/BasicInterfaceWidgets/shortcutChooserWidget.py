@@ -82,19 +82,19 @@ class ShortcutChooserWidget(QtWidgets.QWidget, FORM_CLASS):
             super(ShortcutChooserWidget, self).keyPressEvent(event)
             return
         key = int(event.key())
-        if key == Qt.Key_Meta:
-            self.modifiers |= Qt.META
+        if key == Qt.Key.Key_Meta:
+            self.modifiers |= Qt.KeyboardModifier.MetaModifier
             self.updateShortcutText()
-        elif key == Qt.Key_Alt:
-            self.modifiers |= Qt.ALT
+        elif key == Qt.Key.Key_Alt:
+            self.modifiers |= Qt.KeyboardModifier.AltModifier
             self.updateShortcutText()
-        elif key == Qt.Key_Control:
-            self.modifiers |= Qt.CTRL
+        elif key == Qt.Key.Key_Control:
+            self.modifiers |= Qt.KeyboardModifier.ControlModifier
             self.updateShortcutText()
-        elif key == Qt.Key_Shift:
-            self.modifiers |= Qt.SHIFT
+        elif key == Qt.Key.Key_Shift:
+            self.modifiers |= Qt.KeyboardModifier.ShiftModifier
             self.updateShortcutText()
-        elif key == Qt.Key_Escape:
+        elif key == Qt.Key.Key_Escape:
             self.assignShortcutPushButton.setChecked(False)
             return
         else:
@@ -106,19 +106,19 @@ class ShortcutChooserWidget(QtWidgets.QWidget, FORM_CLASS):
             super(ShortcutChooserWidget, self).keyReleaseEvent(event)
             return
         key = event.key()
-        if key == Qt.Key_Meta:
-            self.modifiers &= Qt.META
+        if key == Qt.Key.Key_Meta:
+            self.modifiers &= Qt.KeyboardModifier.MetaModifier
             self.updateShortcutText()
-        elif key == Qt.Key_Alt:
-            self.modifiers &= Qt.ALT
+        elif key == Qt.Key.Key_Alt:
+            self.modifiers &= Qt.KeyboardModifier.AltModifier
             self.updateShortcutText()
-        elif key == Qt.Key_Control:
-            self.modifiers &= Qt.CTRL
+        elif key == Qt.Key.Key_Control:
+            self.modifiers &= Qt.KeyboardModifier.ControlModifier
             self.updateShortcutText()
-        elif key == Qt.Key_Shift:
-            self.modifiers &= Qt.SHIFT
+        elif key == Qt.Key.Key_Shift:
+            self.modifiers &= Qt.KeyboardModifier.ShiftModifier
             self.updateShortcutText()
-        elif key == Qt.Key_Escape:
+        elif key == Qt.Key.Key_Escape:
             return
         else:
             self.assignShortcutPushButton.setChecked(False)

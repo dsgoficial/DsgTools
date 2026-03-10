@@ -1566,12 +1566,12 @@ def find_constraint_points(
             context=context,
             is_child_algorithm=True,
         )
-        if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry and useBuffer
+        if constraintLayer.geometryType() != QgsWkbTypes.GeometryType.PointGeometry and useBuffer
         else constraintLayer
     )
     predicate = (
         AlgRunner.Intersects
-        if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry
+        if constraintLayer.geometryType() != QgsWkbTypes.GeometryType.PointGeometry
         else AlgRunner.Equals
     )
     selectedNodesFromOcean = algRunner.runExtractByLocation(

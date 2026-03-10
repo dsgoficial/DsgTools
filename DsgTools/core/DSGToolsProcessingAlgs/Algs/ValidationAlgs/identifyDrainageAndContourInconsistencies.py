@@ -109,7 +109,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             )
         algRunner = AlgRunner()
         multiStepFeedback = QgsProcessingMultiStepFeedback(12, feedback)
-        contourAttr = self.parameterAsFields(parameters, self.CONTOUR_ATTR, context)[0]
+        contourAttr = self.parameterAsStrings(parameters, self.CONTOUR_ATTR, context)[0]
         contourInterval = self.parameterAsDouble(
             parameters, self.CONTOUR_INTERVAL, context
         )

@@ -108,7 +108,7 @@ class FilterTools(QgsMapTool):
             iface.messageBar().pushMessage(
                 "Attention",
                 "Enabled layers for edition have not been unfiltered.",
-                level=core.Qgis.Info,
+                level=core.Qgis.MessageLevel.Info,
                 duration=3,
             )
 
@@ -120,7 +120,7 @@ class FilterTools(QgsMapTool):
         selectedFeatures = layer.selectedFeatures()
         if not selectedFeatures:
             return
-        if not (layer.geometryType() == core.QgsWkbTypes.PolygonGeometry):
+        if not (layer.geometryType() == core.QgsWkbTypes.GeometryType.PolygonGeometry):
             return
         multiPolygon = core.QgsMultiPolygon()
         for feature in selectedFeatures:

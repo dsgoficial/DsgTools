@@ -50,7 +50,7 @@ class NewDomainValueWidget(QtWidgets.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.jsonBuilder = CustomJSONBuilder()
         self.populateDomainCombo()
-        regex = QtCore.QRegExp("[0-9]*")
+        regex = QtCore.QRegularExpression("[0-9]*")
         validator = QtGui.QRegExpValidator(regex, self.codeLineEdit)
         self.codeLineEdit.setValidator(validator)
         self.populateFromUiParameterJsonDict(uiParameterJsonDict)
@@ -67,10 +67,10 @@ class NewDomainValueWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         if uiParameterJsonDict:
             if uiParameterJsonDict["allDomainCheckBox"]:
-                self.allDomainCheckBox.setCheckState(Qt.Checked)
+                self.allDomainCheckBox.setCheckState(Qt.CheckState.Checked)
             else:
                 domainIdx = self.domainComboBox.findText(
-                    uiParameterJsonDict["domainComboBox"], flags=Qt.MatchExactly
+                    uiParameterJsonDict["domainComboBox"], flags=Qt.MatchFlag.MatchExactly
                 )
                 self.domainComboBox.setCurrentIndex(domainIdx)
             self.codeLineEdit.setText(uiParameterJsonDict["codeLineEdit"])

@@ -70,7 +70,7 @@ class Options(QDialog, FORM_CLASS):
             )
             return
         self.blackListWidget.addItem(newValue)
-        self.blackListWidget.sortItems(order=Qt.AscendingOrder)
+        self.blackListWidget.sortItems(order=Qt.SortOrder.AscendingOrder)
         self.addParameterLineEdit.setText("")
 
     @pyqtSlot(bool)
@@ -94,7 +94,7 @@ class Options(QDialog, FORM_CLASS):
             )
             return
         self.centroidFlagBlackListWidget.addItem(newValue)
-        self.centroidFlagBlackListWidget.sortItems(order=Qt.AscendingOrder)
+        self.centroidFlagBlackListWidget.sortItems(order=Qt.SortOrder.AscendingOrder)
         self.addCentroidFlagParameterLineEdit.setText("")
 
     def getParameters(self):
@@ -207,7 +207,7 @@ class Options(QDialog, FORM_CLASS):
         if valueList:
             self.blackListWidget.clear()
             self.blackListWidget.addItems(valueList)
-            self.blackListWidget.sortItems(order=Qt.AscendingOrder)
+            self.blackListWidget.sortItems(order=Qt.SortOrder.AscendingOrder)
         if undoPoints:
             self.undoQgsSpinBox.setValue(int(undoPoints))
         if decimals:
@@ -219,7 +219,7 @@ class Options(QDialog, FORM_CLASS):
         if centroidFlagValueList:
             self.centroidFlagBlackListWidget.clear()
             self.centroidFlagBlackListWidget.addItems(centroidFlagValueList)
-            self.centroidFlagBlackListWidget.sortItems(order=Qt.AscendingOrder)
+            self.centroidFlagBlackListWidget.sortItems(order=Qt.SortOrder.AscendingOrder)
 
     def storeParametersInConfig(self):
         (

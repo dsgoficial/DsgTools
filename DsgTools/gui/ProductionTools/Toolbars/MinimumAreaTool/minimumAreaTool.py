@@ -27,10 +27,10 @@ import os
 from qgis.core import Qgis, QgsUnitTypes
 from qgis.gui import QgsMapMouseEvent
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QMessageBox, QAction
+from qgis.PyQt.QtWidgets import QMessageBox, QAction, QWidget
 from qgis.PyQt.QtGui import QIcon, QMouseEvent, QColor
 from qgis.PyQt.QtCore import Qt, QEvent, QSettings, pyqtSlot
-from qgis.PyQt.Qt import QWidget
+
 from qgis.utils import iface
 
 from .shapeTool import ShapeTool
@@ -150,7 +150,7 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
                 self.tr(
                     "<font color=red>Shape value not defined :</font><br><font color=blue>Define all values to activate tool!</font>"
                 ),
-                QMessageBox.Close,
+                QMessageBox.StandardButton.Close,
             )
 
     def run(self, scale, size, shape):
@@ -172,9 +172,9 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         me = QMouseEvent(
             QEvent.MouseMove,
             iface.mapCanvas().mouseLastXY(),
-            Qt.NoButton,
-            Qt.NoButton,
-            Qt.NoModifier,
+            Qt.MouseButton.NoButton,
+            Qt.MouseButton.NoButton,
+            Qt.KeyboardModifier.NoModifier,
         )
         # this maps the global positioning to canvas pos correctly and matches
         # the canvasMoveEvent slot/method signal.
@@ -275,7 +275,7 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         customSizesDict = self.getCustomSizesDict()
         dlg = CustomSizeSetter(customSizesDict)
         dlg.sizeCreated.connect(self.addValueToCustomSizesDict)
-        dlg.exec_()
+        dlg.exec()
 
     def unload(self):
         try:

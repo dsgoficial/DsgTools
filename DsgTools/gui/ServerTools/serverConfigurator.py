@@ -47,7 +47,7 @@ class ServerConfigurator(QDialog, FORM_CLASS):
         self.isEdit = 0
         self.oldName = ""
 
-        self.passwordEdit.setEchoMode(QLineEdit.Password)
+        self.passwordEdit.setEchoMode(QLineEdit.EchoMode.Password)
 
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):

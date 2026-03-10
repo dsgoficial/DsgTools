@@ -54,7 +54,7 @@ class ValidatedItemDelegate(QtWidgets.QStyledItemDelegate):
             return 0
         if index.column() == 0:  # only on the cells in the first column
             editor = QtGui.QLineEdit(widget)
-            validator = QtGui.QRegExpValidator(QtCore.QRegExp("[0-9]*"), editor)
+            validator = QtGui.QRegularExpressionValidator(QtCore.QRegularExpression("[0-9]*"), editor)
             editor.setValidator(validator)
             return editor
         elif index.column() == 1:
@@ -71,8 +71,8 @@ class NewDomainWidget(QtWidgets.QWidget, FORM_CLASS):
         self.setupUi(self)
         header = self.tableWidget.horizontalHeader()
         header.setStretchLastSection(True)
-        regex = QtCore.QRegExp("[a-z][a-z\_]*")
-        validator = QtGui.QRegExpValidator(regex, self.domainNameLineEdit)
+        regex = QtCore.QRegularExpression("[a-z][a-z\_]*")
+        validator = QtGui.QRegularExpressionValidator(regex, self.domainNameLineEdit)
         self.domainNameLineEdit.setValidator(validator)
         self.abstractDb = abstractDb
         self.jsonBuilder = CustomJSONBuilder()

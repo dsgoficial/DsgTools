@@ -27,7 +27,7 @@ import os
 import shutil
 import traceback
 from osgeo import gdal, osr
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,

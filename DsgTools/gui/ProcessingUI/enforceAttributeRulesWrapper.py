@@ -74,7 +74,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         """
         le = QLineEdit()
         le.setPlaceholderText(text)
-        le.setAlignment(Qt.AlignLeft)
+        le.setAlignment(Qt.AlignmentFlag.AlignLeft)
         return le
 
     def ruleExpressionWidget(self):
@@ -84,7 +84,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         """
         rex = QLineEdit()
         rex.setPlaceholderText(self.tr("Entire rule expression"))
-        rex.setAlignment(Qt.AlignLeft)
+        rex.setAlignment(Qt.AlignmentFlag.AlignLeft)
         return rex
 
     def mapLyrAndFieldComboBox(self):
@@ -179,11 +179,11 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
 
         if notLoadedLyr and invalidRules:
             notLoadedLyrWarning = self.showLoadingMsg(notLoadedLyr, "warning")
-            if notLoadedLyrWarning == QMessageBox.Ignore:
+            if notLoadedLyrWarning == QMessageBox.StandardButton.Ignore:
                 invalidRulesWarning = self.validateMethods.showLoadingMsg(
                     invalidRules, "invalid"
                 )
-                if invalidRulesWarning == QMessageBox.Ignore:
+                if invalidRulesWarning == QMessageBox.StandardButton.Ignore:
                     self.modifyAttributeRulesMap(
                         invalidRulesWarning, attrRulesMap, newDict, notLoadedLyr
                     )
@@ -218,7 +218,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         :param newDict: (dict) cleared rules map.
         :param notLoadedLyr: (list) with unloaded canvas layers names.
         """
-        if clickedAction == QMessageBox.Ignore:
+        if clickedAction == QMessageBox.StandardButton.Ignore:
             attrRulesMap.clear()
             for k, v in newDict.items():
                 if v["1"][0] not in notLoadedLyr:
@@ -329,7 +329,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                 newDict[k] = value
         warning = self.showLoadingMsg(notLoadedLyr, "warning")
         if notLoadedLyr:
-            if warning == QMessageBox.Ignore:
+            if warning == QMessageBox.StandardButton.Ignore:
                 attrRulesMap.clear()
                 for k, v in newDict.items():
                     attrRulesMap[k] = v
@@ -351,7 +351,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         msg.setWindowTitle(self.tr("Information about importing rules"))
 
         if lyrList and msgType == "warning":
-            msg.setIcon(QMessageBox.Warning)
+            msg.setIcon(QMessageBox.Icon.Warning)
             msg.setText(self.tr("Some rules have not been loaded"))
             msg.setInformativeText(
                 self.tr("Do you want to ignore and continue or cancel?")
@@ -365,13 +365,13 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
             ) + msgString.format(*textLyrList)
 
             msg.setDetailedText(formatedMsgString)
-            msg.setStandardButtons(QMessageBox.Ignore | QMessageBox.Cancel)
-            msg.setDefaultButton(QMessageBox.Cancel)
+            msg.setStandardButtons(QMessageBox.StandardButton.Ignore | QMessageBox.StandardButton.Cancel)
+            msg.setDefaultButton(QMessageBox.StandardButton.Cancel)
         else:
-            msg.setIcon(QMessageBox.Information)
+            msg.setIcon(QMessageBox.Icon.Information)
             msg.setText(self.tr("Successfully loaded rules!"))
 
-        choice = msg.exec_()
+        choice = msg.exec()
         return choice
 
     def postAddRowStandard(self, row):
@@ -465,7 +465,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         )
         for row in [1, 3, 4]:
             otw.horizontalHeader().setSectionResizeMode(
-                row, QHeaderView.ResizeToContents
+                row, QHeaderView.ResizeMode.ResizeToContents
             )
         otw.setHeaderDoubleClickBehaviour("order")
         otw.dataLoaded.connect(self.modifyImportedAttributeRulesMap)

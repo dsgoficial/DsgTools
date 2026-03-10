@@ -26,7 +26,7 @@ import zipfile
 from pathlib import Path
 
 import processing
-from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsFeature,
     QgsFeatureRequest,
@@ -149,7 +149,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         # Prepare output sink using the CRS of the first loaded layer
         refCrs = self._getRefCrs(zipData)
         fields = QgsFields()
-        fields.append(QgsField("reason", QVariant.String))
+        fields.append(QgsField("reason", QMetaType.Type.QString))
         (pointFlagSink, pointFlagSinkId) = self.parameterAsSink(
             parameters,
             self.POINT_FLAGS,
@@ -277,11 +277,11 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     continue
 
                 geomType = lyr.geometryType()
-                if geomType == QgsWkbTypes.PointGeometry:
+                if geomType == QgsWkbTypes.GeometryType.PointGeometry:
                     layersByType["points"][layerName] = lyr
-                elif geomType == QgsWkbTypes.LineGeometry:
+                elif geomType == QgsWkbTypes.GeometryType.LineGeometry:
                     layersByType["lines"][layerName] = lyr
-                elif geomType == QgsWkbTypes.PolygonGeometry:
+                elif geomType == QgsWkbTypes.GeometryType.PolygonGeometry:
                     layersByType["polygons"][layerName] = lyr
 
             zipData[str(zipPath)] = layersByType

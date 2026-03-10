@@ -36,7 +36,7 @@ from qgis.core import (
     QgsCoordinateTransform,
     QgsWkbTypes,
 )
-from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import QObject
 
 
 class AttributeHandler(QObject):

@@ -62,8 +62,8 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
         self.areasCustomSelector.setTitle(self.tr("Areas"))
         self.linesCustomSelector.setTitle(self.tr("Lines"))
         self.propertyList = propertyList
-        self.button(QtWidgets.QWizard.NextButton).clicked.connect(self.buildTree)
-        self.button(QtWidgets.QWizard.FinishButton).clicked.connect(self.buildDict)
+        self.button(QtWidgets.QWizard.WizardButton.NextButton).clicked.connect(self.buildTree)
+        self.button(QtWidgets.QWizard.WizardButton.FinishButton).clicked.connect(self.buildDict)
         self.setupWizard(oldCoverage, enableSetupFromFile)
         self.configDict = dict()
 
@@ -76,9 +76,9 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
                 self,
                 self.tr("Question"),
                 self.tr("Do you want to open an earth coverage file?"),
-                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
-            == QMessageBox.Cancel
+            == QMessageBox.StandardButton.Cancel
         ):
             return
         filename, __ = QFileDialog.getOpenFileName(
@@ -145,7 +145,7 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
         self.listWidget.addItems(areas)
         if frame:
             try:
-                frameItem = self.listWidget.findItems(frame, Qt.MatchExactly)[0]
+                frameItem = self.listWidget.findItems(frame, Qt.MatchFlag.MatchExactly)[0]
                 self.listWidget.setCurrentItem(frameItem)
             except:
                 pass
@@ -172,7 +172,7 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
                 delimiterItem = areaItem.child(j)
                 if areaItem.text(0) in list(setupDict.keys()):
                     if delimiterItem.text(1) not in setupDict[areaItem.text(0)]:
-                        delimiterItem.setCheckState(1, Qt.Unchecked)
+                        delimiterItem.setCheckState(1, Qt.CheckState.Unchecked)
 
     def loadJson(self, filename):
         """
@@ -212,8 +212,8 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
                     self.treeWidget.invisibleRootItem().child(i)
                 )
                 treeItem.setText(1, delimiter)
-                treeItem.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-                treeItem.setCheckState(1, Qt.Checked)
+                treeItem.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
+                treeItem.setCheckState(1, Qt.CheckState.Checked)
             self.treeWidget.invisibleRootItem().child(i).setExpanded(True)
 
     def getEarthCoverageDictFromTree(self):
@@ -226,7 +226,7 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
             childClass = invRootItem.child(i)
             earthCoverageDict[childClass.text(0)] = []
             for j in range(childClass.childCount()):
-                if childClass.child(j).checkState(1) == Qt.Checked:
+                if childClass.child(j).checkState(1) == Qt.CheckState.Checked:
                     earthCoverageDict[childClass.text(0)].append(
                         childClass.child(j).text(1)
                     )
@@ -249,7 +249,7 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
         self.populateDelimiters()
         self.treeWidget.expandAll()
         self.treeWidget.header().setSectionResizeMode(
-            QtWidgets.QHeaderView.ResizeToContents
+            QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
         self.treeWidget.header().setStretchLastSection(False)
 
@@ -271,7 +271,7 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
             hasSelected = False
             for j in range(lineChildCount):
                 lineChild = areaItem.child(j)
-                if lineChild.checkState(1) == Qt.Checked:
+                if lineChild.checkState(1) == Qt.CheckState.Checked:
                     hasSelected = True
                     break
             if not hasSelected:

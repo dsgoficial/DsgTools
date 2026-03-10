@@ -118,7 +118,7 @@ class ProcessingTools(QtWidgets.QDialog, FORM_CLASS):
         projSelector = QgsProjectionSelectionTreeWidget()
         message = self.tr("Select the Spatial Reference System!")
         projSelector.setMessage(theMessage=message)
-        if not projSelector.exec_():
+        if not projSelector.exec():
             QMessageBox.warning(self, self.tr("Warning!"), message)
             return
         else:

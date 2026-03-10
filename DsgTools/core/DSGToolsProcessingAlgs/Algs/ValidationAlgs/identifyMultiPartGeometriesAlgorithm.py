@@ -21,7 +21,7 @@
 """
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 import os
 import processing
 import concurrent.futures

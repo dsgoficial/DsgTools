@@ -35,7 +35,7 @@ from qgis.core import (
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
 )
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.utils import iface
 
 from .validationAlgorithm import ValidationAlgorithm
@@ -243,7 +243,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
 
     def outLayer(self, parameters, context, geometry, streamLayer, geomtype, sink):
         newFields = QgsFields()
-        newFields.append(QgsField("id", QVariant.Int))
+        newFields.append(QgsField("id", QMetaType.Type.Int))
 
         for idcounter, geom in enumerate(geometry):
             newFeat = QgsFeature()

@@ -1,6 +1,6 @@
 import re
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis import core
 from qgis.core import (
     QgsFeature,
@@ -14,7 +14,7 @@ from qgis.core import (
     QgsWkbTypes,
     QgsProcessingException,
 )
-from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import QMetaType
 
 from ..LayerManagementAlgs.spellChecker.spellCheckerCtrl import SpellCheckerCtrl
 
@@ -68,14 +68,14 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         layer = self.parameterAsVectorLayer(parameters, self.INPUT_LAYER, context)
-        attributeName = self.parameterAsFields(
+        attributeName = self.parameterAsStrings(
             parameters, self.ATTRIBUTE_NAME, context
         )[0]
-        pkField = self.parameterAsFields(parameters, self.PRIMARY_KEY_FIELD, context)[0]
+        pkField = self.parameterAsStrings(parameters, self.PRIMARY_KEY_FIELD, context)[0]
 
         fields = QgsFields()
-        fields.append(QgsField("column_name", QVariant.String))
-        fields.append(QgsField("number_of_errors", QVariant.Int))
+        fields.append(QgsField("column_name", QMetaType.Type.QString))
+        fields.append(QgsField("number_of_errors", QMetaType.Type.Int))
         (flagSink, flag_id) = self.parameterAsSink(
             parameters,
             self.FLAGS,
@@ -162,9 +162,9 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
 
     def getFlagFields(self):
         sinkFields = QgsFields()
-        sinkFields.append(QgsField("erro", QVariant.String))
-        sinkFields.append(QgsField("correcao", QVariant.String))
-        sinkFields.append(QgsField("outras_opcoes", QVariant.String))
+        sinkFields.append(QgsField("erro", QMetaType.Type.QString))
+        sinkFields.append(QgsField("correcao", QMetaType.Type.QString))
+        sinkFields.append(QgsField("outras_opcoes", QMetaType.Type.QString))
         return sinkFields
 
     def name(self):

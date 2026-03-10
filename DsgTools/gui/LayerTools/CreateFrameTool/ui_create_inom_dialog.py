@@ -85,7 +85,7 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
             )
             return
         try:
-            QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             layer = self.loadFrameLayer()
             self.runCreateFrameAndAddFeaturesToFrame(layer)
             QtWidgets.QApplication.restoreOverrideCursor()
@@ -350,61 +350,61 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         REGEx closely related to the valid chars method 'setValidCharacters'
         """
         if self.scaleCombo.currentText() == "1000k":
-            regex = QtCore.QRegExp("[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}")
-            validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
+            regex = QtCore.QRegularExpression("[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}")
+            validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "500k":
-            regex = QtCore.QRegExp("[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}")
-            validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
+            regex = QtCore.QRegularExpression("[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}")
+            validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "250k":
-            regex = QtCore.QRegExp(
+            regex = QtCore.QRegularExpression(
                 "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}"
             )
-            validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
+            validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "100k":
-            regex = QtCore.QRegExp(
+            regex = QtCore.QRegularExpression(
                 "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}"
             )
-            validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
+            validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "50k":
             self.inomLineEdit.setInputMask("NN-NN-N-N-Nnn-0")
-            regex = QtCore.QRegExp(
+            regex = QtCore.QRegularExpression(
                 "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}"
             )
-            validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
+            validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "25k":
-            regex = QtCore.QRegExp(
+            regex = QtCore.QRegularExpression(
                 "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}"
             )
-            validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
+            validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "10k":
-            regex = QtCore.QRegExp(
+            regex = QtCore.QRegularExpression(
                 "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}"
             )
-            validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
+            validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "5k":
-            regex = QtCore.QRegExp(
+            regex = QtCore.QRegularExpression(
                 "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}\-[IViv]{1,3}"
             )
-            validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
+            validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "2k":
-            regex = QtCore.QRegExp(
+            regex = QtCore.QRegularExpression(
                 "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}\-[IViv]{1,3}\-[1-6]{1}"
             )
-            validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
+            validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "1k":
-            regex = QtCore.QRegExp(
+            regex = QtCore.QRegularExpression(
                 "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}\-[IViv]{1,3}\-[1-6]{1}\-[A-Da-d]{1}"
             )
-            validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
+            validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
 
     def validateMI(self):

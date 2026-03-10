@@ -75,7 +75,7 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
         Slot that opens the create profile dialog
         """
         dlg = GenericParameterSetter()
-        if not dlg.exec_():
+        if not dlg.exec():
             return
         templateDb, propertyName, edgvVersion = dlg.getParameters()
         if edgvVersion == self.tr("Select EDGV Version"):
@@ -132,7 +132,7 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
         dlg = SetupEarthCoverage(
             edgvVersion, areas, lines, jsonDict, propertyList, propertyName=propertyName
         )
-        if dlg.exec_():
+        if dlg.exec():
             return dlg.configDict
         else:
             return None

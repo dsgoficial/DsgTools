@@ -28,7 +28,7 @@ from qgis.gui import (
     QgsRubberBand,
     QgsMapToolEmitPoint,
     QgsAttributeDialog,
-    QgsAttributeForm,
+    QgsAttributeEditorContext,
     QgsMessageBar,
 )
 from qgis import core
@@ -91,8 +91,8 @@ class AssignBandValueTool(QgsMapTool):
         return setting
 
     def setRubberbandParameters(self):
-        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
-        self.hoverRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
+        self.hoverRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
         mFillColor = QColor(254, 178, 76, 63)
         self.rubberBand.setColor(mFillColor)
         self.hoverRubberBand.setColor(QColor(255, 0, 0, 90))
@@ -104,16 +104,16 @@ class AssignBandValueTool(QgsMapTool):
         """
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
-        self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
+        self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
 
     def canvasPressEvent(self, e):
         """
         Method used to build rectangle if shift is held, otherwise, feature select/deselect and identify is done.
         :param e: (QgsMouseEvent) mouse event.
         """
-        if e.button() == QtCore.Qt.LeftButton:
+        if e.button() == QtCore.Qt.MouseButton.LeftButton:
             self.auxList = []
-            if QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+            if QApplication.keyboardModifiers() == QtCore.Qt.KeyboardModifier.ShiftModifier:
                 self.isEmittingPoint = True
                 self.startPoint = self.toMapCoordinates(e.pos())
                 self.endPoint = self.startPoint
@@ -133,7 +133,7 @@ class AssignBandValueTool(QgsMapTool):
         """
         Builds rubberband rect.
         """
-        self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
+        self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
             return
         point1 = QgsPointXY(startPoint.x(), startPoint.y())
@@ -169,9 +169,9 @@ class AssignBandValueTool(QgsMapTool):
         After the rectangle is built, here features are selected.
         """
         # tool was planned to work on left click
-        if e.button() == QtCore.Qt.LeftButton:
+        if e.button() == QtCore.Qt.MouseButton.LeftButton:
             layer = self.iface.mapCanvas().currentLayer()
-            if QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+            if QApplication.keyboardModifiers() == QtCore.Qt.KeyboardModifier.ShiftModifier:
                 self.isEmittingPoint = False
                 r = self.rectangle()
                 if r is None:
@@ -213,14 +213,14 @@ class AssignBandValueTool(QgsMapTool):
             action = menu.addAction(field)
             callback = partial(self.handleFeatures, field, layer)
             action.triggered.connect(callback)
-        menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
+        menu.exec(self.canvas.viewport().mapToGlobal(e.pos()))
 
     def handleFeatures(self, selectedField, layer):
         layer.startEditing()
         for item in self.auxList:
             if "featId" in item:
                 feat = item["feat"]
-                idx = feat.fieldNameIndex(selectedField)
+                idx = feat.fields().lookupField(selectedField)
                 feat.setAttribute(idx, item["value"])
                 layer.updateFeature(feat)
             else:
@@ -240,18 +240,18 @@ class AssignBandValueTool(QgsMapTool):
             if value is not None:
                 feature.setAttribute(i, value)
         form = QgsAttributeDialog(layer, feature, False)
-        form.setMode(int(QgsAttributeForm.AddFeatureMode))
+        form.setMode(int(QgsAttributeEditorContext.AddFeatureMode))
         formSuppress = layer.editFormConfig().suppress()
-        if formSuppress == QgsEditFormConfig.SuppressDefault:
+        if formSuppress == QgsEditFormConfig.FeatureFormSuppress.SuppressDefault:
             if (
                 self.getSuppressOptions()
             ):  # this is calculated every time because user can switch options while using tool
                 layer.addFeature(feature)
             else:
-                if not form.exec_():
+                if not form.exec():
                     feature.setAttributes(form.feature().attributes())
-        elif formSuppress == QgsEditFormConfig.SuppressOff:
-            if not form.exec_():
+        elif formSuppress == QgsEditFormConfig.FeatureFormSuppress.SuppressOff:
+            if not form.exec():
                 feature.setAttributes(form.feature().attributes())
         else:
             layer.addFeature(feature)
@@ -269,7 +269,7 @@ class AssignBandValueTool(QgsMapTool):
         Deactivate tool.
         """
         QApplication.restoreOverrideCursor()
-        self.hoverRubberBand.reset(QgsWkbTypes.PolygonGeometry)
+        self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         try:
             if self.toolAction:
                 self.toolAction.setChecked(False)
@@ -292,7 +292,7 @@ class AssignBandValueTool(QgsMapTool):
             self.iface.messageBar().pushMessage(
                 self.tr("Warning"),
                 self.tr("Select a point vector layer as the active layer"),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=5,
             )
             self.deactivate()
@@ -320,7 +320,7 @@ class AssignBandValueTool(QgsMapTool):
             else mousePosGeom.asPoint()
         )
         # identify pixel(s) information
-        i = rasterLayer.dataProvider().identify(mousePos, QgsRaster.IdentifyFormatValue)
+        i = rasterLayer.dataProvider().identify(mousePos, QgsRaster.IdentifyFormat.IdentifyFormatValue)
         if i.isValid():
             value = list(i.results().values())[0]
             if value:

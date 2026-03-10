@@ -55,7 +55,10 @@ def readAsNumpy(
         if isinstance(inputRaster, QgsRasterLayer)
         else inputRaster
     )
-    ds = gdal.Open(inputRaster)
+    try:
+        ds = gdal.Open(inputRaster)
+    except Exception:
+        raise QgsProcessingException(f"Could not open raster: {inputRaster}")
     npArray = (
         np.array(ds.GetRasterBand(1).ReadAsArray().transpose())
         if dtype is None
@@ -193,14 +196,20 @@ def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
     cols = int((x_max - x_min) / x_res)
     rows = int((y_max - y_min) / y_res)
 
-    _raster = gdal.GetDriverByName("GTiff").Create(_out, cols, rows, 1, gdal.GDT_Byte)
+    try:
+        _raster = gdal.GetDriverByName("GTiff").Create(_out, cols, rows, 1, gdal.GDT_Byte)
+    except Exception:
+        raise QgsProcessingException("GTiff driver not available")
     _raster.SetGeoTransform((x_min, x_res, 0, y_max, 0, -y_res))
     _band = _raster.GetRasterBand(1)
     _band.SetNoDataValue(NoData_value)
 
     if vectorLyr is None or vectorLyr.featureCount() == 0:
         _raster = None
-        ds = gdal.Open(_out)
+        try:
+            ds = gdal.Open(_out)
+        except Exception:
+            raise QgsProcessingException(f"Could not open raster: {_out}")
         npRaster = np.array(ds.GetRasterBand(1).ReadAsArray())
         ds = None
         return npRaster
@@ -214,13 +223,19 @@ def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
     )
 
     # 3. Open Shapefile
-    driver = ogr.GetDriverByName("ESRI Shapefile")
-    source_ds = driver.Open(_temp_in, 0)
+    try:
+        driver = ogr.GetDriverByName("ESRI Shapefile")
+        source_ds = driver.Open(_temp_in, 0)
+    except Exception:
+        raise QgsProcessingException(f"Could not open shapefile: {_temp_in}")
     source_layer = source_ds.GetLayer()
 
     gdal.RasterizeLayer(_raster, [1], source_layer, burn_values=[255.0])
     _raster = None
-    ds = gdal.Open(_out)
+    try:
+        ds = gdal.Open(_out)
+    except Exception:
+        raise QgsProcessingException(f"Could not open raster: {_out}")
     npRaster = np.array(ds.GetRasterBand(1).ReadAsArray(), dtype=float)
     ds = None
     npRaster[npRaster == 255.0] = np.nan
@@ -283,7 +298,10 @@ def createMaxPointFeatListFromRasterLayer(
 
 
 def writeOutputRaster(outputRaster, npRaster, ds=None, outputType=None):
-    driver = gdal.GetDriverByName("GTiff")
+    try:
+        driver = gdal.GetDriverByName("GTiff")
+    except Exception:
+        raise RuntimeError("GTiff driver not available")
     ds = (
         ds
         if ds is not None
@@ -325,7 +343,10 @@ def writeOutputRaster(outputRaster, npRaster, ds=None, outputType=None):
             raise RuntimeError("Failed to get GTiff driver")
 
         # 7. Create output dataset with error catching
-        mem_driver = gdal.GetDriverByName("MEM")
+        try:
+            mem_driver = gdal.GetDriverByName("MEM")
+        except Exception:
+            raise RuntimeError("MEM driver not available")
         temp_ds = mem_driver.Create(
             "", int(npRaster.shape[1]), int(npRaster.shape[0]), 1, gdal.GDT_Int16
         )
@@ -478,7 +499,10 @@ def buildNumpyNodataMaskForPolygon(
     # cols = int((x_max - x_min) / x_res)
     # rows = int((y_max - y_min) / y_res)
 
-    _raster = gdal.GetDriverByName("GTiff").Create(_out, cols, rows, 1, gdal.GDT_Byte)
+    try:
+        _raster = gdal.GetDriverByName("GTiff").Create(_out, cols, rows, 1, gdal.GDT_Byte)
+    except Exception:
+        raise QgsProcessingException("GTiff driver not available")
     # _raster.SetGeoTransform(transform.to_gdal())
     _raster.SetGeoTransform((x_min, x_res, 0, y_max, 0, -y_res))
     _band = _raster.GetRasterBand(1)
@@ -495,13 +519,19 @@ def buildNumpyNodataMaskForPolygon(
     )
 
     # 3. Open Shapefile
-    driver = ogr.GetDriverByName("ESRI Shapefile")
-    source_ds = driver.Open(_temp_in, 0)
+    try:
+        driver = ogr.GetDriverByName("ESRI Shapefile")
+        source_ds = driver.Open(_temp_in, 0)
+    except Exception:
+        raise QgsProcessingException(f"Could not open shapefile: {_temp_in}")
     source_layer = source_ds.GetLayer()
 
     gdal.RasterizeLayer(_raster, [1], source_layer, burn_values=[255.0])
     _raster = None
-    ds = gdal.Open(_out)
+    try:
+        ds = gdal.Open(_out)
+    except Exception:
+        raise QgsProcessingException(f"Could not open raster: {_out}")
     outputNpRaster = np.array(ds.GetRasterBand(1).ReadAsArray(), dtype=float)
     ds = None
     outputNpRaster[outputNpRaster == 255.0] = valueToBurnAsMask

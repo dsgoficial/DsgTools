@@ -104,14 +104,14 @@ class OtherTools(QgsMapTool):
             iface.messageBar().pushMessage(
                 "Cancelado",
                 "ação cancelada pelo usuário",
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=5,
             )
             return
         layer = iface.activeLayer()
         if not layer:
             iface.messageBar().pushMessage(
-                "Erro", "Selecione uma camada válida", level=Qgis.Critical, duration=5
+                "Erro", "Selecione uma camada válida", level=Qgis.MessageLevel.Critical, duration=5
             )
             return
         context = QgsProcessingContext()
@@ -124,7 +124,7 @@ class OtherTools(QgsMapTool):
         iface.messageBar().pushMessage(
             "Executado",
             f"Camada temporária criada: {layer.name()}_temp",
-            level=Qgis.Success,
+            level=Qgis.MessageLevel.Success,
             duration=5,
         )
 
@@ -133,7 +133,7 @@ class OtherTools(QgsMapTool):
             iface.mainWindow(),
             "Continuar?",
             "Será criado uma nova camada com as feições selecionadas. Deseja continuar?",
-            QMessageBox.Yes,
-            QMessageBox.No,
+            QMessageBox.StandardButton.Yes,
+            QMessageBox.StandardButton.No,
         )
-        return reply == QMessageBox.Yes
+        return reply == QMessageBox.StandardButton.Yes

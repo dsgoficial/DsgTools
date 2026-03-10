@@ -106,10 +106,10 @@ class AcquisitionFreeController(object):
             core is not None
             and layer
             and layer.isEditable()
-            and (layer.type() == core.QgsMapLayer.VectorLayer)
+            and (layer.type() == core.QgsMapLayer.LayerType.VectorLayer)
             and (
                 layer.geometryType()
-                in [core.QgsWkbTypes.LineGeometry, core.QgsWkbTypes.PolygonGeometry]
+                in [core.QgsWkbTypes.GeometryType.LineGeometry, core.QgsWkbTypes.GeometryType.PolygonGeometry]
             )
         ):
             if not self.actionAcquisitionFree.isEnabled():
@@ -124,7 +124,7 @@ class AcquisitionFreeController(object):
         layer = self.iface.activeLayer()
         if (
             not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() == QgsWkbTypes.PointGeometry
+            or layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
             or not layer.isEditable()
         ):
             enabled = False
@@ -203,14 +203,14 @@ class AcquisitionFreeController(object):
                 QMessageBox.warning(
                     self.iface.mainWindow(), QMessageBox().tr("Error!"), msg
                 )
-                QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.Critical)
+                QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.MessageLevel.Critical)
                 return geom
         finalGeom = sGeom.simplify(self.getFinalTolerance())
         tr = core.QgsCoordinateTransform(
             dest_crs, source_crs, core.QgsCoordinateTransformContext()
         )
         finalGeom.transform(tr)
-        if self.iface.activeLayer().geometryType() == core.QgsWkbTypes.PolygonGeometry:
+        if self.iface.activeLayer().geometryType() == core.QgsWkbTypes.GeometryType.PolygonGeometry:
             return finalGeom
         finalGeom.moveVertex(firstVertex.x(), firstVertex.y(), 0)
         finalGeom.moveVertex(
@@ -252,8 +252,8 @@ class AcquisitionFreeController(object):
         formSuppressOnLayer = layer.editFormConfig().suppress()
         formSuppressOnSettings = self.getFormSuppressStateSettings()
         featureAdded = True
-        if formSuppressOnLayer == core.QgsEditFormConfig.SuppressOn or (
-            formSuppressOnLayer == core.QgsEditFormConfig.SuppressDefault
+        if formSuppressOnLayer == core.QgsEditFormConfig.FeatureFormSuppress.SuppressOn or (
+            formSuppressOnLayer == core.QgsEditFormConfig.FeatureFormSuppress.SuppressDefault
             and formSuppressOnSettings == "true"
         ):
             self.addFeatureWithoutForm(layer, feature)
@@ -270,7 +270,7 @@ class AcquisitionFreeController(object):
             if (
                 layer.id() != currentLayer.id()
                 and layer.isEditable()
-                and layer.type() == core.QgsMapLayer.VectorLayer
+                and layer.type() == core.QgsMapLayer.LayerType.VectorLayer
             )
         ]
         createdGeometry = feature.geometry()
@@ -340,9 +340,9 @@ class AcquisitionFreeController(object):
         layer.beginEditCommand("dsgtools freehand feature added")
         self.loadDefaultFields(layer, feature)
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
-        attrDialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        attrDialog.setMode(int(gui.QgsAttributeForm.AddFeatureMode))
-        res = attrDialog.exec_()
+        attrDialog.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose)
+        attrDialog.setMode(int(gui.QgsAttributeEditorContext.AddFeatureMode))
+        res = attrDialog.exec()
         if res == 0:
             layer.destroyEditCommand()
         else:

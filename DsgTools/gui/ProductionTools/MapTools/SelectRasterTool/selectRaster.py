@@ -23,7 +23,7 @@
 
 from qgis.core import QgsRasterLayer, QgsRectangle, QgsProject
 from qgis.gui import QgsMapTool
-from PyQt5 import QtWidgets, QtGui
+from qgis.PyQt import QtWidgets, QtGui
 
 
 class SelectRasterTool(QgsMapTool):

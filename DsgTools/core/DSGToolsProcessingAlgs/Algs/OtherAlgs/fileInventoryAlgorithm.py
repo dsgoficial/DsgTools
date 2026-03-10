@@ -25,7 +25,7 @@ from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.Factories.ThreadFactory.threadFactory import ThreadFactory
 from ...algRunner import AlgRunner
 import processing, os, requests
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,

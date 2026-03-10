@@ -117,12 +117,12 @@ class AttributeRuleWidget(QtWidgets.QWidget, FORM_CLASS):
                 raise Exception(self.tr("Invalid Attribute Rule Widget json config!"))
             # set layer combo
             idx = self.layerComboBox.findText(
-                parameterDict["layerName"], flags=Qt.MatchExactly
+                parameterDict["layerName"], flags=Qt.MatchFlag.MatchExactly
             )
             self.layerComboBox.setCurrentIndex(idx)
             # set attr combo
             idx = self.attributeComboBox.findText(
-                parameterDict["attributeName"], flags=Qt.MatchExactly
+                parameterDict["attributeName"], flags=Qt.MatchFlag.MatchExactly
             )
             self.attributeComboBox.setCurrentIndex(idx)
             # set rule

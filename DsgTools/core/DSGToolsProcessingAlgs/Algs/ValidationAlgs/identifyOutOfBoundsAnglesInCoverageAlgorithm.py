@@ -25,10 +25,10 @@ from itertools import combinations
 
 import processing
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsGeometry,
-    QgsGeometryUtils,
+    QgsGeometryUtilsBase,
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
@@ -263,7 +263,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             for wkb1, wkb3 in combinations(pointSet, 2):
                 p1 = self.getPointXYFromWkb(wkb1)
                 p3 = self.getPointXYFromWkb(wkb3)
-                angle = QgsGeometryUtils.angleBetweenThreePoints(
+                angle = QgsGeometryUtilsBase.angleBetweenThreePoints(
                     p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y()
                 )
                 vertexAngle = abs(math.degrees(angle))

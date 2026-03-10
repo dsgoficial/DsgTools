@@ -74,7 +74,7 @@ class CustomizationManagerWidget(GenericManagerWidget):
         Slot that opens the create profile dialog
         """
         paramDlg = GenericParameterSetter()
-        if not paramDlg.exec_():
+        if not paramDlg.exec():
             return
         templateDb, propertyName, edgvVersion = paramDlg.getParameters()
         if edgvVersion == self.tr("Select EDGV Version"):
@@ -103,7 +103,7 @@ class CustomizationManagerWidget(GenericManagerWidget):
         dlg = CreateDatabaseCustomization(
             propertyName, templateDb, edgvVersion, self.genericDbManager
         )
-        dlg.exec_()
+        dlg.exec()
 
     @pyqtSlot(bool)
     def on_deleteCustomizationPushButton_clicked(self):
@@ -117,13 +117,13 @@ class CustomizationManagerWidget(GenericManagerWidget):
                 self.tr("Do you really want to delete customization ")
                 + customizationName
                 + "?",
-                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
-            == QMessageBox.Cancel
+            == QMessageBox.StandardButton.Cancel
         ):
             return
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.genericDbManager.deleteCustomization(customizationName, edgvVersion)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(

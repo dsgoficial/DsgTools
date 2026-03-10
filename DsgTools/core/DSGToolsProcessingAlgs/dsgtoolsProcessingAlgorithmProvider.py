@@ -175,7 +175,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.splitContoursAtMax
     SplitContoursAtMaximumLengthAlgorithm,
 )
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
 

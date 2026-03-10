@@ -20,8 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
-from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QMetaType
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
@@ -98,10 +98,10 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         return {self.OUTPUT: [lyr.id() for lyr in inputLyrList]}
 
     def createMeasureColumn(self, layer):
-        if layer.geometryType() == QgsWkbTypes.PolygonGeometry:
-            layer.addExpressionField("$area", QgsField("area_otf", QVariant.Double))
-        elif layer.geometryType() == QgsWkbTypes.LineGeometry:
-            layer.addExpressionField("$length", QgsField("length_otf", QVariant.Double))
+        if layer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
+            layer.addExpressionField("$area", QgsField("area_otf", QMetaType.Type.Double))
+        elif layer.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
+            layer.addExpressionField("$length", QgsField("length_otf", QMetaType.Type.Double))
         return layer
 
     def name(self):

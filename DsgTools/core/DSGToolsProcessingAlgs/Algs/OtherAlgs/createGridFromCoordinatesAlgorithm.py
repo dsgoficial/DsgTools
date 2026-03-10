@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsFeature,
     QgsFeatureSink,
@@ -37,8 +37,6 @@ from qgis.core import (
     QgsProcessingParameterCrs,
     QgsRectangle,
 )
-from qgis.PyQt.Qt import QVariant
-
 from ...algRunner import AlgRunner
 
 

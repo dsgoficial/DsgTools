@@ -59,7 +59,7 @@ class CreateView(QtWidgets.QDialog, FORM_CLASS):
         createViewClause = self.viewTypeDict[self.viewTypeComboBox.currentIndex()]
         fromClause = self.inheritanceType[self.inheritanceTypeComboBox.currentIndex()]
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.abstractDb.createResolvedDomainViews(createViewClause, fromClause)
             QApplication.restoreOverrideCursor()
             QMessageBox.information(

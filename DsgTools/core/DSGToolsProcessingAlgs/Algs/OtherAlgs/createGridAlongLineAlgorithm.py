@@ -39,9 +39,7 @@ from qgis.core import (
     QgsProcessingParameterFeatureSource,
 )
 
-from qgis.PyQt.Qt import QVariant
-
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 
 
 class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
@@ -170,8 +168,8 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
         start = self.parameterAsDouble(parameters, self.START, context)
 
         fields = QgsFields()
-        fields.append(QgsField("ord", QVariant.Int))
-        fields.append(QgsField("id", QVariant.Int))  # ID da feição de linha
+        fields.append(QgsField("ord", QMetaType.Type.Int))
+        fields.append(QgsField("id", QMetaType.Type.Int))  # ID da feição de linha
 
         # Tamanho da folha
         if paper_size == 0:

@@ -1,5 +1,5 @@
 import os, sys, copy
-from PyQt5 import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 from qgis.PyQt.QtWidgets import QMessageBox
 from .tableEditorWidget import TableEditorWidget
 import json
@@ -31,7 +31,7 @@ class ButtonEditorWidget(TableEditorWidget):
         cloneBtn.clicked.connect(lambda *args, index=index: self.handleCloneBtn(index))
         layout.addWidget(cloneBtn)
 
-        layout.setAlignment(QtCore.Qt.AlignCenter)
+        layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         layout.setContentsMargins(0, 0, 0, 0)
         return wd
 
@@ -49,9 +49,9 @@ class ButtonEditorWidget(TableEditorWidget):
                 self,
                 self.tr("Question"),
                 self.tr("Do you really want to delete?"),
-                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
-            == QMessageBox.Cancel
+            == QMessageBox.StandardButton.Cancel
         ):
             return
         try:

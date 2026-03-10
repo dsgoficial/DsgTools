@@ -36,7 +36,7 @@ class ProgressWidget(QgsMessageBar):
         super(self.__class__, self).__init__(parent)
         self.min = min
         self.max = max
-        sizePolicy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
         if parent:
             self.setMinimumSize(parent.width(), 40)
         else:

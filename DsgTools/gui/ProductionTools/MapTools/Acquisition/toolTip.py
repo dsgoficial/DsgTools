@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtWidgets import QToolTip
+from qgis.PyQt.QtWidgets import QToolTip
 
 
 class ToolTip(object):

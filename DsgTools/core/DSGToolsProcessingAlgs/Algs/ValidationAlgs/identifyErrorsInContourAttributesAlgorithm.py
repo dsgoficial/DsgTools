@@ -23,7 +23,7 @@
 
 from collections import defaultdict
 from typing import Any, Dict, Set
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 import concurrent.futures
 import os
@@ -117,7 +117,7 @@ class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT_CONTOURS, context)
         scale = self.parameterAsEnum(parameters, self.SCALE, context)
         equidistance = self.equidistances[scale]
-        heightFieldName = self.parameterAsFields(
+        heightFieldName = self.parameterAsStrings(
             parameters, self.CONTOUR_ATTR, context
         )[0]
         masterContourExpression = self.parameterAsExpression(

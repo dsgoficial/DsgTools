@@ -55,12 +55,12 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         """
         self.fromTreeWidget.expandAll()
         self.fromTreeWidget.header().setSectionResizeMode(
-            QtWidgets.QHeaderView.ResizeToContents
+            QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
         self.fromTreeWidget.header().setStretchLastSection(False)
         self.toTreeWidget.expandAll()
         self.toTreeWidget.header().setSectionResizeMode(
-            QtWidgets.QHeaderView.ResizeToContents
+            QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
         self.toTreeWidget.header().setStretchLastSection(False)
 
@@ -69,9 +69,9 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         Sorts items from input treeWidget
         """
         rootNode = treeWidget.invisibleRootItem()
-        rootNode.sortChildren(0, Qt.AscendingOrder)
+        rootNode.sortChildren(0, Qt.SortOrder.AscendingOrder)
         for i in range(rootNode.childCount()):
-            rootNode.child(i).sortChildren(1, Qt.AscendingOrder)
+            rootNode.child(i).sortChildren(1, Qt.SortOrder.AscendingOrder)
 
     def setTitle(self, title):
         """
@@ -246,14 +246,14 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
                     itemList = self.getItemList(nodeChild)
                     destinationControlLs.append(itemList)
                     originControlLs.pop(originControlLs.index(itemList))
-            destinationCatChild.sortChildren(1, Qt.AscendingOrder)
+            destinationCatChild.sortChildren(1, Qt.SortOrder.AscendingOrder)
             if catChild.childCount() == 0:
                 originRoot.takeChild(i)
-            destinationRoot.sortChildren(0, Qt.AscendingOrder)
+            destinationRoot.sortChildren(0, Qt.SortOrder.AscendingOrder)
         for i in range(destinationRoot.childCount())[::-1]:
             if destinationRoot.child(i).childCount() == 0:
                 destinationRoot.takeChild(i)
-        destinationRoot.sortChildren(0, Qt.AscendingOrder)
+        destinationRoot.sortChildren(0, Qt.SortOrder.AscendingOrder)
         self.resizeTrees()
 
     def getSelectedItems(self, treeWidgetNode, itemList):
@@ -344,9 +344,9 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
             if firstColumnChild is None:
                 firstColumnChild = self.utils.createWidgetItem(rootNode, item[0], 0)
             QTreeWidgetItem(firstColumnChild, item)
-        rootNode.sortChildren(0, Qt.AscendingOrder)
+        rootNode.sortChildren(0, Qt.SortOrder.AscendingOrder)
         for i in range(rootNode.childCount()):
-            rootNode.child(i).sortChildren(1, Qt.AscendingOrder)
+            rootNode.child(i).sortChildren(1, Qt.SortOrder.AscendingOrder)
 
     def getSelectedNodes(self, concatenated=True):
         """
@@ -401,6 +401,6 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         for i in range(treeRoot.childCount())[::-1]:
             if treeRoot.child(i).childCount() == 0:
                 treeRoot.takeChild(i)
-        treeRoot.sortChildren(0, Qt.AscendingOrder)
+        treeRoot.sortChildren(0, Qt.SortOrder.AscendingOrder)
         for i in range(treeRoot.childCount()):
-            treeRoot.child(i).sortChildren(1, Qt.AscendingOrder)
+            treeRoot.child(i).sortChildren(1, Qt.SortOrder.AscendingOrder)

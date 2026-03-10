@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
 from qgis import core, gui
 import re
 global a
@@ -88,10 +88,10 @@ class ManagerForm(QtCore.QObject):
         buttonBox = dialog.findChild(QDialogButtonBox,"buttonBox")
         buttonBox.rejected.connect(self.finishedForm)
         buttonBox.accepted.connect(self.finishedForm)
-        button_ok = buttonBox.button(QDialogButtonBox.Ok)
+        button_ok = buttonBox.button(QDialogButtonBox.StandardButton.Ok)
         button_ok.setAutoDefault(True)
         button_ok.setDefault(True)
-        button_cancel = buttonBox.button(QDialogButtonBox.Cancel)
+        button_cancel = buttonBox.button(QDialogButtonBox.StandardButton.Cancel)
         button_cancel.setAutoDefault(False)
         button_cancel.setDefault(False)
         self.myDialog.installEventFilter(self)

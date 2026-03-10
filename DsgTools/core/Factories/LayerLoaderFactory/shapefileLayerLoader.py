@@ -25,8 +25,7 @@ import os
 
 # Qt imports
 from qgis.PyQt import QtGui, uic, QtCore
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
-from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QObject
 
 # QGIS imports
 from qgis.core import (
@@ -58,7 +57,7 @@ class ShapefileLayerLoader(EDGVLayerLoader):
         try:
             dbVersion = abstractDb.getDatabaseVersion()
         except Exception as e:
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
             return
         self.buildUri()
 
@@ -201,7 +200,7 @@ class ShapefileLayerLoader(EDGVLayerLoader):
         parentNode.addLayer(vlayer)
         if not vlayer.isValid():
             QgsMessageLog.logMessage(
-                vlayer.error().summary(), "DSGTools Plugin", Qgis.Critical
+                vlayer.error().summary(), "DSGTools Plugin", Qgis.MessageLevel.Critical
             )
         vlayer = self.createMeasureColumn(vlayer)
         return vlayer
