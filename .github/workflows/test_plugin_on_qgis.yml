@@ -18,10 +18,10 @@ jobs:
         with:
           submodules: 'true'
       - name: Pull docker images
-        run: docker-compose pull
+        run: docker compose pull
       - name: Start the environment
         run: ./start.sh
       - name: Tests
         run: ./exec.sh
       - name: Stop the environment
-        run: docker-compose down
+        run: docker compose down
