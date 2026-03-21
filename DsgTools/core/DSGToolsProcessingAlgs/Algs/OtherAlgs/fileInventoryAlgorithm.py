@@ -21,43 +21,25 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.Factories.ThreadFactory.threadFactory import ThreadFactory
-from ...algRunner import AlgRunner
-import processing, os, requests
+import os
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterEnum,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterMultipleLayers,
     QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
-    QgsProcessingParameterField,
-    QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFolderDestination,
-    QgsProcessingParameterExpression,
     QgsProcessingException,
-    QgsProcessingParameterString,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterType,
     QgsProcessingParameterMatrix,
     QgsProcessingParameterFile,
     QgsCoordinateReferenceSystem,
     QgsFields,
     QgsAction,
-    QgsActionScope,
+    QgsVectorLayer,
 )
 
 
@@ -141,6 +123,8 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
         copyFolder = self.parameterAsString(parameters, self.COPY_FOLDER, context)
         onlyGeo = self.parameterAsBool(parameters, self.ONLY_GEO, context)
         copyFiles = self.parameterAsBool(parameters, self.COPY_FILES, context)
+        searchType = self.parameterAsEnum(parameters, self.SEARCH_TYPE, context)
+        isWhitelist = searchType == 0
         sinkFields = QgsFields()
         for field in inventory.layer_attributes:
             sinkFields.append(field)
@@ -151,7 +135,7 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
             context,
             sinkFields,
             QgsWkbTypes.Polygon,
-            QgsCoordinateReferenceSystem(4326),
+            QgsCoordinateReferenceSystem.fromEpsgId(4326),
         )
 
         featList = inventory.make_inventory_from_processing(
@@ -159,6 +143,7 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
             file_formats,
             make_copy=copyFiles,
             onlyGeo=onlyGeo,
+            is_whitelist=isWhitelist,
             destination_folder=copyFolder,
         )
 

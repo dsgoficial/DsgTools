@@ -18,9 +18,6 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  ***************************************************************************/
 """
 
-from builtins import range
-from builtins import object
-
 from qgis.PyQt import QtGui, QtCore
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis import core, gui
@@ -106,10 +103,10 @@ class AcquisitionFreeController(object):
             core is not None
             and layer
             and layer.isEditable()
-            and (layer.type() == core.QgsMapLayer.LayerType.VectorLayer)
+            and (layer.type() == Qgis.LayerType.Vector)
             and (
                 layer.geometryType()
-                in [core.QgsWkbTypes.GeometryType.LineGeometry, core.QgsWkbTypes.GeometryType.PolygonGeometry]
+                in [Qgis.GeometryType.Line, Qgis.GeometryType.Polygon]
             )
         ):
             if not self.actionAcquisitionFree.isEnabled():
@@ -124,7 +121,7 @@ class AcquisitionFreeController(object):
         layer = self.iface.activeLayer()
         if (
             not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+            or layer.geometryType() == Qgis.GeometryType.Point
             or not layer.isEditable()
         ):
             enabled = False
@@ -184,7 +181,7 @@ class AcquisitionFreeController(object):
         lastVertex = geom.vertexAt(geom.constGet().nCoordinates() - 1)
         sGeom = geom
         source_crs = self.iface.activeLayer().crs()
-        dest_crs = core.QgsCoordinateReferenceSystem(3857)
+        dest_crs = core.QgsCoordinateReferenceSystem.fromEpsgId(3857)
         tr = core.QgsCoordinateTransform(
             source_crs, dest_crs, core.QgsCoordinateTransformContext()
         )
@@ -196,7 +193,7 @@ class AcquisitionFreeController(object):
                     int(parameters["freeHandSmoothIterations"]),
                     float(parameters["freeHandSmoothOffset"]),
                 )
-            except:
+            except Exception:
                 msg = QMessageBox().tr(
                     "Probably too many smoothing iteration, try reducing it (3 usually is enough). Geometry was not smoothened."
                 )
@@ -210,7 +207,7 @@ class AcquisitionFreeController(object):
             dest_crs, source_crs, core.QgsCoordinateTransformContext()
         )
         finalGeom.transform(tr)
-        if self.iface.activeLayer().geometryType() == core.QgsWkbTypes.GeometryType.PolygonGeometry:
+        if self.iface.activeLayer().geometryType() == Qgis.GeometryType.Polygon:
             return finalGeom
         finalGeom.moveVertex(firstVertex.x(), firstVertex.y(), 0)
         finalGeom.moveVertex(
@@ -270,7 +267,7 @@ class AcquisitionFreeController(object):
             if (
                 layer.id() != currentLayer.id()
                 and layer.isEditable()
-                and layer.type() == core.QgsMapLayer.LayerType.VectorLayer
+                and layer.type() == Qgis.LayerType.Vector
             )
         ]
         createdGeometry = feature.geometry()

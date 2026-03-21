@@ -20,7 +20,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import range
 import os
 import time
 import csv
@@ -31,6 +30,7 @@ from qgis.PyQt.QtCore import QMetaType, pyqtSlot, QObject
 
 # Import the PyQt and QGIS libraries
 from qgis.core import (
+    Qgis,
     QgsMessageLog,
     QgsVectorFileWriter,
     QgsVectorLayer,
@@ -159,6 +159,7 @@ class InventoryThread(GenericThread):
         destination_folder=None,
         make_copy=False,
         onlyGeo=True,
+        is_whitelist=True,
         feedback=None,
     ):
         featList = []
@@ -180,7 +181,10 @@ class InventoryThread(GenericThread):
                 if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                     break
                 extension = current_file.split(".")[-1]
-                if extension not in format_set:
+                in_set = extension in format_set
+                if is_whitelist and not in_set:
+                    continue
+                if not is_whitelist and in_set:
                     continue
                 full_path = self.get_full_path(current_file, root)
                 is_geo = False
@@ -196,20 +200,22 @@ class InventoryThread(GenericThread):
                     except Exception:
                         pass
                 if is_geo:
-                    bbox_geom, attributes = self.computeBoxAndAttributes(
+                    result = self.computeBoxAndAttributes(
                         None, full_path, extension, insertIntoMemory=False
                     )
-                    new_feat = self.get_new_feat(bbox_geom, attributes)
-                    featList.append(new_feat)
-                    fileList.append(full_path)
+                    if result is not None:
+                        bbox_geom, attributes = result
+                        new_feat = self.get_new_feat(bbox_geom, attributes)
+                        featList.append(new_feat)
+                        fileList.append(full_path)
                 if multiStepFeedback is not None:
                     multiStepFeedback.setProgress(files_progress * current)
         if make_copy:
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(nSteps)
             copy_len = len(fileList)
-            for current, file_ in fileList:
-                if multiStepFeedback is not None and multiStepFeedback.isCanceled:
+            for current, file_ in enumerate(fileList):
+                if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                     break
                 try:
                     self.copy_single_file(file_, destination_folder)
@@ -230,7 +236,6 @@ class InventoryThread(GenericThread):
 
     def get_full_path(self, file_name, root):
         line = os.path.join(root, file_name)
-        line = line.encode(encoding="UTF-8")
         return line
 
     def get_new_feat(self, geom, attributes):
@@ -245,12 +250,12 @@ class InventoryThread(GenericThread):
         """
         # creating a csv file
         try:
-            csvfile = open(outputFile, "wb")
+            csvfile = open(outputFile, "w", newline="")
         except IOError as e:
             QgsMessageLog.logMessage(
                 self.messenger.getInventoryErrorMessage() + "\n" + e.strerror,
                 "DSGTools Plugin",
-                QgsMessageLog.INFO,
+                Qgis.MessageLevel.Info,
             )
             return (0, self.messenger.getInventoryErrorMessage() + "\n" + e.strerror)
 
@@ -273,7 +278,6 @@ class InventoryThread(GenericThread):
                             continue
                         # making the full path
                         line = os.path.join(root, file)
-                        line = line.encode(encoding="UTF-8")
                         # changing the separator, it will be changed later
                         line = line.replace(os.sep, "/")
                         # forcing the inventory of .prj files
@@ -304,7 +308,7 @@ class InventoryThread(GenericThread):
                         QgsMessageLog.logMessage(
                             self.messenger.getUserCanceledFeedbackMessage(),
                             "DSGTools Plugin",
-                            QgsMessageLog.INFO,
+                            Qgis.MessageLevel.Info,
                         )
                         return (-1, self.messenger.getUserCanceledFeedbackMessage())
         except csv.Error as e:
@@ -312,7 +316,7 @@ class InventoryThread(GenericThread):
             QgsMessageLog.logMessage(
                 self.messenger.getInventoryErrorMessage() + "\n" + e,
                 "DSGTools Plugin",
-                QgsMessageLog.INFO,
+                Qgis.MessageLevel.Info,
             )
             return (0, self.messenger.getInventoryErrorMessage() + "\n" + e)
         except OSError as e:
@@ -320,7 +324,7 @@ class InventoryThread(GenericThread):
             QgsMessageLog.logMessage(
                 self.messenger.getInventoryErrorMessage() + "\n" + e.strerror,
                 "DSGTools Plugin",
-                QgsMessageLog.INFO,
+                Qgis.MessageLevel.Info,
             )
             return (0, self.messenger.getInventoryErrorMessage() + "\n" + e.strerror)
         except Exception as e:
@@ -328,7 +332,7 @@ class InventoryThread(GenericThread):
             QgsMessageLog.logMessage(
                 self.messenger.getInventoryErrorMessage() + "\n" + ":".join(e.args),
                 "DSGTools Plugin",
-                QgsMessageLog.INFO,
+                Qgis.MessageLevel.Info,
             )
             return (0, self.messenger.getInventoryErrorMessage())
         csvfile.close()
@@ -345,7 +349,7 @@ class InventoryThread(GenericThread):
             QgsMessageLog.logMessage(
                 self.messenger.getSuccessInventoryMessage(),
                 "DSGTools Plugin",
-                QgsMessageLog.INFO,
+                Qgis.MessageLevel.Info,
             )
             return (1, self.messenger.getSuccessInventoryMessage())
 
@@ -355,7 +359,7 @@ class InventoryThread(GenericThread):
         """
         # get the bounding box and wkt projection
         (ogrPoly, prjWkt) = self.getExtent(line)
-        if ogrPoly == None or prjWkt == None:
+        if ogrPoly is None or prjWkt is None:
             return
         # making a QGIS projection
         crsSrc = QgsCoordinateReferenceSystem()
@@ -388,21 +392,21 @@ class InventoryThread(GenericThread):
                     QgsMessageLog.logMessage(
                         self.messenger.getCopyErrorMessage() + "\n" + e.strerror,
                         "DSGTools Plugin",
-                        QgsMessageLog.INFO,
+                        Qgis.MessageLevel.Info,
                     )
                     return (0, self.messenger.getCopyErrorMessage() + "\n" + e.strerror)
             else:
                 QgsMessageLog.logMessage(
                     self.messenger.getUserCanceledFeedbackMessage(),
                     "DSGTools Plugin",
-                    QgsMessageLog.INFO,
+                    Qgis.MessageLevel.Info,
                 )
                 return (-1, self.messenger.getUserCanceledFeedbackMessage())
 
         QgsMessageLog.logMessage(
             self.messenger.getSuccessInventoryAndCopyMessage(),
             "DSGTools Plugin",
-            QgsMessageLog.INFO,
+            Qgis.MessageLevel.Info,
         )
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
 
@@ -435,7 +439,7 @@ class InventoryThread(GenericThread):
                 QgsMessageLog.logMessage(
                     self.messenger.getCopyErrorMessage() + "\n" + ":".join(e.args),
                     "DSGTools Plugin",
-                    QgsMessageLog.INFO,
+                    Qgis.MessageLevel.Info,
                 )
                 return (
                     0,
@@ -445,7 +449,7 @@ class InventoryThread(GenericThread):
         QgsMessageLog.logMessage(
             self.messenger.getSuccessInventoryAndCopyMessage(),
             "DSGTools Plugin",
-            QgsMessageLog.INFO,
+            Qgis.MessageLevel.Info,
         )
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
 
@@ -527,7 +531,7 @@ class InventoryThread(GenericThread):
         creationDate = time.ctime(os.path.getctime(line))
         size = os.path.getsize(line) / 1000.0
 
-        return [line.decode(encoding="UTF-8"), creationDate, size, extension]
+        return [line, creationDate, size, extension]
 
     def getRasterExtent(self, gt, cols, rows):
         """
@@ -625,7 +629,7 @@ class InventoryThread(GenericThread):
         crsSrc:source crs
         ogrPoly: ogr polygon
         """
-        crsDest = QgsCoordinateReferenceSystem(4326)
+        crsDest = QgsCoordinateReferenceSystem.fromEpsgId(4326)
         coordinateTransformer = QgsCoordinateTransform(
             crsSrc, crsDest, QgsProject.instance()
         )

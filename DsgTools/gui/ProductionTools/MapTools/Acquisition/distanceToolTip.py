@@ -45,7 +45,7 @@ class DistanceToolTip(ToolTip):
 
     def calculateDistance(self, p1, p2):
         source_crs = self.iface.mapCanvas().mapSettings().destinationCrs()
-        dest_crs = QgsCoordinateReferenceSystem(3857)
+        dest_crs = QgsCoordinateReferenceSystem.fromEpsgId(3857)
         tr = QgsCoordinateTransform(
             source_crs, dest_crs, QgsCoordinateTransformContext()
         )
@@ -78,5 +78,5 @@ class DistanceToolTip(ToolTip):
                 self.showing = True
 
     def deactivate(self):
-        self.deactivate()
+        super().deactivate()
         self.showing = False

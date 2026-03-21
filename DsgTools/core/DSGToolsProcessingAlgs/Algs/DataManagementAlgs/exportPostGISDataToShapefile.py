@@ -38,8 +38,8 @@ from DsgTools.core.DbTools.dbConversionHandler import (
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsProcessingException,
-    QgsWkbTypes,
     QgsWkbTypes,
     QgsProcessingParameterProviderConnection,
     QgsProcessingMultiStepFeedback,
@@ -65,7 +65,7 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
     INPUT_LAYERS_TO_EXCLUDE = "INPUT_LAYERS_TO_EXCLUDE"
     CONVERSION_MAPS_STRUCTURE = "CONVERSION_MAPS_STRUCTURE"
     TEMPLATE_SHAPEFILES_FOLDER = "TEMPLATE_SHAPEFILES_FOLDER"
-    OUTPUT_CRS = "OUPUT_CRS"
+    OUTPUT_CRS = "OUTPUT_CRS"
     GEOGRAPHIC_BOUNDS = "GEOGRAPHIC_BOUNDS"
     GEOGRAPHIC_BOUNDS_NAME_FIELD = "GEOGRAPHIC_BOUNDS_NAME_FIELD"
     OUTPUT_FOLDER = "OUTPUT_FOLDER"
@@ -120,7 +120,7 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
             QgsProcessingParameterCrs(
                 self.OUTPUT_CRS,
                 self.tr("Output CRS"),
-                defaultValue=QgsCoordinateReferenceSystem(4674),
+                defaultValue=QgsCoordinateReferenceSystem.fromEpsgId(4674),
             )
         )
 
@@ -128,14 +128,7 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS,
                 self.tr("Geographic Bounds"),
-                [QgsWkbTypes.GeometryType.PolygonGeometry],
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.GEOGRAPHIC_BOUNDS,
-                self.tr("Geographic Bounds"),
-                [QgsWkbTypes.GeometryType.PolygonGeometry],
+                [Qgis.GeometryType.Polygon],
             )
         )
         self.addParameter(
@@ -319,12 +312,13 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
                 feedback=multiStepFeedback,
             )
             currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
 
             if len(notConvertedDict) > 0:
                 stepSize = 100 / len(notConvertedDict)
                 for geomType, featDictList in notConvertedDict.items():
-                    if multiStepFeedback.isCanceled():
+                    if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                         break
                     list(
                         map(
