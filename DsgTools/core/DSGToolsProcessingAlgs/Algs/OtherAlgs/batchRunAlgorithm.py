@@ -21,8 +21,8 @@
 """
 
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-import json, processing
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
+import json
 import gc
 from qgis.core import (
     QgsFeatureSink,
@@ -226,7 +226,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         return json.loads(rules_text)
 
     def runProcessingAlg(self, algName, outputKey, parameters, context, feedback):
-        output = processing.run(algName, parameters, context=context, feedback=feedback)
+        output = runProcessing(algName, parameters, context=context, feedback=feedback)
         return output[outputKey] if outputKey else None
 
     def flagFeatures(self, outputLyr, algName, inputLyrName, context):

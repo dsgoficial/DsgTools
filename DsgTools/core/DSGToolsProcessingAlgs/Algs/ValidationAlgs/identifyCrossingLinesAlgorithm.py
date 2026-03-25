@@ -22,8 +22,7 @@
 """
 
 from typing import List
-import processing
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
@@ -175,7 +174,7 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        unjoined = processing.run(
+        unjoined = runProcessing(
             "native:joinattributesbylocation",
             {
                 "INPUT": intersectionLyr,

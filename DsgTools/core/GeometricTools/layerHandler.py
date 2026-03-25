@@ -33,11 +33,10 @@ from uuid import uuid4
 from processing.tools import dataobjects
 
 import concurrent.futures
-import processing
 
 import numpy as np
 
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.core import (
@@ -2218,7 +2217,7 @@ class LayerHandler(QObject):
             currentStep += 1
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
-            mergedLayer = processing.run(
+            mergedLayer = runProcessing(
                 "native:joinattributesbylocation",
                 {
                     "INPUT": mergedLayer,

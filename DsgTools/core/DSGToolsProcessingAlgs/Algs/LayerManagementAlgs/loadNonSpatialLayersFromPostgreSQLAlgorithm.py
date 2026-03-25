@@ -27,7 +27,7 @@ from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
     LayerLoaderFactory,
 )
-import processing
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import runProcessing
 from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
@@ -138,7 +138,7 @@ class LoadNonSpatialLayersFromPostgreSQLAlgorithm(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
         )
         multiStepFeedback.setCurrentStep(1)
-        output = processing.run(
+        output = runProcessing(
             "dsgtools:grouplayers",
             {
                 "INPUT_LAYERS": outputLayers,

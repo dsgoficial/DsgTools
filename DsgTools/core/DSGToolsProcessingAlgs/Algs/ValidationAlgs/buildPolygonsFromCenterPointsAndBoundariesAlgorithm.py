@@ -24,7 +24,6 @@ import concurrent.futures
 import itertools
 import os
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
-import processing
 from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -45,7 +44,7 @@ from qgis.core import (
     QgsProcessingContext,
 )
 
-from ...algRunner import AlgRunner
+from ...algRunner import AlgRunner, runProcessing
 from .validationAlgorithm import ValidationAlgorithm
 
 
@@ -373,9 +372,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Building cache..."))
-        builtPolygonsLyr = processing.run(
+        builtPolygonsLyr = runProcessing(
             "native:addautoincrementalfield",
-            parameters={
+            {
                 "INPUT": output_polygon_sink_id,
                 "FIELD_NAME": "featid",
                 "START": 1,
@@ -467,7 +466,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback.setProgressText(self.tr("Running spatial join..."))
         multiStepFeedback.setCurrentStep(currentStep)
-        unmatchedLines = processing.run(
+        unmatchedLines = runProcessing(
             "native:joinattributesbylocation",
             {
                 "INPUT": segments,
@@ -497,7 +496,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
 
         multiStepFeedback.setCurrentStep(currentStep)
-        mergedSegments = processing.run(
+        mergedSegments = runProcessing(
             "native:dissolve",
             {"INPUT": unmatchedLines, "OUTPUT": "memory:"},
             context=context,
@@ -905,7 +904,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 is_child_algorithm=True,
             )
 
-            unmatchedLines = processing.run(
+            unmatchedLines = runProcessing(
                 "native:joinattributesbylocation",
                 {
                     "INPUT": segments,
@@ -930,7 +929,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 is_child_algorithm=True,
             )
 
-            mergedSegments = processing.run(
+            mergedSegments = runProcessing(
                 "native:dissolve",
                 {"INPUT": unmatchedLines, "OUTPUT": "memory:"},
                 context=context,

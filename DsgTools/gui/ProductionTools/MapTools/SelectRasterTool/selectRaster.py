@@ -86,7 +86,7 @@ class SelectRasterTool(QgsMapTool):
     def openRastersMenu(self, rasters):
         menu = QtWidgets.QMenu()
         self.addRasterMenu(menu, rasters)
-        menu.exec_(QtGui.QCursor.pos())
+        menu.exec(QtGui.QCursor.pos())
 
     def addRasterMenu(self, menu, rasters):
         rasterMenu = menu  # QtWidgets.QMenu(title="Rasters", parent=menu)

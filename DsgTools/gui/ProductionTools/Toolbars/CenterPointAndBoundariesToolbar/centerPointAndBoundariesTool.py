@@ -26,7 +26,7 @@ from DsgTools.gui.ProductionTools.Toolboxes.ContourTool.dsg_line_tool import (
     DsgPolygonTool,
 )
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
 
 from processing.gui.MultipleInputDialog import MultipleInputDialog
 
@@ -42,7 +42,6 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QWidget
-import processing
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "centerPointAndBoundaries.ui")
@@ -131,7 +130,7 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         return groupNode
 
     def runMerge(self, existente, novo):
-        merge = processing.run(
+        merge = runProcessing(
             "native:mergevectorlayers",
             {"LAYERS": [existente, novo], "OUTPUT": "TEMPORARY_OUTPUT"},
         )

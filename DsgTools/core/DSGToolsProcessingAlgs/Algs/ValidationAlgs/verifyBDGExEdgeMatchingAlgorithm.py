@@ -25,7 +25,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-import processing
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import runProcessing
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsFeature,
@@ -387,7 +387,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         extentLyr.updateExtents()
 
         feedback.pushInfo(self.tr("  Generating systematic grid..."))
-        gridOutput = processing.run(
+        gridOutput = runProcessing(
             "dsgtools:createframeswithconstraintalgorithm",
             {
                 "INPUT": extentLyr,

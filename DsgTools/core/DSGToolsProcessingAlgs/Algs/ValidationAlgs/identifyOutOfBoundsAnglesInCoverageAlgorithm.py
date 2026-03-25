@@ -23,8 +23,7 @@ from collections import defaultdict
 import math
 from itertools import combinations
 
-import processing
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsGeometry,
@@ -89,7 +88,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             "TOLERANCE": tol,
             "FLAGS": "memory:",
         }
-        output = processing.run(
+        output = runProcessing(
             "dsgtools:identifyoutofboundsangles",
             parameters,
             context=context,
@@ -116,7 +115,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             "GRASS_VECTOR_DSCO": "",
             "GRASS_VECTOR_LCO": "",
         }
-        x = processing.run(
+        x = runProcessing(
             "grass7:v.clean", parameters, context=context, feedback=feedback
         )
         lyr = QgsProcessingUtils.mapLayerFromString(x["output"], context)
