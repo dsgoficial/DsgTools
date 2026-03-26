@@ -339,7 +339,7 @@ class GeometricaAcquisition(QgsMapTool):
 
             form = QgsAttributeDialog(layer, feature, False)
             form.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose)
-            form.setMode(int(QgsAttributeEditorContext.AddFeatureMode))
+            form.setMode(QgsAttributeEditorContext.Mode.AddFeatureMode)
             formSuppress = layer.editFormConfig().suppress()
             if formSuppress == QgsEditFormConfig.FeatureFormSuppress.SuppressDefault:
                 if (

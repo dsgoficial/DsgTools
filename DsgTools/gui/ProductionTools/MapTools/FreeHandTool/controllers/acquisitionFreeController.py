@@ -338,7 +338,7 @@ class AcquisitionFreeController(object):
         self.loadDefaultFields(layer, feature)
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
         attrDialog.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose)
-        attrDialog.setMode(int(gui.QgsAttributeEditorContext.AddFeatureMode))
+        attrDialog.setMode(gui.QgsAttributeEditorContext.Mode.AddFeatureMode)
         res = attrDialog.exec()
         if res == 0:
             layer.destroyEditCommand()

@@ -240,7 +240,7 @@ class AssignBandValueTool(QgsMapTool):
             if value is not None:
                 feature.setAttribute(i, value)
         form = QgsAttributeDialog(layer, feature, False)
-        form.setMode(int(QgsAttributeEditorContext.AddFeatureMode))
+        form.setMode(QgsAttributeEditorContext.Mode.AddFeatureMode)
         formSuppress = layer.editFormConfig().suppress()
         if formSuppress == QgsEditFormConfig.FeatureFormSuppress.SuppressDefault:
             if (
