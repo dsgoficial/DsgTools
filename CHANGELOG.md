@@ -16,6 +16,12 @@ Correções de bug:
 
 - Corrige bugs no algoritmo de suavização nurbfit;
 
+## 4.20.1 - 2026-01-19
+
+Correção de bugs:
+
+- Corrige import da networkx;
+
 ## 4.20.0 - 2026-01-12
 
 Novas Funcionalidades:
