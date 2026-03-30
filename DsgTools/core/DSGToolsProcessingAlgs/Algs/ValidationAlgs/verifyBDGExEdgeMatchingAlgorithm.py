@@ -37,6 +37,7 @@ from qgis.core import (
     QgsPointXY,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterBoolean,
     QgsProcessingParameterEnum,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterFile,
@@ -56,6 +57,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
     SCALE = "SCALE"
     SEARCH_RADIUS = "SEARCH_RADIUS"
     ATTRIBUTE_BLACKLIST = "ATTRIBUTE_BLACKLIST"
+    IGNORE_FIELD_LENGTHS = "IGNORE_FIELD_LENGTHS"
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
 
@@ -104,6 +106,14 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         )
 
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_FIELD_LENGTHS,
+                self.tr("Ignore field length differences"),
+                defaultValue=False,
+            )
+        )
+
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POINT_FLAGS,
                 self.tr("Point Flags"),
@@ -129,6 +139,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
             if blacklistStr
             else set()
         )
+        ignoreFieldLengths = self.parameterAsBool(
+            parameters, self.IGNORE_FIELD_LENGTHS, context
+        )
         constraintScaleIdx = self._SCALE_INDEX_MAP[scaleIdx]
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
@@ -144,7 +157,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
 
         # Step 1b: Global schema validation — abort with full details on mismatch
         multiStepFeedback.pushInfo(self.tr("Validating shapefile schemas..."))
-        self._validateSchemas(zipData)
+        self._validateSchemas(zipData, ignoreFieldLengths, multiStepFeedback)
 
         # Prepare output sink using the CRS of the first loaded layer
         refCrs = self._getRefCrs(zipData)
@@ -289,21 +302,30 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
 
         return zipData
 
-    def _validateSchemas(self, zipData):
+    def _validateSchemas(self, zipData, ignoreFieldLengths=False, feedback=None):
         """
         Validates that all same-named shapefiles across all zip files have
-        identical field schemas (same field names and types).
+        identical field schemas (same field names, types, and lengths).
 
-        Raises QgsProcessingException with full diff details on the first
-        mismatch found. Processing must not continue after a mismatch.
+        Hard errors (always raise QgsProcessingException):
+          - Fields added or removed across zip files
+          - Fields whose QVariant type changed
+
+        Soft warnings (length-only differences):
+          - If ignoreFieldLengths is False: raises QgsProcessingException
+          - If ignoreFieldLengths is True:  emits a warning via feedback and
+            continues processing
         """
-        schemaRegistry = {}  # {layer_name: {field_name: field_type}}
+        # {layer_name: {field_name: (field_type, field_length)}}
+        schemaRegistry = {}
         schemaSource = {}  # {layer_name: zip_path_str (the reference zip)}
 
         for zipPath, layersByType in zipData.items():
             for layers in layersByType.values():
                 for layerName, lyr in layers.items():
-                    currentSchema = {f.name(): f.type() for f in lyr.fields()}
+                    currentSchema = {
+                        f.name(): (f.type(), f.length()) for f in lyr.fields()
+                    }
 
                     if layerName not in schemaRegistry:
                         schemaRegistry[layerName] = currentSchema
@@ -316,30 +338,60 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
 
                     added = sorted(set(currentSchema.keys()) - set(refSchema.keys()))
                     removed = sorted(set(refSchema.keys()) - set(currentSchema.keys()))
-                    changed = sorted(
+
+                    commonFields = currentSchema.keys() & refSchema.keys()
+                    typeChanged = sorted(
                         f
-                        for f in currentSchema.keys() & refSchema.keys()
-                        if currentSchema[f] != refSchema[f]
+                        for f in commonFields
+                        if currentSchema[f][0] != refSchema[f][0]
+                    )
+                    lengthOnly = sorted(
+                        f
+                        for f in commonFields
+                        if currentSchema[f][0] == refSchema[f][0]
+                        and currentSchema[f][1] != refSchema[f][1]
                     )
 
-                    diffs = []
+                    # Hard errors: structural mismatches
+                    hardDiffs = []
                     if added:
-                        diffs.append(f"Added fields: {added}")
+                        hardDiffs.append(f"Added fields: {added}")
                     if removed:
-                        diffs.append(f"Removed fields: {removed}")
-                    if changed:
-                        diffs.append(f"Changed field types: {changed}")
+                        hardDiffs.append(f"Removed fields: {removed}")
+                    if typeChanged:
+                        hardDiffs.append(f"Changed field types: {typeChanged}")
 
-                    raise QgsProcessingException(
-                        self.tr(
-                            f"Schema mismatch for layer '{layerName}':\n"
+                    if hardDiffs:
+                        raise QgsProcessingException(
+                            self.tr(
+                                f"Schema mismatch for layer '{layerName}':\n"
+                                f"  Reference file  : '{Path(schemaSource[layerName]).name}'\n"
+                                f"  Conflicting file: '{Path(zipPath).name}'\n"
+                                f"  Differences     : {'; '.join(hardDiffs)}\n"
+                                f"All shapefiles with the same name must have identical "
+                                f"field schemas before edge matching can proceed."
+                            )
+                        )
+
+                    # Soft warnings: length-only mismatches
+                    if lengthOnly:
+                        lengthDetails = ", ".join(
+                            f"{f} "
+                            f"(ref={refSchema[f][1]}, "
+                            f"current={currentSchema[f][1]})"
+                            for f in lengthOnly
+                        )
+                        msg = self.tr(
+                            f"Field length mismatch for layer '{layerName}':\n"
                             f"  Reference file  : '{Path(schemaSource[layerName]).name}'\n"
                             f"  Conflicting file: '{Path(zipPath).name}'\n"
-                            f"  Differences     : {'; '.join(diffs)}\n"
-                            f"All shapefiles with the same name must have identical "
-                            f"field schemas before edge matching can proceed."
+                            f"  Fields with different lengths: {lengthDetails}"
                         )
-                    )
+                        if ignoreFieldLengths:
+                            if feedback is not None:
+                                feedback.pushWarning(msg)
+                        else:
+                            raise QgsProcessingException(msg)
 
     def _getRefCrs(self, zipData):
         """Return the CRS of the first valid layer found across all zips."""
