@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
@@ -100,7 +100,7 @@ class Line2Multiline(QgsProcessingAlgorithm):
             return {self.OUTPUT: None}
 
         fields = QgsFields()
-        fields.append(QgsField("length", QVariant.Double))
+        fields.append(QgsField("length", QMetaType.Type.Double))
 
         (sink, sink_id) = self.parameterAsSink(
             parameters,

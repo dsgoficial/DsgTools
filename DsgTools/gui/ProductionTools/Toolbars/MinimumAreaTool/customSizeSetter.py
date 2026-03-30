@@ -41,8 +41,8 @@ class CustomSizeSetter(QtWidgets.QDialog, FORM_CLASS):
         super(self.__class__, self).__init__(parent)
         self.customDict = customDict
         self.setupUi(self)
-        regex = QtCore.QRegExp("[0-9][0-9\.0-9]*")
-        validator = QtGui.QRegExpValidator(regex, self.measureLineEdit)
+        regex = QtCore.QRegularExpression("[0-9][0-9\\.0-9]*")
+        validator = QtGui.QRegularExpressionValidator(regex, self.measureLineEdit)
         self.measureLineEdit.setValidator(validator)
 
     def validateUi(self):

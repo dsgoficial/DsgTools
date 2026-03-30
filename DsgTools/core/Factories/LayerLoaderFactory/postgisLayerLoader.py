@@ -36,8 +36,7 @@ from qgis.core import (
 
 # Qt imports
 from qgis.PyQt import QtCore, QtGui, uic
-from qgis.PyQt.Qt import QObject
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
+from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, QObject
 from qgis.utils import iface
 
 from ....core.LayerTools.CustomFormTools.customFormGenerator import CustomFormGenerator
@@ -288,7 +287,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             return vlayer
         if not vlayer.isValid():
             QgsMessageLog.logMessage(
-                vlayer.error().summary(), "DSGTools Plugin", Qgis.Critical
+                vlayer.error().summary(), "DSGTools Plugin", Qgis.MessageLevel.Critical
             )
         vlayer.setCrs(crs)
         vlayer = (

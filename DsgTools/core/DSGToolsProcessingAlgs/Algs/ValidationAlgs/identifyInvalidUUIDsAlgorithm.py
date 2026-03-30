@@ -34,7 +34,7 @@ from qgis.core import (
     QgsProcessingParameterString,
     QgsWkbTypes,
 )
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 
 from .validationAlgorithm import ValidationAlgorithm
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
@@ -91,7 +91,7 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
     def getFlagGeometry(self, feature):
         if (
             QgsWkbTypes.geometryType(feature.geometry().wkbType())
-            == QgsWkbTypes.LineGeometry
+            == QgsWkbTypes.GeometryType.LineGeometry
         ):
             multiPoints = feature.geometry().convertToType(0, True)
             pointList = multiPoints.asMultiPoint()
@@ -186,9 +186,9 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
 
     def getFlagFields(self):
         sinkFields = QgsFields()
-        sinkFields.append(QgsField("erro", QVariant.String))
-        sinkFields.append(QgsField("classe", QVariant.String))
-        sinkFields.append(QgsField("feature_id", QVariant.Int))
+        sinkFields.append(QgsField("erro", QMetaType.Type.QString))
+        sinkFields.append(QgsField("classe", QMetaType.Type.QString))
+        sinkFields.append(QgsField("feature_id", QMetaType.Type.Int))
         return sinkFields
 
     def hasDuplicateValues(self, value, valueList):

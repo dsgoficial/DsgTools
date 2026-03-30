@@ -11,7 +11,7 @@
         email                : uchoalzac@eb.br
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsFeature,
     QgsProcessing,
@@ -22,7 +22,6 @@ from qgis.core import (
     QgsWkbTypes,
     QgsFeatureSink,
     QgsProcessingMultiStepFeedback,
-    QgsGeometry,
 )
 
 from ...algRunner import AlgRunner
@@ -129,10 +128,8 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
             geom = feature.geometry()
             centroid = geom.centroid()
 
-            point = centroid.asPoint()
             pointFeature = QgsFeature(fields)
             pointFeature.setGeometry(centroid)
-            pointFeature.setGeometry(QgsGeometry.fromPointXY(point))
 
             fieldsFeat = [f.name() for f in feature.fields()]
             for field in fields:
@@ -165,7 +162,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         return {self.OUTPUTPOLYGON: polygonSinkId}
 
     def name(self):
-        return "generalizeedificationsalgorithm"
+        return "generalizeedificationsareaalgorithm"
 
     def displayName(self):
         return self.tr("Generalizar Edificações - Area")

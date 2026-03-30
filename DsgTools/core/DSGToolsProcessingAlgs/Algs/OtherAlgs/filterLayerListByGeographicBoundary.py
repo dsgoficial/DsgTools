@@ -22,7 +22,7 @@
 
 from itertools import chain
 from typing import Any, Dict
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.core import (
     QgsProcessing,
@@ -127,9 +127,9 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
             }
         stepSize = 100 / listSize if listSize else 0
         geometryDict = {
-            QgsWkbTypes.PointGeometry: [],
-            QgsWkbTypes.LineGeometry: [],
-            QgsWkbTypes.PolygonGeometry: [],
+            QgsWkbTypes.GeometryType.PointGeometry: [],
+            QgsWkbTypes.GeometryType.LineGeometry: [],
+            QgsWkbTypes.GeometryType.PolygonGeometry: [],
         }
 
         if (
@@ -224,9 +224,9 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
             outputCrs,
         )
         self.flagSinkDict = {
-            QgsWkbTypes.PointGeometry: self.point_flag_sink,
-            QgsWkbTypes.LineGeometry: self.line_flag_sink,
-            QgsWkbTypes.PolygonGeometry: self.poly_flag_sink,
+            QgsWkbTypes.GeometryType.PointGeometry: self.point_flag_sink,
+            QgsWkbTypes.GeometryType.LineGeometry: self.line_flag_sink,
+            QgsWkbTypes.GeometryType.PolygonGeometry: self.poly_flag_sink,
         }
 
     def name(self):

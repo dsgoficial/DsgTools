@@ -25,10 +25,9 @@ import os
 from collections import defaultdict
 from typing import DefaultDict, Dict, Tuple, Union
 
-import processing
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsFeatureRequest,
     QgsGeometry,
@@ -366,7 +365,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
 
     def makeBoundaries(self, lyr, context, feedback):
         parameters = {"INPUT": lyr, "OUTPUT": "memory:"}
-        output = processing.run("native:boundary", parameters, context=context)
+        output = runProcessing("native:boundary", parameters, context=context)
         return output["OUTPUT"]
 
     def getDanglesOnInputLayerFeatures(

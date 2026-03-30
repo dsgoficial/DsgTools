@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
@@ -127,7 +127,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         geographicBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
-        if geomType == QgsWkbTypes.PolygonGeometry and geographicBoundsLyr is not None:
+        if geomType == QgsWkbTypes.GeometryType.PolygonGeometry and geographicBoundsLyr is not None:
             raise NotImplementedError(
                 self.tr("Spatial restriction not implemented yet for polygon layers")
             )

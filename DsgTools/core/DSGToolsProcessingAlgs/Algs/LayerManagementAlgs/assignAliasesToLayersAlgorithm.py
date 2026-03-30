@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
@@ -31,8 +31,7 @@ from qgis.core import (
     QgsProcessingParameterString,
     QgsEditorWidgetSetup,
 )
-from PyQt5.QtGui import QColor
-from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtGui import QColor
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,

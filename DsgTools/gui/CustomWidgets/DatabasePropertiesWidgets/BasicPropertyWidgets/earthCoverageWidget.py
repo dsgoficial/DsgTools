@@ -33,7 +33,7 @@ FORM_CLASS, _ = uic.loadUiType(
 
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 from DsgTools.core.ServerManagementTools.earthCoverageManager import (
     EarthCoverageManager,
 )
@@ -108,5 +108,5 @@ class EarthCoverageWidget(QtWidgets.QWidget, FORM_CLASS):
                 self.tr("Earth Coverage not loaded! Check log for details.")
                 + ":".join(e.args),
                 "DSGTools Plugin",
-                Qgis.Critical,
+                Qgis.MessageLevel.Critical,
             )

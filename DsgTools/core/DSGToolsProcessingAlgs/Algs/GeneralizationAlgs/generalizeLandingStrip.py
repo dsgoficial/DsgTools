@@ -11,7 +11,7 @@
         email                : uchoalzac@ime.eb.br
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
@@ -27,9 +27,8 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsVectorLayer,
 )
-import processing
 
-from ...algRunner import AlgRunner
+from ...algRunner import AlgRunner, runProcessing
 
 
 class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
@@ -266,9 +265,10 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
             context,
             fieldType=1,
         )
-        orientedBBox = processing.run(
+        orientedBBox = runProcessing(
             "native:orientedminimumboundingbox",
             {"INPUT": id2, "OUTPUT": "TEMPORARY_OUTPUT"},
+            context=context,
         )["OUTPUT"]
         voronoi_result = algRunner.runSkeletonVoronoi(
             features_to_become_line, smooth_voronoi, -1, context

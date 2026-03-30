@@ -22,9 +22,9 @@
 """
 
 from collections import defaultdict
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
-import processing
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import runProcessing
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
@@ -165,7 +165,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             "GRASS_VECTOR_DSCO": "",
             "GRASS_VECTOR_LCO": "",
         }
-        x = processing.run(
+        x = runProcessing(
             "grass7:v.overlay", parameters, context=context, feedback=feedback
         )
         lyr = QgsProcessingUtils.mapLayerFromString(x["output"], context)
@@ -185,8 +185,9 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         """
         # identify all holes in coverage layer first
         coverageHolesParam = {"INPUT": coverage, "FLAGS": "memory:", "SELECTED": False}
-        coverageHoles = processing.run(
-            "dsgtools:identifygaps", coverageHolesParam, None, feedback, context
+        coverageHoles = runProcessing(
+            "dsgtools:identifygaps", coverageHolesParam,
+            context=context, feedback=feedback,
         )["FLAGS"]
         geometryHandler = GeometryHandler()
         gapSet = set()
@@ -212,8 +213,9 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             "OVERLAY": dissolveOutput,
             "OUTPUT": "memory:",
         }
-        differenceOutput = processing.run(
-            "native:difference", differenceParameters, onFinish, feedback, context
+        differenceOutput = runProcessing(
+            "native:difference", differenceParameters,
+            context=context, feedback=feedback, onFinish=onFinish,
         )
         for feat in differenceOutput["OUTPUT"].getFeatures():
             for geom in geometryHandler.deaggregateGeometry(feat.geometry()):

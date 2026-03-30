@@ -65,7 +65,7 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         Initiates the dialog
         """
         header = self.tableWidget.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.Stretch)
+        header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.populateTable()
 
     def populateTable(self):
@@ -155,7 +155,7 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         Adds a new server
         """
         dlg = ServerConfigurator(self)
-        result = dlg.exec_()
+        result = dlg.exec()
         if result:
             self.populateTable()
 
@@ -169,7 +169,7 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
             return
         dlg = ServerConfigurator(self)
         dlg.setServerConfiguration(selectedItem.text())
-        result = dlg.exec_()
+        result = dlg.exec()
         if result:
             self.populateTable()
 
@@ -195,7 +195,7 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
             return
         name = selectedItem.text()
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             test = self.testServer(name)
             if test:
                 QMessageBox.warning(
@@ -275,7 +275,7 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
                 self.tr("Critical!"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
             abstractDb.closeDatabase()
             return False
 

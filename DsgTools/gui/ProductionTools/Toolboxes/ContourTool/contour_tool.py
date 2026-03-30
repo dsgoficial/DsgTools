@@ -101,7 +101,7 @@ class ContourTool(object):
 
         for intersected in features:
             intersection = geom.intersection(intersected.geometry())
-            if intersection.type() == QgsWkbTypes.PointGeometry:
+            if intersection.type() == QgsWkbTypes.GeometryType.PointGeometry:
                 distance = intersection.distance(pointGeom)
                 distances.append((distance, intersected))
 
@@ -145,7 +145,7 @@ class ContourTool(object):
         first_value = first_feature.attribute(attribute)
         if not first_value:
             first_value_dlg = ContourValue(self)
-            retorno = first_value_dlg.exec_()
+            retorno = first_value_dlg.exec()
             if self.first_value:
                 id = first_feature.id()
                 first_value = self.first_value

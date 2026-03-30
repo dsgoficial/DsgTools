@@ -21,7 +21,7 @@
 """
 
 # from qgis.PyQt.QtCore import (QCoreApplication, QVariant)
-from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
@@ -81,7 +81,7 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
         progressStep = 100 / listSize if listSize else 0
         step = 0
         newField = QgsFields()
-        newField.append(QgsField("area", QVariant.Double))
+        newField.append(QgsField("area", QMetaType.Type.Double))
         (self.sink, self.sink_id) = self.parameterAsSink(
             parameters, self.OUTPUT, context, newField, QgsWkbTypes.MultiPolygon, crs
         )

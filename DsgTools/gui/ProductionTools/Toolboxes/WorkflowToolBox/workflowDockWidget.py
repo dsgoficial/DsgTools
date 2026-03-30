@@ -38,10 +38,9 @@ from qgis.core import (
     QgsExpressionContextUtils,
     QgsVectorLayer,
 )
-from qgis.PyQt.QtGui import QBrush, QColor
+from qgis.PyQt.QtGui import QBrush, QColor, QAction
 from qgis.PyQt.QtCore import Qt, pyqtSlot, QEvent
 from qgis.PyQt.QtWidgets import (
-    QAction,
     QLineEdit,
     QFileDialog,
     QDockWidget,
@@ -121,13 +120,13 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             ExecutionStatus.IGNORE_FLAGS: (255, 230, 1),
         }
         self.qgisStatusDict = {
-            ExecutionStatus.RUNNING: Qgis.Info,
-            ExecutionStatus.PAUSED_BEFORE_RUNNING: Qgis.Info,
-            ExecutionStatus.CANCELED: Qgis.Warning,
-            ExecutionStatus.FAILED: Qgis.Critical,
-            ExecutionStatus.FINISHED: Qgis.Info,
-            ExecutionStatus.FINISHED_WITH_FLAGS: Qgis.Warning,
-            ExecutionStatus.IGNORE_FLAGS: Qgis.Warning,
+            ExecutionStatus.RUNNING: Qgis.MessageLevel.Info,
+            ExecutionStatus.PAUSED_BEFORE_RUNNING: Qgis.MessageLevel.Info,
+            ExecutionStatus.CANCELED: Qgis.MessageLevel.Warning,
+            ExecutionStatus.FAILED: Qgis.MessageLevel.Critical,
+            ExecutionStatus.FINISHED: Qgis.MessageLevel.Info,
+            ExecutionStatus.FINISHED_WITH_FLAGS: Qgis.MessageLevel.Warning,
+            ExecutionStatus.IGNORE_FLAGS: Qgis.MessageLevel.Warning,
         }
         self.workflowStatusDict = defaultdict(list)
         self.ignoreFlagsMenuDict = defaultdict(dict)
@@ -154,7 +153,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             self.tr(
                 f"The processing Invalid Feature Filtering option changed to 'Do not filter (better performance)'. This feature is needed for the workflow to work properly."
             ),
-            Qgis.Info,
+            Qgis.MessageLevel.Info,
             duration=3,
         )
 
@@ -187,7 +186,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                 action.triggered.connect(callback)
                 menu.addAction(action)
 
-        out = menu.exec_(widget.mapToGlobal(pos))
+        out = menu.exec(widget.mapToGlobal(pos))
 
     def getIgnoreFlagsMenu(
         self,
@@ -251,7 +250,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             self.tr(
                 f"The user has set the current workflow item of the workflow '{workflow.displayName}' as '{currentWorkflowItem.displayName}'."
             ),
-            Qgis.Info,
+            Qgis.MessageLevel.Info,
             duration=3,
         )
 
@@ -274,9 +273,9 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                 self,
                 self.tr("DSGTools Q&A Tool Box: Confirm action"),
                 msg,
-                QMessageBox.Ok | QMessageBox.Cancel if showCancel else QMessageBox.Ok,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel if showCancel else QMessageBox.StandardButton.Ok,
             )
-            == QMessageBox.Ok
+            == QMessageBox.StandardButton.Ok
         )
 
     @pyqtSlot(bool, name="on_cancelPushButton_clicked")
@@ -386,7 +385,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                 f"Workflow version: {metadata.version}\n"
                 f"Last modification: {metadata.lastModified}"
             ),
-            Qt.ToolTipRole,
+            Qt.ItemDataRole.ToolTipRole,
         )
 
     def setGuiState(self, isActive=False):
@@ -415,7 +414,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         dlg = WorkflowSetupDialog(parent=self)
         dlg.show()
         # if result is 0, a valid workflow was filled and Ok was pressed
-        if dlg.exec_() != 1:
+        if dlg.exec() != 1:
             return
         workflow = dlg.currentWorkflow()
         name = workflow.displayName
@@ -469,7 +468,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             json.dump(workflow.as_dict(), f)
         dlg.importWorkflow(temp)
         os.remove(temp)
-        if dlg.exec_() != 1:
+        if dlg.exec() != 1:
             return
         # block "if modifications are confirmed by user"
         newWorkflow = dlg.currentWorkflow()
@@ -481,7 +480,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                     "modified name is already set for other"
                     " workflow. Nothing changed."
                 ),
-                Qgis.Warning,
+                Qgis.MessageLevel.Warning,
                 duration=3,
             )
             return
@@ -498,7 +497,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         self.setWorkflowTooltip(self.comboBox.currentIndex(), newWorkflow.metadata)
         self.setCurrentWorkflow()
         self.iface.messageBar().pushMessage(
-            self.tr("DSGTools Q&A Tool Box"), msg, Qgis.Info, duration=3
+            self.tr("DSGTools Q&A Tool Box"), msg, Qgis.MessageLevel.Info, duration=3
         )
         self.saveState()
 
@@ -526,7 +525,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         self.iface.messageBar().pushMessage(
             self.tr("DSGTools Q&A Tool Box"),
             self.tr(f"Workflow {currentWorkflow.displayName} execution has finished."),
-            Qgis.Info,
+            Qgis.MessageLevel.Info,
             duration=3,
         )
         self.progressBar.setValue(100)
@@ -636,7 +635,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                     row, workflowItem.displayName, workflow
                 )
             nameWidget = self.customLineWidget(workflowItem.displayName, tooltip)
-            nameWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+            nameWidget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             nameWidget.customContextMenuRequested.connect(
                 partial(
                     self.generateMenu,
@@ -648,7 +647,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             )
             self.tableWidget.setCellWidget(row, 0, nameWidget)
             statusWidget = self.customLineWidget("", tooltip)
-            statusWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+            statusWidget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             statusWidget.customContextMenuRequested.connect(
                 partial(
                     self.generateMenu,
@@ -671,7 +670,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                 ]
                 else 0
             )
-            pb.setContextMenuPolicy(Qt.CustomContextMenu)
+            pb.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             workflowItem.feedback.progressChanged.connect(partial(self.intWrapper, row))
             self.tableWidget.setCellWidget(row, 2, pb)
         workflow.currentWorkflowItemStatusChanged.connect(self.setModelStatus)
@@ -755,7 +754,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                 self.tr(
                     f"The workflows saved in the project are in the older version. We will not load these versions. Please convert your workflows, import them again and save."
                 ),
-                Qgis.Warning,
+                Qgis.MessageLevel.Warning,
                 duration=3,
             )
 
@@ -783,7 +782,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),
                 self.tr("please select a valid Workflow."),
-                Qgis.Warning,
+                Qgis.MessageLevel.Warning,
                 duration=3,
             )
             return
@@ -810,10 +809,10 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                         self.tr(
                             f"Would you like to restart workflow '{workflow.displayName}'?"
                         ),
-                        QMessageBox.Yes | QMessageBox.No,
-                        defaultButton=QMessageBox.No,
+                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                        defaultButton=QMessageBox.StandardButton.No,
                     )
-                    == QMessageBox.No
+                    == QMessageBox.StandardButton.No
                 ):
                     self.setGuiState(False)
                     return
@@ -848,7 +847,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                     self.tr("workflow '{path}' was not imported: '{msg}'").format(
                         path=wPath, msg=str(e)
                     ),
-                    Qgis.Critical,
+                    Qgis.MessageLevel.Critical,
                     duration=3,
                 )
                 continue
@@ -870,7 +869,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         QgsMessageLog.logMessage(
             self.tr("Model {model} imported.").format(model=name),
             "DSGTools Plugin",
-            Qgis.Info,
+            Qgis.MessageLevel.Info,
         )
 
     def importWorkflowFromJsonPayload(self, data: List[Dict]) -> None:
@@ -883,7 +882,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                     self.tr("Error importing workflow. Error message: {msg}'").format(
                         msg=str(e)
                     ),
-                    Qgis.Critical,
+                    Qgis.MessageLevel.Critical,
                     duration=3,
                 )
                 continue

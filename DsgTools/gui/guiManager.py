@@ -26,8 +26,8 @@ import os.path
 import sys
 
 from qgis.PyQt.QtCore import QObject, Qt
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
+from qgis.PyQt.QtGui import QIcon, QAction
+from qgis.PyQt.QtWidgets import QToolButton, QMenu
 
 from .BDGExTools.bdgexGuiManager import BDGExGuiManager
 from .LayerTools.layerToolsGuiManager import LayerToolsGuiManager
@@ -78,8 +78,8 @@ class GuiManager(QObject):
         """
         button = QToolButton(parent)
         button.setObjectName(text)
-        button.setToolButtonStyle(Qt.ToolButtonIconOnly)
-        button.setPopupMode(QToolButton.MenuButtonPopup)
+        button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
+        button.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         parent.addWidget(button)
         self.actions.append(button)
         return button

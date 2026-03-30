@@ -24,7 +24,7 @@
 import re
 from datetime import datetime
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsCoordinateTransform,
     QgsFeature,
@@ -326,13 +326,13 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
         operator = self.parameterAsString(parameters, self.OPERATOR, context)
         todaydate = self.parameterAsString(parameters, self.DATE, context)
         plate = self.parameterAsString(parameters, self.PLATE, context).upper()
-        elevacao = self.parameterAsFields(parameters, self.ELEVATION_FIELD, context)[0]
-        creation = self.parameterAsFields(parameters, self.CREATION_FIELD, context)[0]
-        trackid = self.parameterAsFields(parameters, self.TRACKID_FIELD, context)[0]
-        tracksegid = self.parameterAsFields(parameters, self.TRACKSEGID_FIELD, context)[
+        elevacao = self.parameterAsStrings(parameters, self.ELEVATION_FIELD, context)[0]
+        creation = self.parameterAsStrings(parameters, self.CREATION_FIELD, context)[0]
+        trackid = self.parameterAsStrings(parameters, self.TRACKID_FIELD, context)[0]
+        tracksegid = self.parameterAsStrings(parameters, self.TRACKSEGID_FIELD, context)[
             0
         ]
-        tracksegpointid = self.parameterAsFields(
+        tracksegpointid = self.parameterAsStrings(
             parameters, self.TRACKSEGPOINTID_FIELD, context
         )[0]
         multiStepFeedback.setCurrentStep(1)

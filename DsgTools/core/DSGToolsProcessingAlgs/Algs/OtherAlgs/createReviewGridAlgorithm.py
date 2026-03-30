@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsFeature,
     QgsFeatureSink,
@@ -35,7 +35,7 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsWkbTypes,
 )
-from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import QMetaType
 
 from ...algRunner import AlgRunner
 
@@ -184,12 +184,12 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
 
     def getOutputFields(self):
         fields = QgsFields()
-        fields.append(QgsField("rank", QVariant.Int))
-        fields.append(QgsField("visited", QVariant.Bool))
-        fields.append(QgsField("atividade_id", QVariant.Int))
-        fields.append(QgsField("unidade_trabalho_id", QVariant.Int))
-        fields.append(QgsField("etapa_id", QVariant.Int))
-        fields.append(QgsField("data_atualizacao", QVariant.DateTime))
+        fields.append(QgsField("rank", QMetaType.Type.Int))
+        fields.append(QgsField("visited", QMetaType.Type.Bool))
+        fields.append(QgsField("atividade_id", QMetaType.Type.Int))
+        fields.append(QgsField("unidade_trabalho_id", QMetaType.Type.Int))
+        fields.append(QgsField("etapa_id", QMetaType.Type.Int))
+        fields.append(QgsField("data_atualizacao", QMetaType.Type.QDateTime))
         return fields
 
     def sortGridAndCreateOutputFetures(

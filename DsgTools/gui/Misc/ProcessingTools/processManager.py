@@ -21,8 +21,7 @@
  ***************************************************************************/
 """
 from builtins import str
-from qgis.PyQt.Qt import QObject
-from qgis.PyQt.QtCore import QUrl, pyqtSlot
+from qgis.PyQt.QtCore import Qt, QUrl, pyqtSlot, QObject
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis._core import QgsAction
 
@@ -113,7 +112,7 @@ class ProcessManager(QObject):
         # Setting the progress bar
         progressMessageBar = self.iface.messageBar().createMessage(message)
         progressBar = QProgressBar()
-        progressBar.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        progressBar.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         progressMessageBar.layout().addWidget(progressBar)
         self.iface.messageBar().pushWidget(
             progressMessageBar, self.iface.messageBar().INFO

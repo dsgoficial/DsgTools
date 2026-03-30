@@ -224,9 +224,9 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         :return: (tuple-of-QgsVectorLayer) filled flag layers.
         """
         layerMap = {
-            QgsWkbTypes.PointGeometry: ptLayer,
-            QgsWkbTypes.LineGeometry: lLayer,
-            QgsWkbTypes.PolygonGeometry: polLayer,
+            QgsWkbTypes.GeometryType.PointGeometry: ptLayer,
+            QgsWkbTypes.GeometryType.LineGeometry: lLayer,
+            QgsWkbTypes.GeometryType.PolygonGeometry: polLayer,
         }
 
         for ruleParam in attrRulesMap.values():

@@ -21,7 +21,7 @@
 """
 
 import fnmatch
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsMapLayer,
     QgsProcessingAlgorithm,
@@ -83,7 +83,7 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
         loadedLayerDict = {
             l.name(): l
             for l in QgsProject.instance().mapLayers().values()
-            if l.type() == QgsMapLayer.VectorLayer
+            if l.type() == QgsMapLayer.LayerType.VectorLayer
         }
         loadedLayerNamesSet = set(loadedLayerDict.keys())
         wildCardFilterList = [fi for fi in layerNameList if "*" in fi]

@@ -137,7 +137,7 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
                     + ": "
                     + exceptionDict[errorDb],
                     "DSGTools Plugin",
-                    Qgis.Critical,
+                    Qgis.MessageLevel.Critical,
                 )
         return msg
 

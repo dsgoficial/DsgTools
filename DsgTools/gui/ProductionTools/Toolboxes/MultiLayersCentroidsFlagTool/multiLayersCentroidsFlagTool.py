@@ -26,12 +26,11 @@ from typing import Any, Dict, List, Optional, Tuple, Union, Set, DefaultDict
 from qgis.PyQt.QtWidgets import (
     QMessageBox,
     QSpinBox,
-    QAction,
     QDockWidget,
     QTableWidgetItem,
     QMenu,
 )
-from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtGui import QAction, QIcon
 from qgis.PyQt.QtCore import (
     QSettings,
     pyqtSignal,
@@ -43,7 +42,6 @@ from qgis.PyQt.QtCore import (
     QModelIndex,
 )
 from qgis.PyQt import QtGui, uic, QtCore, QtWidgets
-from qgis.PyQt.Qt import QObject
 
 from processing.gui.MultipleInputDialog import MultipleInputDialog
 from qgis.core import (
@@ -92,7 +90,7 @@ class MultiLayersCentroidsFlagDockWidget(
         self.attributeTable.cellClicked.connect(self.panAndFlashFeature)
 
         # Make the entire table read-only
-        self.attributeTable.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.attributeTable.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
 
         self.pointLayerDict: Dict[str, QgsVectorLayer] = dict()
         self.lyrsNRowPointDict: DefaultDict[int, Tuple[str, QgsFeature]] = defaultdict(
@@ -237,7 +235,7 @@ class MultiLayersCentroidsFlagDockWidget(
 
                 # Create layer name item and make it read-only
                 layerItem = QTableWidgetItem(self.pointLayerDict[lyrid].name())
-                layerItem.setFlags(layerItem.flags() & ~Qt.ItemIsEditable)
+                layerItem.setFlags(layerItem.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.attributeTable.setItem(row, 0, layerItem)
 
                 for nColumn, field in enumerate(self.columns):
@@ -263,7 +261,7 @@ class MultiLayersCentroidsFlagDockWidget(
 
                     # Create attribute item and make it read-only
                     attrItem = QTableWidgetItem(str(attr))
-                    attrItem.setFlags(attrItem.flags() & ~Qt.ItemIsEditable)
+                    attrItem.setFlags(attrItem.flags() & ~Qt.ItemFlag.ItemIsEditable)
                     self.attributeTable.setItem(row, nColumn + 1, attrItem)
 
                 row += 1
@@ -335,7 +333,7 @@ class MultiLayersCentroidsFlagDockWidget(
         """
         Sets up the context menu for the attribute table.
         """
-        self.attributeTable.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.attributeTable.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.attributeTable.customContextMenuRequested.connect(self.showMenuContext)
 
     def headerContextMenu(self) -> None:
@@ -343,7 +341,7 @@ class MultiLayersCentroidsFlagDockWidget(
         Sets up the context menu for the attribute table header.
         """
         header = self.attributeTable.horizontalHeader()
-        header.setContextMenuPolicy(Qt.CustomContextMenu)
+        header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         header.customContextMenuRequested.connect(self.showHeaderMenuContext)
 
     def showHeaderMenuContext(self, position: QPoint) -> None:
@@ -392,7 +390,7 @@ class MultiLayersCentroidsFlagDockWidget(
         contextMenu.addAction(resetAction)
 
         # Execute the menu
-        contextMenu.exec_(header.viewport().mapToGlobal(position))
+        contextMenu.exec(header.viewport().mapToGlobal(position))
 
     def hideColumn(self, columnIndex: int) -> None:
         """
@@ -496,7 +494,7 @@ class MultiLayersCentroidsFlagDockWidget(
         )
         action1.triggered.connect(lambda: self.setAllFeatureAttributesAllLayers(index))
         contextMenu.addAction(action1)
-        contextMenu.exec_(self.attributeTable.viewport().mapToGlobal(position))
+        contextMenu.exec(self.attributeTable.viewport().mapToGlobal(position))
 
     def panAndFlashFeature(self, row: int) -> None:
         """
@@ -609,7 +607,7 @@ class MultiLayersCentroidsFlagDockWidget(
                 i
                 for i in QgsProject.instance().mapLayers().values()
                 if isinstance(i, QgsVectorLayer)
-                and i.geometryType() == QgsWkbTypes.PointGeometry
+                and i.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
             ],
             key=lambda x: x.id(),
         )
@@ -710,7 +708,7 @@ class MultiLayersCentroidsFlagDockWidget(
                 if (
                     layer
                     and isinstance(layer, QgsVectorLayer)
-                    and layer.geometryType() == QgsWkbTypes.PointGeometry
+                    and layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
                 ):
                     self.pointLayerDict[layer_id] = layer
 

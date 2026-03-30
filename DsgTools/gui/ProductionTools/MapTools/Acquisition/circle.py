@@ -54,17 +54,17 @@ class Circle(GeometricaAcquisition):
         self.createGeometry(self.geometry)
 
     def canvasReleaseEvent(self, event):
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.MouseButton.LeftButton:
             if not self.startPoint:
                 self.startPoint = QgsPointXY(event.mapPoint())
                 self.rubberBand = self.getRubberBand()
-        if event.button() == Qt.RightButton:
+        if event.button() == Qt.MouseButton.RightButton:
             self.endGeometry()
 
     def canvasMoveEvent(self, event):
         if self.snapCursorRubberBand:
             self.snapCursorRubberBand.hide()
-            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
+            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.GeometryType.PointGeometry)
             self.snapCursorRubberBand = None
         oldPoint = QgsPointXY(event.mapPoint())
         event.snapPoint()

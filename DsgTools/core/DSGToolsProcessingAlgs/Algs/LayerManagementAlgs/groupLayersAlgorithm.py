@@ -23,7 +23,7 @@
 """
 import os
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from qgis.core import (
     QgsDataSourceUri,

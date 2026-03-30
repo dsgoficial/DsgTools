@@ -29,7 +29,8 @@ from DsgTools.core.NetworkTools.ExternalFilesHandler import (
     ExternalFileDownloadProcessor,
 )
 
-from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtCore import QObject, QUrl
+from qgis.PyQt.QtGui import QDesktopServices
 from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
 from qgis.core import Qgis
 from .Options.options import Options
@@ -120,7 +121,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
         # dlg.show()
         self.options.setInterfaceWithParametersFromConfig()
         self.checkExternalDownloads()
-        result = self.options.exec_()
+        result = self.options.exec()
 
     def checkExternalDownloads(self):
         downloadProcessor = ExternalFileDownloadProcessor(
@@ -139,20 +140,20 @@ class AboutAndFurtherInfoGuiManager(QObject):
                 else self.tr("External files updated")
             )
             self.iface.messageBar().pushMessage(
-                self.tr("Info"), message, level=Qgis.Info
+                self.tr("Info"), message, level=Qgis.MessageLevel.Info
             )
 
     def showHelp(self):
         """
         Shows the help
         """
-        self.iface.openURL("https://github.com/dsgoficial/DsgTools/wiki", False)
+        QDesktopServices.openUrl(QUrl("https://github.com/dsgoficial/DsgTools/wiki"))
 
     def showBugTracker(self):
         """
         Shows the bug tracker
         """
-        self.iface.openURL("https://github.com/dsgoficial/DsgTools/issues", False)
+        QDesktopServices.openUrl(QUrl("https://github.com/dsgoficial/DsgTools/issues"))
 
     def showAbout(self):
         """
@@ -160,4 +161,4 @@ class AboutAndFurtherInfoGuiManager(QObject):
         """
         dlg = AboutDialog()
         dlg.show()
-        dlg.exec_()
+        dlg.exec()

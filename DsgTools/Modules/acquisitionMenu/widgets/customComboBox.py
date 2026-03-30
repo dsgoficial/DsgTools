@@ -1,17 +1,17 @@
-from PyQt5.QtWidgets import QComboBox, QApplication, QCompleter
-from PyQt5.QtCore import Qt, QSortFilterProxyModel
-from PyQt5 import QtGui
+from qgis.PyQt.QtWidgets import QComboBox, QApplication, QCompleter
+from qgis.PyQt.QtCore import Qt, QSortFilterProxyModel
+from qgis.PyQt import QtGui
 
 
 class CustomComboBox(QComboBox):
     def __init__(self, parent=None):
         super(CustomComboBox, self).__init__(parent)
-        self.setFocusPolicy(Qt.StrongFocus)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setEditable(True)
         self.completer = QCompleter(self)
-        self.completer.setCompletionMode(QCompleter.UnfilteredPopupCompletion)
+        self.completer.setCompletionMode(QCompleter.CompletionMode.UnfilteredPopupCompletion)
         self.pFilterModel = QSortFilterProxyModel(self)
-        self.pFilterModel.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.pFilterModel.setFilterCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.completer.setPopup(self.view())
         self.setCompleter(self.completer)
         self.lineEdit().textEdited.connect(self.pFilterModel.setFilterFixedString)
@@ -26,7 +26,7 @@ class CustomComboBox(QComboBox):
         ]
         self.setModel(model)
         self.setModelColumn(0)
-        self.setInsertPolicy(QComboBox.NoInsert)
+        self.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
 
     def setModel(self, model):
         super(CustomComboBox, self).setModel(model)

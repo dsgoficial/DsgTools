@@ -22,14 +22,15 @@
 """
 from builtins import range
 import os
-from qgis.PyQt.QtWidgets import QMessageBox, QApplication
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QWidget
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
-from qgis.PyQt.Qt import QWidget, QObject
+
 
 from qgis.core import (
     QgsMapLayer,
+    QgsProject,
     Qgis,
     QgsDataSourceUri,
     QgsMessageLog,
@@ -95,7 +96,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             dbName = self.dbComboBox.currentText()
             styleName = self.styleComboBox.currentText()
             lyrList = self.getLayers(dbName)
@@ -103,10 +104,12 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             dbVersion = abstractDb.getDatabaseVersion()
             stylesDict = abstractDb.getStyleDict(dbVersion)
             selectedStyle = stylesDict[styleName]
+            context = QgsProcessingContext()
+            context.setProject(QgsProject.instance())
             if "db:" in selectedStyle:
                 self.algRunner.runApplStylesFromDatabaseToLayers(
                     inputList=lyrList,
-                    context=QgsProcessingContext(),
+                    context=context,
                     styleName=selectedStyle.split(":")[-1],
                 )
             else:
@@ -116,7 +119,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
                 self.algRunner.runMatchAndApplyQmlStylesToLayer(
                     inputList=lyrList,
                     qmlFolder=stylePath,
-                    context=QgsProcessingContext(),
+                    context=context,
                 )
             # localProgress = ProgressWidget(1, len(lyrList) - 1, self.tr('Loading style {0}').format(styleName), parent=self.iface.mapCanvas())
             # for lyr in lyrList:
@@ -138,7 +141,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             QgsMessageLog.logMessage(
                 self.tr("Error setting style ") + styleName + ": " + ":".join(e.args),
                 "DSGTools Plugin",
-                Qgis.Critical,
+                Qgis.MessageLevel.Critical,
             )
             QApplication.restoreOverrideCursor()
 

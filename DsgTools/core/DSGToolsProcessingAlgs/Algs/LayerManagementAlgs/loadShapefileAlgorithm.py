@@ -24,7 +24,7 @@ import os
 
 from pathlib import Path
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingOutputMultipleLayers,
@@ -82,9 +82,9 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
             rootNode = QgsProject.instance().layerTreeRoot().addGroup(rootNodeName)
             rootNodeList.append(rootNode)
             groupDict[rootNodeName] = {
-                QgsWkbTypes.PointGeometry: self.createGroup("Ponto", rootNode),
-                QgsWkbTypes.LineGeometry: self.createGroup("Linha", rootNode),
-                QgsWkbTypes.PolygonGeometry: self.createGroup("Area", rootNode),
+                QgsWkbTypes.GeometryType.PointGeometry: self.createGroup("Ponto", rootNode),
+                QgsWkbTypes.GeometryType.LineGeometry: self.createGroup("Linha", rootNode),
+                QgsWkbTypes.GeometryType.PolygonGeometry: self.createGroup("Area", rootNode),
             }
         for step, data in enumerate(shapefileData):
             if feedback.isCanceled():

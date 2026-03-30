@@ -28,7 +28,7 @@ import os
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools import graphHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsFeatureRequest,
     QgsGeometry,
@@ -148,7 +148,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
         if inputLyr is None or inputLyr.featureCount() == 0:
             return {"FLAGS": self.flag_id}
-        attributeBlackList = self.parameterAsFields(
+        attributeBlackList = self.parameterAsStrings(
             parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
         attributeNameList = self.layerHandler.getAttributesFromBlackList(

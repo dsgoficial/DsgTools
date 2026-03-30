@@ -18,15 +18,15 @@ class Toggle(QCheckBox):
     # This widget was originally implemented by Martin Fitzpatrick
     # @ https://github.com/learnpyqt/python-qtwidgets
     # It is slightly modified to be used as a state toggle button
-    _transparent_pen = QPen(Qt.transparent)
-    _light_grey_pen = QPen(Qt.lightGray)
+    _transparent_pen = QPen(Qt.GlobalColor.transparent)
+    _light_grey_pen = QPen(Qt.GlobalColor.lightGray)
 
     def __init__(
         self,
         parent=None,
-        bar_color=Qt.gray,
+        bar_color=Qt.GlobalColor.gray,
         checked_color="#00B0FF",
-        handle_color=Qt.white,
+        handle_color=Qt.GlobalColor.white,
         labels=None,
     ):
         super().__init__(parent)

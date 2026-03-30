@@ -89,7 +89,7 @@ class SmoothLinesTool(QgsMapTool):
         if (
             not layer
             or not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() != QgsWkbTypes.LineGeometry
+            or layer.geometryType() != QgsWkbTypes.GeometryType.LineGeometry
             or not layer.isEditable()
         ):
             enabled = False
@@ -114,7 +114,7 @@ class SmoothLinesTool(QgsMapTool):
             iface.messageBar().pushMessage(
                 self.tr("Error"), 
                 self.tr("Select a valid layer"), 
-                level=Qgis.Critical, 
+                level=Qgis.MessageLevel.Critical, 
                 duration=5
             )
             return
@@ -123,7 +123,7 @@ class SmoothLinesTool(QgsMapTool):
             iface.messageBar().pushMessage(
                 self.tr("Error"),
                 self.tr("Select at least one feature in the source layer"), 
-                level=Qgis.Critical, 
+                level=Qgis.MessageLevel.Critical, 
                 duration=5
             )
             return

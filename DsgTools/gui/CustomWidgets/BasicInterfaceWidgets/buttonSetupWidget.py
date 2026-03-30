@@ -95,11 +95,11 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.messageBar.pushMessage(
             title or self.tr("Invalid workflow"),
             msg,
-            level=lvl or Qgis.Warning,
+            level=lvl or Qgis.MessageLevel.Warning,
             duration=duration or 5,
         )
         # msg = self.tr("Buttons setup definion invalid: {m}").format(m=msg)
-        QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.Warning)
+        QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.MessageLevel.Warning)
 
     def resizeEvent(self, e):
         """
@@ -785,9 +785,9 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :param row: (int) index for the row to be added to selection.
         """
         if row not in self.selectedRows():
-            self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
+            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
             self.tableWidget.selectRow(row)
-            self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
     def removeRowFromSelection(self, row):
         """
@@ -795,9 +795,9 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :param row: (int) index for the row to be removed from selection.
         """
         if row in self.selectedRows():
-            self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
+            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
             self.tableWidget.selectRow(row)
-            self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
     def clearRowSelection(self):
         """
@@ -972,7 +972,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         msg = self.tr('Setup "{0}" imported from "{1}"').format(
             self.setup.name(), filename
         )
-        self.raiseWarning(msg, title=self.tr("Imported workflow"), lvl=Qgis.Success)
+        self.raiseWarning(msg, title=self.tr("Imported workflow"), lvl=Qgis.MessageLevel.Success)
 
     @pyqtSlot(bool, name="on_exportPushButton_clicked")
     def exportSetup(self):
@@ -999,5 +999,5 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         res = os.path.exists(filename)
         if res:
             msg = self.tr('Setup "{0}" exported to "{1}"').format(s.name(), filename)
-            self.raiseWarning(msg, title=self.tr("Exported workflow"), lvl=Qgis.Success)
+            self.raiseWarning(msg, title=self.tr("Exported workflow"), lvl=Qgis.MessageLevel.Success)
         return res

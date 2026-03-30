@@ -20,10 +20,9 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QCoreApplication
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from qgis.PyQt.QtCore import QVariant
-import json, processing
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
+import json
 import gc
 from qgis.core import (
     QgsFeatureSink,
@@ -55,8 +54,8 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         self.flagSink = None
         self.flag_id = None
         self.flagFields = QgsFields()
-        self.flagFields.append(QgsField("alg_name", QVariant.String))
-        self.flagFields.append(QgsField("layer_name", QVariant.String))
+        self.flagFields.append(QgsField("alg_name", QMetaType.Type.QString))
+        self.flagFields.append(QgsField("layer_name", QMetaType.Type.QString))
 
     def initAlgorithm(self, config=None):
         """
@@ -227,7 +226,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         return json.loads(rules_text)
 
     def runProcessingAlg(self, algName, outputKey, parameters, context, feedback):
-        output = processing.run(algName, parameters, context=context, feedback=feedback)
+        output = runProcessing(algName, parameters, context=context, feedback=feedback)
         return output[outputKey] if outputKey else None
 
     def flagFeatures(self, outputLyr, algName, inputLyrName, context):

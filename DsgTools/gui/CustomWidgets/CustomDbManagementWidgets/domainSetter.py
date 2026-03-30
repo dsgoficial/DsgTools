@@ -70,22 +70,22 @@ class DomainSetter(QtWidgets.QDialog, FORM_CLASS):
         """
         if uiParameterJsonDict:
             item = self.domainListWidget.findItems(
-                uiParameterJsonDict["domainListWidget"], Qt.MatchExactly
+                uiParameterJsonDict["domainListWidget"], Qt.MatchFlag.MatchExactly
             )
             if isinstance(item, list):
                 item = item[0]
             self.domainListWidget.setCurrentItem(item)
             if uiParameterJsonDict["filterCheckBox"]:
-                self.filterCheckBox.setCheckState(QtCore.Qt.Checked)
+                self.filterCheckBox.setCheckState(QtCore.Qt.CheckState.Checked)
                 for codeName in uiParameterJsonDict["filterListWidgetCheckedItems"]:
                     codeNameItem = self.filterListWidget.findItems(
-                        codeName, Qt.MatchExactly
+                        codeName, Qt.MatchFlag.MatchExactly
                     )
                     if isinstance(codeNameItem, list):
                         codeNameItem = codeNameItem[0]
                     else:
                         codeNameItem = codeNameItem
-                    codeNameItem.setCheckState(QtCore.Qt.Checked)
+                    codeNameItem.setCheckState(QtCore.Qt.CheckState.Checked)
             self.applyChanges()
 
     def populateDomainList(self):
@@ -97,7 +97,7 @@ class DomainSetter(QtWidgets.QDialog, FORM_CLASS):
     def clearAll(self):
         self.filterLineEdit.clear()
         self.filterListWidget.clear()
-        self.filterCheckBox.setCheckState(QtCore.Qt.Unchecked)
+        self.filterCheckBox.setCheckState(QtCore.Qt.CheckState.Unchecked)
         self.domainName = None
         self.domainDict = None
         self.filterClause = dict()
@@ -109,7 +109,7 @@ class DomainSetter(QtWidgets.QDialog, FORM_CLASS):
     def clearCheckableItems(self):
         for idx in range(self.filterListWidget.__len__()):
             item = self.filterListWidget.item(idx)
-            item.setCheckState(QtCore.Qt.Unchecked)
+            item.setCheckState(QtCore.Qt.CheckState.Unchecked)
 
     @pyqtSlot(int)
     def on_filterCheckBox_stateChanged(self, idx):
@@ -135,11 +135,11 @@ class DomainSetter(QtWidgets.QDialog, FORM_CLASS):
             for codeName in list(self.domainDict.keys()):
                 newItem = QListWidgetItem(codeName)
                 newItem.setFlags(
-                    QtCore.Qt.ItemIsEnabled
-                    | QtCore.Qt.ItemIsTristate
-                    | QtCore.Qt.ItemIsUserCheckable
+                    QtCore.Qt.ItemFlag.ItemIsEnabled
+                    | QtCore.Qt.ItemFlag.ItemIsTristate
+                    | QtCore.Qt.ItemFlag.ItemIsUserCheckable
                 )
-                newItem.setCheckState(QtCore.Qt.Unchecked)
+                newItem.setCheckState(QtCore.Qt.CheckState.Unchecked)
                 self.filterListWidget.addItem(newItem)
 
     def on_filterLineEdit_textChanged(self, text):

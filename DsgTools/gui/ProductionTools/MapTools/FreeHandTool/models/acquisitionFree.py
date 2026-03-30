@@ -169,17 +169,17 @@ class AcquisitionFree(gui.QgsMapTool):
     def isPolygon(self):
         # Método para testar se a camada atual é polígono
         # Parâmetro de retorno: isPolygon (Boleano)
-        isPolygon = self.getGeometryType() != core.QgsWkbTypes.LineGeometry
+        isPolygon = self.getGeometryType() != core.QgsWkbTypes.GeometryType.LineGeometry
         return isPolygon
 
     def keyPressEvent(self, event):
         # Método para receber os eventos do teclado
         # Parâmetro de entrada: event (Evento que chamou o método)
-        if event.key() in [QtCore.Qt.Key_Delete, QtCore.Qt.Key_Backspace]:
+        if event.key() in [QtCore.Qt.Key.Key_Delete, QtCore.Qt.Key.Key_Backspace]:
             self.setStopedState(True)
             self.removeVertice()
             event.ignore()
-        elif event.key() == QtCore.Qt.Key_Escape:
+        elif event.key() == QtCore.Qt.Key.Key_Escape:
             self.cancelEdition()
             self.showMeasureTooltip()
             event.ignore()
@@ -215,7 +215,7 @@ class AcquisitionFree(gui.QgsMapTool):
             if not self.isPolygon():
                 lastPoint = rubberBand.asGeometry().asPolyline()[-1]
                 new_rubberBand = gui.QgsRubberBand(
-                    self.getCanvas(), core.QgsWkbTypes.LineGeometry
+                    self.getCanvas(), core.QgsWkbTypes.GeometryType.LineGeometry
                 )
                 new_rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
             else:
@@ -223,14 +223,14 @@ class AcquisitionFree(gui.QgsMapTool):
                     firstPoint = rubberBand.asGeometry().asPolygon()[0][0]
                     lastPoint = rubberBand.asGeometry().asPolygon()[0][-2]
                 new_rubberBand = gui.QgsRubberBand(
-                    self.getCanvas(), core.QgsWkbTypes.PolygonGeometry
+                    self.getCanvas(), core.QgsWkbTypes.GeometryType.PolygonGeometry
                 )
                 new_rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
             new_rubberBand.setWidth(1)
             rubberBandToStopState = self.getRubberBandToStopState()
             if rubberBandToStopState:
                 rubberBandToStopState.reset()
-            new_rubberBand.setLineStyle(QtCore.Qt.DotLine)
+            new_rubberBand.setLineStyle(QtCore.Qt.PenStyle.DotLine)
             new_rubberBand.addPoint(lastPoint)
             if firstPoint:
                 new_rubberBand.addPoint(firstPoint)
@@ -247,7 +247,7 @@ class AcquisitionFree(gui.QgsMapTool):
             rubberBand.reset()
         else:
             rubberBand = gui.QgsRubberBand(
-                self.getCanvas(), geometryType=core.QgsWkbTypes.PointGeometry
+                self.getCanvas(), geometryType=core.QgsWkbTypes.GeometryType.PointGeometry
             )
         rubberBand.setColor(QtGui.QColor(255, 0, 0, 200))
         rubberBand.setFillColor(QtGui.QColor(255, 0, 0, 40))
@@ -274,7 +274,7 @@ class AcquisitionFree(gui.QgsMapTool):
         # Parâmetro de entrada: event (Evento)
         snapRubberBand = self.getSnapRubberBand()
         if snapRubberBand:
-            snapRubberBand.reset(geometryType=core.QgsWkbTypes.PointGeometry)
+            snapRubberBand.reset(geometryType=core.QgsWkbTypes.GeometryType.PointGeometry)
             snapRubberBand.hide()
             self.setSnapRubberBand(None)
         layer = self.getCanvas().currentLayer()
@@ -289,13 +289,13 @@ class AcquisitionFree(gui.QgsMapTool):
         self.setGeometryType(layer.geometryType())
         if self.isPolygon():
             rubberBand = gui.QgsRubberBand(
-                self.getCanvas(), core.QgsWkbTypes.PolygonGeometry
+                self.getCanvas(), core.QgsWkbTypes.GeometryType.PolygonGeometry
             )
             rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
             rubberBand.setWidth(2)
         else:
             rubberBand = gui.QgsRubberBand(
-                self.getCanvas(), core.QgsWkbTypes.LineGeometry
+                self.getCanvas(), core.QgsWkbTypes.GeometryType.LineGeometry
             )
             rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
             rubberBand.setWidth(1)
@@ -315,7 +315,7 @@ class AcquisitionFree(gui.QgsMapTool):
             snapRubberBand = self.getSnapRubberBand()
             if snapRubberBand:
                 snapRubberBand.hide()
-                snapRubberBand.reset(geometryType=core.QgsWkbTypes.PointGeometry)
+                snapRubberBand.reset(geometryType=core.QgsWkbTypes.GeometryType.PointGeometry)
                 self.setSnapRubberBand(None)
             oldPoint = event.mapPoint()
             event.snapPoint()
@@ -343,7 +343,7 @@ class AcquisitionFree(gui.QgsMapTool):
             return
         geom = rubberBand.asGeometry()
         self.tooltip = QtWidgets.QToolTip
-        if geom.type() == core.QgsWkbTypes.LineGeometry:
+        if geom.type() == core.QgsWkbTypes.GeometryType.LineGeometry:
             length = geom.length()
             if length != None or length == 0:
                 measure_dist = self.dist_area.measureLength(geom)
@@ -361,7 +361,7 @@ class AcquisitionFree(gui.QgsMapTool):
                 )
             else:
                 self.tooltip.hideText()
-        elif geom.type() == core.QgsWkbTypes.PolygonGeometry:
+        elif geom.type() == core.QgsWkbTypes.GeometryType.PolygonGeometry:
             area = geom.area()
             if area != None or area == 0:
                 measure_dist = self.dist_area.measureArea(geom)
@@ -390,7 +390,7 @@ class AcquisitionFree(gui.QgsMapTool):
                 else rubberBand.asGeometry().asPolyline()
             )
             if self.isPolygon() and self.getRubberBand():
-                rubberBand.reset(geometryType=core.QgsWkbTypes.PolygonGeometry)
+                rubberBand.reset(geometryType=core.QgsWkbTypes.GeometryType.PolygonGeometry)
                 firstPoint = self.getRubberBand().asGeometry().asPolygon()[0][0]
                 secondPoint = self.getRubberBand().asGeometry().asPolygon()[0][-2]
                 rubberBand.addPoint(secondPoint)
@@ -417,9 +417,9 @@ class AcquisitionFree(gui.QgsMapTool):
 
     def doReshape(self, geom):
         line = ""
-        if geom.type() == core.QgsWkbTypes.LineGeometry:
+        if geom.type() == core.QgsWkbTypes.GeometryType.LineGeometry:
             line = geom.asPolyline()
-        elif geom.type() == core.QgsWkbTypes.PolygonGeometry:
+        elif geom.type() == core.QgsWkbTypes.GeometryType.PolygonGeometry:
             if geom.isMultipart():
                 line = geom.asMultiPolygon()[0][0]
             else:

@@ -164,7 +164,7 @@ class BDGExRequestHandler(QObject):
             msg = self.tr(
                 "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
             )
-            MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
+            MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             return ""
         
         response = resp.read()
@@ -175,7 +175,7 @@ class BDGExRequestHandler(QObject):
             msg = self.tr(
                 "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
             )
-            MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
+            MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             return ""
         
         # Verificar se a resposta não é HTML de erro
@@ -185,7 +185,7 @@ class BDGExRequestHandler(QObject):
             msg = self.tr(
                 "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
             )
-            MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
+            MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             return ""
         
         try:
@@ -195,7 +195,7 @@ class BDGExRequestHandler(QObject):
             msg = self.tr(
                 "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
             )
-            MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
+            MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             return ""
         
         return myDom

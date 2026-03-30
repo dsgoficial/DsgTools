@@ -23,7 +23,7 @@
 import os, sqlite3
 import json
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
@@ -110,7 +110,7 @@ class CreateBatchIncrementing(QtWidgets.QWizardPage, FORM_CLASS):
                 QgsMessageLog.logMessage(
                     self.tr("Error on {0}: ").format(key) + errorDict[key],
                     "DSGTools Plugin",
-                    Qgis.Critical,
+                    Qgis.MessageLevel.Critical,
                 )
             if len(errorList) > 0:
                 errorMsg += self.tr(
@@ -131,7 +131,7 @@ class CreateBatchIncrementing(QtWidgets.QWizardPage, FORM_CLASS):
             parameterDict["factoryParam"],
             parentWidget=self,
         )
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         dbDict, errorDict = dbCreator.createDbWithAutoIncrementingName(
             parameterDict["dbBaseName"],
             parameterDict["srid"],

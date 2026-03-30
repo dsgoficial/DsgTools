@@ -105,7 +105,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
         )
 
         # Get attribute blacklist
-        attr_blacklist = self.parameterAsFields(
+        attr_blacklist = self.parameterAsStrings(
             parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
 

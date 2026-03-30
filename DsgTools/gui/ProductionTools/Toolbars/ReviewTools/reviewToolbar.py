@@ -35,8 +35,7 @@ from qgis.core import (
     QgsExpression,
 )
 from qgis.gui import QgsMapTool, QgisInterface
-from qgis.PyQt.Qt import QVariant
-from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot
+from qgis.PyQt.QtCore import QMetaType, QSettings, pyqtSignal, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMessageBox, QWidget
 
@@ -138,13 +137,13 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             for field in self.rankFieldComboBox.fields()
             if field.name() == fieldName
         ]
-        if len(fieldList) == 0 or fieldList[0].type() != QVariant.Int:
+        if len(fieldList) == 0 or fieldList[0].type() != QMetaType.Type.Int:
             self.iface.messageBar().pushMessage(
                 title=self.tr("Warning!"),
                 text=self.tr(
                     "Invalid rank field! Select an integer field with unique ordered items."
                 ),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=2,
             )
             self.rankFieldComboBox.setCurrentIndex(0)
@@ -161,11 +160,11 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             for field in self.visitedFieldComboBox.fields()
             if field.name() == fieldName
         ]
-        if len(fieldList) == 0 or fieldList[0].type() != QVariant.Bool:
+        if len(fieldList) == 0 or fieldList[0].type() != QMetaType.Type.Bool:
             self.iface.messageBar().pushMessage(
                 title=self.tr("Warning!"),
                 text=self.tr("Invalid attribute filter! Select a boolean field."),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=2,
             )
             self.visitedFieldComboBox.setCurrentIndex(0)
@@ -178,7 +177,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             self.iface.messageBar().pushMessage(
                 title=self.tr("Warning!"),
                 text=self.tr("Select a layer to prepare the environment!"),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=2,
             )
             return
@@ -186,7 +185,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             self.iface.messageBar().pushMessage(
                 title=self.tr("Warning!"),
                 text=self.tr("Invalid attribute filter! Select a boolean field."),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=2,
             )
             return
@@ -198,7 +197,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
                 text=self.tr(
                     "Invalid rank field! Select an integer field with unique ordered items."
                 ),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=2,
             )
             return
@@ -217,11 +216,11 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             for field in self.visitedFieldComboBox.fields()
             if field.name() == self.visitedFieldComboBox.currentField()
         ]
-        if len(fieldList) == 0 or fieldList[0].type() != QVariant.Bool:
+        if len(fieldList) == 0 or fieldList[0].type() != QMetaType.Type.Bool:
             self.iface.messageBar().pushMessage(
                 title=self.tr("Warning!"),
                 text=self.tr("Invalid attribute filter!"),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=2,
             )
             return
@@ -290,7 +289,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             self.iface.messageBar().pushMessage(
                 title=self.tr("Info!"),
                 text=self.tr("All tiles already visited!"),
-                level=Qgis.Info,
+                level=Qgis.MessageLevel.Info,
                 duration=2,
             )
             return
@@ -325,7 +324,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             self.iface.messageBar().pushMessage(
                 title=self.tr("Info!"),
                 text=self.tr("All tiles already visited!"),
-                level=Qgis.Info,
+                level=Qgis.MessageLevel.Info,
                 duration=2,
             )
             return
@@ -352,9 +351,9 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
                 self,
                 self.tr("DSGTools Review Toolbar: Confirm action"),
                 self.tr("Would you like to set all features from grid as unvisited?"),
-                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
-            == QMessageBox.Ok
+            == QMessageBox.StandardButton.Ok
         ):
             return
         layer.setReadOnly(False)
@@ -383,7 +382,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             self.iface.messageBar().pushMessage(
                 title=self.tr("Info!"),
                 text=self.tr("All tiles already visited!"),
-                level=Qgis.Info,
+                level=Qgis.MessageLevel.Info,
                 duration=2,
             )
             return
@@ -431,7 +430,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         dateTimeFieldList = [
             field.name()
             for field in layer.fields()
-            if field.type() == QVariant.DateTime
+            if field.type() == QMetaType.Type.QDateTime
         ]
         dateTimeField = None if dateTimeFieldList == [] else dateTimeFieldList[0]
         layer.setReadOnly(False)
@@ -544,7 +543,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             self.iface.messageBar().pushMessage(
                 self.tr("Warning!"),
                 self.tr("Active layer is not valid to be used in this tool."),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=2,
             )
 

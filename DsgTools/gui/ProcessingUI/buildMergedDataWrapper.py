@@ -26,8 +26,8 @@ import json
 from qgis.core import Qgis, QgsProject, QgsVectorLayer, QgsMapLayerProxyModel
 from qgis.gui import QgsMessageBar, QgsMapLayerComboBox, QgsFieldExpressionWidget
 from qgis.utils import iface
-from qgis.PyQt.QtCore import QSize, QRegExp
-from qgis.PyQt.QtGui import QRegExpValidator, QIntValidator
+from qgis.PyQt.QtCore import QSize
+from qgis.PyQt.QtGui import QIntValidator
 from qgis.PyQt.QtWidgets import (
     QWidget,
     QComboBox,
@@ -69,7 +69,7 @@ class BuildMergedDataWrapper(WidgetWrapper):
         :return: (QgsMapLayerComboBox) configured layer selection widget.
         """
         cb = QgsMapLayerComboBox()
-        cb.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        cb.setFilters(QgsMapLayerProxyModel.Filter.VectorLayer)
         # Filter only Point, Line, and Polygon layers
         cb.setExceptedLayerList([])
         return cb
@@ -331,7 +331,7 @@ class BuildMergedDataWrapper(WidgetWrapper):
                 self.messageBar.pushMessage(
                     self.tr("Success"),
                     self.tr("Configuration loaded successfully"),
-                    level=Qgis.Success,
+                    level=Qgis.MessageLevel.Success,
                     duration=3,
                 )
             except Exception as e:
@@ -372,7 +372,7 @@ class BuildMergedDataWrapper(WidgetWrapper):
                         self.tr(
                             "Layers configuration successfully exported to {0}"
                         ).format(filepath),
-                        level=Qgis.Success,
+                        level=Qgis.MessageLevel.Success,
                         duration=5,
                     )
             except Exception as e:
@@ -563,7 +563,7 @@ class BuildMergedDataWrapper(WidgetWrapper):
             if pushAlert:
                 self.messageBar.pushMessage(
                     self.tr("Please provide at least 1 layer configuration."),
-                    level=Qgis.Warning,
+                    level=Qgis.MessageLevel.Warning,
                     duration=5,
                 )
             return False
@@ -578,7 +578,7 @@ class BuildMergedDataWrapper(WidgetWrapper):
                 if pushAlert:
                     self.messageBar.pushMessage(
                         self.tr("Layer is required in row {0}.").format(row + 1),
-                        level=Qgis.Warning,
+                        level=Qgis.MessageLevel.Warning,
                         duration=5,
                     )
                 return False
@@ -589,7 +589,7 @@ class BuildMergedDataWrapper(WidgetWrapper):
             #             self.tr("Duplicate class index {0} in row {1}.").format(
             #                 classIndex, row + 1
             #             ),
-            #             level=Qgis.Warning,
+            #             level=Qgis.MessageLevel.Warning,
             #             duration=5,
             #         )
             #     return False

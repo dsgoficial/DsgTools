@@ -61,7 +61,7 @@ class ValidationWorkflowCompactPropertyManagerWidget(
         Must be reimplemented in each child
         """
         dlg = ValidationWorkflowCreator(validationManager, parameterDict=jsonDict)
-        if dlg.exec_():
+        if dlg.exec():
             return dlg.getParameterDict()
         else:
             return None

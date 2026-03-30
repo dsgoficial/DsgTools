@@ -67,7 +67,7 @@ class SmallObjectsOnLayersWrapper(WidgetWrapper):
         """
         cb = QgsMapLayerComboBox()
         cb.setFilters(
-            QgsMapLayerProxyModel.LineLayer | QgsMapLayerProxyModel.PolygonLayer
+            QgsMapLayerProxyModel.Filter.LineLayer | QgsMapLayerProxyModel.Filter.PolygonLayer
         )
         return cb
 
@@ -193,7 +193,7 @@ class SmallObjectsOnLayersWrapper(WidgetWrapper):
         msg = QMessageBox()
         msg.setWindowTitle(self.tr("DSGTools: importing table"))
         if invalidValues and msgType == "warning":
-            msg.setIcon(QMessageBox.Warning)
+            msg.setIcon(QMessageBox.Icon.Warning)
             msg.setText(self.tr("Some rows have not been loaded"))
             msg.setInformativeText(
                 self.tr("Do you want to ignore and continue or cancel?")
@@ -205,12 +205,12 @@ class SmallObjectsOnLayersWrapper(WidgetWrapper):
                 "The following rows have not been loaded:\n{0}"
             ).format(msgString)
             msg.setDetailedText(formatedMsgString)
-            msg.setStandardButtons(QMessageBox.Ignore | QMessageBox.Cancel)
-            msg.setDefaultButton(QMessageBox.Cancel)
+            msg.setStandardButtons(QMessageBox.StandardButton.Ignore | QMessageBox.StandardButton.Cancel)
+            msg.setDefaultButton(QMessageBox.StandardButton.Cancel)
         else:
-            msg.setIcon(QMessageBox.Information)
+            msg.setIcon(QMessageBox.Icon.Information)
             msg.setText(self.tr("Successfully loaded!"))
-        choice = msg.exec_()
+        choice = msg.exec()
         return choice
 
     def setValue(self, value):
@@ -235,7 +235,7 @@ class SmallObjectsOnLayersWrapper(WidgetWrapper):
                 }
             )
         choice = self.showLoadingMsg(invalids, "warning" if invalids else "")
-        if choice == QMessageBox.Cancel:
+        if choice == QMessageBox.StandardButton.Cancel:
             otw.clear()
 
     def readStandardPanel(self):
@@ -299,7 +299,7 @@ class SmallObjectsOnLayersWrapper(WidgetWrapper):
             if pushAlert:
                 self.messageBar.pushMessage(
                     self.tr("Please provide at least layer."),
-                    level=Qgis.Warning,
+                    level=Qgis.MessageLevel.Warning,
                     duration=5,
                 )
             return False

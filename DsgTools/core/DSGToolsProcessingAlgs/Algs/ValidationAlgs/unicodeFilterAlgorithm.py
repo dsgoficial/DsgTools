@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
@@ -86,7 +86,7 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
         futures = set()
         nSteps = len(layerList)
         fields = QgsFields()
-        fields.append(QgsField("id", QVariant.Int))
+        fields.append(QgsField("id", QMetaType.Type.Int))
         returnDict, sinkDict = self.getOutputDict(parameters, context, fields)
         if nSteps == 0:
             return returnDict
@@ -128,19 +128,19 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
             parameters, context, self.OUTPUT1, QgsWkbTypes.MultiPoint, fields
         )
         returnDict[self.OUTPUT1] = point_sink_id
-        sinkDict[QgsWkbTypes.PointGeometry] = point_sink
+        sinkDict[QgsWkbTypes.GeometryType.PointGeometry] = point_sink
 
         line_sink, line_sink_id = self.createOutput(
             parameters, context, self.OUTPUT2, QgsWkbTypes.MultiLineString, fields
         )
         returnDict[self.OUTPUT2] = line_sink_id
-        sinkDict[QgsWkbTypes.LineGeometry] = line_sink
+        sinkDict[QgsWkbTypes.GeometryType.LineGeometry] = line_sink
 
         polygon_sink, polygon_sink_id = self.createOutput(
             parameters, context, self.OUTPUT3, QgsWkbTypes.MultiPolygon, fields
         )
         returnDict[self.OUTPUT3] = polygon_sink_id
-        sinkDict[QgsWkbTypes.PolygonGeometry] = polygon_sink
+        sinkDict[QgsWkbTypes.GeometryType.PolygonGeometry] = polygon_sink
 
         return returnDict, sinkDict
 

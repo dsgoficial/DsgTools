@@ -44,7 +44,7 @@ class LayerAndFieldSelectorWidget(QWidget, FORM_CLASS):
         """
         super(LayerAndFieldSelectorWidget, self).__init__(parent=parent)
         self.setupUi(self)
-        self.mMapLayerComboBox.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        self.mMapLayerComboBox.setFilters(QgsMapLayerProxyModel.Filter.VectorLayer)
         self.resizeWidget()
         self.setLayer()
         self.mMapLayerComboBox.layerChanged.connect(self.setLayer)

@@ -2,7 +2,7 @@
 
 from qgis.PyQt.QtGui import QIcon, QPixmap
 from qgis.PyQt.QtWidgets import QAction
-from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import QObject
 from qgis.gui import QgsMessageBar
 from qgis.core import Qgis, Qgis, QgsWkbTypes, QgsVectorLayer
 from .circle import Circle
@@ -46,7 +46,7 @@ class Acquisition(QObject):
         layer = self.iface.activeLayer()
         if (
             not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() == QgsWkbTypes.PointGeometry
+            or layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
             or not layer.isEditable()
         ):
             enabled = False
@@ -62,8 +62,8 @@ class Acquisition(QObject):
         layer = self.canvas.currentLayer()
         if layer in self.iface.editableLayers():
             if layer.geometryType() in [
-                QgsWkbTypes.LineGeometry,
-                QgsWkbTypes.PolygonGeometry,
+                QgsWkbTypes.GeometryType.LineGeometry,
+                QgsWkbTypes.GeometryType.PolygonGeometry,
             ]:
                 if self.tool:
                     self.tool.deactivate()
@@ -74,7 +74,7 @@ class Acquisition(QObject):
                 self.iface.messageBar().pushMessage(
                     self.tr("Warning"),
                     self.tr("Tool not defined for points"),
-                    level=Qgis.Info,
+                    level=Qgis.MessageLevel.Info,
                     duration=3,
                 )
                 self.tool.deactivate() if self.tool else ""
@@ -82,7 +82,7 @@ class Acquisition(QObject):
             self.iface.messageBar().pushMessage(
                 self.tr("Warning"),
                 self.tr("Start editing in current layer!"),
-                level=Qgis.Info,
+                level=Qgis.MessageLevel.Info,
                 duration=3,
             )
             self.tool.deactivate() if self.tool else ""

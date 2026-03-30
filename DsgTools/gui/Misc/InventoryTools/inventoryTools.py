@@ -28,8 +28,7 @@ from osgeo import gdal, ogr
 
 # Import the PyQt and QGIS libraries
 from qgis.PyQt import uic
-from qgis.PyQt.Qt import QObject
-from qgis.PyQt.QtCore import Qt, pyqtSlot
+from qgis.PyQt.QtCore import Qt, pyqtSlot, QObject
 from qgis.PyQt.QtWidgets import (
     QMenu,
     QApplication,
@@ -64,7 +63,7 @@ class InventoryTools(QDialog, FORM_CLASS):
 
         self.files = list()
 
-        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeWidget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.createMenu)
 
         self.whitelistRadio.setChecked(True)
@@ -100,7 +99,7 @@ class InventoryTools(QDialog, FORM_CLASS):
             if self.depth(item) == 1:
                 menu.addAction(self.tr("Remove Extension"), self.removeExtension)
 
-        menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+        menu.exec(self.treeWidget.viewport().mapToGlobal(position))
 
     def insertExtension(self):
         """

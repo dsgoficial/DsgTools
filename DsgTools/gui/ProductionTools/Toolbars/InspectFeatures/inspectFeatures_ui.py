@@ -6,7 +6,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from qgis.PyQt import QtCore, QtGui, QtWidgets
 
 
 class Ui_Form(object):
@@ -14,7 +14,7 @@ class Ui_Form(object):
         Form.setObjectName("Form")
         Form.resize(858, 36)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.MinimumExpanding
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -28,11 +28,11 @@ class Ui_Form(object):
         self.gridLayout.setSpacing(0)
         self.gridLayout.setObjectName("gridLayout")
         self.splitter = QtWidgets.QSplitter(Form)
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.splitter.setObjectName("splitter")
         self.mMapLayerComboBox = QgsMapLayerComboBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -43,18 +43,18 @@ class Ui_Form(object):
         self.mMapLayerComboBox.setMinimumSize(QtCore.QSize(0, 20))
         self.mMapLayerComboBox.setMaximumSize(QtCore.QSize(16777215, 32))
         self.mMapLayerComboBox.setFilters(
-            core.QgsMapLayerProxyModel.HasGeometry
-            | core.QgsMapLayerProxyModel.LineLayer
-            | core.QgsMapLayerProxyModel.NoGeometry
-            | core.QgsMapLayerProxyModel.PluginLayer
-            | core.QgsMapLayerProxyModel.PointLayer
-            | core.QgsMapLayerProxyModel.PolygonLayer
-            | core.QgsMapLayerProxyModel.VectorLayer
+            core.QgsMapLayerProxyModel.Filter.HasGeometry
+            | core.QgsMapLayerProxyModel.Filter.LineLayer
+            | core.QgsMapLayerProxyModel.Filter.NoGeometry
+            | core.QgsMapLayerProxyModel.Filter.PluginLayer
+            | core.QgsMapLayerProxyModel.Filter.PointLayer
+            | core.QgsMapLayerProxyModel.Filter.PolygonLayer
+            | core.QgsMapLayerProxyModel.Filter.VectorLayer
         )
         self.mMapLayerComboBox.setObjectName("mMapLayerComboBox")
         self.refreshPushButton = QtWidgets.QPushButton(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -68,15 +68,15 @@ class Ui_Form(object):
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap(":/plugins/DsgTools/icons/reload.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.refreshPushButton.setIcon(icon)
         self.refreshPushButton.setIconSize(QtCore.QSize(16, 16))
         self.refreshPushButton.setObjectName("refreshPushButton")
         self.zoomPercentageSpinBox = QgsDoubleSpinBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -89,7 +89,7 @@ class Ui_Form(object):
         self.zoomPercentageSpinBox.setObjectName("zoomPercentageSpinBox")
         self.mScaleWidget = QgsScaleWidget(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -101,7 +101,7 @@ class Ui_Form(object):
         self.mScaleWidget.setObjectName("mScaleWidget")
         self.idSpinBox = QtWidgets.QSpinBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -109,12 +109,12 @@ class Ui_Form(object):
         self.idSpinBox.setSizePolicy(sizePolicy)
         self.idSpinBox.setMinimumSize(QtCore.QSize(40, 20))
         self.idSpinBox.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.idSpinBox.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+        self.idSpinBox.setButtonSymbols(QtWidgets.QAbstractSpinBox.ButtonSymbols.NoButtons)
         self.idSpinBox.setSuffix("")
         self.idSpinBox.setObjectName("idSpinBox")
         self.usePanCkb = QtWidgets.QCheckBox(self.tr("Use pan"), self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -125,7 +125,7 @@ class Ui_Form(object):
         self.usePanCkb.setObjectName("usePanCkb")
         self.backInspectButton = QtWidgets.QPushButton(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -139,15 +139,15 @@ class Ui_Form(object):
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap(":/plugins/DsgTools/icons/backInspect.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.backInspectButton.setIcon(icon)
         self.backInspectButton.setIconSize(QtCore.QSize(16, 16))
         self.backInspectButton.setObjectName("backInspectButton")
         self.nextInspectButton = QtWidgets.QPushButton(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -161,15 +161,15 @@ class Ui_Form(object):
         icon1 = QtGui.QIcon()
         icon1.addPixmap(
             QtGui.QPixmap(":/plugins/DsgTools/icons/nextInspect.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.nextInspectButton.setIcon(icon1)
         self.nextInspectButton.setIconSize(QtCore.QSize(16, 16))
         self.nextInspectButton.setObjectName("nextInspectButton")
         self.mFieldExpressionWidget = QgsFieldExpressionWidget(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Preferred
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -181,7 +181,7 @@ class Ui_Form(object):
         self.mFieldExpressionWidget.setObjectName("mFieldExpressionWidget")
         self.sortPushButton = QtWidgets.QPushButton(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -195,18 +195,18 @@ class Ui_Form(object):
         icon3 = QtGui.QIcon()
         icon3.addPixmap(
             QtGui.QPixmap(":/plugins/DsgTools/icons/sort.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.sortPushButton.setIcon(icon3)
         self.sortPushButton.setCheckable(True)
         self.sortPushButton.setObjectName("sortPushButton")
         self.splitter2 = QtWidgets.QSplitter(self.splitter)
-        self.splitter2.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter2.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.splitter2.setObjectName("splitter2")
         self.mFieldComboBox = QgsFieldComboBox(self.splitter2)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -223,7 +223,7 @@ class Ui_Form(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.ascRadioButton = QtWidgets.QRadioButton(self.widget)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -235,8 +235,8 @@ class Ui_Form(object):
         icon4 = QtGui.QIcon()
         icon4.addPixmap(
             QtGui.QPixmap(":/plugins/DsgTools/icons/up.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.ascRadioButton.setIcon(icon4)
         self.ascRadioButton.setChecked(True)
@@ -244,7 +244,7 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.ascRadioButton)
         self.descRadioButton = QtWidgets.QRadioButton(self.widget)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -256,8 +256,8 @@ class Ui_Form(object):
         icon5 = QtGui.QIcon()
         icon5.addPixmap(
             QtGui.QPixmap(":/plugins/DsgTools/icons/down.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.descRadioButton.setIcon(icon5)
         self.descRadioButton.setObjectName("descRadioButton")
@@ -266,7 +266,7 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.splitter, 0, 2, 1, 1)
         self.inspectPushButton = QtWidgets.QPushButton(Form)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -280,8 +280,8 @@ class Ui_Form(object):
         icon2 = QtGui.QIcon()
         icon2.addPixmap(
             QtGui.QPixmap(":/plugins/DsgTools/icons/inspectFeatures.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.inspectPushButton.setIcon(icon2)
         self.inspectPushButton.setIconSize(QtCore.QSize(16, 16))
@@ -289,7 +289,7 @@ class Ui_Form(object):
         self.inspectPushButton.setObjectName("inspectPushButton")
         self.gridLayout.addWidget(self.inspectPushButton, 0, 0, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(
-            10, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum
+            10, 20, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum
         )
         self.gridLayout.addItem(spacerItem, 0, 1, 1, 1)
 

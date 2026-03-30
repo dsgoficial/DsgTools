@@ -22,9 +22,9 @@
 """
 import concurrent.futures
 import os
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtGui import QColor
-from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtCore import QMetaType
 from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingParameterMultipleLayers,
@@ -134,7 +134,7 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
         if expression.hasParserError():
             raise Exception(f"Invalid expression: \n{expressionString}")
         lyr.addExpressionField(
-            expressionString, QgsField("geometry_error", QVariant.String)
+            expressionString, QgsField("geometry_error", QMetaType.Type.QString)
         )
 
     def name(self):

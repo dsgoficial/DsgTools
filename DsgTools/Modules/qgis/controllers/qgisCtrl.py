@@ -1,6 +1,6 @@
 from qgis import core, gui
 from qgis.utils import iface
-from PyQt5 import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 import json
 from DsgTools.Modules.qgis.factories.actionsFactory import ActionsFactory
 from qgis.core import QgsWkbTypes
@@ -15,7 +15,7 @@ class QgisCtrl:
     def getLoadedVectorLayerNames(self):
         layerNames = []
         for l in core.QgsProject.instance().mapLayers().values():
-            if not (l.type() == core.QgsMapLayer.VectorLayer):
+            if not (l.type() == core.QgsMapLayer.LayerType.VectorLayer):
                 continue
             layerName = None
             if l.providerType() == "postgres":
@@ -36,7 +36,7 @@ class QgisCtrl:
     def getVectorLayerNames(self, layers):
         layerNames = []
         for l in layers:
-            if not (l.type() == core.QgsMapLayer.VectorLayer):
+            if not (l.type() == core.QgsMapLayer.LayerType.VectorLayer):
                 continue
             layerName = None
             if l.providerType() == "postgres":
@@ -58,13 +58,13 @@ class QgisCtrl:
         return [
             l
             for l in core.QgsProject.instance().mapLayers().values()
-            if l.type() == core.QgsMapLayer.VectorLayer
+            if l.type() == core.QgsMapLayer.LayerType.VectorLayer
         ]
 
     def getVectorLayersByName(self, name):
         layers = []
         for l in core.QgsProject.instance().mapLayers().values():
-            if not (l.type() == core.QgsMapLayer.VectorLayer):
+            if not (l.type() == core.QgsMapLayer.LayerType.VectorLayer):
                 continue
             layerName = None
             if l.providerType() == "postgres":
@@ -125,7 +125,7 @@ class QgisCtrl:
             "Mão Livre": "FreeHand",
         }
 
-    def addDockWidget(self, dockWidget, side=QtCore.Qt.LeftDockWidgetArea):
+    def addDockWidget(self, dockWidget, side=QtCore.Qt.DockWidgetArea.LeftDockWidgetArea):
         iface.addDockWidget(side, dockWidget)
 
     def removeDockWidget(self, dockWidget):
@@ -261,11 +261,11 @@ class QgisCtrl:
 
     def cutAndPasteSelectedFeatures(self, layer, destinatonLayer, attributes):
         geometryFilterDict = {
-            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry,),
-            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry,),
-            QgsWkbTypes.PolygonGeometry: (
-                QgsWkbTypes.PointGeometry,
-                QgsWkbTypes.PolygonGeometry,
+            QgsWkbTypes.GeometryType.PointGeometry: (QgsWkbTypes.GeometryType.PointGeometry,),
+            QgsWkbTypes.GeometryType.LineGeometry: (QgsWkbTypes.GeometryType.LineGeometry,),
+            QgsWkbTypes.GeometryType.PolygonGeometry: (
+                QgsWkbTypes.GeometryType.PointGeometry,
+                QgsWkbTypes.GeometryType.PolygonGeometry,
             ),
         }
         if (
@@ -282,8 +282,8 @@ class QgisCtrl:
             newFeat.setFields(destinatonLayer.fields())
             newGeom = (
                 feature.geometry().pointOnSurface()
-                if destinatonLayer.geometryType() == core.QgsWkbTypes.PointGeometry
-                and layer.geometryType() == core.QgsWkbTypes.PolygonGeometry
+                if destinatonLayer.geometryType() == core.QgsWkbTypes.GeometryType.PointGeometry
+                and layer.geometryType() == core.QgsWkbTypes.GeometryType.PolygonGeometry
                 else feature.geometry()
             )
             newFeat.setGeometry(newGeom)
@@ -327,9 +327,9 @@ class QgisCtrl:
     def suppressLayerForm(self, layer, suppress):
         setup = layer.editFormConfig()
         setup.setSuppress(
-            core.QgsEditFormConfig.SuppressOn
+            core.QgsEditFormConfig.FeatureFormSuppress.SuppressOn
             if suppress
-            else core.QgsEditFormConfig.SuppressOff
+            else core.QgsEditFormConfig.FeatureFormSuppress.SuppressOff
         )
         layer.setEditFormConfig(setup)
 

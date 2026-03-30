@@ -30,7 +30,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorith
 )
 from DsgTools.core.GeometricTools import rasterHandler
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from qgis.core import (
     QgsProcessingException,
@@ -90,7 +90,12 @@ class ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Reading input numpy array"))
 
-        ds = gdal.Open(str(inputRaster.source()))
+        try:
+            ds = gdal.Open(str(inputRaster.source()))
+        except Exception:
+            raise QgsProcessingException(
+                self.tr(f"Could not open raster: {inputRaster.source()}")
+            )
         # Read the array without specifying dtype to preserve original data type
         npRaster = ds.GetRasterBand(1).ReadAsArray()
         # Get the original data type from the array

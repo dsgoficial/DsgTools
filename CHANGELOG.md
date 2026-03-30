@@ -1,9 +1,10 @@
 # CHANGELOG
 
-## 4.21.1 - dev
+## 5.0 - 2026-03-30
 
 Novas Funcionalidades:
 
+- Migração do DSGTools para o QGIS 4;
 - Novo algoritmo de verificar ligação de shapefiles;
 
 Melhorias:

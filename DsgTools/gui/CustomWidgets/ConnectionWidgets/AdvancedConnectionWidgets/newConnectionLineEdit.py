@@ -184,7 +184,7 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
             self.problemOccurred.emit(
                 self.tr("A problem occurred! Check log for details.")
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
 
     def validate(self):
         """
@@ -235,7 +235,7 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
         """
         # model of implementation for reimplementation
         fd = QFileDialog()
-        fd.setFileMode(QFileDialog.AnyFile)
+        fd.setFileMode(QFileDialog.FileMode.AnyFile)
         filename, __ = fd.getSaveFileName(caption=self.caption, filter=self.filter)
         if filename:
             self.dsLineEdit.setText(filename)
@@ -243,4 +243,4 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_serverPushButton_clicked(self):
-        self.viewServers.exec_()
+        self.viewServers.exec()

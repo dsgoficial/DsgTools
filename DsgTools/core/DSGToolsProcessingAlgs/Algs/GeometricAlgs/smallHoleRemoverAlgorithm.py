@@ -27,7 +27,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorith
 )
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from qgis.core import (
     QgsProcessing,
@@ -107,7 +107,7 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
         maxHoleArea = self.parameterAsDouble(
             parameters, self.MAX_HOLE_AREA_TO_ELIMINATE, context
         )
-        dissolveAttributeList = self.parameterAsFields(
+        dissolveAttributeList = self.parameterAsStrings(
             parameters, self.DISSOLVE_ATTRIBUTE_LIST, context
         )
         algRunner = AlgRunner()

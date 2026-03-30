@@ -34,8 +34,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
-from qgis.PyQt.Qt import QVariant
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 
 from qgis.core import (
     QgsProcessing,
@@ -161,18 +160,18 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         )
         if filterExpression == "":
             filterExpression = None
-        classFieldName = self.parameterAsFields(parameters, self.LABEL_FIELD, context)[
+        classFieldName = self.parameterAsStrings(parameters, self.LABEL_FIELD, context)[
             0
         ]
         labelListStr = self.parameterAsString(parameters, self.LABEL_ORDER, context)
         classOrderList = None if labelListStr == "" else labelListStr.split(",")
         field = [f for f in inputLyr.fields() if f.name() == classFieldName][0]
-        if field.type() == QVariant.Int:
+        if field.type() == QMetaType.Type.Int:
             classOrderList = list(map(int, classOrderList))
-        elif field.type() == QVariant.Double:
+        elif field.type() == QMetaType.Type.Double:
             classOrderList = list(map(float, classOrderList))
         dissolveOutput = self.parameterAsBool(parameters, self.DISSOLVE_OUTPUT, context)
-        dissolveFields = self.parameterAsFields(
+        dissolveFields = self.parameterAsStrings(
             parameters, self.DISSOLVE_ATTRIBUTE_LIST, context
         )
         dissolveFields = list(set(dissolveFields).union({classFieldName}))

@@ -25,7 +25,6 @@ from qgis.PyQt.QtWidgets import QMessageBox, QSpinBox, QAction, QWidget
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
-from qgis.PyQt.Qt import QObject
 
 from qgis.core import (
     QgsMapLayer,
@@ -144,9 +143,9 @@ class InspectFeatures(QWidget, Ui_Form):
         currentLayer = self.getIterateLayer()
         if not currentLayer:
             return
-        if currentLayer.type() != QgsMapLayer.VectorLayer:
+        if currentLayer.type() != QgsMapLayer.LayerType.VectorLayer:
             return
-        if currentLayer.geometryType() == QgsWkbTypes.PointGeometry:
+        if currentLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
             self.mScaleWidget.setEnabled(True)
             self.mScaleWidget.show()
             self.zoomPercentageSpinBox.setEnabled(False)
@@ -211,7 +210,7 @@ class InspectFeatures(QWidget, Ui_Form):
                 oldIndex = 0
             zoom = (
                 self.mScaleWidget.scale()
-                if currentLayer.geometryType() == QgsWkbTypes.PointGeometry
+                if currentLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
                 else self.zoomPercentageSpinBox.value()
             )
             if oldIndex == newId:
@@ -236,7 +235,7 @@ class InspectFeatures(QWidget, Ui_Form):
             self.iface.messageBar().pushMessage(
                 self.tr("Warning!"),
                 self.tr("Invalid attribute filter!"),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=2,
             )
             return []
@@ -273,7 +272,7 @@ class InspectFeatures(QWidget, Ui_Form):
 
         zoom = (
             self.mScaleWidget.scale()
-            if currentLayer.geometryType() == QgsWkbTypes.PointGeometry
+            if currentLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
             else self.zoomPercentageSpinBox.value()
         )
 
@@ -334,7 +333,7 @@ class InspectFeatures(QWidget, Ui_Form):
             self.tr(
                 "<font color=red>There are no features in the current layer:<br></font><font color=blue>Add features and try again!</font>"
             ),
-            QMessageBox.Close,
+            QMessageBox.StandardButton.Close,
         )
 
     def selectLayer(self, index, currentLayer):
@@ -387,7 +386,7 @@ class InspectFeatures(QWidget, Ui_Form):
             self.zoomToLayer(layer=lyr, zoom=float(zoom))
             lyr.selectByIds(selectIdList)
 
-        if self.getIterateLayer().geometryType() == QgsWkbTypes.PointGeometry:
+        if self.getIterateLayer().geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
             self.iface.mapCanvas().zoomScale(float(zoom))
 
     @pyqtSlot(bool, name="on_inspectPushButton_toggled")
@@ -479,7 +478,7 @@ class InspectFeatures(QWidget, Ui_Form):
             self.iface.messageBar().pushMessage(
                 self.tr("Warning!"),
                 self.tr("Active layer is not valid to be used in this tool."),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=2,
             )
         self.mFieldExpressionWidget.setExpression("")
@@ -509,7 +508,7 @@ class InspectFeatures(QWidget, Ui_Form):
             "current_layer": currentLayer.id(),
             "current_feature_state_dict": self.allLayers,
             "current_zoom": self.mScaleWidget.scale()
-            if currentLayer.geometryType() == QgsWkbTypes.PointGeometry
+            if currentLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
             else self.zoomPercentageSpinBox.value(),
             "use_pan": self.usePanCkb.isChecked(),
             "current_filter_expression": self.mFieldExpressionWidget.currentText(),
@@ -537,7 +536,7 @@ class InspectFeatures(QWidget, Ui_Form):
             return False
         self.allLayers.update(currentStateDict)
         currentZoom = stateDict.get("current_zoom", None)
-        if currentLayer.geometryType() == QgsWkbTypes.PointGeometry:
+        if currentLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
             self.mScaleWidget.setScale(currentZoom)
         else:
             self.zoomPercentageSpinBox.setValue(currentZoom)

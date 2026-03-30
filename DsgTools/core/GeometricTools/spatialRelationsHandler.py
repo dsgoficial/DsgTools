@@ -38,9 +38,8 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsFeatureRequest,
 )
-from qgis.PyQt.Qt import QObject
-from qgis.PyQt.QtCore import QRegExp, QCoreApplication
-from qgis.PyQt.QtGui import QRegExpValidator
+from qgis.PyQt.QtCore import QRegularExpression, QCoreApplication, QObject
+from qgis.PyQt.QtGui import QRegularExpressionValidator
 
 from DsgTools.core.GeometricTools.terrainHandler import TerrainModel
 
@@ -1904,11 +1903,11 @@ class SpatialRule(QObject):
         :return: (bool) provided predicate's validity.
         """
         if useDE9IM:
-            regex = QRegExp("[FfTt012\*]{9}")
-            acceptable = QRegExpValidator.Acceptable
+            regex = QRegularExpression("[FfTt012\*]{9}")
+            acceptable = QRegularExpressionValidator.State.Acceptable
             return (
                 isinstance(pred, str)
-                and QRegExpValidator(regex).validate(pred, 9)[0] == acceptable
+                and QRegularExpressionValidator(regex).validate(pred, 9)[0] == acceptable
             )
         else:
             return pred in SpatialRelationsHandler().availablePredicates()
@@ -2066,11 +2065,11 @@ class SpatialRule(QObject):
         :param card: (str) string of cardinality to be evaluated.
         :return: (bool) provided cardinality's validity.
         """
-        regex = QRegExp("[0-9\*]\.\.[0-9\*]")
-        acceptable = QRegExpValidator.Acceptable
+        regex = QRegularExpression("[0-9\*]\.\.[0-9\*]")
+        acceptable = QRegularExpressionValidator.State.Acceptable
         return (
             isinstance(card, str)
-            and QRegExpValidator(regex).validate(card, 9)[0] == acceptable
+            and QRegularExpressionValidator(regex).validate(card, 9)[0] == acceptable
         )
 
     def cardinalityIsValid(self):

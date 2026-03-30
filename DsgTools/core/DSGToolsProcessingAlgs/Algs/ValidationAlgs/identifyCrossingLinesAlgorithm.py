@@ -22,9 +22,8 @@
 """
 
 from typing import List
-import processing
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from PyQt5.QtCore import QCoreApplication
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingParameterFeatureSink,
@@ -148,9 +147,9 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         stepSize = 100 / len(layerList)
         for current, layer in enumerate(layerList):
             layerPre = layer
-            if layer.geometryType() == QgsWkbTypes.PolygonGeometry:
+            if layer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
                 layerPre = self.algRunner.runPolygonsToLines(layer, context)
-            if layer.geometryType() == QgsWkbTypes.PointGeometry:
+            if layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
                 continue
             toMergeList.append(layerPre)
             multiStepFeedback.setProgress(current * stepSize)
@@ -175,7 +174,7 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        unjoined = processing.run(
+        unjoined = runProcessing(
             "native:joinattributesbylocation",
             {
                 "INPUT": intersectionLyr,

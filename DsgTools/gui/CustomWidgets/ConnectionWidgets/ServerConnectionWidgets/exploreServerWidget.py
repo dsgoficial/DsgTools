@@ -52,7 +52,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         """Constructor."""
         super(ExploreServerWidget, self).__init__(parent)
         self.setupUi(self)
-        self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         self.superNeeded = False
         self.dbFactory = DbFactory()
         self.factory = SqlGeneratorFactory()
@@ -131,11 +131,11 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
                         + database
                         + "| msg: "
                         + postgisDb.db.lastError().databaseText(),
-                        level=Qgis.Critical,
+                        level=Qgis.MessageLevel.Critical,
                     )
 
                 query = QSqlQuery(postgisDb.db)
-                if query.exec_(gen.getEDGVVersion()):
+                if query.exec(gen.getEDGVVersion()):
                     while query.next():
                         version = query.value(0)
                         if version:
@@ -156,7 +156,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         postgisDb.connectDatabaseWithParameters(host, port, database, user, password)
         if not postgisDb.db.open():
             QgsMessageLog.logMessage(
-                db.lastError().text(), "DSGTools Plugin", Qgis.Critical
+                db.lastError().text(), "DSGTools Plugin", Qgis.MessageLevel.Critical
             )
             QMessageBox.critical(
                 self.iface.mainWindow(),
@@ -184,7 +184,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         Opens the View Server dialog
         """
         createNewServer = ViewServers(parent=self)
-        result = createNewServer.exec_()
+        result = createNewServer.exec()
         self.populateServersCombo()
 
     def populateServersCombo(self):

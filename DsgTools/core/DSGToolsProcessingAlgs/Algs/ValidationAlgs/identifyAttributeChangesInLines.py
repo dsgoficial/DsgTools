@@ -29,7 +29,7 @@ from qgis.core import (
     QgsFeature,
     QgsProcessingParameterVectorLayer,
     QgsFeatureRequest,
-    QgsGeometryUtils,
+    QgsGeometryUtilsBase,
     QgsProcessingParameterField,
     QgsProcessingParameterNumber,
     QgsGeometry,
@@ -99,7 +99,7 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         layer = self.parameterAsVectorLayer(parameters, self.INPUT_LAYER, context)
-        inputFields = self.parameterAsFields(parameters, self.INPUT_FIELDS, context)
+        inputFields = self.parameterAsStrings(parameters, self.INPUT_FIELDS, context)
         angle = self.parameterAsDouble(parameters, self.INPUT_ANGLE, context)
         maxLength = self.parameterAsDouble(parameters, self.INPUT_MAX_SIZE, context)
         algRunner = AlgRunner()
@@ -228,7 +228,7 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
         pointB = QgsPointXY(point.asPoint())
         pointA = self.adjacentPoint(line1, pointB)
         pointC = self.adjacentPoint(line2, pointB)
-        angleRad = QgsGeometryUtils().angleBetweenThreePoints(
+        angleRad = QgsGeometryUtilsBase.angleBetweenThreePoints(
             pointA.x(), pointA.y(), pointB.x(), pointB.y(), pointC.x(), pointC.y()
         )
         angle = math.degrees(angleRad)

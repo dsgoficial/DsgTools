@@ -69,7 +69,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         super(ButtonPropWidget, self).__init__(parent)
         self.setupUi(self)
         self.mMapLayerComboBox.setFilters(
-            QgsMapLayerProxyModel.HasGeometry | QgsMapLayerProxyModel.WritableLayer
+            QgsMapLayerProxyModel.Filter.HasGeometry | QgsMapLayerProxyModel.Filter.WritableLayer
         )
         self.button = button or CustomFeatureButton()
         self.fillToolComboBox()
@@ -89,7 +89,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             ]
         )
         header = self.attributeTableWidget.verticalHeader()
-        header.setSectionResizeMode(header.ResizeToContents)
+        header.setSectionResizeMode(header.ResizeMode.ResizeToContents)
         self.updateFieldTable()
 
     def confirmAction(self, msg, title=None, showNo=True):
@@ -103,12 +103,12 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         title = title or self.tr("Confirm action")
         if showNo:
             return (
-                QMessageBox.question(self, title, msg, QMessageBox.Yes | QMessageBox.No)
-                == QMessageBox.Yes
+                QMessageBox.question(self, title, msg, QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+                == QMessageBox.StandardButton.Yes
             )
         else:
             return (
-                QMessageBox.question(self, title, msg, QMessageBox.Ok) == QMessageBox.Ok
+                QMessageBox.question(self, title, msg, QMessageBox.StandardButton.Ok) == QMessageBox.StandardButton.Ok
             )
 
     def fillToolComboBox(self):
@@ -381,7 +381,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                     " model?"
                 ).format(value, field)
                 title = self.tr("DSGTools Custom Feature Tool Box")
-                MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
+                MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
                 value = None
             cb.setCurrentText(valueMaps[field][value])
 
@@ -479,7 +479,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         w = QWidget()
         l = QHBoxLayout()
-        l.setAlignment(Qt.AlignCenter)
+        l.setAlignment(Qt.AlignmentFlag.AlignCenter)
         cb = QCheckBox()
         # just an easy way to access the cb
         w.cb = cb

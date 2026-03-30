@@ -48,8 +48,7 @@ from qgis.core import (
     QgsFields,
     QgsProcessingMultiStepFeedback,
 )
-from qgis.PyQt.Qt import QObject
-from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtCore import QMetaType, QObject
 
 
 class NetworkHandler(QObject):
@@ -2174,7 +2173,7 @@ class NetworkHandler(QObject):
 
     def getFlagFields(self):
         fields = QgsFields()
-        fields.append(QgsField("reason", QVariant.String))
+        fields.append(QgsField("reason", QMetaType.Type.QString))
         return fields
 
     def createNewInvalidLineFeature(self, feat_geom, reason, fields):

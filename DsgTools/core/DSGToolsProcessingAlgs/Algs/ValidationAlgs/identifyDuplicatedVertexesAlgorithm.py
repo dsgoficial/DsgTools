@@ -22,7 +22,7 @@
 
 from collections import defaultdict
 from dataclasses import dataclass
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
@@ -112,7 +112,7 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Building search structure..."))
         pointDict = self.buildPointDict(
             vertexLayer,
-            inpuIsPolygon=inputLyr.geometryType() == QgsWkbTypes.PolygonGeometry,
+            inpuIsPolygon=inputLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry,
             feedback=multiStepFeedback,
         )
         multiStepFeedback.setCurrentStep(3)

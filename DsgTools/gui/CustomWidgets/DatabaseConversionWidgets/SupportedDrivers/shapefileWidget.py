@@ -111,8 +111,8 @@ class ShapefileWidget(AbstractSelectionWidget):
         """
         # model of implementation for reimplementation
         fd = QFileDialog()
-        fd.setFileMode(QFileDialog.Directory)
-        fd.setOption(QFileDialog.ShowDirsOnly, True)
+        fd.setFileMode(QFileDialog.FileMode.Directory)
+        fd.setOption(QFileDialog.Option.ShowDirsOnly, True)
         directory = fd.getExistingDirectory(
             caption=self.selectionWidget.connectionSelectorLineEdit.caption
         )

@@ -29,8 +29,7 @@ from qgis.core import (
     QgsProcessingParameterBoolean,
     QgsProcessingException,
 )
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QVariant
 
 
 class AzimuthCalculationAlgorithm(QgsProcessingAlgorithm):
@@ -77,7 +76,7 @@ class AzimuthCalculationAlgorithm(QgsProcessingAlgorithm):
         if inputLyr is None:
             raise QgsProcessingException("Choose a layer for azimuth calculation")
 
-        attributeAzim = self.parameterAsFields(parameters, self.ATTRIBUTE, context)[0]
+        attributeAzim = self.parameterAsStrings(parameters, self.ATTRIBUTE, context)[0]
 
         inputLyr.startEditing()
         inputLyr.beginEditCommand(f'Updating the attribute "{attributeAzim}"')

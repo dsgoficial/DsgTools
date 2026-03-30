@@ -22,7 +22,7 @@
 """
 # Qt Imports
 from builtins import str
-from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import QObject
 
 
 class DbCustomization(QObject):

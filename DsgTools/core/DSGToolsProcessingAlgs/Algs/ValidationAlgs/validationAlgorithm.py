@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtCore import QMetaType
 
 from qgis.core import QgsGeometry, QgsFeature, QgsField, QgsProcessingAlgorithm
 
@@ -83,9 +83,9 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
 
     def getFlagFields(self, addFeatId=False):
         fields = QgsFields()
-        fields.append(QgsField("reason", QVariant.String))
+        fields.append(QgsField("reason", QMetaType.Type.QString))
         if addFeatId:
-            fields.append(QgsField("featid", QVariant.String))
+            fields.append(QgsField("featid", QMetaType.Type.QString))
         return fields
 
     def flagFeature(self, flagGeom, flagText, featid=None, fromWkb=False, sink=None):

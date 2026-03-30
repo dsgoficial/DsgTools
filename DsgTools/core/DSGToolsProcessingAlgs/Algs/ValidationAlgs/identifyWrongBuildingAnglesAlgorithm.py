@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 import math
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from qgis.core import (

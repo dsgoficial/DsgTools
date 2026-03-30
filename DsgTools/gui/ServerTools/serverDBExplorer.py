@@ -127,7 +127,7 @@ class ServerDBExplorer(QtWidgets.QDialog, FORM_CLASS):
         for (dbname, dbversion) in dbList:
             item = QListWidgetItem(self.serverListWidget)
             item.setText(dbname + " (EDGV v. " + dbversion + ")")
-            item.setData(Qt.UserRole, dbname)
+            item.setData(Qt.ItemDataRole.UserRole, dbname)
 
     @pyqtSlot(bool)
     def on_createConnectionPushButton_clicked(self):
@@ -138,7 +138,7 @@ class ServerDBExplorer(QtWidgets.QDialog, FORM_CLASS):
         existentConnections = []
         newConnections = []
         for item in items:
-            dbname = item.data(Qt.UserRole)
+            dbname = item.data(Qt.ItemDataRole.UserRole)
             ret = self.storeConnection(
                 self.serverWidget.serversCombo.currentText(), dbname
             )

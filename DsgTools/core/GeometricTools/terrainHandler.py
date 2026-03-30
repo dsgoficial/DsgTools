@@ -23,7 +23,7 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
 import itertools
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
     QgsVectorLayer,

@@ -27,8 +27,8 @@ import json
 from qgis.core import Qgis, QgsProject, QgsVectorLayer, QgsMapLayerProxyModel
 from qgis.gui import QgsMessageBar, QgsMapLayerComboBox, QgsFieldExpressionWidget
 from qgis.utils import iface
-from qgis.PyQt.QtCore import QSize, QRegExp
-from qgis.PyQt.QtGui import QRegExpValidator
+from qgis.PyQt.QtCore import QSize, QRegularExpression
+from qgis.PyQt.QtGui import QRegularExpressionValidator
 from qgis.PyQt.QtWidgets import (
     QWidget,
     QComboBox,
@@ -82,7 +82,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         :return: (QgsMapLayerComboBox) configured layer selection widget.
         """
         cb = QgsMapLayerComboBox()
-        cb.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        cb.setFilters(QgsMapLayerProxyModel.Filter.VectorLayer)
         return cb
 
     def mapLayerModelDialog(self):
@@ -137,8 +137,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         :return: (QLineEdit) a line edit with a DE-9IM text validator.
         """
         le = QLineEdit()
-        regex = QRegExp("[FfTt012\*]{9}")
-        le.setValidator(QRegExpValidator(regex, le))
+        regex = QRegularExpression("[FfTt012\\*]{9}")
+        le.setValidator(QRegularExpressionValidator(regex, le))
         le.setPlaceholderText(self.tr("Type in a DE-9IM as 'T*F0*F21*'..."))
         return le
 
@@ -149,8 +149,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                  applied.
         """
         le = QLineEdit()
-        regex = QRegExp("[0-9\*]\.\.[0-9\*]")
-        le.setValidator(QRegExpValidator(regex, le))
+        regex = QRegularExpression("[0-9\\*]\\.\\.[0-9\\*]")
+        le.setValidator(QRegularExpressionValidator(regex, le))
         le.setPlaceholderText("1..*")
         return le
 
@@ -474,7 +474,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                         self.tr("Spatial rules successfully exported to {0}").format(
                             filepath
                         ),
-                        level=Qgis.Success,
+                        level=Qgis.MessageLevel.Success,
                         duration=5,
                     )
             except Exception as e:
@@ -508,7 +508,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         msg = QMessageBox()
         msg.setWindowTitle(self.tr("DSGTools: importing spatial rules"))
         if invalidRules and msgType == "warning":
-            msg.setIcon(QMessageBox.Warning)
+            msg.setIcon(QMessageBox.Icon.Warning)
             msg.setText(self.tr("Some rules have not been loaded"))
             msg.setInformativeText(
                 self.tr("Do you want to ignore and continue or cancel?")
@@ -518,12 +518,12 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "The following layers have not been loaded:\n{0}"
             ).format(msgString)
             msg.setDetailedText(formatedMsgString)
-            msg.setStandardButtons(QMessageBox.Ignore | QMessageBox.Cancel)
-            msg.setDefaultButton(QMessageBox.Cancel)
+            msg.setStandardButtons(QMessageBox.StandardButton.Ignore | QMessageBox.StandardButton.Cancel)
+            msg.setDefaultButton(QMessageBox.StandardButton.Cancel)
         else:
-            msg.setIcon(QMessageBox.Information)
+            msg.setIcon(QMessageBox.Icon.Information)
             msg.setText(self.tr("Successfully loaded rules!"))
-        choice = msg.exec_()
+        choice = msg.exec()
         return choice
 
     def setValue(self, value):
@@ -558,7 +558,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 }
             )
         choice = self.showLoadingMsg(invalids, "warning" if invalids else "")
-        if choice == QMessageBox.Cancel:
+        if choice == QMessageBox.StandardButton.Cancel:
             otw.clear()
 
     def readStandardPanel(self):
@@ -618,7 +618,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             if pushAlert:
                 self.messageBar.pushMessage(
                     self.tr("Please provide at least 1 spatial rule."),
-                    level=Qgis.Warning,
+                    level=Qgis.MessageLevel.Warning,
                     duration=5,
                 )
             return False
@@ -632,7 +632,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 if pushAlert:
                     self.messageBar.pushMessage(
                         self.tr("{0} (row {1}).").format(rule.validate(), row + 1),
-                        level=Qgis.Warning,
+                        level=Qgis.MessageLevel.Warning,
                         duration=5,
                     )
                 return False

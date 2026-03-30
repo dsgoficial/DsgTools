@@ -34,7 +34,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorith
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools import rasterHandler
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.Utils.threadingTools import concurrently
 

@@ -190,7 +190,7 @@ class GenericCompactPropertyManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         2. Use manager to apply to database
         """
         dlg = GenericParameterSetter(hideDbUi=True)
-        if not dlg.exec_():
+        if not dlg.exec():
             return
         propertyName = dlg.getParameters()
         if propertyName == "":
@@ -251,7 +251,7 @@ class GenericCompactPropertyManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             )
             return
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.genericDbManager.importSetting(filename)
             settingName = os.path.basename(fullFilePath).split(".")[0]
             self.genericDbManager.installSetting(
@@ -297,7 +297,7 @@ class GenericCompactPropertyManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             return
         edgvVersion = self.genericDbManager.edgvVersion
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             for exportProperty in exportPropertyList:
                 self.genericDbManager.exportSetting(exportProperty, edgvVersion, folder)
             QApplication.restoreOverrideCursor()
@@ -346,7 +346,7 @@ class GenericCompactPropertyManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         )
         if setupDict:
             try:
-                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
                 self.genericDbManager.updateSetting(propertyName, setupDict)
                 QApplication.restoreOverrideCursor()
                 QMessageBox.information(

@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 
 from qgis.core import (
     QgsProcessing,
@@ -68,7 +68,7 @@ class ExtractMiddleVertexOnLineAlgorithm(QgsProcessingAlgorithm):
             )
 
         outputFields = inputSource.fields()
-        outputFields.append(QgsField("part_id", QVariant.Int))
+        outputFields.append(QgsField("part_id", QMetaType.Type.Int))
 
         (output_sink, output_dest_id) = self.parameterAsSink(
             parameters,

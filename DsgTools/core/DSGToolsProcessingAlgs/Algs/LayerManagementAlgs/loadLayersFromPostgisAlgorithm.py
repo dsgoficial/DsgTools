@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
@@ -142,7 +142,7 @@ class LoadLayersFromPostgisAlgorithm(QgsProcessingAlgorithm):
     def getLoadedLayerIds(self, layerNamesFilter):
         layerIds = []
         for l in QgsProject.instance().mapLayers().values():
-            if not (l.type() == QgsMapLayer.VectorLayer):
+            if not (l.type() == QgsMapLayer.LayerType.VectorLayer):
                 continue
             layerName = None
             if l.providerType() == "postgres":
@@ -159,7 +159,7 @@ class LoadLayersFromPostgisAlgorithm(QgsProcessingAlgorithm):
     def getUnloadedLayerNames(self, layerNames):
         loadedLayerNames = []
         for l in QgsProject.instance().mapLayers().values():
-            if not (l.type() == QgsMapLayer.VectorLayer):
+            if not (l.type() == QgsMapLayer.LayerType.VectorLayer):
                 continue
             layerName = None
             if l.providerType() == "postgres":
