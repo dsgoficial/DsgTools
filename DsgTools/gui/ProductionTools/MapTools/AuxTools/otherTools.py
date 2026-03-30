@@ -115,6 +115,7 @@ class OtherTools(QgsMapTool):
             )
             return
         context = QgsProcessingContext()
+        context.setProject(QgsProject.instance())
         outputLyr = AlgRunner().runSaveSelectedFeatures(
             inputLyr=layer,
             context=context,

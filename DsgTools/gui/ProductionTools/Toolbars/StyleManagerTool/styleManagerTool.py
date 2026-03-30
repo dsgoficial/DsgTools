@@ -30,6 +30,7 @@ from qgis.PyQt import QtGui, uic, QtCore
 
 from qgis.core import (
     QgsMapLayer,
+    QgsProject,
     Qgis,
     QgsDataSourceUri,
     QgsMessageLog,
@@ -103,10 +104,12 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             dbVersion = abstractDb.getDatabaseVersion()
             stylesDict = abstractDb.getStyleDict(dbVersion)
             selectedStyle = stylesDict[styleName]
+            context = QgsProcessingContext()
+            context.setProject(QgsProject.instance())
             if "db:" in selectedStyle:
                 self.algRunner.runApplStylesFromDatabaseToLayers(
                     inputList=lyrList,
-                    context=QgsProcessingContext(),
+                    context=context,
                     styleName=selectedStyle.split(":")[-1],
                 )
             else:
@@ -116,7 +119,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
                 self.algRunner.runMatchAndApplyQmlStylesToLayer(
                     inputList=lyrList,
                     qmlFolder=stylePath,
-                    context=QgsProcessingContext(),
+                    context=context,
                 )
             # localProgress = ProgressWidget(1, len(lyrList) - 1, self.tr('Loading style {0}').format(styleName), parent=self.iface.mapCanvas())
             # for lyr in lyrList:

@@ -39,8 +39,8 @@ class GetCrsDialog(QDialog):
     def __init__(self):
         super(GetCrsDialog, self).__init__()
         uic.loadUi(self.getUiPath(), self)
-        self.buttonBox.addButton("Sim", QDialogButtonBox.AcceptRole)
-        self.buttonBox.addButton("Não mudar", QDialogButtonBox.RejectRole)
+        self.buttonBox.addButton("Sim", QDialogButtonBox.ButtonRole.AcceptRole)
+        self.buttonBox.addButton("Não mudar", QDialogButtonBox.ButtonRole.RejectRole)
 
     def setCrsValue(self, value):
         self.selectCRS.setCrs(value)

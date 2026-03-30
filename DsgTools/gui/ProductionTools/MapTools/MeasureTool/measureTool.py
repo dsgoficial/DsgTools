@@ -194,14 +194,14 @@ class EventFilter(QObject):
             return QObject.eventFilter(self, obj, event)
         if (
             (
-                event.type() == QEvent.MouseButtonPress
+                event.type() == QEvent.Type.MouseButtonPress
                 and event.button() == Qt.MouseButton.LeftButton
             )
             or (
-                event.type() == QEvent.MouseButtonRelease
+                event.type() == QEvent.Type.MouseButtonRelease
                 and event.button() == Qt.MouseButton.LeftButton
             )
-            or (event.type() == QEvent.MouseMove and event.button() != Qt.MouseButton.MiddleButton)
+            or (event.type() == QEvent.Type.MouseMove and event.button() != Qt.MouseButton.MiddleButton)
         ):
             curPoint = (
                 self.iface.mapCanvas()
@@ -211,17 +211,17 @@ class EventFilter(QObject):
             self.updateMeasure()
             self.pointList.updateCurrentPoint(curPoint)
         if (
-            event.type() == QEvent.MouseButtonRelease
+            event.type() == QEvent.Type.MouseButtonRelease
             and event.button() == Qt.MouseButton.LeftButton
         ):
             self.pointList.newPoint()
-        elif event.type() == QEvent.KeyPress:
+        elif event.type() == QEvent.Type.KeyPress:
             if event.key() == Qt.Key.Key_Backspace or event.key() == Qt.Key.Key_Delete:
                 self.pointList.removeLastPoint()
             elif event.key() == Qt.Key.Key_Escape:
                 self.pointList.empty()
         elif (
-            event.type() == QEvent.MouseButtonRelease
+            event.type() == QEvent.Type.MouseButtonRelease
             and event.button() == Qt.MouseButton.RightButton
         ):
             self.pointList.empty()

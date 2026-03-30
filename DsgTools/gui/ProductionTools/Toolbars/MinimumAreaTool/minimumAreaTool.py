@@ -29,7 +29,7 @@ from qgis.gui import QgsMapMouseEvent
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QMessageBox, QAction, QWidget
 from qgis.PyQt.QtGui import QIcon, QMouseEvent, QColor
-from qgis.PyQt.QtCore import Qt, QEvent, QSettings, pyqtSlot
+from qgis.PyQt.QtCore import Qt, QEvent, QPointF, QSettings, pyqtSlot
 
 from qgis.utils import iface
 
@@ -170,8 +170,8 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         tool.toolFinished.connect(self.refreshCombo)
         # draw the figure instantly, no need for move event at first
         me = QMouseEvent(
-            QEvent.MouseMove,
-            iface.mapCanvas().mouseLastXY(),
+            QEvent.Type.MouseMove,
+            QPointF(iface.mapCanvas().mouseLastXY()),
             Qt.MouseButton.NoButton,
             Qt.MouseButton.NoButton,
             Qt.KeyboardModifier.NoModifier,

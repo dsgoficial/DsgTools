@@ -105,10 +105,12 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         lyr = self.layerHandler.createMemoryLayerFromGeometry(
             geom, crs=QgsProject.instance().crs()
         )
+        context = QgsProcessingContext()
+        context.setProject(QgsProject.instance())
         outputCenterPointsLyr, _ = self.algRunner.runUnbuildPolygons(
             inputPolygonList=[lyr],
             lineConstraintLayerList=list(self.lineLayerDict.values()),
-            context=QgsProcessingContext(),
+            context=context,
         )
         outputCenterPointsLyr = (
             self.runMerge(outputLyr, outputCenterPointsLyr)

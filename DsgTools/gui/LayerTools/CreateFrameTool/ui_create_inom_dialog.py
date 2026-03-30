@@ -28,6 +28,7 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsProcessingContext,
+    QgsProject,
     QgsFeature,
 )
 from qgis.PyQt import QtWidgets, QtCore, uic, QtGui
@@ -99,6 +100,7 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         inom = self.inomLineEdit.text()
         scaleIdx = self.scaleCombo.currentIndex()
         context = QgsProcessingContext()
+        context.setProject(QgsProject.instance())
         processingOutput = processing.run(
             "dsgtools:gridzonegenerator",
             {

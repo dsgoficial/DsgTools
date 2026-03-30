@@ -76,6 +76,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         self.resetModelList()
         self._feedback = QgsProcessingFeedback()
         self._context = QgsProcessingContext()
+        self._context.setProject(QgsProject.instance())
         self._newModels = []
 
     def _widgets(self):
