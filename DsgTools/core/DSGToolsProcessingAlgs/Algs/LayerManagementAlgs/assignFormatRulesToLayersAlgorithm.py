@@ -22,9 +22,9 @@
 """
 import json
 import os
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtGui import QColor
-from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtCore import QMetaType
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
@@ -263,7 +263,7 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
         if expression.hasParserError():
             raise Exception(f"Invalid expression: \n{expressionString}")
         lyr.addExpressionField(
-            expressionString, QgsField("attribute_error_description", QVariant.String)
+            expressionString, QgsField("attribute_error_description", QMetaType.Type.QString)
         )
 
     def expressionHasParseError(self, expressionString):

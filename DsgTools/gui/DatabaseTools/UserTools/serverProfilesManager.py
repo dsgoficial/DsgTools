@@ -30,7 +30,7 @@ from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog
 from qgis.PyQt.QtGui import QCursor
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 # DSGTools imports
 from DsgTools.gui.DatabaseTools.UserTools.createProfileWithProfileManager import (
@@ -70,12 +70,12 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
         """
         item = QtWidgets.QTreeWidgetItem(parent)
         item.setFlags(
-            QtCore.Qt.ItemIsEnabled
-            | QtCore.Qt.ItemIsTristate
-            | QtCore.Qt.ItemIsUserCheckable
+            QtCore.Qt.ItemFlag.ItemIsEnabled
+            | QtCore.Qt.ItemFlag.ItemIsTristate
+            | QtCore.Qt.ItemFlag.ItemIsUserCheckable
         )
-        item.setCheckState(1, QtCore.Qt.Unchecked)
-        item.setCheckState(2, QtCore.Qt.Unchecked)
+        item.setCheckState(1, QtCore.Qt.CheckState.Unchecked)
+        item.setCheckState(2, QtCore.Qt.CheckState.Unchecked)
         item.setText(0, text)
         return item
 
@@ -123,7 +123,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
 
         permissions = profileDict[self.parent]
         self.createChildrenItems(dbItem, permissions)
-        self.treeWidget.sortItems(0, Qt.AscendingOrder)
+        self.treeWidget.sortItems(0, Qt.SortOrder.AscendingOrder)
 
     def createChildrenItems(self, parent, mydict):
         """
@@ -186,7 +186,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
             self.profilesListWidget.addItems(
                 [i + " ({0})".format(edgvVersion) for i in profilesDict[edgvVersion]]
             )
-        self.profilesListWidget.sortItems(order=Qt.AscendingOrder)
+        self.profilesListWidget.sortItems(order=Qt.SortOrder.AscendingOrder)
 
     @pyqtSlot(bool)
     def on_createPermissionPushButton_clicked(self):
@@ -196,7 +196,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
         # use selector
         permissionDict = self.permissionManager.getSettings()
         parameterDlg = GenericParameterSetter(nameList=list(permissionDict.keys()))
-        if not parameterDlg.exec_():
+        if not parameterDlg.exec():
             return
         templateDb, profileName, edgvVersion = parameterDlg.getParameters()
         if edgvVersion in list(permissionDict.keys()):
@@ -242,7 +242,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
     def updateInterface(self, profileName, edgvVersion):
         self.refreshProfileList()
         profileItem = self.profilesListWidget.findItems(
-            profileName + " ({0})".format(edgvVersion), Qt.MatchExactly
+            profileName + " ({0})".format(edgvVersion), Qt.MatchFlag.MatchExactly
         )[0]
         self.profilesListWidget.setCurrentItem(profileItem)
 
@@ -260,13 +260,13 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
                     self.tr("Do you really want to delete profile ")
                     + profileName
                     + "?",
-                    QMessageBox.Ok | QMessageBox.Cancel,
+                    QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
                 )
-                == QMessageBox.Cancel
+                == QMessageBox.StandardButton.Cancel
             ):
                 return
             try:
-                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
                 self.permissionManager.deleteSetting(profileName, edgvVersion)
                 QApplication.restoreOverrideCursor()
                 QMessageBox.warning(
@@ -293,7 +293,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
         edgvVersion = edgvVersion.replace(")", "")
         newProfileDict = self.makeProfileDict()
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.permissionManager.updateSetting(
                 profileName, edgvVersion, newProfileDict
             )
@@ -326,7 +326,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
                 self.tr("Critical!"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
             return
         profile = dict()
         categories = dict()

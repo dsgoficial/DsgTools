@@ -30,7 +30,7 @@ from xml.dom.minidom import parse, parseString
 from qgis.utils import iface
 from qgis.core import Qgis, QgsMessageLog, QgsExpression
 from qgis.gui import QgsGui
-from qgis.PyQt.QtCore import QObject, QSettings, QVariant
+from qgis.PyQt.QtCore import QMetaType, QObject, QSettings
 from qgis.PyQt.QtWidgets import QAction, QToolBar, QMessageBox, QTreeWidgetItem
 from qgis.PyQt.QtGui import QColor
 
@@ -364,7 +364,7 @@ class Utils(object):
         :param field: (QgsField) field to be checked.
         :return: (bool) if data is boolean.
         """
-        return field.type() == QVariant.Bool
+        return field.type() == QMetaType.Type.Bool
 
     def fieldIsFloat(self, field):
         """
@@ -372,7 +372,7 @@ class Utils(object):
         :param field: (QgsField) field to be checked.
         :return: (bool) if data is float.
         """
-        floatTypes = [QVariant.Double]
+        floatTypes = [QMetaType.Type.Double]
         return field.type() in floatTypes
 
     def fieldIsInt(self, field):
@@ -381,7 +381,7 @@ class Utils(object):
         :param field: (QgsField) field to be checked.
         :return: (bool) if data is a whole number.
         """
-        intTypes = [QVariant.Int, QVariant.UInt, QVariant.LongLong, QVariant.ULongLong]
+        intTypes = [QMetaType.Type.Int, QMetaType.Type.UInt, QMetaType.Type.LongLong, QMetaType.Type.ULongLong]
         return field.type() in intTypes
 
     def fieldIsNumeric(self, field):
@@ -419,7 +419,7 @@ class MessageRaiser(QObject):
         :param level: (int) level code (warning, critical, etc).
         :param duration: (int) time in seconds message will be displayed.
         """
-        level = Qgis.Info if level is None else level
+        level = Qgis.MessageLevel.Info if level is None else level
         duration = 3 if duration is None else duration
         iface.messageBar().pushMessage(title, msg, level=level, duration=duration)
 
@@ -429,7 +429,7 @@ class MessageRaiser(QObject):
         :param msg: (str) message to be displayed.
         :param level: (int) level code (warning, critical, etc).
         """
-        level = Qgis.Info if level is None else level
+        level = Qgis.MessageLevel.Info if level is None else level
         QgsMessageLog.logMessage(msg, "DSGTools Plugin", level)
 
     def confirmAction(self, parent, msg, title=None, showNo=True):
@@ -444,14 +444,14 @@ class MessageRaiser(QObject):
         if showNo:
             return (
                 QMessageBox.question(
-                    parent, title, msg, QMessageBox.Yes | QMessageBox.No
+                    parent, title, msg, QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
                 )
-                == QMessageBox.Yes
+                == QMessageBox.StandardButton.Yes
             )
         else:
             return (
-                QMessageBox.question(parent, title, msg, QMessageBox.Ok)
-                == QMessageBox.Ok
+                QMessageBox.question(parent, title, msg, QMessageBox.StandardButton.Ok)
+                == QMessageBox.StandardButton.Ok
             )
 
 
@@ -522,7 +522,7 @@ class ValidateImportedDataMethods:
         msg.setWindowTitle("Invalid Rules Information")
 
         if lyrList and msgType == "invalid":
-            msg.setIcon(QMessageBox.Critical)
+            msg.setIcon(QMessageBox.Icon.Critical)
             msg.setText("Some rules has invalid itens!")
             msg.setInformativeText(
                 "If you ignore, the invalid rules may not be loaded."
@@ -536,11 +536,11 @@ class ValidateImportedDataMethods:
             )
 
             msg.setDetailedText(formatedMsgString)
-            msg.setStandardButtons(QMessageBox.Ignore | QMessageBox.Cancel)
-            msg.setDefaultButton(QMessageBox.Cancel)
+            msg.setStandardButtons(QMessageBox.StandardButton.Ignore | QMessageBox.StandardButton.Cancel)
+            msg.setDefaultButton(QMessageBox.StandardButton.Cancel)
         else:
-            msg.setIcon(QMessageBox.Information)
+            msg.setIcon(QMessageBox.Icon.Information)
             msg.setText("Successfully loaded rules!")
 
-        choice = msg.exec_()
+        choice = msg.exec()
         return choice

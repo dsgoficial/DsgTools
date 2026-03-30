@@ -12,7 +12,7 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
@@ -87,7 +87,7 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             input_layer.fields(),
-            QgsWkbTypes.LineString,
+            input_layer.wkbType(),
             input_layer.sourceCrs(),
         )
 
@@ -102,7 +102,7 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
             if geom.isNull() or geom.isEmpty():
                 continue
 
-            smoothed_geom = self._smooth_geometry(geom, degree, segment_length)
+            smoothed_geom = self._smooth_geometry(geom, degree, segment_length, feedback)
             if smoothed_geom is not None:
                 out_feature = QgsFeature()
                 out_feature.setGeometry(smoothed_geom)
@@ -113,33 +113,47 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
 
         return {self.OUTPUT: dest_id}
 
-    def _smooth_geometry(self, geometry, degree, segment_length):
+    def _is_closed(self, line, tolerance=1e-8):
+        """Check if line is closed (ring)"""
+        if len(line) < 3:
+            return False
+        return line[0].distance(line[-1]) < tolerance
+
+    def _smooth_geometry(self, geometry, degree, segment_length, feedback=None):
         """Smooth a line geometry using B-spline (NURBfit)"""
         if geometry.isMultipart():
             parts = []
             for part in geometry.asMultiPolyline():
-                smoothed = self._smooth_line(part, degree, segment_length)
+                smoothed = self._smooth_line(part, degree, segment_length, feedback)
                 if smoothed:
                     parts.append(smoothed)
             if parts:
                 return QgsGeometry.fromMultiPolylineXY(parts)
         else:
             line = geometry.asPolyline()
-            smoothed = self._smooth_line(line, degree, segment_length)
+            smoothed = self._smooth_line(line, degree, segment_length, feedback)
             if smoothed:
                 return QgsGeometry.fromPolylineXY(smoothed)
         return None
 
-    def _smooth_line(self, line, degree, segment_length):
+    def _smooth_line(self, line, degree, segment_length, feedback=None):
         """Apply B-spline smoothing to a line"""
-        if len(line) < degree + 1:
+        # Validação: FME requer degree < (num_vertices - 2)
+        if len(line) <= degree + 1:
             return line
 
         x = [p.x() for p in line]
         y = [p.y() for p in line]
 
+        # Detectar se é linha fechada
+        is_closed = self._is_closed(line)
+
+        # Ajustar grau se necessário
+        k_actual = min(degree, len(line) - 1)
+
         try:
-            tck, u = splprep([x, y], s=0, k=min(degree, len(line) - 1))
+            # Usar spline periódica para linhas fechadas
+            tck, u = splprep([x, y], s=0, k=k_actual, per=1 if is_closed else 0)
 
             if segment_length <= 0:
                 num_points = len(line) * 10
@@ -152,13 +166,27 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
             u_new = np.linspace(0, 1, num_points)
             x_new, y_new = splev(u_new, tck)
 
-            output_list = [QgsPointXY(float(x_new[i]), float(y_new[i])) for i in range(len(x_new))]
+            output_list = [
+                QgsPointXY(float(x_new[i]), float(y_new[i]))
+                for i in range(len(x_new))
+            ]
 
-        except Exception:
+            # Para linhas abertas, garantir endpoints exatos
+            if not is_closed:
+                output_list[0] = QgsPointXY(float(x[0]), float(y[0]))
+                output_list[-1] = QgsPointXY(float(x[-1]), float(y[-1]))
+            else:
+                # Para linhas fechadas, garantir fechamento
+                output_list[-1] = output_list[0]
+
+            return output_list
+
+        except Exception as e:
+            if feedback:
+                feedback.pushWarning(
+                    self.tr(f"Could not smooth line with {len(line)} vertices: {str(e)}")
+                )
             return line
-        output_list[0] = QgsPointXY(float(x[0]), float(y[0]))
-        output_list[-1] = QgsPointXY(float(x[-1]), float(y[-1]))
-        return output_list
 
     def name(self):
         return "nurbfitsmoothingalgorithm"

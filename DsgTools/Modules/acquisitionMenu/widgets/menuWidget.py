@@ -1,5 +1,5 @@
 import os, sys, copy
-from PyQt5 import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 
 
 class MenuWidget(QtWidgets.QTabWidget):
@@ -9,8 +9,8 @@ class MenuWidget(QtWidgets.QTabWidget):
         self.menuName = None
         self.buttonCallback = None
         self.buttonList = []
-        self.setTabPosition(QtWidgets.QTabWidget.West)
-        self.setElideMode(QtCore.Qt.ElideNone)
+        self.setTabPosition(QtWidgets.QTabWidget.TabPosition.West)
+        self.setElideMode(QtCore.Qt.TextElideMode.ElideNone)
         self.setStyleSheet(
             "QTabBar::tab::disabled {width: 0; heigth: 0; margin: 0; padding: 0; border: none;}"
         )
@@ -95,23 +95,23 @@ class MenuWidget(QtWidgets.QTabWidget):
             button.setShortcut(self.getButtonShortcut(n))
 
     def buttonMouseMoveEvent(self, e, button):
-        if e.buttons() == QtCore.Qt.LeftButton:
+        if e.buttons() == QtCore.Qt.MouseButton.LeftButton:
             mimeData = QtCore.QMimeData()
             drag = QtGui.QDrag(button)
             drag.setMimeData(mimeData)
-            dropAction = drag.exec_(QtCore.Qt.MoveAction)
+            dropAction = drag.exec(QtCore.Qt.DropAction.MoveAction)
 
     def getButtonShortcut(self, no):
         shortcuts = {
-            0: QtCore.Qt.Key_1,
-            1: QtCore.Qt.Key_2,
-            2: QtCore.Qt.Key_3,
-            3: QtCore.Qt.Key_4,
-            4: QtCore.Qt.Key_5,
-            5: QtCore.Qt.Key_6,
-            6: QtCore.Qt.Key_7,
-            7: QtCore.Qt.Key_8,
-            8: QtCore.Qt.Key_9,
+            0: QtCore.Qt.Key.Key_1,
+            1: QtCore.Qt.Key.Key_2,
+            2: QtCore.Qt.Key.Key_3,
+            3: QtCore.Qt.Key.Key_4,
+            4: QtCore.Qt.Key.Key_5,
+            5: QtCore.Qt.Key.Key_6,
+            6: QtCore.Qt.Key.Key_7,
+            7: QtCore.Qt.Key.Key_8,
+            8: QtCore.Qt.Key.Key_9,
         }
         return shortcuts[no]
 

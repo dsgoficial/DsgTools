@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
@@ -96,10 +96,10 @@ class SnapFeaturesInsideLayerWithGroupByAlgorithm(ValidationAlgorithm):
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        attributeName = self.parameterAsFields(parameters, self.ATTRIBUTE, context)[0]
+        attributeName = self.parameterAsStrings(parameters, self.ATTRIBUTE, context)[0]
         currentStep = 0
         uniqueValues = inputLyr.uniqueValues(
-            inputLyr.dataProvider().fieldNameIndex(attributeName)
+            inputLyr.fields().lookupField(attributeName)
         )
         multiStepFeedback = QgsProcessingMultiStepFeedback(
             3 + 3 * len(uniqueValues), feedback

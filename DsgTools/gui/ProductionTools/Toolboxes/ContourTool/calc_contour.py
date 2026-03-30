@@ -98,7 +98,7 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
         for layer in layers:
             if (
                 isinstance(layer, QgsVectorLayer)
-                and layer.geometryType() == QgsWkbTypes.LineGeometry
+                and layer.geometryType() == QgsWkbTypes.GeometryType.LineGeometry
             ):
                 self.layerCombo.addItem(layer.name())
 
@@ -124,7 +124,7 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(
                 self.tr("Information"),
                 self.tr("A layer must be selected!"),
-                level=Qgis.Info,
+                level=Qgis.MessageLevel.Info,
                 duration=3,
             )
             return
@@ -133,7 +133,7 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(
                 self.tr("Information"),
                 self.tr("A field must be selected!"),
-                level=Qgis.Info,
+                level=Qgis.MessageLevel.Info,
                 duration=3,
             )
             return
@@ -155,21 +155,21 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(
                 self.tr("Information!"),
                 self.tr("Layer successfully updated!"),
-                level=Qgis.Info,
+                level=Qgis.MessageLevel.Info,
                 duration=3,
             )
         elif ret == 0:
             self.iface.messageBar().pushMessage(
                 self.tr("Critical!"),
                 self.tr("Could not update features!"),
-                level=Qgis.Critical,
+                level=Qgis.MessageLevel.Critical,
                 duration=3,
             )
         elif ret == -1:
             self.iface.messageBar().pushMessage(
                 self.tr("Critical!"),
                 self.tr("Problem ordering the features!"),
-                level=Qgis.Critical,
+                level=Qgis.MessageLevel.Critical,
                 duration=3,
             )
         elif ret == -2:
@@ -178,7 +178,7 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
                 self.tr(
                     "The line created does not cross any features in the selected layer!"
                 ),
-                level=Qgis.Critical,
+                level=Qgis.MessageLevel.Critical,
                 duration=3,
             )
         elif ret == -3:
@@ -187,7 +187,7 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
                 self.tr(
                     "Assign a value for the selected attribute of the first crossed feature!"
                 ),
-                level=Qgis.Critical,
+                level=Qgis.MessageLevel.Critical,
                 duration=3,
             )
 

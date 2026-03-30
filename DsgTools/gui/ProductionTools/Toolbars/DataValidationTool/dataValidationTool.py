@@ -76,6 +76,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         self.resetModelList()
         self._feedback = QgsProcessingFeedback()
         self._context = QgsProcessingContext()
+        self._context.setProject(QgsProject.instance())
         self._newModels = []
 
     def _widgets(self):
@@ -164,16 +165,16 @@ class DataValidationTool(QWidget, FORM_CLASS):
                     self,
                     self.tr("Confirm Action"),
                     msg,
-                    QMessageBox.Ok | QMessageBox.Cancel,
+                    QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
                 )
-                == QMessageBox.Ok
+                == QMessageBox.StandardButton.Ok
             )
         else:
             return (
                 QMessageBox.question(
-                    self, self.tr("Confirm Action"), msg, QMessageBox.Ok
+                    self, self.tr("Confirm Action"), msg, QMessageBox.StandardButton.Ok
                 )
-                == QMessageBox.Ok
+                == QMessageBox.StandardButton.Ok
             )
 
     def modelExists(self, modelName):
@@ -239,7 +240,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         Checks current default path for models and refreshes current displayed
         list. If current selection is found, it is kept as active.
         """
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         currentModel = self.model()
         self.resetModelList()
         self.setActiveModel(currentModel)
@@ -270,7 +271,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 QgsMessageLog.logMessage(
                     self.tr("Model {model} was not imported.").format(model=modelName),
                     "DSGTools Plugin",
-                    Qgis.Info,
+                    Qgis.MessageLevel.Info,
                 )
                 return
             dest = os.path.join(self.defaultModelPath(), modelName)
@@ -285,7 +286,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                         model=modelName, dest=dest
                     ),
                     "DSGTools Plugin",
-                    Qgis.Info,
+                    Qgis.MessageLevel.Info,
                 )
 
     @pyqtSlot(bool, name="on_removeModelPushButton_clicked")
@@ -338,7 +339,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 self.tr("model {model} seems to have been deleted.").format(
                     model=modelName
                 ),
-                level=Qgis.Critical,
+                level=Qgis.MessageLevel.Critical,
                 duration=5,
             )
             return
@@ -355,7 +356,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(
                 self.tr("Sucess"),
                 self.tr("model {model} finished.").format(model=modelName),
-                level=Qgis.Info,
+                level=Qgis.MessageLevel.Info,
                 duration=5,
             )
             QgsMessageLog.logMessage(
@@ -364,7 +365,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                     " check model output on Processing log tab."
                 ).format(model=modelName),
                 "DSGTools Plugin",
-                Qgis.Info,
+                Qgis.MessageLevel.Info,
             )
             if not self.options()["loadModelOutput"]:
                 return
@@ -384,10 +385,10 @@ class DataValidationTool(QWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(
                 self.tr("Model {model} failed").format(model=modelName),
                 self.tr("check log for more information."),
-                level=Qgis.Critical,
+                level=Qgis.MessageLevel.Critical,
                 duration=5,
             )
-            QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.Info)
+            QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.MessageLevel.Info)
 
     def unload(self):
         """

@@ -37,7 +37,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.convertDatabas
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.exportPostGISDataToShapefile import (
     ExportPostGISDataToShapefile,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.etcqdgSegmentationEvaluatorFromRaster import ETCQDGSegmentationEvaluatorFromRaster
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.etcqdgSegmentationEvaluatorFromRaster import (
+    ETCQDGSegmentationEvaluatorFromRaster,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.genericSelectionToolParametersAlgorithm import (
     GenericSelectionToolParametersAlgorithm,
 )
@@ -109,11 +111,15 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.mergeShapefil
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGeographicBoundsConstraint import (
     BatchRunAlgorithmWithGeographicBoundsConstraint,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.cqdgGridGenerator import ETCQDGGridGenerator
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.cqdgGridGenerator import (
+    ETCQDGGridGenerator,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
     CreateGridFromCoordinatesAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.etcqdgSegmentationEvaluator import ETCQDGSegmentationEvaluator
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataQualityAlgs.etcqdgSegmentationEvaluator import (
+    ETCQDGSegmentationEvaluator,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeographicBoundary import (
     FilterLayerListByGeographicBoundary,
 )
@@ -169,7 +175,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.splitContoursAtMax
     SplitContoursAtMaximumLengthAlgorithm,
 )
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
 
@@ -619,6 +625,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unicodeFilterAlgor
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyAdjacentGeographicBoundaryDataAlgorithm import (
     VerifyAdjacentGeographicBoundaryDataAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyBDGExEdgeMatchingAlgorithm import (
+    VerifyBDGExEdgeMatchingAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadThemesAlgorithm import (
     LoadThemesAlgorithm,
 )
@@ -785,6 +794,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             GenericSelectionToolParametersAlgorithm(),
             ClipAndCopyFeaturesBetweenDatabasesAlgorithm(),
             VerifyAdjacentGeographicBoundaryDataAlgorithm(),
+            VerifyBDGExEdgeMatchingAlgorithm(),
             FixSegmentErrorsBetweenLinesAlgorithm(),
             IdentifyDifferencesBetweenDatabaseModelsAlgorithm(),
             AzimuthCalculationAlgorithm(),

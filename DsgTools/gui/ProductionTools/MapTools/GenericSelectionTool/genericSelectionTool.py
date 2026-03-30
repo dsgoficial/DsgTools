@@ -61,8 +61,8 @@ class AbstractSelectionTool(QgsMapTool):
         self.canvas = self.iface.mapCanvas()
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
-        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
-        self.hoverRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
+        self.hoverRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
         mFillColor = QColor(254, 178, 76, 63)
         self.rubberBand.setColor(mFillColor)
         self.hoverRubberBand.setColor(QColor(255, 0, 0, 90))
@@ -89,7 +89,7 @@ class AbstractSelectionTool(QgsMapTool):
         """
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
-        self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
+        self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
 
     def canvasMoveEvent(self, e):
         """
@@ -97,7 +97,7 @@ class AbstractSelectionTool(QgsMapTool):
         """
         if self.menuHovered:
             # deactivates rubberband when the context menu is "destroyed"
-            self.hoverRubberBand.reset(QgsWkbTypes.PolygonGeometry)
+            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         if not self.isEmittingPoint:
             return
         self.endPoint = self.toMapCoordinates(e.pos())
@@ -111,7 +111,7 @@ class AbstractSelectionTool(QgsMapTool):
         """
         Method used to build rectangle if shift is held, otherwise, feature select/deselect and identify is done.
         """
-        if QApplication.keyboardModifiers() == Qt.ShiftModifier:
+        if QApplication.keyboardModifiers() == Qt.KeyboardModifier.ShiftModifier:
             self.isEmittingPoint = True
             self.startPoint = self.toMapCoordinates(e.pos())
             self.endPoint = self.startPoint
@@ -147,7 +147,7 @@ class AbstractSelectionTool(QgsMapTool):
         # these layers are ordered by view order
         primitiveDict = dict()
         geometryFilter = [
-            QgsWkbTypes.PointGeometry,  QgsWkbTypes.LineGeometry, QgsWkbTypes.PolygonGeometry
+            QgsWkbTypes.GeometryType.PointGeometry,  QgsWkbTypes.GeometryType.LineGeometry, QgsWkbTypes.GeometryType.PolygonGeometry
         ] if geometryFilter is None else geometryFilter
         firstGeom = self.checkSelectedLayers()
         visibleLayers = QgsProject.instance().layerTreeRoot().checkedLayers()
@@ -190,7 +190,7 @@ class AbstractSelectionTool(QgsMapTool):
         Deactivate tool.
         """
         QApplication.restoreOverrideCursor()
-        self.hoverRubberBand.reset(QgsWkbTypes.PolygonGeometry)
+        self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         try:
             self.rubberBand.reset()
             if self.toolAction:
@@ -245,11 +245,11 @@ class AbstractSelectionTool(QgsMapTool):
         :param geom: int indicating geometry type of target feature
         """
         if geom == 0:
-            self.hoverRubberBand.reset(QgsWkbTypes.PointGeometry)
+            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PointGeometry)
         elif geom == 1:
-            self.hoverRubberBand.reset(QgsWkbTypes.LineGeometry)
+            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.LineGeometry)
         else:
-            self.hoverRubberBand.reset(QgsWkbTypes.PolygonGeometry)
+            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         self.hoverRubberBand.addGeometry(feature.geometry(), layer)
         # to inform the code that menu has been hovered over
         self.menuHovered = True
@@ -262,11 +262,11 @@ class AbstractSelectionTool(QgsMapTool):
         # only one type of geometry at a time will have rubberbands around it
         geom = list(dictLayerFeature.keys())[0].geometryType()
         if geom == 0:
-            self.hoverRubberBand.reset(QgsWkbTypes.PointGeometry)
+            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PointGeometry)
         elif geom == 1:
-            self.hoverRubberBand.reset(QgsWkbTypes.LineGeometry)
+            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.LineGeometry)
         else:
-            self.hoverRubberBand.reset(QgsWkbTypes.PolygonGeometry)
+            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         for layer, features in dictLayerFeature.items():
             for feat in features:
                 self.hoverRubberBand.addGeometry(feat.geometry(), layer)
@@ -468,14 +468,14 @@ class AbstractSelectionTool(QgsMapTool):
         Creates the context menu for overlapping layers.
         :param e: mouse event caught from canvas.
         """
-        selected = QApplication.keyboardModifiers() == Qt.ControlModifier
+        selected = QApplication.keyboardModifiers() == Qt.KeyboardModifier.ControlModifier
         if selected:
             firstGeom = self.checkSelectedLayers()
         # setting a list of features to iterate over
         layerList = self.getPrimitiveDict(
             e,
             hasControlModifier=selected,
-            hasAltModifier=QApplication.keyboardModifiers() == Qt.AltModifier,
+            hasAltModifier=QApplication.keyboardModifiers() == Qt.KeyboardModifier.AltModifier,
             geometryFilter=geometryFilter,
         )
         layers = []
@@ -564,7 +564,7 @@ class GenericSelectionTool(AbstractSelectionTool):
         """
         Builds rubberband rect.
         """
-        self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
+        self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
             return
         point1 = QgsPointXY(startPoint.x(), startPoint.y())
@@ -595,7 +595,7 @@ class GenericSelectionTool(AbstractSelectionTool):
         """
         After the rectangle is built, here features are selected.
         """
-        if QApplication.keyboardModifiers() == Qt.ShiftModifier:
+        if QApplication.keyboardModifiers() == Qt.KeyboardModifier.ShiftModifier:
             firstGeom = self.checkSelectedLayers()
             self.isEmittingPoint = False
             r = self.rectangle()
@@ -677,7 +677,7 @@ class GenericSelectionTool(AbstractSelectionTool):
         """
         if not geomType:
             geomType = layer.geometryType()
-        if e.button() == Qt.LeftButton:
+        if e.button() == Qt.MouseButton.LeftButton:
             # line added to make sure the action is associated with current loop value,
             # lambda function is used with standard parameter set to current loops value.
             # triggeredAction = lambda t=[layer, feature] : self.setSelectionFeature(t[0], feature=t[1], selectAll=selectAll, setActiveLayer=True)
@@ -691,8 +691,8 @@ class GenericSelectionTool(AbstractSelectionTool):
             hoveredAction = partial(
                 self.createRubberBand, feature=feature, layer=layer, geom=geomType
             )
-        elif e.button() == Qt.RightButton:
-            selected = QApplication.keyboardModifiers() == Qt.ControlModifier
+        elif e.button() == Qt.MouseButton.RightButton:
+            selected = QApplication.keyboardModifiers() == Qt.KeyboardModifier.ControlModifier
             if selected:
                 triggeredAction = partial(self.iface.setActiveLayer, layer)
                 hoveredAction = None
@@ -713,7 +713,7 @@ class GenericSelectionTool(AbstractSelectionTool):
         :return: (tuple-of function_lambda) callbacks for triggered and hovered signals.
         """
         # setting the action for the "All" options
-        if e.button() == Qt.LeftButton:
+        if e.button() == Qt.MouseButton.LeftButton:
             triggeredAction = partial(
                 self.setSelectionListFeature,
                 dictLayerFeature=dictLayerFeature,
@@ -743,7 +743,7 @@ class GenericSelectionTool(AbstractSelectionTool):
         # finding out if one of either dictionaty are filled ("Exclusive or")
         selectedXORnotSelected = selectedDict != notSelectedDict
         # setting "All"-command name
-        if e.button() == Qt.RightButton:
+        if e.button() == Qt.MouseButton.RightButton:
             genericAction = self.tr("Open All Feature Forms")
         else:
             genericAction = self.tr("Select All Features")
@@ -763,7 +763,7 @@ class GenericSelectionTool(AbstractSelectionTool):
                 genericAction = self.tr("Select All Features")
                 # if the dictionary is from non-selected features, we want commands to be able to select them
                 selectAll = True
-            if e.button() == Qt.RightButton:
+            if e.button() == Qt.MouseButton.RightButton:
                 genericAction = self.tr("Open All Feature Forms")
             self.createSubmenu(
                 e=e,
@@ -832,11 +832,11 @@ class GenericSelectionTool(AbstractSelectionTool):
                     onTriggeredAction=triggeredAction,
                     onHoveredAction=hoveredAction,
                 )
-        menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
+        menu.exec(self.canvas.viewport().mapToGlobal(e.pos()))
     
     def removeSelection(self, e, hasControlModifier, lyr):
-        if (not hasControlModifier and e.button() == Qt.LeftButton) or (
-                hasControlModifier and e.button() == Qt.RightButton
+        if (not hasControlModifier and e.button() == Qt.MouseButton.LeftButton) or (
+                hasControlModifier and e.button() == Qt.MouseButton.RightButton
             ):
             lyr.removeSelection()
     
@@ -859,8 +859,8 @@ class GenericSelectionTool(AbstractSelectionTool):
         else:
             layer = list(lyrFeatDict.keys())[0]
             feature = lyrFeatDict[layer][0]
-            selected = QApplication.keyboardModifiers() == Qt.ControlModifier
-            if e.button() == Qt.LeftButton:
+            selected = QApplication.keyboardModifiers() == Qt.KeyboardModifier.ControlModifier
+            if e.button() == Qt.MouseButton.LeftButton:
                 # if feature is selected, we want it to be de-selected
                 self.setSelectionFeature(
                     layer=layer,

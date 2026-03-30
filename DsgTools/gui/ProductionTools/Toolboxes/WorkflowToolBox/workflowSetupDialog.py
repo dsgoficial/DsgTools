@@ -170,7 +170,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.orderedTableWidget.setHeaderDoubleClickBehaviour("replicate")
         self.orderedTableWidget.horizontalHeader().setStretchLastSection(True)
         self.orderedTableWidget.tableWidget.setHorizontalScrollBarPolicy(
-            QtCore.Qt.ScrollBarAsNeeded
+            QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded
         )
         self.orderedTableWidget.tableWidget.horizontalHeader().setDefaultSectionSize(
             150
@@ -250,32 +250,32 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                         self,
                         self.tr("Confirm Action"),
                         msg,
-                        QMessageBox.Ok | QMessageBox.Cancel,
+                        QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
                     )
-                    == QMessageBox.Ok
+                    == QMessageBox.StandardButton.Ok
                 )
             else:
                 return (
                     QMessageBox.question(
-                        self, self.tr("Confirm Action"), msg, QMessageBox.Ok
+                        self, self.tr("Confirm Action"), msg, QMessageBox.StandardButton.Ok
                     )
-                    == QMessageBox.Ok
+                    == QMessageBox.StandardButton.Ok
                 )
         # prompt to all == true daqui para frente
         if self.promptToAll is not None:
             return self.promptToAll
         # prompt to all == true daqui para frente e self.promptToAll is None
         # (o usuario nao mandou algum sim ou nao para todos)
-        buttonPromptList = QMessageBox.Ok | QMessageBox.YesAll | QMessageBox.NoAll
+        buttonPromptList = QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.YesAll | QMessageBox.StandardButton.NoAll
         if showCancel:
-            buttonPromptList = buttonPromptList | QMessageBox.Cancel
+            buttonPromptList = buttonPromptList | QMessageBox.StandardButton.Cancel
         answer = QMessageBox.question(
             self, self.tr("Confirm Action"), msg, buttonPromptList
         )
-        if answer in [QMessageBox.YesAll, QMessageBox.NoAll]:
-            self.promptToAll = answer == QMessageBox.YesAll
+        if answer in [QMessageBox.StandardButton.YesAll, QMessageBox.StandardButton.NoAll]:
+            self.promptToAll = answer == QMessageBox.StandardButton.YesAll
             return self.promptToAll
-        return answer == QMessageBox.Ok
+        return answer == QMessageBox.StandardButton.Ok
 
     def clear(self):
         """
@@ -342,9 +342,9 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 self,
                 self.tr("Confirm Action"),
                 self.tr("Would you like to open the exported file on Model Designer?"),
-                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             )
-            == QMessageBox.Yes
+            == QMessageBox.StandardButton.Yes
         ):
             return
         dlg = ModelerDialog.create()
@@ -409,7 +409,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
 
     def loadFlagLayers(self):
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Minimum
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -640,7 +640,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
 
     def pushMessage(self, message):
         self.messageBar.pushMessage(
-            self.tr("Info"), message, level=Qgis.Info, duration=5
+            self.tr("Info"), message, level=Qgis.MessageLevel.Info, duration=5
         )
 
     @pyqtSlot(bool, name="on_exportPushButton_clicked")
@@ -652,7 +652,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         msg = self.validate()
         if msg != "":
             self.messageBar.pushMessage(
-                self.tr("Invalid workflow"), msg, level=Qgis.Warning, duration=5
+                self.tr("Invalid workflow"), msg, level=Qgis.MessageLevel.Warning, duration=5
             )
             return False
         fd = QFileDialog()
@@ -676,7 +676,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 self.tr("Unable to export workflow to '{fp}' ({error}).").format(
                     fp=filename, error=str(e)
                 ),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=5,
             )
             return False
@@ -685,7 +685,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             if result
             else self.tr("Unable to export workflow to '{fp}'")
         ).format(fp=filename)
-        lvl = Qgis.Success if result else Qgis.Warning
+        lvl = Qgis.MessageLevel.Success if result else Qgis.MessageLevel.Warning
         self.messageBar.pushMessage(
             self.tr("Workflow exporting"), msg, level=lvl, duration=5
         )
@@ -726,14 +726,14 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 self.tr("Unable to export workflow to '{fp}' ({error}).").format(
                     fp=filename, error=str(e)
                 ),
-                level=Qgis.Critical,
+                level=Qgis.MessageLevel.Critical,
                 duration=5,
             )
             return False
         self.messageBar.pushMessage(
             self.tr("Success"),
             self.tr("Workflow '{fp}' imported!").format(fp=filename),
-            level=Qgis.Info,
+            level=Qgis.MessageLevel.Info,
             duration=5,
         )
         return True
@@ -750,7 +750,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             self.messageBar.pushMessage(
                 self.tr("Invalid workflow"),
                 self.validate(),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=5,
             )
 

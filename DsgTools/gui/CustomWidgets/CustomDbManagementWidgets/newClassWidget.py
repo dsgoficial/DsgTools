@@ -58,10 +58,10 @@ class NewClassWidget(QtWidgets.QWidget, FORM_CLASS):
         }
         header = self.tableWidget.horizontalHeader()
         header.setStretchLastSection(True)
-        regex = QtCore.QRegExp("[a-z][a-z\_]*")
+        regex = QtCore.QRegularExpression("[a-z][a-z\_]*")
         validator = QtGui.QRegExpValidator(regex, self.classNameLineEdit)
         self.classNameLineEdit.setValidator(validator)
-        regex2 = QtCore.QRegExp("[a-z]*")
+        regex2 = QtCore.QRegularExpression("[a-z]*")
         validator2 = QtGui.QRegExpValidator(regex2, self.categoryLineEdit)
         self.categoryLineEdit.setValidator(validator2)
         self.abstractDb = abstractDb
@@ -82,7 +82,7 @@ class NewClassWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         if uiParameterJsonDict:
             idx = self.schemaComboBox.findText(
-                uiParameterJsonDict["schemaComboBox"], flags=Qt.MatchExactly
+                uiParameterJsonDict["schemaComboBox"], flags=Qt.MatchFlag.MatchExactly
             )
             self.schemaComboBox.setCurrentIndex(idx)
             self.categoryLineEdit.setText(uiParameterJsonDict["categoryLineEdit"])

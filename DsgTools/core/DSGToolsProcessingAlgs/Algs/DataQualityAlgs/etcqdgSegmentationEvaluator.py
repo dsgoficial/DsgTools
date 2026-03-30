@@ -29,7 +29,7 @@ from collections import defaultdict
 import numpy as np
 import processing 
 
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
@@ -216,25 +216,25 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
         source_fields = [f for f in tiles_source.fields() if f.name() != "fid"]
         output_fields = QgsFields(source_fields)
         
-        output_fields.append(QgsField("experimento", QVariant.String))
-        output_fields.append(QgsField("gt_path", QVariant.String))
-        output_fields.append(QgsField("pred_path", QVariant.String))
-        output_fields.append(QgsField("accuracy", QVariant.Double))
-        output_fields.append(QgsField("mean_iou", QVariant.Double))
-        output_fields.append(QgsField("f1_score", QVariant.Double))
-        output_fields.append(QgsField("precision", QVariant.Double))
-        output_fields.append(QgsField("recall", QVariant.Double))
-        output_fields.append(QgsField("total_px", QVariant.Int))
-        output_fields.append(QgsField("correct_px", QVariant.Int))
+        output_fields.append(QgsField("experimento", QMetaType.Type.QString))
+        output_fields.append(QgsField("gt_path", QMetaType.Type.QString))
+        output_fields.append(QgsField("pred_path", QMetaType.Type.QString))
+        output_fields.append(QgsField("accuracy", QMetaType.Type.Double))
+        output_fields.append(QgsField("mean_iou", QMetaType.Type.Double))
+        output_fields.append(QgsField("f1_score", QMetaType.Type.Double))
+        output_fields.append(QgsField("precision", QMetaType.Type.Double))
+        output_fields.append(QgsField("recall", QMetaType.Type.Double))
+        output_fields.append(QgsField("total_px", QMetaType.Type.Int))
+        output_fields.append(QgsField("correct_px", QMetaType.Type.Int))
 
         sorted_classes = sorted(class_names.keys())
         for cid in sorted_classes:
             cname = class_names[cid].replace(" ", "_")
             prefix = f"cl_{cid}_{cname}"[:20]
-            output_fields.append(QgsField(f"{prefix}_iou", QVariant.Double))
-            output_fields.append(QgsField(f"{prefix}_f1", QVariant.Double))
-            output_fields.append(QgsField(f"{prefix}_prec", QVariant.Double))
-            output_fields.append(QgsField(f"{prefix}_rec", QVariant.Double))
+            output_fields.append(QgsField(f"{prefix}_iou", QMetaType.Type.Double))
+            output_fields.append(QgsField(f"{prefix}_f1", QMetaType.Type.Double))
+            output_fields.append(QgsField(f"{prefix}_prec", QMetaType.Type.Double))
+            output_fields.append(QgsField(f"{prefix}_rec", QMetaType.Type.Double))
 
         (sink, dest_id) = self.parameterAsSink(
             parameters, self.OUTPUT_LAYER, context, output_fields, tiles_source.wkbType(), tiles_source.sourceCrs()

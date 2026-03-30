@@ -116,13 +116,13 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
             self.POLYGON_FLAGS,
         )
         func_dict = {
-            QgsWkbTypes.LineGeometry: lambda x: algRunner.runIdentifySmallLines(
+            QgsWkbTypes.GeometryType.LineGeometry: lambda x: algRunner.runIdentifySmallLines(
                 inputLyr=x[0],
                 tol=x[1],
                 context=context,
                 feedback=x[2],
             ),
-            QgsWkbTypes.PolygonGeometry: lambda x: algRunner.runIdentifySmallPolygons(
+            QgsWkbTypes.GeometryType.PolygonGeometry: lambda x: algRunner.runIdentifySmallPolygons(
                 inputLyr=x[0],
                 tol=x[1],
                 context=context,
@@ -141,8 +141,8 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
             outputDict[layer.geometryType()].append(outputLyr)
 
         flagLambdaDict = {
-            QgsWkbTypes.LineGeometry: lambda x: self.lineFlagSink.addFeature(x),
-            QgsWkbTypes.PolygonGeometry: lambda x: self.polygonFlagSink.addFeature(x),
+            QgsWkbTypes.GeometryType.LineGeometry: lambda x: self.lineFlagSink.addFeature(x),
+            QgsWkbTypes.GeometryType.PolygonGeometry: lambda x: self.polygonFlagSink.addFeature(x),
         }
         for currentStep, (wkbType, featList) in enumerate(
             outputDict.items(), start=currentStep + 1

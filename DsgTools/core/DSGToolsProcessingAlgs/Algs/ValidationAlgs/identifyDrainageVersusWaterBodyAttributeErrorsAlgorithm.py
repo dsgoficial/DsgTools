@@ -23,7 +23,7 @@
 
 from collections import defaultdict
 from typing import Any, Dict, Set
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 import concurrent.futures
 import os
@@ -124,7 +124,7 @@ class IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(ValidationAlgorith
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT_DRAINAGES)
             )
-        polygonRelationshipAttribute = self.parameterAsFields(
+        polygonRelationshipAttribute = self.parameterAsStrings(
             parameters, self.INSIDE_POLYGON_ATTRIBUTE, context
         )[0]
         outsidePolygonValue = self.parameterAsString(

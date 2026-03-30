@@ -34,7 +34,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorith
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools import rasterHandler
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.affine import Affine
 from qgis.core import (
@@ -1072,8 +1072,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4(ValidationAlgorithm):
         else:
             # For projected coordinates
             units = crs.mapUnits()
+            areaUnit = QgsUnitTypes.distanceToAreaUnit(units)
             conversion_factor = QgsUnitTypes.fromUnitToUnitFactor(
-                units, QgsUnitTypes.SquareMeters
+                areaUnit, QgsUnitTypes.AreaSquareMeters
             )
             pixel_area = pixel_width * pixel_height * conversion_factor
 

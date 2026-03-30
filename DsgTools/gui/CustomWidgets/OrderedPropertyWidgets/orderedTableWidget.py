@@ -77,7 +77,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         self.showSaveLoadButtons(showButtons)
         self.setHeaders(headerMap or {})
         self.setHeaderDoubleClickBehaviour()
-        self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
     def showSaveLoadButtons(self, showButtons=False):
         """
@@ -261,10 +261,10 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param mode: (str) resize policy identifier.
         """
         policies = {
-            "interactive": QHeaderView.Interactive,
-            "stretch": QHeaderView.Stretch,
-            "fixed": QHeaderView.Fixed,
-            "resizetocontents": QHeaderView.ResizeToContents,
+            "interactive": QHeaderView.ResizeMode.Interactive,
+            "stretch": QHeaderView.ResizeMode.Stretch,
+            "fixed": QHeaderView.ResizeMode.Fixed,
+            "resizetocontents": QHeaderView.ResizeMode.ResizeToContents,
         }
         if col < 0 or col >= self.rowCount() or mode not in policies:
             return
@@ -310,7 +310,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                 item = QTableWidgetItem()
                 # it "flips" current state, which, by default, is "editable"
                 if not properties["editable"]:
-                    item.setFlags(Qt.ItemIsEditable)
+                    item.setFlags(Qt.ItemFlag.ItemIsEditable)
                 self.tableWidget.setItem(row, col, item)
             else:
                 self.tableWidget.setCellWidget(row, col, properties["widget"]())
@@ -338,7 +338,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                 item = QTableWidgetItem(value)
                 # it "flips" current state, which, by default, is "editable"
                 if not properties["editable"]:
-                    item.setFlags(Qt.ItemIsEditable)
+                    item.setFlags(Qt.ItemFlag.ItemIsEditable)
                 self.tableWidget.setItem(row, col, item)
             else:
                 widget = properties["widget"]()
@@ -441,9 +441,9 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param row: (int) index for the row to be added to selection.
         """
         if row not in self.selectedRows():
-            self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
+            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
             self.tableWidget.selectRow(row)
-            self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
     def removeRowFromSelection(self, row):
         """
@@ -451,9 +451,9 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param row: (int) index for the row to be removed from selection.
         """
         if row in self.selectedRows():
-            self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
+            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
             self.tableWidget.selectRow(row)
-            self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
     def clearRowSelection(self):
         """

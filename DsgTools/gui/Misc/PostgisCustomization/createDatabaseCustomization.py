@@ -23,7 +23,7 @@
 from builtins import range
 import os, json
 
-from qgis.core import QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgsCollapsibleGroupBox
 
 # Qt imports
@@ -263,7 +263,7 @@ class CreateDatabaseCustomization(QtWidgets.QDialog, FORM_CLASS):
         )
 
     def addWidget(self, widget, title):
-        layout = QtGui.QFormLayout()
+        layout = QFormLayout()
         layout.addRow(widget)
         groupBox = QgsCollapsibleGroupBox(title)
         groupBox.setCollapsed(False)
@@ -296,7 +296,7 @@ class CreateDatabaseCustomization(QtWidgets.QDialog, FORM_CLASS):
             treeItemList = [self.customizationTreeWidget.currentItem()]
         else:
             treeItemList = self.customizationTreeWidget.findItems(
-                widgetText, flags=Qt.MatchExactly
+                widgetText, flags=Qt.MatchFlag.MatchExactly
             )
         if len(treeItemList) > 0:
             for treeItem in treeItemList:
@@ -310,7 +310,7 @@ class CreateDatabaseCustomization(QtWidgets.QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         exceptionList = []
         customJsonDict = dict()
         for i in list(self.customDict.keys()):
@@ -370,7 +370,7 @@ class CreateDatabaseCustomization(QtWidgets.QDialog, FORM_CLASS):
                     QgsMessageLog.logMessage(
                         self.tr("Customization error: ") + error,
                         "DSGTools Plugin",
-                        Qgis.Critical,
+                        Qgis.MessageLevel.Critical,
                     )
                 QMessageBox.warning(self, self.tr("Error!"), msg)
 

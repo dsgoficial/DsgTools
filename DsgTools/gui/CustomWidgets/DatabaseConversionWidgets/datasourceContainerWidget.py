@@ -171,7 +171,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # filter dialog is only built on the first execution
         if self.filterDlg is None:
             self.refreshFilterDialog()
-        if self.filterDlg.exec_() == 0:
+        if self.filterDlg.exec() == 0:
             # in case execution changed anything - e.g. if Ok was pressed
             self.filterSettingsChanged.emit(self)
 

@@ -108,7 +108,7 @@ class AbstractDb(QObject):
                 query = QSqlQuery(sql, self.db)
                 query.next()
                 number = query.value(0)
-                if not query.exec_(sql):
+                if not query.exec(sql):
                     raise Exception(
                         self.tr("Problem counting elements: ")
                         + query.lastError().text()
@@ -150,7 +150,7 @@ class AbstractDb(QObject):
                         self.db.databaseName(), self.db.lastError().databaseText()
                     ),
                     "DSGTools Plugin",
-                    Qgis.Warning,
+                    Qgis.MessageLevel.Warning,
                 )
                 continue
 
@@ -973,7 +973,7 @@ class AbstractDb(QObject):
         )
         self.db.transaction()
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             self.db.rollback()
             self.db.close()
             raise Exception(

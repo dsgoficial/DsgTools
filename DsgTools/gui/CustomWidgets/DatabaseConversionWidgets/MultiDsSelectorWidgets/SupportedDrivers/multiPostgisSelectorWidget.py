@@ -233,7 +233,7 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         # datasources are cleared once dialog is re-opened
         self.datasources = {}
-        if not self.selector.exec_():
+        if not self.selector.exec():
             # if ok was selected on multiselector, check for database selection
             if self.selector.dbList:
                 self.datasources = self.getDbListServerInfo(dbList=self.selector.dbList)

@@ -22,11 +22,12 @@
 """
 import os
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtWidgets import QMessageBox
 
 # DSGTools imports
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
@@ -79,7 +80,7 @@ class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
                 self.tr("Critical!"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
             return
         version = self.abstractDb.getDatabaseVersion()
         self.profile = dict()

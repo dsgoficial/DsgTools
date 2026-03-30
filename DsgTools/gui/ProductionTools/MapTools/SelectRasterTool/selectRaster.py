@@ -23,7 +23,7 @@
 
 from qgis.core import QgsRasterLayer, QgsRectangle, QgsProject
 from qgis.gui import QgsMapTool
-from PyQt5 import QtWidgets, QtGui
+from qgis.PyQt import QtWidgets, QtGui
 
 
 class SelectRasterTool(QgsMapTool):
@@ -86,7 +86,7 @@ class SelectRasterTool(QgsMapTool):
     def openRastersMenu(self, rasters):
         menu = QtWidgets.QMenu()
         self.addRasterMenu(menu, rasters)
-        menu.exec_(QtGui.QCursor.pos())
+        menu.exec(QtGui.QCursor.pos())
 
     def addRasterMenu(self, menu, rasters):
         rasterMenu = menu  # QtWidgets.QMenu(title="Rasters", parent=menu)

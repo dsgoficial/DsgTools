@@ -23,7 +23,7 @@
 import fnmatch
 import json
 from typing import Any, Dict, List, Optional
-from PyQt5.QtCore import QVariant, QMetaType, QDateTime
+from qgis.PyQt.QtCore import QVariant, QMetaType, QDateTime
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.abstractConvertDatabaseAlgorithm import (
     AbstractDatabaseAlgorithm,
 )
@@ -47,7 +47,7 @@ from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
 )
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingException,
@@ -139,7 +139,7 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS,
                 self.tr("Geographic Bounds"),
-                [QgsWkbTypes.PolygonGeometry],
+                [QgsWkbTypes.GeometryType.PolygonGeometry],
                 optional=True,
             )
         )

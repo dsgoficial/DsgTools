@@ -44,7 +44,7 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsProject,
 )
-from qgis.PyQt.Qt import QObject, QVariant
+from qgis.PyQt.QtCore import QObject
 
 from .geometryHandler import GeometryHandler
 from .attributeHandler import AttributeHandler

@@ -25,7 +25,7 @@ import os
 from pathlib import Path
 import zipfile
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingParameterString,

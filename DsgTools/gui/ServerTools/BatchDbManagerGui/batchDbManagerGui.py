@@ -56,7 +56,7 @@ class BatchDbManagerGui(QObject):
         Opens dialog.
         """
         self.batchDbManager.show()
-        result = self.batchDbManager.exec_()
+        result = self.batchDbManager.exec()
 
     def unload(self):
         """

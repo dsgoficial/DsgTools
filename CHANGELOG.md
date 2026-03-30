@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 5.0 - 2026-03-30
+
+Novas Funcionalidades:
+
+- Migração do DSGTools para o QGIS 4;
+- Novo algoritmo de verificar ligação de shapefiles;
+
+Melhorias:
+
+- Adiciona opção de extrair somente os topos de morro e depressões no algoritmo de extração de pontos cotados;
+- Melhoria de desempenho no converte linha para multilinha;
+
+Correções de bug:
+
+- Corrige bugs no algoritmo de suavização nurbfit;
+
 ## 4.20.1 - 2026-01-19
 
 Correção de bugs:

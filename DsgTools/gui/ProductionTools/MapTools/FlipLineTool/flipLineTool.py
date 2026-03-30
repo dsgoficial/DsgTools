@@ -77,7 +77,7 @@ class FlipLine(QgsMapTool):
         if (
             not layer
             or not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() != QgsWkbTypes.LineGeometry
+            or layer.geometryType() != QgsWkbTypes.GeometryType.LineGeometry
             or not layer.isEditable()
         ):
             enabled = False
@@ -128,10 +128,10 @@ class FlipLine(QgsMapTool):
         if not selectedFeatures:
             logMsg = self.getLogMessage(None, None)
             self.iface.messageBar().pushMessage(
-                self.tr("Error"), logMsg, level=Qgis.Critical, duration=3
+                self.tr("Error"), logMsg, level=Qgis.MessageLevel.Critical, duration=3
             )
             # QMessageBox.critical(self, self.tr('Critical!'), logMsg)
-            QgsMessageLog.logMessage(logMsg, "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(logMsg, "DSGTools Plugin", Qgis.MessageLevel.Critical)
             return
         # call the method for flipping features from geometry module
         flippedLines, failedLines = self.DsgGeometryHandler.flipFeatureList(
@@ -139,9 +139,9 @@ class FlipLine(QgsMapTool):
         )
         logMsg = self.getLogMessage(flippedLines, failedLines)
         self.iface.messageBar().pushMessage(
-            self.tr("Success"), logMsg, level=Qgis.Info, duration=3
+            self.tr("Success"), logMsg, level=Qgis.MessageLevel.Info, duration=3
         )
-        QgsMessageLog.logMessage(logMsg, "DSGTools Plugin", Qgis.Info)
+        QgsMessageLog.logMessage(logMsg, "DSGTools Plugin", Qgis.MessageLevel.Info)
 
     def getLogMessage(self, flippedLines, failedLines):
         """
@@ -177,7 +177,7 @@ class FlipLine(QgsMapTool):
             self.iface.messageBar().pushMessage(
                 self.tr("Warning"),
                 self.tr("Start editing in current layer!"),
-                level=Qgis.Info,
+                level=Qgis.MessageLevel.Info,
                 duration=3,
             )
 

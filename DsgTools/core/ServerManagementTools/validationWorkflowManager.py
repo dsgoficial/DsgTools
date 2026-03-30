@@ -31,7 +31,7 @@ from DsgTools.core.ServerManagementTools.genericDbManager import GenericDbManage
 from DsgTools.core.Utils.utils import Utils
 
 # qgis.PyQt imports
-from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import QObject
 
 
 class ValidationWorkflowManager(GenericDbManager):

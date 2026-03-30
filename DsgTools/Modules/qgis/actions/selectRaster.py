@@ -1,6 +1,6 @@
 from qgis import gui, core
 from qgis.utils import iface
-from PyQt5 import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 
 
 class SelectRaster:
@@ -36,7 +36,7 @@ class SelectRaster:
     def openRastersMenu(self, rasters):
         menu = QtWidgets.QMenu()
         self.addRasterMenu(menu, rasters)
-        menu.exec_(QtGui.QCursor.pos())
+        menu.exec(QtGui.QCursor.pos())
 
     def addRasterMenu(self, menu, rasters):
         rasterMenu = menu  # QtWidgets.QMenu(title="Rasters", parent=menu)

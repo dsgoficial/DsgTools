@@ -184,7 +184,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
             QMessageBox.critical(
                 self.iface.mainWindow(), self.tr("Critical!"), ":".join(e.args)
             )
-            QgsMessageLog.logMessage(e.args[0], "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(e.args[0], "DSGTools Plugin", Qgis.MessageLevel.Critical)
 
         self.complexCombo.addItems(complexClasses)
 
@@ -229,7 +229,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
         dlg.tableUpdated.connect(self.loadAssociatedFeatures)
         # connects a signal to disassociate features from complex before removal
         dlg.markedToRemove.connect(self.disassociateFeatures)
-        result = dlg.exec_()
+        result = dlg.exec()
         if result:
             pass
 
@@ -304,7 +304,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
         toBeremoved: uuid of the complex that will have all its associated features disassociated
         """
         for uuid in toBeRemoved:
-            items = self.treeWidget.findItems(uuid, Qt.MatchRecursive, 1)
+            items = self.treeWidget.findItems(uuid, Qt.MatchFlag.MatchRecursive, 1)
             if len(items) == 0:
                 return
             complexItem = items[0]
@@ -330,7 +330,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
                 self.tr("Critical"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
 
         # getting the layer the needs to be updated
         aggregated_layer = None
@@ -377,7 +377,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
                 self.tr("Critical"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
 
         # getting the layer the needs to be updated
         aggregated_layer = None
@@ -433,7 +433,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
             QMessageBox.critical(
                 self.iface.mainWindow(), self.tr("Critical!"), e.args[0]
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
 
     @pyqtSlot(bool)
     def on_disassociatePushButton_clicked(self):
@@ -487,7 +487,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
                 self.tr("Critical"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
 
         for name in list(associatedDict.keys()):
             for complex_uuid in list(associatedDict[name].keys()):
@@ -541,7 +541,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
         forbiddenLayers = []
         self.layers = self.iface.mapCanvas().layers()
         for layer in self.layers:
-            if layer.type() != QgsMapLayer.VectorLayer:
+            if layer.type() != QgsMapLayer.LayerType.VectorLayer:
                 continue
             # case no fetures selected we proceed to the next one
             selectedFeatures = layer.selectedFeatures()
@@ -559,7 +559,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
                     self.tr("A problem occurred! Check log for details."),
                 )
                 QgsMessageLog.logMessage(
-                    ":".join(e.args), "DSGTools Plugin", Qgis.Critical
+                    ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
                 )
 
             # storing the names of the incompatible layers

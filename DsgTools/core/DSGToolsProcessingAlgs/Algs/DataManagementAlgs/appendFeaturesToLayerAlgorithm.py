@@ -25,7 +25,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorith
 )
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingParameterFeatureSource,

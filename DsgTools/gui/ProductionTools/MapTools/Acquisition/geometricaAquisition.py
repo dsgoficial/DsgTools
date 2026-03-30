@@ -27,7 +27,7 @@ from qgis.gui import (
     QgsMapTool,
     QgsRubberBand,
     QgsAttributeDialog,
-    QgsAttributeForm,
+    QgsAttributeEditorContext,
     QgsSnapIndicator,
 )
 from qgis.utils import iface
@@ -117,15 +117,15 @@ class GeometricaAcquisition(QgsMapTool):
             QgsMapTool.deactivate(self)
 
     def keyReleaseEvent(self, event):
-        if event.key() == Qt.Key_Escape:
+        if event.key() == Qt.Key.Key_Escape:
             self.initVariable()
-        if event.key() == Qt.Key_Control:
+        if event.key() == Qt.Key.Key_Control:
             self.free = False
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Control:
+        if event.key() == Qt.Key.Key_Control:
             self.free = True
-        if event.key() == Qt.Key_Backspace and self.geometry:
+        if event.key() == Qt.Key.Key_Backspace and self.geometry:
             self.geometry.pop()
             geom = QgsGeometry.fromPolygonXY([self.geometry])
             self.qntPoint -= 1
@@ -150,7 +150,7 @@ class GeometricaAcquisition(QgsMapTool):
         self.qntPoint = 0
         self.geometry = []
         # if self.snapCursorRubberBand:
-        #     self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
+        #     self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.GeometryType.PointGeometry)
         #     self.snapCursorRubberBand.hide()
         #     self.snapCursorRubberBand = None
 
@@ -263,21 +263,21 @@ class GeometricaAcquisition(QgsMapTool):
 
     def getRubberBand(self):
         geomType = self.iface.activeLayer().geometryType()
-        if geomType == QgsWkbTypes.PolygonGeometry:
+        if geomType == QgsWkbTypes.GeometryType.PolygonGeometry:
             rubberBand = QgsRubberBand(
-                self.canvas, geometryType=QgsWkbTypes.PolygonGeometry
+                self.canvas, geometryType=QgsWkbTypes.GeometryType.PolygonGeometry
             )
             rubberBand.setFillColor(QColor(255, 0, 0, 40))
-        elif geomType == QgsWkbTypes.LineGeometry:
+        elif geomType == QgsWkbTypes.GeometryType.LineGeometry:
             rubberBand = QgsRubberBand(
-                self.canvas, geometryType=QgsWkbTypes.LineGeometry
+                self.canvas, geometryType=QgsWkbTypes.GeometryType.LineGeometry
             )
         rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
         return rubberBand
 
     def getSnapRubberBand(self):
-        rubberBand = QgsRubberBand(self.canvas, geometryType=QgsWkbTypes.PointGeometry)
+        rubberBand = QgsRubberBand(self.canvas, geometryType=QgsWkbTypes.GeometryType.PointGeometry)
         rubberBand.setFillColor(QColor(255, 0, 0, 40))
         rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
@@ -285,12 +285,12 @@ class GeometricaAcquisition(QgsMapTool):
         return rubberBand
 
     def setAllowedStyleSnapRubberBand(self):
-        self.rubberBand.setLineStyle(Qt.PenStyle(Qt.SolidLine))
+        self.rubberBand.setLineStyle(Qt.PenStyle.SolidLine)
         self.rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         self.rubberBand.setFillColor(QColor(255, 0, 0, 40))
 
     def setAvoidStyleSnapRubberBand(self):
-        self.rubberBand.setLineStyle(Qt.PenStyle(Qt.DashDotLine))
+        self.rubberBand.setLineStyle(Qt.PenStyle.DashDotLine)
         self.rubberBand.setSecondaryStrokeColor(QColor(255, 255, 0, 200))
         self.rubberBand.setFillColor(QColor(255, 0, 0, 40))
 
@@ -338,18 +338,18 @@ class GeometricaAcquisition(QgsMapTool):
             self.loadDefaultFields(layer, feature)
 
             form = QgsAttributeDialog(layer, feature, False)
-            form.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-            form.setMode(int(QgsAttributeForm.AddFeatureMode))
+            form.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose)
+            form.setMode(QgsAttributeEditorContext.Mode.AddFeatureMode)
             formSuppress = layer.editFormConfig().suppress()
-            if formSuppress == QgsEditFormConfig.SuppressDefault:
+            if formSuppress == QgsEditFormConfig.FeatureFormSuppress.SuppressDefault:
                 if (
                     self.getSuppressOption()
                 ):  # this is calculated every time because user can switch options while using tool
                     layer.addFeature(feature)
                 else:
-                    form.exec_()
-            elif formSuppress == QgsEditFormConfig.SuppressOff:
-                form.exec_()
+                    form.exec()
+            elif formSuppress == QgsEditFormConfig.FeatureFormSuppress.SuppressOff:
+                form.exec()
             else:
                 layer.addFeature(feature)
             layer.endEditCommand()
@@ -380,20 +380,20 @@ class GeometricaAcquisition(QgsMapTool):
         )
         lyrType = self.iface.activeLayer().geometryType()
         # Transforming the points
-        if lyrType == QgsWkbTypes.LineGeometry:
+        if lyrType == QgsWkbTypes.GeometryType.LineGeometry:
             geomList = geom.asPolyline()
-        elif lyrType == QgsWkbTypes.PolygonGeometry:
+        elif lyrType == QgsWkbTypes.GeometryType.PolygonGeometry:
             geomList = geom.asPolygon()
         newGeom = []
         for idx, geomIdx in enumerate(geomList):
-            if lyrType == QgsWkbTypes.LineGeometry:
+            if lyrType == QgsWkbTypes.GeometryType.LineGeometry:
                 newGeom.append(coordinateTransformer.transform(geomIdx))
-            elif lyrType == QgsWkbTypes.PolygonGeometry:
+            elif lyrType == QgsWkbTypes.GeometryType.PolygonGeometry:
                 line = geomIdx
                 for i in range(len(line)):
                     point = line[i]
                     newGeom.append(coordinateTransformer.transform(point))
-        if lyrType == QgsWkbTypes.LineGeometry:
+        if lyrType == QgsWkbTypes.GeometryType.LineGeometry:
             return QgsGeometry.fromPolylineXY(newGeom + [newGeom[0]])
-        elif lyrType == QgsWkbTypes.PolygonGeometry:
+        elif lyrType == QgsWkbTypes.GeometryType.PolygonGeometry:
             return QgsGeometry.fromPolygonXY([newGeom])

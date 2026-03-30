@@ -23,7 +23,10 @@ def edgv_checker(folder, output):
             if ".sqlite" not in file:
                 continue
             file = os.path.join(root, file)
-            ogrSrc = ogr.Open(file)
+            try:
+                ogrSrc = ogr.Open(file)
+            except Exception:
+                ogrSrc = None
             isEdgv = False
             if ogrSrc:
                 layer = ogrSrc.GetLayerByName("cb_adm_area_pub_civil_a")

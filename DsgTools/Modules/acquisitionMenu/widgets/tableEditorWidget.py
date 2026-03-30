@@ -1,5 +1,5 @@
 import os, sys, copy
-from PyQt5 import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 
 
@@ -46,7 +46,7 @@ class TableEditorWidget(QtWidgets.QWidget):
 
     def createNotEditableItem(self, value):
         item = QtWidgets.QTableWidgetItem(self.validateValue(value))
-        item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+        item.setFlags(QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable)
         return item
 
     def createEditableItem(self, value):
@@ -105,7 +105,7 @@ class TableEditorWidget(QtWidgets.QWidget):
         )
         layout.addWidget(deleteBtn)
 
-        layout.setAlignment(QtCore.Qt.AlignCenter)
+        layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         layout.setContentsMargins(0, 0, 0, 0)
         return wd
 

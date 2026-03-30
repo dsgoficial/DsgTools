@@ -131,7 +131,10 @@ class RasterProcess(object):
 
         targetSR = self.getCRS(srcraster)
 
-        driver = gdal.GetDriverByName("GTiff")
+        try:
+            driver = gdal.GetDriverByName("GTiff")
+        except Exception:
+            raise RuntimeError("GTiff driver not available")
 
         outRaster = driver.Create(destfile, cols, rows, 3, pixelType)
         outRaster.SetGeoTransform((xOrigin, pixelWidth, 0, yOrigin, 0, pixelHeight))

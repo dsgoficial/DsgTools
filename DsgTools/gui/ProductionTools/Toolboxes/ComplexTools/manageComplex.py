@@ -26,7 +26,7 @@ from builtins import range
 import os
 from uuid import uuid4
 
-from qgis.core import QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog
 
 # Import the PyQt and QGIS libraries
 from qgis.PyQt import uic, QtGui, QtCore
@@ -91,8 +91,8 @@ class CustomTableModel(QSqlTableModel):
         Gets index flags
         """
         if index.column() == 0:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
-        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+            return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
+        return Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
 
     def data(self, index, role):
         """
@@ -102,7 +102,7 @@ class CustomTableModel(QSqlTableModel):
         role: role used to get the data
         """
         dbdata = QSqlTableModel.data(self, index, role)
-        column = self.headerData(index.column(), Qt.Horizontal)
+        column = self.headerData(index.column(), Qt.Orientation.Horizontal)
         if column in self.dict:
             if isinstance(self.dict[column], dict):
                 valueMap = self.dict[column]
@@ -123,7 +123,7 @@ class CustomTableModel(QSqlTableModel):
                     return "{%s}" % ",".join(code_names)
         return dbdata
 
-    def setData(self, index, value, role=Qt.EditRole):
+    def setData(self, index, value, role=Qt.ItemDataRole.EditRole):
         """
         Custom reimplementation of the method setData.
         It is necessary to work with value map and value relation.
@@ -131,7 +131,7 @@ class CustomTableModel(QSqlTableModel):
         value: value to be set
         role: role used
         """
-        column = self.headerData(index.column(), Qt.Horizontal)
+        column = self.headerData(index.column(), Qt.Orientation.Horizontal)
         newValue = value
         if column in self.dict:
             if isinstance(self.dict[column], dict):
@@ -181,7 +181,7 @@ class ComboBoxDelegate(QStyledItemDelegate):
         m = index.model()
         try:
             if index.column() == self.column:
-                txt = m.data(index, Qt.DisplayRole)
+                txt = m.data(index, Qt.ItemDataRole.DisplayRole)
                 editor.setEditText(txt)
             else:
                 # use default
@@ -218,7 +218,7 @@ class ListWidgetDelegate(QStyledItemDelegate):
             list = QListWidget(parent)
             for item in self.itemsDict:
                 listItem = QListWidgetItem(item)
-                listItem.setCheckState(Qt.Unchecked)
+                listItem.setCheckState(Qt.CheckState.Unchecked)
                 list.addItem(listItem)
             return list
         return QItemDelegate.createEditor(self, parent, option, index)
@@ -230,12 +230,12 @@ class ListWidgetDelegate(QStyledItemDelegate):
         m = index.model()
         try:
             if index.column() == self.column:
-                txt = m.data(index, Qt.DisplayRole)
+                txt = m.data(index, Qt.ItemDataRole.DisplayRole)
                 checkList = txt[1:-1].split(",")
                 for i in range(editor.count()):
                     item = editor.item(i)
                     item.setCheckState(
-                        Qt.Checked if item.text() in checkList else Qt.Unchecked
+                        Qt.CheckState.Checked if item.text() in checkList else Qt.CheckState.Unchecked
                     )
             else:
                 # use default
@@ -251,7 +251,7 @@ class ListWidgetDelegate(QStyledItemDelegate):
             checkedItems = []
             for i in range(editor.count()):
                 item = editor.item(i)
-                if item.checkState() == Qt.Checked:
+                if item.checkState() == Qt.CheckState.Checked:
                     checkedItems.append(item.text())
             model.setData(index, "{%s}" % ",".join(checkedItems))
         else:
@@ -301,7 +301,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
                 self.tr("Critical!"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
         qmlPath = os.path.join(qmlDirPath, fileName)
 
         # getting the domain dictionary that will be used to generate the comboboxes
@@ -394,7 +394,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         # adjusting the table
         self.projectModel.setTable(self.table)
         # manual commit rule
-        self.projectModel.setEditStrategy(QSqlTableModel.OnManualSubmit)
+        self.projectModel.setEditStrategy(QSqlTableModel.EditStrategy.OnManualSubmit)
         # selecting all item from the table
         self.projectModel.select()
         # creating the comboboxes and listwidgets to map the domain values
@@ -411,7 +411,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
 
         # Hiding columns that point to other complexes so that the user can't change them
         for i in range(self.projectModel.columnCount()):
-            columnName = self.projectModel.headerData(i, Qt.Horizontal)
+            columnName = self.projectModel.headerData(i, Qt.Orientation.Horizontal)
             if "id_" in columnName:
                 self.tableView.hideColumn(i)
 
@@ -433,7 +433,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         record.setValue("id", str(uuid4()))
         record.setValue("nome", self.tr("edit this field"))
         for i in range(self.projectModel.columnCount()):
-            columnName = self.projectModel.headerData(i, Qt.Horizontal)
+            columnName = self.projectModel.headerData(i, Qt.Orientation.Horizontal)
             if columnName in self.domainDict:
                 record.setValue(columnName, self.tr("edit this field"))
         return record

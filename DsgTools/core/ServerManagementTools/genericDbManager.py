@@ -32,7 +32,7 @@ from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.dsgEnums import DsgEnums
 
 # qgis.PyQt imports
-from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import QObject
 
 
 class GenericDbManager(QObject):

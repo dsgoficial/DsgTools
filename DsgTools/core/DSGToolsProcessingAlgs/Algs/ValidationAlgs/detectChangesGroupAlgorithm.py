@@ -21,8 +21,8 @@
 """
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.PyQt import QtWidgets
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from processing.gui.wrappers import WidgetWrapper
 from qgis.core import (
     QgsFeature,
@@ -332,10 +332,10 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
 
     def fieldsFlag(self, attributeGroup):
         fields = QgsFields()
-        fields.append(QgsField(f"{attributeGroup}", QVariant.String))
-        fields.append(QgsField("name_layer", QVariant.String))
-        fields.append(QgsField("type_change", QVariant.String))
-        fields.append(QgsField("update", QVariant.String))
+        fields.append(QgsField(f"{attributeGroup}", QMetaType.Type.QString))
+        fields.append(QgsField("name_layer", QMetaType.Type.QString))
+        fields.append(QgsField("type_change", QMetaType.Type.QString))
+        fields.append(QgsField("update", QMetaType.Type.QString))
         return fields
 
     def compareAttributes(self, strBlackAttributes, lyrOriginal):
@@ -349,9 +349,9 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
         return listWhiteAttributes
 
     def typeOfLayer(self, addedLyr):
-        lyrPoint = addedLyr.geometryType() == QgsWkbTypes.PointGeometry
-        lyrLine = addedLyr.geometryType() == QgsWkbTypes.LineGeometry
-        lyrPolygon = addedLyr.geometryType() == QgsWkbTypes.PolygonGeometry
+        lyrPoint = addedLyr.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+        lyrLine = addedLyr.geometryType() == QgsWkbTypes.GeometryType.LineGeometry
+        lyrPolygon = addedLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
         return lyrPoint, lyrLine, lyrPolygon
 
     def dictNameLyrCrs(self, group):

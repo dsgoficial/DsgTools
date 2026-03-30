@@ -22,7 +22,7 @@
 """
 
 from collections import defaultdict
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 import concurrent.futures
 import os
@@ -747,7 +747,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 intersection = geomEngine.intersection(drainageGeom.constGet())
                 if (
                     QgsWkbTypes.geometryType(intersection.wkbType())
-                    == QgsWkbTypes.PointGeometry
+                    == QgsWkbTypes.GeometryType.PointGeometry
                 ):
                     outCount += (
                         0
@@ -846,7 +846,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 candidateGeom = candidateFeat.geometry()
                 if QgsWkbTypes.geometryType(
                     candidateGeom.wkbType()
-                ) == QgsWkbTypes.PointGeometry and geomEngine.intersects(
+                ) == QgsWkbTypes.GeometryType.PointGeometry and geomEngine.intersects(
                     candidateGeom.constGet()
                 ):
                     return None

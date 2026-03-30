@@ -23,12 +23,11 @@ from collections import defaultdict
 import math
 from itertools import combinations
 
-import processing
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from PyQt5.QtCore import QCoreApplication
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsGeometry,
-    QgsGeometryUtils,
+    QgsGeometryUtilsBase,
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
@@ -89,7 +88,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             "TOLERANCE": tol,
             "FLAGS": "memory:",
         }
-        output = processing.run(
+        output = runProcessing(
             "dsgtools:identifyoutofboundsangles",
             parameters,
             context=context,
@@ -116,7 +115,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             "GRASS_VECTOR_DSCO": "",
             "GRASS_VECTOR_LCO": "",
         }
-        x = processing.run(
+        x = runProcessing(
             "grass7:v.clean", parameters, context=context, feedback=feedback
         )
         lyr = QgsProcessingUtils.mapLayerFromString(x["output"], context)
@@ -263,7 +262,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             for wkb1, wkb3 in combinations(pointSet, 2):
                 p1 = self.getPointXYFromWkb(wkb1)
                 p3 = self.getPointXYFromWkb(wkb3)
-                angle = QgsGeometryUtils.angleBetweenThreePoints(
+                angle = QgsGeometryUtilsBase.angleBetweenThreePoints(
                     p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y()
                 )
                 vertexAngle = abs(math.degrees(angle))

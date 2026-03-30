@@ -145,18 +145,18 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
                 ).json()[jsonKey]
         except ReadTimeout:
             self.messageBar.pushMessage(
-                self.tr("Connection timed out."), level=Qgis.Warning
+                self.tr("Connection timed out."), level=Qgis.MessageLevel.Warning
             )
             workspaceList = list()
         except ConnectTimeout:
             self.messageBar.pushMessage(
-                self.tr("Connection timed out (max attempts)."), level=Qgis.Warning
+                self.tr("Connection timed out (max attempts)."), level=Qgis.MessageLevel.Warning
             )
             workspaceList = list()
         except InvalidSchema:
             self.messageBar.pushMessage(
                 self.tr("Missing connection schema (e.g.'http', etc)."),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
             )
             workspaceList = list()
         except BaseException as e:
@@ -165,7 +165,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
                     "Unexpected error while trying to reach server. "
                     "Check your parameters. Error message: {}".format(e)
                 ),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
             )
             workspaceList = list()
         return workspaceList
@@ -226,14 +226,14 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
                     self.tr(
                         "Proxy usage is set but no QGIS proxy settings " "was found."
                     ),
-                    level=Qgis.Warning,
+                    level=Qgis.MessageLevel.Warning,
                 )
             return False
         if self.server() == "":
             if pushAlert:
                 self.messageBar.pushMessage(
                     self.tr("URL to FME Manager server was not provided."),
-                    level=Qgis.Warning,
+                    level=Qgis.MessageLevel.Warning,
                 )
             return False
         return True

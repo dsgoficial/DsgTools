@@ -55,8 +55,8 @@ class PermissionProperties(QtWidgets.QDialog, FORM_CLASS):
 
         self.createChildrenItems(dbItem, permissionsDict)
 
-        self.treeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
-        self.treeWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.treeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
+        self.treeWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
     def createItem(self, parent, text):
         """
@@ -65,9 +65,9 @@ class PermissionProperties(QtWidgets.QDialog, FORM_CLASS):
         text: item text
         """
         item = QtWidgets.QTreeWidgetItem(parent)
-        item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate)
-        item.setCheckState(1, QtCore.Qt.Unchecked)
-        item.setCheckState(2, QtCore.Qt.Unchecked)
+        item.setFlags(QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsTristate)
+        item.setCheckState(1, QtCore.Qt.CheckState.Unchecked)
+        item.setCheckState(2, QtCore.Qt.CheckState.Unchecked)
         item.setText(0, text)
         return item
 

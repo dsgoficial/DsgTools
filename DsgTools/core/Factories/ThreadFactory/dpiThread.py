@@ -27,8 +27,7 @@ import osgeo.osr
 import numpy
 import math
 
-from qgis.PyQt.Qt import QObject
-from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtCore import pyqtSlot, QObject
 
 from qgis.core import QgsMessageLog
 
@@ -125,7 +124,10 @@ class DpiThread(GenericThread):
         steps = 0
         for file in self.filesList:
             # Open image
-            imgIn = osgeo.gdal.Open(file)
+            try:
+                imgIn = osgeo.gdal.Open(file)
+            except Exception:
+                imgIn = None
             if not imgIn:
                 continue
             steps += imgIn.RasterCount
@@ -166,7 +168,10 @@ class DpiThread(GenericThread):
         )
 
         # Open image
-        imgIn = osgeo.gdal.Open(inFile)
+        try:
+            imgIn = osgeo.gdal.Open(inFile)
+        except Exception:
+            imgIn = None
         if not imgIn:
             QgsMessageLog.logMessage(
                 self.messenger.getProblemMessage() + inFile,

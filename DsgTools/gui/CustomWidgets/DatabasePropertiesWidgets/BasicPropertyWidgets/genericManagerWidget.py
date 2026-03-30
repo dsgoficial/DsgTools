@@ -98,7 +98,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.utils = Utils()
         self.setHeaders()
         self.setButtons()
-        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeWidget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.createMenuAssigned)
 
     def setButtons(self):
@@ -174,7 +174,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to import!'))
             return
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.genericDbManager.importSetting(filename)
             QApplication.restoreOverrideCursor()
             QMessageBox.information(
@@ -218,7 +218,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             return
         edgvVersion = self.genericDbManager.edgvVersion
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             for exportProperty in exportPropertyList:
                 self.genericDbManager.exportSetting(exportProperty, edgvVersion, folder)
             QApplication.restoreOverrideCursor()
@@ -250,7 +250,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.genericDbManager.batchExportSettings(folder)
             QApplication.restoreOverrideCursor()
             QMessageBox.information(
@@ -282,7 +282,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a input folder!'))
             return
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.genericDbManager.batchImportSettings(folder)
             QApplication.restoreOverrideCursor()
             QMessageBox.information(
@@ -356,10 +356,10 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                 for item in propertyPerspectiveDict[key]:
                     if item and item != "":
                         dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
-        self.treeWidget.sortItems(0, Qt.AscendingOrder)
+        self.treeWidget.sortItems(0, Qt.SortOrder.AscendingOrder)
         self.treeWidget.expandAll()
         self.treeWidget.header().setSectionResizeMode(
-            QtWidgets.QHeaderView.ResizeToContents
+            QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
         self.treeWidget.header().setStretchLastSection(False)
 
@@ -407,7 +407,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                             + " : "
                             + exceptionDict[config][dbName],
                             "DSGTools Plugin",
-                            Qgis.Critical,
+                            Qgis.MessageLevel.Critical,
                         )
         return msg
 
@@ -432,7 +432,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.genericDbManager.getPropertyPerspectiveDict().keys()
         )
         dlg = ListSelector(availableConfig, [])
-        res = dlg.exec_()
+        res = dlg.exec()
         if res == 0:
             # to identify when user presses Cancel
             return None
@@ -465,7 +465,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         dbList = [] if dbList is None else dbList
         if self.lookAndPromptForStructuralChanges(dbList=dbList):
             for config in selectedConfig:
-                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
                 sucessList, errorDict = self.manageSetting(
                     config, manageType, dbList=dbList, parameterDict=parameterDict
                 )
@@ -517,7 +517,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                 menu.addAction(
                     self.tr("Delete selected setting"), self.deleteSelectedSetting
                 )
-        menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+        menu.exec(self.treeWidget.viewport().mapToGlobal(position))
 
     def createPropertyPerspectiveContextMenu(self, position):
         menu = QMenu()
@@ -548,7 +548,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                     self.tr("Uninstall selected setting on selected database"),
                     self.uninstallSettings,
                 )
-        menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
+        menu.exec(self.treeWidget.viewport().mapToGlobal(position))
 
     def manageDbSettings(self):
         """
@@ -564,7 +564,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             if i not in uiParameterDict["parameterList"]
         ]
         dlg = ListSelector(availableConfig, uiParameterDict["parameterList"])
-        dlg.exec_()
+        dlg.exec()
         fromLs, toLs = dlg.getInputAndOutputLists()
         # build install list: elements from toLs that were not in uiParameterDict['parameterList']
         installList = [i for i in toLs if i not in uiParameterDict["parameterList"]]
@@ -612,7 +612,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             if i not in uiParameterDict["databaseList"]
         ]
         dlg = ListSelector(availableDb, uiParameterDict["databaseList"])
-        dlg.exec_()
+        dlg.exec()
         fromLs, toLs = dlg.getInputAndOutputLists()
         # build install list: elements from toLs that were not in uiParameterDict['parameterList']
         installList = [i for i in toLs if i not in uiParameterDict["databaseList"]]
@@ -751,9 +751,9 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                 self,
                 self.tr("Question"),
                 self.tr("Do you really want to delete ") + settingTextList + "?",
-                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
-            == QMessageBox.Cancel
+            == QMessageBox.StandardButton.Cancel
         ):
             return
         successDict, exceptionDict = self.manageSettings(
@@ -777,9 +777,9 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                     + dbChangeList
                     + "?"
                     + self.tr(" (Data may be lost in the process)"),
-                    QMessageBox.Ok | QMessageBox.Cancel,
+                    QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
                 )
-                == QMessageBox.Cancel
+                == QMessageBox.StandardButton.Cancel
             ):
                 return False
             else:

@@ -43,7 +43,7 @@ class GeopackageLayerLoader(SpatialiteLayerLoader):
         try:
             dbVersion = abstractDb.getDatabaseVersion()
         except Exception as e:
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
             return
 
         self.buildUri()
@@ -65,7 +65,7 @@ class GeopackageLayerLoader(SpatialiteLayerLoader):
         vlayer = self.getLayerByName("{0}_{1}".format(schema, tableName))
         if not vlayer.isValid():
             QgsMessageLog.logMessage(
-                vlayer.error().summary(), "DSGTools Plugin", Qgis.Critical
+                vlayer.error().summary(), "DSGTools Plugin", Qgis.MessageLevel.Critical
             )
         QgsProject.instance().addMapLayer(vlayer, addToLegend=False)
         crs = QgsCoordinateReferenceSystem(

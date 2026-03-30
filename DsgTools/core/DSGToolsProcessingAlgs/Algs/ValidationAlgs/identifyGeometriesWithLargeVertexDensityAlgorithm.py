@@ -24,7 +24,7 @@ import os
 import concurrent.futures
 
 from collections import defaultdict
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from qgis.core import (
     QgsProcessing,

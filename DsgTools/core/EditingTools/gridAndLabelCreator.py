@@ -1335,7 +1335,7 @@ class GridAndLabelCreator(QObject):
 
         # Listing available label masks
         for layer in layers:
-            if not layer.type() == QgsMapLayer.VectorLayer:
+            if not layer.type() == QgsMapLayer.LayerType.VectorLayer:
                 continue
             labels = layer.labeling()
             if not labels:

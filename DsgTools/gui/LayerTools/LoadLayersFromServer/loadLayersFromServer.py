@@ -113,7 +113,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
             progress.initBar()
             for dbName in dbList:
                 try:
-                    QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                    QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
                     geomList = self.customServerConnectionWidget.selectedDbsDict[
                         dbName
                     ].getGeomColumnTupleList(showViews=showViews)
@@ -214,7 +214,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
             parent=self,
         )
         for dbName in factoryDict:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             try:
                 selectedClasses = [
                     self.lyrDict[key][dbName]
@@ -264,7 +264,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                 + ": "
                 + exceptionDict[errorDb],
                 "DSGTools Plugin",
-                Qgis.Critical,
+                Qgis.MessageLevel.Critical,
             )
         return msg
 

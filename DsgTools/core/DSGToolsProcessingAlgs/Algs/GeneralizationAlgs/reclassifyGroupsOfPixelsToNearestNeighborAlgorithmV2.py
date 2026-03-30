@@ -34,7 +34,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorith
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools import rasterHandler
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.affine import Affine
 from DsgTools.core.Utils.threadingTools import concurrently
@@ -469,7 +469,10 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(ValidationAlgorithm):
             )
 
             # Create a new temporary dataset with proper geotransform
-            driver = gdal.GetDriverByName("GTiff")
+            try:
+                driver = gdal.GetDriverByName("GTiff")
+            except Exception:
+                raise QgsProcessingException("GTiff driver not available")
             temp_ds = driver.Create(temp_output, rows, cols, 1, gdal.GDT_Int16)
 
             window_transform = Affine(

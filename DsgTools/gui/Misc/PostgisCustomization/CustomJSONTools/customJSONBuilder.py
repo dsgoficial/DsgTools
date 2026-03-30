@@ -23,7 +23,7 @@
 import json
 
 # Qt Imports
-from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import QObject
 
 # DsgTools Imports
 

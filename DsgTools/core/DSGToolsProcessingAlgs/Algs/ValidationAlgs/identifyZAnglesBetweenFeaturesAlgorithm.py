@@ -23,14 +23,14 @@
 import math
 import os
 
-from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsFeature,
     QgsFeatureRequest,
     QgsField,
     QgsFields,
     QgsGeometry,
-    QgsGeometryUtils,
+    QgsGeometryUtilsBase,
     QgsPoint,
     QgsPointXY,
     QgsProcessing,
@@ -86,7 +86,7 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
         crs = QgsProject.instance().crs()
         self.fields = QgsFields()
-        self.fields.append(QgsField("source", QVariant.String))
+        self.fields.append(QgsField("source", QMetaType.Type.QString))
 
         sink, dest_id = self.parameterAsSink(
             parameters, self.OUTPUT, context, self.fields, QgsWkbTypes.LineString, crs
@@ -139,14 +139,14 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
         geometry_type = QgsWkbTypes.geometryType(inputSource.wkbType())
 
         # Set up multistep feedback
-        nSteps = 2 if geometry_type == QgsWkbTypes.LineGeometry else 1
+        nSteps = 2 if geometry_type == QgsWkbTypes.GeometryType.LineGeometry else 1
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback) if nSteps > 1 else feedback
         )
         currentStep = 0
 
         # Process based on geometry type
-        if geometry_type == QgsWkbTypes.LineGeometry:
+        if geometry_type == QgsWkbTypes.GeometryType.LineGeometry:
             # First process Z angles within each line
             multiStepFeedback.setProgressText(
                 self.tr("Evaluating Z angles within lines")
@@ -227,12 +227,12 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
             # Calculate angles directly
             angle1 = math.degrees(
-                QgsGeometryUtils.angleBetweenThreePoints(
+                QgsGeometryUtilsBase.angleBetweenThreePoints(
                     v1.x(), v1.y(), v2.x(), v2.y(), v3.x(), v3.y()
                 )
             )
             angle2 = math.degrees(
-                QgsGeometryUtils.angleBetweenThreePoints(
+                QgsGeometryUtilsBase.angleBetweenThreePoints(
                     v2.x(), v2.y(), v3.x(), v3.y(), v4.x(), v4.y()
                 )
             )
@@ -273,12 +273,12 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                 v1, v2, v3, v4 = ring[i : i + 4]
 
                 angle1 = math.degrees(
-                    QgsGeometryUtils.angleBetweenThreePoints(
+                    QgsGeometryUtilsBase.angleBetweenThreePoints(
                         v1.x(), v1.y(), v2.x(), v2.y(), v3.x(), v3.y()
                     )
                 )
                 angle2 = math.degrees(
-                    QgsGeometryUtils.angleBetweenThreePoints(
+                    QgsGeometryUtilsBase.angleBetweenThreePoints(
                         v2.x(), v2.y(), v3.x(), v3.y(), v4.x(), v4.y()
                     )
                 )
@@ -299,12 +299,12 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                 v1, v2, v3, v4 = ring[-3], ring[-2], ring[-1], ring[1]
 
                 angle1 = math.degrees(
-                    QgsGeometryUtils.angleBetweenThreePoints(
+                    QgsGeometryUtilsBase.angleBetweenThreePoints(
                         v1.x(), v1.y(), v2.x(), v2.y(), v3.x(), v3.y()
                     )
                 )
                 angle2 = math.degrees(
-                    QgsGeometryUtils.angleBetweenThreePoints(
+                    QgsGeometryUtilsBase.angleBetweenThreePoints(
                         v2.x(), v2.y(), v3.x(), v3.y(), v4.x(), v4.y()
                     )
                 )
@@ -398,7 +398,7 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
                     # Calculate angles between points
                     angle1 = math.degrees(
-                        QgsGeometryUtils.angleBetweenThreePoints(
+                        QgsGeometryUtilsBase.angleBetweenThreePoints(
                             points[0].x(),
                             points[0].y(),
                             points[1].x(),
@@ -408,7 +408,7 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                         )
                     )
                     angle2 = math.degrees(
-                        QgsGeometryUtils.angleBetweenThreePoints(
+                        QgsGeometryUtilsBase.angleBetweenThreePoints(
                             points[1].x(),
                             points[1].y(),
                             points[2].x(),
@@ -444,7 +444,7 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
                     # Calculate angles between points
                     angle1 = math.degrees(
-                        QgsGeometryUtils.angleBetweenThreePoints(
+                        QgsGeometryUtilsBase.angleBetweenThreePoints(
                             points[0].x(),
                             points[0].y(),
                             points[1].x(),
@@ -454,7 +454,7 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                         )
                     )
                     angle2 = math.degrees(
-                        QgsGeometryUtils.angleBetweenThreePoints(
+                        QgsGeometryUtilsBase.angleBetweenThreePoints(
                             points[1].x(),
                             points[1].y(),
                             points[2].x(),
@@ -592,7 +592,7 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
                 # Calculate angles
                 angle1 = math.degrees(
-                    QgsGeometryUtils.angleBetweenThreePoints(
+                    QgsGeometryUtilsBase.angleBetweenThreePoints(
                         points[0].x(),
                         points[0].y(),
                         points[1].x(),
@@ -602,7 +602,7 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                     )
                 )
                 angle2 = math.degrees(
-                    QgsGeometryUtils.angleBetweenThreePoints(
+                    QgsGeometryUtilsBase.angleBetweenThreePoints(
                         points[1].x(),
                         points[1].y(),
                         points[2].x(),
@@ -641,7 +641,7 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
                 # Calculate angles
                 angle1 = math.degrees(
-                    QgsGeometryUtils.angleBetweenThreePoints(
+                    QgsGeometryUtilsBase.angleBetweenThreePoints(
                         points[0].x(),
                         points[0].y(),
                         points[1].x(),
@@ -651,7 +651,7 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                     )
                 )
                 angle2 = math.degrees(
-                    QgsGeometryUtils.angleBetweenThreePoints(
+                    QgsGeometryUtilsBase.angleBetweenThreePoints(
                         points[1].x(),
                         points[1].y(),
                         points[2].x(),

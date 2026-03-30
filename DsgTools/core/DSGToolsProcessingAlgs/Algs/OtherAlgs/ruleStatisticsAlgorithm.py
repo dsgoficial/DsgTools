@@ -25,7 +25,7 @@ import fnmatch
 import json
 from collections import Counter, defaultdict
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsFeature,
     QgsField,
@@ -38,7 +38,7 @@ from qgis.core import (
     QgsProcessingParameterString,
     QgsWkbTypes,
 )
-from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtCore import QMetaType
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
@@ -102,9 +102,9 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
         input_data = self.load_rules_from_parameters(parameters)
         rows = self.buildRuleDict(input_data[0], inputLyrNamesWithSchemaList)
         fields = QgsFields()
-        fields.append(QgsField("layer_name", QVariant.String))
-        fields.append(QgsField("type", QVariant.String))
-        fields.append(QgsField("number_of_errors", QVariant.Int))
+        fields.append(QgsField("layer_name", QMetaType.Type.QString))
+        fields.append(QgsField("type", QMetaType.Type.QString))
+        fields.append(QgsField("number_of_errors", QMetaType.Type.Int))
         (flagSink, flag_id) = self.parameterAsSink(
             parameters,
             self.FLAGS,

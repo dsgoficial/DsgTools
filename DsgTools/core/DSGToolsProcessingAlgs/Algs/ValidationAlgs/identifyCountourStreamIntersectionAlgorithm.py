@@ -22,7 +22,7 @@
 import concurrent.futures
 import os
 
-import processing
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import runProcessing
 from qgis.core import (
     QgsFeature,
     QgsFeatureSink,
@@ -35,7 +35,7 @@ from qgis.core import (
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
 )
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.utils import iface
 
 from .validationAlgorithm import ValidationAlgorithm
@@ -109,22 +109,22 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Building intermediary structures"))
 
         auxStreamLayerInput = self.runAddCount(
-            streamLayerInput, feedback=multiStepFeedback
+            streamLayerInput, context=context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
-        self.runCreateSpatialIndex(auxStreamLayerInput, feedback=multiStepFeedback)
+        self.runCreateSpatialIndex(auxStreamLayerInput, context=context, feedback=multiStepFeedback)
 
         multiStepFeedback.setCurrentStep(2)
-        auxCountourLayer = self.runAddCount(countourLayer, feedback=multiStepFeedback)
+        auxCountourLayer = self.runAddCount(countourLayer, context=context, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(3)
-        self.runCreateSpatialIndex(auxCountourLayer, feedback=multiStepFeedback)
+        self.runCreateSpatialIndex(auxCountourLayer, context=context, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(4)
         idDict = {feat["AUTO"]: feat for feat in auxCountourLayer.getFeatures()}
 
         multiStepFeedback.setCurrentStep(5)
         multiStepFeedback.pushInfo(self.tr("Doing spatial join"))
         spatialJoinOutput = self.runSpatialJoin(
-            auxStreamLayerInput, auxCountourLayer, feedback=multiStepFeedback
+            auxStreamLayerInput, auxCountourLayer, context=context, feedback=multiStepFeedback
         )
 
         multiStepFeedback.setCurrentStep(6)
@@ -161,8 +161,8 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             self.LINE_FLAGS: line_flag_sink_id,
         }
 
-    def runSpatialJoin(self, streamLayerInput, countourLayer, feedback):
-        output = processing.run(
+    def runSpatialJoin(self, streamLayerInput, countourLayer, context, feedback):
+        output = runProcessing(
             "native:joinattributesbylocation",
             {
                 "INPUT": streamLayerInput,
@@ -174,12 +174,13 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
                 "PREFIX": "",
                 "OUTPUT": "TEMPORARY_OUTPUT",
             },
+            context=context,
             feedback=feedback,
         )
         return output["OUTPUT"]
 
-    def runAddCount(self, inputLyr, feedback):
-        output = processing.run(
+    def runAddCount(self, inputLyr, context, feedback):
+        output = runProcessing(
             "native:addautoincrementalfield",
             {
                 "INPUT": inputLyr,
@@ -191,14 +192,16 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
                 "SORT_NULLS_FIRST": False,
                 "OUTPUT": "TEMPORARY_OUTPUT",
             },
+            context=context,
             feedback=feedback,
         )
         return output["OUTPUT"]
 
-    def runCreateSpatialIndex(self, inputLyr, feedback):
-        processing.run(
+    def runCreateSpatialIndex(self, inputLyr, context, feedback):
+        runProcessing(
             "native:createspatialindex",
             {"INPUT": inputLyr},
+            context=context,
             feedback=feedback,
             is_child_algorithm=True,
         )
@@ -243,7 +246,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
 
     def outLayer(self, parameters, context, geometry, streamLayer, geomtype, sink):
         newFields = QgsFields()
-        newFields.append(QgsField("id", QVariant.Int))
+        newFields.append(QgsField("id", QMetaType.Type.Int))
 
         for idcounter, geom in enumerate(geometry):
             newFeat = QgsFeature()

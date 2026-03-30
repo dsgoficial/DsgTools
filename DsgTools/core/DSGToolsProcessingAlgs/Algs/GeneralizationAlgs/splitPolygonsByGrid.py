@@ -116,15 +116,6 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 defaultValue=0.0001,
             )
         )
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.Y_DISTANCE,
-                self.tr("Y Distance"),
-                parentParameterName=self.INPUT,
-                minValue=0.0,
-                defaultValue=0.0001,
-            )
-        )
         param = QgsProcessingParameterDistance(
             self.MIN_AREA,
             self.tr(
@@ -219,7 +210,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 featureLayer = self.layerHandler.createMemoryLayerWithFeature(
                     source, feature, context=context, isSource=True
                 )
-            except:
+            except Exception:
                 return None, None
             if bbox.isEmpty() or bbox.isNull() or not bbox.isFinite():
                 return None, None
@@ -227,7 +218,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 localNeighborVertexes = self.algRunner.runExtractByExtent(
                     inputLayer=verticesLyr, extent=bbox, context=context, clip=True
                 )
-            except:
+            except Exception:
                 return None, None
             return featureLayer, localNeighborVertexes
 
@@ -319,8 +310,6 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
     ):
         context = QgsProcessingContext()
         algRunner = AlgRunner()
-        if feedback is not None and feedback.isCanceled():
-            return set()
         if (
             (feedback is not None and feedback.isCanceled())
             or feature is None
@@ -383,7 +372,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             clippedPolygons = algRunner.runClip(
                 gridLayer, featureLayer, context=context
             )
-        except:
+        except Exception:
             clippedPolygons = None
         if (
             not isinstance(clippedPolygons, QgsVectorLayer)

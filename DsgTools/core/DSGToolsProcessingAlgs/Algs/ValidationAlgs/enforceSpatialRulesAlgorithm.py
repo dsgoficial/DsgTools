@@ -141,9 +141,9 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         gh = GeometryHandler()
         fields = self.getFlagFields()
         layerMap = {
-            QgsWkbTypes.PointGeometry: ptLayer,
-            QgsWkbTypes.LineGeometry: lLayer,
-            QgsWkbTypes.PolygonGeometry: polLayer,
+            QgsWkbTypes.GeometryType.PointGeometry: ptLayer,
+            QgsWkbTypes.GeometryType.LineGeometry: lLayer,
+            QgsWkbTypes.GeometryType.PolygonGeometry: polLayer,
         }
         for ruleName, flags in flagDict.items():
             flagText = self.tr('Rule "{name}" broken: {{text}}').format(name=ruleName)

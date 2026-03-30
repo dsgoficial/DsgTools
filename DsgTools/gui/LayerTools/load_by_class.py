@@ -26,7 +26,7 @@ import os
 
 # Qgis imports
 from qgis.gui import QgsMessageBar
-from qgis.core import QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog
 
 # PyQt imports
 from qgis.PyQt import QtWidgets, QtCore, uic
@@ -59,11 +59,11 @@ class LoadByClass(QtWidgets.QDialog, FORM_CLASS):
         self.selectedClasses = []
 
         self.bar = QgsMessageBar()
-        self.setLayout(QtGui.QGridLayout(self))
+        self.setLayout(QtWidgets.QGridLayout(self))
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().setAlignment(QtCore.Qt.AlignTop)
-        sizePolicy = QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed
+        self.layout().setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed
         )
         self.bar.setSizePolicy(sizePolicy)
         self.layout().addWidget(self.bar, 0, 0, 1, 1)
@@ -126,7 +126,7 @@ class LoadByClass(QtWidgets.QDialog, FORM_CLASS):
                 self.tr("A problem occurred! Check log for details."),
                 level=QgsMessageBar.CRITICAL,
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
 
         if self.onlyParentsCheckBox.isChecked() and not self.widget.isSpatialite:
             self.classesListWidget.addItems(self.parentClassList)
@@ -188,7 +188,7 @@ class LoadByClass(QtWidgets.QDialog, FORM_CLASS):
         """
         Loads the selected layers
         """
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         self.loadLayers()
         QApplication.restoreOverrideCursor()
 

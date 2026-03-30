@@ -33,18 +33,18 @@ class Polygon(GeometricaAcquisition):
 
     def endGeometry(self):
         if len(self.geometry) > 2:
-            if self.iface.activeLayer().geometryType() == QgsWkbTypes.PolygonGeometry:
+            if self.iface.activeLayer().geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
                 geom = QgsGeometry.fromPolygonXY([self.geometry])
-            elif self.iface.activeLayer().geometryType() == QgsWkbTypes.LineGeometry:
+            elif self.iface.activeLayer().geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
                 geom = QgsGeometry.fromPolylineXY(self.geometry)
             self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
             self.createGeometry(geom)
 
     def endGeometryFree(self):
         if len(self.geometry) > 2:
-            if self.iface.activeLayer().geometryType() == QgsWkbTypes.PolygonGeometry:
+            if self.iface.activeLayer().geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
                 geom = QgsGeometry.fromPolygonXY([self.geometry])
-            elif self.iface.activeLayer().geometryType() == QgsWkbTypes.LineGeometry:
+            elif self.iface.activeLayer().geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
                 geom = QgsGeometry.fromPolylineXY(self.geometry + [self.geometry[0]])
             self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
             self.createGeometry(geom)
@@ -62,11 +62,11 @@ class Polygon(GeometricaAcquisition):
     def canvasReleaseEvent(self, event):
         event.snapPoint()  # snap!!!
         if self.snapCursorRubberBand:
-            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
+            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.GeometryType.PointGeometry)
             self.snapCursorRubberBand.hide()
             self.snapCursorRubberBand = None
         pointMap = QgsPointXY(event.mapPoint())
-        if event.button() == Qt.RightButton:
+        if event.button() == Qt.MouseButton.RightButton:
             if not self.rubberBand:
                 self.geometry = []
                 self.qntPoint = 0
@@ -102,7 +102,7 @@ class Polygon(GeometricaAcquisition):
                                     self.tr(
                                         "Not possible to digitize, segment smaller than minimun distance."
                                     ),
-                                    level=Qgis.Info,
+                                    level=Qgis.MessageLevel.Info,
                                 )
                     else:
                         self.iface.messageBar().pushMessage(
@@ -110,13 +110,13 @@ class Polygon(GeometricaAcquisition):
                             self.tr(
                                 "The right angle tool should be used only for rectangular shapes."
                             ),
-                            level=Qgis.Info,
+                            level=Qgis.MessageLevel.Info,
                         )
         elif self.free:
             self.geometry.append(pointMap)
             self.qntPoint += 1
         else:
-            if event.button() == Qt.LeftButton:
+            if event.button() == Qt.MouseButton.LeftButton:
                 if self.qntPoint == 0:
                     self.rubberBand = self.getRubberBand()
                     point = QgsPointXY(pointMap)
@@ -136,7 +136,7 @@ class Polygon(GeometricaAcquisition):
                             self.tr(
                                 "Not possible to digitise, segment smaller than minimun distance."
                             ),
-                            level=Qgis.Info,
+                            level=Qgis.MessageLevel.Info,
                         )
                 else:
                     point = QgsPointXY(pointMap)
@@ -162,13 +162,13 @@ class Polygon(GeometricaAcquisition):
                                 self.tr(
                                     "Not possible to digitise, segment smaller than minimun distance."
                                 ),
-                                level=Qgis.Info,
+                                level=Qgis.MessageLevel.Info,
                             )
 
     def canvasMoveEvent(self, event):
         if self.snapCursorRubberBand:
             self.snapCursorRubberBand.hide()
-            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
+            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.GeometryType.PointGeometry)
             self.snapCursorRubberBand = None
         oldPoint = QgsPointXY(event.mapPoint())
         event.snapPoint()

@@ -22,8 +22,7 @@
 
 import json
 
-from qgis.PyQt.Qt import QVariant
-from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSink,
@@ -150,9 +149,9 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         Gets all fields for output layer.
         """
         fields = QgsFields()
-        fields.append(QgsField("algorithm", QVariant.String))
-        fields.append(QgsField("tests_output", QVariant.String))
-        fields.append(QgsField("status", QVariant.String))
+        fields.append(QgsField("algorithm", QMetaType.Type.QString))
+        fields.append(QgsField("tests_output", QMetaType.Type.QString))
+        fields.append(QgsField("status", QMetaType.Type.QString))
         return fields
 
     def processAlgorithm(self, parameters, context, feedback):

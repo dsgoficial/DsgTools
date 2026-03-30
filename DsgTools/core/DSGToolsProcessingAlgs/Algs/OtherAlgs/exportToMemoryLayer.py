@@ -19,7 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtXml import QDomDocument
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
@@ -29,6 +29,7 @@ from qgis.core import (
     QgsFeatureSink,
     QgsProcessing,
     QgsProcessingAlgorithm,
+    QgsProcessingContext,
     QgsProcessingOutputVectorLayer,
     QgsProcessingParameterString,
     QgsProcessingParameterFeatureSink,
@@ -100,10 +101,13 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         temp_data.addAttributes(layer.dataProvider().fields().toList())
         temp.updateFields()
         temp_data.addFeatures([feat for feat in layer.getFeatures()])
-        QgsProject().instance().addMapLayer(temp)
-        root = QgsProject.instance().layerTreeRoot()
-        myLayerNode = root.findLayer(temp.id())
-        myLayerNode.setCustomProperty("showFeatureCount", True)
+        context.temporaryLayerStore().addMapLayer(temp)
+        context.addLayerToLoadOnCompletion(
+            temp.id(),
+            QgsProcessingContext.LayerDetails(
+                outputLayerName, QgsProject.instance(), ""
+            ),
+        )
         return {}
 
     def name(self):

@@ -56,7 +56,7 @@ class SnapWithLayerChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         self.snapDoubleSpinBox.setMaximum(1000000)
         self.snapDoubleSpinBox.setMinimum(0.00000000000000001)
         self.layerComboBox.setFilters(
-            QgsMapLayerProxyModel.HasGeometry | QgsMapLayerProxyModel.VectorLayer
+            QgsMapLayerProxyModel.Filter.HasGeometry | QgsMapLayerProxyModel.Filter.VectorLayer
         )
         if blackList is not None:
             self.layerComboBox.setExceptedLayerList(blackList)
@@ -102,7 +102,7 @@ class SnapWithLayerChooserWidget(QtWidgets.QWidget, FORM_CLASS):
                 raise Exception(self.tr("Invalid Snap Chooser Widget json config!"))
             # set layer combo
             idx = self.layerComboBox.findText(
-                parameterDict["layerName"], flags=Qt.MatchExactly
+                parameterDict["layerName"], flags=Qt.MatchFlag.MatchExactly
             )
             self.layerComboBox.setCurrentIndex(idx)
             # set snap double spin box

@@ -1,5 +1,5 @@
 #! -*- coding: utf-8 -*-
-from PyQt5 import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 import os, sys
 
 
@@ -72,7 +72,7 @@ class ReclassifyDialog(QtWidgets.QDialog):
         }
 
     def showTopLevel(self):
-        return self.exec_() == QtWidgets.QDialog.Accepted
+        return self.exec() == QtWidgets.QDialog.DialogCode.Accepted
 
     @QtCore.pyqtSlot(bool)
     def on_saveBtn_clicked(self):

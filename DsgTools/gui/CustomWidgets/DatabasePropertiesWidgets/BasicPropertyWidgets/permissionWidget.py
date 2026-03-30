@@ -70,7 +70,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.serverAbstractDb = None
         self.dbDict = dict()
         self.permissionManager = None
-        self.permissionTreeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.permissionTreeWidget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.permissionTreeWidget.customContextMenuRequested.connect(
             self.createMenuAssigned
         )
@@ -82,7 +82,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Refreshes permission table according to selected view type.
         """
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         viewType = self.getViewType()
         self.permissionTreeWidget.clear()
         if viewType == "database":
@@ -103,7 +103,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
                 dbItem = self.createItem(parentDbItem, permission, 1)
                 for user in dbPerspectiveDict[dbName][permission]:
                     userItem = self.createItem(dbItem, user, 2)
-        self.permissionTreeWidget.sortItems(0, Qt.AscendingOrder)
+        self.permissionTreeWidget.sortItems(0, Qt.SortOrder.AscendingOrder)
         self.permissionTreeWidget.expandAll()
 
     def populateWithUserPerspective(self):
@@ -118,7 +118,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
                 dbItem = self.createItem(parentUserItem, dbName, 1)
                 for permission in userPerspectiveDict[userName][dbName]:
                     permissionItem = self.createItem(dbItem, permission, 2)
-        self.permissionTreeWidget.sortItems(0, Qt.AscendingOrder)
+        self.permissionTreeWidget.sortItems(0, Qt.SortOrder.AscendingOrder)
         self.permissionTreeWidget.expandAll()
 
     def createItem(self, parent, text, column):
@@ -144,7 +144,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
     def on_manageUsersPushButton_clicked(self):
         try:
             dlg = ManageServerUsers(self.serverAbstractDb)
-            dlg.exec_()
+            dlg.exec()
         except:
             QMessageBox.warning(self, self.tr("Error!"), self.tr("Select a server!"))
         self.refresh()
@@ -154,7 +154,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         try:
             dlg = ServerProfilesManager(self.permissionManager)
             # dlg.profilesChanged.connect(self.refresh)
-            dlg.exec_()
+            dlg.exec()
         except Exception as e:
             QMessageBox.warning(self, self.tr("Error!"), ":".join(e.args))
         self.refresh()
@@ -181,7 +181,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
                 )
             elif item.text(2) != "":
                 menu.addAction(self.tr("Revoke User"), self.revokeSelectedUser)
-        menu.exec_(self.permissionTreeWidget.viewport().mapToGlobal(position))
+        menu.exec(self.permissionTreeWidget.viewport().mapToGlobal(position))
 
     def createUserPerspectiveContextMenu(self, position):
         menu = QMenu()
@@ -201,7 +201,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
                 menu.addAction(
                     self.tr("Revoke Permission"), self.revokeSelectedPermission
                 )
-        menu.exec_(self.permissionTreeWidget.viewport().mapToGlobal(position))
+        menu.exec(self.permissionTreeWidget.viewport().mapToGlobal(position))
 
     def manageUserPermissions(self):
         currItem = self.permissionTreeWidget.currentItem()
@@ -223,7 +223,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
                 dbName,
                 edgvVersion,
             )
-            dlg.exec_()
+            dlg.exec()
         except:
             pass
         self.refresh()
@@ -233,7 +233,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         permissionName = self.permissionTreeWidget.currentItem().parent().text(1)
         dbName = self.permissionTreeWidget.currentItem().parent().parent().text(0)
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.permissionManager.revokePermission(dbName, permissionName, userName)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(
@@ -304,7 +304,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
                 dbName,
                 edgvVersion,
             )
-            dlg.exec_()
+            dlg.exec()
         except:
             pass
         self.refresh()
@@ -314,7 +314,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         dbName = self.permissionTreeWidget.currentItem().parent().text(1)
         userName = self.permissionTreeWidget.currentItem().parent().parent().text(0)
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.permissionManager.revokePermission(dbName, permissionName, userName)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(
@@ -345,7 +345,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
             # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a file to import!'))
             return
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.permissionManager.importSetting(filename)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(
@@ -380,7 +380,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         dbName = self.permissionTreeWidget.currentItem().parent().text(0)
         edgvVersion = self.dbDict[dbName].getDatabaseVersion()
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.permissionManager.exportSetting(profileName, edgvVersion, folder)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(
@@ -402,7 +402,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
             # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
             return
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.permissionManager.batchExportSettings(folder)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(
@@ -426,7 +426,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
             # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a input folder!'))
             return
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.permissionManager.batchImportSettings(folder)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(

@@ -20,18 +20,17 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import range
 import os
 import time
 import csv
 import shutil
 from osgeo import gdal, ogr
 
-from qgis.PyQt.Qt import QObject, QVariant
-from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtCore import QMetaType, pyqtSlot, QObject
 
 # Import the PyQt and QGIS libraries
 from qgis.core import (
+    Qgis,
     QgsMessageLog,
     QgsVectorFileWriter,
     QgsVectorLayer,
@@ -103,13 +102,11 @@ class InventoryThread(GenericThread):
 
         self.messenger = InventoryMessages(self)
         self.files = list()
-        gdal.DontUseExceptions()
-        ogr.DontUseExceptions()
         self.layer_attributes = [
-            QgsField("filename", QVariant.String),
-            QgsField("date", QVariant.String),
-            QgsField("size", QVariant.String),
-            QgsField("extension", QVariant.String),
+            QgsField("filename", QMetaType.Type.QString),
+            QgsField("date", QMetaType.Type.QString),
+            QgsField("size", QMetaType.Type.QString),
+            QgsField("extension", QMetaType.Type.QString),
         ]
         self.qgsattr = QgsFields()
         for i in self.layer_attributes:
@@ -162,6 +159,7 @@ class InventoryThread(GenericThread):
         destination_folder=None,
         make_copy=False,
         onlyGeo=True,
+        is_whitelist=True,
         feedback=None,
     ):
         featList = []
@@ -183,24 +181,41 @@ class InventoryThread(GenericThread):
                 if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                     break
                 extension = current_file.split(".")[-1]
-                if extension not in format_set:
+                in_set = extension in format_set
+                if is_whitelist and not in_set:
+                    continue
+                if not is_whitelist and in_set:
                     continue
                 full_path = self.get_full_path(current_file, root)
-                if gdal.Open(full_path) or ogr.Open(full_path):
-                    bbox_geom, attributes = self.computeBoxAndAttributes(
+                is_geo = False
+                try:
+                    if gdal.Open(full_path):
+                        is_geo = True
+                except Exception:
+                    pass
+                if not is_geo:
+                    try:
+                        if ogr.Open(full_path):
+                            is_geo = True
+                    except Exception:
+                        pass
+                if is_geo:
+                    result = self.computeBoxAndAttributes(
                         None, full_path, extension, insertIntoMemory=False
                     )
-                    new_feat = self.get_new_feat(bbox_geom, attributes)
-                    featList.append(new_feat)
-                    fileList.append(full_path)
+                    if result is not None:
+                        bbox_geom, attributes = result
+                        new_feat = self.get_new_feat(bbox_geom, attributes)
+                        featList.append(new_feat)
+                        fileList.append(full_path)
                 if multiStepFeedback is not None:
                     multiStepFeedback.setProgress(files_progress * current)
         if make_copy:
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(nSteps)
             copy_len = len(fileList)
-            for current, file_ in fileList:
-                if multiStepFeedback is not None and multiStepFeedback.isCanceled:
+            for current, file_ in enumerate(fileList):
+                if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                     break
                 try:
                     self.copy_single_file(file_, destination_folder)
@@ -221,7 +236,6 @@ class InventoryThread(GenericThread):
 
     def get_full_path(self, file_name, root):
         line = os.path.join(root, file_name)
-        line = line.encode(encoding="UTF-8")
         return line
 
     def get_new_feat(self, geom, attributes):
@@ -236,12 +250,12 @@ class InventoryThread(GenericThread):
         """
         # creating a csv file
         try:
-            csvfile = open(outputFile, "wb")
+            csvfile = open(outputFile, "w", newline="")
         except IOError as e:
             QgsMessageLog.logMessage(
                 self.messenger.getInventoryErrorMessage() + "\n" + e.strerror,
                 "DSGTools Plugin",
-                QgsMessageLog.INFO,
+                Qgis.MessageLevel.Info,
             )
             return (0, self.messenger.getInventoryErrorMessage() + "\n" + e.strerror)
 
@@ -264,7 +278,6 @@ class InventoryThread(GenericThread):
                             continue
                         # making the full path
                         line = os.path.join(root, file)
-                        line = line.encode(encoding="UTF-8")
                         # changing the separator, it will be changed later
                         line = line.replace(os.sep, "/")
                         # forcing the inventory of .prj files
@@ -272,8 +285,14 @@ class InventoryThread(GenericThread):
                             self.writeLine(outwriter, line, extension)
                         else:
                             # check if GDAL/OGR recognizes the file
-                            gdalSrc = gdal.Open(line)
-                            ogrSrc = ogr.Open(line)
+                            try:
+                                gdalSrc = gdal.Open(line)
+                            except Exception:
+                                gdalSrc = None
+                            try:
+                                ogrSrc = ogr.Open(line)
+                            except Exception:
+                                ogrSrc = None
                             if gdalSrc or ogrSrc:
                                 # if only geo mode
                                 if self.isOnlyGeo:
@@ -289,7 +308,7 @@ class InventoryThread(GenericThread):
                         QgsMessageLog.logMessage(
                             self.messenger.getUserCanceledFeedbackMessage(),
                             "DSGTools Plugin",
-                            QgsMessageLog.INFO,
+                            Qgis.MessageLevel.Info,
                         )
                         return (-1, self.messenger.getUserCanceledFeedbackMessage())
         except csv.Error as e:
@@ -297,7 +316,7 @@ class InventoryThread(GenericThread):
             QgsMessageLog.logMessage(
                 self.messenger.getInventoryErrorMessage() + "\n" + e,
                 "DSGTools Plugin",
-                QgsMessageLog.INFO,
+                Qgis.MessageLevel.Info,
             )
             return (0, self.messenger.getInventoryErrorMessage() + "\n" + e)
         except OSError as e:
@@ -305,7 +324,7 @@ class InventoryThread(GenericThread):
             QgsMessageLog.logMessage(
                 self.messenger.getInventoryErrorMessage() + "\n" + e.strerror,
                 "DSGTools Plugin",
-                QgsMessageLog.INFO,
+                Qgis.MessageLevel.Info,
             )
             return (0, self.messenger.getInventoryErrorMessage() + "\n" + e.strerror)
         except Exception as e:
@@ -313,7 +332,7 @@ class InventoryThread(GenericThread):
             QgsMessageLog.logMessage(
                 self.messenger.getInventoryErrorMessage() + "\n" + ":".join(e.args),
                 "DSGTools Plugin",
-                QgsMessageLog.INFO,
+                Qgis.MessageLevel.Info,
             )
             return (0, self.messenger.getInventoryErrorMessage())
         csvfile.close()
@@ -330,7 +349,7 @@ class InventoryThread(GenericThread):
             QgsMessageLog.logMessage(
                 self.messenger.getSuccessInventoryMessage(),
                 "DSGTools Plugin",
-                QgsMessageLog.INFO,
+                Qgis.MessageLevel.Info,
             )
             return (1, self.messenger.getSuccessInventoryMessage())
 
@@ -340,7 +359,7 @@ class InventoryThread(GenericThread):
         """
         # get the bounding box and wkt projection
         (ogrPoly, prjWkt) = self.getExtent(line)
-        if ogrPoly == None or prjWkt == None:
+        if ogrPoly is None or prjWkt is None:
             return
         # making a QGIS projection
         crsSrc = QgsCoordinateReferenceSystem()
@@ -373,21 +392,21 @@ class InventoryThread(GenericThread):
                     QgsMessageLog.logMessage(
                         self.messenger.getCopyErrorMessage() + "\n" + e.strerror,
                         "DSGTools Plugin",
-                        QgsMessageLog.INFO,
+                        Qgis.MessageLevel.Info,
                     )
                     return (0, self.messenger.getCopyErrorMessage() + "\n" + e.strerror)
             else:
                 QgsMessageLog.logMessage(
                     self.messenger.getUserCanceledFeedbackMessage(),
                     "DSGTools Plugin",
-                    QgsMessageLog.INFO,
+                    Qgis.MessageLevel.Info,
                 )
                 return (-1, self.messenger.getUserCanceledFeedbackMessage())
 
         QgsMessageLog.logMessage(
             self.messenger.getSuccessInventoryAndCopyMessage(),
             "DSGTools Plugin",
-            QgsMessageLog.INFO,
+            Qgis.MessageLevel.Info,
         )
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
 
@@ -404,8 +423,14 @@ class InventoryThread(GenericThread):
             newFileName = newFileName.replace("/", os.sep)
 
             try:
-                gdalSrc = gdal.Open(fileName)
-                ogrSrc = ogr.Open(fileName)
+                try:
+                    gdalSrc = gdal.Open(fileName)
+                except Exception:
+                    gdalSrc = None
+                try:
+                    ogrSrc = ogr.Open(fileName)
+                except Exception:
+                    ogrSrc = None
                 if ogrSrc:
                     self.copyOGRDataSource(ogrSrc, newFileName)
                 elif gdalSrc:
@@ -414,7 +439,7 @@ class InventoryThread(GenericThread):
                 QgsMessageLog.logMessage(
                     self.messenger.getCopyErrorMessage() + "\n" + ":".join(e.args),
                     "DSGTools Plugin",
-                    QgsMessageLog.INFO,
+                    Qgis.MessageLevel.Info,
                 )
                 return (
                     0,
@@ -424,7 +449,7 @@ class InventoryThread(GenericThread):
         QgsMessageLog.logMessage(
             self.messenger.getSuccessInventoryAndCopyMessage(),
             "DSGTools Plugin",
-            QgsMessageLog.INFO,
+            Qgis.MessageLevel.Info,
         )
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
 
@@ -433,8 +458,14 @@ class InventoryThread(GenericThread):
         file_ = file_name.split(os.sep)[-1]
         newFileName = os.path.join(destination_folder, file_)
         newFileName = newFileName.replace("/", os.sep)
-        gdalSrc = gdal.Open(fileName)
-        ogrSrc = ogr.Open(fileName)
+        try:
+            gdalSrc = gdal.Open(file_name)
+        except Exception:
+            gdalSrc = None
+        try:
+            ogrSrc = ogr.Open(file_name)
+        except Exception:
+            ogrSrc = None
         if ogrSrc:
             self.copyOGRDataSource(ogrSrc, newFileName)
         elif gdalSrc:
@@ -500,7 +531,7 @@ class InventoryThread(GenericThread):
         creationDate = time.ctime(os.path.getctime(line))
         size = os.path.getsize(line) / 1000.0
 
-        return [line.decode(encoding="UTF-8"), creationDate, size, extension]
+        return [line, creationDate, size, extension]
 
     def getRasterExtent(self, gt, cols, rows):
         """
@@ -527,8 +558,14 @@ class InventoryThread(GenericThread):
         Makes a ogr polygon to represent the extent (i.e. bounding box)
         filename: file name
         """
-        gdalSrc = gdal.Open(filename)
-        ogrSrc = ogr.Open(filename)
+        try:
+            gdalSrc = gdal.Open(filename)
+        except Exception:
+            gdalSrc = None
+        try:
+            ogrSrc = ogr.Open(filename)
+        except Exception:
+            ogrSrc = None
         if ogrSrc:
             poly = ogr.Geometry(ogr.wkbPolygon)
             spatialRef = None
@@ -592,7 +629,7 @@ class InventoryThread(GenericThread):
         crsSrc:source crs
         ogrPoly: ogr polygon
         """
-        crsDest = QgsCoordinateReferenceSystem(4326)
+        crsDest = QgsCoordinateReferenceSystem.fromEpsgId(4326)
         coordinateTransformer = QgsCoordinateTransform(
             crsSrc, crsDest, QgsProject.instance()
         )

@@ -341,7 +341,7 @@ class BDGExGuiManager(QObject):
                 msg = self.tr(
                     "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
                 )
-                MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
+                MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             else:
                 QgsProject.instance().addMapLayer(vlayer)
 

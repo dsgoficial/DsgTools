@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (QgsProcessing, QgsProcessingAlgorithm,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterEnum,
@@ -267,13 +267,13 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         
         # Criar campos de saída
         fields = QgsFields()
-        fields.append(QgsField('mi', QVariant.String))
-        fields.append(QgsField('quadricula', QVariant.String))
-        fields.append(QgsField('grid_x', QVariant.Int))
-        fields.append(QgsField('grid_y', QVariant.Int))
-        fields.append(QgsField('area_m2', QVariant.Double))
-        fields.append(QgsField('selecionada', QVariant.Int))
-        fields.append(QgsField('fuso_utm', QVariant.String))
+        fields.append(QgsField('mi', QMetaType.Type.QString))
+        fields.append(QgsField('quadricula', QMetaType.Type.QString))
+        fields.append(QgsField('grid_x', QMetaType.Type.Int))
+        fields.append(QgsField('grid_y', QMetaType.Type.Int))
+        fields.append(QgsField('area_m2', QMetaType.Type.Double))
+        fields.append(QgsField('selecionada', QMetaType.Type.Int))
+        fields.append(QgsField('fuso_utm', QMetaType.Type.QString))
         
         # Criar sinks (no CRS original)
         (sink_grid, dest_id_grid) = self.parameterAsSink(
@@ -296,7 +296,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             feedback.setProgress(int(current * 100 / total_features))
             
             # Identificar MI
-            mi_nome = moldura_feat.attribute('mi') if moldura_feat.fieldNameIndex('mi') >= 0 else f'MI_{current+1}'
+            mi_nome = moldura_feat.attribute('mi') if moldura_feat.fields().lookupField('mi') >= 0 else f'MI_{current+1}'
             feedback.pushInfo(f'\nProcessando {mi_nome}...')
             
             # Obter geometria da moldura (cópia para não modificar o original)

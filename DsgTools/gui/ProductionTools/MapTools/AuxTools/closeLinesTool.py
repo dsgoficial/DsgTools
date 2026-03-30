@@ -93,7 +93,7 @@ class CloseLinesTool(QgsMapTool):
         if (
             not layer
             or not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() != QgsWkbTypes.LineGeometry
+            or layer.geometryType() != QgsWkbTypes.GeometryType.LineGeometry
             or not layer.isEditable()
         ):
             enabled = False
@@ -117,13 +117,13 @@ class CloseLinesTool(QgsMapTool):
         layer = iface.activeLayer()
         if not layer:
             iface.messageBar().pushMessage(
-                "Erro", "Selecione uma camada válida", level=Qgis.Critical, duration=5
+                "Erro", "Selecione uma camada válida", level=Qgis.MessageLevel.Critical, duration=5
             )
             return
         selectedFeatures = layer.selectedFeatureCount()
         if selectedFeatures == 0:
             iface.messageBar().pushMessage(
-                "Erro", "Nenhuma feição selecionada", level=Qgis.Critical, duration=5
+                "Erro", "Nenhuma feição selecionada", level=Qgis.MessageLevel.Critical, duration=5
             )
             return
         confirmation = self.confirmAction(selectedFeatures)
@@ -131,7 +131,7 @@ class CloseLinesTool(QgsMapTool):
             iface.messageBar().pushMessage(
                 "Cancelado",
                 "Ação cancelada pelo usuário",
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=5,
             )
             return
@@ -155,7 +155,7 @@ class CloseLinesTool(QgsMapTool):
         iface.messageBar().pushMessage(
             "Executado",
             f"{len(featuresIdsToDelete)} linha(s) fechada(s)",
-            level=Qgis.Success,
+            level=Qgis.MessageLevel.Success,
             duration=5,
         )
 
@@ -164,10 +164,10 @@ class CloseLinesTool(QgsMapTool):
             iface.mainWindow(),
             "Continuar?",
             f"As linhas selecionadas com vértices iniciais e finais próximos serão fechadas ({selectedFeatures} feição(ões) selecionada(s)). Deseja continuar?",
-            QMessageBox.Yes,
-            QMessageBox.No,
+            QMessageBox.StandardButton.Yes,
+            QMessageBox.StandardButton.No,
         )
-        return reply == QMessageBox.Yes
+        return reply == QMessageBox.StandardButton.Yes
 
     # Não está sendo usado, usar caso queira verificar proximidade para fechar linhas
     def isFirstPointCloseToLastPoint(self, geometry: QgsGeometry, tolerance):

@@ -31,7 +31,7 @@ from DsgTools.core.GeometricTools import geometryHandler, rasterHandler
 from DsgTools.core.GeometricTools.affine import Affine
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
-from PyQt5.QtCore import QCoreApplication, QVariant, QByteArray
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType, QByteArray
 from qgis.core import (
     QgsFeature,
     QgsFeatureSink,
@@ -83,6 +83,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
     ROADS = "ROADS"
     MAIN_ROADS_EXPRESSION = "MAIN_ROADS_EXPRESSION"
     OTHER_ROADS_EXPRESSION = "OTHER_ROADS_EXPRESSION"
+    ONLY_HILLTOPS = "ONLY_HILLTOPS"
     OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config=None):
@@ -260,6 +261,17 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.ONLY_HILLTOPS,
+                self.tr(
+                    "Extract only hilltops (extracts all hilltop points, "
+                    "including depressions, and discards all other methods)"
+                ),
+                defaultValue=False,
+            )
+        )
+
+        self.addParameter(
             QgsProcessingParameterFeatureSink(self.OUTPUT, "Output spot elevation")
         )
 
@@ -269,7 +281,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         contourLyr = self.parameterAsVectorLayer(
             parameters, self.CONTOUR_LINES, context
         )
-        heightFieldName = self.parameterAsFields(
+        heightFieldName = self.parameterAsStrings(
             parameters, self.CONTOUR_ATTR, context
         )[0]
         contourHeightInterval = self.parameterAsDouble(
@@ -296,7 +308,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         drainagesLyr = self.parameterAsVectorLayer(
             parameters, self.DRAINAGE_LINES, context
         )
-        drainageNameAttribute = self.parameterAsFields(
+        drainageNameAttribute = self.parameterAsStrings(
             parameters, self.DRAINAGE_LINES_NAME_ATTRIBUTE, context
         )[0]
         getDrainagesWithoutName = self.parameterAsBool(
@@ -316,6 +328,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if otherRoadsFilterExpression == "":
             otherRoadsFilterExpression = None
 
+        onlyHilltops = self.parameterAsBool(
+            parameters, self.ONLY_HILLTOPS, context
+        )
+
         self.outputCrs = QgsCoordinateReferenceSystem("EPSG:4674")
 
         self.bufferDist = self.distances[scale]
@@ -325,13 +341,13 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         self.contourBufferLength = self.contourBufferLengths[scale]
 
         fields = QgsFields()
-        fields.append(QgsField("cota", QVariant.Int))
-        fields.append(QgsField("cota_mais_alta", QVariant.Int))
-        fields.append(QgsField("cota_comprovada", QVariant.Int))
-        fields.append(QgsField("ancora_horizontal", QVariant.Int))
-        fields.append(QgsField("ancora_vertical", QVariant.Int))
-        fields.append(QgsField("suprimir_simbologia", QVariant.Int))
-        fields.append(QgsField("visivel", QVariant.Int))
+        fields.append(QgsField("cota", QMetaType.Type.Int))
+        fields.append(QgsField("cota_mais_alta", QMetaType.Type.Int))
+        fields.append(QgsField("cota_comprovada", QMetaType.Type.Int))
+        fields.append(QgsField("ancora_horizontal", QMetaType.Type.Int))
+        fields.append(QgsField("ancora_vertical", QMetaType.Type.Int))
+        fields.append(QgsField("suprimir_simbologia", QMetaType.Type.Int))
+        fields.append(QgsField("visivel", QMetaType.Type.Int))
         self.defaultAttrMap = {
             "cota_mais_alta": 2,
             "cota_comprovada": 2,
@@ -525,6 +541,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 else None,
                 mainRoadsLyr=mainRoadsLyr if mainRoadsLyr is not None else None,
                 otherRoadsLyr=otherRoadsLyr if otherRoadsLyr is not None else None,
+                onlyHilltops=onlyHilltops,
                 fields=fields,
                 context=context,
                 feedback=multiStepFeedback,
@@ -549,6 +566,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         drainagesWithoutNameLyr,
         mainRoadsLyr,
         otherRoadsLyr,
+        onlyHilltops,
         fields,
         context,
         feedback,
@@ -743,6 +761,25 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
+
+        if onlyHilltops:
+            if multiStepFeedback is not None:
+                multiStepFeedback.pushInfo(
+                    self.tr("Extracting only hilltop points (all hilltops)...")
+                )
+            allHilltopPoints = self.extractAllHilltopPoints(
+                contourLyr=contourLyr,
+                polygonLyr=polygonLyr,
+                rasterLyr=clippedRaster,
+                geographicBoundsLyr=geographicBoundsLyr,
+                minusBuffergeographicBoundsLyr=minusBufferedGeographicBoundsLyr,
+                originEpsg=originEpsg,
+                fields=fields,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            return allHilltopPoints
+
         # create grid
         if multiStepFeedback is not None:
             currentStep += 1
@@ -2076,7 +2113,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             geom = feat.geometry()
             buffer = (
                 geom.buffer(distance, 10, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1)
-                if geom.type() == QgsWkbTypes.PointGeometry
+                if geom.type() == QgsWkbTypes.GeometryType.PointGeometry
                 else geom
             )
             newFeat = QgsVectorLayerUtils.createFeature(exclusionLyr, buffer)
@@ -2333,6 +2370,121 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
         return featList, clippedHilltops
+
+    def extractAllHilltopPoints(
+        self,
+        contourLyr: QgsVectorLayer,
+        polygonLyr: QgsVectorLayer,
+        rasterLyr: QgsRasterLayer,
+        geographicBoundsLyr: QgsVectorLayer,
+        minusBuffergeographicBoundsLyr: QgsVectorLayer,
+        originEpsg: QgsCoordinateReferenceSystem,
+        fields: QgsFields,
+        context: QgsProcessingContext,
+        feedback: QgsFeedback = None,
+    ) -> List[QgsFeature]:
+        """Extract all hilltop points (both normal and depression) without
+        applying distance/grid/exclusion filtering. Unlike
+        extractElevationPointsFromHilltops, this includes hilltops of any
+        order count (including order 1)."""
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(3, feedback)
+            if feedback is not None
+            else None
+        )
+        spatialRelationsHandler = SpatialRelationsHandler()
+        layerHandler = LayerHandler()
+        currentStep = 0
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Finding all hilltops..."))
+        hillTopsLyr = spatialRelationsHandler.createHilltopLayerFromPolygonLayer(
+            polygonLayer=polygonLyr,
+            geographicBoundsLyr=geographicBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            computeOrder=True,
+        )
+        self.algRunner.runCreateSpatialIndex(
+            hillTopsLyr, context=context, is_child_algorithm=True
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        minusBufferLength = geometryHandler.convertDistance(
+            self.contourBufferLength,
+            originEpsg=originEpsg,
+            destinationEpsg=geographicBoundsLyr.crs(),
+        )
+        clippedHilltops = self.algRunner.runClip(
+            inputLayer=hillTopsLyr,
+            overlayLayer=minusBuffergeographicBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        nFeats = clippedHilltops.featureCount()
+        if nFeats == 0:
+            return []
+        self.algRunner.runCreateSpatialIndex(
+            clippedHilltops, context=context, is_child_algorithm=True
+        )
+        clippedHilltops = self.algRunner.runJoinAttributesByLocation(
+            inputLyr=clippedHilltops,
+            joinLyr=contourLyr,
+            context=context,
+            discardNonMatching=True,
+            method=1,
+        )
+        stepSize = 100 / nFeats
+        featList = []
+        hilltopList = sorted(
+            filter(
+                lambda x: x["order_count"] > 1,
+                clippedHilltops.getFeatures(),
+            ),
+            key=lambda x: (x["order_count"], 1.0 / max(x.geometry().area(), 1e-15)),
+            reverse=True,
+        )
+        for current, hilltopFeat in enumerate(hilltopList):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            geom = hilltopFeat.geometry()
+            minusBuffer = geom.buffer(
+                minusBufferLength, -1,
+                Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1,
+            )
+            if minusBuffer.isEmpty():
+                continue
+            localHilltopLyr = layerHandler.createMemoryLayerWithFeature(
+                hillTopsLyr, hilltopFeat, context
+            )
+            clippedRaster = self.algRunner.runClipRasterLayer(
+                rasterLyr,
+                mask=localHilltopLyr,
+                context=context,
+                nodata=-9999,
+                outputRaster=QgsProcessingUtils.generateTempFilename(
+                    f"local_clip_{str(uuid4().hex)}.tif"
+                ),
+            )
+            clippedRasterLyr = QgsProcessingUtils.mapLayerFromString(
+                clippedRaster, context
+            )
+            if clippedRasterLyr is None:
+                continue
+            newFeat = rasterHandler.createMaxPointFeatFromRasterLayer(
+                inputRaster=clippedRasterLyr,
+                fields=fields,
+                fieldName="cota",
+                defaultAtributeMap=dict(self.defaultAttrMap),
+            )
+            featList.append(newFeat)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
+        return featList
 
     def keepThirdOrderOrHigherPoints(
         self,

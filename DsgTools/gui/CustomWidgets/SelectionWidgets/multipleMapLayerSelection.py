@@ -33,7 +33,7 @@ class CheckableComboBox(QgsMapLayerComboBox):
 
     def handleItemPressed(self, index):
         item = self.model().itemFromIndex(index)
-        if item.checkState() == QtCore.Qt.Checked:
-            item.setCheckState(QtCore.Qt.Unchecked)
+        if item.checkState() == QtCore.Qt.CheckState.Checked:
+            item.setCheckState(QtCore.Qt.CheckState.Unchecked)
         else:
-            item.setCheckState(QtCore.Qt.Checked)
+            item.setCheckState(QtCore.Qt.CheckState.Checked)

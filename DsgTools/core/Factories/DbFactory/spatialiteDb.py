@@ -25,7 +25,7 @@ from builtins import range
 
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtWidgets import QFileDialog
-from qgis.core import QgsCoordinateReferenceSystem
+from qgis.core import QgsCoordinateReferenceSystem, QgsVariantUtils
 
 from .abstractDb import AbstractDb
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
@@ -270,20 +270,18 @@ class SpatialiteDb(AbstractDb):
                                         )
                             else:
                                 if inputAttrList[i] in notNullDict[outputClass]:
-                                    try:
-                                        if value.isNull():
-                                            invalidated = self.utils.buildNestedDict(
-                                                invalidated,
-                                                [
-                                                    "nullAttribute",
-                                                    inputClass,
-                                                    id,
-                                                    inputAttrList[i],
-                                                ],
-                                                value,
-                                            )
-                                    except:
-                                        if (
+                                    if QgsVariantUtils.isNull(value):
+                                        invalidated = self.utils.buildNestedDict(
+                                            invalidated,
+                                            [
+                                                "nullAttribute",
+                                                inputClass,
+                                                id,
+                                                inputAttrList[i],
+                                            ],
+                                            value,
+                                        )
+                                    elif (
                                             (value == None)
                                             and (not nullLine)
                                             and (
@@ -547,7 +545,7 @@ class SpatialiteDb(AbstractDb):
             "complexos_" + aggregated_class, link_column, id
         )
         query = QSqlQuery(self.db)
-        if not query.exec_(sql):
+        if not query.exec(sql):
             self.db.close()
             raise Exception(
                 self.tr("Problem disassociating complex from complex: ")

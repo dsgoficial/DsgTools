@@ -25,7 +25,7 @@ import os
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingMultiStepFeedback,
@@ -220,7 +220,7 @@ class IdentifyPolygonUndershootsAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        if boundaryLyr.geometryType() == QgsWkbTypes.LineGeometry:
+        if boundaryLyr.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
             boundaryLyr = algRunner.runExplodeLines(
                 boundaryLyr, context, feedback=multiStepFeedback
             )

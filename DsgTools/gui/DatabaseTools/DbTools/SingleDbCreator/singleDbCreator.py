@@ -141,7 +141,7 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
                 QgsMessageLog.logMessage(
                     self.tr("Error on {0}: ").format(key) + errorDict[key],
                     "DSGTools Plugin",
-                    Qgis.Critical,
+                    Qgis.MessageLevel.Critical,
                 )
             if len(errorList) > 0:
                 errorMsg += self.tr(
@@ -163,7 +163,7 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
             parameterDict["factoryParam"],
             parentWidget=self,
         )
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         dbDict, errorDict = dict(), dict()
         try:
             newDb = dbCreator.createDb(

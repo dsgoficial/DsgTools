@@ -132,7 +132,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
             self.problemOccurred.emit(
                 self.tr("A problem occurred! Check log for details.")
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
 
     def validate(self):
         """
@@ -168,4 +168,4 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         Exhibits information about selected database.
         """
         contents = self.abstractDb.databaseInfo() if self.abstractDb else []
-        DatasourceInfoTable(contents=contents).exec_()
+        DatasourceInfoTable(contents=contents).exec()

@@ -1,5 +1,5 @@
 from DsgTools.Modules.acquisitionMenu.factories.widgetFactory import WidgetFactory
-from PyQt5 import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 from DsgTools.Modules.qgis.controllers.qgisCtrl import QgisCtrl
 import json
 from qgis.core import QgsWkbTypes
@@ -244,12 +244,12 @@ class AcquisitionMenuCtrl:
     def getLayersForReclassification(self, layerName, geometryType):
         layers = self.qgis.getLoadedVectorLayers()
         geometryFilterDict = {
-            QgsWkbTypes.PointGeometry: (
-                QgsWkbTypes.PointGeometry,
-                QgsWkbTypes.PolygonGeometry,
+            QgsWkbTypes.GeometryType.PointGeometry: (
+                QgsWkbTypes.GeometryType.PointGeometry,
+                QgsWkbTypes.GeometryType.PolygonGeometry,
             ),
-            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry,),
-            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PolygonGeometry,),
+            QgsWkbTypes.GeometryType.LineGeometry: (QgsWkbTypes.GeometryType.LineGeometry,),
+            QgsWkbTypes.GeometryType.PolygonGeometry: (QgsWkbTypes.GeometryType.PolygonGeometry,),
         }
         return [
             l

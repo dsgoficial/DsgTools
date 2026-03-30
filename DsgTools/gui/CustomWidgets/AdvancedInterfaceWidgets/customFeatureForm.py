@@ -221,12 +221,12 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
             # also to make easier to read data
             self._fieldsWidgets[fName] = w
             label = QLabel(text)
-            label.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-            w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            label.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+            w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
             self.widgetsLayout.addWidget(label, row, 0)
             self.widgetsLayout.addWidget(w, row, 1)
         self.widgetsLayout.addItem(
-            QSpacerItem(20, 40, QSizePolicy.Expanding, QSizePolicy.Expanding),
+            QSpacerItem(20, 40, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding),
             row + 1,
             1,
             1,
@@ -301,6 +301,6 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
             self.messageBar.pushMessage(
                 self.tr("Invalid layer selection"),
                 self.tr("select at least one layer for reclassification!"),
-                level=Qgis.Warning,
+                level=Qgis.MessageLevel.Warning,
                 duration=5,
             )

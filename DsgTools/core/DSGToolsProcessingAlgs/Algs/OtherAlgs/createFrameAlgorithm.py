@@ -22,8 +22,7 @@
 """
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
-from qgis.PyQt.Qt import QVariant
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsFeatureSink,
     QgsProcessingAlgorithm,
@@ -195,8 +194,8 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             ySubdivisions = default_y
 
         fields = QgsFields()
-        fields.append(QgsField("inom", QVariant.String))
-        fields.append(QgsField("mi", QVariant.String))
+        fields.append(QgsField("inom", QMetaType.Type.QString))
+        fields.append(QgsField("mi", QMetaType.Type.QString))
         (output_sink, output_sink_id) = self.parameterAsSink(
             parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, crs
         )

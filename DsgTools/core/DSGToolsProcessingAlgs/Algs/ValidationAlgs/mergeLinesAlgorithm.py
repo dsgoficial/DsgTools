@@ -22,7 +22,7 @@
 """
 import os
 import concurrent.futures
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools import graphHandler
 
@@ -142,7 +142,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         self.algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        attributeBlackList = self.parameterAsFields(
+        attributeBlackList = self.parameterAsStrings(
             parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
         ignoreVirtual = self.parameterAsBool(

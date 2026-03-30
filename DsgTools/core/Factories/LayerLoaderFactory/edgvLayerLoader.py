@@ -33,8 +33,7 @@ from qgis.core import (
     QgsVectorLayerJoinInfo,
 )
 from qgis.utils import iface
-from qgis.PyQt.QtCore import QVariant
-from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import QMetaType, QObject
 from qgis.PyQt.QtXml import QDomDocument
 
 from DsgTools.core.Utils.utils import Utils
@@ -123,13 +122,13 @@ class EDGVLayerLoader(QObject):
             return parentTreeNode
 
     def createMeasureColumn(self, layer):
-        if layer.geometryType() == QgsWkbTypes.PolygonGeometry:
+        if layer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
             layer.addExpressionField(
-                "$area", QgsField(self.tr("area_otf"), QVariant.Double)
+                "$area", QgsField(self.tr("area_otf"), QMetaType.Type.Double)
             )
-        elif layer.geometryType() == QgsWkbTypes.LineGeometry:
+        elif layer.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
             layer.addExpressionField(
-                "$length", QgsField(self.tr("length_otf"), QVariant.Double)
+                "$length", QgsField(self.tr("length_otf"), QMetaType.Type.Double)
             )
         return layer
 
@@ -242,7 +241,7 @@ class EDGVLayerLoader(QObject):
         try:
             qmldir, qmlType = self.abstractDb.getQml(vlayer.name())
         except Exception as e:
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
             return None
         if qmlType == "db":
             tempPath = os.path.join(os.path.dirname(__file__), "temp.qml")

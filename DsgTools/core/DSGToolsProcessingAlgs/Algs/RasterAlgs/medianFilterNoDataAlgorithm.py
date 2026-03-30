@@ -479,7 +479,7 @@ class MedianFilterNoDataAlgorithm(QgsProcessingAlgorithm):
             feedback.pushInfo('Processing completed successfully!')
             
         except Exception as e:
-            QgsMessageLog.logMessage(f'Error in median filter: {str(e)}', 'DsgTools', Qgis.Critical)
+            QgsMessageLog.logMessage(f'Error in median filter: {str(e)}', 'DsgTools', Qgis.MessageLevel.Critical)
             raise QgsProcessingException(f'Processing failed: {str(e)}')
         
         return {self.OUTPUT: output_path}

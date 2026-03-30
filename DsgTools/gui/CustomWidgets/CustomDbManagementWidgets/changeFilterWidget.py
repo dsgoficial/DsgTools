@@ -86,9 +86,9 @@ class ChangeFilterWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         if uiParameterJsonDict:
             if uiParameterJsonDict["allTablesCheckBox"]:
-                self.allTablesCheckBox.setCheckState(Qt.Checked)
+                self.allTablesCheckBox.setCheckState(Qt.CheckState.Checked)
                 singleValueIdx = self.singleValueComboBox.findText(
-                    uiParameterJsonDict["singleValueComboBox"], flags=Qt.MatchExactly
+                    uiParameterJsonDict["singleValueComboBox"], flags=Qt.MatchFlag.MatchExactly
                 )
                 self.singleValueComboBox.setCurrentIndex(singleValueIdx)
                 self.actionComboBox.setCurrentIndex(
@@ -96,18 +96,18 @@ class ChangeFilterWidget(QtWidgets.QWidget, FORM_CLASS):
                 )
             else:
                 schemaIdx = self.schemaComboBox.findText(
-                    uiParameterJsonDict["schemaComboBox"], flags=Qt.MatchExactly
+                    uiParameterJsonDict["schemaComboBox"], flags=Qt.MatchFlag.MatchExactly
                 )
                 self.schemaComboBox.setCurrentIndex(schemaIdx)
                 tableIdx = self.tableComboBox.findText(
-                    uiParameterJsonDict["tableComboBox"], flags=Qt.MatchExactly
+                    uiParameterJsonDict["tableComboBox"], flags=Qt.MatchFlag.MatchExactly
                 )
                 self.tableComboBox.setCurrentIndex(tableIdx)
                 if uiParameterJsonDict["allAttributesCheckBox"]:
-                    self.allAttributesCheckBox.setCheckState(Qt.Checked)
+                    self.allAttributesCheckBox.setCheckState(Qt.CheckState.Checked)
                     singleValueIdx = self.singleValueComboBox.findText(
                         uiParameterJsonDict["singleValueComboBox"],
-                        flags=Qt.MatchExactly,
+                        flags=Qt.MatchFlag.MatchExactly,
                     )
                     self.singleValueComboBox.setCurrentIndex(singleValueIdx)
                     self.actionComboBox.setCurrentIndex(
@@ -115,7 +115,7 @@ class ChangeFilterWidget(QtWidgets.QWidget, FORM_CLASS):
                     )
                 else:
                     attributeIdx = self.attributeComboBox.findText(
-                        uiParameterJsonDict["attributeComboBox"], flags=Qt.MatchExactly
+                        uiParameterJsonDict["attributeComboBox"], flags=Qt.MatchFlag.MatchExactly
                     )
                     self.attributeComboBox.setCurrentIndex(attributeIdx)
                     self.filterCustomSelectorWidget.selectItems(
@@ -138,7 +138,7 @@ class ChangeFilterWidget(QtWidgets.QWidget, FORM_CLASS):
                 self.treeWidget,
                 0,
             )
-        self.treeWidget.sortItems(0, Qt.AscendingOrder)
+        self.treeWidget.sortItems(0, Qt.SortOrder.AscendingOrder)
         self.treeWidget.expandAll()
 
     def populateSchemaCombo(self):
@@ -200,7 +200,7 @@ class ChangeFilterWidget(QtWidgets.QWidget, FORM_CLASS):
         ):
             self.attributeComboBox.clear()
             self.attributeComboBox.setEnabled(False)
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             self.singleValueComboBox.clear()
             self.singleValueComboBox.addItem(self.tr("Select a value to alter"))
             if self.allAttributesCheckBox.checkState() == 2:

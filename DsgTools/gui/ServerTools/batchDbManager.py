@@ -212,7 +212,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
                 msg = self.tr("Error for database {0}: ").format(
                     errorDb, exceptionDict[errorDb]
                 )
-                QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.Critical)
+                QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.MessageLevel.Critical)
         return msg
 
     @pyqtSlot(bool)
@@ -231,12 +231,12 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
                 self.tr("Question"),
                 self.tr("Do you really want to drop databases: ")
                 + ", ".join(selectedDbNameList),
-                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
-            == QMessageBox.Cancel
+            == QMessageBox.StandardButton.Cancel
         ):
             return
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         successList, exceptionDict = self.batchDropDbs(selectedDbNameList)
         QApplication.restoreOverrideCursor()
         self.setDatabases()
@@ -247,7 +247,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_upgradePostgisPushButton_clicked(self):
         selectedDbNameList = self.getSelectedDbList()
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         successList, exceptionDict = self.batchUpgradePostgis(selectedDbNameList)
         QApplication.restoreOverrideCursor()
         self.setDatabases()
@@ -264,9 +264,9 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
                 self.tr(
                     "This operation will upgrade PostGIS version for templates databases as well as the selected databases. Would you like to continue?"
                 ),
-                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
-            == QMessageBox.Cancel
+            == QMessageBox.StandardButton.Cancel
         ):
             return successList, exceptionDict
         dbsDict = self.instantiateAbstractDbs(instantiateTemplates=True)
@@ -327,11 +327,11 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
             styleDir = self.getStyleDir(versionList)
             styleList = self.getStyleList(styleDir)
             dlg = SelectStyles(styleList)
-            dlg.exec_()
+            dlg.exec()
             selectedStyles = dlg.selectedStyles
             if len(selectedStyles) == 0:
                 return
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             successList, exceptionDict = self.batchImportStyles(
                 dbsDict, styleDir, selectedStyles, versionList[0]
             )
@@ -454,11 +454,11 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         styleDict = self.getStylesFromDbs()
         styleList = list(styleDict.keys())
         dlg = SelectStyles(styleList)
-        execStatus = dlg.exec_()
+        execStatus = dlg.exec()
         selectedStyles = dlg.selectedStyles
         if execStatus != 0 and selectedStyles != []:
             selectedStyleDict = {k: styleDict[k] for k in selectedStyles}
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             successList, exceptionDict = self.batchDeleteStyles(
                 dbsDict, selectedStyleDict
             )
@@ -494,7 +494,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         sqlFilePath = self.getSQLFile()
         if sqlFilePath == "":
             return
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         successList, exceptionDict = self.batchCustomizeFromSQLFile(
             dbsDict, sqlFilePath
         )

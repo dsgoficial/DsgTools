@@ -22,7 +22,7 @@
 """
 import concurrent.futures
 import os
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsGeometry,
     QgsProcessing,
@@ -163,7 +163,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.invalidSourceError(parameters, self.INPUT)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        heightFieldName = self.parameterAsFields(parameters, self.CONTOUR_ATTR, context)
+        heightFieldName = self.parameterAsStrings(parameters, self.CONTOUR_ATTR, context)
         heightFieldName = None if len(heightFieldName) == 0 else heightFieldName[0]
         depressionExpression = self.parameterAsExpression(
             parameters, self.DEPRESSION_EXPRESSION, context
@@ -180,7 +180,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         elevationPointsLyr = self.parameterAsVectorLayer(
             parameters, self.INPUT_SPOT_ELEVATION, context
         )
-        elevationPointHeightFieldName = self.parameterAsFields(
+        elevationPointHeightFieldName = self.parameterAsStrings(
             parameters, self.ELEVATION_POINT_ATTR, context
         )
         elevationPointHeightFieldName = (
@@ -207,9 +207,9 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         )
 
         sinkDict = {
-            QgsWkbTypes.PointGeometry: point_flagSink,
-            QgsWkbTypes.LineGeometry: line_flagSink,
-            QgsWkbTypes.PolygonGeometry: polygon_flagSink,
+            QgsWkbTypes.GeometryType.PointGeometry: point_flagSink,
+            QgsWkbTypes.GeometryType.LineGeometry: line_flagSink,
+            QgsWkbTypes.GeometryType.PolygonGeometry: polygon_flagSink,
         }
 
         invalidDict = (

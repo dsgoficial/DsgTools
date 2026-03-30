@@ -75,10 +75,10 @@ class ExternalFileDownloadProcessor(QObject):
                     fileName
                 )
             ),
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
         )
-        if reply == QMessageBox.No:
+        if reply == QMessageBox.StandardButton.No:
             return False
         return True
 
@@ -98,7 +98,7 @@ class ExternalFileDownloadProcessor(QObject):
         reply = self.promptForDownload(fileConfigList)
         if not reply:
             return 0
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         for file in fileConfigList:
             if not os.path.isdir(file.output_folder):
                 os.makedirs(file.output_folder)

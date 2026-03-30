@@ -23,7 +23,7 @@
 
 from collections import defaultdict
 from typing import Dict, Set, Tuple
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools import graphHandler
 from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (

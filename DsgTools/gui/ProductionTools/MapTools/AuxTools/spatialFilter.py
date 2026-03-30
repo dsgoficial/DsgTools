@@ -24,7 +24,7 @@
 from qgis import gui, core
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
-from PyQt5 import QtGui, QtCore
+from qgis.PyQt import QtGui, QtCore
 
 
 class SpatialFilter(QgsMapTool):
@@ -38,7 +38,7 @@ class SpatialFilter(QgsMapTool):
         self.myMapTool.canvasClicked.connect(self.mouseClick)
         self.myMapTool.keyReleaseEvent = (
             lambda event: self.disconnect()
-            if event.key() == QtCore.Qt.Key_Escape
+            if event.key() == QtCore.Qt.Key.Key_Escape
             else ""
         )
         self.iface = iface
@@ -56,7 +56,7 @@ class SpatialFilter(QgsMapTool):
         self.isActive = not self.isActive
         if self.isActive:
             self.myRubberBand = gui.QgsRubberBand(
-                iface.mapCanvas(), core.QgsWkbTypes.PolygonGeometry
+                iface.mapCanvas(), core.QgsWkbTypes.GeometryType.PolygonGeometry
             )
             color = QtGui.QColor(78, 97, 114)
             color.setAlpha(190)
@@ -85,14 +85,14 @@ class SpatialFilter(QgsMapTool):
 
     def mouseClick(self, currentPos, clickedButton):
         if (
-            clickedButton == QtCore.Qt.LeftButton
+            clickedButton == QtCore.Qt.MouseButton.LeftButton
         ):  # and myRubberBand.numberOfVertices() == 0:
             self.myRubberBand.addPoint(core.QgsPointXY(currentPos))
             self.coordinates.append(core.QgsPointXY(currentPos))
             self.isEditing = 1
 
         elif (
-            clickedButton == QtCore.Qt.RightButton
+            clickedButton == QtCore.Qt.MouseButton.RightButton
             and self.myRubberBand.numberOfVertices() > 2
         ):
             self.isEditing = 0
@@ -117,7 +117,7 @@ class SpatialFilter(QgsMapTool):
             )
 
             core.QgsProject.instance().addMapLayer(vlyr)
-            self.myRubberBand.reset(core.QgsWkbTypes.PolygonGeometry)
+            self.myRubberBand.reset(core.QgsWkbTypes.GeometryType.PolygonGeometry)
             string = f"(geom && ST_GEOMFROMEWKT('SRID={rep};{g}')) AND ST_INTERSECTS(geom, ST_GEOMFROMEWKT('SRID={rep};{g}'))"
             layers = core.QgsProject.instance().mapLayers().values()
 
@@ -135,7 +135,7 @@ class SpatialFilter(QgsMapTool):
                 except Exception:
                     pass
 
-            self.myRubberBand.reset(core.QgsWkbTypes.PolygonGeometry)
+            self.myRubberBand.reset(core.QgsWkbTypes.GeometryType.PolygonGeometry)
             self.disconnect()
 
     def getLayersBacklist(self):

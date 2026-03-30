@@ -57,7 +57,7 @@ class ViewServersGui(QObject):
         Opens dialog.
         """
         self.viewServers.show()
-        result = self.viewServers.exec_()
+        result = self.viewServers.exec()
 
     def unload(self):
         """

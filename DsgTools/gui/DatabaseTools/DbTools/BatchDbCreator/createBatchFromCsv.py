@@ -131,7 +131,7 @@ class CreateBatchFromCsv(QtWidgets.QWizardPage, FORM_CLASS):
                 QgsMessageLog.logMessage(
                     self.tr("Error on {0}: ").format(key) + errorDict[key],
                     "DSGTools Plugin",
-                    Qgis.Critical,
+                    Qgis.MessageLevel.Critical,
                 )
             if len(frameList) > 0:
                 errorFrameMsg += self.tr(
@@ -156,7 +156,7 @@ class CreateBatchFromCsv(QtWidgets.QWizardPage, FORM_CLASS):
             parameterDict["factoryParam"],
             parentWidget=self,
         )
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         dbDict, errorDict = dbCreator.createDbFromMIList(
             parameterDict["miList"],
             parameterDict["srid"],

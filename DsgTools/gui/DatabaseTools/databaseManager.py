@@ -146,6 +146,6 @@ class DatabaseGuiManager(QObject):
                 )
             dlg = self.batchCreator
         if dlg:
-            result = dlg.exec_()
+            result = dlg.exec()
             if result:
                 pass

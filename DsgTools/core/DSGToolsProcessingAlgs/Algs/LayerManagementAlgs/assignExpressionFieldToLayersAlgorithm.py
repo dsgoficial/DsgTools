@@ -20,9 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtGui import QColor
-from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtCore import QMetaType
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
@@ -147,7 +147,7 @@ class AssignExpressionFieldToLayersAlgorithm(QgsProcessingAlgorithm):
                 if lyr.fields().indexOf(field["nome"]) < 0 or not field["valor"]:
                     continue
                 lyr.addExpressionField(
-                    field["valor"], core.QgsField(field["nome"], QtCore.QVariant.String)
+                    field["valor"], QgsField(field["nome"], QMetaType.Type.QString)
                 )
 
     def name(self):

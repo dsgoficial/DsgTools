@@ -24,7 +24,7 @@ from qgis.core import (
     QgsField,
     QgsFeature,
 )
-from qgis.PyQt.QtCore import QVariant, QCoreApplication
+from qgis.PyQt.QtCore import QMetaType, QCoreApplication
 
 
 class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
@@ -100,7 +100,7 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
             feedback.pushInfo(f"Ordenando por campo: {group_by_field}")
 
         fields = layer.fields()
-        fields.append(QgsField(attr_name, QVariant.Int))
+        fields.append(QgsField(attr_name, QMetaType.Type.Int))
 
         (sink, dest_id) = self.parameterAsSink(
             parameters,

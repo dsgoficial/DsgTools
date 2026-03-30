@@ -53,7 +53,7 @@ class RemoveEmptyLayers(QgsProcessingAlgorithm):
         for key, layer in QgsProject.instance().mapLayers().items():
             if feedback.isCanceled():
                 return {self.OUTPUT: outputLayers}
-            if layer.type() == QgsMapLayer.VectorLayer and layer.featureCount() == 0:
+            if layer.type() == QgsMapLayer.LayerType.VectorLayer and layer.featureCount() == 0:
                 outputLayers.append(layer.name())
                 toBeRemoved.append(layer.id())
             step += 1
@@ -63,7 +63,7 @@ class RemoveEmptyLayers(QgsProcessingAlgorithm):
         iface.messageBar().pushMessage(
             self.tr("Executed."),
             self.tr("Empty layers removed."),
-            level=Qgis.Success,
+            level=Qgis.MessageLevel.Success,
             duration=5,
         )
 

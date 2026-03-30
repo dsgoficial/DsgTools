@@ -22,7 +22,7 @@
 
 from collections import defaultdict
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis import core
 from qgis.core import (
     QgsFeature,
@@ -112,13 +112,13 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
         inputFrameLyr = self.parameterAsVectorLayer(
             parameters, self.INPUT_FRAME, context
         )
-        inputLyrAttributes = self.parameterAsFields(
+        inputLyrAttributes = self.parameterAsStrings(
             parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
         distSearch = self.parameterAsDouble(parameters, self.DISTANCE_SEARCH, context)
 
         fields = QgsFields()
-        fields.append(QgsField("Flag", QVariant.String))
+        fields.append(QgsField("Flag", QMetaType.Type.QString))
 
         (point_flag_sink, point_flag_sink_id) = self.parameterAsSink(
             parameters,
@@ -193,7 +193,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
         # List of attributes
         attributes = self.listAttributes(inputLinePolyLyr, inputLyrAttributes)
 
-        if inputLinePolyLyr.geometryType() == QgsWkbTypes.LineGeometry:
+        if inputLinePolyLyr.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
             # Extract specific vertices
             extractSpecifVertLyr = algRunner.runExtractSpecificVertices(
                 inputLyr=inputLinePolyLyr,
@@ -239,7 +239,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
                 feed, attributes, dictVertInFrame, stepSize, point_flag_sink, fields
             )
 
-        elif inputLinePolyLyr.geometryType() == QgsWkbTypes.PolygonGeometry:
+        elif inputLinePolyLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
             multiChildTwo = QgsProcessingMultiStepFeedback(4, multiStepFeedback)
             multiChildTwo.setCurrentStep(0)
 

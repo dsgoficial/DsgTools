@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
@@ -145,9 +145,9 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
         Returns a dictionary with geometry types as keys and lists of layers as values.
         """
         grouped = {
-            QgsWkbTypes.PointGeometry: [],
-            QgsWkbTypes.LineGeometry: [],
-            QgsWkbTypes.PolygonGeometry: [],
+            QgsWkbTypes.GeometryType.PointGeometry: [],
+            QgsWkbTypes.GeometryType.LineGeometry: [],
+            QgsWkbTypes.GeometryType.PolygonGeometry: [],
         }
         
         for layer in layers:

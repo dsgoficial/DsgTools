@@ -84,7 +84,7 @@ class LayerToolsGuiManager(QObject):
         """
         dlg = LoadLayersFromServer(self.iface, parent=self.iface.mainWindow())
         dlg.show()
-        result = dlg.exec_()
+        result = dlg.exec()
         if result:
             pass
 
@@ -95,6 +95,6 @@ class LayerToolsGuiManager(QObject):
 
         dlg = CreateInomDialog(self.iface)
         dlg.show()
-        result = dlg.exec_()
+        result = dlg.exec()
         if result:
             pass

@@ -18,9 +18,6 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  ***************************************************************************/
 """
 
-from builtins import range
-from builtins import object
-
 from qgis.PyQt import QtGui, QtCore
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis import core, gui
@@ -106,10 +103,10 @@ class AcquisitionFreeController(object):
             core is not None
             and layer
             and layer.isEditable()
-            and (layer.type() == core.QgsMapLayer.VectorLayer)
+            and (layer.type() == Qgis.LayerType.Vector)
             and (
                 layer.geometryType()
-                in [core.QgsWkbTypes.LineGeometry, core.QgsWkbTypes.PolygonGeometry]
+                in [Qgis.GeometryType.Line, Qgis.GeometryType.Polygon]
             )
         ):
             if not self.actionAcquisitionFree.isEnabled():
@@ -124,7 +121,7 @@ class AcquisitionFreeController(object):
         layer = self.iface.activeLayer()
         if (
             not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() == QgsWkbTypes.PointGeometry
+            or layer.geometryType() == Qgis.GeometryType.Point
             or not layer.isEditable()
         ):
             enabled = False
@@ -184,7 +181,7 @@ class AcquisitionFreeController(object):
         lastVertex = geom.vertexAt(geom.constGet().nCoordinates() - 1)
         sGeom = geom
         source_crs = self.iface.activeLayer().crs()
-        dest_crs = core.QgsCoordinateReferenceSystem(3857)
+        dest_crs = core.QgsCoordinateReferenceSystem.fromEpsgId(3857)
         tr = core.QgsCoordinateTransform(
             source_crs, dest_crs, core.QgsCoordinateTransformContext()
         )
@@ -196,21 +193,21 @@ class AcquisitionFreeController(object):
                     int(parameters["freeHandSmoothIterations"]),
                     float(parameters["freeHandSmoothOffset"]),
                 )
-            except:
+            except Exception:
                 msg = QMessageBox().tr(
                     "Probably too many smoothing iteration, try reducing it (3 usually is enough). Geometry was not smoothened."
                 )
                 QMessageBox.warning(
                     self.iface.mainWindow(), QMessageBox().tr("Error!"), msg
                 )
-                QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.Critical)
+                QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.MessageLevel.Critical)
                 return geom
         finalGeom = sGeom.simplify(self.getFinalTolerance())
         tr = core.QgsCoordinateTransform(
             dest_crs, source_crs, core.QgsCoordinateTransformContext()
         )
         finalGeom.transform(tr)
-        if self.iface.activeLayer().geometryType() == core.QgsWkbTypes.PolygonGeometry:
+        if self.iface.activeLayer().geometryType() == Qgis.GeometryType.Polygon:
             return finalGeom
         finalGeom.moveVertex(firstVertex.x(), firstVertex.y(), 0)
         finalGeom.moveVertex(
@@ -252,8 +249,8 @@ class AcquisitionFreeController(object):
         formSuppressOnLayer = layer.editFormConfig().suppress()
         formSuppressOnSettings = self.getFormSuppressStateSettings()
         featureAdded = True
-        if formSuppressOnLayer == core.QgsEditFormConfig.SuppressOn or (
-            formSuppressOnLayer == core.QgsEditFormConfig.SuppressDefault
+        if formSuppressOnLayer == core.QgsEditFormConfig.FeatureFormSuppress.SuppressOn or (
+            formSuppressOnLayer == core.QgsEditFormConfig.FeatureFormSuppress.SuppressDefault
             and formSuppressOnSettings == "true"
         ):
             self.addFeatureWithoutForm(layer, feature)
@@ -270,7 +267,7 @@ class AcquisitionFreeController(object):
             if (
                 layer.id() != currentLayer.id()
                 and layer.isEditable()
-                and layer.type() == core.QgsMapLayer.VectorLayer
+                and layer.type() == Qgis.LayerType.Vector
             )
         ]
         createdGeometry = feature.geometry()
@@ -340,9 +337,9 @@ class AcquisitionFreeController(object):
         layer.beginEditCommand("dsgtools freehand feature added")
         self.loadDefaultFields(layer, feature)
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
-        attrDialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        attrDialog.setMode(int(gui.QgsAttributeForm.AddFeatureMode))
-        res = attrDialog.exec_()
+        attrDialog.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose)
+        attrDialog.setMode(gui.QgsAttributeEditorContext.Mode.AddFeatureMode)
+        res = attrDialog.exec()
         if res == 0:
             layer.destroyEditCommand()
         else:

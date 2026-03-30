@@ -25,7 +25,7 @@ import os, json
 
 # Qgis imports
 from qgis.gui import QgsMessageBar
-from qgis.core import QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog
 
 # PyQt imports
 from qgis.PyQt import QtWidgets, QtCore, uic
@@ -58,11 +58,11 @@ class LoadAuxStruct(QtWidgets.QDialog, FORM_CLASS):
         self.widget.tabWidget.setTabEnabled(1, False)
         self.widget.tabWidget.setCurrentIndex(0)
         self.bar = QgsMessageBar()
-        self.setLayout(QtGui.QGridLayout(self))
+        self.setLayout(QtWidgets.QGridLayout(self))
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().setAlignment(QtCore.Qt.AlignTop)
-        sizePolicy = QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed
+        self.layout().setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed
         )
         self.bar.setSizePolicy(sizePolicy)
         self.layout().addWidget(self.bar, 0, 0, 1, 1)
@@ -90,7 +90,7 @@ class LoadAuxStruct(QtWidgets.QDialog, FORM_CLASS):
         """
         Checks the linee-centroid structure and loads the correspondent layers
         """
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         if self.widgetConv.settingDict == dict():
             QApplication.restoreOverrideCursor()
             self.bar.pushMessage(
@@ -133,7 +133,7 @@ class LoadAuxStruct(QtWidgets.QDialog, FORM_CLASS):
             )
             factory.load(auxClasses, uniqueLoad=True, isEdgv=isEdgv)
         except Exception as e:
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
             self.bar.pushMessage(
                 self.tr("Error!"),
                 self.tr("Could not load auxiliary classes! Check log for details!"),

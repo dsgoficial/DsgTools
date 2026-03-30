@@ -23,7 +23,7 @@
 import os
 
 # PyQt imports
-from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
 
 # Qt imports
@@ -62,11 +62,7 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
         self.getInstalledProfiles()
 
         # Objects Connections
-        QtCore.QObject.connect(
-            self.widget,
-            QtCore.SIGNAL(("connectionChanged()")),
-            self.getInstalledProfiles,
-        )
+        self.widget.connectionChanged.connect(self.getInstalledProfiles)
 
     def parseJson(self, filename):
         """
@@ -127,7 +123,7 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
             )
             return
 
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
 
         for item in self.possibleProfiles.selectedItems():
             role = item.text()
@@ -161,7 +157,7 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
         Opens the profile editor dialog
         """
         dlg = ProfileEditor()
-        dlg.exec_()
+        dlg.exec()
         self.getModelProfiles()
 
     @pyqtSlot(bool)
@@ -177,7 +173,7 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
             )
             return
 
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
 
         problem = False
         for item in self.assignedProfiles.selectedItems():
@@ -216,9 +212,9 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
                 self,
                 self.tr("Question"),
                 self.tr("Do you really want to remove selected profile models?"),
-                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
-            == QMessageBox.Cancel
+            == QMessageBox.StandardButton.Cancel
         ):
             return
 

@@ -22,7 +22,7 @@
 """
 
 from collections import Counter, defaultdict
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.core import (
     QgsProcessing,

@@ -70,25 +70,25 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         if uiParameterJsonDict:
             if uiParameterJsonDict["allTablesCheckBox"]:
-                self.allTablesCheckBox.setCheckState(Qt.Checked)
+                self.allTablesCheckBox.setCheckState(Qt.CheckState.Checked)
             else:
                 schemaIdx = self.schemaComboBox.findText(
-                    uiParameterJsonDict["schemaComboBox"], flags=Qt.MatchExactly
+                    uiParameterJsonDict["schemaComboBox"], flags=Qt.MatchFlag.MatchExactly
                 )
                 self.schemaComboBox.setCurrentIndex(schemaIdx)
                 tableIdx = self.tableComboBox.findText(
-                    uiParameterJsonDict["tableComboBox"], flags=Qt.MatchExactly
+                    uiParameterJsonDict["tableComboBox"], flags=Qt.MatchFlag.MatchExactly
                 )
                 self.tableComboBox.setCurrentIndex(tableIdx)
                 if uiParameterJsonDict["allAttributesCheckBox"]:
-                    self.allAttributesCheckBox.setCheckState(Qt.Checked)
+                    self.allAttributesCheckBox.setCheckState(Qt.CheckState.Checked)
                 else:
                     attributeIdx = self.attributeComboBox.findText(
-                        uiParameterJsonDict["attributeComboBox"], flags=Qt.MatchExactly
+                        uiParameterJsonDict["attributeComboBox"], flags=Qt.MatchFlag.MatchExactly
                     )
                     self.attributeComboBox.setCurrentIndex(attributeIdx)
                 idx = self.singleValueComboBox.findText(
-                    uiParameterJsonDict["singleValueComboBox"], flags=Qt.MatchExactly
+                    uiParameterJsonDict["singleValueComboBox"], flags=Qt.MatchFlag.MatchExactly
                 )
                 self.singleValueComboBox.setCurrentIndex(idx)
 
@@ -137,7 +137,7 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
     @pyqtSlot(int, name="on_schemaComboBox_currentIndexChanged")
     @pyqtSlot(int, name="on_tableComboBox_currentIndexChanged")
     def populateOnSelectAll(self):
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         if self.allTablesCheckBox.checkState() == 2 or (
             self.allAttributesCheckBox.checkState() == 2
             and self.schemaComboBox.currentIndex() != 0
@@ -186,7 +186,7 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
         if idx == 0:
             QApplication.restoreOverrideCursor()
             return
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         filterList = []
         attributeName = self.attributeComboBox.currentText()
         tableFilter = []
@@ -222,7 +222,7 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
                         defaultCodeInt = int(defaultCode)
                     if defaultCodeInt in list(attrDomainDict.keys()):
                         comboItem = self.singleValueComboBox.findText(
-                            attrDomainDict[defaultCodeInt], flags=Qt.MatchExactly
+                            attrDomainDict[defaultCodeInt], flags=Qt.MatchFlag.MatchExactly
                         )
                         self.singleValueComboBox.setCurrentIndex(comboItem)
         QApplication.restoreOverrideCursor()
