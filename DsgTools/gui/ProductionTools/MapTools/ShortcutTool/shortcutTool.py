@@ -89,11 +89,19 @@ class ShortcutTool(QObject):
         except:
             pass
         activeLayer = self.iface.activeLayer()
-        layerTreeRoot = QgsProject.instance().layerTreeRoot()
-        layerVisibilityState = activeLayer in layerTreeRoot.checkedLayers()
-        layerTreeRoot.findLayer(activeLayer.id()).setItemVisibilityChecked(
-            not layerVisibilityState
-        )
+        if activeLayer is not None:
+            layerTreeRoot = QgsProject.instance().layerTreeRoot()
+            layerVisibilityState = activeLayer in layerTreeRoot.checkedLayers()
+            layerTreeRoot.findLayer(activeLayer.id()).setItemVisibilityChecked(
+                not layerVisibilityState
+            )
+            return
+        layerTreeView = self.iface.layerTreeView()
+        currentNode = layerTreeView.currentNode() if layerTreeView else None
+        if currentNode is not None:
+            currentNode.setItemVisibilityChecked(
+                not currentNode.itemVisibilityChecked()
+            )
 
     def unload(self):
         for action in self.actionList:
