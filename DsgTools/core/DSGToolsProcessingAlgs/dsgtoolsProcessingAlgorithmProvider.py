@@ -52,9 +52,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.smoothLines
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.appendFeaturesToLayerAlgorithm import (
     AppendFeaturesToLayerAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.buildingGeneralizationAlgorithm import (
-    BuildingGeneralizationAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.findSmallClosedLinesAlgorithm import (
     FindSmallClosedLinesAlgorithm,
 )
@@ -841,7 +838,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(),
             LineOnAreaOverlayerAlgorithm(),
             PolygonTilerAlgorithm(),
-            BuildingGeneralizationAlgorithm(),
             AnchoredSnapperAlgorithm(),
             OverlayLinesWithLinesAndUpdate(),
             RasterRemapAlgorithm(),

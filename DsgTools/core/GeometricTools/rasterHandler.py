@@ -81,6 +81,57 @@ def getMinCoordinatesFromNpArray(npArray: np.array) -> np.array:
     return np.argwhere(npArray == npArray[~np.isnan(npArray)].min())
 
 
+def maskContourIntervalMultiples(npRaster: np.array, contourHeightInterval: float) -> np.array:
+    interval = int(contourHeightInterval)
+    if interval <= 0:
+        return npRaster
+    nonNanMask = ~np.isnan(npRaster)
+    multipleMask = np.zeros_like(npRaster, dtype=bool)
+    multipleMask[nonNanMask] = npRaster[nonNanMask].astype(int) % interval == 0
+    if np.all(multipleMask | ~nonNanMask):
+        return npRaster
+    result = np.array(npRaster)
+    result[multipleMask] = np.nan
+    return result
+
+
+def findNearbyNonMultiplePixel(
+    pixelCoordinates: Tuple[int, int],
+    npRaster: np.array,
+    contourHeightInterval: float,
+    maxSearchRadius: int = 5,
+) -> Tuple[int, int]:
+    row, col = pixelCoordinates
+    interval = int(contourHeightInterval)
+    if interval <= 0:
+        return pixelCoordinates
+    try:
+        value = npRaster[row, col]
+    except (IndexError, ValueError):
+        return pixelCoordinates
+    if np.isnan(value) or int(value) % interval != 0:
+        return pixelCoordinates
+    rows, cols = npRaster.shape
+    for radius in range(1, maxSearchRadius + 1):
+        bestDist = float("inf")
+        bestCoords = None
+        for dr in range(-radius, radius + 1):
+            for dc in range(-radius, radius + 1):
+                if abs(dr) != radius and abs(dc) != radius:
+                    continue
+                nr, nc = row + dr, col + dc
+                if 0 <= nr < rows and 0 <= nc < cols:
+                    v = npRaster[nr, nc]
+                    if not np.isnan(v) and int(v) % interval != 0:
+                        dist = dr * dr + dc * dc
+                        if dist < bestDist:
+                            bestDist = dist
+                            bestCoords = (nr, nc)
+        if bestCoords is not None:
+            return bestCoords
+    return pixelCoordinates
+
+
 def createFeatureWithPixelValueFromPixelCoordinates(
     pixelCoordinates: Tuple[float, float],
     fieldName: str,
@@ -88,7 +139,12 @@ def createFeatureWithPixelValueFromPixelCoordinates(
     npRaster: np.array,
     transform: Affine,
     defaultAtributeMap: Dict = None,
+    contourHeightInterval: float = None,
 ) -> QgsFeature:
+    if contourHeightInterval is not None:
+        pixelCoordinates = findNearbyNonMultiplePixel(
+            pixelCoordinates, npRaster, contourHeightInterval
+        )
     newFeat = QgsFeature(fields)
     terrainCoordinates = transform * pixelCoordinates
     newFeat.setGeometry(QgsGeometry(QgsPoint(*terrainCoordinates)))
@@ -113,6 +169,7 @@ def createFeatureListWithPixelValuesFromPixelCoordinatesArray(
     npRaster: np.array,
     transform: Affine,
     defaultAtributeMap: Dict = None,
+    contourHeightInterval: float = None,
 ) -> List[QgsFeature]:
     return list(
         filter(
@@ -125,6 +182,7 @@ def createFeatureListWithPixelValuesFromPixelCoordinatesArray(
                     npRaster,
                     transform,
                     defaultAtributeMap=defaultAtributeMap,
+                    contourHeightInterval=contourHeightInterval,
                 )
                 for coords in pixelCoordinates
             ),
@@ -139,6 +197,7 @@ def createFeatureListWithPointList(
     npRaster: np.array,
     transform: Affine,
     defaultAtributeMap: Dict = None,
+    contourHeightInterval: float = None,
 ) -> List[QgsFeature]:
     return [
         createFeatureWithPixelValueFromTerrainCoordinates(
@@ -152,6 +211,7 @@ def createFeatureListWithPointList(
             npRaster,
             transform,
             defaultAtributeMap,
+            contourHeightInterval=contourHeightInterval,
         )
         for point in pointList
     ]
@@ -164,10 +224,16 @@ def createFeatureWithPixelValueFromTerrainCoordinates(
     npRaster: np.array,
     transform: Affine,
     defaultAtributeMap: Dict = None,
+    contourHeightInterval: float = None,
 ) -> QgsFeature:
     newFeat = QgsFeature(fields)
     pixelCoordinates = ~transform * terrainCoordinates
     pixelCoordinates = tuple(map(int, pixelCoordinates))
+    if contourHeightInterval is not None:
+        pixelCoordinates = findNearbyNonMultiplePixel(
+            pixelCoordinates, npRaster, contourHeightInterval
+        )
+        terrainCoordinates = transform * pixelCoordinates
     try:
         value = npRaster[pixelCoordinates]
     except:
@@ -249,6 +315,7 @@ def createMaxPointFeatFromRasterLayer(
     defaultAtributeMap: Dict = None,
     maxValue: float = None,
     minValue: float = None,
+    contourHeightInterval: float = None,
 ) -> QgsFeature:
     ds, npRaster = readAsNumpy(inputRaster)
     transform = getCoordinateTransform(ds)
@@ -259,6 +326,8 @@ def createMaxPointFeatFromRasterLayer(
         npRaster[npRaster >= maxValue] = np.nan
     if minValue is not None:
         npRaster[npRaster <= minValue] = np.nan
+    if contourHeightInterval is not None:
+        npRaster = maskContourIntervalMultiples(npRaster, contourHeightInterval)
     pixelCoordinates = getMaxCoordinatesFromNpArray(npRaster)
     pixelCoordinates = (
         tuple(pixelCoordinates.reshape(1, -1)[0])
@@ -280,14 +349,49 @@ def createMaxPointFeatListFromRasterLayer(
     fields: QgsFields,
     fieldName: str,
     defaultAtributeMap: Dict = None,
+    contourHeightInterval: float = None,
 ) -> List[QgsFeature]:
     ds, npRaster = readAsNumpy(inputRaster)
     transform = getCoordinateTransform(ds)
     nanIndexes = np.isnan(npRaster)
     npRaster = (np.rint(npRaster)).astype(float)
     npRaster[nanIndexes] = np.nan
+    if contourHeightInterval is not None:
+        npRaster = maskContourIntervalMultiples(npRaster, contourHeightInterval)
     pixelCoordinates = getMaxCoordinatesFromNpArray(npRaster)
     return createFeatureListWithPixelValuesFromPixelCoordinatesArray(
+        pixelCoordinates=pixelCoordinates,
+        fieldName=fieldName,
+        fields=fields,
+        npRaster=npRaster,
+        transform=transform,
+        defaultAtributeMap=defaultAtributeMap,
+    )
+
+
+def createMinPointFeatFromRasterLayer(
+    inputRaster: QgsRasterLayer,
+    fields: QgsFields,
+    fieldName: str,
+    defaultAtributeMap: Dict = None,
+    contourHeightInterval: float = None,
+) -> QgsFeature:
+    ds, npRaster = readAsNumpy(inputRaster)
+    transform = getCoordinateTransform(ds)
+    nanIndexes = np.isnan(npRaster)
+    npRaster = (np.rint(npRaster)).astype(float)
+    npRaster[nanIndexes] = np.nan
+    if contourHeightInterval is not None:
+        npRaster = maskContourIntervalMultiples(npRaster, contourHeightInterval)
+    pixelCoordinates = getMinCoordinatesFromNpArray(npRaster)
+    if pixelCoordinates.size == 0:
+        return None
+    pixelCoordinates = (
+        tuple(pixelCoordinates.reshape(1, -1)[0])
+        if pixelCoordinates.shape[0] == 1
+        else tuple(pixelCoordinates[0])
+    )
+    return createFeatureWithPixelValueFromPixelCoordinates(
         pixelCoordinates=pixelCoordinates,
         fieldName=fieldName,
         fields=fields,

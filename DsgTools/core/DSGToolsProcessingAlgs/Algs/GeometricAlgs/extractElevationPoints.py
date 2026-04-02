@@ -709,6 +709,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             distance=localBufferDistance,
             maskLyr=maskLyr,
             crs=maskLyr.crs() if maskLyr is not None else clippedRasterLyr.crs(),
+            contourHeightInterval=contourHeightInterval,
             context=context,
             feedback=multiStepFeedback,
         )
@@ -719,6 +720,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             distance=localBufferDistance,
             maskLyr=maskLyr,
             crs=maskLyr.crs() if maskLyr is not None else clippedRasterLyr.crs(),
+            contourHeightInterval=contourHeightInterval,
             context=context,
             feedback=multiStepFeedback,
         )
@@ -777,6 +779,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 fields=fields,
                 context=context,
                 feedback=multiStepFeedback,
+                contourHeightInterval=contourHeightInterval,
+                depressionExpression=depressionExpression,
             )
             return allHilltopPoints
 
@@ -1467,7 +1471,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep = 0
             multiStepFeedback.setCurrentStep(currentStep)
         pointList = self.getElevationPointsFromLayer(
-            npRaster, transform, naturalPointFeaturesLyr, fields
+            npRaster, transform, naturalPointFeaturesLyr, fields,
+            contourHeightInterval=contourHeightInterval,
         )
         if multiStepFeedback is not None:
             currentStep += 1
@@ -1488,7 +1493,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
         )
 
-    def getElevationPointsFromLayer(self, npRaster, transform, lyr, fields):
+    def getElevationPointsFromLayer(self, npRaster, transform, lyr, fields, contourHeightInterval=None):
         pointList = rasterHandler.createFeatureListWithPointList(
             pointList=lyr.getFeatures(),
             fieldName="cota",
@@ -1496,6 +1501,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             npRaster=npRaster,
             transform=transform,
             defaultAtributeMap=dict(self.defaultAttrMap),
+            contourHeightInterval=contourHeightInterval,
         )
         return filter(lambda x: x is not None, pointList)
 
@@ -1705,6 +1711,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             npRaster=npRaster,
             transform=transform,
             defaultAtributeMap=localAttrDefaultMap,
+            contourHeightInterval=contourHeightInterval,
         )
         if multiStepFeedback is not None:
             currentStep += 1
@@ -1726,11 +1733,15 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
     def getMaxFeatures(
-        self, fields, npRaster, transform, distance, maskLyr, crs, context, feedback=None
+        self, fields, npRaster, transform, distance, maskLyr, crs, contourHeightInterval, context, feedback=None
     ):
         featSet = set()
-        maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(npRaster)
         npRasterCopy = np.array(npRaster)
+        if contourHeightInterval is not None:
+            npRasterCopy = rasterHandler.maskContourIntervalMultiples(
+                npRasterCopy, contourHeightInterval
+            )
+        maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(npRasterCopy)
         if feedback is not None:
             feedback.pushInfo(
                 self.tr("Creating max feature list from pixel coordinates array...")
@@ -1740,7 +1751,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 maxCoordinatesArray,
                 fieldName="cota",
                 fields=fields,
-                npRaster=npRaster,
+                npRaster=npRasterCopy,
                 transform=transform,
                 defaultAtributeMap=dict(self.defaultAttrMap),
             )
@@ -1778,7 +1789,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                     maxCoordinatesArray,
                     fieldName="cota",
                     fields=fields,
-                    npRaster=npRaster,
+                    npRaster=npRasterCopy,
                     transform=transform,
                     defaultAtributeMap=dict(self.defaultAttrMap),
                 )
@@ -1810,11 +1821,16 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         distance,
         maskLyr,
         crs,
+        contourHeightInterval,
         context,
         feedback=None,
     ):
         featSet = set()
         npRasterCopy = np.array(npRaster)
+        if contourHeightInterval is not None:
+            npRasterCopy = rasterHandler.maskContourIntervalMultiples(
+                npRasterCopy, contourHeightInterval
+            )
         minCoordinatesArray = rasterHandler.getMinCoordinatesFromNpArray(npRasterCopy)
         if len(minCoordinatesArray) == 0:
             return list(featSet)
@@ -2198,6 +2214,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             fields=fields,
             context=context,
             feedback=multiStepFeedback,
+            contourHeightInterval=contourHeightInterval,
+            depressionExpression=depressionExpression,
         )
 
         if multiStepFeedback is not None:
@@ -2265,6 +2283,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         fields: QgsFields,
         context: QgsProcessingContext,
         feedback: QgsFeedback = None,
+        contourHeightInterval: float = None,
+        depressionExpression: str = None,
     ) -> List:
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(3, feedback)
@@ -2335,6 +2355,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             key=lambda x: (x["order_count"], 1.0 / x.geometry().area()),
             reverse=True,
         )
+        depressionFeatIds = set()
+        if depressionExpression is not None:
+            for feat in clippedHilltops.getFeatures(depressionExpression):
+                depressionFeatIds.add(feat.id())
         for current, hilltopFeat in enumerate(hilltopList):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
@@ -2359,13 +2383,25 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             )
             if clippedRasterLyr is None:
                 continue
-            newFeat = rasterHandler.createMaxPointFeatFromRasterLayer(
-                inputRaster=clippedRasterLyr,
-                fields=fields,
-                fieldName="cota",
-                defaultAtributeMap=dict(self.defaultAttrMap),
-            )
-            featList.append(newFeat)
+            isDepression = hilltopFeat.id() in depressionFeatIds
+            if isDepression:
+                newFeat = rasterHandler.createMinPointFeatFromRasterLayer(
+                    inputRaster=clippedRasterLyr,
+                    fields=fields,
+                    fieldName="cota",
+                    defaultAtributeMap=dict(self.defaultAttrMap),
+                    contourHeightInterval=contourHeightInterval,
+                )
+            else:
+                newFeat = rasterHandler.createMaxPointFeatFromRasterLayer(
+                    inputRaster=clippedRasterLyr,
+                    fields=fields,
+                    fieldName="cota",
+                    defaultAtributeMap=dict(self.defaultAttrMap),
+                    contourHeightInterval=contourHeightInterval,
+                )
+            if newFeat is not None:
+                featList.append(newFeat)
 
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
@@ -2382,6 +2418,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         fields: QgsFields,
         context: QgsProcessingContext,
         feedback: QgsFeedback = None,
+        contourHeightInterval: float = None,
+        depressionExpression: str = None,
     ) -> List[QgsFeature]:
         """Extract all hilltop points (both normal and depression) without
         applying distance/grid/exclusion filtering. Unlike
@@ -2448,6 +2486,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             key=lambda x: (x["order_count"], 1.0 / max(x.geometry().area(), 1e-15)),
             reverse=True,
         )
+        depressionFeatIds = set()
+        if depressionExpression is not None:
+            for feat in clippedHilltops.getFeatures(depressionExpression):
+                depressionFeatIds.add(feat.id())
         for current, hilltopFeat in enumerate(hilltopList):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
@@ -2475,13 +2517,25 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             )
             if clippedRasterLyr is None:
                 continue
-            newFeat = rasterHandler.createMaxPointFeatFromRasterLayer(
-                inputRaster=clippedRasterLyr,
-                fields=fields,
-                fieldName="cota",
-                defaultAtributeMap=dict(self.defaultAttrMap),
-            )
-            featList.append(newFeat)
+            isDepression = hilltopFeat.id() in depressionFeatIds
+            if isDepression:
+                newFeat = rasterHandler.createMinPointFeatFromRasterLayer(
+                    inputRaster=clippedRasterLyr,
+                    fields=fields,
+                    fieldName="cota",
+                    defaultAtributeMap=dict(self.defaultAttrMap),
+                    contourHeightInterval=contourHeightInterval,
+                )
+            else:
+                newFeat = rasterHandler.createMaxPointFeatFromRasterLayer(
+                    inputRaster=clippedRasterLyr,
+                    fields=fields,
+                    fieldName="cota",
+                    defaultAtributeMap=dict(self.defaultAttrMap),
+                    contourHeightInterval=contourHeightInterval,
+                )
+            if newFeat is not None:
+                featList.append(newFeat)
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
         return featList
@@ -2619,6 +2673,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 inputRaster=clippedRasterLyr,
                 fields=fields,
                 fieldName="cota",
+                contourHeightInterval=contourHeightInterval,
             )
             if not newFeatList:
                 continue

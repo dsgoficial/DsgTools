@@ -817,7 +817,7 @@ class TerrainModel:
         for polygonSet in auxDict.values():
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 return G
-            if len(polygonSet) <= 1:
+            if len(polygonSet) != 2:
                 continue
             p1, p2 = polygonSet
             G.add_edge(
@@ -862,12 +862,14 @@ class TerrainModel:
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
             visitedSet.add(node)
-            currentHeight = self.terrainGraph.get_edge_data(
+            edgeData = self.terrainGraph.get_edge_data(
                 node, list(self.terrainGraph.neighbors(node))[0]
-            )["height"]
+            )
+            currentHeight = edgeData["height"]
+            edgeContourId = edgeData["contourid"]
             heightRange = (
                 (currentHeight + self.threshold, currentHeight)
-                if node not in self.depressionIdSet
+                if edgeContourId not in self.depressionIdSet
                 else (currentHeight, currentHeight - self.threshold)
             )
             self.nx.set_node_attributes(
@@ -980,6 +982,58 @@ class TerrainModel:
 
         return sortedHilltops
 
+    def validateDepressionAttribution(
+        self, feedback: Optional[QgsProcessingFeedback] = None
+    ) -> Dict[QByteArray, str]:
+        flagDict = dict()
+        contourFeatCache = {
+            f["contourid"]: f
+            for f in self.contourCacheLyr.getFeatures()
+        }
+        for hilltopNode in (
+            i
+            for i in self.terrainGraph.nodes
+            if self.terrainGraph.degree(i) == 1
+        ):
+            if feedback is not None and feedback.isCanceled():
+                break
+            neighbor = list(self.terrainGraph.neighbors(hilltopNode))[0]
+            edgeData = self.terrainGraph.get_edge_data(hilltopNode, neighbor)
+            if not edgeData["is_closed"]:
+                continue
+            hilltopHeight = edgeData["height"]
+            hilltopContourId = edgeData["contourid"]
+            isMarkedAsDepression = hilltopContourId in self.depressionIdSet
+            if self.terrainGraph.degree(neighbor) < 2:
+                continue
+            neighborEdgeHeights = [
+                self.terrainGraph.get_edge_data(neighbor, n)["height"]
+                for n in self.terrainGraph.neighbors(neighbor)
+                if n != hilltopNode
+            ]
+            if not neighborEdgeHeights:
+                continue
+            allNeighborHeightsLower = all(
+                h < hilltopHeight for h in neighborEdgeHeights
+            )
+            allNeighborHeightsHigher = all(
+                h > hilltopHeight for h in neighborEdgeHeights
+            )
+            flagMessage = None
+            if allNeighborHeightsLower and isMarkedAsDepression:
+                flagMessage = self.tr(
+                    f"Contour with height {hilltopHeight} is marked as depression but terrain model indicates it is a normal hilltop (peak)."
+                )
+            elif allNeighborHeightsHigher and not isMarkedAsDepression:
+                flagMessage = self.tr(
+                    f"Contour with height {hilltopHeight} is not marked as depression but terrain model indicates it is a depression."
+                )
+            if flagMessage is not None:
+                contourFeat = contourFeatCache.get(hilltopContourId)
+                if contourFeat is not None:
+                    flagDict[contourFeat.geometry().asWkb()] = flagMessage
+        return flagDict
+
     def flag_terrain_band(self, flagDict, node):
         """
         Flags terrain bands that are out of the threshold range.
@@ -1007,7 +1061,7 @@ class TerrainModel:
         """
         invalidDict = dict()
         multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(2, feedback)
+            QgsProcessingMultiStepFeedback(3, feedback)
             if feedback is not None
             else None
         )
@@ -1015,7 +1069,6 @@ class TerrainModel:
             multiStepFeedback.pushInfo(self.tr("Validating terrain bands"))
             multiStepFeedback.setCurrentStep(0)
 
-        # TODO find bands with missing contour
         for slice in self.terrainSlicesDict.values():
             output = slice.validate()
             if output == dict():
@@ -1023,15 +1076,22 @@ class TerrainModel:
             invalidDict.update(output)
         if invalidDict != dict():
             return invalidDict
-        # TODO search on graph starting on hilltops
         if multiStepFeedback is not None:
             multiStepFeedback.pushInfo(
                 self.tr("Building terrain graph and validating built terrain with it")
             )
             multiStepFeedback.setCurrentStep(1)
         invalidDict = self.validateTerrainWithGraph(feedback=multiStepFeedback)
-
-        # TODO output flags
+        if invalidDict != dict():
+            return invalidDict
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(
+                self.tr("Validating depression attribution on hilltops")
+            )
+            multiStepFeedback.setCurrentStep(2)
+        invalidDict.update(
+            self.validateDepressionAttribution(feedback=multiStepFeedback)
+        )
         return invalidDict
 
     def validateSpotElevation(
@@ -1050,12 +1110,12 @@ class TerrainModel:
             Dict[QByteArray, str]: Dictionary with invalid spot elevation features.
         """
         multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(2, feedback)
+            QgsProcessingMultiStepFeedback(3, feedback)
             if feedback is not None
             else None
         )
         currentStep = 0
-        context = QgsProcessingContext() if context is not None else context
+        context = QgsProcessingContext() if context is None else context
         invalidDict = dict()
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -1081,6 +1141,28 @@ class TerrainModel:
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(
+                self.tr("Checking spot elevations with contour interval multiples")
+            )
+        interval = int(self.threshold)
+        if interval > 0:
+            filterExpr = (
+                f'"{self.spotElevationFieldName}" IS NOT NULL AND '
+                f'to_int("{self.spotElevationFieldName}") % {interval} = 0'
+            )
+            request = QgsFeatureRequest().setFilterExpression(filterExpr)
+            for feat in self.spotElevationLyr.getFeatures(request):
+                if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                    break
+                pointHeight = feat[self.spotElevationFieldName]
+                pointGeom = feat.geometry()
+                invalidDict[pointGeom.asWkb()] = self.tr(
+                    f"Spot elevation with height {pointHeight} is a multiple of the contour interval ({interval}). "
+                    f"Spot elevations should not have the same value as contour lines."
+                )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
         joinnedSpotElevation = self.algRunner.runJoinAttributesByLocation(
             inputLyr=self.spotElevationLyr,
             joinLyr=self.terrainPolygonLayer,
@@ -1096,6 +1178,8 @@ class TerrainModel:
                 break
             bandId = feat["polygonid"]
             pointHeight = feat[self.spotElevationFieldName]
+            if bandId not in self.terrainSlicesDict:
+                continue
             h_min, h_max = self.terrainSlicesDict[bandId].getMinMaxHeight()
             if h_min is None or h_max is None:
                 continue
@@ -1114,7 +1198,7 @@ class TerrainModel:
                     continue
             elif pointHeight < h_min or pointHeight > h_max:
                 flagText = self.tr(
-                    f"Elevation point with height {pointHeight} out of threshold. This value should be between {self.h_min} and {self.h_max}"
+                    f"Elevation point with height {pointHeight} out of threshold. This value should be between {h_min} and {h_max}"
                 )
             else:
                 continue
