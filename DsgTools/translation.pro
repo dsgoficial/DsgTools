@@ -64,12 +64,9 @@
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeRoundaboutsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeWaterBodyAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyGroupsOfPixelsToNearestNeighborAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2.py \
-                     core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3.py \
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyPixelsToNearestNeighborAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/runReclassifyPixelsWithSlidingWindow.py \
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/splitPolygonsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/splitPolygonsByGrid.py \
                      core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/__init__.py \

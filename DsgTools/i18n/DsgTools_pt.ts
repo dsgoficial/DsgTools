@@ -18288,107 +18288,107 @@ Usuários com erro:</translation>
 <context>
     <name>ReclassifyAdjacentPolygonsAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="73"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="73"/>
         <source>Input Polygon Layer</source>
         <translation type="unfinished">Camada de Polígonos de Entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="81"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="81"/>
         <source>Process only selected features</source>
         <translation type="unfinished">Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="87"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="87"/>
         <source>Class label field on input polygons</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="98"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="98"/>
         <source>Filter expression for input</source>
         <translation type="unfinished">Expressão da camada de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="108"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="108"/>
         <source>Label order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="118"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="118"/>
         <source>Dissolve Output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="124"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="124"/>
         <source>Fields to consider on dissolve</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="135"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="135"/>
         <source>Output</source>
         <translation type="unfinished">Saída</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="146"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="146"/>
         <source>This algorithm requires the Python networkx library. Please install this library and try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="193"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="193"/>
         <source>Creating cache layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="207"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="207"/>
         <source>Creating spatial index on cache</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="217"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="217"/>
         <source>Building aux structures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="230"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="230"/>
         <source>Performing reclassification</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="243"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="243"/>
         <source>Changing attributes from cache</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="263"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="263"/>
         <source>Dissolving Polygons</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="284"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="284"/>
         <source>Building Outputs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="392"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="392"/>
         <source>Starting the processess of building graph using parallel computing. Evaluating {nFeats:n} features.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="406"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="406"/>
         <source>Evaluated {candidateCount:n} / {nFeats:n} features.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="411"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="411"/>
         <source>{nFeats:n} evaluated. Found {candidateCount:n} candidates to evaluate in next step.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="518"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="518"/>
         <source>Reclassify Adjacent Polygons</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjecentPolygonsAlgorithm.py" line="525"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/reclassifyAdjacentPolygonsAlgorithm.py" line="525"/>
         <source>Generalization Algorithms</source>
         <translation>Algoritmos de Generalização</translation>
     </message>

@@ -2492,28 +2492,6 @@ class AlgRunner:
         )
         return output["output"]
 
-    def runDSGToolsReclassifyGroupsOfPixels(
-        self,
-        inputRaster: QgsRasterLayer,
-        minArea: float,
-        nodataValue: int,
-        context: QgsProcessingContext,
-        outputLyr: Optional[QgsRasterLayer] = None,
-        feedback: Optional[QgsFeedback] = None,
-        is_child_algorithm: bool = False,
-    ) -> QgsRasterLayer:
-        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
-        output = self._runProcessing(
-            "dsgtools:reclassifygroupsofpixelstonearestneighboralgorithm",
-            {
-                "INPUT": inputRaster,
-                "MIN_AREA": minArea,
-                "NODATA_VALUE": nodataValue,
-                "OUTPUT": outputLyr,
-            },
-        )
-        return output["OUTPUT"]
-
     def runRasterClipByExtent(
         self,
         inputRaster: QgsRasterLayer,
@@ -3175,58 +3153,6 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         
-        return output["OUTPUT"]
-
-    def runReclassifyGroupsOfPixelsToNearestNeighborV3(
-        self,
-        inputRaster: QgsRasterLayer,
-        minArea: float,
-        nodataValue: int,
-        context: QgsProcessingContext,
-        outputLyr: Optional[QgsRasterLayer] = None,
-        reclassifiedPolygonsLyr: Optional[QgsVectorLayer] = None,
-        feedback: Optional[QgsFeedback] = None,
-        is_child_algorithm: bool = False,
-    ) -> Union[QgsRasterLayer, Tuple[QgsRasterLayer, QgsVectorLayer]]:
-        """
-        Runs the Reclassify Groups of Pixels to Nearest Neighbor Algorithm V3.
-        
-        This algorithm reclassifies groups of pixels smaller than a minimum area
-        to the value of their nearest neighbor.
-        
-        :param inputRaster: Input raster layer to be reclassified
-        :param minArea: Minimum area in square meters. Groups smaller than this will be reclassified
-        :param nodataValue: Value to be treated as NODATA
-        :param context: Processing context
-        :param outputLyr: Output raster path or URI
-        :param reclassifiedPolygonsLyr: Optional output for reclassified polygon features
-        :param feedback: Feedback object for progress reporting
-        :param is_child_algorithm: Whether this is being run as a child algorithm
-        :return: Output raster layer, or tuple of (output raster, reclassified polygons) if 
-                 reclassifiedPolygonsLyr is provided
-        """
-        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
-        
-        parameters = {
-            "INPUT": inputRaster,
-            "MIN_AREA": minArea,
-            "NODATA_VALUE": nodataValue,
-            "OUTPUT": outputLyr,
-        }
-        
-        if reclassifiedPolygonsLyr is not None:
-            parameters["RECLASSIFIED_POLYGONS"] = reclassifiedPolygonsLyr
-        
-        output = self._runProcessing(
-            "dsgtools:reclassifygroupsofpixelstonearestneighboralgorithmv3",
-            parameters,
-            context=context,
-            feedback=feedback,
-            is_child_algorithm=is_child_algorithm,
-        )
-        
-        if reclassifiedPolygonsLyr is not None:
-            return output["OUTPUT"], output["RECLASSIFIED_POLYGONS"]
         return output["OUTPUT"]
 
     def runAdjustNetworkConnectivityAlgorithm(self,
