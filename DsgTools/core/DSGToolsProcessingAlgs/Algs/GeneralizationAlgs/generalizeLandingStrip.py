@@ -82,7 +82,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
             defaultValue=0.1,
         )
         smooth_voronoi.setFlags(
-            smooth_voronoi.flags() | QgsProcessingParameterDefinition.FlagAdvanced
+            smooth_voronoi.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
         )
         self.addParameter(smooth_voronoi)
 
@@ -93,7 +93,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
             defaultValue=0.0001,
         )
         smooth_simplify.setFlags(
-            smooth_simplify.flags() | QgsProcessingParameterDefinition.FlagAdvanced
+            smooth_simplify.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
         )
         self.addParameter(smooth_simplify)
 

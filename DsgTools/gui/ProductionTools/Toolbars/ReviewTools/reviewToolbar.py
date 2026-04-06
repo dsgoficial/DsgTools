@@ -207,10 +207,13 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         overviewWidget = self.getOverviewWidget()
         if overviewWidget is not None:
             overviewWidget.show()
-        currentLayerFromTreeRoot = (
-            QgsProject.instance().layerTreeRoot().findLayer(currentLayer.id())
+        root = QgsProject.instance().layerTreeRoot()
+        currentLayerFromTreeRoot = next(
+            (n for n in root.findLayers() if n.layerId() == currentLayer.id()),
+            None,
         )
-        currentLayerFromTreeRoot.setCustomProperty("overview", 1)
+        if currentLayerFromTreeRoot is not None:
+            currentLayerFromTreeRoot.setCustomProperty("overview", 1)
         fieldList = [
             field
             for field in self.visitedFieldComboBox.fields()

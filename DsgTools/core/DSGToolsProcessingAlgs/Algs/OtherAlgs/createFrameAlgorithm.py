@@ -109,7 +109,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             type=QgsProcessingParameterNumber.Integer,
             optional=True,
         )
-        param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
+        param.setFlags(param.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced)
 
         self.addParameter(param)
 
@@ -120,7 +120,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             type=QgsProcessingParameterNumber.Integer,
             optional=True,
         )
-        param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
+        param.setFlags(param.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced)
         self.addParameter(param)
 
         self.addParameter(

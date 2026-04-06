@@ -167,4 +167,4 @@ class LoadThemesAlgorithm(QgsProcessingAlgorithm):
         This process is not thread safe due to the fact that removeChildNode
         method from QgsLayerTreeGroup is not thread safe.
         """
-        return super().flags() | QgsProcessingAlgorithm.FlagNoThreading
+        return super().flags() | QgsProcessingAlgorithm.Flag.FlagNoThreading

@@ -126,7 +126,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
             minValue=0.0
         )
         areaFilter.setFlags(
-            areaFilter.flags() | QgsProcessingParameterDefinition.FlagAdvanced
+            areaFilter.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
         )
         self.addParameter(areaFilter)
         self.addParameter(

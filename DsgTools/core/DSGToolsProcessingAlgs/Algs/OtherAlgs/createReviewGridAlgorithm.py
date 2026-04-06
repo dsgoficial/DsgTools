@@ -32,6 +32,7 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterDefinition,
     QgsProcessingParameterNumber,
     QgsWkbTypes,
 )
@@ -90,7 +91,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             type=QgsProcessingParameterNumber.Integer,
         )
         paramRelatedTask.setFlags(
-            paramRelatedTask.flags() | QgsProcessingParameterNumber.FlagAdvanced
+            paramRelatedTask.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
         )
         self.addParameter(paramRelatedTask)
 
@@ -101,7 +102,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             type=QgsProcessingParameterNumber.Integer,
         )
         paramUnitWork.setFlags(
-            paramUnitWork.flags() | QgsProcessingParameterNumber.FlagAdvanced
+            paramUnitWork.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
         )
         self.addParameter(paramUnitWork)
 
@@ -112,7 +113,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             type=QgsProcessingParameterNumber.Integer,
         )
         paramStep.setFlags(
-            paramStep.flags() | QgsProcessingParameterNumber.FlagAdvanced
+            paramStep.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
         )
         self.addParameter(paramStep)
 

@@ -67,9 +67,9 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
     def flags(self):
         return (
             super().flags()
-            | QgsProcessingAlgorithm.FlagNotAvailableInStandaloneTool
-            | QgsProcessingAlgorithm.FlagRequiresProject
-            | QgsProcessingAlgorithm.FlagNoThreading
+            | QgsProcessingAlgorithm.Flag.FlagNotAvailableInStandaloneTool
+            | QgsProcessingAlgorithm.Flag.FlagRequiresProject
+            | QgsProcessingAlgorithm.Flag.FlagNoThreading
         )
 
     def initAlgorithm(self, config):

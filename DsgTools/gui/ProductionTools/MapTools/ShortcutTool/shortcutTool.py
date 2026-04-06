@@ -92,9 +92,12 @@ class ShortcutTool(QObject):
         if activeLayer is not None:
             layerTreeRoot = QgsProject.instance().layerTreeRoot()
             layerVisibilityState = activeLayer in layerTreeRoot.checkedLayers()
-            layerTreeRoot.findLayer(activeLayer.id()).setItemVisibilityChecked(
-                not layerVisibilityState
+            node = next(
+                (n for n in layerTreeRoot.findLayers() if n.layerId() == activeLayer.id()),
+                None,
             )
+            if node is not None:
+                node.setItemVisibilityChecked(not layerVisibilityState)
             return
         layerTreeView = self.iface.layerTreeView()
         currentNode = layerTreeView.currentNode() if layerTreeView else None

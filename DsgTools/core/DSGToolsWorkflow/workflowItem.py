@@ -647,8 +647,11 @@ class DSGToolsWorkflowItem(QObject):
 
     def enableFeatureCount(self, lyr):
         root = QgsProject.instance().layerTreeRoot()
-        lyrNode = root.findLayer(lyr.id())
-        lyrNode.setCustomProperty("showFeatureCount", True)
+        lyrNode = next(
+            (n for n in root.findLayers() if n.layerId() == lyr.id()), None
+        )
+        if lyrNode is not None:
+            lyrNode.setCustomProperty("showFeatureCount", True)
 
 
 def load_from_json(input_dict: dict) -> DSGToolsWorkflowItem:
