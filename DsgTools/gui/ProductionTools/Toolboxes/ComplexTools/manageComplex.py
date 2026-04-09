@@ -45,6 +45,7 @@ from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 # DsgTools imports
 from DsgTools.core.Misc.QmlTools.qmlParser import QmlParser
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.core.Factories.SqlFactory.sqlGenerator import SqlGenerator
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "ui_manageComplex.ui")
@@ -69,12 +70,12 @@ class CustomTableModel(QSqlTableModel):
         in_clause = "(%s)" % ",".join(map(str, codes))
         if self.db.driverName() == "QPSQL":
             sql = "select code, code_name from dominios.%s where code in %s" % (
-                table,
+                SqlGenerator._qi(table),
                 in_clause,
             )
         elif self.db.driverName() == "QSQLITE":
-            sql = "select code, code_name from dominios_%s where code in %s" % (
-                table,
+            sql = "select code, code_name from %s where code in %s" % (
+                SqlGenerator._qi("dominios_" + table),
                 in_clause,
             )
 
@@ -376,12 +377,12 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         in_clause = "(%s)" % ",".join(map(str, codes))
         if self.db.driverName() == "QPSQL":
             sql = "select code, code_name from dominios.%s where code in %s" % (
-                table,
+                SqlGenerator._qi(table),
                 in_clause,
             )
         elif self.db.driverName() == "QSQLITE":
-            sql = "select code, code_name from dominios_%s where code in %s" % (
-                table,
+            sql = "select code, code_name from %s where code in %s" % (
+                SqlGenerator._qi("dominios_" + table),
                 in_clause,
             )
 
