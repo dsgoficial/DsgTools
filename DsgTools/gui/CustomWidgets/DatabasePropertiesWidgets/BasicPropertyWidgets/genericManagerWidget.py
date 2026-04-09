@@ -60,7 +60,6 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.genericDbManager = genericDbManager
         self.textDict = {
-            "EarthCoverage": self.tr("Earth Coverage"),
             "Customization": self.tr("Customization"),
             "Style": self.tr("Style"),
             "ValidationConfig": self.tr("Validation"),
@@ -69,7 +68,6 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             "SpatialRuleConfig": self.tr("Spatial Rule Configuration"),
         }
         self.captionDict = {
-            "EarthCoverage": self.tr("Earth Coverage"),
             "Customization": self.tr("Customization"),
             "Style": self.tr("Style"),
             "ValidationConfig": self.tr("Validation"),
@@ -78,7 +76,6 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             "SpatialRuleConfig": self.tr("Spatial Rule Configuration file"),
         }
         self.filterDict = {
-            "EarthCoverage": self.tr("Earth Coverage Setup File (*.dsgearthcov)"),
             "Customization": self.tr("DsgTools Customization File (*.dsgcustom)"),
             "Style": self.tr("DsgTools Styles File (*.dsgstyle)"),
             "ValidationConfig": self.tr(

@@ -347,31 +347,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="earthCoverage">
-      <attribute name="title">
-       <string>Earth Coverage</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_10">
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox_4">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Line-Centroid Structure</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_9">
-          <item row="0" column="0">
-           <widget class="EarthCoverageManagerWidget" name="earthCoverageManagerWidget" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+
     </widget>
    </item>
   </layout>
@@ -399,12 +375,6 @@
    <class>PermissionWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.permissionWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>EarthCoverageManagerWidget</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.earthCoverageManagerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -63,7 +63,6 @@ class GenericCompactPropertyManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.genericDbManager = None
         self.textDict = {
-            "EarthCoverage": self.tr("Earth Coverage"),
             "Customization": self.tr("Customization"),
             "Style": self.tr("Style"),
             "ValidationConfig": self.tr("Validation"),

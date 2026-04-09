@@ -1329,40 +1329,6 @@ class PostgisDb(AbstractDb):
             if useTransaction:
                 self.db.commit()
 
-    def getValidationStatus(self, processName):
-        """
-        Gets the validation status for a specific process
-        processName: process name
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.validationStatus(processName)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem acquiring status: ") + query.lastError().text()
-            )
-        ret = None
-        while query.next():
-            ret = query.value(0)
-        return ret
-
-    def getValidationStatusText(self, processName):
-        """
-        Gets the validation message text for a specific process
-        processName: process name
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.validationStatusText(processName)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem acquiring status: ") + query.lastError().text()
-            )
-        ret = None
-        while query.next():
-            ret = query.value(0)
-        return ret
-
     def setValidationProcessStatus(self, processName, log, status):
         """
         Sets the validation status for a specific process
@@ -1741,28 +1707,6 @@ class PostgisDb(AbstractDb):
             result.append((id, geom))
         return result
 
-    def getFlagsDictByProcess(self, processName):
-        """
-        Gets flags data dictionary by process name
-        processName: process name
-        """
-        self.checkAndOpenDb()
-        flagsDict = dict()
-        sql = self.gen.getFlagsByProcess(processName)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem getting flags dict: ") + query.lastError().text()
-            )
-        while query.next():
-            cl = query.value(0)
-            id = query.value(1)
-            geometry_column = query.value(2)
-            if cl not in list(flagsDict.keys()):
-                flagsDict[cl] = []
-            flagsDict[cl].append({"id": str(id), "geometry_column": geometry_column})
-        return flagsDict
-
     def forceValidity(self, cl, processList, keyColumn, useTransaction=True):
         """
         Forces geometry validity (i.e uses ST_MakeValid)
@@ -1899,190 +1843,6 @@ class PostgisDb(AbstractDb):
             )
         if useTransaction:
             self.db.commit()
-
-    def checkCentroidAuxStruct(self):
-        """
-        Checks the centroid structure
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.checkCentroidAuxStruct()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem checking structure: ") + query.lastError().text()
-            )
-        while query.next():
-            if query.value(0) == None:
-                return False
-        return True
-
-    def createCentroidAuxStruct(self, earthCoverageClasses, useTransaction=True):
-        """
-        Creates the centroid structure
-        earthCoverageClasses: earth coverage configuration diciotnary
-        """
-        self.checkAndOpenDb()
-        if useTransaction:
-            self.db.transaction()
-        for cl in earthCoverageClasses:
-            # getting table schema
-            if "." in cl:
-                tableSchema = cl.split(".")[0]
-                tableName = cl.split(".")[-1]
-            else:
-                tableSchema = self.getTableSchemaFromDb(cl)
-                tableName = cl
-            # specific EPSG search
-            parameters = {"tableSchema": tableSchema, "tableName": tableName}
-            srid = self.findEPSG(parameters=parameters)
-            sqltext = self.gen.createCentroidColumn(tableSchema, tableName, srid)
-            sqlList = sqltext.split("#")
-            query = QSqlQuery(self.db)
-            for sql2 in sqlList:
-                if not query.exec(sql2):
-                    if useTransaction:
-                        self.db.rollback()
-                    raise Exception(
-                        self.tr("Problem creating centroid structure: ")
-                        + query.lastError().text()
-                    )
-        if useTransaction:
-            self.db.commit()
-
-    def checkAndCreateCentroidAuxStruct(self, earthCoverageClasses):
-        """
-        Checks the centroid structure. If not already created, it creates the centroid structure
-        earthCoverageClasses: earth coverage configuration diciotnary
-        """
-        if not self.checkCentroidAuxStruct():
-            self.createCentroidAuxStruct(earthCoverageClasses)
-
-    def getEarthCoverageClasses(self):
-        """
-        Gets the earth coverage classes from earth coverage configuration dictionary.
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.getEarthCoverageDict()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem getting earth coverage tables: ")
-                + query.lastError().text()
-            )
-        result = []
-        while query.next():
-            result.append(query.value(0))
-        return result
-
-    def getEarthCoverageDict(self):
-        """
-        Gets the earth coverage configuration dictionary.
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.getEarthCoverageDict()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem getting earth coverage structure: ")
-                + query.lastError().text()
-            )
-        while query.next():
-            return query.value(0)
-
-    def setEarthCoverageDict(self, textDict, useTransaction=True):
-        """
-        Sets the earth coverage configuration dictionary.
-        textDict: earth coverage configuration dictionary
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.setEarthCoverageDict(textDict)
-        query = QSqlQuery(self.db)
-        if useTransaction:
-            self.db.transaction()
-        if not query.exec(sql):
-            if useTransaction:
-                self.db.rollback()
-            raise Exception(
-                self.tr("Problem setting earth coverage structure: ")
-                + query.lastError().text()
-            )
-        if useTransaction:
-            self.db.commit()
-
-    def updateEarthCoverageDict(self, updateDict, oldDict, useTransaction=True):
-        """
-        Updates earthCoverage, creating new centroids and removing old unused ones.
-        """
-        creationList = []
-        removalList = []
-        updateList = list(updateDict.keys())
-        oldList = list(oldDict.keys())
-        for centroid in updateList:
-            if centroid not in oldList:
-                creationList.append(centroid)
-        for centroid in oldList:
-            if centroid not in updateList:
-                removalList.append(centroid)
-        self.createCentroidAuxStruct(creationList, useTransaction=useTransaction)
-        self.dropCentroids(removalList, useTransaction=useTransaction)
-
-    def dropCentroids(self, classList, useTransaction=True):
-        """
-        Drops the centroid structure
-        classList: classes to be altered
-        """
-        self.checkAndOpenDb()
-        if useTransaction:
-            self.db.transaction()
-        query = QSqlQuery(self.db)
-        for cl in classList:
-            # getting table schema
-            if "." not in cl:
-                tableSchema = self.getTableSchemaFromDb(cl)
-                fullTableName = tableSchema + "." + cl
-            else:
-                fullTableName = cl
-            # making the query using table schema and table name
-            sql = self.gen.dropCentroid(fullTableName)
-            if not query.exec(sql):
-                if useTransaction:
-                    self.db.rollback()
-                raise Exception(
-                    self.tr("Problem dropping centroids: ") + query.lastError().text()
-                )
-        if useTransaction:
-            self.db.commit()
-
-    def rollbackEarthCoverage(self, classList):
-        """
-        Rolls back the centroid structure
-        classList: classes to be altered
-        """
-        try:
-            self.dropCentroids(classList)
-            self.setEarthCoverageDict(None)
-        except Exception as e:
-            raise e
-
-    def getEarthCoverageCentroids(self):
-        """
-        Gets the earth coverage structure
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.getEarthCoverageCentroids()
-        query = QSqlQuery(sql, self.db)
-        centroidList = []
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem getting earth coverage structure: ")
-                + query.lastError().text()
-            )
-        while query.next():
-            table = query.value(0).split("_")
-            table[-1] = "c"
-            layerName = "_".join(table)
-            centroidList.append(layerName)
-        return centroidList
 
     def getWhoAmI(self, cl, id):
         """
@@ -2978,37 +2738,16 @@ class PostgisDb(AbstractDb):
     def getGeomColumnTupleList(
         self,
         showViews=False,
-        hideCentroids=True,
         primitiveFilter=None,
         withElements=False,
         layerFilter=None,
     ):
         """
         list in the format [(table_schema, table_name, geometryColumn, geometryType, tableType)]
-        centroids are hidden by default
         """
         self.checkAndOpenDb()
         primitiveFilter = [] if primitiveFilter is None else primitiveFilter
         layerFilter = [] if layerFilter is None else layerFilter
-        centroidTableList = []
-        try:
-            edgvVersion = self.getDatabaseVersion()
-            if hideCentroids:
-                if self.checkIfExistsConfigTable("EarthCoverage"):
-                    propertyDict = self.getAllSettingsFromAdminDb("EarthCoverage")
-                    propertyName = propertyDict[edgvVersion][0]
-                    dbName = self.db.databaseName()
-                    settingDict = json.loads(
-                        self.getSettingFromAdminDb(
-                            "EarthCoverage", propertyName, edgvVersion
-                        )
-                    )
-                    earthCoverageDict = settingDict["earthCoverageDict"]
-                    centroidTableList = [
-                        i.split(".")[-1] for i in list(earthCoverageDict.keys())
-                    ]
-        except:
-            pass
 
         sql = self.gen.getGeomColumnTupleList(showViews=showViews)
         query = QSqlQuery(sql, self.db)
@@ -3018,22 +2757,15 @@ class PostgisDb(AbstractDb):
             )
         localList = []
         while query.next():
-            if (
-                query.value(2) == "centroid"
-                and query.value(3) == "POINT"
-                and query.value(1) in centroidTableList
-            ):
-                continue
-            else:
-                localList.append(
-                    (
-                        query.value(0),
-                        query.value(1),
-                        query.value(2),
-                        query.value(3),
-                        query.value(4),
-                    )
+            localList.append(
+                (
+                    query.value(0),
+                    query.value(1),
+                    query.value(2),
+                    query.value(3),
+                    query.value(4),
                 )
+            )
         if not withElements and primitiveFilter == []:
             return localList
         if withElements:
@@ -3060,14 +2792,12 @@ class PostgisDb(AbstractDb):
     def getGeomColumnDictV2(
         self,
         showViews=False,
-        hideCentroids=True,
         primitiveFilter=[],
         withElements=False,
         excludeValidation=False,
     ):
         geomList = self.getGeomColumnTupleList(
             showViews=showViews,
-            hideCentroids=hideCentroids,
             primitiveFilter=primitiveFilter,
             withElements=withElements,
         )
@@ -3386,14 +3116,10 @@ class PostgisDb(AbstractDb):
         threading=False,
     ):
         self.checkAndOpenDb()
-        tableDictList = self.getParentGeomTables(
-            getDictList=True, showViews=False, hideCentroids=False
-        )
+        tableDictList = self.getParentGeomTables(getDictList=True, showViews=False)
         viewList = [
             '''"{0}"."{1}"'''.format(i["tableSchema"], i["tableName"])
-            for i in list(
-                self.getGeomColumnDictV2(showViews=True, hideCentroids=False).values()
-            )
+            for i in list(self.getGeomColumnDictV2(showViews=True).values())
             if i["tableType"] == "VIEW"
         ]
         viewDefinitionDict = {i: self.getViewDefinition(i) for i in viewList}
@@ -4016,16 +3742,13 @@ class PostgisDb(AbstractDb):
         getFullName=False,
         primitiveFilter=[],
         showViews=False,
-        hideCentroids=True,
         getDictList=False,
     ):
         """
         Lists all tables with geometries from schema that are parents.
         """
         self.checkAndOpenDb()
-        layerDictList = self.getGeomColumnDictV2(
-            showViews=showViews, hideCentroids=hideCentroids
-        )
+        layerDictList = self.getGeomColumnDictV2(showViews=showViews)
         geomTables = [i["tableName"] for i in list(layerDictList.values())]
         inhDict = self.getInheritanceDict()
 
@@ -4071,7 +3794,6 @@ class PostgisDb(AbstractDb):
                 for i in list(
                     self.getGeomColumnDictV2(
                         showViews=showViews,
-                        hideCentroids=hideCentroids,
                         primitiveFilter=primitiveFilter,
                     ).values()
                 )
@@ -4791,24 +4513,6 @@ class PostgisDb(AbstractDb):
             classesOrProcesses.append(str(query.value(0)))
         return classesOrProcesses
 
-    def getFilteredFlagsView(self, filterType=None, filteredElement=None):
-        """
-        Returns a list of flagged features accordingly to what
-        was chosen to filter and which element was chosen as such
-        (e.g. a process named 'identifyDuplicatedGeometries')
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.getFilteredFlagsQuery(filterType, filteredElement)
-        outFiltered = []
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem filtering flags: ") + query.lastError().text()
-            )
-        while query.next():
-            outFiltered.append(str(query.value(0)))
-        return outFiltered
-
     def createFilteredFlagsViewTable(self, filterType=None, filteredElement=None):
         """
         Cretas a View Table if it doesn't exist and populates it
@@ -4842,118 +4546,6 @@ class PostgisDb(AbstractDb):
             geom = query.value(0)
             invalidRecordsList.append((0, reason, geom))
         return invalidRecordsList
-
-    def getNumberOfFlagsByProcess(self, processName):
-        """
-        Returns the number of flags raised by a process.
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.getFlagsByProcess(processName)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem while retrieving flags dict: ")
-                + query.lastError().text()
-            )
-        nrFlags = 0
-        while query.next():
-            nrFlags += 1
-        return nrFlags
-
-    def createValidationHistoryViewTable(self, idListString=None):
-        """
-        Creates the view table for validation processes history.
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.createValidationHistoryViewTableQuery(idListString=idListString)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem while retrieving validation processes history table: ")
-                + query.lastError().text()
-            )
-        return
-
-    def getValidationLog(self, idList=False):
-        """
-        Returns a list of all logs registered for each process executed.
-        """
-        # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
-        self.checkAndOpenDb()
-        sql = self.gen.getValidationLogQuery()
-        query = QSqlQuery(sql, self.db)
-        log = []  # list of logs
-        idL = []  # list of ID in the same order as the logs appears
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem while retrieving validation processes history table: ")
-                + query.lastError().text()
-            )
-        while query.next():
-            log.append(query.value(0).encode(self.databaseEncoding))
-            idL.append(query.value(1))
-        if idList:
-            return log, idL
-        else:
-            return log
-
-    def getValidationHistory(self, idListString=False):
-        """
-        Returns a list of all logs registered for each process executed.
-        :param idList: boolean indicating whether or not to return the list of IDs as well.
-        :param consolidate: boolean indicating whether or not the logs should be consoliodated into one.
-        """
-        # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
-        self.checkAndOpenDb()
-        sql = self.gen.getValidationHistoryQuery(idListString=idListString)
-        query = QSqlQuery(sql, self.db)
-        history = []  # list of logs
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem while retrieving validation processes history table: ")
-                + query.lastError().text()
-            )
-        while query.next():
-            history.append(
-                [
-                    query.value(0),
-                    query.value(1),
-                    query.value(2),
-                    query.value(3),
-                    query.value(4),
-                ]
-            )
-        return history
-
-    def createCompactValidationHistory(self, compactHistory):
-        """
-        Creates and populates the compact validation history table from a given list of logs.
-        """
-        self.checkAndOpenDb()
-        # table creation
-        sql = self.gen.createCompactValidationHistoryQuery()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr(
-                    "Problem while creating compact validation processes history table: "
-                )
-                + query.lastError().text()
-            )
-        # table population
-        for log in compactHistory:
-            sql = self.gen.populateCompactValidationHistoryQuery(log=log)
-            query = QSqlQuery(sql, self.db)
-            if not query.isActive():
-                self.db.rollback()
-                raise Exception(
-                    self.tr(
-                        "Problem while populating compact validation processes history table: "
-                    )
-                    + query.lastError().text()
-                )
-        self.db.commit()
-        return True
 
     def instantiateQgsVectorLayer(self, uri):
         pass

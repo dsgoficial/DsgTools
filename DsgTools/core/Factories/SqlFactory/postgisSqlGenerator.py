@@ -505,10 +505,9 @@ class PostGISSqlGenerator(SqlGenerator):
             id serial NOT NULL,
             scale character varying(10),
             tolerance float,
-            earthcoverage text,
             CONSTRAINT settings_pk PRIMARY KEY (id)
         )#
-        INSERT INTO validation.settings(earthcoverage) VALUES (NULL)#
+        INSERT INTO validation.settings DEFAULT VALUES#
         INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')
         """ % (
             srid,
@@ -996,56 +995,11 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "select id from %s limit 1" % orphan
         return sql
 
-    def checkCentroidAuxStruct(self):
-        sql = "select distinct count(column_name) from information_schema.columns where column_name = 'centroid' group by column_name"
-        return sql
-
-    def dropCentroid(self, table):
-        table = '"' + '"."'.join(table.replace('"', "").split(".")) + '"'
-        sql = "alter table %s drop column if exists centroid" % table
-        return sql
-
-    def createCentroidColumn(self, table_schema, table_name, srid):
-        sql = """alter table "{1}"."{2}" add column centroid geometry('POINT',{0})#
-        alter table "{1}"."{2}" alter column geom drop not null#
-        CREATE INDEX {3} ON "{1}"."{2}" USING gist(centroid)""".format(
-            srid, table_schema, table_name, table_name[:-2] + "_c_gist"
-        )
-        return sql
-
-    def createCentroidGist(self, table_schema, table_name):
-        gistName = table_name[:-2] + "_c_gist"
-        sql = """CREATE INDEX {0} ON "{1}"."{2}" USING gist(centroid)""".format(
-            gistName, table_schema, table_name
-        )
-        return sql
-
-    def getEarthCoverageClasses(self):
-        sql = "select distinct table_schema || '.' || table_name from information_schema.columns where column_name = 'centroid'"
-        return sql
-
-    def getEarthCoverageDict(self):
-        sql = "select earthcoverage from validation.settings limit 1"
-        return sql
-
-    def setEarthCoverageDict(self, earthDict):
-        if earthDict:
-            sql = "update validation.settings set earthcoverage = '%s'" % self._el(
-                earthDict
-            )
-        else:
-            sql = "update validation.settings set earthcoverage = NULL"
-        return sql
-
     def makeRelationDict(self, table, codes):
         sql = """select code, code_name from dominios.%s where code in %s""" % (
             self._qi(table),
             codes,
         )
-        return sql
-
-    def getEarthCoverageCentroids(self):
-        sql = "select distinct table_name from information_schema.columns where column_name = 'centroid'"
         return sql
 
     def getWhoAmI(self, cl, id):
@@ -1609,8 +1563,6 @@ class PostGISSqlGenerator(SqlGenerator):
             tableName = "permission_profile"
         elif settingType == "Customization":
             tableName = "customization"
-        elif settingType == "EarthCoverage":
-            tableName = "earth_coverage"
         elif settingType == "Style":
             tableName = "style"
         elif settingType == "FieldToolBoxConfig":

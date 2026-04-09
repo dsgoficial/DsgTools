@@ -33,11 +33,10 @@ class DsgEnums(object):
     (
         PermissionProperty,
         FieldToolboxProperty,
-        EarthCoverageProperty,
         AttributeRuleProperty,
         SpatialRuleProperty,
         ValidationWorkflowProperty,
-    ) = list(range(6))
+    ) = list(range(5))
     # datasource selection widgets enum
     (
         NoDriver,
