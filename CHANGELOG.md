@@ -1,6 +1,12 @@
 # CHANGELOG
 
-## 5.0 - 2026-03-30
+## 5.0.1 - 2026-04-09
+
+Correções de bug:
+
+- Corrige imports da shapely em ambientes que não tem ela instalada.
+
+## 5.0.0 - 2026-03-30
 
 Novas Funcionalidades:
 

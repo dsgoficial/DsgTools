@@ -11,7 +11,7 @@ name=DSG Tools
 qgisMinimumVersion=4.0
 supportsQt6=True
 description=Brazilian Army Cartographic Production Tools
-version=5.0.0
+version=5.0.1
 author=Brazilian Army Geographic Service
 email=dsgtools@dsg.eb.mil.br
 about=
@@ -45,6 +45,9 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+	5.0.1
+		Correções de bug:
+			- Corrige imports da shapely em ambientes que não tem ela instalada.
 	5.0.0
 		Novas Funcionalidades:
 			- Migração do DSGTools para o QGIS 4;

@@ -44,20 +44,9 @@ from qgis.core import (
     QgsProcessingException,
 )
 import processing
-import numpy as np
 from concurrent.futures import ThreadPoolExecutor, ThreadPoolExecutor
 import math
 import random
-from shapely.geometry import (
-    Point,
-    Polygon,
-    LineString,
-    box,
-    MultiPolygon,
-    MultiLineString,
-)
-from shapely.affinity import rotate, translate
-from shapely.ops import unary_union
 import concurrent.futures
 
 
@@ -276,6 +265,24 @@ class BuildingGeneralizationAlgorithm(QgsProcessingAlgorithm):
         """
         Main implementation of the algorithm.
         """
+        try:
+            from shapely.geometry import (
+                Point,
+                Polygon,
+                LineString,
+                box,
+                MultiPolygon,
+                MultiLineString,
+            )
+            from shapely.affinity import rotate, translate
+            from shapely.ops import unary_union
+        except ImportError:
+            raise QgsProcessingException(
+                self.tr(
+                    "The 'shapely' library is not installed. "
+                    "To install it, run in the terminal: pip install shapely"
+                )
+            )
         # Get the input parameters
         building_source = self.parameterAsSource(
             parameters, self.INPUT_BUILDINGS, context
@@ -480,6 +487,9 @@ class BuildingGeneralizationProcessor:
         Returns:
         - Shapely Polygon representing the rotated square
         """
+        from shapely.geometry import box
+        from shapely.affinity import rotate
+
         half_size = size / 2
         square = box(
             center_x - half_size,
@@ -499,6 +509,15 @@ class BuildingGeneralizationProcessor:
         - Construct block polygons from road network
         - Partition buildings by block and geographic boundary
         """
+        from shapely.geometry import (
+            Point,
+            Polygon,
+            LineString,
+            MultiPolygon,
+            MultiLineString,
+        )
+        from shapely.ops import unary_union
+
         feedback.pushInfo("Loading building features...")
         total = (
             100.0 / self.building_source.featureCount()
@@ -1074,6 +1093,8 @@ class BuildingGeneralizationProcessor:
         - Update polygon geometry with rotation
         - Refresh spatial indexes with rotated geometries
         """
+        from shapely.geometry import Point, LineString, MultiLineString
+
         feedback.pushInfo("Calculating optimal rotation angles...")
 
         # Function to calculate rotation angle for a single building
@@ -1603,6 +1624,8 @@ class BuildingGeneralizationProcessor:
 
     def calculate_road_buffer_repulsion(self, building_id, road_id):
         """Calculate repulsion force from road buffer to building."""
+        from shapely.geometry import Point
+
         building = self.buildings[building_id]
         road_id_numeric = int(road_id.split("_")[1])
         road = self.roads[road_id_numeric]
@@ -1667,6 +1690,8 @@ class BuildingGeneralizationProcessor:
 
     def calculate_water_body_repulsion(self, building_id, water_id):
         """Calculate repulsion force from water body to building."""
+        from shapely.geometry import Point
+
         building = self.buildings[building_id]
         water_id_numeric = int(water_id.split("_")[1])
         water = self.water_bodies[water_id_numeric]
@@ -1731,6 +1756,8 @@ class BuildingGeneralizationProcessor:
 
     def calculate_position_preservation(self, building_id):
         """Calculate force pulling building back to original position."""
+        from shapely.geometry import Point
+
         building = self.buildings[building_id]
 
         original_center = building["original_center"]
@@ -2084,6 +2111,8 @@ class BuildingGeneralizationProcessor:
 
     def check_building_outside_block(self, building_id):
         """Check if a building is outside its assigned block."""
+        from shapely.geometry import Point
+
         building = self.buildings.get(building_id)
         block_id = self.building_blocks.get(building_id)
 
