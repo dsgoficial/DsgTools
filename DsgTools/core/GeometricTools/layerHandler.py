@@ -1222,7 +1222,10 @@ class LayerHandler(QObject):
             geom = feat.geometry()
             if not feat.hasGeometry() or geom.isNull() or geom.isEmpty():
                 return featid
-            if geom.type() == QgsWkbTypes.GeometryType.LineGeometry and geom.length() < tol:
+            if (
+                geom.type() == QgsWkbTypes.GeometryType.LineGeometry
+                and geom.length() < tol
+            ):
                 return featid
             geom.removeDuplicateNodes()
             fixedGeom = geom.makeValid()
@@ -1731,7 +1734,11 @@ class LayerHandler(QObject):
         :param inputLyr: (QgsVectorLayer) layer to run build the aux structure.
         :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
         """
-        nSteps = 3 if inputLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry else 2
+        nSteps = (
+            3
+            if inputLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
+            else 2
+        )
         algRunner = AlgRunner() if algRunner is None else algRunner
         context = (
             dataobjects.createContext(feedback=feedback) if context is None else context

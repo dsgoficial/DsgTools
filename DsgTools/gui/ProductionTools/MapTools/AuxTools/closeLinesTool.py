@@ -42,15 +42,15 @@ class CloseLinesTool(QgsMapTool):
         super(CloseLinesTool, self).__init__(self.canvas)
 
     def addTool(
-            self, 
-            manager, 
-            callback, 
-            parentMenu, 
-            iconBasePath,
-            parentButton=None,
-            defaultButton=False,
-        ):
-        self.parentButton=parentButton
+        self,
+        manager,
+        callback,
+        parentMenu,
+        iconBasePath,
+        parentButton=None,
+        defaultButton=False,
+    ):
+        self.parentButton = parentButton
         icon_path = iconBasePath + "/closedLines.png"
         toolTip = self.tr("DSGTools: Close Selected Lines")
         action = manager.add_action(
@@ -117,13 +117,19 @@ class CloseLinesTool(QgsMapTool):
         layer = iface.activeLayer()
         if not layer:
             iface.messageBar().pushMessage(
-                "Erro", "Selecione uma camada válida", level=Qgis.MessageLevel.Critical, duration=5
+                "Erro",
+                "Selecione uma camada válida",
+                level=Qgis.MessageLevel.Critical,
+                duration=5,
             )
             return
         selectedFeatures = layer.selectedFeatureCount()
         if selectedFeatures == 0:
             iface.messageBar().pushMessage(
-                "Erro", "Nenhuma feição selecionada", level=Qgis.MessageLevel.Critical, duration=5
+                "Erro",
+                "Nenhuma feição selecionada",
+                level=Qgis.MessageLevel.Critical,
+                duration=5,
             )
             return
         confirmation = self.confirmAction(selectedFeatures)

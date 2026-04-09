@@ -92,7 +92,11 @@ class CustomTableModel(QSqlTableModel):
         """
         if index.column() == 0:
             return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
-        return Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
+        return (
+            Qt.ItemFlag.ItemIsEditable
+            | Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+        )
 
     def data(self, index, role):
         """
@@ -235,7 +239,9 @@ class ListWidgetDelegate(QStyledItemDelegate):
                 for i in range(editor.count()):
                     item = editor.item(i)
                     item.setCheckState(
-                        Qt.CheckState.Checked if item.text() in checkList else Qt.CheckState.Unchecked
+                        Qt.CheckState.Checked
+                        if item.text() in checkList
+                        else Qt.CheckState.Unchecked
                     )
             else:
                 # use default
@@ -301,7 +307,9 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
                 self.tr("Critical!"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
         qmlPath = os.path.join(qmlDirPath, fileName)
 
         # getting the domain dictionary that will be used to generate the comboboxes

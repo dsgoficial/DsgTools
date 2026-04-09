@@ -112,7 +112,9 @@ class ProcessManager(QObject):
         # Setting the progress bar
         progressMessageBar = self.iface.messageBar().createMessage(message)
         progressBar = QProgressBar()
-        progressBar.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        progressBar.setAlignment(
+            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
+        )
         progressMessageBar.layout().addWidget(progressBar)
         self.iface.messageBar().pushWidget(
             progressMessageBar, self.iface.messageBar().INFO

@@ -105,7 +105,9 @@ class Options(QDialog, FORM_CLASS):
         minSegmentDistance = self.minSegmentDistanceQgsSpinBox.value()
         rightAngleDecimals = self.rightAngleDecimalsQgsSpinBox.value()
         numberSmoothingIterations = self.numberSmoothingIterationsQgsSpinBox.value()
-        fractionLineCreateNewVertices = self.fractionLineCreateNewVerticesQgsSpinBox.value()
+        fractionLineCreateNewVertices = (
+            self.fractionLineCreateNewVerticesQgsSpinBox.value()
+        )
         valueList = [
             self.blackListWidget.item(i).text()
             for i in range(self.blackListWidget.count())
@@ -189,9 +191,13 @@ class Options(QDialog, FORM_CLASS):
             fractionLineCreateNewVertices,
         ) = self.loadParametersFromConfig()
         if numberSmoothingIterations:
-            self.numberSmoothingIterationsQgsSpinBox.setValue(int(numberSmoothingIterations))
+            self.numberSmoothingIterationsQgsSpinBox.setValue(
+                int(numberSmoothingIterations)
+            )
         if fractionLineCreateNewVertices:
-            self.fractionLineCreateNewVerticesQgsSpinBox.setValue(float(fractionLineCreateNewVertices))
+            self.fractionLineCreateNewVerticesQgsSpinBox.setValue(
+                float(fractionLineCreateNewVertices)
+            )
         if freeHandTolerance:
             self.toleranceQgsDoubleSpinBox.setValue(float(freeHandTolerance))
         if freeHandSmoothIterations:
@@ -219,7 +225,9 @@ class Options(QDialog, FORM_CLASS):
         if centroidFlagValueList:
             self.centroidFlagBlackListWidget.clear()
             self.centroidFlagBlackListWidget.addItems(centroidFlagValueList)
-            self.centroidFlagBlackListWidget.sortItems(order=Qt.SortOrder.AscendingOrder)
+            self.centroidFlagBlackListWidget.sortItems(
+                order=Qt.SortOrder.AscendingOrder
+            )
 
     def storeParametersInConfig(self):
         (
@@ -249,7 +257,9 @@ class Options(QDialog, FORM_CLASS):
         settings.setValue("undoPoints", undoPoints)
         settings.setValue("decimals", decimals)
         settings.setValue("numberSmoothingIterations", numberSmoothingIterations)
-        settings.setValue("fractionLineCreateNewVertices", fractionLineCreateNewVertices)
+        settings.setValue(
+            "fractionLineCreateNewVertices", fractionLineCreateNewVertices
+        )
         settings.setValue(
             "freeHandFinalSimplifyTolerance", freeHandFinalSimplifyTolerance
         )

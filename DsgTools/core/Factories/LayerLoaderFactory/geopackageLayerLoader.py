@@ -43,7 +43,9 @@ class GeopackageLayerLoader(SpatialiteLayerLoader):
         try:
             dbVersion = abstractDb.getDatabaseVersion()
         except Exception as e:
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
             return
 
         self.buildUri()

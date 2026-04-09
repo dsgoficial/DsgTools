@@ -381,7 +381,12 @@ class Utils(object):
         :param field: (QgsField) field to be checked.
         :return: (bool) if data is a whole number.
         """
-        intTypes = [QMetaType.Type.Int, QMetaType.Type.UInt, QMetaType.Type.LongLong, QMetaType.Type.ULongLong]
+        intTypes = [
+            QMetaType.Type.Int,
+            QMetaType.Type.UInt,
+            QMetaType.Type.LongLong,
+            QMetaType.Type.ULongLong,
+        ]
         return field.type() in intTypes
 
     def fieldIsNumeric(self, field):
@@ -444,7 +449,10 @@ class MessageRaiser(QObject):
         if showNo:
             return (
                 QMessageBox.question(
-                    parent, title, msg, QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+                    parent,
+                    title,
+                    msg,
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 )
                 == QMessageBox.StandardButton.Yes
             )
@@ -536,7 +544,9 @@ class ValidateImportedDataMethods:
             )
 
             msg.setDetailedText(formatedMsgString)
-            msg.setStandardButtons(QMessageBox.StandardButton.Ignore | QMessageBox.StandardButton.Cancel)
+            msg.setStandardButtons(
+                QMessageBox.StandardButton.Ignore | QMessageBox.StandardButton.Cancel
+            )
             msg.setDefaultButton(QMessageBox.StandardButton.Cancel)
         else:
             msg.setIcon(QMessageBox.Icon.Information)

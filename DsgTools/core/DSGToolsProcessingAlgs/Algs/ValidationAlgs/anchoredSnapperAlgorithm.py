@@ -149,16 +149,24 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             QgsWkbTypes.GeometryType.LineGeometry: [],
             QgsWkbTypes.GeometryType.PolygonGeometry: [],
         }
-        
+
         for layer in layers:
             geomType = layer.geometryType()
             if geomType in grouped:
                 grouped[geomType].append(layer)
-        
+
         return grouped
 
-    def prepareAnchorLayers(self, pointAnchorLayers, lineAnchorLayers, polygonAnchorLayers, 
-                           anchorOnlySelected, algRunner, context, feedback):
+    def prepareAnchorLayers(
+        self,
+        pointAnchorLayers,
+        lineAnchorLayers,
+        polygonAnchorLayers,
+        anchorOnlySelected,
+        algRunner,
+        context,
+        feedback,
+    ):
         """
         Prepare anchor layers: handle selection and convert polygons to lines.
         Returns merged and indexed anchor layers for lines and points.
@@ -235,9 +243,19 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
 
         return mergedLineAnchor, mergedPointAnchor
 
-    def processGeometryGroup(self, inputLayers, mergedLineAnchor, mergedPointAnchor,
-                            snapTolerance, behavior, onlySelected, algRunner, 
-                            layerHandler, context, feedback):
+    def processGeometryGroup(
+        self,
+        inputLayers,
+        mergedLineAnchor,
+        mergedPointAnchor,
+        snapTolerance,
+        behavior,
+        onlySelected,
+        algRunner,
+        layerHandler,
+        context,
+        feedback,
+    ):
         """
         Process a group of layers with the same geometry type.
         """
@@ -245,9 +263,11 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             return
 
         geomType = inputLayers[0].wkbType()
-        
+
         feedback.pushInfo(
-            self.tr(f"Processing {len(inputLayers)} layer(s) of type {QgsWkbTypes.displayString(geomType)}...")
+            self.tr(
+                f"Processing {len(inputLayers)} layer(s) of type {QgsWkbTypes.displayString(geomType)}..."
+            )
         )
 
         # Create aux structure for input layers
@@ -301,7 +321,7 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
         #     }
 
         #     primitiveDict[snappedLyr.geometryType()].append(snappedLyr)
-            
+
         #     if mergedLineAnchor:
         #         primitiveDict[QgsWkbTypes.LineGeometry].append(mergedLineAnchor)
 
@@ -356,7 +376,9 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
 
         if not pointAnchorLayers and not lineAnchorLayers and not polygonAnchorLayers:
             raise QgsProcessingException(
-                self.tr("You must provide at least one anchor layer (point, line or polygon)")
+                self.tr(
+                    "You must provide at least one anchor layer (point, line or polygon)"
+                )
             )
 
         snapTolerance = self.parameterAsDouble(parameters, self.TOLERANCE, context)
@@ -367,19 +389,21 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
 
         # Group input layers by geometry type
         groupedLayers = self.groupLayersByGeometryType(inputLayers)
-        
+
         # Count non-empty groups
         activeGroups = sum(1 for layers in groupedLayers.values() if layers)
-        
+
         # Setup progress feedback
-        totalSteps = 1 + (activeGroups * 2)  # Prepare anchors + (process + update) per group
+        totalSteps = 1 + (
+            activeGroups * 2
+        )  # Prepare anchors + (process + update) per group
         multiStepFeedback = QgsProcessingMultiStepFeedback(totalSteps, feedback)
         currentStep = 0
 
         # Prepare anchor layers (only once for all groups)
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Preparing anchor layers..."))
-        
+
         mergedLineAnchor, mergedPointAnchor = self.prepareAnchorLayers(
             pointAnchorLayers,
             lineAnchorLayers,
@@ -389,25 +413,23 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             context,
             multiStepFeedback,
         )
-        
+
         if not mergedLineAnchor and not mergedPointAnchor:
-            raise QgsProcessingException(
-                self.tr("No valid anchor layers to process")
-            )
-        
+            raise QgsProcessingException(self.tr("No valid anchor layers to process"))
+
         currentStep += 1
 
         # Process each geometry type group
         for geomType, layers in groupedLayers.items():
             if not layers:
                 continue
-            
+
             multiStepFeedback.setCurrentStep(currentStep)
             geomTypeName = QgsWkbTypes.displayString(geomType)
             multiStepFeedback.setProgressText(
                 self.tr(f"Processing {geomTypeName} layers...")
             )
-            
+
             self.processGeometryGroup(
                 layers,
                 mergedLineAnchor,
@@ -420,7 +442,7 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
                 context,
                 multiStepFeedback,
             )
-            
+
             currentStep += 1
 
         return {}

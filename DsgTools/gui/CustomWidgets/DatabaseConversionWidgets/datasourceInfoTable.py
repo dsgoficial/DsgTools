@@ -96,7 +96,9 @@ class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
         )
         # set resize policy for each column
         [
-            header.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+            header.setSectionResizeMode(
+                i, QtWidgets.QHeaderView.ResizeMode.ResizeToContents
+            )
             for i in range(self.COLUMN_COUNT)
         ]
         # connect header double click signal to order by that column

@@ -163,7 +163,9 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.invalidSourceError(parameters, self.INPUT)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        heightFieldName = self.parameterAsStrings(parameters, self.CONTOUR_ATTR, context)
+        heightFieldName = self.parameterAsStrings(
+            parameters, self.CONTOUR_ATTR, context
+        )
         heightFieldName = None if len(heightFieldName) == 0 else heightFieldName[0]
         depressionExpression = self.parameterAsExpression(
             parameters, self.DEPRESSION_EXPRESSION, context

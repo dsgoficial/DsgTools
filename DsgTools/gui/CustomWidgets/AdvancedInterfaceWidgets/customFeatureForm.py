@@ -221,12 +221,16 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
             # also to make easier to read data
             self._fieldsWidgets[fName] = w
             label = QLabel(text)
-            label.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+            label.setSizePolicy(
+                QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred
+            )
             w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
             self.widgetsLayout.addWidget(label, row, 0)
             self.widgetsLayout.addWidget(w, row, 1)
         self.widgetsLayout.addItem(
-            QSpacerItem(20, 40, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding),
+            QSpacerItem(
+                20, 40, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+            ),
             row + 1,
             1,
             1,

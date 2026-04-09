@@ -138,7 +138,9 @@ class ShapeTool(QgsMapTool):
         """
         Deals with mouse move event to update the rubber band position in the canvas
         """
-        ctrlIsHeld = QApplication.keyboardModifiers() == Qt.KeyboardModifier.ControlModifier
+        ctrlIsHeld = (
+            QApplication.keyboardModifiers() == Qt.KeyboardModifier.ControlModifier
+        )
         if e.button() != None and not ctrlIsHeld:
             if self.rotate:
                 # change rotate status
@@ -173,9 +175,7 @@ class ShapeTool(QgsMapTool):
         self.rubberBand.reset(Qgis.GeometryType.Polygon)
         for itheta in range(nPoints + 1):
             theta = itheta * (2.0 * pi / nPoints)
-            self.rubberBand.addPoint(
-                QgsPointXY(x + r * cos(theta), y + r * sin(theta))
-            )
+            self.rubberBand.addPoint(QgsPointXY(x + r * cos(theta), y + r * sin(theta)))
         self.rubberBand.show()
 
     def showRect(self, startPoint, param, rotAngle=0):
@@ -209,7 +209,8 @@ class ShapeTool(QgsMapTool):
     def convertDistance(self, distance):
         distanceArea = QgsDistanceArea()
         distanceArea.setSourceCrs(
-            QgsCoordinateReferenceSystem.fromEpsgId(3857), QgsCoordinateTransformContext()
+            QgsCoordinateReferenceSystem.fromEpsgId(3857),
+            QgsCoordinateTransformContext(),
         )
         return distanceArea.convertLengthMeasurement(
             distance, self.canvas.mapSettings().destinationCrs().mapUnits()

@@ -241,7 +241,9 @@ class EDGVLayerLoader(QObject):
         try:
             qmldir, qmlType = self.abstractDb.getQml(vlayer.name())
         except Exception as e:
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
             return None
         if qmlType == "db":
             tempPath = os.path.join(os.path.dirname(__file__), "temp.qml")

@@ -91,8 +91,12 @@ class AssignBandValueTool(QgsMapTool):
         return setting
 
     def setRubberbandParameters(self):
-        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
-        self.hoverRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
+        self.rubberBand = QgsRubberBand(
+            self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry
+        )
+        self.hoverRubberBand = QgsRubberBand(
+            self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry
+        )
         mFillColor = QColor(254, 178, 76, 63)
         self.rubberBand.setColor(mFillColor)
         self.hoverRubberBand.setColor(QColor(255, 0, 0, 90))
@@ -113,7 +117,10 @@ class AssignBandValueTool(QgsMapTool):
         """
         if e.button() == QtCore.Qt.MouseButton.LeftButton:
             self.auxList = []
-            if QApplication.keyboardModifiers() == QtCore.Qt.KeyboardModifier.ShiftModifier:
+            if (
+                QApplication.keyboardModifiers()
+                == QtCore.Qt.KeyboardModifier.ShiftModifier
+            ):
                 self.isEmittingPoint = True
                 self.startPoint = self.toMapCoordinates(e.pos())
                 self.endPoint = self.startPoint
@@ -171,7 +178,10 @@ class AssignBandValueTool(QgsMapTool):
         # tool was planned to work on left click
         if e.button() == QtCore.Qt.MouseButton.LeftButton:
             layer = self.iface.mapCanvas().currentLayer()
-            if QApplication.keyboardModifiers() == QtCore.Qt.KeyboardModifier.ShiftModifier:
+            if (
+                QApplication.keyboardModifiers()
+                == QtCore.Qt.KeyboardModifier.ShiftModifier
+            ):
                 self.isEmittingPoint = False
                 r = self.rectangle()
                 if r is None:
@@ -320,7 +330,9 @@ class AssignBandValueTool(QgsMapTool):
             else mousePosGeom.asPoint()
         )
         # identify pixel(s) information
-        i = rasterLayer.dataProvider().identify(mousePos, QgsRaster.IdentifyFormat.IdentifyFormatValue)
+        i = rasterLayer.dataProvider().identify(
+            mousePos, QgsRaster.IdentifyFormat.IdentifyFormatValue
+        )
         if i.isValid():
             value = list(i.results().values())[0]
             if value:

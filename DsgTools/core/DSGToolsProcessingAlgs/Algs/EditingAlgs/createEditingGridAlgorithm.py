@@ -220,8 +220,12 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         gridLayer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
-        attribute = self.parameterAsStrings(parameters, self.ATTRIBUTE_INDEX, context)[0]
-        id_attribute = self.parameterAsStrings(parameters, self.ATTRIBUTE_ID, context)[0]
+        attribute = self.parameterAsStrings(parameters, self.ATTRIBUTE_INDEX, context)[
+            0
+        ]
+        id_attribute = self.parameterAsStrings(parameters, self.ATTRIBUTE_ID, context)[
+            0
+        ]
         id_value = self.parameterAsInt(parameters, self.ID_VALUE, context)
         spacing = self.parameterAsInt(parameters, self.SPACING, context)
         crossX = self.parameterAsInt(parameters, self.CROSSES_X, context)

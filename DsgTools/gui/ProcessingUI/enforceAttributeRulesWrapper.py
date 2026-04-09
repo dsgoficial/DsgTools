@@ -365,7 +365,9 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
             ) + msgString.format(*textLyrList)
 
             msg.setDetailedText(formatedMsgString)
-            msg.setStandardButtons(QMessageBox.StandardButton.Ignore | QMessageBox.StandardButton.Cancel)
+            msg.setStandardButtons(
+                QMessageBox.StandardButton.Ignore | QMessageBox.StandardButton.Cancel
+            )
             msg.setDefaultButton(QMessageBox.StandardButton.Cancel)
         else:
             msg.setIcon(QMessageBox.Icon.Information)

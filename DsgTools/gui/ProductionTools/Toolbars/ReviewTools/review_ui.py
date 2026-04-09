@@ -16,7 +16,8 @@ class Ui_ReviewToolbar(object):
         ReviewToolbar.setObjectName("ReviewToolbar")
         ReviewToolbar.resize(335, 50)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.MinimumExpanding
+            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -57,7 +58,8 @@ class Ui_ReviewToolbar(object):
         self.splitter.setObjectName("splitter")
         self.mMapLayerComboBox = QgsMapLayerComboBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -67,7 +69,9 @@ class Ui_ReviewToolbar(object):
         self.mMapLayerComboBox.setSizePolicy(sizePolicy)
         self.mMapLayerComboBox.setMinimumSize(QtCore.QSize(0, 24))
         self.mMapLayerComboBox.setObjectName("mMapLayerComboBox")
-        self.mMapLayerComboBox.setFilters(core.QgsMapLayerProxyModel.Filter.PolygonLayer)
+        self.mMapLayerComboBox.setFilters(
+            core.QgsMapLayerProxyModel.Filter.PolygonLayer
+        )
 
         self.setActiveLayerPushButton = QtWidgets.QPushButton(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
@@ -94,7 +98,8 @@ class Ui_ReviewToolbar(object):
 
         self.rankFieldComboBox = QgsFieldComboBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -106,7 +111,8 @@ class Ui_ReviewToolbar(object):
         self.rankFieldComboBox.setObjectName("rankFieldComboBox")
         self.visitedFieldComboBox = QgsFieldComboBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -118,7 +124,8 @@ class Ui_ReviewToolbar(object):
         self.visitedFieldComboBox.setObjectName("visitedFieldComboBox")
         self.zoomComboBox = QtWidgets.QComboBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

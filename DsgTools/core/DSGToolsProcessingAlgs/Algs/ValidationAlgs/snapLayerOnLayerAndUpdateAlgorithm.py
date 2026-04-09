@@ -158,22 +158,26 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Running snap..."))
-        snapped = algRunner.runSnapGeometriesToLayer(
-            inputLayer=auxLyr,
-            referenceLayer=refLyr
-            if buildLocalCache
-            else parameters[self.REFERENCE_LAYER],
-            tol=tol,
-            behavior=behavior,
-            context=context,
-            feedback=multiStepFeedback,
-        ) if behavior != 7 else algRunner.runSnapGeometriesToLayer(
-            inputLayer=auxLyr,
-            referenceLayer=auxLyr,
-            tol=tol,
-            behavior=behavior,
-            context=context,
-            feedback=multiStepFeedback,
+        snapped = (
+            algRunner.runSnapGeometriesToLayer(
+                inputLayer=auxLyr,
+                referenceLayer=refLyr
+                if buildLocalCache
+                else parameters[self.REFERENCE_LAYER],
+                tol=tol,
+                behavior=behavior,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if behavior != 7
+            else algRunner.runSnapGeometriesToLayer(
+                inputLayer=auxLyr,
+                referenceLayer=auxLyr,
+                tol=tol,
+                behavior=behavior,
+                context=context,
+                feedback=multiStepFeedback,
+            )
         )
         currentStep += 1
 

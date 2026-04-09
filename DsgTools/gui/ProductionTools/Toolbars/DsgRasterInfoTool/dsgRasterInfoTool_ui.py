@@ -39,7 +39,8 @@ class Ui_DsgRasterInfoTool(object):
         DsgRasterInfoTool.setObjectName(_fromUtf8("DsgRasterInfoTool"))
         DsgRasterInfoTool.resize(309, 49)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.MinimumExpanding
+            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -80,7 +81,8 @@ class Ui_DsgRasterInfoTool(object):
         self.rasterComboBox = QgsMapLayerComboBox(self.splitter)
         self.rasterComboBox.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

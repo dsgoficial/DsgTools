@@ -111,7 +111,10 @@ class OtherTools(QgsMapTool):
         layer = iface.activeLayer()
         if not layer:
             iface.messageBar().pushMessage(
-                "Erro", "Selecione uma camada válida", level=Qgis.MessageLevel.Critical, duration=5
+                "Erro",
+                "Selecione uma camada válida",
+                level=Qgis.MessageLevel.Critical,
+                duration=5,
             )
             return
         context = QgsProcessingContext()

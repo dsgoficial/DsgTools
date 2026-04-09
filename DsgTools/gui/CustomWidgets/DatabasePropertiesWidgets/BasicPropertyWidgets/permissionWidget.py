@@ -70,7 +70,9 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.serverAbstractDb = None
         self.dbDict = dict()
         self.permissionManager = None
-        self.permissionTreeWidget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.permissionTreeWidget.setContextMenuPolicy(
+            Qt.ContextMenuPolicy.CustomContextMenu
+        )
         self.permissionTreeWidget.customContextMenuRequested.connect(
             self.createMenuAssigned
         )

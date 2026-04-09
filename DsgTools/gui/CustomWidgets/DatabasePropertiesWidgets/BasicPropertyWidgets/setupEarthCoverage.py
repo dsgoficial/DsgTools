@@ -62,8 +62,12 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
         self.areasCustomSelector.setTitle(self.tr("Areas"))
         self.linesCustomSelector.setTitle(self.tr("Lines"))
         self.propertyList = propertyList
-        self.button(QtWidgets.QWizard.WizardButton.NextButton).clicked.connect(self.buildTree)
-        self.button(QtWidgets.QWizard.WizardButton.FinishButton).clicked.connect(self.buildDict)
+        self.button(QtWidgets.QWizard.WizardButton.NextButton).clicked.connect(
+            self.buildTree
+        )
+        self.button(QtWidgets.QWizard.WizardButton.FinishButton).clicked.connect(
+            self.buildDict
+        )
         self.setupWizard(oldCoverage, enableSetupFromFile)
         self.configDict = dict()
 
@@ -145,7 +149,9 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
         self.listWidget.addItems(areas)
         if frame:
             try:
-                frameItem = self.listWidget.findItems(frame, Qt.MatchFlag.MatchExactly)[0]
+                frameItem = self.listWidget.findItems(frame, Qt.MatchFlag.MatchExactly)[
+                    0
+                ]
                 self.listWidget.setCurrentItem(frameItem)
             except:
                 pass
@@ -212,7 +218,9 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
                     self.treeWidget.invisibleRootItem().child(i)
                 )
                 treeItem.setText(1, delimiter)
-                treeItem.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
+                treeItem.setFlags(
+                    Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled
+                )
                 treeItem.setCheckState(1, Qt.CheckState.Checked)
             self.treeWidget.invisibleRootItem().child(i).setExpanded(True)
 

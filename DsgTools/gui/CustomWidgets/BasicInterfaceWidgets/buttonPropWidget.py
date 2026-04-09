@@ -69,7 +69,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         super(ButtonPropWidget, self).__init__(parent)
         self.setupUi(self)
         self.mMapLayerComboBox.setFilters(
-            QgsMapLayerProxyModel.Filter.HasGeometry | QgsMapLayerProxyModel.Filter.WritableLayer
+            QgsMapLayerProxyModel.Filter.HasGeometry
+            | QgsMapLayerProxyModel.Filter.WritableLayer
         )
         self.button = button or CustomFeatureButton()
         self.fillToolComboBox()
@@ -103,12 +104,18 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         title = title or self.tr("Confirm action")
         if showNo:
             return (
-                QMessageBox.question(self, title, msg, QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+                QMessageBox.question(
+                    self,
+                    title,
+                    msg,
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                )
                 == QMessageBox.StandardButton.Yes
             )
         else:
             return (
-                QMessageBox.question(self, title, msg, QMessageBox.StandardButton.Ok) == QMessageBox.StandardButton.Ok
+                QMessageBox.question(self, title, msg, QMessageBox.StandardButton.Ok)
+                == QMessageBox.StandardButton.Ok
             )
 
     def fillToolComboBox(self):
@@ -381,7 +388,9 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                     " model?"
                 ).format(value, field)
                 title = self.tr("DSGTools Custom Feature Tool Box")
-                MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
+                MessageRaiser().raiseIfaceMessage(
+                    title, msg, Qgis.MessageLevel.Warning, 5
+                )
                 value = None
             cb.setCurrentText(valueMaps[field][value])
 

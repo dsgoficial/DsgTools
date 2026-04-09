@@ -25,7 +25,8 @@ class Ui_MultiLayersCentroidsFlagDockWidget(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.flagsMapLayerComboBox = QgsMapLayerComboBox(self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -36,7 +37,9 @@ class Ui_MultiLayersCentroidsFlagDockWidget(object):
         self.flagsMapLayerComboBox.setMinimumSize(QtCore.QSize(160, 0))
         self.flagsMapLayerComboBox.setMaximumSize(QtCore.QSize(500, 16777215))
         self.flagsMapLayerComboBox.setObjectName("flagsMapLayerComboBox")
-        self.flagsMapLayerComboBox.setFilters(core.QgsMapLayerProxyModel.Filter.PolygonLayer)
+        self.flagsMapLayerComboBox.setFilters(
+            core.QgsMapLayerProxyModel.Filter.PolygonLayer
+        )
         self.horizontalLayout.addWidget(self.flagsMapLayerComboBox)
         self.refreshFlagsPushButton = QtWidgets.QPushButton(self.dockWidgetContents)
         self.refreshFlagsPushButton.setMinimumSize(QtCore.QSize(28, 24))

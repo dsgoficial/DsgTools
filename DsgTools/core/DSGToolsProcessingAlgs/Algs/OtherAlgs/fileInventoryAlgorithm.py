@@ -73,7 +73,7 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
         )
         self.searchTypes = [
             self.tr("Search only listed formats"),
-            self.tr("Exclude listed formats")
+            self.tr("Exclude listed formats"),
         ]
 
         self.addParameter(
@@ -84,7 +84,7 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=0,
             )
         )
-    
+
         self.addParameter(
             QgsProcessingParameterMatrix(
                 self.FILE_FORMATS,

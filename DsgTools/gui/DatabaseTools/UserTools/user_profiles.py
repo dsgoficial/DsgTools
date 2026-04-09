@@ -62,11 +62,15 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
         # Objects Connections
         self.widget.connectionChanged.connect(self.populateUsers)
 
-        self.installedProfiles.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.installedProfiles.setContextMenuPolicy(
+            Qt.ContextMenuPolicy.CustomContextMenu
+        )
         self.installedProfiles.customContextMenuRequested.connect(
             self.createMenuInstalled
         )
-        self.assignedProfiles.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.assignedProfiles.setContextMenuPolicy(
+            Qt.ContextMenuPolicy.CustomContextMenu
+        )
         self.assignedProfiles.customContextMenuRequested.connect(
             self.createMenuAssigned
         )

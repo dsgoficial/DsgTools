@@ -9460,7 +9460,7 @@ Obs.2: O valor default da suavização do &apos;simplify&apos; corresponde a uma
 </context>
 <context>
     <name>GeneralizeNetworkEdgesWithLengthAlgorithm</name>
-    
+
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeNetworkEdgesFromLengthAlgorithm.py" line="66"/>
         <source>Network layer</source>
@@ -19384,7 +19384,7 @@ Usuários com erro:</translation>
 </context>
 <context>
     <name>LineOnLineOverlayerAlgorithm</name>
-    
+
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnLineOverlayerAlgorithm.py" line="77"/>
         <source>Input line layer</source>

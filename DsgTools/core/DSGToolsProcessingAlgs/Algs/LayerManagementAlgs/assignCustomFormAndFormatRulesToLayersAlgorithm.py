@@ -201,7 +201,8 @@ class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
                 )
         expressionString += """ELSE ''\nEND"""
         lyr.addExpressionField(
-            expressionString, QgsField("attribute_error_description", QMetaType.Type.QString)
+            expressionString,
+            QgsField("attribute_error_description", QMetaType.Type.QString),
         )
 
     def cleanRules(self, inputLayerList):

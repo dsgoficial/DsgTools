@@ -282,25 +282,23 @@ class SpatialiteDb(AbstractDb):
                                             value,
                                         )
                                     elif (
-                                            (value == None)
-                                            and (not nullLine)
-                                            and (
-                                                inputAttrList[i]
-                                                not in list(
-                                                    domainDict[outputClass].keys()
-                                                )
-                                            )
-                                        ):
-                                            invalidated = self.utils.buildNestedDict(
-                                                invalidated,
-                                                [
-                                                    "nullAttribute",
-                                                    inputClass,
-                                                    id,
-                                                    inputAttrList[i],
-                                                ],
-                                                value,
-                                            )
+                                        (value == None)
+                                        and (not nullLine)
+                                        and (
+                                            inputAttrList[i]
+                                            not in list(domainDict[outputClass].keys())
+                                        )
+                                    ):
+                                        invalidated = self.utils.buildNestedDict(
+                                            invalidated,
+                                            [
+                                                "nullAttribute",
+                                                inputClass,
+                                                id,
+                                                inputAttrList[i],
+                                            ],
+                                            value,
+                                        )
                         if outputClass in list(domainDict.keys()):
                             if (
                                 inputAttrList[i]

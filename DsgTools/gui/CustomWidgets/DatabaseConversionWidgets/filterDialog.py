@@ -290,7 +290,9 @@ class FilterDialog(QDialog, FORM_CLASS):
         :param readOnly: (bool) whether widget will be read only mode.
         """
         widget.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, readOnly)
-        widget.setFocusPolicy(Qt.FocusPolicy.NoFocus if readOnly else Qt.FocusPolicy.StrongFocus)
+        widget.setFocusPolicy(
+            Qt.FocusPolicy.NoFocus if readOnly else Qt.FocusPolicy.StrongFocus
+        )
 
     def enableEdition(self, enabled):
         """

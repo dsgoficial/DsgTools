@@ -328,9 +328,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if otherRoadsFilterExpression == "":
             otherRoadsFilterExpression = None
 
-        onlyHilltops = self.parameterAsBool(
-            parameters, self.ONLY_HILLTOPS, context
-        )
+        onlyHilltops = self.parameterAsBool(parameters, self.ONLY_HILLTOPS, context)
 
         self.outputCrs = QgsCoordinateReferenceSystem("EPSG:4674")
 
@@ -1301,7 +1299,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             if len(layerList) == 1
             else self.algRunner.runMergeVectorLayers(layerList, context)
         )
-        self.algRunner.runCreateSpatialIndex(outputLyr, context, is_child_algorithm=True)
+        self.algRunner.runCreateSpatialIndex(
+            outputLyr, context, is_child_algorithm=True
+        )
         return outputLyr
 
     def addPointsToMemoryLayer(
@@ -1726,7 +1726,15 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
     def getMaxFeatures(
-        self, fields, npRaster, transform, distance, maskLyr, crs, context, feedback=None
+        self,
+        fields,
+        npRaster,
+        transform,
+        distance,
+        maskLyr,
+        crs,
+        context,
+        feedback=None,
     ):
         featSet = set()
         maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(npRaster)
@@ -1796,7 +1804,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         filteredPoints = self.filterFeaturesByDistanceAndExclusionLayer(
             candidatesPointLyr=candidatesPointLyr,
             exclusionLyr=maskLyr,
-            distance=10*distance,
+            distance=10 * distance,
             context=context,
             feedback=None,
         )
@@ -1880,7 +1888,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         filteredPoints = self.filterFeaturesByDistanceAndExclusionLayer(
             candidatesPointLyr=candidatesPointLyr,
             exclusionLyr=maskLyr,
-            distance=10*distance,
+            distance=10 * distance,
             context=context,
             feedback=None,
         )
@@ -1962,7 +1970,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         exclusionGeom = None
         for feat in filterFeatList:
             geom = feat.geometry()
-            buffer = geom.buffer(distance, 10, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1)
+            buffer = geom.buffer(
+                distance, 10, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1
+            )
             if exclusionGeom is not None and exclusionGeom.intersects(geom):
                 continue
             feat["cota_mais_alta"] = 1 if cotaMaisAlta else 2
@@ -2001,7 +2011,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
-            candidatesPointLyrWithId, context, feedback=multiStepFeedback, is_child_algorithm=True
+            candidatesPointLyrWithId,
+            context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         if multiStepFeedback is not None:
             currentStep += 1
@@ -2023,7 +2036,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(disjointLyr, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        self.algRunner.runCreateSpatialIndex(
+            disjointLyr, context, feedback=multiStepFeedback, is_child_algorithm=True
+        )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -2050,7 +2065,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 continue
             outputSet.add(feat)
             geom = feat.geometry()
-            buffer = geom.buffer(distance, 10, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1)
+            buffer = geom.buffer(
+                distance, 10, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1
+            )
             bbox = buffer.boundingBox()
             for candidateFeat in disjointLyr.getFeatures(bbox):
                 if multiStepFeedback is not None and multiStepFeedback.isCanceled():
@@ -2112,7 +2129,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         for feat in pointList:
             geom = feat.geometry()
             buffer = (
-                geom.buffer(distance, 10, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1)
+                geom.buffer(
+                    distance, 10, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1
+                )
                 if geom.type() == QgsWkbTypes.GeometryType.PointGeometry
                 else geom
             )
@@ -2339,7 +2358,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
             geom = hilltopFeat.geometry()
-            minusBuffer = geom.buffer(minusBufferLength, -1, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1)
+            minusBuffer = geom.buffer(
+                minusBufferLength, -1, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1
+            )
             if minusBuffer.isEmpty():
                 continue
             localHilltopLyr = layerHandler.createMemoryLayerWithFeature(
@@ -2453,8 +2474,11 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 break
             geom = hilltopFeat.geometry()
             minusBuffer = geom.buffer(
-                minusBufferLength, -1,
-                Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1,
+                minusBufferLength,
+                -1,
+                Qgis.EndCapStyle.Round,
+                Qgis.JoinStyle.Round,
+                -1,
             )
             if minusBuffer.isEmpty():
                 continue
@@ -2576,7 +2600,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        self.algRunner.runCreateSpatialIndex(planeGrid, context, is_child_algorithm=True)
+        self.algRunner.runCreateSpatialIndex(
+            planeGrid, context, is_child_algorithm=True
+        )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -2682,4 +2708,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         return "DSGTools - QA Tools: Terrain Processes"
 
     def shortHelpString(self):
-        return self.tr("This algorithm extracts elevation points from DEM. The output crs is always 4674.")
+        return self.tr(
+            "This algorithm extracts elevation points from DEM. The output crs is always 4674."
+        )

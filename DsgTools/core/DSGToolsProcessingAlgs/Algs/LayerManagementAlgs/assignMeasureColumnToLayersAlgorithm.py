@@ -99,9 +99,13 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
 
     def createMeasureColumn(self, layer):
         if layer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
-            layer.addExpressionField("$area", QgsField("area_otf", QMetaType.Type.Double))
+            layer.addExpressionField(
+                "$area", QgsField("area_otf", QMetaType.Type.Double)
+            )
         elif layer.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
-            layer.addExpressionField("$length", QgsField("length_otf", QMetaType.Type.Double))
+            layer.addExpressionField(
+                "$length", QgsField("length_otf", QMetaType.Type.Double)
+            )
         return layer
 
     def name(self):

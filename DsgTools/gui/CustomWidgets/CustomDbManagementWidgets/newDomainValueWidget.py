@@ -70,7 +70,8 @@ class NewDomainValueWidget(QtWidgets.QWidget, FORM_CLASS):
                 self.allDomainCheckBox.setCheckState(Qt.CheckState.Checked)
             else:
                 domainIdx = self.domainComboBox.findText(
-                    uiParameterJsonDict["domainComboBox"], flags=Qt.MatchFlag.MatchExactly
+                    uiParameterJsonDict["domainComboBox"],
+                    flags=Qt.MatchFlag.MatchExactly,
                 )
                 self.domainComboBox.setCurrentIndex(domainIdx)
             self.codeLineEdit.setText(uiParameterJsonDict["codeLineEdit"])

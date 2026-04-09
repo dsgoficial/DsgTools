@@ -184,7 +184,9 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
             QMessageBox.critical(
                 self.iface.mainWindow(), self.tr("Critical!"), ":".join(e.args)
             )
-            QgsMessageLog.logMessage(e.args[0], "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                e.args[0], "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
 
         self.complexCombo.addItems(complexClasses)
 
@@ -330,7 +332,9 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
                 self.tr("Critical"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
 
         # getting the layer the needs to be updated
         aggregated_layer = None
@@ -377,7 +381,9 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
                 self.tr("Critical"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
 
         # getting the layer the needs to be updated
         aggregated_layer = None
@@ -433,7 +439,9 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
             QMessageBox.critical(
                 self.iface.mainWindow(), self.tr("Critical!"), e.args[0]
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
 
     @pyqtSlot(bool)
     def on_disassociatePushButton_clicked(self):
@@ -487,7 +495,9 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
                 self.tr("Critical"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
 
         for name in list(associatedDict.keys()):
             for complex_uuid in list(associatedDict[name].keys()):

@@ -88,7 +88,8 @@ class ChangeFilterWidget(QtWidgets.QWidget, FORM_CLASS):
             if uiParameterJsonDict["allTablesCheckBox"]:
                 self.allTablesCheckBox.setCheckState(Qt.CheckState.Checked)
                 singleValueIdx = self.singleValueComboBox.findText(
-                    uiParameterJsonDict["singleValueComboBox"], flags=Qt.MatchFlag.MatchExactly
+                    uiParameterJsonDict["singleValueComboBox"],
+                    flags=Qt.MatchFlag.MatchExactly,
                 )
                 self.singleValueComboBox.setCurrentIndex(singleValueIdx)
                 self.actionComboBox.setCurrentIndex(
@@ -96,11 +97,13 @@ class ChangeFilterWidget(QtWidgets.QWidget, FORM_CLASS):
                 )
             else:
                 schemaIdx = self.schemaComboBox.findText(
-                    uiParameterJsonDict["schemaComboBox"], flags=Qt.MatchFlag.MatchExactly
+                    uiParameterJsonDict["schemaComboBox"],
+                    flags=Qt.MatchFlag.MatchExactly,
                 )
                 self.schemaComboBox.setCurrentIndex(schemaIdx)
                 tableIdx = self.tableComboBox.findText(
-                    uiParameterJsonDict["tableComboBox"], flags=Qt.MatchFlag.MatchExactly
+                    uiParameterJsonDict["tableComboBox"],
+                    flags=Qt.MatchFlag.MatchExactly,
                 )
                 self.tableComboBox.setCurrentIndex(tableIdx)
                 if uiParameterJsonDict["allAttributesCheckBox"]:
@@ -115,7 +118,8 @@ class ChangeFilterWidget(QtWidgets.QWidget, FORM_CLASS):
                     )
                 else:
                     attributeIdx = self.attributeComboBox.findText(
-                        uiParameterJsonDict["attributeComboBox"], flags=Qt.MatchFlag.MatchExactly
+                        uiParameterJsonDict["attributeComboBox"],
+                        flags=Qt.MatchFlag.MatchExactly,
                     )
                     self.attributeComboBox.setCurrentIndex(attributeIdx)
                     self.filterCustomSelectorWidget.selectItems(

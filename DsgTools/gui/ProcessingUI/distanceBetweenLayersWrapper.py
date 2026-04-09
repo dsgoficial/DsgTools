@@ -220,7 +220,9 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
                 "The following rows have not been loaded:\n{0}"
             ).format(msgString)
             msg.setDetailedText(formatedMsgString)
-            msg.setStandardButtons(QMessageBox.StandardButton.Ignore | QMessageBox.StandardButton.Cancel)
+            msg.setStandardButtons(
+                QMessageBox.StandardButton.Ignore | QMessageBox.StandardButton.Cancel
+            )
             msg.setDefaultButton(QMessageBox.StandardButton.Cancel)
         else:
             msg.setIcon(QMessageBox.Icon.Information)

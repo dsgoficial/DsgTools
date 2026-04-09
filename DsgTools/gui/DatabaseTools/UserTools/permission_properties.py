@@ -65,7 +65,9 @@ class PermissionProperties(QtWidgets.QDialog, FORM_CLASS):
         text: item text
         """
         item = QtWidgets.QTreeWidgetItem(parent)
-        item.setFlags(QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsTristate)
+        item.setFlags(
+            QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsTristate
+        )
         item.setCheckState(1, QtCore.Qt.CheckState.Unchecked)
         item.setCheckState(2, QtCore.Qt.CheckState.Unchecked)
         item.setText(0, text)

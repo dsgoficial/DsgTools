@@ -247,7 +247,8 @@ class AcquisitionFree(gui.QgsMapTool):
             rubberBand.reset()
         else:
             rubberBand = gui.QgsRubberBand(
-                self.getCanvas(), geometryType=core.QgsWkbTypes.GeometryType.PointGeometry
+                self.getCanvas(),
+                geometryType=core.QgsWkbTypes.GeometryType.PointGeometry,
             )
         rubberBand.setColor(QtGui.QColor(255, 0, 0, 200))
         rubberBand.setFillColor(QtGui.QColor(255, 0, 0, 40))
@@ -274,7 +275,9 @@ class AcquisitionFree(gui.QgsMapTool):
         # Parâmetro de entrada: event (Evento)
         snapRubberBand = self.getSnapRubberBand()
         if snapRubberBand:
-            snapRubberBand.reset(geometryType=core.QgsWkbTypes.GeometryType.PointGeometry)
+            snapRubberBand.reset(
+                geometryType=core.QgsWkbTypes.GeometryType.PointGeometry
+            )
             snapRubberBand.hide()
             self.setSnapRubberBand(None)
         layer = self.getCanvas().currentLayer()
@@ -315,7 +318,9 @@ class AcquisitionFree(gui.QgsMapTool):
             snapRubberBand = self.getSnapRubberBand()
             if snapRubberBand:
                 snapRubberBand.hide()
-                snapRubberBand.reset(geometryType=core.QgsWkbTypes.GeometryType.PointGeometry)
+                snapRubberBand.reset(
+                    geometryType=core.QgsWkbTypes.GeometryType.PointGeometry
+                )
                 self.setSnapRubberBand(None)
             oldPoint = event.mapPoint()
             event.snapPoint()
@@ -390,7 +395,9 @@ class AcquisitionFree(gui.QgsMapTool):
                 else rubberBand.asGeometry().asPolyline()
             )
             if self.isPolygon() and self.getRubberBand():
-                rubberBand.reset(geometryType=core.QgsWkbTypes.GeometryType.PolygonGeometry)
+                rubberBand.reset(
+                    geometryType=core.QgsWkbTypes.GeometryType.PolygonGeometry
+                )
                 firstPoint = self.getRubberBand().asGeometry().asPolygon()[0][0]
                 secondPoint = self.getRubberBand().asGeometry().asPolygon()[0][-2]
                 rubberBand.addPoint(secondPoint)

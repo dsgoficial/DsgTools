@@ -133,7 +133,9 @@ class LoadAuxStruct(QtWidgets.QDialog, FORM_CLASS):
             )
             factory.load(auxClasses, uniqueLoad=True, isEdgv=isEdgv)
         except Exception as e:
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
             self.bar.pushMessage(
                 self.tr("Error!"),
                 self.tr("Could not load auxiliary classes! Check log for details!"),

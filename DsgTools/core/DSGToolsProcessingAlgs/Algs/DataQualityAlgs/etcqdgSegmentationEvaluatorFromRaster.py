@@ -82,15 +82,15 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
         return self.tr(
             """
         Avalia segmentação comparando raster Ground Truth com inferências de múltiplos experimentos.
-        
+
         Diferente da versão vetorial, esta versão trabalha diretamente com raster de GT.
-        
+
         IMPORTANTE:
         - nodata = 255 (pixels ignorados)
         - classe 0 = Background (incluída nas métricas)
         - GT é a referência para resolução espacial e alinhamento
         - Rasters de comparação são reamostrados (vizinho mais próximo) se necessário
-        
+
         Processamento por MI:
         1. Agrupa tiles por MI
         2. Calcula extent combinado no CRS do MI (UTM)
@@ -99,19 +99,19 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
            - Clipa GT para o tile
            - Clipa e alinha predicted para o tile (usando GT como referência)
            - Calcula métricas: Accuracy, IoU, Precision, Recall, F1
-        
+
         Estrutura de saída:
         Para cada experimento:
         - {experimento}/ground_truth/{MI}/{MI}_{quadricula}.tif: GT clipado
         - {experimento}/predicted_tiles/{MI}/{MI}_{quadricula}.tif: Inferência clipada e alinhada
         - {experimento}/metrics/: CSVs com métricas
-        
+
         Consolidado (raiz):
         - consolidated_all_metrics.csv
         - per_class_metrics.csv
         - consolidated_tile_metrics.csv
         - consolidated_mi_metrics.csv
-        
+
         Parâmetros:
         - Quadrículas: ET-CQDG (campos: mi, quadricula, fuso_utm)
         - Raster Ground Truth: Raster com classes (valores inteiros)
@@ -148,7 +148,9 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterString(
                 self.CLASS_NAMES_JSON,
-                self.tr('Mapeamento de Classes (JSON opcional, ex: {"0": "Background", "1": "Edificacao"})'),
+                self.tr(
+                    'Mapeamento de Classes (JSON opcional, ex: {"0": "Background", "1": "Edificacao"})'
+                ),
                 optional=True,
                 defaultValue="",
             )
@@ -170,16 +172,24 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         # 1. Parâmetros
         tiles_source = self.parameterAsSource(parameters, self.INPUT_TILES, context)
-        gt_raster = self.parameterAsRasterLayer(parameters, self.INPUT_GT_RASTER, context)
-        segmentation_rasters = self.parameterAsLayerList(parameters, self.SEGMENTATION_RASTER, context)
-        class_names_json = self.parameterAsString(parameters, self.CLASS_NAMES_JSON, context)
+        gt_raster = self.parameterAsRasterLayer(
+            parameters, self.INPUT_GT_RASTER, context
+        )
+        segmentation_rasters = self.parameterAsLayerList(
+            parameters, self.SEGMENTATION_RASTER, context
+        )
+        class_names_json = self.parameterAsString(
+            parameters, self.CLASS_NAMES_JSON, context
+        )
         output_folder = self.parameterAsString(parameters, self.OUTPUT_FOLDER, context)
 
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
 
         # 2. Descobrir classes do GT
-        class_names = self._discoverClassesFromRaster(gt_raster, class_names_json, feedback)
+        class_names = self._discoverClassesFromRaster(
+            gt_raster, class_names_json, feedback
+        )
 
         # 3. Configurar Output Vector (Sink)
         output_fields = self._createOutputFields(tiles_source.fields(), class_names)
@@ -208,11 +218,17 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
 
         for exp_idx, segmentation_raster in enumerate(segmentation_rasters):
             multiStepFeedback.setCurrentStep(exp_idx)
-            experiment_name = os.path.splitext(os.path.basename(segmentation_raster.source()))[0]
+            experiment_name = os.path.splitext(
+                os.path.basename(segmentation_raster.source())
+            )[0]
 
             feedback.pushInfo(f"\n{'=' * 80}")
-            multiStepFeedback.setProgressText(f"Processando experimento {exp_idx + 1}/{num_experiments}: {experiment_name}")
-            feedback.pushInfo(f"Processando experimento {exp_idx + 1}/{num_experiments}: {experiment_name}")
+            multiStepFeedback.setProgressText(
+                f"Processando experimento {exp_idx + 1}/{num_experiments}: {experiment_name}"
+            )
+            feedback.pushInfo(
+                f"Processando experimento {exp_idx + 1}/{num_experiments}: {experiment_name}"
+            )
             feedback.pushInfo(f"{'=' * 80}\n")
 
             # Criar pasta do experimento
@@ -221,7 +237,12 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             predicted_folder = os.path.join(experiment_folder, "predicted_tiles")
             metrics_folder = os.path.join(experiment_folder, "metrics")
 
-            for folder in [experiment_folder, ground_truth_folder, predicted_folder, metrics_folder]:
+            for folder in [
+                experiment_folder,
+                ground_truth_folder,
+                predicted_folder,
+                metrics_folder,
+            ]:
                 os.makedirs(folder, exist_ok=True)
 
             # Processar este experimento
@@ -261,25 +282,26 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
     def _discoverClassesFromRaster(self, gt_raster, class_names_json, feedback):
         """Descobre classes únicas do GT e monta dicionário de nomes"""
         import json
-        
+
         feedback.pushInfo("Descobrindo classes do raster GT...")
-        
+
         # Ler amostra do raster para descobrir classes
         try:
             import rasterio
+
             with rasterio.open(gt_raster.source()) as src:
                 # Ler amostra (primeira janela 1000x1000 ou todo o raster se menor)
                 window_size = min(1000, src.width, src.height)
                 sample = src.read(1, window=(0, 0, window_size, window_size))
-                
+
                 # Encontrar valores únicos (excluindo nodata)
                 unique_values = np.unique(sample[sample != 255])
-                
+
         except Exception as e:
             feedback.reportError(f"Erro ao ler raster GT: {e}")
             # Fallback: assumir classes 0-10
             unique_values = np.arange(11)
-        
+
         # Parsear JSON de nomes se fornecido
         user_class_names = {}
         if class_names_json:
@@ -289,7 +311,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                 user_class_names = {int(k): v for k, v in user_class_names.items()}
             except Exception as e:
                 feedback.reportError(f"Erro ao parsear JSON de classes: {e}")
-        
+
         # Montar dicionário final
         class_names = {}
         for val in unique_values:
@@ -298,10 +320,10 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                 class_names[val_int] = user_class_names[val_int]
             else:
                 class_names[val_int] = f"Classe_{val_int}"
-        
+
         if 0 not in class_names:
             class_names[0] = "Background"
-        
+
         feedback.pushInfo(f"Classes descobertas: {class_names}")
         return class_names
 
@@ -372,7 +394,9 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
         global_counts = {}
         global_total_pixels = 0
         global_correct_pixels = 0
-        mi_accumulators = defaultdict(lambda: {"counts": {}, "total_pixels": 0, "correct_pixels": 0})
+        mi_accumulators = defaultdict(
+            lambda: {"counts": {}, "total_pixels": 0, "correct_pixels": 0}
+        )
         metrics_by_tile = []
 
         algRunner = AlgRunner()
@@ -404,12 +428,16 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                 fuso_utm = tile_features[0]["fuso_utm"]
                 utm_crs = QgsCoordinateReferenceSystem(fuso_utm)
                 if not utm_crs.isValid():
-                    multiStepFeedback.reportError(f"Fuso UTM inválido: {fuso_utm}. Pulando MI {mi}.")
+                    multiStepFeedback.reportError(
+                        f"Fuso UTM inválido: {fuso_utm}. Pulando MI {mi}."
+                    )
                     current_step_index += 1 + len(tile_features)
                     continue
 
                 # Calcular extent combinado dos tiles no CRS do MI
-                mi_extent_utm = self._calculateMIExtent(tile_features, tiles_crs, utm_crs, feedback)
+                mi_extent_utm = self._calculateMIExtent(
+                    tile_features, tiles_crs, utm_crs, feedback
+                )
 
                 # Preparar GT para este MI (clipar e reprojetar)
                 gt_mi_path = os.path.join(mi_gt_folder, f"gt_{mi}_full.tif")
@@ -450,7 +478,9 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                     tile_id = f"{mi}_{quadricula}"
 
                     # Obter geometria do tile no CRS UTM
-                    tile_geom_utm = self._getTileGeometryInUTM(tile_feat, tiles_crs, utm_crs)
+                    tile_geom_utm = self._getTileGeometryInUTM(
+                        tile_feat, tiles_crs, utm_crs
+                    )
                     tile_bbox_utm = tile_geom_utm.boundingBox()
 
                     task_data = {
@@ -460,7 +490,9 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                         "pred_raster_path": pred_mi_path,
                         "tile_bbox": tile_bbox_utm,
                         "gt_tile_path": os.path.join(mi_gt_folder, f"{tile_id}.tif"),
-                        "pred_tile_path": os.path.join(mi_pred_folder, f"{tile_id}.tif"),
+                        "pred_tile_path": os.path.join(
+                            mi_pred_folder, f"{tile_id}.tif"
+                        ),
                         "nodata": 255,
                         "class_names": class_names,
                     }
@@ -483,11 +515,15 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                     result = future.result()
                     if result["status"] == "success":
                         m = result["metrics"]
-                        raw = m.get("raw_counts", {})  # Usar get ao invés de pop para preservar
+                        raw = m.get(
+                            "raw_counts", {}
+                        )  # Usar get ao invés de pop para preservar
                         self._updateCounts(global_counts, raw)
                         self._updateCounts(mi_accumulators[result["mi"]]["counts"], raw)
 
-                        t_px, c_px = m.get("total_pixels", 0), m.get("correct_pixels", 0)
+                        t_px, c_px = m.get("total_pixels", 0), m.get(
+                            "correct_pixels", 0
+                        )
                         global_total_pixels += t_px
                         global_correct_pixels += c_px
                         mi_accumulators[result["mi"]]["total_pixels"] += t_px
@@ -524,7 +560,9 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                             featsToAdd.append(new_feat)
 
                     else:
-                        multiStepFeedback.reportError(f"Erro no worker {tile_id}: {result.get('error')}")
+                        multiStepFeedback.reportError(
+                            f"Erro no worker {tile_id}: {result.get('error')}"
+                        )
 
                 except Exception as exc:
                     multiStepFeedback.reportError(f"Exceção {tile_id}: {exc}")
@@ -538,46 +576,71 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             global_counts, global_correct_pixels, global_total_pixels, class_names
         )
         global_metrics["experiment_name"] = experiment_name
-        global_metrics.update({"num_tiles": processed_count, "num_mis": len(mi_accumulators)})
+        global_metrics.update(
+            {"num_tiles": processed_count, "num_mis": len(mi_accumulators)}
+        )
 
         multiStepFeedback.pushInfo("\n" + "=" * 80)
-        multiStepFeedback.pushInfo(f"RESUMO {experiment_name} ({processed_count} tiles)")
+        multiStepFeedback.pushInfo(
+            f"RESUMO {experiment_name} ({processed_count} tiles)"
+        )
         multiStepFeedback.pushInfo("-" * 80)
-        multiStepFeedback.pushInfo(f"Acurácia Global:   {global_metrics.get('accuracy', 0):.2%}")
-        multiStepFeedback.pushInfo(f"Mean IoU:          {global_metrics.get('mean_iou', 0):.4f}")
-        multiStepFeedback.pushInfo(f"Mean F1-Score:     {global_metrics.get('f1_score', 0):.4f}")
+        multiStepFeedback.pushInfo(
+            f"Acurácia Global:   {global_metrics.get('accuracy', 0):.2%}"
+        )
+        multiStepFeedback.pushInfo(
+            f"Mean IoU:          {global_metrics.get('mean_iou', 0):.4f}"
+        )
+        multiStepFeedback.pushInfo(
+            f"Mean F1-Score:     {global_metrics.get('f1_score', 0):.4f}"
+        )
         multiStepFeedback.pushInfo("=" * 80 + "\n")
 
         # Export CSVs por experimento
-        self._write_csv_safe(os.path.join(metrics_folder, "metrics_per_tile.csv"), metrics_by_tile)
+        self._write_csv_safe(
+            os.path.join(metrics_folder, "metrics_per_tile.csv"), metrics_by_tile
+        )
 
         mi_list = []
         for mi, data in mi_accumulators.items():
-            mm = self._calculateFinalMetricsFromCounts(data["counts"], data["correct_pixels"], data["total_pixels"], class_names)
+            mm = self._calculateFinalMetricsFromCounts(
+                data["counts"],
+                data["correct_pixels"],
+                data["total_pixels"],
+                class_names,
+            )
             mm["experiment"] = experiment_name
             mm["mi"] = mi
             mi_list.append(mm)
 
-        self._write_csv_safe(os.path.join(metrics_folder, "metrics_per_mi.csv"), mi_list)
-        self._write_csv_safe(os.path.join(metrics_folder, "metrics_overall.csv"), [global_metrics])
+        self._write_csv_safe(
+            os.path.join(metrics_folder, "metrics_per_mi.csv"), mi_list
+        )
+        self._write_csv_safe(
+            os.path.join(metrics_folder, "metrics_overall.csv"), [global_metrics]
+        )
 
-        return {"tile_metrics": metrics_by_tile, "mi_metrics": mi_list, "overall_metrics": global_metrics}, featsToAdd
+        return {
+            "tile_metrics": metrics_by_tile,
+            "mi_metrics": mi_list,
+            "overall_metrics": global_metrics,
+        }, featsToAdd
 
     def _calculateMIExtent(self, tile_features, tiles_crs, utm_crs, feedback):
         """Calcula o extent combinado dos tiles no CRS do MI"""
         xform = QgsCoordinateTransform(tiles_crs, utm_crs, QgsProject.instance())
-        
+
         combined_extent = None
         for tile_feat in tile_features:
             geom = tile_feat.geometry()
             geom.transform(xform)
             bbox = geom.boundingBox()
-            
+
             if combined_extent is None:
                 combined_extent = bbox
             else:
                 combined_extent.combineExtentWith(bbox)
-        
+
         # Buffer de segurança
         buffer = max(combined_extent.width(), combined_extent.height()) * 0.1
         combined_extent = QgsRectangle(
@@ -586,17 +649,26 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             combined_extent.xMaximum() + buffer,
             combined_extent.yMaximum() + buffer,
         )
-        
+
         return combined_extent
 
-    def _prepareGTForMI(self, gt_raster, mi_extent_utm, utm_crs, output_path, algRunner, context, feedback):
+    def _prepareGTForMI(
+        self,
+        gt_raster,
+        mi_extent_utm,
+        utm_crs,
+        output_path,
+        algRunner,
+        context,
+        feedback,
+    ):
         """Clipa e reprojeta GT para o extent do MI"""
         gt_crs = gt_raster.crs()
-        
+
         # Transformar extent para CRS do GT
         xform = QgsCoordinateTransform(utm_crs, gt_crs, QgsProject.instance())
         gt_extent = xform.transformBoundingBox(mi_extent_utm)
-        
+
         # Clipar
         clipped_gt = algRunner.runRasterClipByExtent(
             inputRaster=gt_raster,
@@ -605,7 +677,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             context=context,
             feedback=feedback,
         )
-        
+
         # Reprojetar para UTM do MI
         if gt_crs != utm_crs:
             reprojected_gt = algRunner.runGdalWarp(
@@ -624,17 +696,31 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                 outputRaster=output_path,
                 feedback=feedback,
             )
-        
-        return reprojected_gt if isinstance(reprojected_gt, str) else reprojected_gt.source()
 
-    def _preparePredictedForMI(self, predicted_raster, gt_raster_path, mi_extent_utm, utm_crs, output_path, algRunner, context, feedback):
+        return (
+            reprojected_gt
+            if isinstance(reprojected_gt, str)
+            else reprojected_gt.source()
+        )
+
+    def _preparePredictedForMI(
+        self,
+        predicted_raster,
+        gt_raster_path,
+        mi_extent_utm,
+        utm_crs,
+        output_path,
+        algRunner,
+        context,
+        feedback,
+    ):
         """Clipa e reprojeta Predicted para o extent do MI, alinhando com GT"""
         pred_crs = predicted_raster.crs()
-        
+
         # Transformar extent para CRS do predicted
         xform = QgsCoordinateTransform(utm_crs, pred_crs, QgsProject.instance())
         pred_extent = xform.transformBoundingBox(mi_extent_utm)
-        
+
         # Clipar
         clipped_pred = algRunner.runRasterClipByExtent(
             inputRaster=predicted_raster,
@@ -643,18 +729,18 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             context=context,
             feedback=feedback,
         )
-        
+
         # Reprojetar e alinhar ao GT usando gdal.Warp
         # O GT é a referência: mesma resolução, mesmo grid
         try:
             import rasterio
-            
+
             # Ler parâmetros do GT
             with rasterio.open(gt_raster_path) as gt_src:
                 gt_res_x, gt_res_y = gt_src.res
                 gt_bounds = gt_src.bounds
                 gt_width, gt_height = gt_src.width, gt_src.height
-            
+
             # Warp predicted alinhado ao GT
             reprojected_pred = algRunner.runGdalWarp(
                 rasterLayer=clipped_pred,
@@ -662,13 +748,20 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                 context=context,
                 resampling=0,  # Nearest neighbor
                 targetResolution=gt_res_x,  # Usar resolução do GT
-                targetExtent=[gt_bounds.left, gt_bounds.bottom, gt_bounds.right, gt_bounds.top],
+                targetExtent=[
+                    gt_bounds.left,
+                    gt_bounds.bottom,
+                    gt_bounds.right,
+                    gt_bounds.top,
+                ],
                 feedback=feedback,
                 outputLyr=output_path,
             )
-            
+
         except ImportError:
-            feedback.reportError("rasterio não disponível, alinhamento pode não ser perfeito")
+            feedback.reportError(
+                "rasterio não disponível, alinhamento pode não ser perfeito"
+            )
             # Fallback sem alinhamento garantido
             reprojected_pred = algRunner.runGdalWarp(
                 rasterLayer=clipped_pred,
@@ -678,8 +771,12 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                 feedback=feedback,
                 outputLyr=output_path,
             )
-        
-        return reprojected_pred if isinstance(reprojected_pred, str) else reprojected_pred.source()
+
+        return (
+            reprojected_pred
+            if isinstance(reprojected_pred, str)
+            else reprojected_pred.source()
+        )
 
     def _getTileGeometryInUTM(self, tile_feat, tiles_crs, utm_crs):
         """Transforma geometria do tile para CRS UTM"""
@@ -688,7 +785,20 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
         geom.transform(xform)
         return geom
 
-    def _createOutputFeature(self, cached, output_fields, output_fields_names, experiment_name, result, m, t_px, c_px, sorted_classes, class_names, raw_counts):
+    def _createOutputFeature(
+        self,
+        cached,
+        output_fields,
+        output_fields_names,
+        experiment_name,
+        result,
+        m,
+        t_px,
+        c_px,
+        sorted_classes,
+        class_names,
+        raw_counts,
+    ):
         """Cria feature de saída com métricas"""
         new_feat = QgsFeature(output_fields)
         new_feat.setGeometry(cached.geometry())
@@ -715,9 +825,11 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             dest_prefix = f"cl_{cid}_{cname.replace(' ', '_')}"[:20]
             new_feat.setAttribute(f"{dest_prefix}_iou", m.get(f"{src_prefix}_iou"))
             new_feat.setAttribute(f"{dest_prefix}_f1", m.get(f"{src_prefix}_f1_score"))
-            new_feat.setAttribute(f"{dest_prefix}_prec", m.get(f"{src_prefix}_precision"))
+            new_feat.setAttribute(
+                f"{dest_prefix}_prec", m.get(f"{src_prefix}_precision")
+            )
             new_feat.setAttribute(f"{dest_prefix}_rec", m.get(f"{src_prefix}_recall"))
-            
+
             # Adicionar valores de TP, FP, FN para matriz de confusão
             if cid in raw_counts:
                 new_feat.setAttribute(f"{dest_prefix}_tp", raw_counts[cid]["tp"])
@@ -791,13 +903,22 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             "num_tiles",
             "num_mis",
         ]
-        header = [k for k in priority if k in all_keys] + sorted([k for k in all_keys if k not in priority])
+        header = [k for k in priority if k in all_keys] + sorted(
+            [k for k in all_keys if k not in priority]
+        )
         with open(path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=header, extrasaction="ignore")
             writer.writeheader()
             writer.writerows(data_list)
 
-    def _writeConsolidatedMetrics(self, output_folder, tile_metrics, mi_metrics_list, overall_metrics_list, class_names):
+    def _writeConsolidatedMetrics(
+        self,
+        output_folder,
+        tile_metrics,
+        mi_metrics_list,
+        overall_metrics_list,
+        class_names,
+    ):
         """Escreve CSVs consolidados no formato esperado"""
 
         # consolidated_all_metrics.csv (overall de todos experimentos)
@@ -825,7 +946,10 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
 
             consolidated_overall.append(row)
 
-        self._write_csv_safe(os.path.join(output_folder, "consolidated_all_metrics.csv"), consolidated_overall)
+        self._write_csv_safe(
+            os.path.join(output_folder, "consolidated_all_metrics.csv"),
+            consolidated_overall,
+        )
 
         # per_class_metrics.csv
         per_class_consolidated = []
@@ -846,13 +970,19 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                 }
                 per_class_consolidated.append(row)
 
-        self._write_csv_safe(os.path.join(output_folder, "per_class_metrics.csv"), per_class_consolidated)
+        self._write_csv_safe(
+            os.path.join(output_folder, "per_class_metrics.csv"), per_class_consolidated
+        )
 
         # Tile metrics consolidados
-        self._write_csv_safe(os.path.join(output_folder, "consolidated_tile_metrics.csv"), tile_metrics)
+        self._write_csv_safe(
+            os.path.join(output_folder, "consolidated_tile_metrics.csv"), tile_metrics
+        )
 
         # MI metrics consolidados
-        self._write_csv_safe(os.path.join(output_folder, "consolidated_mi_metrics.csv"), mi_metrics_list)
+        self._write_csv_safe(
+            os.path.join(output_folder, "consolidated_mi_metrics.csv"), mi_metrics_list
+        )
 
 
 def process_tile_worker_raster(data):
@@ -860,7 +990,9 @@ def process_tile_worker_raster(data):
     try:
         import rasterio
         from rasterio.warp import reproject, Resampling
-        from DsgTools.core.GeometricTools.rasterHandler import calculateSegmentationMetricsFromArrays
+        from DsgTools.core.GeometricTools.rasterHandler import (
+            calculateSegmentationMetricsFromArrays,
+        )
 
         gt_raster_path = data["gt_raster_path"]
         pred_raster_path = data["pred_raster_path"]
@@ -917,12 +1049,16 @@ def process_tile_worker_raster(data):
                 or pred_src.res != gt_src.res
             ):
                 # Reamostrar predicted para alinhar com GT
-                pred_tile_array = np.empty_like(gt_tile_array, dtype=pred_tile_array_raw.dtype)
+                pred_tile_array = np.empty_like(
+                    gt_tile_array, dtype=pred_tile_array_raw.dtype
+                )
 
                 reproject(
                     source=pred_tile_array_raw,
                     destination=pred_tile_array,
-                    src_transform=rasterio.windows.transform(window_pred, pred_src.transform),
+                    src_transform=rasterio.windows.transform(
+                        window_pred, pred_src.transform
+                    ),
                     src_crs=pred_src.crs,
                     dst_transform=gt_transform,
                     dst_crs=gt_src.crs,
@@ -954,6 +1090,7 @@ def process_tile_worker_raster(data):
 
     except Exception as e:
         import traceback
+
         return {
             "status": "error",
             "mi": data["mi"],

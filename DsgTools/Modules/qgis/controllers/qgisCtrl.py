@@ -125,7 +125,9 @@ class QgisCtrl:
             "Mão Livre": "FreeHand",
         }
 
-    def addDockWidget(self, dockWidget, side=QtCore.Qt.DockWidgetArea.LeftDockWidgetArea):
+    def addDockWidget(
+        self, dockWidget, side=QtCore.Qt.DockWidgetArea.LeftDockWidgetArea
+    ):
         iface.addDockWidget(side, dockWidget)
 
     def removeDockWidget(self, dockWidget):
@@ -261,8 +263,12 @@ class QgisCtrl:
 
     def cutAndPasteSelectedFeatures(self, layer, destinatonLayer, attributes):
         geometryFilterDict = {
-            QgsWkbTypes.GeometryType.PointGeometry: (QgsWkbTypes.GeometryType.PointGeometry,),
-            QgsWkbTypes.GeometryType.LineGeometry: (QgsWkbTypes.GeometryType.LineGeometry,),
+            QgsWkbTypes.GeometryType.PointGeometry: (
+                QgsWkbTypes.GeometryType.PointGeometry,
+            ),
+            QgsWkbTypes.GeometryType.LineGeometry: (
+                QgsWkbTypes.GeometryType.LineGeometry,
+            ),
             QgsWkbTypes.GeometryType.PolygonGeometry: (
                 QgsWkbTypes.GeometryType.PointGeometry,
                 QgsWkbTypes.GeometryType.PolygonGeometry,
@@ -282,8 +288,10 @@ class QgisCtrl:
             newFeat.setFields(destinatonLayer.fields())
             newGeom = (
                 feature.geometry().pointOnSurface()
-                if destinatonLayer.geometryType() == core.QgsWkbTypes.GeometryType.PointGeometry
-                and layer.geometryType() == core.QgsWkbTypes.GeometryType.PolygonGeometry
+                if destinatonLayer.geometryType()
+                == core.QgsWkbTypes.GeometryType.PointGeometry
+                and layer.geometryType()
+                == core.QgsWkbTypes.GeometryType.PolygonGeometry
                 else feature.geometry()
             )
             newFeat.setGeometry(newGeom)

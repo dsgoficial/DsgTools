@@ -356,7 +356,9 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
             validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "500k":
-            regex = QtCore.QRegularExpression("[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}")
+            regex = QtCore.QRegularExpression(
+                "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}"
+            )
             validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "250k":

@@ -785,9 +785,13 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :param row: (int) index for the row to be added to selection.
         """
         if row not in self.selectedRows():
-            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+            self.tableWidget.setSelectionMode(
+                QAbstractItemView.SelectionMode.MultiSelection
+            )
             self.tableWidget.selectRow(row)
-            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+            self.tableWidget.setSelectionMode(
+                QAbstractItemView.SelectionMode.ExtendedSelection
+            )
 
     def removeRowFromSelection(self, row):
         """
@@ -795,9 +799,13 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :param row: (int) index for the row to be removed from selection.
         """
         if row in self.selectedRows():
-            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+            self.tableWidget.setSelectionMode(
+                QAbstractItemView.SelectionMode.MultiSelection
+            )
             self.tableWidget.selectRow(row)
-            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+            self.tableWidget.setSelectionMode(
+                QAbstractItemView.SelectionMode.ExtendedSelection
+            )
 
     def clearRowSelection(self):
         """
@@ -972,7 +980,9 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         msg = self.tr('Setup "{0}" imported from "{1}"').format(
             self.setup.name(), filename
         )
-        self.raiseWarning(msg, title=self.tr("Imported workflow"), lvl=Qgis.MessageLevel.Success)
+        self.raiseWarning(
+            msg, title=self.tr("Imported workflow"), lvl=Qgis.MessageLevel.Success
+        )
 
     @pyqtSlot(bool, name="on_exportPushButton_clicked")
     def exportSetup(self):
@@ -999,5 +1009,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         res = os.path.exists(filename)
         if res:
             msg = self.tr('Setup "{0}" exported to "{1}"').format(s.name(), filename)
-            self.raiseWarning(msg, title=self.tr("Exported workflow"), lvl=Qgis.MessageLevel.Success)
+            self.raiseWarning(
+                msg, title=self.tr("Exported workflow"), lvl=Qgis.MessageLevel.Success
+            )
         return res

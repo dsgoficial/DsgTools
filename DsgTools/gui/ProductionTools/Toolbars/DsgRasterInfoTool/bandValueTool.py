@@ -98,7 +98,9 @@ class BandValueTool(QgsMapTool):
         self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvasCrs)
         mousePos = mousePosGeom.asPoint()
         # identify pixel(s) information
-        i = rasterLayer.dataProvider().identify(mousePos, QgsRaster.IdentifyFormat.IdentifyFormatValue)
+        i = rasterLayer.dataProvider().identify(
+            mousePos, QgsRaster.IdentifyFormat.IdentifyFormatValue
+        )
         if i.isValid():
             text = ", ".join(
                 ["{0:g}".format(r) for r in list(i.results().values()) if r is not None]

@@ -23,7 +23,9 @@
 
 from functools import partial
 from typing import Tuple
-from DsgTools.gui.ProductionTools.MapTools.GenericSelectionTool.genericSelectionTool import AbstractSelectionTool
+from DsgTools.gui.ProductionTools.MapTools.GenericSelectionTool.genericSelectionTool import (
+    AbstractSelectionTool,
+)
 
 from qgis.core import (
     QgsVectorLayer,
@@ -35,49 +37,49 @@ from qgis.core import (
     QgsProject,
     QgsCoordinateTransform,
 )
-from qgis.gui import (
-    QgisInterface, 
-    QgsMapMouseEvent
-)
+from qgis.gui import QgisInterface, QgsMapMouseEvent
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtGui import QPixmap, QPainter, QPen, QCursor
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QMenu, QApplication
 
+
 class TrimExtendTool(AbstractSelectionTool):
     TRIM, EXTEND = range(2)
+
     def __init__(self, iface: QgisInterface):
         self.iface = iface
         self.toolAction = None
         self.canvas = self.iface.mapCanvas()
         super(TrimExtendTool, self).__init__(self.iface)
         self.setCursor(self.createColoredCursor(Qt.GlobalColor.yellow, 32))
-    
+
     def createColoredCursor(self, color, size=16):
         """Create a colored crosshair cursor"""
         pixmap = QPixmap(size, size)
         pixmap.fill(Qt.GlobalColor.transparent)
-        
+
         painter = QPainter(pixmap)
         pen = QPen(color, 2)
         painter.setPen(pen)
-        
+
         # Draw crosshair
         center = size // 2
         painter.drawLine(center, 2, center, size - 2)
         painter.drawLine(2, center, size - 2, center)
-        
+
         painter.end()
-        
+
         return QCursor(pixmap, center, center)
 
-    def addTool(self,
-            manager,
-            callback,
-            parentMenu,
-            iconBasePath,
-            parentButton=None,
-            defaultButton=False,
+    def addTool(
+        self,
+        manager,
+        callback,
+        parentMenu,
+        iconBasePath,
+        parentButton=None,
+        defaultButton=False,
     ):
         self.parentButton = parentButton
         icon_path = iconBasePath + "/trim_extend_icon.png"
@@ -97,11 +99,11 @@ class TrimExtendTool(AbstractSelectionTool):
         self.setAction(action)
         if defaultButton:
             self.parentButton.setDefaultAction(action)
-    
+
     def setAction(self, action) -> None:
         self.toolAction = action
 
-    def setToolEnabled(self, layer: QgsVectorLayer=None) -> bool:
+    def setToolEnabled(self, layer: QgsVectorLayer = None) -> bool:
         """
         Checks if it is possible to use tool given layer editing conditions and type.
         :param layer: (QgsVectorLayer) layer that may have its lines closed.
@@ -122,45 +124,46 @@ class TrimExtendTool(AbstractSelectionTool):
         return enabled
 
     def getNearestVertexOnSelectedObject(
-            self, 
-            referenceFeat: QgsVectorLayer, 
-            destinationFeature: QgsFeature
+        self, referenceFeat: QgsVectorLayer, destinationFeature: QgsFeature
     ) -> Tuple[QgsPointXY, int]:
         destinationGeom = destinationFeature.geometry()
         verticesreferenceFeatList = list(referenceFeat.geometry().vertices())
-        firstVertex, lastVertex = verticesreferenceFeatList[0], verticesreferenceFeatList[-1]
+        firstVertex, lastVertex = (
+            verticesreferenceFeatList[0],
+            verticesreferenceFeatList[-1],
+        )
         if firstVertex == lastVertex:
             QMessageBox.warning(
                 self.iface.mainWindow(),
                 self.tr("Warning!"),
-                self.tr(
-                    "The referenceFeat is closed, it must be open."
-                ),
+                self.tr("The referenceFeat is closed, it must be open."),
             )
             return
-        distanceFirstVertexdestinationFeat = QgsGeometry.fromPointXY(QgsPointXY(firstVertex)).distance(destinationGeom)
-        distanceLastVertexdestinationFeat = QgsGeometry.fromPointXY(QgsPointXY(lastVertex)).distance(destinationGeom)
+        distanceFirstVertexdestinationFeat = QgsGeometry.fromPointXY(
+            QgsPointXY(firstVertex)
+        ).distance(destinationGeom)
+        distanceLastVertexdestinationFeat = QgsGeometry.fromPointXY(
+            QgsPointXY(lastVertex)
+        ).distance(destinationGeom)
         if distanceFirstVertexdestinationFeat < distanceLastVertexdestinationFeat:
             return firstVertex, 0
         return lastVertex, -1
-    
+
     def crsProjectToLayer(self) -> QgsCoordinateTransform:
         projectCrs = QgsProject.instance().crs()
         lyrCrs = self.iface.activeLayer().crs()
         if projectCrs == lyrCrs:
             return None
         coordinateTransform = QgsCoordinateTransform(
-            projectCrs,
-            lyrCrs,
-            QgsProject.instance()
+            projectCrs, lyrCrs, QgsProject.instance()
         )
         return coordinateTransform
 
     def getClosestVertexInDestination(
-            self, 
-            referenceFeat: QgsFeature, 
-            destinationFeat: QgsFeature, 
-            clickEvent: QgsMapMouseEvent,
+        self,
+        referenceFeat: QgsFeature,
+        destinationFeat: QgsFeature,
+        clickEvent: QgsMapMouseEvent,
     ) -> Tuple[QgsGeometry, int]:
         # TODO: tratar caso de destino polígono]
         clickPoint = self.canvas.getCoordinateTransform().toMapCoordinates(
@@ -176,11 +179,22 @@ class TrimExtendTool(AbstractSelectionTool):
             rect.transform(coordinateTransform)
         referenceGeom = referenceFeat.geometry()
         destinationGeom = destinationFeat.geometry()
-        closestVertexToReferenceGeom, firstOrLasterVertexInreferenceFeat = self.getNearestVertexOnSelectedObject(referenceFeat, destinationFeat)
-        boundary = QgsGeometry(destinationGeom.constGet().boundary()) if destinationGeom.type() == QgsWkbTypes.GeometryType.PolygonGeometry else destinationGeom
-        pointInDestinationFeat = boundary.nearestPoint(clickPoint) if trimOrExtend == self.EXTEND else referenceGeom.intersection(boundary)
+        (
+            closestVertexToReferenceGeom,
+            firstOrLasterVertexInreferenceFeat,
+        ) = self.getNearestVertexOnSelectedObject(referenceFeat, destinationFeat)
+        boundary = (
+            QgsGeometry(destinationGeom.constGet().boundary())
+            if destinationGeom.type() == QgsWkbTypes.GeometryType.PolygonGeometry
+            else destinationGeom
+        )
+        pointInDestinationFeat = (
+            boundary.nearestPoint(clickPoint)
+            if trimOrExtend == self.EXTEND
+            else referenceGeom.intersection(boundary)
+        )
         return pointInDestinationFeat, firstOrLasterVertexInreferenceFeat, rect
-    
+
     def addVertexOnDestinationFeature(
         self,
         referenceFeat: QgsFeature,
@@ -189,25 +203,45 @@ class TrimExtendTool(AbstractSelectionTool):
         clickEvent: QgsMapMouseEvent,
     ) -> Tuple[QgsPointXY, int]:
         trimOrExtend = self.getMode(referenceFeat, destinationFeat)
-        destinationPointGeom, firstOrLasterVertexInreferenceFeat, rect = self.getClosestVertexInDestination(referenceFeat, destinationFeat, clickEvent)
+        (
+            destinationPointGeom,
+            firstOrLasterVertexInreferenceFeat,
+            rect,
+        ) = self.getClosestVertexInDestination(
+            referenceFeat, destinationFeat, clickEvent
+        )
         destinationGeom = destinationFeat.geometry()
         if trimOrExtend == self.TRIM:
             destinationPointGeom = destinationGeom.nearestPoint(destinationPointGeom)
         destinationPointXY = destinationPointGeom.asPoint()
-        _, _, positionInsertPoint, __ = destinationGeom.closestSegmentWithContext(destinationPointXY)
-        closestVertexOnDestinationGeom = QgsGeometry(destinationGeom.vertexAt(positionInsertPoint))
-        if trimOrExtend == self.TRIM and closestVertexOnDestinationGeom.asPoint() != destinationPointXY:
-            destinationGeom.insertVertex(destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint)
+        _, _, positionInsertPoint, __ = destinationGeom.closestSegmentWithContext(
+            destinationPointXY
+        )
+        closestVertexOnDestinationGeom = QgsGeometry(
+            destinationGeom.vertexAt(positionInsertPoint)
+        )
+        if (
+            trimOrExtend == self.TRIM
+            and closestVertexOnDestinationGeom.asPoint() != destinationPointXY
+        ):
+            destinationGeom.insertVertex(
+                destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint
+            )
             destinationGeom.removeDuplicateNodes(epsilon=1e-8)
             destinationLyr.changeGeometry(destinationFeat.id(), destinationGeom)
         else:
             if closestVertexOnDestinationGeom.intersects(rect):
-                return closestVertexOnDestinationGeom.asPoint(), firstOrLasterVertexInreferenceFeat
-            destinationGeom.insertVertex(destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint)
+                return (
+                    closestVertexOnDestinationGeom.asPoint(),
+                    firstOrLasterVertexInreferenceFeat,
+                )
+            destinationGeom.insertVertex(
+                destinationPointXY.x(), destinationPointXY.y(), positionInsertPoint
+            )
             destinationGeom.removeDuplicateNodes(epsilon=1e-8)
             destinationLyr.changeGeometry(destinationFeat.id(), destinationGeom)
         return destinationPointXY, firstOrLasterVertexInreferenceFeat
-    
+
     def getMode(self, referenceFeat: QgsFeature, destinationFeat: QgsFeature) -> int:
         geomreferenceFeat = referenceFeat.geometry()
         destinationGeom = destinationFeat.geometry()
@@ -216,18 +250,20 @@ class TrimExtendTool(AbstractSelectionTool):
         return self.EXTEND
 
     def trimExtendFeatures(
-            self, 
-            destinationLyr: QgsVectorLayer, 
-            destinationFeat: QgsFeature, 
-            clickEvent: QgsMapMouseEvent,
+        self,
+        destinationLyr: QgsVectorLayer,
+        destinationFeat: QgsFeature,
+        clickEvent: QgsMapMouseEvent,
     ):
         layer = self.iface.mapCanvas().currentLayer()
         if layer.crs() != destinationLyr.crs():
             self.iface.messageBar().pushMessage(
                 self.tr("Error"),
-                self.tr("The reference system of origin layer is difference of destination layer"),
+                self.tr(
+                    "The reference system of origin layer is difference of destination layer"
+                ),
                 level=Qgis.MessageLevel.Critical,
-                duration=5
+                duration=5,
             )
             return
         numberSelectedFeatures = layer.selectedFeatureCount()
@@ -235,28 +271,37 @@ class TrimExtendTool(AbstractSelectionTool):
             self.iface.messageBar().pushMessage(
                 self.tr("Error"),
                 self.tr("Select only one feature on the origin layer"),
-                level=Qgis.MessageLevel.Critical, 
-                duration=5
+                level=Qgis.MessageLevel.Critical,
+                duration=5,
             )
             return
         referenceFeat = [i for i in layer.getSelectedFeatures()][0]
         trimOrExtend = self.getMode(referenceFeat, destinationFeat)
         referenceGeom = referenceFeat.geometry()
-        destinationPointXY, firstOrLasterVertexInreferenceFeat = self.addVertexOnDestinationFeature(
-            referenceFeat, 
-            destinationFeat, 
-            destinationLyr, 
+        (
+            destinationPointXY,
+            firstOrLasterVertexInreferenceFeat,
+        ) = self.addVertexOnDestinationFeature(
+            referenceFeat,
+            destinationFeat,
+            destinationLyr,
             clickEvent,
         )
         if trimOrExtend == self.EXTEND:
-            pointsGeomReferenceFeat = referenceGeom.asPolyline() if not referenceGeom.isMultipart() else referenceGeom.asMultiPolyline()[0] # tem que resolver o caso de multipart
+            pointsGeomReferenceFeat = (
+                referenceGeom.asPolyline()
+                if not referenceGeom.isMultipart()
+                else referenceGeom.asMultiPolyline()[0]
+            )  # tem que resolver o caso de multipart
             if firstOrLasterVertexInreferenceFeat == 0:
                 pointsGeomReferenceFeat.insert(0, destinationPointXY)
             else:
                 pointsGeomReferenceFeat.append(destinationPointXY)
             newReferenceGeom = QgsGeometry.fromPolylineXY(pointsGeomReferenceFeat)
         else:
-            resultProcess, newGeomsreferenceFeat, _ = referenceGeom.splitGeometry([destinationPointXY], False)
+            resultProcess, newGeomsreferenceFeat, _ = referenceGeom.splitGeometry(
+                [destinationPointXY], False
+            )
             if resultProcess == 0 and newGeomsreferenceFeat:
                 part1 = referenceGeom
                 part2 = newGeomsreferenceFeat[0]
@@ -266,15 +311,16 @@ class TrimExtendTool(AbstractSelectionTool):
         if QgsWkbTypes.isMultiType(layer.wkbType()):
             newReferenceGeom.convertToMultiType()
         layer.changeGeometry(referenceFeat.id(), newReferenceGeom)
-    
+
     def createContextMenu(self, e, geometryFilter=None):
         super().createContextMenu(
             e=e,
             geometryFilter=[
-                QgsWkbTypes.GeometryType.LineGeometry, QgsWkbTypes.GeometryType.PolygonGeometry
-            ] 
+                QgsWkbTypes.GeometryType.LineGeometry,
+                QgsWkbTypes.GeometryType.PolygonGeometry,
+            ],
         )
-    
+
     def performTask(self, e, lyrFeatDict):
         moreThanOneFeat = (
             len(list(lyrFeatDict.values())) > 1
@@ -299,7 +345,7 @@ class TrimExtendTool(AbstractSelectionTool):
                 destinationLyr=layer,
                 clickEvent=e,
             )
-    
+
     def setContextMenuStyle(self, e, dictMenuSelected, dictMenuNotSelected):
         """
         Defines how many "submenus" the context menu should have.
@@ -339,7 +385,7 @@ class TrimExtendTool(AbstractSelectionTool):
             self.createRubberBand, feature=feature, layer=layer, geom=geomType
         )
         return triggeredAction, hoveredAction
-    
+
     def removeSelection(self, e, hasControlModifier, lyr):
         return
 

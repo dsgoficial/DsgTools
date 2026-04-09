@@ -47,6 +47,7 @@ from qgis.core import (
     QgsProcessingException,
 )
 
+
 def readAsNumpy(
     inputRaster: Union[str, QgsRasterLayer], dtype=None, nodataValue=None
 ) -> Tuple[Dataset, np.array]:
@@ -197,7 +198,9 @@ def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
     rows = int((y_max - y_min) / y_res)
 
     try:
-        _raster = gdal.GetDriverByName("GTiff").Create(_out, cols, rows, 1, gdal.GDT_Byte)
+        _raster = gdal.GetDriverByName("GTiff").Create(
+            _out, cols, rows, 1, gdal.GDT_Byte
+        )
     except Exception:
         raise QgsProcessingException("GTiff driver not available")
     _raster.SetGeoTransform((x_min, x_res, 0, y_max, 0, -y_res))
@@ -500,7 +503,9 @@ def buildNumpyNodataMaskForPolygon(
     # rows = int((y_max - y_min) / y_res)
 
     try:
-        _raster = gdal.GetDriverByName("GTiff").Create(_out, cols, rows, 1, gdal.GDT_Byte)
+        _raster = gdal.GetDriverByName("GTiff").Create(
+            _out, cols, rows, 1, gdal.GDT_Byte
+        )
     except Exception:
         raise QgsProcessingException("GTiff driver not available")
     # _raster.SetGeoTransform(transform.to_gdal())
@@ -547,6 +552,7 @@ def polygonizeFromNumpyArray(npRaster, ds):
     )
     return outputLyr
 
+
 def rasterizePolygonsToFile(
     vectorLayer: QgsVectorLayer,
     classField: str,
@@ -558,14 +564,14 @@ def rasterizePolygonsToFile(
     dtype: str = "int16",
     width: int = None,
     height: int = None,
-    transform_affine = None,
+    transform_affine=None,
 ) -> None:
     """
     Rasteriza uma camada de polígonos para um arquivo GeoTIFF.
-    
+
     Esta função usa rasterio para criar uma máscara de segmentação onde cada
     pixel tem o valor do campo de classe do polígono que o contém.
-    
+
     Args:
         vectorLayer: Camada vetorial com os polígonos
         classField: Nome do campo que contém os valores de classe (inteiros)
@@ -578,7 +584,7 @@ def rasterizePolygonsToFile(
         width: Largura específica do raster (opcional, tem prioridade sobre cálculo via bbox)
         height: Altura específica do raster (opcional, tem prioridade sobre cálculo via bbox)
         transform_affine: Transformação afim específica (opcional, tem prioridade sobre cálculo via bbox)
-    
+
     Raises:
         ImportError: Se rasterio não estiver instalado
         QgsProcessingException: Se houver erro no processamento
@@ -592,9 +598,9 @@ def rasterizePolygonsToFile(
             "A biblioteca 'rasterio' não está instalada. "
             "Instale com: pip install rasterio"
         )
-    
+
     import json
-    
+
     try:
         # Verificar se o campo existe
         field_names = [field.name() for field in vectorLayer.fields()]
@@ -602,11 +608,11 @@ def rasterizePolygonsToFile(
             raise QgsProcessingException(
                 f'Campo "{classField}" não encontrado na camada'
             )
-        
+
         # Verificar se há features
         if vectorLayer.featureCount() == 0:
             raise QgsProcessingException("Camada não contém features")
-        
+
         # Calcular dimensões do raster
         if width is not None and height is not None and transform_affine is not None:
             # Usar dimensões e transform fornecidos (modo de compatibilidade)
@@ -617,36 +623,36 @@ def rasterizePolygonsToFile(
                 raise QgsProcessingException(
                     "bbox e pixelSize são obrigatórios quando width/height/transform não são fornecidos"
                 )
-            
+
             xmin, ymin, xmax, ymax = bbox.toRectF().getCoords()
             width = int(np.ceil((xmax - xmin) / pixelSize))
             height = int(np.ceil((ymax - ymin) / pixelSize))
-            
+
             if width <= 0 or height <= 0:
                 raise QgsProcessingException(
                     f"Dimensões inválidas do raster: {width}x{height}"
                 )
-            
+
             # Criar transformação afim
             transform = from_bounds(xmin, ymin, xmax, ymax, width, height)
-        
+
         # Preparar shapes para rasterização (geometrias + valores)
         shapes = []
         for feature in vectorLayer.getFeatures():
             geom = feature.geometry()
             if geom is None or geom.isEmpty():
                 continue
-            
+
             # Obter valor da classe
             class_value = feature[classField]
             if class_value is None:
                 continue
-            
+
             try:
                 class_value = int(class_value)
             except (ValueError, TypeError):
                 continue
-            
+
             # Converter geometria QGIS para formato GeoJSON usando asJson()
             try:
                 geom_json = geom.asJson()
@@ -656,7 +662,7 @@ def rasterizePolygonsToFile(
                 try:
                     from shapely.wkt import loads as wkt_loads
                     from shapely.geometry import mapping
-                    
+
                     wkt = geom.asWkt()
                     shapely_geom = wkt_loads(wkt)
                     geom_dict = mapping(shapely_geom)
@@ -669,25 +675,25 @@ def rasterizePolygonsToFile(
                     raise QgsProcessingException(
                         f"Erro ao converter geometria: {str(e2)}"
                     )
-            
+
             shapes.append((geom_dict, class_value))
-        
+
         if not shapes:
             raise QgsProcessingException(
                 "Nenhuma geometria válida encontrada para rasterizar"
             )
-        
+
         # Mapear dtype string para numpy dtype
         dtype_map = {
-            'int16': np.int16,
-            'int32': np.int32,
-            'uint8': np.uint8,
-            'uint16': np.uint16,
-            'float32': np.float32,
-            'float64': np.float64,
+            "int16": np.int16,
+            "int32": np.int32,
+            "uint8": np.uint8,
+            "uint16": np.uint16,
+            "float32": np.float32,
+            "float64": np.float64,
         }
         np_dtype = dtype_map.get(dtype, np.int16)
-        
+
         # Rasterizar
         raster_array = rasterize(
             shapes=shapes,
@@ -697,12 +703,12 @@ def rasterizePolygonsToFile(
             dtype=np_dtype,
             all_touched=True,  # Incluir pixels que tocam os polígonos
         )
-        
+
         # Salvar como GeoTIFF
         with rasterio.open(
             outputPath,
-            'w',
-            driver='GTiff',
+            "w",
+            driver="GTiff",
             height=height,
             width=width,
             count=1,
@@ -710,20 +716,22 @@ def rasterizePolygonsToFile(
             crs=crs.toWkt() if crs else None,
             transform=transform,
             nodata=nodataValue,
-            compress='lzw',
+            compress="lzw",
             tiled=True,
         ) as dst:
             dst.write(raster_array, 1)
-    
+
     except ImportError:
         raise
     except QgsProcessingException:
         raise
     except Exception as e:
         import traceback
+
         raise QgsProcessingException(
             f"Erro ao rasterizar polígonos: {str(e)}\n{traceback.format_exc()}"
         )
+
 
 def calculateSegmentationMetrics(
     ground_truth_path: str,
@@ -739,18 +747,19 @@ def calculateSegmentationMetrics(
         import rasterio
     except ImportError:
         raise ImportError("A biblioteca 'rasterio' não está instalada.")
-    
+
     import numpy as np
-    
+
     with rasterio.open(ground_truth_path) as gt_src:
         ground_truth = gt_src.read(1)
-    
+
     with rasterio.open(prediction_path) as pred_src:
         prediction = pred_src.read(1)
-    
+
     return calculateSegmentationMetricsFromArrays(
         ground_truth, prediction, nodata_value, class_names
     )
+
 
 def rasterizePolygonsToArray(
     vectorLayer: QgsVectorLayer,
@@ -762,10 +771,10 @@ def rasterizePolygonsToArray(
 ) -> np.ndarray:
     """
     Rasteriza uma camada de polígonos para um array numpy.
-    
+
     Similar a rasterizePolygonsToFile, mas retorna um array numpy em vez
     de salvar em arquivo.
-    
+
     Args:
         vectorLayer: Camada vetorial com os polígonos
         classField: Nome do campo que contém os valores de classe (inteiros)
@@ -773,10 +782,10 @@ def rasterizePolygonsToArray(
         pixelSize: Tamanho do pixel em unidades do CRS
         nodataValue: Valor para pixels sem dados (padrão: 0)
         dtype: Tipo de dados do raster ('uint8', 'uint16', 'int16', 'int32', etc.)
-    
+
     Returns:
         Array numpy com os valores rasterizados
-    
+
     Raises:
         ImportError: Se rasterio não estiver instalado
         QgsProcessingException: Se houver erro no processamento
@@ -790,9 +799,9 @@ def rasterizePolygonsToArray(
             "A biblioteca 'rasterio' não está instalada. "
             "Instale com: pip install rasterio"
         )
-    
+
     import json
-    
+
     try:
         # Verificar se o campo existe
         field_names = [field.name() for field in vectorLayer.fields()]
@@ -800,41 +809,41 @@ def rasterizePolygonsToArray(
             raise QgsProcessingException(
                 f'Campo "{classField}" não encontrado na camada'
             )
-        
+
         # Verificar se há features
         if vectorLayer.featureCount() == 0:
             raise QgsProcessingException("Camada não contém features")
-        
+
         # Calcular dimensões do raster
         xmin, ymin, xmax, ymax = bbox.toRectF().getCoords()
         width = int(np.ceil((xmax - xmin) / pixelSize))
         height = int(np.ceil((ymax - ymin) / pixelSize))
-        
+
         if width <= 0 or height <= 0:
             raise QgsProcessingException(
                 f"Dimensões inválidas do raster: {width}x{height}"
             )
-        
+
         # Criar transformação afim
         transform = from_bounds(xmin, ymin, xmax, ymax, width, height)
-        
+
         # Preparar shapes para rasterização (geometrias + valores)
         shapes = []
         for feature in vectorLayer.getFeatures():
             geom = feature.geometry()
             if geom is None or geom.isEmpty():
                 continue
-            
+
             # Obter valor da classe
             class_value = feature[classField]
             if class_value is None:
                 continue
-            
+
             try:
                 class_value = int(class_value)
             except (ValueError, TypeError):
                 continue
-            
+
             # Converter geometria QGIS para formato GeoJSON usando asJson()
             try:
                 geom_json = geom.asJson()
@@ -844,7 +853,7 @@ def rasterizePolygonsToArray(
                 try:
                     from shapely.wkt import loads as wkt_loads
                     from shapely.geometry import mapping
-                    
+
                     wkt = geom.asWkt()
                     shapely_geom = wkt_loads(wkt)
                     geom_dict = mapping(shapely_geom)
@@ -857,25 +866,25 @@ def rasterizePolygonsToArray(
                     raise QgsProcessingException(
                         f"Erro ao converter geometria: {str(e2)}"
                     )
-            
+
             shapes.append((geom_dict, class_value))
-        
+
         if not shapes:
             raise QgsProcessingException(
                 "Nenhuma geometria válida encontrada para rasterizar"
             )
-        
+
         # Mapear dtype string para numpy dtype
         dtype_map = {
-            'int16': np.int16,
-            'int32': np.int32,
-            'uint8': np.uint8,
-            'uint16': np.uint16,
-            'float32': np.float32,
-            'float64': np.float64,
+            "int16": np.int16,
+            "int32": np.int32,
+            "uint8": np.uint8,
+            "uint16": np.uint16,
+            "float32": np.float32,
+            "float64": np.float64,
         }
         np_dtype = dtype_map.get(dtype, np.int16)
-        
+
         # Rasterizar
         raster_array = rasterize(
             shapes=shapes,
@@ -885,18 +894,20 @@ def rasterizePolygonsToArray(
             dtype=np_dtype,
             all_touched=True,
         )
-        
+
         return raster_array
-    
+
     except ImportError:
         raise
     except QgsProcessingException:
         raise
     except Exception as e:
         import traceback
+
         raise QgsProcessingException(
             f"Erro ao rasterizar polígonos: {str(e)}\n{traceback.format_exc()}"
         )
+
 
 def clipRasterByVectorMask(
     input_raster_path: str,
@@ -906,16 +917,16 @@ def clipRasterByVectorMask(
 ) -> str:
     """
     Clipa um raster usando uma máscara vetorial.
-    
+
     Args:
         input_raster_path: Caminho do raster de entrada
         mask_layer: Camada vetorial com a máscara (deve ter uma feature)
         output_path: Caminho do raster de saída
         nodata_value: Valor para pixels fora da máscara
-    
+
     Returns:
         Caminho do raster de saída
-    
+
     Raises:
         ImportError: Se rasterio não estiver instalado
         QgsProcessingException: Se houver erro no processamento
@@ -929,23 +940,23 @@ def clipRasterByVectorMask(
             "A biblioteca 'rasterio' não está instalada. "
             "Instale com: pip install rasterio"
         )
-    
+
     import json
     from shapely.wkt import loads as wkt_loads
-    
+
     try:
         # Obter a geometria da máscara
         features = list(mask_layer.getFeatures())
         if not features:
             raise QgsProcessingException("Camada de máscara não contém features")
-        
+
         # Usar a primeira feature como máscara
         mask_geom = features[0].geometry()
-        
+
         # Converter para shapely geometry
         wkt = mask_geom.asWkt()
         shapely_geom = wkt_loads(wkt)
-        
+
         # Abrir o raster de entrada
         with rasterio.open(input_raster_path) as src:
             # Clipar o raster
@@ -956,34 +967,38 @@ def clipRasterByVectorMask(
                 nodata=nodata_value,
                 all_touched=False,
             )
-            
+
             # Atualizar metadados
             out_meta = src.meta.copy()
-            out_meta.update({
-                "driver": "GTiff",
-                "height": out_image.shape[1],
-                "width": out_image.shape[2],
-                "transform": out_transform,
-                "nodata": nodata_value,
-                "compress": "lzw",
-                "tiled": True,
-            })
-            
+            out_meta.update(
+                {
+                    "driver": "GTiff",
+                    "height": out_image.shape[1],
+                    "width": out_image.shape[2],
+                    "transform": out_transform,
+                    "nodata": nodata_value,
+                    "compress": "lzw",
+                    "tiled": True,
+                }
+            )
+
             # Salvar o raster clipado
             with rasterio.open(output_path, "w", **out_meta) as dest:
                 dest.write(out_image)
-        
+
         return output_path
-    
+
     except ImportError:
         raise
     except QgsProcessingException:
         raise
     except Exception as e:
         import traceback
+
         raise QgsProcessingException(
             f"Erro ao clipar raster: {str(e)}\n{traceback.format_exc()}"
         )
+
 
 def calculateSegmentationMetricsFromArrays(
     ground_truth_array: np.ndarray,
@@ -997,15 +1012,19 @@ def calculateSegmentationMetricsFromArrays(
     """
     if class_names is None:
         class_names = {}
-    
+
     if ground_truth_array.shape != prediction_array.shape:
-        raise ValueError(f"Dimensões diferentes: {ground_truth_array.shape} vs {prediction_array.shape}")
-    
-    valid_mask = (ground_truth_array != nodata_value) & (prediction_array != nodata_value)
-    
+        raise ValueError(
+            f"Dimensões diferentes: {ground_truth_array.shape} vs {prediction_array.shape}"
+        )
+
+    valid_mask = (ground_truth_array != nodata_value) & (
+        prediction_array != nodata_value
+    )
+
     result = {}
     counts = {}
-    
+
     if not valid_mask.any():
         result = {
             "accuracy": 0.0,
@@ -1015,44 +1034,48 @@ def calculateSegmentationMetricsFromArrays(
             "f1_score": 0.0,
             "total_pixels": 0,
             "correct_pixels": 0,
-            "raw_counts": {}
+            "raw_counts": {},
         }
         return result
-    
+
     gt_valid = ground_truth_array[valid_mask]
     pred_valid = prediction_array[valid_mask]
-    
+
     classes = np.unique(np.concatenate([gt_valid, pred_valid]))
-    
+
     total_pixels = len(gt_valid)
     correct_pixels = np.sum(gt_valid == pred_valid)
     accuracy = correct_pixels / total_pixels if total_pixels > 0 else 0
-    
+
     result["accuracy"] = float(accuracy)
     result["total_pixels"] = int(total_pixels)
     result["correct_pixels"] = int(correct_pixels)
-    
+
     ious, precisions, recalls, f1_scores = [], [], [], []
-    
+
     for cls in classes:
         c = int(cls)
         tp = np.sum((gt_valid == c) & (pred_valid == c))
         fp = np.sum((gt_valid != c) & (pred_valid == c))
         fn = np.sum((gt_valid == c) & (pred_valid != c))
-        
-        counts[c] = {'tp': int(tp), 'fp': int(fp), 'fn': int(fn)}
-        
+
+        counts[c] = {"tp": int(tp), "fp": int(fp), "fn": int(fn)}
+
         union = tp + fp + fn
         iou = tp / union if union > 0 else 0.0
         precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
         recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
-        f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
-        
+        f1 = (
+            2 * (precision * recall) / (precision + recall)
+            if (precision + recall) > 0
+            else 0.0
+        )
+
         ious.append(iou)
         precisions.append(precision)
         recalls.append(recall)
         f1_scores.append(f1)
-        
+
         class_name = class_names.get(c, f"Classe_{c}")
         prefix = f"class_{c}_{class_name}"
         result[f"{prefix}_iou"] = float(iou)
@@ -1065,5 +1088,5 @@ def calculateSegmentationMetricsFromArrays(
     result["recall"] = float(np.mean(recalls)) if recalls else 0.0
     result["f1_score"] = float(np.mean(f1_scores)) if f1_scores else 0.0
     result["raw_counts"] = counts
-    
+
     return result

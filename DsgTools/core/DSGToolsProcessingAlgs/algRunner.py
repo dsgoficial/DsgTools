@@ -76,7 +76,9 @@ def sanitizeProcessingParams(params, context=None):
     return sanitized
 
 
-def runProcessing(algId, params, context=None, feedback=None, is_child_algorithm=False, onFinish=None):
+def runProcessing(
+    algId, params, context=None, feedback=None, is_child_algorithm=False, onFinish=None
+):
     """Drop-in replacement for processing.run() with Qt6/SIP6 compatibility.
     Sanitizes QgsMapLayer values in params before calling processing.run()."""
     sanitized = sanitizeProcessingParams(params, context)
@@ -160,8 +162,23 @@ class AlgRunner:
         else:
             return lyr
 
-    def _runProcessing(self, algId, params, context=None, feedback=None, is_child_algorithm=False, onFinish=None):
-        return runProcessing(algId, params, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm, onFinish=onFinish)
+    def _runProcessing(
+        self,
+        algId,
+        params,
+        context=None,
+        feedback=None,
+        is_child_algorithm=False,
+        onFinish=None,
+    ):
+        return runProcessing(
+            algId,
+            params,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+            onFinish=onFinish,
+        )
 
     def runDissolve(
         self,
@@ -240,7 +257,11 @@ class AlgRunner:
             or QgsProcessingUtils.generateTempFilename("output.shp"),
         }
         output = self._runProcessing(
-            "grass7:v.dissolve", parameters, context=context, feedback=feedback, onFinish=onFinish
+            "grass7:v.dissolve",
+            parameters,
+            context=context,
+            feedback=feedback,
+            onFinish=onFinish,
         )
         return self.getGrassReturn(output, context)
 
@@ -505,7 +526,7 @@ class AlgRunner:
             feedback=feedback,
         )
         return output["FLAGS"]
-    
+
     def runRemoveSmallLines(
         self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False
     ) -> None:
@@ -633,13 +654,14 @@ class AlgRunner:
         )
         return output if returnProcessingDict else output["FLAGS"]
 
-    def runSnapToGrid(self,
+    def runSnapToGrid(
+        self,
         inputLayer: QgsVectorLayer,
         tol: float,
         context: QgsProcessingContext,
-        feedback: Optional[QgsFeedback]=None,
-        outputLyr: Optional[QgsVectorLayer]=None,
-        is_child_algorithm: Optional[bool]=False,
+        feedback: Optional[QgsFeedback] = None,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        is_child_algorithm: Optional[bool] = False,
     ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
@@ -658,8 +680,9 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
-    
-    def runDSGToolsSnapToGridAndUpdate(self,
+
+    def runDSGToolsSnapToGridAndUpdate(
+        self,
         inputLayer: QgsVectorLayer,
         tol: float,
         context: QgsProcessingContext,
@@ -1091,7 +1114,15 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runReprojectLayer(self, layer, targetCrs, output=None, context=None, feedback=None, is_child_algorithm=False):
+    def runReprojectLayer(
+        self,
+        layer,
+        targetCrs,
+        output=None,
+        context=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
         """
         Reprojects layer's CRS.
         :param : (QgsVectorLayer) layer to be reprojected.
@@ -2423,7 +2454,7 @@ class AlgRunner:
                 "INPUT_RASTER": inputRaster,
                 "BURN": value,
                 "ADD": False,
-                "EXTRA": '',
+                "EXTRA": "",
             },
             context=context,
             feedback=feedback,
@@ -3131,7 +3162,7 @@ class AlgRunner:
     ):
         """
         Runs GDAL translate algorithm to convert/copy raster data.
-        
+
         :param inputRaster: (QgsRasterLayer or str) Input raster layer or path
         :param context: (QgsProcessingContext) Processing context
         :param outputRaster: (str) Output raster path. If None, uses "TEMPORARY_OUTPUT"
@@ -3151,7 +3182,7 @@ class AlgRunner:
         outputRaster = "TEMPORARY_OUTPUT" if outputRaster is None else outputRaster
         options = "" if options is None else options
         dataType = 0 if dataType is None else dataType
-        
+
         parameters = {
             "INPUT": inputRaster,
             "OUTPUT": outputRaster,
@@ -3166,7 +3197,7 @@ class AlgRunner:
             "OUTSIZE": outputSize,
             "EXTRA": "",
         }
-        
+
         output = self._runProcessing(
             "gdal:translate",
             parameters,
@@ -3174,7 +3205,7 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        
+
         return output["OUTPUT"]
 
     def runReclassifyGroupsOfPixelsToNearestNeighborV3(
@@ -3190,10 +3221,10 @@ class AlgRunner:
     ) -> Union[QgsRasterLayer, Tuple[QgsRasterLayer, QgsVectorLayer]]:
         """
         Runs the Reclassify Groups of Pixels to Nearest Neighbor Algorithm V3.
-        
+
         This algorithm reclassifies groups of pixels smaller than a minimum area
         to the value of their nearest neighbor.
-        
+
         :param inputRaster: Input raster layer to be reclassified
         :param minArea: Minimum area in square meters. Groups smaller than this will be reclassified
         :param nodataValue: Value to be treated as NODATA
@@ -3202,21 +3233,21 @@ class AlgRunner:
         :param reclassifiedPolygonsLyr: Optional output for reclassified polygon features
         :param feedback: Feedback object for progress reporting
         :param is_child_algorithm: Whether this is being run as a child algorithm
-        :return: Output raster layer, or tuple of (output raster, reclassified polygons) if 
+        :return: Output raster layer, or tuple of (output raster, reclassified polygons) if
                  reclassifiedPolygonsLyr is provided
         """
         outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
-        
+
         parameters = {
             "INPUT": inputRaster,
             "MIN_AREA": minArea,
             "NODATA_VALUE": nodataValue,
             "OUTPUT": outputLyr,
         }
-        
+
         if reclassifiedPolygonsLyr is not None:
             parameters["RECLASSIFIED_POLYGONS"] = reclassifiedPolygonsLyr
-        
+
         output = self._runProcessing(
             "dsgtools:reclassifygroupsofpixelstonearestneighboralgorithmv3",
             parameters,
@@ -3224,17 +3255,18 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        
+
         if reclassifiedPolygonsLyr is not None:
             return output["OUTPUT"], output["RECLASSIFIED_POLYGONS"]
         return output["OUTPUT"]
 
-    def runAdjustNetworkConnectivityAlgorithm(self,
+    def runAdjustNetworkConnectivityAlgorithm(
+        self,
         inputLyr: QgsVectorLayer,
         tol: float,
         context: QgsProcessingContext,
-        selected: Optional[bool]=False,
-        feedback: Optional[QgsFeedback]=None
+        selected: Optional[bool] = False,
+        feedback: Optional[QgsFeedback] = None,
     ) -> None:
         self._runProcessing(
             "dsgtools:adjustnetworkconnectivity",
@@ -3244,5 +3276,5 @@ class AlgRunner:
                 "TOLERANCE": tol,
             },
             context=context,
-            feedback=feedback
+            feedback=feedback,
         )

@@ -145,26 +145,30 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
             try:
                 return json.loads(inputText)
             except json.JSONDecodeError as e:
-                raise QgsProcessingException(f"Erro ao decodificar JSON do texto: {str(e)}")
-        
+                raise QgsProcessingException(
+                    f"Erro ao decodificar JSON do texto: {str(e)}"
+                )
+
         # Se não há texto válido, tenta carregar do arquivo
         inputFile = self.parameterAsFile(parameters, self.FILE, context)
-        
+
         # Verifica se o arquivo foi fornecido
         if not inputFile or inputFile.strip() == "":
             raise QgsProcessingException("Nenhum texto JSON ou arquivo foi fornecido.")
-        
+
         # Verifica se o arquivo existe
         if not os.path.exists(inputFile):
             raise QgsProcessingException(f"Arquivo não encontrado: {inputFile}")
-        
+
         # Carrega o arquivo com encoding adequado
         try:
             with open(inputFile, "r", encoding="utf-8") as f:
                 rulesData = json.load(f)
             return rulesData
         except json.JSONDecodeError as e:
-            raise QgsProcessingException(f"Erro ao decodificar JSON do arquivo: {str(e)}")
+            raise QgsProcessingException(
+                f"Erro ao decodificar JSON do arquivo: {str(e)}"
+            )
         except Exception as e:
             raise QgsProcessingException(f"Erro ao ler o arquivo: {str(e)}")
 
@@ -263,7 +267,8 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
         if expression.hasParserError():
             raise Exception(f"Invalid expression: \n{expressionString}")
         lyr.addExpressionField(
-            expressionString, QgsField("attribute_error_description", QMetaType.Type.QString)
+            expressionString,
+            QgsField("attribute_error_description", QMetaType.Type.QString),
         )
 
     def expressionHasParseError(self, expressionString):

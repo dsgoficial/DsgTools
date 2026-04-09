@@ -232,8 +232,9 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
         return {self.FLAGS: self.flag_id}
 
     def tr(self, string):
-        return QCoreApplication.translate("IdentifyWaterBodyAndContourInconsistencies", string)
-
+        return QCoreApplication.translate(
+            "IdentifyWaterBodyAndContourInconsistencies", string
+        )
 
     def createInstance(self):
         return IdentifyWaterBodyAndContourInconsistencies()

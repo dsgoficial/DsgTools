@@ -200,7 +200,9 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.workflowToolBox)
         else:
             self.workflowToolBox = WorkflowDockWidget(self.iface)
-        self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.workflowToolBox)
+        self.iface.addDockWidget(
+            Qt.DockWidgetArea.RightDockWidgetArea, self.workflowToolBox
+        )
 
     def showMultiLayersCentroidsFlagTool(self):
         if self.multiLayersCentroidsFlagToolBox is not None:
@@ -221,7 +223,9 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.calcContour)
         else:
             self.calcContour = CalcContour(self.iface)
-        self.iface.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.calcContour)
+        self.iface.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, self.calcContour
+        )
 
     def showComplexDock(self):
         """
@@ -231,7 +235,9 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.complexWindow)
         else:
             self.complexWindow = ComplexWindow(self.iface)
-        self.iface.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.complexWindow)
+        self.iface.addDockWidget(
+            Qt.DockWidgetArea.LeftDockWidgetArea, self.complexWindow
+        )
 
     def saveStateOnProject(self):
         """

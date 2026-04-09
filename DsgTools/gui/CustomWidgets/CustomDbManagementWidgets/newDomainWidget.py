@@ -54,7 +54,9 @@ class ValidatedItemDelegate(QtWidgets.QStyledItemDelegate):
             return 0
         if index.column() == 0:  # only on the cells in the first column
             editor = QtGui.QLineEdit(widget)
-            validator = QtGui.QRegularExpressionValidator(QtCore.QRegularExpression("[0-9]*"), editor)
+            validator = QtGui.QRegularExpressionValidator(
+                QtCore.QRegularExpression("[0-9]*"), editor
+            )
             editor.setValidator(validator)
             return editor
         elif index.column() == 1:

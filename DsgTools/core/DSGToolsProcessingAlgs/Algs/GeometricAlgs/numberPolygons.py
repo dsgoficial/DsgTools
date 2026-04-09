@@ -57,7 +57,7 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=0,
             )
         )
-        
+
         # Novo parâmetro opcional de agrupamento
         self.addParameter(
             QgsProcessingParameterField(
@@ -68,7 +68,7 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
                 allowMultiple=False,
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterString(
                 self.ATTRIBUTE_NAME,
@@ -87,7 +87,9 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         layer = self.parameterAsVectorLayer(parameters, self.INPUT_LAYER, context)
         direction = self.parameterAsEnum(parameters, self.DIRECTION, context)
         attr_name = self.parameterAsString(parameters, self.ATTRIBUTE_NAME, context)
-        group_by_field = self.parameterAsString(parameters, self.GROUP_BY_FIELD, context)
+        group_by_field = self.parameterAsString(
+            parameters, self.GROUP_BY_FIELD, context
+        )
 
         if not layer:
             raise QgsProcessingException("Invalid input layer")
@@ -112,10 +114,10 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         )
 
         features = list(layer.getFeatures())
-        
+
         # Ordenar features considerando grupo (se houver) e direção
         sorted_features = self._sort_features(features, direction, group_by_field)
-        
+
         total = 100.0 / len(sorted_features) if sorted_features else 0
         feedback.setProgressText("Numerando os polígonos conforme direção dada...\n")
 
@@ -182,10 +184,10 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
             else:
                 features.sort(
                     key=lambda f: (
-                    f.geometry().centroid().asPoint().y(),
-                    -f.geometry().centroid().asPoint().x(),
+                        f.geometry().centroid().asPoint().y(),
+                        -f.geometry().centroid().asPoint().x(),
+                    )
                 )
-            )
 
         # Ordenação do Sul para o Norte e do Oeste para o Leste
         elif direction == 3:
@@ -204,7 +206,7 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
                         f.geometry().centroid().asPoint().x(),
                     )
                 )
-        
+
         return features
 
     def name(self):

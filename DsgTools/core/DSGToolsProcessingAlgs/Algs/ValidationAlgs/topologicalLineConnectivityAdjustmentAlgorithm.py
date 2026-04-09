@@ -116,7 +116,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         currentStep += 1
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Removing small lines..."))
         self.algRunner.runRemoveSmallLines(
@@ -139,7 +139,9 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Removing small lines post snap on unified layer..."))
+        multiStepFeedback.pushInfo(
+            self.tr("Removing small lines post snap on unified layer...")
+        )
         self.algRunner.runRemoveSmallLines(
             inputLyr=outputLyr,
             tol=tol,
@@ -151,15 +153,16 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Running adjust network connectivity..."))
         self.algRunner.runAdjustNetworkConnectivityAlgorithm(
-            inputLyr=outputLyr,
-            tol=tol,
-            context=context,
-            feedback=multiStepFeedback
+            inputLyr=outputLyr, tol=tol, context=context, feedback=multiStepFeedback
         )
         outputLyr.commitChanges()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Running identify dangles after removing small lines post snap on unified layer..."))
+        multiStepFeedback.pushInfo(
+            self.tr(
+                "Running identify dangles after removing small lines post snap on unified layer..."
+            )
+        )
         dangleLyr = self.algRunner.runIdentifyDangles(
             outputLyr,
             tol,
@@ -171,7 +174,9 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         )
         currentStep += 1
         if dangleLyr.featureCount() == 0:
-            multiStepFeedback.pushInfo(self.tr("No more remaining dangles. Ending process."))
+            multiStepFeedback.pushInfo(
+                self.tr("No more remaining dangles. Ending process.")
+            )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Updating original layers..."))
@@ -183,10 +188,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Removing duplicated dangles..."))
         dangleSnappedToGrid = self.algRunner.runSnapToGrid(
-            inputLayer=dangleLyr,
-            tol=tol,
-            context=context,
-            feedback=multiStepFeedback
+            inputLayer=dangleLyr, tol=tol, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -208,12 +210,18 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         dangleSnappedToItself.commitChanges()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Removing duplicated dangles after duplicate filter..."))
-        layerHandler.filterDangles(dangleSnappedToItself, tol, feedback=multiStepFeedback)
+        multiStepFeedback.pushInfo(
+            self.tr("Removing duplicated dangles after duplicate filter...")
+        )
+        layerHandler.filterDangles(
+            dangleSnappedToItself, tol, feedback=multiStepFeedback
+        )
         dangleSnappedToItself.commitChanges()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Performing individual snap on remaining dangles..."))
+        multiStepFeedback.pushInfo(
+            self.tr("Performing individual snap on remaining dangles...")
+        )
         fixedLines = self.fixDanglesWithIndividualSnap(
             dangleLyr=dangleSnappedToItself,
             lineLyr=outputLyr,
@@ -221,7 +229,11 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
             feedback=multiStepFeedback,
             tol=tol,
         )
-        multiStepFeedback.pushInfo(self.tr(f"{dangleSnappedToItself.featureCount()} remaining. Final fix remaining dangles..."))
+        multiStepFeedback.pushInfo(
+            self.tr(
+                f"{dangleSnappedToItself.featureCount()} remaining. Final fix remaining dangles..."
+            )
+        )
         self.fixRemainingDangles(
             dangleLyr=dangleSnappedToItself,
             lineLyr=fixedLines,
@@ -237,8 +249,15 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         )
 
         return {}
-    
-    def fixDanglesWithIndividualSnap(self, dangleLyr: QgsVectorLayer, lineLyr: QgsVectorLayer, context: QgsProcessingContext, feedback: QgsFeedback, tol: float):
+
+    def fixDanglesWithIndividualSnap(
+        self,
+        dangleLyr: QgsVectorLayer,
+        lineLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+        tol: float,
+    ):
         nDangles = dangleLyr.featureCount()
         if nDangles == 0:
             return lineLyr
@@ -260,8 +279,15 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
                 context=context,
             )
         return currentLyr
-    
-    def fixRemainingDangles(self, dangleLyr: QgsVectorLayer, lineLyr: QgsVectorLayer, context: QgsProcessingContext, feedback: QgsFeedback, tol: float):
+
+    def fixRemainingDangles(
+        self,
+        dangleLyr: QgsVectorLayer,
+        lineLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+        tol: float,
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(10, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
@@ -275,13 +301,24 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        danglePointDict = {f["dangle_featid"]: f.geometry().asPoint() for f in danglesWithId.getFeatures()}
+        danglePointDict = {
+            f["dangle_featid"]: f.geometry().asPoint()
+            for f in danglesWithId.getFeatures()
+        }
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        dangleBuffer = self.algRunner.runBuffer(danglesWithId, distance=2*tol, dissolve=True, context=context, feedback=multiStepFeedback)
+        dangleBuffer = self.algRunner.runBuffer(
+            danglesWithId,
+            distance=2 * tol,
+            dissolve=True,
+            context=context,
+            feedback=multiStepFeedback,
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(dangleBuffer, context, feedback=multiStepFeedback)
+        self.algRunner.runCreateSpatialIndex(
+            dangleBuffer, context, feedback=multiStepFeedback
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         lineLyrWithId = self.algRunner.runCreateFieldWithExpression(
@@ -294,7 +331,9 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(lineLyrWithId, context, feedback=multiStepFeedback)
+        self.algRunner.runCreateSpatialIndex(
+            lineLyrWithId, context, feedback=multiStepFeedback
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         candidateLines = self.algRunner.runExtractByLocation(
@@ -314,26 +353,35 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(verticeLyr, context, feedback=multiStepFeedback)
+        self.algRunner.runCreateSpatialIndex(
+            verticeLyr, context, feedback=multiStepFeedback
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         joinned = self.algRunner.runJoinAttributesByLocation(
             inputLyr=dangleBuffer,
             joinLyr=verticeLyr,
             predicateList=[AlgRunner.Intersects],
-            joinFields=['line_featid','vertex_index','vertex_part','vertex_part_index','distance','angle'],
+            joinFields=[
+                "line_featid",
+                "vertex_index",
+                "vertex_part",
+                "vertex_part_index",
+                "distance",
+                "angle",
+            ],
             context=context,
             feedback=multiStepFeedback,
         )
-        
+
         nFeats = joinned.featureCount()
         if nFeats == 0:
             return
         joinnedDict = defaultdict(set)
         for feat in joinned.getFeatures():
-            joinnedDict[feat.id()].add(feat['line_featid'])
-        lineLyrDict = {f['line_featid']:f for f in lineLyrWithId.getFeatures()}
-        stepSize = 100/nFeats
+            joinnedDict[feat.id()].add(feat["line_featid"])
+        lineLyrDict = {f["line_featid"]: f for f in lineLyrWithId.getFeatures()}
+        stepSize = 100 / nFeats
         lineLyr.startEditing()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
