@@ -930,7 +930,6 @@ class PostgisDb(AbstractDb):
             for database in dbList:
                 if database not in [
                     "postgres",
-                    "dsgtools_admindb",
                     "template_edgv_213",
                     "template_edgv_3",
                     "template_edgv_fter_2a_ed",
@@ -1685,19 +1684,6 @@ class PostgisDb(AbstractDb):
 
     @ensure_connected
     @transactional()
-    def importStyle(self, styleName, table_name, qml, tableSchema, useTransaction=True):
-        try:
-            parsedQml = self.utils.parseStyle(qml)
-            dbName = self.db.databaseName()
-            sql = self.gen.importStyle(
-                styleName, table_name, parsedQml, tableSchema, dbName
-            )
-            self._execute(sql)
-        except Exception:
-            raise
-
-    @ensure_connected
-    @transactional()
     def updateStyle(self, styleName, table_name, qml, tableSchema, useTransaction=True):
         try:
             parsedQml = self.utils.parseStyle(qml)
@@ -1714,59 +1700,6 @@ class PostgisDb(AbstractDb):
             self._execute(self.gen.deleteStyle(styleName))
         except Exception:
             raise
-
-    def importStylesIntoDb(self, styleFolder, useTransaction=True):
-        """
-        path: path to folder
-        styleFolder: folder with version. Example: edgv_213/example
-        """
-        if self.versionFolderDict[self.getDatabaseVersion()] not in styleFolder:
-            raise Exception(
-                self.tr("Style ")
-                + styleFolder
-                + self.tr(" does not match the version of database ")
-                + self.db.databaseName()
-            )
-        path = os.path.join(os.path.dirname(__file__), "..", "..", "Styles")
-        stylePath = os.path.join(path, styleFolder)
-        availableStyles = next(os.walk(stylePath))[2]
-        created = self.checkAndCreateStyleTable(useTransaction=useTransaction)
-        for style in availableStyles:
-            # filtering and checking file names for special characters
-            if style[0] == ".":
-                continue
-            if not re.match("^[a-zA-Z0-9_.]*$", style):
-                raise Exception(self.tr("Problem importing style ") + style)
-
-            tableName = style.split(".")[0]
-            localStyle = os.path.join(stylePath, style)
-            tableSchema = self.getTableSchemaFromDb(tableName)
-            # check if style already exists. If it does, update it.
-            # if style does not exist, create one.
-            if self.getStyle(styleFolder, tableName, parsing=False):
-                self.updateStyle(
-                    styleFolder,
-                    tableName,
-                    localStyle,
-                    tableSchema,
-                    useTransaction=useTransaction,
-                )
-            else:
-                try:
-                    self.importStyle(
-                        styleFolder,
-                        tableName,
-                        localStyle,
-                        tableSchema,
-                        useTransaction=useTransaction,
-                    )
-                except Exception as e:
-                    raise Exception(
-                        self.tr("Problem importing style ")
-                        + style
-                        + ":"
-                        + ":".join(e.args)
-                    )
 
     @ensure_connected
     def getTableSchemaFromDb(self, table):
@@ -2627,18 +2560,6 @@ class PostgisDb(AbstractDb):
                 "3_Orto",
                 "edgv3_orto.sql",
             )
-        elif version == "admin":
-            edgvPath = os.path.join(
-                currentPath,
-                "..",
-                "..",
-                "..",
-                "core",
-                "DbModels",
-                "PostGIS",
-                "admin",
-                "dsgtools_admindb.sql",
-            )
         return edgvPath
 
     def getCommandsFromFile(self, edgvPath, epsg=None):
@@ -2757,29 +2678,6 @@ class PostgisDb(AbstractDb):
         return (host, port, user, password)
 
     @ensure_connected
-    def createAdminDb(self):
-        """
-        Creates a database with a given name
-        """
-        sql = self.gen.getCreateDatabase("dsgtools_admindb")
-        try:
-            self._execute(sql)
-        except Exception as e:
-            raise Exception(self.tr("Problem creating database: ") + str(e))
-
-    @ensure_connected
-    def hasAdminDb(self):
-        """
-        Checks if server has a dsgtools_admindb
-        """
-        sql = self.gen.hasAdminDb()
-        rows = self._fetch_all(sql)
-        for row in rows:
-            if row[0]:
-                return True
-        return False
-
-    @ensure_connected
     def getRolesDict(self):
         """
         Gets a dict with the format: 'dbname':{[-list of roles-]}
@@ -2793,102 +2691,6 @@ class PostgisDb(AbstractDb):
                 rolesDict[aux["dbname"]] = []
             rolesDict[aux["dbname"]].append(aux["rolename"])
         return rolesDict
-
-    @ensure_connected
-    def insertIntoPermissionProfile(self, name, jsondict, edgvversion):
-        """
-        Inserts into public.permission_profile on dsgtools_admindb (name, jsondict, edgvversion)
-        """
-        if self.db.databaseName() != "dsgtools_admindb":
-            raise Exception(
-                self.tr("Error! Operation not defined for non dsgtools_admindb")
-            )
-        sql = self.gen.insertIntoPermissionProfile(name, jsondict, edgvversion)
-        try:
-            self._execute(sql)
-        except Exception as e:
-            raise Exception(
-                self.tr("Problem inserting into permission profile: ") + str(e)
-            )
-
-    @ensure_connected
-    def dropRoleOnDatabase(self, roleName):
-        """
-        Drops role using drop owned by and drop role.
-        This is like dropRole, but it does not uses a specific function, hence it is more generic.
-        """
-        sql = self.gen.dropRoleOnDatabase(roleName)
-        try:
-            self._execute(sql)
-        except Exception as e:
-            raise Exception(
-                self.tr("Problem dropping profile: ") + roleName + " :" + str(e)
-            )
-
-    @ensure_connected
-    def getRoleFromAdminDb(self, roleName, edgvVersion):
-        """
-        Gets role from public.permission_profile
-        """
-        sql = self.gen.getPermissionProfile(roleName, edgvVersion)
-        row = self._fetch_one(sql)
-        if row:
-            return row[0]
-
-    @ensure_connected
-    def getAllRolesFromAdminDb(self):
-        """
-        Gets role from public.permission_profile and returns a dict with format {edgvVersion:[-list of roles-]}
-        """
-        sql = self.gen.getAllPermissionProfiles()
-        rows = self._fetch_all(sql)
-        allRolesDict = dict()
-        for row in rows:
-            aux = self._as_json(row[0])
-            allRolesDict[aux["edgvversion"]] = aux["profiles"]
-        return allRolesDict
-
-    @ensure_connected
-    def deletePermissionProfile(self, name, edgvversion):
-        """
-        Deletes profile from public.permission_profiles
-        """
-        sql = self.gen.deletePermissionProfile(name, edgvversion)
-        try:
-            self._execute(sql)
-        except Exception as e:
-            raise Exception(self.tr("Problem deleting permission profile: ") + str(e))
-
-    @ensure_connected
-    def getGrantedRolesDict(self):
-        """
-        Gets a dict in the format:
-        { roleName : [-list of users-] }
-        """
-        sql = self.gen.getRolesWithGrantedUsers()
-        rows = self._fetch_all(sql)
-        grantedRolesDict = dict()
-        for row in rows:
-            aux = self._as_json(row[0])
-            if aux["profile"] not in list(grantedRolesDict.keys()):
-                grantedRolesDict[aux["profile"]] = []
-            for user in aux["users"]:
-                if user not in grantedRolesDict[aux["profile"]]:
-                    grantedRolesDict[aux["profile"]].append(user)
-        return grantedRolesDict
-
-    @ensure_connected
-    def updatePermissionProfile(self, name, edgvVersion, newjsondict):
-        """
-        Updates public.permission_profile with new definition.
-        """
-        sql = self.gen.updateRecordFromPropertyTable(
-            "Permission", name, edgvVersion, newjsondict
-        )
-        try:
-            self._execute(sql)
-        except Exception as e:
-            raise Exception(self.tr("Problem updating permission profile: ") + str(e))
 
     @ensure_connected
     def getDomainTables(self):
@@ -3133,72 +2935,6 @@ class PostgisDb(AbstractDb):
             return row[0]
 
     @ensure_connected
-    def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):
-        """
-        Inserts setting into dsgtools_admindb (name, jsondict, edgvversion),
-        according to settingType
-        """
-        if self.db.databaseName() != "dsgtools_admindb":
-            raise Exception(
-                self.tr("Error! Operation not defined for non dsgtools_admindb")
-            )
-        sql = self.gen.insertSettingIntoAdminDb(
-            settingType, name, jsondict, edgvversion
-        )
-        try:
-            self._execute(sql)
-        except Exception as e:
-            raise Exception(
-                self.tr("Problem inserting property ")
-                + settingType
-                + self.tr(" into dsgtools_admindb: ")
-                + str(e)
-            )
-
-    @ensure_connected
-    def getSettingFromAdminDb(self, settingType, settingName, edgvVersion):
-        """
-        Gets role from public.permission_profile
-        """
-        sql = self.gen.getSettingFromAdminDb(settingType, settingName, edgvVersion)
-        row = self._fetch_one(sql)
-        if row:
-            return row[0]
-
-    @ensure_connected
-    def getSettingVersion(self, settingType, settingName):
-        sql = self.gen.getSettingVersion(settingType, settingName)
-        row = self._fetch_one(sql)
-        if row:
-            return row[0]
-
-    @ensure_connected
-    def getAllSettingsFromAdminDb(self, settingType):
-        """
-        Gets role from public.permission_profile and returns a dict with format {edgvVersion:[-list of roles-]}
-        """
-        if not self.checkIfExistsConfigTable(settingType):
-            return dict()
-        sql = self.gen.getAllSettingsFromAdminDb(settingType)
-        rows = self._fetch_all(sql)
-        allRolesDict = dict()
-        for row in rows:
-            aux = self._as_json(row[0])
-            allRolesDict[aux["edgvversion"]] = aux["settings"]
-        return allRolesDict
-
-    @ensure_connected
-    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):
-        """
-        Deletes profile from public.permission_profiles
-        """
-        sql = self.gen.deleteSettingFromAdminDb(settingType, name, edgvversion)
-        try:
-            self._execute(sql)
-        except Exception as e:
-            raise Exception(self.tr("Problem deleting permission setting: ") + str(e))
-
-    @ensure_connected
     @transactional()
     def upgradePostgis(self, useTransaction=True):
         updateDict = self.getPostgisVersion()
@@ -3228,37 +2964,6 @@ class PostgisDb(AbstractDb):
         return updateDict
 
     @ensure_connected
-    def getCustomizationPerspectiveDict(self, perspective):
-        sql = self.gen.getCustomizationPerspectiveDict(perspective)
-        rows = self._fetch_all(sql)
-        customDict = dict()
-        for row in rows:
-            jsonDict = self._as_json(row[0])
-            customDict[jsonDict["name"]] = jsonDict["array_agg"]
-        return customDict
-
-    @ensure_connected
-    def getPropertyPerspectiveDict(self, settingType, perspective, versionFilter=None):
-        sql = self.gen.getPropertyPerspectiveDict(
-            settingType, perspective, versionFilter
-        )
-        rows = self._fetch_all(sql)
-        customDict = dict()
-        for row in rows:
-            jsonDict = self._as_json(row[0])
-            customDict[jsonDict["name"]] = jsonDict["array_agg"]
-        return customDict
-
-    @ensure_connected
-    @transactional()
-    def createPropertyTable(self, settingType, useTransaction=True, isAdminDb=False):
-        createSql = self.gen.createPropertyTable(settingType, isAdminDb=isAdminDb)
-        try:
-            self._execute(createSql)
-        except Exception as e:
-            raise Exception(self.tr("Problem creating Setting table: ") + str(e))
-
-    @ensure_connected
     def checkIfTableExists(self, schema, tableName):
         sql = self.gen.checkIfTableExists(schema, tableName)
         rows = self._fetch_all(sql)
@@ -3266,118 +2971,6 @@ class PostgisDb(AbstractDb):
             if row[0]:
                 return True
         return False
-
-    def checkIfExistsConfigTable(self, settingType):
-        settingTable = self.gen.getSettingTable(settingType)
-        return self.checkIfTableExists("public", settingTable)
-
-    @ensure_connected
-    def getRecordFromAdminDb(self, settingType, propertyName, edgvVersion):
-        sql = self.gen.getRecordFromAdminDb(settingType, propertyName, edgvVersion)
-        row = self._fetch_one(sql)
-        if row:
-            retDict = dict()
-            retDict["id"] = row[0]
-            retDict["name"] = row[1]
-            retDict["jsondict"] = row[2]
-            retDict["edgvversion"] = row[3]
-            return retDict
-
-    @ensure_connected
-    @transactional()
-    def insertRecordInsidePropertyTable(
-        self, settingType, settingDict, edgvVersion, useTransaction=False
-    ):
-        if edgvVersion != self.getDatabaseVersion():
-            raise Exception(self.tr("Invalid property with database version."))
-        createSql = self.gen.insertRecordInsidePropertyTable(settingType, settingDict)
-        try:
-            self._execute(createSql)
-        except Exception as e:
-            raise Exception(
-                self.tr("Problem inserting record inside property table: ") + str(e)
-            )
-
-    @ensure_connected
-    def getPropertyDict(self, settingType, getOnlySameVersion=False):
-        if getOnlySameVersion:
-            myEdgvVersion = self.getDatabaseVersion()
-        sql = self.gen.getAllPropertiesFromDb(settingType)
-        rows = self._fetch_all(sql)
-        propertyDict = dict()
-        for row in rows:
-            edgvVersion = row[0]
-            if getOnlySameVersion:
-                if myEdgvVersion != edgvVersion:
-                    continue
-            name = row[1]
-            jsonDict = self._as_json(row[2])
-            if edgvVersion not in list(propertyDict.keys()):
-                propertyDict[edgvVersion] = dict()
-            propertyDict[edgvVersion][name] = jsonDict
-        return propertyDict
-
-    @ensure_connected
-    @transactional()
-    def insertInstalledRecordIntoAdminDb(
-        self, settingType, recDict, dbOid, useTransaction=False
-    ):
-        createSql = self.gen.insertInstalledRecordIntoAdminDb(
-            settingType, recDict, dbOid
-        )
-        try:
-            self._execute(createSql)
-        except Exception as e:
-            raise Exception(
-                self.tr("Problem inserting installed record into adminDb: ") + str(e)
-            )
-
-    @ensure_connected
-    @transactional()
-    def removeRecordFromPropertyTable(
-        self, settingType, configName, edgvVersion, useTransaction=False
-    ):
-        createSql = self.gen.removeRecordFromPropertyTable(
-            settingType, configName, edgvVersion
-        )
-        try:
-            self._execute(createSql)
-        except Exception as e:
-            raise Exception(
-                self.tr("Problem removing installed record into db: ") + str(e)
-            )
-
-    @ensure_connected
-    @transactional()
-    def updateRecordFromPropertyTable(
-        self, settingType, configName, edgvVersion, jsonDict, useTransaction=False
-    ):
-        if isinstance(jsonDict, dict):
-            jsonDict = json.dumps(jsonDict, sort_keys=True, indent=4)
-        createSql = self.gen.updateRecordFromPropertyTable(
-            settingType, configName, edgvVersion, jsonDict
-        )
-        try:
-            self._execute(createSql)
-        except Exception as e:
-            raise Exception(
-                self.tr("Problem removing installed record into db: ") + str(e)
-            )
-
-    @ensure_connected
-    @transactional()
-    def uninstallPropertyOnAdminDb(
-        self, settingType, configName, edgvVersion, useTransaction=False, dbName=None
-    ):
-        createSql = self.gen.uninstallPropertyOnAdminDb(
-            settingType, configName, edgvVersion, dbName=dbName
-        )
-        try:
-            self._execute(createSql)
-        except Exception as e:
-            raise Exception(
-                self.tr("Problem removing installed record into db: ") + str(e)
-            )
 
     @ensure_connected
     def getPrimaryKeyColumn(self, tableName):

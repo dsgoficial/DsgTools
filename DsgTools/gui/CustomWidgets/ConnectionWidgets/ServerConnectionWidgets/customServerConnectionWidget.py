@@ -43,7 +43,6 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
     selectionChanged = pyqtSignal()
     resetAll = pyqtSignal()
     dbDictChanged = pyqtSignal(str, list)
-    styleChanged = pyqtSignal(dict)
 
     def __init__(self, parent=None):
         """Constructor."""
@@ -68,7 +67,6 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         }
         self.dbNameDict = dict()
         self.selectedDbsDict = defaultdict()
-        self.stylesDict = defaultdict(lambda: {"dbList": [], "style": []})
         self.postgisCustomSelector.selectionChanged.connect(self.selectedDatabases)
         self.spatialiteCustomSelector.selectionChanged.connect(self.selectedFiles)
         # self.gpkgCustomSelector.selectionChanged.connect(self.selectedGeopackageFiles)
@@ -103,28 +101,13 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                     host, port, self.dbNameDict[dbNameAlias], user, password
                 )
                 self.selectedDbsDict[dbNameAlias] = localDb
-                # do get dicts
-                localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
-                for key in list(localDict.keys()):
-                    self.stylesDict[key]["style"] = localDict[key]
-                    if dbNameAlias not in self.stylesDict[key]["dbList"]:
-                        self.stylesDict[key]["dbList"].append(dbNameAlias)
             self.dbDictChanged.emit("added", dbList)
-            self.styleChanged.emit(self.stylesDict)
         # 2- Iterate over selectedDbsDict and if there is a key not in dbList, close db and pop item
         if type == "removed":
             for dbNameAlias in list(self.selectedDbsDict.keys()):
                 if dbNameAlias in dbList:
                     self.selectedDbsDict.pop(dbNameAlias)
             self.dbDictChanged.emit("removed", dbList)
-            for key in list(self.stylesDict.keys()):
-                for db in self.stylesDict[key]["dbList"]:
-                    if db in dbList:
-                        idx = self.stylesDict[key]["dbList"].index(db)
-                        self.stylesDict[key]["dbList"].pop(idx)
-                if len(self.stylesDict[key]["dbList"]) == 0:
-                    self.stylesDict.pop(key)
-            self.styleChanged.emit(self.stylesDict)
 
     def selectedFiles(self, dbList, type):
         """
@@ -138,29 +121,13 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 localDb = self.dbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
                 localDb.connectDatabase(conn=self.spatialiteDict[dbName])
                 self.selectedDbsDict[dbName] = localDb
-                # do get dicts
-                localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
-                for key in list(localDict.keys()):
-                    self.stylesDict[key]["style"] = localDict[key]
-                    if dbName not in self.stylesDict[key]["dbList"]:
-                        self.stylesDict[key]["dbList"].append(dbName)
             self.dbDictChanged.emit("added", dbList)
-            self.styleChanged.emit(self.stylesDict)
         # 2- Iterate over selectedDbsDict and if there is a key not in dbList, close db and pop item
         if type == "removed":
             for dbName in list(self.selectedDbsDict.keys()):
                 if dbName in dbList:
                     self.selectedDbsDict.pop(dbName)
             self.dbDictChanged.emit("removed", dbList)
-            for key in list(self.stylesDict.keys()):
-                for db in self.stylesDict[key]["dbList"]:
-                    if db not in dbList:
-                        continue
-                    idx = self.stylesDict[key]["dbList"].index(db)
-                    self.stylesDict[key]["dbList"].pop(idx)
-                if len(self.stylesDict[key]["dbList"]) == 0:
-                    self.stylesDict.pop(key)
-            self.styleChanged.emit(self.stylesDict)
 
     @pyqtSlot(int)
     def on_serverConnectionTab_currentChanged(self, currentTab):
@@ -267,12 +234,3 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.edgvType = None
         self.selectedDbsDict = dict()
         self.resetAll.emit()
-
-    def getStyles(self, type, abstractDb):
-        """
-        Gets database styles. If the structure to store styles is not yet created, we should create it.
-        """
-        dbVersion = abstractDb.getDatabaseVersion()
-        abstractDb.checkAndCreateStyleTable()
-        styles = abstractDb.getStyleDict(dbVersion)
-        self.styleChanged.emit(type, styles)

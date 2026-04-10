@@ -24,9 +24,6 @@
 from qgis.PyQt.QtCore import QObject
 
 from DsgTools.gui.ServerTools.ViewServersGui.viewServersGui import ViewServersGui
-from DsgTools.gui.ServerTools.BatchDbManagerGui.batchDbManagerGui import (
-    BatchDbManagerGui,
-)
 
 
 class ServerToolsGuiManager(QObject):
@@ -75,12 +72,9 @@ class ServerToolsGuiManager(QObject):
         """
         self.viewServersGui = ViewServersGui(manager=self, parentMenu=self.menu)
         self.viewServersGui.initGui()
-        self.batchDbManagerGui = BatchDbManagerGui(manager=self, parentMenu=self.menu)
-        self.batchDbManagerGui.initGui()
 
     def unload(self):
         """
         Unloads all loaded GUI.
         """
         self.viewServersGui.unload()
-        self.batchDbManagerGui.unload()
