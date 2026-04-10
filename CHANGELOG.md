@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 5.1.1 - dev
+
+Melhorias:
+
+- Refatoração do AbstractDb e remoção da dependência da QtQSql (que implicava em instalação de biblioteca adicional no linux);
+- Melhoria na gestão de conexões do PostgisDb;
+- Remoção de funcionalidades não utilizadas e de diversos códigos mortos (removida gestão de bancos no servidor, dsgtools_admindb, etc);
+
 ## 5.0.1 - 2026-04-09
 
 Correções de bug:

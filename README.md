@@ -8,7 +8,7 @@
 |branch|status|version|
 |-------|--------|--------|
 |master|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=master)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|5.0.1|
-|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|5.1.0|
+|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|5.1.1|
 
 ------------------------------------
 # Complemento DSGTools
@@ -69,11 +69,6 @@ A versão atual do complemento possui as seguintes funcionalidades:
 - Ferramentas para extração de pontos cotados e validação do terreno
 - Ferramentas para numeração de polígonos e generalização
 
-### Gerenciamento de Usuários e Segurança
-- Gerenciamento de permissões de usuários
-- Criação/Remoção de usuários no PostgreSQL
-- Alteração de senha de usuários no PostgreSQL
-
 ### Outros
 - Visualizador de valores de códigos da EDGV para auxiliar em consultas por atributos
 - Ferramenta para preparação de arquivos para empacotamento no BDGEx
@@ -84,13 +79,6 @@ O plugin foi todo desenvolvido em Python e está disponível para download pelo 
 Para acessar o histórico completo de mudanças, visite: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
 
 Para maiores informações, acesse https://github.com/dsgoficial/DsgTools/wiki ou https://bdgex.eb.mil.br/portal/index.php?option=com_content&view=article&id=96&Itemid=380&lang=pt
-
-## Requisitos para Linux (Ubuntu/Debian)
-
-Instalar os seguintes pacotes de acordo com o código abaixo:
-```
-sudo apt-get install libqt5sql5-psql
-sudo apt-get install libqt5sql5-sqlite
 ```
 
 ------------------------------------
@@ -151,10 +139,6 @@ The plugin is in version 4.17.27 and has the following features:
 - Tools for spot elevation extraction and terrain validation
 - Tools for polygon numbering and generalization
 
-### User and Security Management
-- User permissions management
-- User creation/removal in PostgreSQL
-- Password changing for PostgreSQL users
 
 ### Others
 - EDGV code list viewer to aid attribute queries
@@ -166,11 +150,3 @@ The plugin was fully developed in Python and is available for download through Q
 For the complete changelog, visit: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
 
 For further information, go to https://github.com/dsgoficial/DsgTools/wiki or https://bdgex.eb.mil.br/portal/index.php?option=com_content&view=article&id=96&Itemid=380&lang=pt
-
-## Requirements for LINUX (Ubuntu/Debian)
-
-Install the following packages as follows:
-```
-sudo apt-get install libqt5sql5-psql
-sudo apt-get install libqt5sql5-sqlite
-```
