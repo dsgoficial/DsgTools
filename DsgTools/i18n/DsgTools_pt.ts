@@ -9342,6 +9342,115 @@ Reshapes polygon or line features from mouse movement.</source>
     </message>
 </context>
 <context>
+    <name>GeneralizeContourLinesAlgorithm</name>
+    <message>
+        <source>Input contour lines</source>
+        <translation>Camada de curvas de nível</translation>
+    </message>
+    <message>
+        <source>Elevation attribute</source>
+        <translation>Atributo de cota</translation>
+    </message>
+    <message>
+        <source>Minimum length for closed contours (meters)</source>
+        <translation>Comprimento mínimo para curvas fechadas (metros)</translation>
+    </message>
+    <message>
+        <source>Frame layer (clip boundary)</source>
+        <translation>Camada de moldura (limite de recorte)</translation>
+    </message>
+    <message>
+        <source>Prepared contour lines</source>
+        <translation>Curvas de nível preparadas</translation>
+    </message>
+    <message>
+        <source>Invalid input layer</source>
+        <translation>Camada de entrada inválida</translation>
+    </message>
+    <message>
+        <source>Invalid frame layer</source>
+        <translation>Camada de moldura inválida</translation>
+    </message>
+    <message>
+        <source>Frame layer has no valid geometries</source>
+        <translation>Camada de moldura não possui geometrias válidas</translation>
+    </message>
+    <message>
+        <source>Step 1/6: Collecting and exploding geometries...</source>
+        <translation>Passo 1/6: Coletando e explodindo geometrias...</translation>
+    </message>
+    <message>
+        <source>Step 2/6: Merging connected lines...</source>
+        <translation>Passo 2/6: Mesclando linhas conectadas...</translation>
+    </message>
+    <message>
+        <source>Step 3/6: Validating geometries...</source>
+        <translation>Passo 3/6: Validando geometrias...</translation>
+    </message>
+    <message>
+        <source>Step 4/6: Filtering small closed contours (&lt; %1 m)...</source>
+        <translation>Passo 4/6: Filtrando curvas fechadas pequenas (&lt; %1 m)...</translation>
+    </message>
+    <message>
+        <source>Step 5/6: Generalizing (Douglas → NURBfit → Douglas)...</source>
+        <translation>Passo 5/6: Generalizando (Douglas → NURBfit → Douglas)...</translation>
+    </message>
+    <message>
+        <source>Step 6/6: Clipping by frame and writing output...</source>
+        <translation>Passo 6/6: Recortando pela moldura e gravando saída...</translation>
+    </message>
+    <message>
+        <source>Generalize Contour Lines</source>
+        <translation>Generalizar Curvas de Nível</translation>
+    </message>
+    <message>
+        <source>Generalization Algorithms</source>
+        <translation>Algoritmos de Generalização</translation>
+    </message>
+    <message>
+        <source>Prepares raw contour lines for cartographic production following the EDGV standard.
+
+The algorithm performs the following steps:
+1. Explodes multipart geometries and merges connected lines at the same elevation
+2. Removes duplicate vertices
+3. Filters out closed contours shorter than the specified minimum length
+4. Applies a three-step generalization chain:
+   a) Douglas-Peucker simplification (2 m tolerance)
+   b) NURBfit B-spline interpolation (degree 3)
+   c) Douglas-Peucker simplification (3 m tolerance)
+5. Clips the result to the frame boundary
+6. Creates output features with EDGV attributes (id, cota, indice, depressao, visivel, dentro_massa_dagua, texto_edicao)
+
+The algorithm handles non-metric coordinate systems by automatically projecting to an appropriate UTM zone for metric operations.
+
+Parameters:
+- Input contour lines: Raw contour line layer
+- Elevation attribute: Field containing the elevation value
+- Minimum length for closed contours: Closed contour lines shorter than this value (in meters) will be removed
+- Frame layer: Polygon layer used to clip the output</source>
+        <translation>Prepara curvas de nível brutas para produção cartográfica seguindo o padrão EDGV.
+
+O algoritmo executa os seguintes passos:
+1. Explode geometrias multipart e mescla linhas conectadas na mesma cota
+2. Remove vértices duplicados
+3. Filtra curvas fechadas menores que o comprimento mínimo especificado
+4. Aplica uma cadeia de generalização em três passos:
+   a) Simplificação Douglas-Peucker (tolerância de 2 m)
+   b) Interpolação B-spline NURBfit (grau 3)
+   c) Simplificação Douglas-Peucker (tolerância de 3 m)
+5. Recorta o resultado pela moldura
+6. Cria feições de saída com atributos EDGV (id, cota, indice, depressao, visivel, dentro_massa_dagua, texto_edicao)
+
+O algoritmo trata sistemas de coordenadas não métricos projetando automaticamente para uma zona UTM adequada para operações métricas.
+
+Parâmetros:
+- Camada de curvas de nível: Camada de linhas brutas
+- Atributo de cota: Campo contendo o valor de elevação
+- Comprimento mínimo para curvas fechadas: Curvas de nível fechadas menores que este valor (em metros) serão removidas
+- Camada de moldura: Camada de polígono usada para recortar a saída</translation>
+    </message>
+</context>
+<context>
     <name>GeneralizeLandingStripAlgorithm</name>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeLandingStrip.py" line="48"/>
