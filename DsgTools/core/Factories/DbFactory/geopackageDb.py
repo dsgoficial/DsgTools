@@ -26,6 +26,7 @@ from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import QgsCoordinateReferenceSystem
 
 from .spatialiteDb import SpatialiteDb
+from .pgDataTypes import GeomDictResult, GeomTableEntry
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.core.dsgEnums import DsgEnums
 
@@ -171,11 +172,10 @@ class GeopackageDb(SpatialiteDb):
                 geomDict[type_].append(layerName)
         return geomDict
 
-    def getGeomDict(self, getCentroids=False):
+    def getGeomDict(self, getCentroids=False) -> GeomDictResult:
         """
-        returns a dict like this:
-        {'tablePerspective' : {
-            'layerName' :
+        Returns geometry metadata for all tables in the database as a
+        :class:`GeomDictResult`.
         """
         self.checkAndOpenDb()
         edgvVersion = self.getDatabaseVersion()
@@ -186,11 +186,8 @@ class GeopackageDb(SpatialiteDb):
                 self.tr("Problem getting geom tables from db: ")
                 + query.lastError().text()
             )
-        geomDict = dict()
-        geomDict["primitivePerspective"] = self.getGeomTypeDict()
-        geomDict["tablePerspective"] = dict()
+        result = GeomDictResult(primitivePerspective=self.getGeomTypeDict())
         while query.next():
-            isCentroid = False
             srid = query.value(0)
             if edgvVersion in ("2.1.3", "FTer_2a_Ed"):
                 geometryType = query.value(2)
@@ -200,16 +197,15 @@ class GeopackageDb(SpatialiteDb):
             tableSchema = tableName.split("_")[0]
             geometryColumn = query.value(1)
             layerName = "_".join(tableName.split("_")[1::])
-            if layerName not in list(geomDict["tablePerspective"].keys()):
-                geomDict["tablePerspective"][layerName] = dict()
-                geomDict["tablePerspective"][layerName]["schema"] = tableSchema
-                geomDict["tablePerspective"][layerName]["srid"] = str(srid)
-                geomDict["tablePerspective"][layerName][
-                    "geometryColumn"
-                ] = geometryColumn
-                geomDict["tablePerspective"][layerName]["geometryType"] = geometryType
-                geomDict["tablePerspective"][layerName]["tableName"] = tableName
-        return geomDict
+            if layerName not in result.tablePerspective:
+                result.tablePerspective[layerName] = GeomTableEntry(
+                    schema=tableSchema,
+                    srid=srid,
+                    geometryColumn=geometryColumn,
+                    geometryType=geometryType,
+                    tableName=tableName,
+                )
+        return result
 
     def getGeomColumnTupleList(self, showViews=False):
         """

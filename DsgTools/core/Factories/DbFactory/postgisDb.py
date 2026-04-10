@@ -33,6 +33,13 @@ from qgis.core import (
 
 from .abstractDb import AbstractDb
 from .pgConnectionAdapter import PsycopgDbAdapter
+from .pgDataTypes import (
+    ColumnDomainInfo,
+    DatabaseLayerInfo,
+    GeomDictResult,
+    GeomTableEntry,
+    TableDomainInfo,
+)
 from .pgDecorators import ensure_connected, transactional
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
@@ -1800,55 +1807,23 @@ class PostgisDb(AbstractDb):
             raise
 
     @ensure_connected
-    def getStructureDict2(self):
-        """
-        Don't know the purpose of this method
-        """
-
-        if self.getDatabaseVersion() == "2.1.3":
-            schemaList = ["cb", "complexos", "dominios"]
-        elif self.getDatabaseVersion() == "FTer_2a_Ed":
-            schemaList = ["pe", "ge", "complexos"]
-        else:
-            QgsMessageLog.logMessage(
-                self.tr("Operation not defined for this database version!"),
-                "DSGTools Plugin",
-                Qgis.MessageLevel.Critical,
-            )
-            return
-
-        rows = self._fetch_all(self.gen.validateWithDomain(schemaList))
-        classDict = dict()
-        for row in rows:
-            schemaName = str(row[0])
-            className = str(row[1])
-            attName = str(row[2])
-            domainQuery = str(row[5])
-            cl = schemaName + "." + className
-            for drow in self._fetch_all(domainQuery):
-                value = int(drow[0])
-                code_name = drow[1]
-                classDict = self.utils.buildNestedDict(
-                    classDict, [str(cl), str(attName)], [(value, code_name)]
-                )
-        # TODO: get constraints
-        return classDict
-
-    @ensure_connected
     def getGeomSchemaList(self):
         return [row[0] for row in self._fetch_all(self.gen.getGeometricSchemas())]
 
     @ensure_connected
-    def getGeomDict(self, geomTypeDict, insertCategory=False):
+    def getGeomDict(self, geomTypeDict, insertCategory=False) -> GeomDictResult:
         """
-        returns a dict like this:
-        {'tablePerspective' : {
-            'layerName' :
+        Returns geometry metadata for all tables in the database.
+
+        Returns a :class:`GeomDictResult` with two perspectives:
+
+        * ``primitivePerspective`` — the ``geomTypeDict`` passed by the caller
+          (primitive type → list of layer names).
+        * ``tablePerspective`` — ``{layerName: GeomTableEntry}`` mapping with
+          schema, srid (native int), geometry column/type and EDGV category.
         """
         edgvVersion = self.getDatabaseVersion()
-        geomDict = dict()
-        geomDict["primitivePerspective"] = geomTypeDict
-        geomDict["tablePerspective"] = dict()
+        result = GeomDictResult(primitivePerspective=geomTypeDict)
         for row in self._fetch_all(self.gen.getGeomTablesFromGeometryColumns()):
             srid = row[0]
             geometryColumn = row[1]
@@ -1857,121 +1832,112 @@ class PostgisDb(AbstractDb):
             tableName = row[4]
             layerName = tableName
             if geometryColumn == "centroid":
-                table = layerName.split("_")
-                table[-1] = "c"
-                layerName = "_".join(table)
-            if layerName not in list(geomDict["tablePerspective"].keys()):
-                geomDict["tablePerspective"][layerName] = dict()
-                geomDict["tablePerspective"][layerName]["schema"] = tableSchema
-                geomDict["tablePerspective"][layerName]["srid"] = str(srid)
-                geomDict["tablePerspective"][layerName][
-                    "geometryColumn"
-                ] = geometryColumn
-                geomDict["tablePerspective"][layerName]["geometryType"] = geometryType
-                geomDict["tablePerspective"][layerName]["tableName"] = tableName
-                if insertCategory:
-                    if edgvVersion == "Non_EDGV":
-                        geomDict["tablePerspective"][layerName]["category"] = ""
-                    else:
-                        geomDict["tablePerspective"][layerName][
-                            "category"
-                        ] = layerName.split("_")[0]
-        return geomDict
+                parts = layerName.split("_")
+                parts[-1] = "c"
+                layerName = "_".join(parts)
+            if layerName in result.tablePerspective:
+                continue
+            category = ""
+            if insertCategory and edgvVersion != "Non_EDGV":
+                category = layerName.split("_")[0]
+            result.tablePerspective[layerName] = GeomTableEntry(
+                schema=tableSchema,
+                srid=srid,
+                geometryColumn=geometryColumn,
+                geometryType=geometryType,
+                tableName=tableName,
+                category=category,
+            )
+        return result
 
     @ensure_connected
-    def getDbDomainDict(self, auxGeomDict, buildOtherInfo=False):
+    def getDbDomainDict(
+        self, auxGeomDict: GeomDictResult, buildOtherInfo=False
+    ) -> dict:
         """
-        returns a dict like this:
-        {'adm_posto_fiscal_a': {
-            'columns':{
-                'operacional': {'references':'dominios.operacional', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
-                'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
-                'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
-                }
-            'schema': schemaName
-            'geometryColum': geometryColumn
-            'primaryKey': primaryKey
+        Returns domain / constraint metadata for all geometry tables.
+
+        Return type is ``Dict[str, TableDomainInfo]``: a mapping from table
+        name to a :class:`TableDomainInfo` whose ``columns`` attribute maps
+        each FK column name to a :class:`ColumnDomainInfo`.
+
+        Example structure::
+
+            {
+                'adm_posto_fiscal_a': TableDomainInfo(columns={
+                    'operacional': ColumnDomainInfo(
+                        references='"dominios"."operacional"',
+                        refPk='code', otherKey='code_name',
+                        values={1: 'Sim', 2: 'Não'},
+                        constraintList=[1, 2],
+                        isMulti=False, nullable=False,
+                    ),
+                    ...
+                }),
+                ...
             }
-        }
         """
-        # gets only schemas of classes with geom, to speed up the process.
         checkConstraintDict = self.getCheckConstraintDict()
         notNullDict = self.getNotNullDictV2()
         multiDict = self.getMultiColumnsDict()
-        geomDict = dict()
+        result: dict = {}
+
         for row in self._fetch_all(self.gen.getGeomTablesDomains()):
-            # parse done in parseFkQuery to make code cleaner.
             (
                 tableName,
                 fkAttribute,
                 domainTable,
                 domainReferencedAttribute,
             ) = self.parseFkQuery(row[0], row[1])
-            if tableName not in list(geomDict.keys()):
-                geomDict[tableName] = dict()
-            if "columns" not in list(geomDict[tableName].keys()):
-                geomDict[tableName]["columns"] = dict()
-            if fkAttribute not in list(geomDict[tableName]["columns"].keys()):
-                geomDict[tableName]["columns"][fkAttribute] = dict()
-            geomDict[tableName]["columns"][fkAttribute]["references"] = domainTable
-            geomDict[tableName]["columns"][fkAttribute][
-                "refPk"
-            ] = domainReferencedAttribute
+            if tableName not in result:
+                result[tableName] = TableDomainInfo()
+            if fkAttribute in result[tableName].columns:
+                continue
             values, otherKey = self.getLayerColumnDict(
                 domainReferencedAttribute, domainTable
             )
-            geomDict[tableName]["columns"][fkAttribute]["values"] = values
-            geomDict[tableName]["columns"][fkAttribute]["otherKey"] = otherKey
-            geomDict[tableName]["columns"][fkAttribute]["constraintList"] = []
-            geomDict[tableName]["columns"][fkAttribute]["isMulti"] = False
-            if tableName in list(checkConstraintDict.keys()):
-                if fkAttribute in list(checkConstraintDict[tableName].keys()):
-                    geomDict[tableName]["columns"][fkAttribute][
-                        "constraintList"
-                    ] = checkConstraintDict[tableName][fkAttribute]
-            geomDict[tableName]["columns"][fkAttribute]["nullable"] = True
-            if tableName in list(notNullDict.keys()):
-                if fkAttribute in notNullDict[tableName]["attributes"]:
-                    geomDict[tableName]["columns"][fkAttribute]["nullable"] = False
-            if tableName in list(multiDict.keys()):
-                if fkAttribute in multiDict[tableName]:
-                    geomDict[tableName]["columns"][fkAttribute]["isMulti"] = True
-        for tableName in list(multiDict.keys()):
-            if tableName in list(auxGeomDict["tablePerspective"].keys()):
-                for fkAttribute in multiDict[tableName]:
-                    if tableName not in list(geomDict.keys()):
-                        geomDict[tableName] = dict()
-                    if "columns" not in list(geomDict[tableName].keys()):
-                        geomDict[tableName]["columns"] = dict()
-                    if fkAttribute not in list(geomDict[tableName]["columns"].keys()):
-                        geomDict[tableName]["columns"][fkAttribute] = dict()
-                    geomDict[tableName]["columns"][fkAttribute]["references"] = None
-                    if fkAttribute in list(checkConstraintDict[tableName].keys()):
-                        geomDict[tableName]["columns"][fkAttribute][
-                            "constraintList"
-                        ] = checkConstraintDict[tableName][fkAttribute]
-                    geomDict[tableName]["columns"][fkAttribute]["nullable"] = True
-                    if tableName in list(notNullDict.keys()):
-                        if fkAttribute in notNullDict[tableName]["attributes"]:
-                            geomDict[tableName]["columns"][fkAttribute][
-                                "nullable"
-                            ] = False
-                    if tableName in list(multiDict.keys()):
-                        if fkAttribute in multiDict[tableName]:
-                            geomDict[tableName]["columns"][fkAttribute][
-                                "isMulti"
-                            ] = True
-                            geomDict[tableName]["columns"][fkAttribute][
-                                "refPk"
-                            ] = "code"
-                            geomDict[tableName]["columns"][fkAttribute][
-                                "otherKey"
-                            ] = "code_name"
-                            geomDict[tableName]["columns"][fkAttribute][
-                                "values"
-                            ] = dict()
+            constraintList = checkConstraintDict.get(tableName, {}).get(fkAttribute, [])
+            nullable = not (
+                tableName in notNullDict
+                and fkAttribute in notNullDict[tableName]["attributes"]
+            )
+            isMulti = tableName in multiDict and fkAttribute in multiDict[tableName]
+            result[tableName].columns[fkAttribute] = ColumnDomainInfo(
+                references=domainTable,
+                refPk=domainReferencedAttribute,
+                otherKey=otherKey,
+                values=values,
+                constraintList=constraintList,
+                isMulti=isMulti,
+                nullable=nullable,
+            )
 
-        return geomDict
+        for tableName, attrs in multiDict.items():
+            if tableName not in auxGeomDict.tablePerspective:
+                continue
+            if tableName not in result:
+                result[tableName] = TableDomainInfo()
+            for fkAttribute in attrs:
+                if fkAttribute in result[tableName].columns:
+                    continue
+                constraintList = checkConstraintDict.get(tableName, {}).get(
+                    fkAttribute, []
+                )
+                nullable = not (
+                    tableName in notNullDict
+                    and fkAttribute in notNullDict[tableName]["attributes"]
+                )
+                result[tableName].columns[fkAttribute] = ColumnDomainInfo(
+                    references=None,
+                    refPk="code",
+                    otherKey="code_name",
+                    values={},
+                    constraintList=constraintList,
+                    isMulti=True,
+                    nullable=nullable,
+                )
+
+        return result
 
     @ensure_connected
     def getCheckConstraintDict(self, layerFilter=None):
@@ -3065,9 +3031,6 @@ class PostgisDb(AbstractDb):
         self.utils.getRecursiveInheritance(parent, bloodLine, inhDict)
         return bloodLine
 
-    def getFullBloodLineDict(self, candidate):
-        pass
-
     @ensure_connected
     def getAttributeListFromTable(self, schema, tableName):
         """
@@ -3578,12 +3541,6 @@ class PostgisDb(AbstractDb):
         reason = self.tr("Gap between the features of the layer")
         return [(0, reason, row[0]) for row in rows]
 
-    def instantiateQgsVectorLayer(self, uri):
-        pass
-
-    def setDataSourceUri(self, schema, tableName, geometryColumn, sql, pkColumm):
-        uri = QgsDataSourceUri()
-
     def getLayerDict(self):
         """
         Returns a dict:
@@ -3654,17 +3611,16 @@ class PostgisDb(AbstractDb):
         """
         Gives information about all tables present in the database. Output is composed by
         schema, layer, geometry column, geometry type and srid, in that order.
-        :return: (list-of-dict) database information.
+        :return: (list of DatabaseLayerInfo) database information.
         """
         sql = self.gen.databaseInfo()
-        rows = self._fetch_all(sql)
-        out = []
-        for row in rows:
-            rowDict = dict()
-            rowDict["schema"] = row[0]
-            rowDict["layer"] = row[1]
-            rowDict["geomCol"] = row[2]
-            rowDict["geomType"] = row[3]
-            rowDict["srid"] = str(row[4])
-            out.append(rowDict)
-        return out
+        return [
+            DatabaseLayerInfo(
+                schema=row[0],
+                layer=row[1],
+                geomCol=row[2],
+                geomType=row[3],
+                srid=row[4],
+            )
+            for row in self._fetch_all(sql)
+        ]

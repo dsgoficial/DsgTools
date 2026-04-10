@@ -273,17 +273,18 @@ class EDGVLayerLoader(QObject):
             schema = inputParam["tableSchema"]
             geomColumn = inputParam["geom"]
             tableName = inputParam["tableName"]
-            srid = self.geomDict["tablePerspective"][tableName]["srid"]
+            srid = self.geomDict.tablePerspective[tableName].srid
         elif isinstance(inputParam, tuple):
             schema, tableName = inputParam
             lyrName = tableName
             geomColumn, srid = "", ""
         else:
             lyrName = inputParam
-            tableName = self.geomDict["tablePerspective"][lyrName]["tableName"]
-            schema = self.geomDict["tablePerspective"][lyrName]["schema"]
-            geomColumn = self.geomDict["tablePerspective"][lyrName]["geometryColumn"]
-            srid = self.geomDict["tablePerspective"][lyrName]["srid"]
+            entry = self.geomDict.tablePerspective[lyrName]
+            tableName = entry.tableName
+            schema = entry.schema
+            geomColumn = entry.geometryColumn
+            srid = entry.srid
         return lyrName, schema, geomColumn, tableName, srid
 
     def getLayerByName(self, layer):

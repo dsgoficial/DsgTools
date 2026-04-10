@@ -87,9 +87,9 @@ class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
         version = self.abstractDb.getDatabaseVersion()
         self.profile = dict()
         categories = dict()
-        for layerName in list(geomDict.keys()):
-            schema = geomDict[layerName]["schema"]
-            category = geomDict[layerName]["category"]
+        for layerName, entry in geomDict.tablePerspective.items():
+            schema = entry.schema
+            category = entry.category
             if schema not in list(categories.keys()):
                 categories[schema] = dict()
             if category not in list(categories[schema].keys()):
