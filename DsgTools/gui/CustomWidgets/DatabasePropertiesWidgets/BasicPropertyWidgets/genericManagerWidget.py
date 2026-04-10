@@ -180,17 +180,16 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.information(
                 self,
                 self.tr("Success!"),
-                self.widgetName + self.tr(" successfully imported."),
+                self.tr("{0} successfully imported.").format(self.widgetName),
             )
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(
                 self,
                 self.tr("Error!"),
-                self.tr("Error! Problem importing ")
-                + self.widgetName
-                + ": "
-                + ":".join(e.args),
+                self.tr("Error! Problem importing {0}: {1}").format(
+                    self.widgetName, ":".join(e.args)
+                ),
             )
         self.refresh()
 
@@ -225,17 +224,16 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.information(
                 self,
                 self.tr("Success!"),
-                self.widgetName + self.tr(" successfully exported."),
+                self.tr("{0} successfully exported.").format(self.widgetName),
             )
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(
                 self,
                 self.tr("Error!"),
-                self.tr("Error! Problem exporting ")
-                + self.widgetName
-                + ": "
-                + ":".join(e.args),
+                self.tr("Error! Problem exporting {0}: {1}").format(
+                    self.widgetName, ":".join(e.args)
+                ),
             )
 
     @pyqtSlot(bool)
@@ -256,17 +254,16 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.information(
                 self,
                 self.tr("Success!"),
-                self.widgetName + self.tr(" successfully exported."),
+                self.tr("{0} successfully exported.").format(self.widgetName),
             )
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(
                 self,
                 self.tr("Error!"),
-                self.tr("Error! Problem exporting ")
-                + self.widgetName
-                + ": "
-                + ":".join(e.args),
+                self.tr("Error! Problem exporting {0}: {1}").format(
+                    self.widgetName, ":".join(e.args)
+                ),
             )
 
     @pyqtSlot(bool)
@@ -288,17 +285,16 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.information(
                 self,
                 self.tr("Success!"),
-                self.widgetName + self.tr(" successfully imported."),
+                self.tr("{0} successfully imported.").format(self.widgetName),
             )
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(
                 self,
                 self.tr("Error!"),
-                self.tr("Error! Problem importing ")
-                + self.widgetName
-                + ": "
-                + ":".join(e.args),
+                self.tr("Error! Problem importing {0}: {1}").format(
+                    self.widgetName, ":".join(e.args)
+                ),
             )
 
     @pyqtSlot(bool)
@@ -379,7 +375,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                 if successList:
                     if len(successList) > 0:
                         try:
-                            msg += self.tr(" on databases ") + ", ".join(successList)
+                            msg += self.tr(" on databases {0}").format(", ".join(successList))
                         except:  # none type case, just add .
                             msg += "."
         msg += self.logInternalError(exceptionDict)
@@ -392,7 +388,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         msg = ""
         configList = list(exceptionDict.keys())
         if len(configList) > 0:
-            msg += self.tr("\nConfig with error:") + ",".join(configList)
+            msg += self.tr("\nConfig with error: {0}").format(",".join(configList))
             msg += self.tr(
                 "\nError messages for each config and database were output in qgis log."
             )
@@ -400,12 +396,9 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                 for dbName in list(exceptionDict[config].keys()):
                     if exceptionDict[config][dbName] != dict():
                         QgsMessageLog.logMessage(
-                            self.tr("Error for config ")
-                            + config
-                            + " in database "
-                            + dbName
-                            + " : "
-                            + exceptionDict[config][dbName],
+                            self.tr("Error for config {0} in database {1}: {2}").format(
+                                config, dbName, exceptionDict[config][dbName]
+                            ),
                             "DSGTools Plugin",
                             Qgis.MessageLevel.Critical,
                         )
@@ -750,7 +743,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.question(
                 self,
                 self.tr("Question"),
-                self.tr("Do you really want to delete ") + settingTextList + "?",
+                self.tr("Do you really want to delete {0}?").format(settingTextList),
                 QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
             == QMessageBox.StandardButton.Cancel
@@ -773,10 +766,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                 QMessageBox.question(
                     self,
                     self.tr("Question"),
-                    self.tr("Do you really want to apply selected operation on ")
-                    + dbChangeList
-                    + "?"
-                    + self.tr(" (Data may be lost in the process)"),
+                    self.tr("Do you really want to apply selected operation on {0}? (Data may be lost in the process)").format(dbChangeList),
                     QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
                 )
                 == QMessageBox.StandardButton.Cancel

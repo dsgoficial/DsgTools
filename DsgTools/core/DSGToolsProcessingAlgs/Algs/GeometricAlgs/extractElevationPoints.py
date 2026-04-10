@@ -684,7 +684,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(
-                self.tr(f"{self.currentStepText}: Building masked raster...")
+                self.tr("{0}: Building masked raster...").format(self.currentStepText)
             )
         npRaster, maskedNpRaster, transform, maskLyr = self.readAndMaskRaster(
             clippedRasterLyr,

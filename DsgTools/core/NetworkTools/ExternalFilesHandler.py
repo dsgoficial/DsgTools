@@ -71,10 +71,8 @@ class ExternalFileDownloadProcessor(QObject):
             self.parent,
             self.tr("Download Files"),
             self.tr(
-                "The following files: {} are not downloaded. Do you want to download them?".format(
-                    fileName
-                )
-            ),
+                "The following files: {0} are not downloaded. Do you want to download them?"
+            ).format(fileName),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             QMessageBox.StandardButton.No,
         )
@@ -115,7 +113,7 @@ class ExternalFileDownloadProcessor(QObject):
             QMessageBox.critical(
                 self.parent,
                 self.tr("Error"),
-                self.tr("Could not download the following files: {}".format(e)),
+                self.tr("Could not download the following files: {0}").format(e),
             )
         QApplication.restoreOverrideCursor()
         return 2

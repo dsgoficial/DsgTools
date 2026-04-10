@@ -114,9 +114,7 @@ class CustomizationManagerWidget(GenericManagerWidget):
             QMessageBox.question(
                 self,
                 self.tr("Question"),
-                self.tr("Do you really want to delete customization ")
-                + customizationName
-                + "?",
+                self.tr("Do you really want to delete customization {0}?").format(customizationName),
                 QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
             == QMessageBox.StandardButton.Cancel
@@ -129,9 +127,7 @@ class CustomizationManagerWidget(GenericManagerWidget):
             QMessageBox.warning(
                 self,
                 self.tr("Success!"),
-                self.tr("Customization ")
-                + customizationName
-                + self.tr(" successfully deleted."),
+                self.tr("Customization {0} successfully deleted.").format(customizationName),
             )
             self.refreshProfileList()
         except Exception as e:
@@ -139,5 +135,5 @@ class CustomizationManagerWidget(GenericManagerWidget):
             QMessageBox.warning(
                 self,
                 self.tr("Warning!"),
-                self.tr("Error! Problem deleting customization: ") + ":".join(e.args),
+                self.tr("Error! Problem deleting customization: {0}").format(":".join(e.args)),
             )

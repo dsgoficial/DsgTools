@@ -519,20 +519,20 @@ class ValidateImportedDataMethods:
         :return: (signal) value returned from the clicked button.
         """
         msg = QMessageBox()
-        msg.setWindowTitle("Invalid Rules Information")
+        msg.setWindowTitle(self.tr("Invalid Rules Information"))
 
         if lyrList and msgType == "invalid":
             msg.setIcon(QMessageBox.Icon.Critical)
-            msg.setText("Some rules has invalid itens!")
+            msg.setText(self.tr("Some rules have invalid items!"))
             msg.setInformativeText(
-                "If you ignore, the invalid rules may not be loaded."
+                self.tr("If you ignore, the invalid rules may not be loaded.")
             )
 
             textLyrList = sorted(set(lyrList))
             formatedLyrList = ["{}" for item in textLyrList]
             msgString = ",".join(formatedLyrList).replace(",", "\n")
             formatedMsgString = (
-                "The following rules are not valid:\n" + msgString.format(*textLyrList)
+                self.tr("The following rules are not valid:\n") + msgString.format(*textLyrList)
             )
 
             msg.setDetailedText(formatedMsgString)
@@ -540,7 +540,7 @@ class ValidateImportedDataMethods:
             msg.setDefaultButton(QMessageBox.StandardButton.Cancel)
         else:
             msg.setIcon(QMessageBox.Icon.Information)
-            msg.setText("Successfully loaded rules!")
+            msg.setText(self.tr("Successfully loaded rules!"))
 
         choice = msg.exec()
         return choice

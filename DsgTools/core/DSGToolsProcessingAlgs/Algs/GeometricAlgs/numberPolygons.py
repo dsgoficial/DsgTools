@@ -40,19 +40,19 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LAYER,
-                self.tr("Insira a camada de polígonos"),
+                self.tr("Input polygon layer"),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.DIRECTION,
-                self.tr("Indique a direção de numeração:"),
+                self.tr("Indicate the numbering direction:"),
                 options=[
-                    "Do Norte para o Sul, do Oeste para o Leste",
-                    "Do Norte para o Sul, do Leste para o Oeste",
-                    "Do Sul para o Norte, do Leste para o Oeste",
-                    "Do Sul para o Norte, do Oeste para o Leste",
+                    self.tr("North to South, West to East"),
+                    self.tr("North to South, East to West"),
+                    self.tr("South to North, East to West"),
+                    self.tr("South to North, West to East"),
                 ],
                 defaultValue=0,
             )
@@ -62,7 +62,7 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.GROUP_BY_FIELD,
-                self.tr("Campo para agrupar (opcional)"),
+                self.tr("Group by field (optional)"),
                 parentLayerParameterName=self.INPUT_LAYER,
                 optional=True,
                 allowMultiple=False,
@@ -72,7 +72,7 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterString(
                 self.ATTRIBUTE_NAME,
-                self.tr("Insira o nome do atributo de ordenamento"),
+                self.tr("Enter the ordering attribute name"),
                 defaultValue="ord",
             )
         )
@@ -90,14 +90,14 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         group_by_field = self.parameterAsString(parameters, self.GROUP_BY_FIELD, context)
 
         if not layer:
-            raise QgsProcessingException("Invalid input layer")
+            raise QgsProcessingException(self.tr("Invalid input layer"))
 
         # Validar campo de agrupamento se fornecido
         if group_by_field:
             field_index = layer.fields().indexFromName(group_by_field)
             if field_index == -1:
-                raise QgsProcessingException(f"Campo '{group_by_field}' não encontrado")
-            feedback.pushInfo(f"Ordenando por campo: {group_by_field}")
+                raise QgsProcessingException(self.tr("Field '{0}' not found").format(group_by_field))
+            feedback.pushInfo(self.tr("Ordering by field: {0}").format(group_by_field))
 
         fields = layer.fields()
         fields.append(QgsField(attr_name, QMetaType.Type.Int))
@@ -117,7 +117,7 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         sorted_features = self._sort_features(features, direction, group_by_field)
         
         total = 100.0 / len(sorted_features) if sorted_features else 0
-        feedback.setProgressText("Numerando os polígonos conforme direção dada...\n")
+        feedback.setProgressText(self.tr("Numbering polygons according to given direction...\n"))
 
         for i, feature in enumerate(sorted_features, start=1):
             new_feature = QgsFeature(fields)

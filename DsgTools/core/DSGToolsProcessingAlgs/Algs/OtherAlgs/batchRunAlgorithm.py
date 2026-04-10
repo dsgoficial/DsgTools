@@ -143,17 +143,17 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             )
             if layer is None:
                 multiStepFeedback.pushInfo(
-                    self.tr(f"Layer {layerName} not found. Skipping step.")
+                    self.tr("Layer {0} not found. Skipping step.").format(layerName)
                 )
                 continue
             if layer.readOnly():
                 multiStepFeedback.pushInfo(
-                    self.tr(f"Layer {layerName} is read only. Skipping step.")
+                    self.tr("Layer {0} is read only. Skipping step.").format(layerName)
                 )
                 continue
             if layer.featureCount() == 0:
                 multiStepFeedback.pushInfo(
-                    self.tr(f"Layer {layerName} is empty. Skipping step.")
+                    self.tr("Layer {0} is empty. Skipping step.").format(layerName)
                 )
                 continue
             fieldNameSet = set(f.name() for f in layer.fields())

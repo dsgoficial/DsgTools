@@ -352,7 +352,7 @@ class AbstractSelectionTool(QgsMapTool):
                     db_name.split("'")[1] if "'" in db_name else db_name
                 )
             elif "memory" in dsUri:
-                db_name = self.tr(f"{cl.name()} (Memory Layer)")
+                db_name = self.tr("{0} (Memory Layer)").format(cl.name())
             else:
                 db_name = dsUri.split("'")[1]
             if len(menuDict) == 1:

@@ -198,7 +198,7 @@ class MultiLayersCentroidsFlagDockWidget(
             if featList == []:
                 continue
             lyrFields = [
-                self.tr(f"{field.name()}")
+                field.name()
                 for field in self.pointLayerDict[lyrid].fields()
             ]
             for field in lyrFields:
@@ -227,7 +227,7 @@ class MultiLayersCentroidsFlagDockWidget(
         row = 0
         for lyrid in lyrsPointsInsideFlagPolygonDict:
             lyrFields = [
-                self.tr(f"{field.name()}")
+                field.name()
                 for field in self.pointLayerDict[lyrid].fields()
             ]
             for feat in lyrsPointsInsideFlagPolygonDict[lyrid]:
@@ -367,12 +367,12 @@ class MultiLayersCentroidsFlagDockWidget(
 
         if not isHidden:
             # Add action to hide this column
-            hideAction = QAction(self.tr(f"Hide column '{columnName}'"), self)
+            hideAction = QAction(self.tr("Hide column '{0}'").format(columnName), self)
             hideAction.triggered.connect(lambda: self.hideColumn(logicalIndex))
             contextMenu.addAction(hideAction)
         else:
             # Add action to show this column
-            showAction = QAction(self.tr(f"Show column '{columnName}'"), self)
+            showAction = QAction(self.tr("Show column '{0}'").format(columnName), self)
             showAction.triggered.connect(lambda: self.showColumn(logicalIndex))
             contextMenu.addAction(showAction)
 

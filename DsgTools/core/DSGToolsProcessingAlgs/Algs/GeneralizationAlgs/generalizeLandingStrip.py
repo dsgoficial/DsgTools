@@ -47,7 +47,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT_POLYGON,
-                self.tr("Camada de Entrada de Polígonos"),
+                self.tr("Polygon Input Layer"),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -55,14 +55,14 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.ESCALA,
-                self.tr("Escala"),
+                self.tr("Scale"),
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.AREAMINIMA,
-                self.tr("Área Mínima no Mapa (na carta)"),
+                self.tr("Minimum Map Area (on chart)"),
                 type=QgsProcessingParameterNumber.Double,
             )
         )
@@ -70,14 +70,14 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.LARGURAMINIMA,
-                self.tr("Largura mínima no Mapa (na carta)"),
+                self.tr("Minimum Map Width (on chart)"),
                 parentParameterName=self.INPUT_POLYGON,
             )
         )
 
         smooth_voronoi = QgsProcessingParameterNumber(
             self.SVORONOI,
-            self.tr("valor da suavização voronoi"),
+            self.tr("Voronoi smoothing value"),
             type=QgsProcessingParameterNumber.Double,
             defaultValue=0.1,
         )
@@ -88,7 +88,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
 
         smooth_simplify = QgsProcessingParameterNumber(
             self.SSIMPLIFY,
-            self.tr("valor da suavização do 'simplify'"),
+            self.tr("Simplify smoothing value"),
             type=QgsProcessingParameterNumber.Double,
             defaultValue=0.0001,
         )
@@ -98,7 +98,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(smooth_simplify)
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(self.OUTPUTLINE, self.tr("Linhas"))
+            QgsProcessingParameterFeatureSink(self.OUTPUTLINE, self.tr("Lines"))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -138,19 +138,19 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Iniciando atribuição 'id' às feições da camada...")
+            self.tr("Starting 'id' assignment to layer features...")
         )
         ids = algRunner.runCreateFieldWithExpression(
             polygonLayer, "@id", "featid", context, fieldType=1
         )
         multiStepFeedback.setProgressText(
-            self.tr("Atribuição de 'id' às feições da camada completa...")
+            self.tr("Feature 'id' assignment complete...")
         )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Iniciando algoritmo de polo de inacessibilidade...")
+            self.tr("Starting pole of inaccessibility algorithm...")
         )
 
         verifyingCrs = ids.crs()
@@ -164,25 +164,25 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
             ids, context, tolerance=tolerancia
         )
         multiStepFeedback.setProgressText(
-            self.tr("algoritmo de polo de inacessibilidade completo...")
+            self.tr("Pole of inaccessibility algorithm complete...")
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Iniciando determinação da largura das pistas de pouso...")
+            self.tr("Starting landing strip width determination...")
         )
 
         polygon_com_largura = algRunner.runJoinAttributesTable(
             ids, "featid", inacessibility_pole, "featid", context, 1, ["dist_pole"]
         )
         multiStepFeedback.setProgressText(
-            self.tr("Determinação da largura das pistas de pouso completa...")
+            self.tr("Landing strip width determination complete...")
         )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Iniciando Seleção das pistas de pouso...")
+            self.tr("Starting landing strip selection...")
         )
 
         features_to_become_line = algRunner.runFilterExpression(
@@ -191,13 +191,13 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
             context,
         )
         multiStepFeedback.setProgressText(
-            self.tr("Seleção das pistas de pouso completo...")
+            self.tr("Landing strip selection complete...")
         )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Iniciando obtenção das linhas a partir das áreas...")
+            self.tr("Starting line extraction from areas...")
         )
 
         centerlinesDict = self.getLinesFromArea(
@@ -227,7 +227,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
                 newFeat[fieldName] = feat[fieldName]
             LineSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
         polygonLayer.startEditing()
-        polygonLayer.beginEditCommand("Deletar os polígonos")
+        polygonLayer.beginEditCommand(self.tr("Delete polygons"))
         polygonLayer.deleteFeatures(ids_to_delete)
         polygonLayer.endEditCommand()
 
@@ -245,10 +245,10 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Iniciando obtenção das linhas a partir das áreas...")
+            self.tr("Starting line extraction from areas...")
         )
         multiStepFeedback.setProgressText(
-            self.tr("Aplicando a esqueletização de voronoi...")
+            self.tr("Applying Voronoi skeletonization...")
         )
 
         algRunner = AlgRunner()
@@ -278,7 +278,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Ajustando campos da tabela de atributos...")
+            self.tr("Adjusting attribute table fields...")
         )
         # voronoi trunca nome dos atributos ate 10 caracteres, usamos join para recuperar os nomes originais
         line_with_fields = algRunner.runJoinAttributesTable(
@@ -296,7 +296,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Retirando vértices dos extremos e aplicando a suavização...")
+            self.tr("Removing end vertices and applying smoothing...")
         )
         line_with_height = algRunner.runJoinAttributesTable(
             line_with_fields, "featid", orientedBBox, "featid", context, 1, ["height"]
@@ -350,7 +350,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
         return "generalizelandingstripalgorithm"
 
     def displayName(self):
-        return self.tr("Generalizar Pistas de pouso")
+        return self.tr("Generalize Landing Strips")
 
     def group(self):
         return self.tr("Generalization Algorithms")
@@ -363,7 +363,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "Este algoritmo recebe uma camada do tipo polígono com feições que correspondem a pistas de pouso. \nSe a área da pista de pouso for menor que a mínima ou sua largura for menor que a mínima, o algoritmo cria uma linha centra para representar a pista de pouso e elimina o polígono da camada de polígonos original.\n A camada de output são as linhas criadas correspondentes às respectivas pistas de pouso. \nObs.1: Os parâmetros de área e largura têm unidade de medida correspondente às unidades da camada de entrada. Assim, se a camada tem uma projeção métrica, os valores de largura e área serão recebidos pelo algoritmo em metros e metros quadrados, respectivamente. \nObs.2: O valor default da suavização do 'simplify' corresponde a uma projeção geográfica (unidades em graus). Para um sistema de referência métrico, valor de suavização deve ser corrigido, sendo multiplicado por um valor na ordem de grandeza de 10^5."
+            "This algorithm receives a polygon layer with features corresponding to landing strips. \nIf the landing strip area is smaller than the minimum or its width is smaller than the minimum, the algorithm creates a center line to represent the landing strip and removes the polygon from the original polygon layer.\n The output layer contains the lines created corresponding to the respective landing strips. \nNote 1: The area and width parameters have measurement units corresponding to the input layer units. Thus, if the layer has a metric projection, the width and area values will be received by the algorithm in meters and square meters, respectively. \nNote 2: The default simplify smoothing value corresponds to a geographic projection (units in degrees). For a metric reference system, the smoothing value must be corrected by multiplying by a value in the order of magnitude of 10^5."
         )
 
     def createInstance(self):

@@ -117,20 +117,20 @@ class CloseLinesTool(QgsMapTool):
         layer = iface.activeLayer()
         if not layer:
             iface.messageBar().pushMessage(
-                "Erro", "Selecione uma camada válida", level=Qgis.MessageLevel.Critical, duration=5
+                self.tr("Error"), self.tr("Select a valid layer"), level=Qgis.MessageLevel.Critical, duration=5
             )
             return
         selectedFeatures = layer.selectedFeatureCount()
         if selectedFeatures == 0:
             iface.messageBar().pushMessage(
-                "Erro", "Nenhuma feição selecionada", level=Qgis.MessageLevel.Critical, duration=5
+                self.tr("Error"), self.tr("No features selected"), level=Qgis.MessageLevel.Critical, duration=5
             )
             return
         confirmation = self.confirmAction(selectedFeatures)
         if not confirmation:
             iface.messageBar().pushMessage(
-                "Cancelado",
-                "Ação cancelada pelo usuário",
+                self.tr("Canceled"),
+                self.tr("Action canceled by user"),
                 level=Qgis.MessageLevel.Warning,
                 duration=5,
             )
@@ -153,8 +153,8 @@ class CloseLinesTool(QgsMapTool):
             layer.addFeatures(list(featuresToAdd))
             layer.endEditCommand()
         iface.messageBar().pushMessage(
-            "Executado",
-            f"{len(featuresIdsToDelete)} linha(s) fechada(s)",
+            self.tr("Done"),
+            self.tr("{0} line(s) closed").format(len(featuresIdsToDelete)),
             level=Qgis.MessageLevel.Success,
             duration=5,
         )
@@ -162,8 +162,8 @@ class CloseLinesTool(QgsMapTool):
     def confirmAction(self, selectedFeatures):
         reply = QMessageBox.question(
             iface.mainWindow(),
-            "Continuar?",
-            f"As linhas selecionadas com vértices iniciais e finais próximos serão fechadas ({selectedFeatures} feição(ões) selecionada(s)). Deseja continuar?",
+            self.tr("Continue?"),
+            self.tr("Selected lines with close start and end vertices will be closed ({0} feature(s) selected). Do you want to continue?").format(selectedFeatures),
             QMessageBox.StandardButton.Yes,
             QMessageBox.StandardButton.No,
         )

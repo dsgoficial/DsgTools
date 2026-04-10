@@ -35,7 +35,7 @@ from qgis.core import (
     QgsTask,
     QgsProject,
 )
-from qgis.PyQt.QtCore import pyqtSignal, QObject
+from qgis.PyQt.QtCore import QCoreApplication, pyqtSignal, QObject
 
 from DsgTools.core.DSGToolsWorkflow.workflowItem import (
     DSGToolsWorkflowItem,
@@ -368,7 +368,7 @@ def dsgtools_workflow_from_dict(data: Dict[str, Any]) -> DSGToolsWorkflow:
         metadata.lastModified,
     ):
         raise ValueError(
-            "Display name, author, version, and last modified are required fields."
+            QCoreApplication.translate("Workflow", "Display name, author, version, and last modified are required fields.")
         )
 
     workflow_item_list = [
@@ -376,7 +376,7 @@ def dsgtools_workflow_from_dict(data: Dict[str, Any]) -> DSGToolsWorkflow:
     ]
 
     if not workflow_item_list:
-        raise ValueError("Workflow item list cannot be empty.")
+        raise ValueError(QCoreApplication.translate("Workflow", "Workflow item list cannot be empty."))
 
     # Create and return DSGToolsWorkflow object
     return DSGToolsWorkflow(

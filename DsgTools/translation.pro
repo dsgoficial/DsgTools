@@ -44,10 +44,16 @@
                      core/DSGToolsProcessingAlgs/Algs/DataManagementAlgs/__init__.py \
                      core/DSGToolsProcessingAlgs/Algs/DataManagementAlgs/abstractConvertDatabaseAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/DataManagementAlgs/appendFeaturesToLayerAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/DataManagementAlgs/buildMergedDataAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/DataManagementAlgs/clipAndCopyFeaturesBetweenDatabasesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/DataManagementAlgs/conversionParameterTypes.py \
                      core/DSGToolsProcessingAlgs/Algs/DataManagementAlgs/convertDatabaseAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/DataManagementAlgs/exportPostGISDataToShapefile.py \
+                     core/DSGToolsProcessingAlgs/Algs/DataQualityAlgs/__init__.py \
+                     core/DSGToolsProcessingAlgs/Algs/DataQualityAlgs/cqdgGridGenerator.py \
+                     core/DSGToolsProcessingAlgs/Algs/DataQualityAlgs/etcqdgSegmentationEvaluator.py \
+                     core/DSGToolsProcessingAlgs/Algs/DataQualityAlgs/etcqdgSegmentationEvaluatorFromRaster.py \
+                     core/DSGToolsProcessingAlgs/Algs/DataQualityAlgs/pecCalculatorAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/EditingAlgs/__init__.py \
                      core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/__init__.py \
@@ -55,8 +61,10 @@
                      core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/genericSelectionToolParametersAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/rightAngleToolParametersAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/setFreeHandToolParametersAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/smoothLinesToolParametersAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/__init__.py \
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/findSmallClosedLinesAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeContourLinesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeEdificationsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeEdificationsAreaAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/GeneralizationAlgs/generalizeHighwaysAlgorithm.py \
@@ -75,7 +83,11 @@
                      core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractElevationPoints.py \
                      core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/extractMiddleVertexOnLineAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/line2Multiline.py \
+                     core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnAreaOverlayer.py \
+                     core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/lineOnLineOverlayerAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/numberPolygons.py \
+                     core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/nurbfitSmoothingAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/polygonTiler.py \
                      core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/selectByDE9IM.py \
                      core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/setLineOrientation.py \
                      core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/smallHoleRemoverAlgorithm.py \
@@ -104,6 +116,7 @@
                      core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadThemesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/lockAttributeEditingAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/mergeShapefileZipFilesInSingleGeopackage.py \
                      core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/removeEmptyLayers.py \
                      core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/setRemoveDuplicateNodePropertyOnLayers.py \
@@ -118,9 +131,9 @@
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/convertLayer2LayerAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridAlongLineAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createGridFromCoordinatesAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createReviewGridAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportFeaturesByAttributeAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/fileInventoryAlgorithm.py \
@@ -129,7 +142,6 @@
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/identifyDifferencesBetweenDatabaseModelsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/loadTrackerAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/pecCalculatorAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/raiseFlagsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/ruleStatisticsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runFMESAPAlgorithm.py \
@@ -142,14 +154,18 @@
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/validateTrackerAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/RasterAlgs/__init__.py \
                      core/DSGToolsProcessingAlgs/Algs/RasterAlgs/batchRasterPackagingForBDGEx.py \
+                     core/DSGToolsProcessingAlgs/Algs/RasterAlgs/medianFilterNoDataAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/RasterAlgs/prepareFilesForRasterPackagingForBDGEx.py \
+                     core/DSGToolsProcessingAlgs/Algs/RasterAlgs/rasterRemapAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/RasterAlgs/rasterizePolygonsWithBuffer.py \
+                     core/DSGToolsProcessingAlgs/Algs/RasterAlgs/trataRasterAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/__init__.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnIntersectionsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/addUnsharedVertexOnSharedEdgesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/adjustNetworkConnectivityAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/anchoredSnapperAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/anchoredSnapperAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/deaggregateGeometriesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/detectChangesGroupAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/detectNullGeometriesAlgorithm.py \
@@ -208,16 +224,16 @@
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUncoveredStartAndEndPointsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedLinesWithSameAttributeSetAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedPolygonsWithSameAttributeSetAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnIntersectionsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyVertexNearEdgesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWaterBodyAndContourInconsistencies.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongBuildingAnglesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnmergedPolygonsWithSameAttributeSetAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayLinesWithLinesAndUpdate.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeDuplicateNodesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeDuplicatedFeaturesAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeDuplicatedGeometriesAlgorithm.py \
@@ -239,6 +255,7 @@
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unicodeFilterAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/validationAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyAdjacentGeographicBoundaryDataAlgorithm.py \
+                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyBDGExEdgeMatchingAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/__init__.py \
                      core/DSGToolsProcessingAlgs/__init__.py \
                      core/DSGToolsProcessingAlgs/algRunner.py \
@@ -266,13 +283,16 @@
                      core/Factories/DbCreatorFactory/spatialiteDbCreator.py \
                      core/Factories/DbCustomizationFactory/__init__.py \
                      core/Factories/DbCustomizationFactory/attributeCustomization.py \
+                     core/Factories/DbCustomizationFactory/classCustomization.py \
                      core/Factories/DbCustomizationFactory/codeNameCustomization.py \
                      core/Factories/DbCustomizationFactory/dbCustomization.py \
                      core/Factories/DbCustomizationFactory/dbCustomizationFactory.py \
+                     core/Factories/DbCustomizationFactory/defaultCustomization.py \
                      core/Factories/DbCustomizationFactory/domainValueCustomization.py \
                      core/Factories/DbCustomizationFactory/filterCustomization.py \
                      core/Factories/DbCustomizationFactory/newDomainTableCustomization.py \
                      core/Factories/DbCustomizationFactory/newDomainValueCustomization.py \
+                     core/Factories/DbCustomizationFactory/nullityCustomization.py \
                      core/Factories/DbFactory/__init__.py \
                      core/Factories/DbFactory/abstractDb.py \
                      core/Factories/DbFactory/dbFactory.py \
@@ -288,6 +308,9 @@
                      core/Factories/LayerLoaderFactory/shapefileLayerLoader.py \
                      core/Factories/LayerLoaderFactory/spatialiteLayerLoader.py \
                      core/Factories/SqlFactory/__init__.py \
+                     core/Factories/SqlFactory/geopackageSqlGenerator.py \
+                     core/Factories/SqlFactory/postgisSqlGenerator.py \
+                     core/Factories/SqlFactory/spatialiteSqlGenerator.py \
                      core/Factories/SqlFactory/sqlGenerator.py \
                      core/Factories/SqlFactory/sqlGeneratorFactory.py \
                      core/Factories/ThreadFactory/__init__.py \
@@ -313,7 +336,6 @@
                      core/LayerTools/CustomFormTools/customInitCodeGenerator.py \
                      core/LayerTools/CustomFormTools/formsCustom/__init__.py \
                      core/Misc/QGIS_Scripts/HSV_fusion.py \
-                     core/Misc/QGIS_Scripts/Sigef.py \
                      core/Misc/QGIS_Scripts/__init__.py \
                      core/Misc/QGIS_Scripts/edgv_checker.py \
                      core/Misc/QGIS_Scripts/reverse_geocode.py \
@@ -522,6 +544,7 @@
                      gui/Misc/__init__.py \
                      gui/ProcessingUI/__init__.py \
                      gui/ProcessingUI/attributeRulesWrapper.py \
+                     gui/ProcessingUI/buildMergedDataWrapper.py \
                      gui/ProcessingUI/colorWidgetWrapper.py \
                      gui/ProcessingUI/dbConversionWrapper.py \
                      gui/ProcessingUI/distanceBetweenLayersWrapper.py \
@@ -543,6 +566,7 @@
                      gui/ProductionTools/MapTools/AuxTools/copiarwkt.py \
                      gui/ProductionTools/MapTools/AuxTools/filterTools.py \
                      gui/ProductionTools/MapTools/AuxTools/otherTools.py \
+                     gui/ProductionTools/MapTools/AuxTools/smoothLinesTool.py \
                      gui/ProductionTools/MapTools/AuxTools/spatialFilter.py \
                      gui/ProductionTools/MapTools/FlipLineTool/__init__.py \
                      gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py \
@@ -563,6 +587,8 @@
                      gui/ProductionTools/MapTools/SelectRasterTool/selectRaster.py \
                      gui/ProductionTools/MapTools/ShortcutTool/__init__.py \
                      gui/ProductionTools/MapTools/ShortcutTool/shortcutTool.py \
+                     gui/ProductionTools/MapTools/TrimExtendTool/__init__.py \
+                     gui/ProductionTools/MapTools/TrimExtendTool/trimExtendTool.py \
                      gui/ProductionTools/MapTools/__init__.py \
                      gui/ProductionTools/MapTools/mapToolsGuiManager.py \
                      gui/ProductionTools/Toolbars/CenterPointAndBoundariesToolbar/__init__.py \
@@ -625,7 +651,7 @@
                      gui/guiManager.py \
                      plugin_upload.py \
                      resources.py \
-                     resources_rc.py
+                     resources_rc.py 
 
  FORMS		 =	Modules/acquisitionMenu/uis/addButtonDialog.ui \
                      Modules/acquisitionMenu/uis/addTabDialog.ui \
@@ -754,7 +780,7 @@
                      gui/ServerTools/selectStyles.ui \
                      gui/ServerTools/ui_serverConfigurator.ui \
                      gui/ServerTools/ui_serverDBExplorer.ui \
-                     gui/ServerTools/ui_viewServers.ui
+                     gui/ServerTools/ui_viewServers.ui 
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 

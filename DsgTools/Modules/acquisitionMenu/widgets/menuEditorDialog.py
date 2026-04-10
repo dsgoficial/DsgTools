@@ -157,7 +157,7 @@ class MenuEditorDialog(QtWidgets.QDialog):
     def on_exportMenuBtn_clicked(self):
         menuName = self.menuNameLe.text()
         if not menuName:
-            self.showError("Erro", "Informe o nome do menu!")
+            self.showError(self.tr("Error"), self.tr("Enter the menu name!"))
             return
         filePath = QtWidgets.QFileDialog.getSaveFileName(
             self, "", "{0}.json".format(menuName), "*.json"
@@ -172,7 +172,7 @@ class MenuEditorDialog(QtWidgets.QDialog):
     def on_createMenuBtn_clicked(self):
         menuName = self.menuNameLe.text()
         if not menuName:
-            self.showError("Erro", "Informe o nome do menu!")
+            self.showError(self.tr("Error"), self.tr("Enter the menu name!"))
             return
         self.menuWidget.setMenuName(menuName)
         self.getController().createMenuDock([self.menuWidget.dump()])

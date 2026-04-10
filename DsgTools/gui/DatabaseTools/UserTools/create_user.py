@@ -88,11 +88,9 @@ class CreateUser(QtWidgets.QDialog, FORM_CLASS):
         QtWidgets.QMessageBox.warning(
             self,
             self.tr("Success!"),
-            self.tr("User ")
-            + user
-            + self.tr(" created successfully on server ")
-            + self.abstractDb.getHostName()
-            + "!",
+            self.tr("User {0} created successfully on server {1}!").format(
+                user, self.abstractDb.getHostName()
+            ),
         )
         self.refreshScreen()
         return

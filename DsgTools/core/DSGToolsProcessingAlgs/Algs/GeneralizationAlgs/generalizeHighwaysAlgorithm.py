@@ -47,19 +47,19 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.NETWORK_LAYER,
-                self.tr("Camada de rodovias"),
+                self.tr("Highway layer"),
                 [QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.ESCALA, self.tr("Escala"), type=QgsProcessingParameterNumber.Double
+                self.ESCALA, self.tr("Scale"), type=QgsProcessingParameterNumber.Double
             )
         )
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.AREA_MINIMA,
-                self.tr("Área mínima para rotatórias na carta"),
+                self.tr("Minimum area for roundabouts on chart"),
                 parentParameterName=self.NETWORK_LAYER,
             )
         )
@@ -98,7 +98,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.MIN_LENGTH,
-                self.tr("Comprimento mínimo das estradas com pontas soltas"),
+                self.tr("Minimum length for dead-end roads"),
                 minValue=0,
                 defaultValue=0.001,
                 parentParameterName=self.NETWORK_LAYER,
@@ -175,7 +175,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         return "generalizehighwaysalgorithm"
 
     def displayName(self):
-        return self.tr("Generalizar Rodovias")
+        return self.tr("Generalize Highways")
 
     def group(self):
         return self.tr("Generalization Algorithms")

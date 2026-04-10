@@ -572,14 +572,14 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             )
             list(map(pointFlagLambda, pointFlagLyr.getFeatures()))
             multiStepFeedback.setProgressText(
-                self.tr(f"Found {pointFlagLyr.featureCount()} points of flow issues.")
+                self.tr("Found {0} points of flow issues.").format(pointFlagLyr.featureCount())
             )
             lineFlagLambda = lambda x: self.flagFeature(
                 x.geometry(), flagText=x["reason"], sink=self.line_flags_sink
             )
             list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
             multiStepFeedback.setProgressText(
-                self.tr(f"Found {lineFlagLyr.featureCount()} lines of flow issues.")
+                self.tr("Found {0} lines of flow issues.").format(lineFlagLyr.featureCount())
             )
             polygonFlagLambda = lambda x: self.flagFeature(
                 x.geometry(), flagText=x["reason"], sink=self.polygon_flags_sink
@@ -587,8 +587,8 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             list(map(polygonFlagLambda, polygonFlagLyr.getFeatures()))
             multiStepFeedback.setProgressText(
                 self.tr(
-                    f"Found {polygonFlagLyr.featureCount()} polygon of flow issues."
-                )
+                    "Found {0} polygon of flow issues."
+                ).format(polygonFlagLyr.featureCount())
             )
 
         if runLoopCheck:
@@ -607,7 +607,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
 
             multiStepFeedback.pushInfo(
-                self.tr(f"Found {lineFlagLyr.featureCount()} loop issues.")
+                self.tr("Found {0} loop issues.").format(lineFlagLyr.featureCount())
             )
         return {
             self.POINT_FLAGS: self.point_flags_sink_id,

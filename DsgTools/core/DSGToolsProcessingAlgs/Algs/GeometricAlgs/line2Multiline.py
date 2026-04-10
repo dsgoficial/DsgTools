@@ -215,4 +215,4 @@ class Line2Multiline(QgsProcessingAlgorithm):
         return "DSGTools - Geometric Algorithms"
 
     def shortHelpString(self):
-        return self.tr("O algoritmo converte linhas que se tocam para multilinha")
+        return self.tr("The algorithm converts touching lines to multiline")

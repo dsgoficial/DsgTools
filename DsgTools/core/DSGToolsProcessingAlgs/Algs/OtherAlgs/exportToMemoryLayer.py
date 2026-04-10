@@ -54,12 +54,12 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         Parameter setting.
         """
         self.addParameter(
-            QgsProcessingParameterVectorLayer(self.INPUT, self.tr("Camada de entrada"))
+            QgsProcessingParameterVectorLayer(self.INPUT, self.tr("Input layer"))
         )
         self.addParameter(
             QgsProcessingParameterString(
                 self.OUTPUT_NAME,
-                self.tr("Nome da camada de saída"),
+                self.tr("Output layer name"),
                 optional=True,
                 defaultValue="resultado",
             )
@@ -67,7 +67,7 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterString(
                 self.OUTPUT_QML_STYLE,
-                self.tr("Estilo da camada de saída"),
+                self.tr("Output layer style"),
                 multiLine=True,
                 optional=True,
             )

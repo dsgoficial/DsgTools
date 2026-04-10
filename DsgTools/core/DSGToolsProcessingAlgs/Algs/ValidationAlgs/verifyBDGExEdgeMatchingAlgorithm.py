@@ -215,7 +215,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Finding adjacent cell pairs..."))
         adjacentPairs = self._findAdjacentPairs(cellFeatDict, cellSpatialIdx)
         multiStepFeedback.pushInfo(
-            self.tr(f"Found {len(adjacentPairs)} adjacent cell pair(s).")
+            self.tr("Found {0} adjacent cell pair(s).").format(len(adjacentPairs))
         )
 
         # Step 5: Edge matching
@@ -268,7 +268,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         for i, zipPath in enumerate(zipFiles):
             if feedback.isCanceled():
                 break
-            feedback.pushInfo(self.tr(f"  Extracting {zipPath.name}..."))
+            feedback.pushInfo(self.tr("  Extracting {0}...").format(zipPath.name))
 
             tempDir = tempfile.mkdtemp()
             try:
@@ -276,7 +276,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     zf.extractall(tempDir)
             except Exception as e:
                 raise QgsProcessingException(
-                    self.tr(f"Failed to extract '{zipPath.name}': {e}")
+                    self.tr("Failed to extract '{0}': {1}").format(zipPath.name, e)
                 )
 
             layersByType = {"points": {}, "lines": {}, "polygons": {}}
@@ -285,7 +285,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                 lyr = QgsVectorLayer(str(shpPath), layerName, "ogr")
                 if not lyr.isValid():
                     feedback.pushWarning(
-                        self.tr(f"  Could not load '{shpPath.name}'. Skipping.")
+                        self.tr("  Could not load '{0}'. Skipping.").format(shpPath.name)
                     )
                     continue
 
@@ -503,7 +503,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                 cellFeatDict[cell.id()] = cell
                 cellSpatialIdx.addFeature(cell)
 
-        feedback.pushInfo(self.tr(f"  {len(cellFeatDict)} grid cell(s) contain data."))
+        feedback.pushInfo(self.tr("  {0} grid cell(s) contain data.").format(len(cellFeatDict)))
         return cellFeatDict, cellSpatialIdx
 
     def _cellHasData(
@@ -563,7 +563,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
 
             if zipExtent.isEmpty():
                 feedback.pushWarning(
-                    self.tr(f"  No extent found for '{Path(zipPath).name}'. Skipping.")
+                    self.tr("  No extent found for '{0}'. Skipping.").format(Path(zipPath).name)
                 )
                 continue
 
@@ -755,7 +755,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
             extBufA = cellExternalBorders.get(cellIdA, QgsGeometry())
             extBufB = cellExternalBorders.get(cellIdB, QgsGeometry())
 
-            feedback.pushInfo(self.tr(f"  Matching cells {cellIdA} ↔ {cellIdB}..."))
+            feedback.pushInfo(self.tr("  Matching cells {0} and {1}...").format(cellIdA, cellIdB))
 
             for geomTypeKey in ("lines", "points", "polygons"):
                 layersA = dataA.get(geomTypeKey, {})
@@ -1035,7 +1035,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     continue
                 self._addFlag(
                     ptA,
-                    self.tr(f"[{layerName}] Point without neighbor at boundary."),
+                    self.tr("[{0}] Point without neighbor at boundary.").format(layerName),
                     fields,
                     sink,
                 )
@@ -1054,7 +1054,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     continue
                 self._addFlag(
                     ptA,
-                    self.tr(f"[{layerName}] Point without neighbor at boundary."),
+                    self.tr("[{0}] Point without neighbor at boundary.").format(layerName),
                     fields,
                     sink,
                 )

@@ -113,7 +113,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         return "trataraster"
 
     def displayName(self):
-        return self.tr("Trata Raster (Consolidado)")
+        return self.tr("Raster Treatment (Consolidated)")
 
     def group(self):
         return self.tr("Raster Handling")
@@ -123,35 +123,35 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "Algoritmo consolidado de tratamento de raster para classificacao "
-            "de vegetacao.\n\n"
-            "Realiza limpeza (sieve), correcao de classes (massa d'agua e "
-            "area edificada), generalizacao e preenchimento de nodata.\n\n"
-            "A correcao de classes funciona em etapas:\n"
-            "1. Remove TODOS os pixels do raster que possuem os valores DN "
-            "de massa d'agua e area edificada (torna nodata)\n"
-            "2. Queima os poligonos de referencia com os valores corretos\n"
-            "3. Preenche nodata adjacente por vizinho mais proximo\n\n"
-            "Parametros:\n"
-            "- Raster: Raster classificado de entrada (banda unica)\n"
-            "- Area Edificada: Camada vetorial de poligonos\n"
-            "- Massa d'Agua: Camada vetorial de poligonos\n"
-            "- Valor Area Edificada: Valor DN da classe (ex: 4)\n"
-            "- Valor Massa d'Agua: Valor DN da classe (ex: 1)\n"
-            "- Valor NoData: (padrao: -9999)\n"
-            "- Distancia Buffer: Buffer negativo em unidades do mapa "
-            "(padrao: -0.0001)\n"
-            "- Limiar Sieve: Pixels minimos por grupo (padrao: 50)\n"
-            "- Area Minima Passo 1: m2 para passo 1 (padrao: 15625)\n"
-            "- Area Minima Passo 2: m2 para passo 2 (padrao: 62500)\n"
-            "- Regras de Generalizacao: JSON com restricoes de classe"
+            "Consolidated raster treatment algorithm for vegetation "
+            "classification.\n\n"
+            "Performs cleanup (sieve), class correction (water body and "
+            "built-up area), generalization and nodata filling.\n\n"
+            "Class correction works in steps:\n"
+            "1. Removes ALL pixels from the raster that have the DN values "
+            "of water body and built-up area (converts to nodata)\n"
+            "2. Burns reference polygons with correct values\n"
+            "3. Fills adjacent nodata by nearest neighbor\n\n"
+            "Parameters:\n"
+            "- Raster: Classified input raster (single band)\n"
+            "- Built-up Area: Vector polygon layer\n"
+            "- Water Body: Vector polygon layer\n"
+            "- Built-up Area Value: Class DN value (e.g.: 4)\n"
+            "- Water Body Value: Class DN value (e.g.: 1)\n"
+            "- NoData Value: (default: -9999)\n"
+            "- Buffer Distance: Negative buffer in map units "
+            "(default: -0.0001)\n"
+            "- Sieve Threshold: Minimum pixels per group (default: 50)\n"
+            "- Minimum Area Pass 1: m2 for pass 1 (default: 15625)\n"
+            "- Minimum Area Pass 2: m2 for pass 2 (default: 62500)\n"
+            "- Generalization Rules: JSON with class restrictions"
         )
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterRasterLayer(
                 self.INPUT_RASTER,
-                self.tr("Raster de Entrada"),
+                self.tr("Input Raster"),
                 optional=False,
             )
         )
@@ -159,7 +159,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.AREA_EDIFICADA,
-                self.tr("Area Edificada (Poligonos)"),
+                self.tr("Built-up Area (Polygons)"),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=False,
             )
@@ -168,7 +168,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.MASSA_DAGUA,
-                self.tr("Massa d'Agua (Poligonos)"),
+                self.tr("Water Body (Polygons)"),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=False,
             )
@@ -177,7 +177,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.AREA_EDIFICADA_VALUE,
-                self.tr("Valor DN da Classe Area Edificada"),
+                self.tr("DN Value for Built-up Area Class"),
                 type=QgsProcessingParameterNumber.Integer,
                 defaultValue=2,
             )
@@ -186,7 +186,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MASSA_DAGUA_VALUE,
-                self.tr("Valor DN da Classe Massa d'Agua"),
+                self.tr("DN Value for Water Body Class"),
                 type=QgsProcessingParameterNumber.Integer,
                 defaultValue=1,
             )
@@ -195,7 +195,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.NODATA_VALUE,
-                self.tr("Valor NoData"),
+                self.tr("NoData Value"),
                 type=QgsProcessingParameterNumber.Integer,
                 defaultValue=-9999,
             )
@@ -204,7 +204,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.BUFFER_DISTANCE,
-                self.tr("Distancia do Buffer Negativo (unidades do CRS do raster)"),
+                self.tr("Negative Buffer Distance (raster CRS units)"),
                 type=QgsProcessingParameterNumber.Double,
                 defaultValue=-5,
             )
@@ -213,7 +213,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.SIEVE_THRESHOLD,
-                self.tr("Limiar Sieve (pixels)"),
+                self.tr("Sieve Threshold (pixels)"),
                 type=QgsProcessingParameterNumber.Integer,
                 defaultValue=50,
             )
@@ -222,7 +222,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.FIRST_PASS_MIN_AREA,
-                self.tr("Area Minima - Passo 1 (m2)"),
+                self.tr("Minimum Area - Pass 1 (m2)"),
                 type=QgsProcessingParameterNumber.Integer,
                 defaultValue=15625,
             )
@@ -231,7 +231,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.SECOND_PASS_MIN_AREA,
-                self.tr("Area Minima - Passo 2 (m2)"),
+                self.tr("Minimum Area - Pass 2 (m2)"),
                 type=QgsProcessingParameterNumber.Integer,
                 defaultValue=62500,
             )
@@ -241,8 +241,8 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterString(
                 self.GENERALIZATION_RULES_PASS1,
                 self.tr(
-                    "Regras de Generalizacao - Passo 1 (JSON). "
-                    'Formato: {"class_restrictions": {...}, '
+                    "Generalization Rules - Pass 1 (JSON). "
+                    'Format: {"class_restrictions": {...}, '
                     '"size_thresholds": {...}, '
                     '"non_growing_classes": [...]}'
                 ),
@@ -255,8 +255,8 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterString(
                 self.GENERALIZATION_RULES_PASS2,
                 self.tr(
-                    "Regras de Generalizacao - Passo 2 (JSON). "
-                    "Usado no segundo passo de generalizacao."
+                    "Generalization Rules - Pass 2 (JSON). "
+                    "Used in the second generalization pass."
                 ),
                 defaultValue=self.DEFAULT_RULES_PASS2,
                 optional=True,
@@ -266,7 +266,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterRasterDestination(
                 self.OUTPUT_RASTER,
-                self.tr("Raster de Saida"),
+                self.tr("Output Raster"),
                 optional=False,
             )
         )
@@ -318,7 +318,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
         if not inputRaster or not inputRaster.isValid():
             raise QgsProcessingException(
-                self.tr("Raster de entrada invalido ou nao fornecido.")
+                self.tr("Invalid or not provided input raster.")
             )
 
         self._tmpDir = tempfile.mkdtemp(prefix="trata_raster_")
@@ -330,19 +330,19 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         try:
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr("Etapa 1/10: Lendo raster de entrada...")
+                self.tr("Step 1/10: Reading input raster...")
             )
             npRaster, geotransform, projection = self._readRaster(
                 inputRaster.source()
             )
             multiStepFeedback.pushInfo(
-                self.tr("  Dimensoes: %d x %d, dtype: %s")
+                self.tr("  Dimensions: %d x %d, dtype: %s")
                 % (npRaster.shape[0], npRaster.shape[1], npRaster.dtype)
             )
 
             rasterCrs = inputRaster.crs()
             multiStepFeedback.pushInfo(
-                self.tr("Preparando poligonos (reprojecao, dissolve, buffer)... CRS raster: %s")
+                self.tr("Preparing polygons (reprojection, dissolve, buffer)... Raster CRS: %s")
                 % rasterCrs.authid()
             )
             massaDaguaBuffered = self._prepareSinglePolygonLayer(
@@ -355,7 +355,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr("Etapa 2/10: Sieve inicial (limiar=%d)...") % sieveThreshold
+                self.tr("Step 2/10: Initial sieve (threshold=%d)...") % sieveThreshold
             )
             npRaster = self._runSieve(
                 npRaster, geotransform, projection, sieveThreshold,
@@ -368,14 +368,14 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
                 self.tr(
-                    "Etapa 3/10: Removendo pixels de massa d'agua "
-                    "e area edificada..."
+                    "Step 3/10: Removing water body "
+                    "and built-up area pixels..."
                 )
             )
             maskMassa = npRaster == massaDaguaValue
             maskEdif = npRaster == areaEdificadaValue
             multiStepFeedback.pushInfo(
-                self.tr("  %d pixels massa d'agua (DN=%d), %d pixels area edificada (DN=%d) convertidos para nodata (%d).")
+                self.tr("  %d water body pixels (DN=%d), %d built-up area pixels (DN=%d) converted to nodata (%d).")
                 % (int(np.sum(maskMassa)), massaDaguaValue, int(np.sum(maskEdif)), areaEdificadaValue, nodata)
             )
             npRaster[maskMassa] = nodata
@@ -387,7 +387,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr("Etapa 4/10: Queimando poligonos com valores corretos...")
+                self.tr("Step 4/10: Burning polygons with correct values...")
             )
             npRaster = self._burnMultipleValues(
                 npRaster, geotransform, projection,
@@ -402,7 +402,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(step)
             nNodataPixels = int(np.sum(npRaster == nodata))
             multiStepFeedback.pushInfo(
-                self.tr("Etapa 5/10: Reclassificando %d pixels nodata por vizinho mais proximo...") % nNodataPixels
+                self.tr("Step 5/10: Reclassifying %d nodata pixels to nearest neighbor...") % nNodataPixels
             )
             if nNodataPixels > 0:
                 self._reclassifyValuesToNearestInPlace(
@@ -414,7 +414,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr("Etapa 6/10: Generalizacao passo 1 (min_area=%d m2)...") % firstPassMinArea
+                self.tr("Step 6/10: Generalization pass 1 (min_area=%d m2)...") % firstPassMinArea
             )
             npRaster = self._runGeneralization(
                 npRaster, geotransform, projection, nodata,
@@ -427,7 +427,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr("Etapa 7/10: Sieve pos-generalizacao (limiar=%d)...") % sieveThreshold
+                self.tr("Step 7/10: Post-generalization sieve (threshold=%d)...") % sieveThreshold
             )
             npRaster = self._runSieve(
                 npRaster, geotransform, projection, sieveThreshold,
@@ -439,7 +439,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr("Etapa 8/10: Generalizacao passo 2 (min_area=%d m2)...") % secondPassMinArea
+                self.tr("Step 8/10: Generalization pass 2 (min_area=%d m2)...") % secondPassMinArea
             )
             npRaster = self._runGeneralization(
                 npRaster, geotransform, projection, nodata,
@@ -452,7 +452,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr("Etapa 9/10: Sieve final (limiar=%d)...") % sieveThreshold
+                self.tr("Step 9/10: Final sieve (threshold=%d)...") % sieveThreshold
             )
             npRaster = self._runSieve(
                 npRaster, geotransform, projection, sieveThreshold,
@@ -462,14 +462,14 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr("Etapa 10/10: Escrevendo raster de saida...")
+                self.tr("Step 10/10: Writing output raster...")
             )
             self._writeRaster(
                 npRaster, geotransform, projection, outputRaster, nodata
             )
 
             multiStepFeedback.pushInfo(
-                self.tr("Processamento concluido com sucesso!")
+                self.tr("Processing completed successfully!")
             )
             return {self.OUTPUT_RASTER: outputRaster}
 

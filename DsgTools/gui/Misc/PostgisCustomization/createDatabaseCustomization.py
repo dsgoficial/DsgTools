@@ -354,9 +354,7 @@ class CreateDatabaseCustomization(QtWidgets.QDialog, FORM_CLASS):
             QMessageBox.information(
                 self,
                 self.tr("Success!"),
-                self.tr("Database Customization ")
-                + self.customizationName
-                + self.tr(" created successfuly!"),
+                self.tr("Database Customization {0} created successfully!").format(self.customizationName),
             )
             # EMIT to reload?
             self.close()
@@ -368,7 +366,7 @@ class CreateDatabaseCustomization(QtWidgets.QDialog, FORM_CLASS):
                 )
                 for error in exceptionList:
                     QgsMessageLog.logMessage(
-                        self.tr("Customization error: ") + error,
+                        self.tr("Customization error: {0}").format(error),
                         "DSGTools Plugin",
                         Qgis.MessageLevel.Critical,
                     )

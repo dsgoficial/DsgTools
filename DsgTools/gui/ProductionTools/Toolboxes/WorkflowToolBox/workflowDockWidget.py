@@ -151,7 +151,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         self.iface.messageBar().pushMessage(
             self.tr("DSGTools Workflow Toolbox"),
             self.tr(
-                f"The processing Invalid Feature Filtering option changed to 'Do not filter (better performance)'. This feature is needed for the workflow to work properly."
+                "The processing Invalid Feature Filtering option changed to 'Do not filter (better performance)'. This feature is needed for the workflow to work properly."
             ),
             Qgis.MessageLevel.Info,
             duration=3,
@@ -175,7 +175,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             or idx <= currentWorkflowIndexFromWorkflow
         ):
             actionTextList: List[str] = [action.text() for action in menu.actions()]
-            actionName = self.tr(f"Set model as current step")
+            actionName = self.tr("Set model as current step")
             if actionName not in actionTextList:
                 action = QAction(
                     actionName,
@@ -215,7 +215,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         workflowName = workflow.displayName
         self.ignoreFlagsMenuDict[workflowName][idx] = QMenu(self)
         action = QAction(
-            self.tr(f"Ignore false positive flags on model {modelName}"),
+            self.tr("Ignore false positive flags on model {0}").format(modelName),
             self.ignoreFlagsMenuDict[workflowName][idx],
         )
         func = partial(self.setCurrentWorkflowItemToIgnoreFlags, row=idx)
@@ -231,8 +231,8 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         )
         if not self.confirmAction(
             msg=self.tr(
-                f"Would you like to set model '{currentWorkflowItem.displayName}' as current model of workflow '{workflow.displayName}'?"
-            )
+                "Would you like to set model '{0}' as current model of workflow '{1}'?"
+            ).format(currentWorkflowItem.displayName, workflow.displayName)
         ):
             return
         workflow.resetWorkflowItems(startIdx=idx)
@@ -248,8 +248,8 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         self.iface.messageBar().pushMessage(
             self.tr("DSGTools Workflow Toolbox"),
             self.tr(
-                f"The user has set the current workflow item of the workflow '{workflow.displayName}' as '{currentWorkflowItem.displayName}'."
-            ),
+                "The user has set the current workflow item of the workflow '{0}' as '{1}'."
+            ).format(workflow.displayName, currentWorkflowItem.displayName),
             Qgis.MessageLevel.Info,
             duration=3,
         )
@@ -381,10 +381,10 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         self.comboBox.setItemData(
             idx,
             self.tr(
-                f"Workflow author: {metadata.author}\n"
-                f"Workflow version: {metadata.version}\n"
-                f"Last modification: {metadata.lastModified}"
-            ),
+                "Workflow author: {0}\n"
+                "Workflow version: {1}\n"
+                "Last modification: {2}"
+            ).format(metadata.author, metadata.version, metadata.lastModified),
             Qt.ItemDataRole.ToolTipRole,
         )
 
@@ -440,7 +440,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             return
         # raise any confirmation question?
         name = self.currentWorkflowName()
-        msg = self.tr(f"Are you sure you want to remove workflow {name}?")
+        msg = self.tr("Are you sure you want to remove workflow {0}?").format(name)
         if not self.confirmAction(msg):
             return
         self.comboBox.removeItem(idx)
@@ -524,7 +524,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             return
         self.iface.messageBar().pushMessage(
             self.tr("DSGTools Q&A Tool Box"),
-            self.tr(f"Workflow {currentWorkflow.displayName} execution has finished."),
+            self.tr("Workflow {0} execution has finished.").format(currentWorkflow.displayName),
             Qgis.MessageLevel.Info,
             duration=3,
         )
@@ -577,16 +577,16 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Workflow Toolbox"),
                 self.tr(
-                    f"model {workflowItem.displayName} status changed to {status}."
-                ),
+                    "Model {0} status changed to {1}."
+                ).format(workflowItem.displayName, status),
                 self.qgisStatusDict[code],
                 duration=3,
             )
         elif code != ExecutionStatus.INITIAL:
             QgsMessageLog.logMessage(
                 self.tr(
-                    f"Model {workflowItem.displayName} status changed to {status}."
-                ),
+                    "Model {0} status changed to {1}."
+                ).format(workflowItem.displayName, status),
                 "DSGTools Plugin",
                 self.qgisStatusDict[code],
             )
@@ -627,9 +627,9 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             return
         self.tableWidget.setRowCount(len(workflow.workflowItemList))
         for row, workflowItem in enumerate(workflow.workflowItemList):
-            tooltip = self.tr(f"Model name: {workflowItem.displayName}")
+            tooltip = self.tr("Model name: {0}").format(workflowItem.displayName)
             if workflowItem.getDescription() != "":
-                tooltip += f"\n\nModel description: {workflowItem.getDescription()}"
+                tooltip += "\n\n" + self.tr("Model description: {0}").format(workflowItem.getDescription())
             if workflowItem.flagsCanHaveFalsePositiveResults():
                 self.prepareIgnoreFlagMenuDictItem(
                     row, workflowItem.displayName, workflow
@@ -752,7 +752,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),
                 self.tr(
-                    f"The workflows saved in the project are in the older version. We will not load these versions. Please convert your workflows, import them again and save."
+                    "The workflows saved in the project are in the older version. We will not load these versions. Please convert your workflows, import them again and save."
                 ),
                 Qgis.MessageLevel.Warning,
                 duration=3,
@@ -807,8 +807,8 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                         self,
                         self.tr("DSGTools Q&A Tool Box: Confirm action"),
                         self.tr(
-                            f"Would you like to restart workflow '{workflow.displayName}'?"
-                        ),
+                            "Would you like to restart workflow '{0}'?"
+                        ).format(workflow.displayName),
                         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                         defaultButton=QMessageBox.StandardButton.No,
                     )

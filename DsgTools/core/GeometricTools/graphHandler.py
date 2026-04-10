@@ -25,7 +25,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from enum import Enum
 from itertools import tee
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
-from qgis.PyQt.QtCore import QByteArray
+from qgis.PyQt.QtCore import QByteArray, QCoreApplication
 from itertools import chain
 from itertools import product
 from itertools import combinations
@@ -1866,7 +1866,7 @@ def consolidate_network_nodes(
     # Step 0: Preparar layer
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo("Preparing edge layer with feature IDs...")
+        multiStepFeedback.pushInfo(QCoreApplication.translate("GraphHandler", "Preparing edge layer with feature IDs..."))
     
     # ✅ MUDANÇA: Passar idFieldName
     edgesWithFeatId, nodesLayer = buildAuxLayersPriorGraphBuilding(
@@ -1878,7 +1878,7 @@ def consolidate_network_nodes(
     
     # ✅ Criar mapeamento featid→originalFid UMA VEZ
     if multiStepFeedback is not None:
-        multiStepFeedback.pushInfo("Creating feature ID mapping...")
+        multiStepFeedback.pushInfo(QCoreApplication.translate("GraphHandler", "Creating feature ID mapping..."))
     
     featid_to_original_fid = {}
     for feat in edgesLayer.getFeatures():
@@ -1887,7 +1887,7 @@ def consolidate_network_nodes(
     # Step 1: Construir estruturas do grafo
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo("Building graph structures...")
+        multiStepFeedback.pushInfo(QCoreApplication.translate("GraphHandler", "Building graph structures..."))
     
     # ✅ MUDANÇA: Passar idFieldName
     (
@@ -1911,7 +1911,7 @@ def consolidate_network_nodes(
     # Step 2: Extrair coordenadas dos nós (PARALELIZADO)
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo("Extracting node coordinates (parallel)...")
+        multiStepFeedback.pushInfo(QCoreApplication.translate("GraphHandler", "Extracting node coordinates (parallel)..."))
     
     n_nodes = len(nodeIdDict)
     if n_nodes == 0:
@@ -1954,7 +1954,7 @@ def consolidate_network_nodes(
     # Step 3: Construir índice espacial
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo("Finding nearby nodes to consolidate...")
+        multiStepFeedback.pushInfo(QCoreApplication.translate("GraphHandler", "Finding nearby nodes to consolidate..."))
     
     tree = cKDTree(coordsArray)
     pairs = tree.query_pairs(tolerance)
@@ -1983,7 +1983,7 @@ def consolidate_network_nodes(
     # Step 4: Calcular centroides (PARALELIZADO)
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(4)
-        multiStepFeedback.pushInfo("Computing consolidated coordinates (parallel)...")
+        multiStepFeedback.pushInfo(QCoreApplication.translate("GraphHandler", "Computing consolidated coordinates (parallel)..."))
     
     nodeConsolidationDict = {}
     edgeFeatIdToNodeDict = defaultdict(dict)
@@ -2024,14 +2024,14 @@ def consolidate_network_nodes(
     
     # Converter tuplas para QgsPointXY na main thread
     if multiStepFeedback is not None:
-        multiStepFeedback.pushInfo("Converting to QgsPointXY objects...")
+        multiStepFeedback.pushInfo(QCoreApplication.translate("GraphHandler", "Converting to QgsPointXY objects..."))
     
     for wkb, (x, y) in temp_consolidation_dict.items():
         nodeConsolidationDict[wkb] = QgsPointXY(x, y)
     
     # 🚀 PARALELIZAÇÃO 3: Mapear nós consolidados para edges
     if multiStepFeedback is not None:
-        multiStepFeedback.pushInfo("Mapping consolidated nodes to edges (parallel)...")
+        multiStepFeedback.pushInfo(QCoreApplication.translate("GraphHandler", "Mapping consolidated nodes to edges (parallel)..."))
     
     hash_items = list(hashDict.items())
     chunk_size = max(100, len(hash_items) // (max_workers or 4))

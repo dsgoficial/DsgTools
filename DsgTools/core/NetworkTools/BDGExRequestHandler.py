@@ -113,10 +113,10 @@ class BDGExRequestHandler(QObject):
         Returns QGIS url service string.
         """
         if service not in self.availableServicesDict:
-            raise Exception("Service {service} not available".format(service=service))
+            raise Exception(self.tr("Service {service} not available").format(service=service))
         if serviceType not in self.availableServicesDict[service]["services"]:
             raise Exception(
-                "Invalid request {service_type} for service {service}".format(
+                self.tr("Invalid request {service_type} for service {service}").format(
                     service=service, service_type=serviceType
                 )
             )
@@ -256,7 +256,7 @@ class BDGExRequestHandler(QObject):
         Makes the requisition to the tile cache service
         """
         if layerList == []:
-            raise Exception("Invalid name request")
+            raise Exception(self.tr("Invalid name request"))
         elif len(layerList) > 1:
             # ctmList = [i for i in capabilitiesDict.keys() if 'ctm' in i]
             # ctmList.sort(key = lambda x : int(x.replace('ctm','')))

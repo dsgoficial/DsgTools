@@ -206,7 +206,7 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
         except Exception as e:
             if feedback:
                 feedback.pushWarning(
-                    self.tr(f"Could not smooth line with {len(line)} vertices: {str(e)}")
+                    self.tr("Could not smooth line with {0} vertices: {1}").format(len(line), str(e))
                 )
             return line
 

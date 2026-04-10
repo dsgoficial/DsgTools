@@ -19,6 +19,7 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 """
 
 from qgis.PyQt import QtGui, QtCore
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis import core, gui
 from qgis.utils import iface
@@ -194,11 +195,14 @@ class AcquisitionFreeController(object):
                     float(parameters["freeHandSmoothOffset"]),
                 )
             except Exception:
-                msg = QMessageBox().tr(
-                    "Probably too many smoothing iteration, try reducing it (3 usually is enough). Geometry was not smoothened."
+                msg = QCoreApplication.translate(
+                    "AcquisitionFreeController",
+                    "Probably too many smoothing iterations, try reducing it (3 usually is enough). Geometry was not smoothed."
                 )
                 QMessageBox.warning(
-                    self.iface.mainWindow(), QMessageBox().tr("Error!"), msg
+                    self.iface.mainWindow(),
+                    QCoreApplication.translate("AcquisitionFreeController", "Error!"),
+                    msg
                 )
                 QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.MessageLevel.Critical)
                 return geom

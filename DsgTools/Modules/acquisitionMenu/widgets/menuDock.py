@@ -73,7 +73,7 @@ class MenuDock(QtWidgets.QDockWidget):
                 buttonConfig, self.callbackReclassify
             )
         except Exception as e:
-            self.showError("Erro", str(e))
+            self.showError(self.tr("Error"), str(e))
 
     def setLastLayer(self, layer):
         self.lastLayer = layer

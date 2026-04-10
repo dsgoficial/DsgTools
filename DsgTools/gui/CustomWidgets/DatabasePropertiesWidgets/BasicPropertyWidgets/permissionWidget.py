@@ -239,13 +239,9 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.warning(
                 self,
                 self.tr("Revoke Complete!"),
-                self.tr("Revoke for user ")
-                + userName
-                + self.tr(" on profile ")
-                + permissionName
-                + self.tr(" of database ")
-                + dbName
-                + self.tr(" complete."),
+                self.tr("Revoke for user {0} on profile {1} of database {2} complete.").format(
+                    userName, permissionName, dbName
+                ),
             )
         except Exception as e:
             QApplication.restoreOverrideCursor()
@@ -320,13 +316,9 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.warning(
                 self,
                 self.tr("Revoke Complete!"),
-                self.tr("Revoke for user ")
-                + userName
-                + self.tr(" on profile ")
-                + permissionName
-                + self.tr(" of database ")
-                + dbName
-                + self.tr(" complete."),
+                self.tr("Revoke for user {0} on profile {1} of database {2} complete.").format(
+                    userName, permissionName, dbName
+                ),
             )
         except Exception as e:
             QApplication.restoreOverrideCursor()
@@ -356,7 +348,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.warning(
                 self,
                 self.tr("Warning!"),
-                self.tr("Error! Problem importing permission: ") + ":".join(e.args),
+                self.tr("Error! Problem importing permission: {0}").format(":".join(e.args)),
             )
         # self.refreshProfileList()
 
@@ -391,7 +383,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.warning(
                 self,
                 self.tr("Warning!"),
-                self.tr("Error! Problem exporting permission: ") + ":".join(e.args),
+                self.tr("Error! Problem exporting permission: {0}").format(":".join(e.args)),
             )
 
     @pyqtSlot(bool)
@@ -413,7 +405,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.warning(
                 self,
                 self.tr("Warning!"),
-                self.tr("Error! Problem exporting permission: ") + ":".join(e.args),
+                self.tr("Error! Problem exporting permission: {0}").format(":".join(e.args)),
             )
 
     @pyqtSlot(bool)
@@ -437,5 +429,5 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.warning(
                 self,
                 self.tr("Warning!"),
-                self.tr("Error! Problem importing permission: ") + ":".join(e.args),
+                self.tr("Error! Problem importing permission: {0}").format(":".join(e.args)),
             )

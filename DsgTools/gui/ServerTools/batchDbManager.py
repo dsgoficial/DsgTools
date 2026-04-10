@@ -229,8 +229,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
             QMessageBox.question(
                 self,
                 self.tr("Question"),
-                self.tr("Do you really want to drop databases: ")
-                + ", ".join(selectedDbNameList),
+                self.tr("Do you really want to drop databases: {0}").format(", ".join(selectedDbNameList)),
                 QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
             )
             == QMessageBox.StandardButton.Cancel

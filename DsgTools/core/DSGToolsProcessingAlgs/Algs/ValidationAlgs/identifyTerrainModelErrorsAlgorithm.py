@@ -421,7 +421,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             # localFlagDict = compute(localGeographicBoundsLyr)
             localFlagDict = future.result()
             multiStepFeedback.pushInfo(
-                self.tr(f"Identification of region {current+1}/{nRegions} is done.")
+                self.tr("Identification of region {0}/{1} is done.").format(current+1, nRegions)
             )
             multiStepFeedback.setProgress(current * stepSize)
             flagDict.update(localFlagDict)

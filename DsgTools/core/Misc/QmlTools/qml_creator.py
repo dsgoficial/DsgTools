@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from qgis.PyQt.QtCore import QFile, QIODevice
+from qgis.PyQt.QtCore import QCoreApplication, QFile, QIODevice
 
 
 def generateQml(filename, attrs, codelists):
@@ -7,7 +7,7 @@ def generateQml(filename, attrs, codelists):
     xmlFile = QFile(filename)
 
     if xmlFile.open(QIODevice.WriteOnly) == False:
-        QMessageBox.warning(0, "Error!", "Error opening file")
+        QMessageBox.warning(0, QCoreApplication.translate("QmlCreator", "Error!"), QCoreApplication.translate("QmlCreator", "Error opening file"))
     else:
         xmlWriter.setDevice(xmlFile)
         # starting xml file

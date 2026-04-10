@@ -241,7 +241,7 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
             QMessageBox.warning(
                 self,
                 self.tr("Warning!"),
-                self.tr("Problem saving file! \n") + ":".join(e.args),
+                self.tr("Problem saving file!\n{0}").format(":".join(e.args)),
             )
             return
 
@@ -268,9 +268,7 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
                 QMessageBox.question(
                     self,
                     self.tr("Question"),
-                    self.tr("Do you really want to remove profile ")
-                    + profileName
-                    + "?",
+                    self.tr("Do you really want to remove profile {0}?").format(profileName),
                     QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
                 )
                 == QMessageBox.StandardButton.Cancel
@@ -282,7 +280,7 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
                 QMessageBox.warning(
                     self,
                     self.tr("Warning!"),
-                    self.tr("Problem deleting profile! \n") + ":".join(e.args),
+                    self.tr("Problem deleting profile!\n{0}").format(":".join(e.args)),
                 )
                 return
             self.getProfiles()

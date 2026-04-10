@@ -49,7 +49,7 @@ class ReclassifyDialog(QtWidgets.QDialog):
 
     def addLayerCheckBox(self, layer):
         checkBox = QtWidgets.QCheckBox(
-            "Camada : {0} >>> Quantidade de selecionados : {1}".format(
+            self.tr("Layer: {0} >>> Selected count: {1}").format(
                 layer.name(), layer.selectedFeatureCount()
             )
         )

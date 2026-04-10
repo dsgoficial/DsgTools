@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Mudar CRS?</string>
+   <string>Change CRS?</string>
   </property>
   <property name="toolTip">
    <string/>
@@ -64,7 +64,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Deseja mudar o CRS das feições antes de copiar?</string>
+      <string>Do you want to change the CRS of features before copying?</string>
      </property>
     </widget>
    </item>

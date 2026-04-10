@@ -62,7 +62,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS, self.tr(f"{self.displayName()} Flags")
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 

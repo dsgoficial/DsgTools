@@ -331,7 +331,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         widget.setFilter(self.tr("Select a QGIS Processing model (*.model3 *.model)"))
         # defining setter and getter methods for composed widgets into OTW
         widget.fileExported.connect(
-            lambda x: self.pushMessage(self.tr(f"Model source exported to file {x}"))
+            lambda x: self.pushMessage(self.tr("Model source exported to file {0}").format(x))
         )
         widget.fileExported.connect(self.openExportedModel)
         return widget

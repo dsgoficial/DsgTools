@@ -203,7 +203,7 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                     self.abstractDb.getDatabaseVersion()
                 )
                 serverName = self.serverWidget.serversCombo.currentText()
-                newText = dbName + self.tr(" on ") + serverName
+                newText = self.tr("{0} on {1}").format(dbName, serverName)
                 self.mGroupBox.setToolTip(newText)
                 # self.mGroupBox.setTitle(newText)
 

@@ -43,19 +43,19 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LAYER,
-                self.tr("Camada de rodovias"),
+                self.tr("Highway layer"),
                 [QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.ESCALA, self.tr("Escala"), type=QgsProcessingParameterNumber.Double
+                self.ESCALA, self.tr("Scale"), type=QgsProcessingParameterNumber.Double
             )
         )
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.AREA_MINIMA,
-                self.tr("Área mínima para rotatórias na carta"),
+                self.tr("Minimum area for roundabouts on chart"),
                 parentParameterName=self.NETWORK_LAYER,
             )
         )
@@ -130,7 +130,7 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
         return "generalizeroundaboutsalgorithm"
 
     def displayName(self):
-        return self.tr("Generalizar Rotatórias")
+        return self.tr("Generalize Roundabouts")
 
     def group(self):
         return self.tr("Generalization Algorithms")

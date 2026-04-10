@@ -693,8 +693,8 @@ def rasterizePolygonsToFile(
         from rasterio.transform import from_bounds
     except ImportError:
         raise ImportError(
-            "A biblioteca 'rasterio' não está instalada. "
-            "Instale com: pip install rasterio"
+            "The 'rasterio' library is not installed. "
+            "Install it with: pip install rasterio"
         )
     
     import json
@@ -704,12 +704,12 @@ def rasterizePolygonsToFile(
         field_names = [field.name() for field in vectorLayer.fields()]
         if classField not in field_names:
             raise QgsProcessingException(
-                f'Campo "{classField}" não encontrado na camada'
+                f'Field "{classField}" not found in layer'
             )
         
         # Verificar se há features
         if vectorLayer.featureCount() == 0:
-            raise QgsProcessingException("Camada não contém features")
+            raise QgsProcessingException("Layer contains no features")
         
         # Calcular dimensões do raster
         if width is not None and height is not None and transform_affine is not None:
@@ -719,7 +719,7 @@ def rasterizePolygonsToFile(
             # Calcular a partir do bbox e pixelSize
             if bbox is None or pixelSize is None:
                 raise QgsProcessingException(
-                    "bbox e pixelSize são obrigatórios quando width/height/transform não são fornecidos"
+                    "bbox and pixelSize are required when width/height/transform are not provided"
                 )
             
             xmin, ymin, xmax, ymax = bbox.toRectF().getCoords()
@@ -728,7 +728,7 @@ def rasterizePolygonsToFile(
             
             if width <= 0 or height <= 0:
                 raise QgsProcessingException(
-                    f"Dimensões inválidas do raster: {width}x{height}"
+                    f"Invalid raster dimensions: {width}x{height}"
                 )
             
             # Criar transformação afim
@@ -778,7 +778,7 @@ def rasterizePolygonsToFile(
         
         if not shapes:
             raise QgsProcessingException(
-                "Nenhuma geometria válida encontrada para rasterizar"
+                "No valid geometry found for rasterization"
             )
         
         # Mapear dtype string para numpy dtype
@@ -826,7 +826,7 @@ def rasterizePolygonsToFile(
     except Exception as e:
         import traceback
         raise QgsProcessingException(
-            f"Erro ao rasterizar polígonos: {str(e)}\n{traceback.format_exc()}"
+            f"Error rasterizing polygons: {str(e)}\n{traceback.format_exc()}"
         )
 
 def calculateSegmentationMetrics(
@@ -842,7 +842,7 @@ def calculateSegmentationMetrics(
     try:
         import rasterio
     except ImportError:
-        raise ImportError("A biblioteca 'rasterio' não está instalada.")
+        raise ImportError("The 'rasterio' library is not installed.")
     
     import numpy as np
     
@@ -891,8 +891,8 @@ def rasterizePolygonsToArray(
         from rasterio.transform import from_bounds
     except ImportError:
         raise ImportError(
-            "A biblioteca 'rasterio' não está instalada. "
-            "Instale com: pip install rasterio"
+            "The 'rasterio' library is not installed. "
+            "Install it with: pip install rasterio"
         )
     
     import json
@@ -902,12 +902,12 @@ def rasterizePolygonsToArray(
         field_names = [field.name() for field in vectorLayer.fields()]
         if classField not in field_names:
             raise QgsProcessingException(
-                f'Campo "{classField}" não encontrado na camada'
+                f'Field "{classField}" not found in layer'
             )
         
         # Verificar se há features
         if vectorLayer.featureCount() == 0:
-            raise QgsProcessingException("Camada não contém features")
+            raise QgsProcessingException("Layer contains no features")
         
         # Calcular dimensões do raster
         xmin, ymin, xmax, ymax = bbox.toRectF().getCoords()
@@ -916,7 +916,7 @@ def rasterizePolygonsToArray(
         
         if width <= 0 or height <= 0:
             raise QgsProcessingException(
-                f"Dimensões inválidas do raster: {width}x{height}"
+                f"Invalid raster dimensions: {width}x{height}"
             )
         
         # Criar transformação afim
@@ -966,7 +966,7 @@ def rasterizePolygonsToArray(
         
         if not shapes:
             raise QgsProcessingException(
-                "Nenhuma geometria válida encontrada para rasterizar"
+                "No valid geometry found for rasterization"
             )
         
         # Mapear dtype string para numpy dtype
@@ -999,7 +999,7 @@ def rasterizePolygonsToArray(
     except Exception as e:
         import traceback
         raise QgsProcessingException(
-            f"Erro ao rasterizar polígonos: {str(e)}\n{traceback.format_exc()}"
+            f"Error rasterizing polygons: {str(e)}\n{traceback.format_exc()}"
         )
 
 def clipRasterByVectorMask(
@@ -1030,8 +1030,8 @@ def clipRasterByVectorMask(
         from rasterio.warp import calculate_default_transform, reproject, Resampling
     except ImportError:
         raise ImportError(
-            "A biblioteca 'rasterio' não está instalada. "
-            "Instale com: pip install rasterio"
+            "The 'rasterio' library is not installed. "
+            "Install it with: pip install rasterio"
         )
     
     import json
@@ -1041,7 +1041,7 @@ def clipRasterByVectorMask(
         # Obter a geometria da máscara
         features = list(mask_layer.getFeatures())
         if not features:
-            raise QgsProcessingException("Camada de máscara não contém features")
+            raise QgsProcessingException("Mask layer contains no features")
         
         # Usar a primeira feature como máscara
         mask_geom = features[0].geometry()
@@ -1103,7 +1103,7 @@ def calculateSegmentationMetricsFromArrays(
         class_names = {}
     
     if ground_truth_array.shape != prediction_array.shape:
-        raise ValueError(f"Dimensões diferentes: {ground_truth_array.shape} vs {prediction_array.shape}")
+        raise ValueError(f"Different dimensions: {ground_truth_array.shape} vs {prediction_array.shape}")
     
     valid_mask = (ground_truth_array != nodata_value) & (prediction_array != nodata_value)
     

@@ -83,11 +83,9 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
         QMessageBox.warning(
             self,
             self.tr("Success!"),
-            self.tr("User ")
-            + self.user
-            + self.tr(" password successfully updated on database ")
-            + self.abstractDb.getDatabaseName()
-            + "!",
+            self.tr("User {0} password successfully updated on database {1}!").format(
+                self.user, self.abstractDb.getDatabaseName()
+            ),
         )
 
     def alterServerPassword(self, userList, newpassword):
@@ -102,10 +100,8 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
                 successList.append(user)
             except Exception as e:
                 exceptionDict[user] = ":".join(e.args)
-        header = (
-            self.tr("Alter operation on server ")
-            + self.abstractDb.getHostName()
-            + self.tr(" complete!\n")
+        header = self.tr("Alter operation on server {0} complete!\n").format(
+            self.abstractDb.getHostName()
         )
         self.outputMessage(header, successList, exceptionDict)
 

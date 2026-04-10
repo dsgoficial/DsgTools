@@ -38,22 +38,22 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT1, self.tr("Flag - unicode não permitido (ponto)")
+                self.OUTPUT1, self.tr("Flag - disallowed unicode (point)")
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT2, self.tr("Flag - unicode não permitido (linha)")
+                self.OUTPUT2, self.tr("Flag - disallowed unicode (line)")
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT3, self.tr("Flag - unicode não permitido (área)")
+                self.OUTPUT3, self.tr("Flag - disallowed unicode (polygon)")
             )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        feedback.setProgressText("Verificando unicodes...")
+        feedback.setProgressText(self.tr("Checking unicodes..."))
         layerList = self.parameterAsLayerList(parameters, "INPUT_LAYER_LIST", context)
         whitelist = self.getWhitelist(self.getCsvFilePath())
         flags = defaultdict(list)

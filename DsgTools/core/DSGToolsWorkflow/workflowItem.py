@@ -44,7 +44,7 @@ from qgis.core import (
     Qgis,
     QgsVectorFileWriter,
 )
-from qgis.PyQt.QtCore import pyqtSignal, QObject
+from qgis.PyQt.QtCore import QCoreApplication, pyqtSignal, QObject
 from qgis.utils import iface
 from processing.tools import dataobjects
 import processing
@@ -93,7 +93,7 @@ class FlagSettings:
 
     def __post_init__(self):
         if self.onFlagsRaised not in ("halt", "warn", "ignore"):
-            raise ValueError("Invalid on flags raised flag.")
+            raise ValueError(QCoreApplication.translate("WorkflowItem", "Invalid on flags raised flag."))
 
 
 @dataclass

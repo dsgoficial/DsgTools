@@ -26,6 +26,8 @@ import concurrent.futures
 import itertools
 import os
 
+from qgis.PyQt.QtCore import QCoreApplication
+
 
 def concurrently(handler, inputs, *, max_concurrency=None, feedback=None):
     """
@@ -71,7 +73,7 @@ def concurrently(handler, inputs, *, max_concurrency=None, feedback=None):
                         yield result
                 except Exception as e:
                     if feedback is not None:
-                        feedback.pushWarning(f"Error processing input: {str(e)}")
+                        feedback.pushWarning(QCoreApplication.translate("ThreadingTools", "Error processing input: {0}").format(str(e)))
                 futures.pop(fut)
 
             # Check for cancellation

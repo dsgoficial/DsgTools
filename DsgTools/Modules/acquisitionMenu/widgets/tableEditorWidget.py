@@ -95,11 +95,11 @@ class TableEditorWidget(QtWidgets.QWidget):
         layout = QtWidgets.QHBoxLayout(wd)
         index = QtCore.QPersistentModelIndex(self.tableWidget.model().index(row, col))
 
-        editBtn = self.createTableToolButton("Editar", self.getEditIconPath())
+        editBtn = self.createTableToolButton(self.tr("Edit"), self.getEditIconPath())
         editBtn.clicked.connect(lambda *args, index=index: self.handleEditBtn(index))
         layout.addWidget(editBtn)
 
-        deleteBtn = self.createTableToolButton("Excluir", self.getDeleteIconPath())
+        deleteBtn = self.createTableToolButton(self.tr("Delete"), self.getDeleteIconPath())
         deleteBtn.clicked.connect(
             lambda *args, index=index: self.handleDeleteBtn(index)
         )

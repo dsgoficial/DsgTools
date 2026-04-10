@@ -139,7 +139,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             QApplication.restoreOverrideCursor()
         except Exception as e:
             QgsMessageLog.logMessage(
-                self.tr("Error setting style ") + styleName + ": " + ":".join(e.args),
+                self.tr("Error setting style {0}: {1}").format(styleName, ":".join(e.args)),
                 "DSGTools Plugin",
                 Qgis.MessageLevel.Critical,
             )

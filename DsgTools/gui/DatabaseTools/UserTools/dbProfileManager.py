@@ -64,10 +64,9 @@ class DbProfileManager(QtWidgets.QDialog, FORM_CLASS):
         self.dbName = dbName
         self.edgvVersion = edgvVersion
         self.profileCustomSelector.setTitle(
-            self.tr("Manage permissions to user ")
-            + userName
-            + self.tr(" on database ")
-            + dbName
+            self.tr("Manage permissions to user {0} on database {1}").format(
+                userName, dbName
+            )
         )
         self.profileCustomSelector.setFromList(
             list(notGrantedProfileList), unique=True

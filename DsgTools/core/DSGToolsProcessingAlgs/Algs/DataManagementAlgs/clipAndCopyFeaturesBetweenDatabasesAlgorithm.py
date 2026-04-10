@@ -208,7 +208,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         for current, (lyrName, lyr) in enumerate(outputLayerDict.items()):
             if multiStepFeedback is not None:
                 multiStepFeedback.pushInfo(
-                    self.tr(f"Commiting changes for layer {lyrName}")
+                    self.tr("Committing changes for layer {0}").format(lyrName)
                 )
             lyr.commitChanges()
             if multiStepFeedback is not None:

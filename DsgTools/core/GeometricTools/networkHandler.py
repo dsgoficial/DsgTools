@@ -1996,14 +1996,14 @@ class NetworkHandler(QObject):
         self.nodesToPop = []
         self.reclassifyNodeType = dict()
         if feedback is not None:
-            multiStepFeedback.pushInfo("Identifying nodes...")
+            multiStepFeedback.pushInfo(self.tr("Identifying nodes..."))
             multiStepFeedback.setCurrentStep(stepCount)
             stepCount += 1
         self.nodeDict = self.identifyAllNodes(
             networkLayer=networkLayer, feedback=multiStepFeedback
         )
         if feedback is not None:
-            multiStepFeedback.pushInfo("Getting auxiliar spatial indexes...")
+            multiStepFeedback.pushInfo(self.tr("Getting auxiliary spatial indexes..."))
             multiStepFeedback.setCurrentStep(stepCount)
             stepCount += 1
         auxIndexStructure = self.getAuxIndexStructure(
@@ -2033,7 +2033,7 @@ class NetworkHandler(QObject):
             auxIndexStructure=auxIndexStructure,
         )
         if feedback is not None:
-            multiStepFeedback.pushInfo("Getting node type dictionary...")
+            multiStepFeedback.pushInfo(self.tr("Getting node type dictionary..."))
             multiStepFeedback.setCurrentStep(stepCount)
             stepCount += 1
         self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(
@@ -2051,7 +2051,7 @@ class NetworkHandler(QObject):
         cycleCount = 0
         while True:
             if feedback is not None:
-                multiStepFeedback.pushInfo("Starting cycle {0}...".format(cycleCount))
+                multiStepFeedback.pushInfo(self.tr("Starting cycle {0}...").format(cycleCount))
                 multiStepFeedback.setCurrentStep(stepCount)
                 stepCount += 1
             nodeFlags_, inval_, val_ = self.directNetwork(

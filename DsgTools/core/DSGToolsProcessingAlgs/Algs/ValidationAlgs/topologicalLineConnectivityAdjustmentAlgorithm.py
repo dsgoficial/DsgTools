@@ -221,7 +221,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
             feedback=multiStepFeedback,
             tol=tol,
         )
-        multiStepFeedback.pushInfo(self.tr(f"{dangleSnappedToItself.featureCount()} remaining. Final fix remaining dangles..."))
+        multiStepFeedback.pushInfo(self.tr("{0} remaining. Final fix remaining dangles...").format(dangleSnappedToItself.featureCount()))
         self.fixRemainingDangles(
             dangleLyr=dangleSnappedToItself,
             lineLyr=fixedLines,

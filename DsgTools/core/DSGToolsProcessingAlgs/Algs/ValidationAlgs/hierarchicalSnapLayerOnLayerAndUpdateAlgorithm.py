@@ -145,7 +145,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 multiStepFeedback.setCurrentStep(currentStep)
                 referenceLayerName = item["referenceLayer"]
                 multiStepFeedback.pushInfo(
-                    self.tr(f"Snapping {referenceLayerName} to geographic boundary.")
+                    self.tr("Snapping {0} to geographic boundary.").format(referenceLayerName)
                 )
                 if referenceLayerName not in snapStructure:
                     continue
@@ -170,7 +170,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 currentStep += 2
                 continue
             multiStepFeedback.pushInfo(
-                self.tr(f"Performing snap internally on {referenceLayerName}.")
+                self.tr("Performing snap internally on {0}.").format(referenceLayerName)
             )
             snapStructure[referenceLayerName][
                 "tempLayer"
@@ -188,7 +188,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             if lyrList == []:
                 continue
             multiStepFeedback.pushInfo(
-                self.tr(f"Starting snapping with reference layer {referenceLayerName}.")
+                self.tr("Starting snapping with reference layer {0}.").format(referenceLayerName)
             )
             self.snapLayersToReference(
                 refLyrName=referenceLayerName,
@@ -385,7 +385,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(len(snapStructure), feedback)
         for current, (lyrName, auxDict) in enumerate(snapStructure.items()):
             multiStepFeedback.setCurrentStep(current)
-            multiStepFeedback.pushInfo(self.tr(f"Updating changes on {lyrName}"))
+            multiStepFeedback.pushInfo(self.tr("Updating changes on {0}").format(lyrName))
             tempLyr = QgsProcessingUtils.mapLayerFromString(
                 auxDict["tempLayer"], context
             )

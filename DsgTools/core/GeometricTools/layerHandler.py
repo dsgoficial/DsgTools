@@ -430,7 +430,7 @@ class LayerHandler(QObject):
             parameterDict = self.getDestinationParameters(lyr)
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(3 * i)
-                multiStepFeedback.pushInfo(self.tr(f"Building {lyr.name()} input dict"))
+                multiStepFeedback.pushInfo(self.tr("Building {0} input dict").format(lyr.name()))
             inputDict = self.buildInputDict(
                 lyr, onlySelected=onlySelected, feedback=multiStepFeedback
             )
@@ -442,7 +442,7 @@ class LayerHandler(QObject):
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(3 * i + 1)
                 multiStepFeedback.pushInfo(
-                    self.tr(f"Populating {lyr.name()} input dict")
+                    self.tr("Populating {0} input dict").format(lyr.name())
                 )
             self.populateInputDictFeatList(
                 unifiedLyr,
@@ -456,7 +456,7 @@ class LayerHandler(QObject):
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, lyr)
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(3 * i + 2)
-                multiStepFeedback.pushInfo(self.tr(f"Updating {lyr.name()} features"))
+                multiStepFeedback.pushInfo(self.tr("Updating {0} features").format(lyr.name()))
             self.updateOriginalLayerFeatures(
                 lyr,
                 inputDict,
@@ -554,7 +554,7 @@ class LayerHandler(QObject):
             idsToRemove = idsToRemove.union(deletedIds)
             if current % 1000 == 0 and multiStepFeedback is not None:
                 multiStepFeedback.pushInfo(
-                    self.tr(f"Evaluated {current}/{nSteps} results.")
+                    self.tr("Evaluated {0}/{1} results.").format(current, nSteps)
                 )
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(localTotal * current)
@@ -1680,7 +1680,7 @@ class LayerHandler(QObject):
         :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
         """
         if inputLyr.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
-            raise Exception("Vertex near edge not defined for point geometry")
+            raise Exception(self.tr("Vertex near edge not defined for point geometry"))
         algRunner = AlgRunner() if algRunner is None else algRunner
         context = (
             dataobjects.createContext(feedback=feedback) if context is None else context

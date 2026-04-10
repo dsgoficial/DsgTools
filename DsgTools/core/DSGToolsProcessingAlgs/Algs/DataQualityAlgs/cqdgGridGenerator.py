@@ -109,7 +109,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         return 'cqdggridgenerator'
 
     def displayName(self):
-        return self.tr('Gerador de Quadrículas ET-CQDG')
+        return self.tr('ET-CQDG Tile Grid Generator')
 
     def group(self):
         """
@@ -172,29 +172,29 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
 
     def shortHelpString(self):
         return self.tr("""
-        Gera quadrículas de avaliação conforme ET-CQDG (DSG/EB).
-        
-        IMPORTANTE: Apenas quadrículas COMPLETAMENTE dentro da moldura são 
-        consideradas (quadrículas cortadas pela borda são descartadas).
-        
-        Cada moldura é processada individualmente com seu fuso UTM específico.
-        
-        Parâmetros:
-        - Camada de Moldura: Camada vetorial com as molduras (MI)
-        - Escala: Escala de trabalho (1:25.000, 1:50.000, 1:100.000, 1:250.000)
-        - LQA (%): Limite de Qualidade Aceitável (1%, 4% ou 10%)
-        - Tipo de Lote: Lote a lote (10+ produtos) ou Isolado (1-9 produtos)
-        
-        Saídas:
-        - Grid completo: Todas as quadrículas inteiras dentro da moldura
-        - Amostra: Quadrículas selecionadas aleatoriamente para avaliação
+        Generates evaluation tiles according to ET-CQDG (DSG/EB).
+
+        IMPORTANT: Only tiles COMPLETELY within the frame are
+        considered (tiles cut by the border are discarded).
+
+        Each frame is processed individually with its specific UTM zone.
+
+        Parameters:
+        - Frame Layer: Vector layer with the frames (MI)
+        - Scale: Working scale (1:25,000, 1:50,000, 1:100,000, 1:250,000)
+        - AQL (%): Acceptable Quality Limit (1%, 4% or 10%)
+        - Batch Type: Batch by batch (10+ products) or Isolated (1-9 products)
+
+        Outputs:
+        - Complete grid: All complete tiles within the frame
+        - Sample: Tiles randomly selected for evaluation
         """)
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT_MOLDURA,
-                self.tr('Camada de Moldura (MI)'),
+                self.tr('Frame Layer (MI)'),
                 [QgsProcessing.TypeVectorPolygon]
             )
         )
@@ -202,7 +202,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.ESCALA,
-                self.tr('Escala'),
+                self.tr('Scale'),
                 options=['1:25.000', '1:50.000', '1:100.000', '1:250.000'],
                 defaultValue=0
             )
@@ -211,7 +211,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.LQA,
-                self.tr('LQA - Limite de Qualidade Aceitável (%)'),
+                self.tr('AQL - Acceptable Quality Limit (%)'),
                 options=['1%', '4%', '10%'],
                 defaultValue=1
             )
@@ -220,8 +220,8 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.TIPO_LOTE,
-                self.tr('Tipo de Lote'),
-                options=['Lote a Lote (10+ produtos)', 'Isolado (1-9 produtos)'],
+                self.tr('Batch Type'),
+                options=[self.tr('Batch by Batch (10+ products)'), self.tr('Isolated (1-9 products)')],
                 defaultValue=1
             )
         )
@@ -229,14 +229,14 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT_GRID,
-                self.tr('Grid Completo de Quadrículas')
+                self.tr('Complete Tile Grid')
             )
         )
         
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT_AMOSTRA,
-                self.tr('Quadrículas Amostradas')
+                self.tr('Sampled Tiles')
             )
         )
 

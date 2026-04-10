@@ -120,11 +120,11 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
             raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
 
         if layer is None:
-            raise QgsProcessingException("Camada inválida ou não encontrada.")
+            raise QgsProcessingException(self.tr("Invalid or not found layer."))
 
         if fieldName not in layer.fields().names():
             feedback.pushInfo(
-                f"O atributo '{fieldName}' não foi encontrado na camada. Nenhuma exportação realizada."
+                self.tr("Attribute '{0}' was not found in the layer. No export performed.").format(fieldName)
             )
             return {self.OUTPUT: dest_id}
 
@@ -146,7 +146,7 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
         expression = QgsExpression(expression_string)
         if expression.hasParserError():
             raise QgsProcessingException(
-                f"Erro na expressão: {expression.parserErrorString()}"
+                self.tr("Expression error: {0}").format(expression.parserErrorString())
             )
 
         features = layer.getFeatures(QgsFeatureRequest(expression))
@@ -165,7 +165,7 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
             sink.addFeature(feature, QgsFeatureSink.FastInsert)
             feedback.setProgress(int((current / nFeatures) * 100))
 
-        feedback.pushInfo("Exportação concluída com sucesso.")
+        feedback.pushInfo(self.tr("Export completed successfully."))
         return {self.OUTPUT: dest_id}
 
     def name(self):

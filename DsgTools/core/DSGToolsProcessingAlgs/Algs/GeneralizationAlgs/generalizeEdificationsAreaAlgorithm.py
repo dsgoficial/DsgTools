@@ -43,7 +43,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT_POLYGON,
-                self.tr("Camada de Entrada de Polígonos"),
+                self.tr("Polygon Input Layer"),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -51,7 +51,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT_POINT,
-                self.tr("Camada de Entrada de Pontos"),
+                self.tr("Point Input Layer"),
                 [QgsProcessing.TypeVectorPoint],
             )
         )
@@ -59,7 +59,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.ESCALA,
-                self.tr("Escala"),
+                self.tr("Scale"),
                 type=QgsProcessingParameterNumber.Integer,
             )
         )
@@ -67,7 +67,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.AREAMINIMA,
-                self.tr("Área Mínima no Mapa (graus² na carta)"),
+                self.tr("Minimum Map Area (degrees squared on chart)"),
                 type=QgsProcessingParameterNumber.Double,
                 defaultValue=1,
             )
@@ -75,7 +75,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUTPOLYGON, self.tr("Edificações áreas transformadas em pontos")
+                self.OUTPUTPOLYGON, self.tr("Area buildings converted to points")
             )
         )
 
@@ -109,7 +109,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Selecionando feições com area menor que o mínimo estabelecido...")
+            self.tr("Selecting features with area smaller than the established minimum...")
         )
 
         selected_features = algRunner.runFilterExpression(
@@ -117,7 +117,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         )
         pointLayer.startEditing()
         pointLayer.beginEditCommand(
-            "Adicionando os pontos na camada de pontos original"
+            self.tr("Adding points to the original point layer")
         )
         idsToDelete = []
         for feature in selected_features.getFeatures():
@@ -145,27 +145,27 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
             self.tr(
-                "Deletando da camada de input os polígonos com área menor que o mínimo..."
+                "Deleting polygons with area smaller than the minimum from the input layer..."
             )
         )
 
         polygonLayer.startEditing()
         polygonLayer.beginEditCommand(
-            "Deletar da camada de polígonos de input os polígonos com área menor que a área limite"
+            self.tr("Delete polygons with area smaller than the limit from the input polygon layer")
         )
         polygonLayer.deleteFeatures(idsToDelete)
         polygonLayer.endEditCommand()
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Algoritmo completo..."))
+        multiStepFeedback.setProgressText(self.tr("Algorithm complete..."))
         return {self.OUTPUTPOLYGON: polygonSinkId}
 
     def name(self):
         return "generalizeedificationsareaalgorithm"
 
     def displayName(self):
-        return self.tr("Generalizar Edificações - Area")
+        return self.tr("Generalize Buildings - Area")
 
     def group(self):
         return self.tr("Generalization Algorithms")
@@ -178,7 +178,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "Este algoritmo recebe uma camada do tipo ponto e uma do tipo polígono como inputs. As feições do tipo polígono que tiverem uma área menor que o mínimo estabecido serão excluídas da camada original e um ponto correspondente ao centroide de cada um desses polígonos será inserido na camada de pontos. Além disso, uma camada de output contém as feições do tipo polígono que foram excluídas da camada original. Obs.: Os valores de área a ser inseridos no input são relativos à área no mapa(que será corrigida pela escala), no sistema métrico das camadas inseridas."
+            "This algorithm receives a point layer and a polygon layer as inputs. Polygon features with an area smaller than the established minimum will be removed from the original layer and a point corresponding to the centroid of each polygon will be inserted into the point layer. Additionally, an output layer contains the polygon features that were removed from the original layer. Note: The area values to be entered as input are relative to the map area (which will be corrected by the scale), in the metric system of the input layers."
         )
 
     def createInstance(self):

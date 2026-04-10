@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QLineEdit" name="searchLe">
      <property name="placeholderText">
-      <string>Pesquisar</string>
+      <string>Search</string>
      </property>
     </widget>
    </item>
@@ -30,12 +30,12 @@
      </column>
      <column>
       <property name="text">
-       <string>Aba</string>
+       <string>Tab</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Opções</string>
+       <string>Options</string>
       </property>
      </column>
     </widget>
@@ -58,7 +58,7 @@
      <item>
       <widget class="QPushButton" name="addBtn">
        <property name="text">
-        <string>Adicionar</string>
+        <string>Add</string>
        </property>
       </widget>
      </item>

@@ -22,6 +22,7 @@
 """
 from builtins import str
 from builtins import map
+from qgis.PyQt.QtCore import QCoreApplication
 from .sqlGenerator import SqlGenerator
 from ...dsgEnums import DsgEnums
 
@@ -1604,7 +1605,7 @@ class PostGISSqlGenerator(SqlGenerator):
         elif settingType == "ValidationWorkflow":
             tableName = "validation_workflow"
         else:
-            raise Exception("Setting type not defined!")
+            raise Exception(QCoreApplication.translate("PostGISSqlGenerator", "Setting type not defined!"))
         return tableName
 
     def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):

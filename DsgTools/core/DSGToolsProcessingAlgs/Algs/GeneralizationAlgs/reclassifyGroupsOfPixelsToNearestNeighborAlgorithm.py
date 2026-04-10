@@ -177,16 +177,16 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         
         if len(thresholdPhases) > 1:
             multiStepFeedback.pushInfo(
-                self.tr(f"Processing in {len(thresholdPhases)} phases based on size thresholds")
+                self.tr("Processing in {0} phases based on size thresholds").format(len(thresholdPhases))
             )
             for idx, (threshold, dnList) in enumerate(thresholdPhases):
                 if dnList == ['default']:
                     multiStepFeedback.pushInfo(
-                        self.tr(f"  Phase {idx + 1}: All other classes with threshold {threshold} m²")
+                        self.tr("  Phase {0}: All other classes with threshold {1} m\u00b2").format(idx + 1, threshold)
                     )
                 else:
                     multiStepFeedback.pushInfo(
-                        self.tr(f"  Phase {idx + 1}: Classes {dnList} with threshold {threshold} m²")
+                        self.tr("  Phase {0}: Classes {1} with threshold {2} m\u00b2").format(idx + 1, dnList, threshold)
                     )
         
         # Compute bbox line (used across all phases)
@@ -211,9 +211,10 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             
             if len(thresholdPhases) > 1:
                 multiStepFeedback.pushInfo(
-                    self.tr(f"\n{'='*60}\nPhase {phaseIdx + 1}/{len(thresholdPhases)}: "
-                           f"Processing {'classes ' + str(dnList) if dnList != ['default'] else 'remaining classes'} "
-                           f"with threshold {threshold} m²\n{'='*60}")
+                    self.tr("Phase {0}/{1}: Processing {2} with threshold {3} m\u00b2").format(
+                           phaseIdx + 1, len(thresholdPhases),
+                           'classes ' + str(dnList) if dnList != ['default'] else 'remaining classes',
+                           threshold)
                 )
             
             npRaster, polygons_sink, polygons_dest_id = self.processPhase(
@@ -271,7 +272,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             rules = json.loads(rulesJson)
         except json.JSONDecodeError as e:
             raise QgsProcessingException(
-                self.tr(f"Invalid JSON in Generalization Rules: {str(e)}")
+                self.tr("Invalid JSON in Generalization Rules: {0}").format(str(e))
             )
         
         # Parse class restrictions
@@ -286,12 +287,12 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                     intRestrictions[int_key] = int_values
                 except (ValueError, TypeError) as e:
                     feedback.pushWarning(
-                        self.tr(f"Skipping invalid class restriction: {key} -> {value}: {str(e)}")
+                        self.tr("Skipping invalid class restriction: {0} -> {1}: {2}").format(key, value, str(e))
                     )
             
             classRestrictions = self.makeBidirectional(intRestrictions)
             feedback.pushInfo(
-                self.tr(f"Loaded class restrictions (bidirectional): {classRestrictions}")
+                self.tr("Loaded class restrictions (bidirectional): {0}").format(classRestrictions)
             )
         
         # Parse size thresholds
@@ -307,11 +308,11 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                         sizeThresholds['default'] = float(value)
                     else:
                         feedback.pushWarning(
-                            self.tr(f"Skipping invalid size threshold: {key} -> {value}")
+                            self.tr("Skipping invalid size threshold: {0} -> {1}").format(key, value)
                         )
             
             feedback.pushInfo(
-                self.tr(f"Loaded size thresholds: {sizeThresholds}")
+                self.tr("Loaded size thresholds: {0}").format(sizeThresholds)
             )
         
         # Parse non-growing classes
@@ -321,11 +322,11 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             try:
                 nonGrowingClasses = [int(dn) for dn in rawNonGrowing]
                 feedback.pushInfo(
-                    self.tr(f"Loaded non-growing classes: {nonGrowingClasses}")
+                    self.tr("Loaded non-growing classes: {0}").format(nonGrowingClasses)
                 )
             except (ValueError, TypeError) as e:
                 feedback.pushWarning(
-                    self.tr(f"Invalid non-growing classes specification: {str(e)}")
+                    self.tr("Invalid non-growing classes specification: {0}").format(str(e))
                 )
         
         return classRestrictions, sizeThresholds, nonGrowingClasses
@@ -470,7 +471,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         )
         
         nFeats = selectedPolygonLayer.featureCount()
-        feedback.pushInfo(self.tr(f"Found {nFeats} polygons matching criteria"))
+        feedback.pushInfo(self.tr("Found {0} polygons matching criteria").format(nFeats))
         
         if nFeats == 0:
             feedback.pushInfo(self.tr("No polygons to process in this phase"))
@@ -641,13 +642,13 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             
             if remainingFeatCount == 0:
                 feedback.pushInfo(
-                    self.tr(f"No more polygons to process after {nIterations} iterations")
+                    self.tr("No more polygons to process after {0} iterations").format(nIterations)
                 )
                 break
             
             if nIterations > 0:
                 feedback.pushInfo(
-                    self.tr(f"Iteration {nIterations + 1}: Processing {remainingFeatCount} polygons")
+                    self.tr("Iteration {0}: Processing {1} polygons").format(nIterations + 1, remainingFeatCount)
                 )
             
             # Build graph for current iteration
@@ -656,7 +657,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             
             nGroups = len(connected_components)
             feedback.pushInfo(
-                self.tr(f"Processing {nGroups} connected components")
+                self.tr("Processing {0} connected components").format(nGroups)
             )
             
             innerFeedback = QgsProcessingMultiStepFeedback(nGroups, feedback)
@@ -747,7 +748,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             ds = None
         
         feedback.pushInfo(
-            self.tr(f"Phase completed after {nIterations} iterations")
+            self.tr("Phase completed after {0} iterations").format(nIterations)
         )
         
         return npRaster, polygons_sink, polygons_dest_id

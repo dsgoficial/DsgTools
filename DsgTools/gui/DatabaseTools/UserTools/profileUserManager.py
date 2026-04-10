@@ -63,10 +63,9 @@ class ProfileUserManager(QtWidgets.QDialog, FORM_CLASS):
         self.dbName = dbName
         self.edgvVersion = edgvVersion
         self.userCustomSelector.setTitle(
-            self.tr("Manage user permissions to profile ")
-            + profileName
-            + self.tr(" on database ")
-            + dbName
+            self.tr("Manage user permissions to profile {0} on database {1}").format(
+                profileName, dbName
+            )
         )
         self.userCustomSelector.setFromList(
             list(notGrantedUserList), unique=True

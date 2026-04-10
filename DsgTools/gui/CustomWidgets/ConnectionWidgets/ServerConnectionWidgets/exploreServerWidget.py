@@ -169,7 +169,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.critical(
                 self.iface.mainWindow(),
                 self.tr("Critical"),
-                self.tr("Problem executing query: ") + query.lastError().text(),
+                self.tr("Problem executing query: {0}").format(query.lastError().text()),
             )
 
         dbList = []

@@ -268,7 +268,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             )
         )
         multiStepFeedback.pushInfo(
-            self.tr(f"Found {len(uniqueBoundariesIdSet)} unique boundary segments")
+            self.tr("Found {0} unique boundary segments").format(len(uniqueBoundariesIdSet))
         )
 
         currentStep += 1
@@ -297,7 +297,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             outputBoundariesLambda = lambda x: output_boundaries_sink.addFeature(x)
             list(map(outputBoundariesLambda, uniqueBoundaries.getFeatures()))
             multiStepFeedback.pushInfo(
-                self.tr(f"Added {uniqueBoundaries.featureCount()} boundaries to output")
+                self.tr("Added {0} boundaries to output").format(uniqueBoundaries.featureCount())
             )
         else:
             multiStepFeedback.pushInfo(self.tr("No unique boundaries found to process"))
@@ -469,7 +469,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             count += 1
 
         multiStepFeedback.pushInfo(
-            self.tr(f"Added {count} center points to output sink")
+            self.tr("Added {0} center points to output sink").format(count)
         )
         multiStepFeedback.pushInfo(self.tr("Processing complete!"))
 
@@ -502,7 +502,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 break
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr(f"Preparing layer: {lyr.name()}"))
+            multiStepFeedback.pushInfo(self.tr("Preparing layer: {0}").format(lyr.name()))
             outputLyr = self.prepareLayer(
                 lyr,
                 onlySelected=onlySelected,
@@ -512,7 +512,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             )
             layerList.append(outputLyr)
             multiStepFeedback.pushInfo(
-                self.tr(f"Layer {lyr.name()} prepared successfully")
+                self.tr("Layer {0} prepared successfully").format(lyr.name())
             )
         if not mergeOutputs:
             return layerList
@@ -652,7 +652,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             G[startPoint][endPoint]["layerIdSet"].add(feat["layer_id"])
             if feedback is not None and i % 1000 == 0:
                 feedback.setProgress(int(i * stepSize))
-                feedback.pushInfo(self.tr(f"Processed {i} of {nFeats} line segments"))
+                feedback.pushInfo(self.tr("Processed {0} of {1} line segments").format(i, nFeats))
 
         if feedback is not None:
             feedback.pushInfo(
@@ -667,7 +667,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         )
 
         if feedback is not None:
-            feedback.pushInfo(self.tr(f"Found {len(result)} unique boundary segments"))
+            feedback.pushInfo(self.tr("Found {0} unique boundary segments").format(len(result)))
 
         return result
 
@@ -764,7 +764,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 break
             multiStepFeedback.pushInfo(
-                self.tr(f"Submitting grid cell {current+1}/{nFeats} for processing")
+                self.tr("Submitting grid cell {0}/{1} for processing").format(current+1, nFeats)
             )
             tileLayer = self.layerHandler.createMemoryLayerWithFeature(
                 layer=referencePolygonLayer, feat=polygonTile, context=context
@@ -833,7 +833,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         if num_batches <= 1:
             # If small enough, process normally
             feedback.pushInfo(
-                self.tr(f"Processing {total_ids} boundaries in a single batch")
+                self.tr("Processing {0} boundaries in a single batch").format(total_ids)
             )
             return self.algRunner.runFilterExpression(
                 inputLyr=intersectedLines,
@@ -844,7 +844,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
 
         # Process in batches
         feedback.pushInfo(
-            self.tr(f"Processing {total_ids} boundaries in {num_batches} batches")
+            self.tr("Processing {0} boundaries in {1} batches").format(total_ids, num_batches)
         )
 
         # Create a temporary layer for accumulating results

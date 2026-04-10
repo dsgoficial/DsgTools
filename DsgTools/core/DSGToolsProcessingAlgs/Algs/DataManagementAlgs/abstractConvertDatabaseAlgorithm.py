@@ -313,7 +313,7 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(
-                self.tr(f"Converting Features: step 1/{nStepsOnText}")
+                self.tr("Converting Features: step 1/{0}").format(nStepsOnText)
             )
         firstConversionData = (
             conversionMapList[0] if len(conversionMapList) > 0 else None

@@ -30,6 +30,7 @@ from qgis.core import (
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QMessageBox, QApplication
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt import uic
 from qgis.utils import iface
 import os
@@ -39,8 +40,8 @@ class GetCrsDialog(QDialog):
     def __init__(self):
         super(GetCrsDialog, self).__init__()
         uic.loadUi(self.getUiPath(), self)
-        self.buttonBox.addButton("Sim", QDialogButtonBox.ButtonRole.AcceptRole)
-        self.buttonBox.addButton("Não mudar", QDialogButtonBox.ButtonRole.RejectRole)
+        self.buttonBox.addButton(self.tr("Yes"), QDialogButtonBox.ButtonRole.AcceptRole)
+        self.buttonBox.addButton(self.tr("Do not change"), QDialogButtonBox.ButtonRole.RejectRole)
 
     def setCrsValue(self, value):
         self.selectCRS.setCrs(value)
@@ -56,8 +57,8 @@ def copywkt():
     layer = iface.activeLayer()
     if layer is None:
         iface.messageBar().pushMessage(
-            "Warning",
-            "Selecione uma camada antes de rodar o processo",
+            QCoreApplication.translate("CopyWKT", "Warning"),
+            QCoreApplication.translate("CopyWKT", "Select a layer before running the process"),
             level=Qgis.MessageLevel.Warning,
             duration=5,
         )
@@ -72,10 +73,11 @@ def copywkt():
         wktcoord.append(geom.asWkt())
     QApplication.clipboard().setText("\n".join(wktcoord))
     iface.messageBar().pushMessage(
-        "Executado",
-        " As coordenadas das feições selecionadas foram copiadas em WKT para o sistema {}".format(
-            destCrs.authid()
-        ),
+        QCoreApplication.translate("CopyWKT", "Done"),
+        QCoreApplication.translate(
+            "CopyWKT",
+            "The coordinates of the selected features were copied as WKT to the {0} coordinate system"
+        ).format(destCrs.authid()),
         level=Qgis.MessageLevel.Success,
         duration=5,
     )
@@ -95,8 +97,8 @@ def callDialog(crsvalue):
 def errorAction():
     reply = QMessageBox.question(
         iface.mainWindow(),
-        "CRS Invalido",
-        "Se deseja mudar o CRS, selecione um CRS valido",
+        QCoreApplication.translate("CopyWKT", "Invalid CRS"),
+        QCoreApplication.translate("CopyWKT", "If you want to change the CRS, select a valid CRS"),
         QMessageBox.StandardButton.Ok,
     )
     return False

@@ -2254,7 +2254,7 @@ class PostgisDb(AbstractDb):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(
-                    self.tr("Problem creating temp table {}: ".format(tableName))
+                    self.tr("Problem creating temp table {0}: ").format(tableName)
                     + query.lastError().text()
                 )
         indexSql = self.gen.createSpatialIndex(tableName, geomColumnName)
@@ -2282,7 +2282,7 @@ class PostgisDb(AbstractDb):
             if useTransaction:
                 self.db.rollback()
             raise Exception(
-                self.tr("Problem dropping temp table {}: ".format(tableName))
+                self.tr("Problem dropping temp table {0}: ").format(tableName)
                 + query.lastError().text()
             )
         if useTransaction:

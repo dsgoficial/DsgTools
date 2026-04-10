@@ -216,7 +216,7 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
             QMessageBox.warning(
                 self,
                 self.tr("Success!"),
-                self.tr("Database ") + localDbName + self.tr(" dropped successfully!"),
+                self.tr("Database {0} dropped successfully!").format(localDbName),
             )
             self.clearQSettings(localDbName)
         except Exception as e:

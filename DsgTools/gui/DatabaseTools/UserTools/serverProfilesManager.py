@@ -204,11 +204,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
                 QMessageBox.warning(
                     self,
                     self.tr("Warning!"),
-                    self.tr("Profile ")
-                    + profileName
-                    + self.tr(" for EDGV ")
-                    + edgvVersion
-                    + self.tr(" already exists!"),
+                    self.tr("Profile {0} for EDGV {1} already exists!").format(profileName, edgvVersion),
                 )
                 return
         newItem = self.populateTreeDict(templateDb, edgvVersion)
@@ -218,7 +214,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
         QMessageBox.warning(
             self,
             self.tr("Success!"),
-            self.tr("Profile ") + profileName + self.tr(" created successfully!"),
+            self.tr("Profile {0} created successfully!").format(profileName),
         )
 
     def setEnabled(self, enabled):
@@ -272,9 +268,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
                 QMessageBox.warning(
                     self,
                     self.tr("Success!"),
-                    self.tr("Permission ")
-                    + profileName
-                    + self.tr(" successfully deleted."),
+                    self.tr("Permission {0} successfully deleted.").format(profileName),
                 )
                 self.refreshProfileList()
             except Exception as e:
@@ -282,7 +276,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
                 QMessageBox.warning(
                     self,
                     self.tr("Warning!"),
-                    self.tr("Error! Problem deleting permission: ") + ":".join(e.args),
+                    self.tr("Error! Problem deleting permission: {0}").format(":".join(e.args)),
                 )
 
     @pyqtSlot(bool)
@@ -301,16 +295,14 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
             QMessageBox.warning(
                 self,
                 self.tr("Success!"),
-                self.tr("Permission ")
-                + profileName
-                + self.tr(" successfully updated."),
+                self.tr("Permission {0} successfully updated.").format(profileName),
             )
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(
                 self,
                 self.tr("Warning!"),
-                self.tr("Error! Problem updating permission: ") + ":".join(e.args),
+                self.tr("Error! Problem updating permission: {0}").format(":".join(e.args)),
             )
 
     def populateTreeDict(self, abstractDb, version):

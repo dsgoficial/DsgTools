@@ -112,9 +112,7 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
             QMessageBox.information(
                 self,
                 self.tr("Success!"),
-                self.tr("Field Toolbox Configuration ")
-                + propertyName
-                + self.tr(" created successfuly!"),
+                self.tr("Field Toolbox Configuration {0} created successfully!").format(propertyName),
             )
 
     def populateConfigInterface(self, templateDb, jsonDict=None, propertyName=None):

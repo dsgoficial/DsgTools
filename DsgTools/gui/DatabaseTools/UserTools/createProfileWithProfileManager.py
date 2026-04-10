@@ -117,11 +117,7 @@ class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
                 QMessageBox.warning(
                     self,
                     self.tr("Warning!"),
-                    self.tr("Profile ")
-                    + profileName
-                    + self.tr(" for EDGV ")
-                    + edgvVersion
-                    + self.tr(" already exists!"),
+                    self.tr("Profile {0} for EDGV {1} already exists!").format(profileName, edgvVersion),
                 )
                 return
         jsonDict = json.dumps(self.profile, sort_keys=True, indent=4)

@@ -112,7 +112,7 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
                         shutil.copy2(file, destination)
                     except IOError as e:
                         QgsMessageLog.logMessage(
-                            self.tr("Error copying file: ") + text + "\n" + e.strerror,
+                            self.tr("Error copying file: {0}\n{1}").format(text, e.strerror),
                             "DSGTools Plugin",
                             QgsMessageLog.INFO,
                         )

@@ -197,17 +197,17 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
         lyrAPkFieldNames = self.getLayerPrimaryKeyAttributeNames(layerApre)
         lyrAPkFieldName = "feat_id" if lyrAPkFieldNames is None else lyrAPkFieldNames[0]
         idAText = (
-            self.tr(f"with feature id")
+            self.tr("with feature id")
             if lyrAPkFieldName == "feat_id"
-            else self.tr(f"with {lyrAPkFieldName}")
+            else self.tr("with {0}").format(lyrAPkFieldName)
         )
         layerB = tempLayersDict[layerBpre]
         lyrBPkFieldNames = self.getLayerPrimaryKeyAttributeNames(layerBpre)
         lyrBPkFieldName = "feat_id" if lyrBPkFieldNames is None else lyrBPkFieldNames[0]
         idBText = (
-            self.tr(f"with feature id")
+            self.tr("with feature id")
             if lyrBPkFieldName == "feat_id"
-            else self.tr(f"with {lyrBPkFieldName}")
+            else self.tr("with {0}").format(lyrBPkFieldName)
         )
         multiStepFeedback.setCurrentStep(0)
         joinedLayer = self.algRunner.runJoinAttributesByLocation(

@@ -1,6 +1,7 @@
 from qgis import core, gui
 from qgis.utils import iface
 from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt.QtCore import QCoreApplication
 import json
 from DsgTools.Modules.qgis.factories.actionsFactory import ActionsFactory
 from qgis.core import QgsWkbTypes
@@ -120,9 +121,9 @@ class QgisCtrl:
 
     def getAcquisitionToolNames(self):
         return {
-            "Padrão": None,
-            "Ângulo Reto": "RightDegreeAngleDigitizing",
-            "Mão Livre": "FreeHand",
+            QCoreApplication.translate("QgisCtrl", "Default"): None,
+            QCoreApplication.translate("QgisCtrl", "Right Angle"): "RightDegreeAngleDigitizing",
+            QCoreApplication.translate("QgisCtrl", "Free Hand"): "FreeHand",
         }
 
     def addDockWidget(self, dockWidget, side=QtCore.Qt.DockWidgetArea.LeftDockWidgetArea):

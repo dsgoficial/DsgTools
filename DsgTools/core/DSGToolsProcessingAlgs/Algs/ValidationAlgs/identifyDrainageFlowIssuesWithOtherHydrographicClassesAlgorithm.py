@@ -708,17 +708,17 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             return
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setProgressText(
-            self.tr(f"Validating drainages with {waterBodyName}")
+            self.tr("Validating drainages with {0}").format(waterBodyName)
         )
         multiStepFeedback.setCurrentStep(0)
         flagLineLambda = lambda geom: self.flagFeature(
             geom,
-            flagText=self.tr(f"Invalid intersection of drainage and {waterBodyName}."),
+            flagText=self.tr("Invalid intersection of drainage and {0}.").format(waterBodyName),
             sink=self.lineFlagSink,
         )
         flagPolygonLambda = lambda geom: self.flagFeature(
             geom,
-            flagText=self.tr(f"Invalid flow on polygon of {waterBodyName}"),
+            flagText=self.tr("Invalid flow on polygon of {0}").format(waterBodyName),
             sink=self.polygonFlagSink,
         )
         flowCheckLambda = (
@@ -809,7 +809,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             return
         flagPointLambda = lambda geom: self.flagFeature(
             QgsGeometry.fromWkt(geom),
-            flagText=self.tr(f"Confluence with more than 3 rivers"),
+            flagText=self.tr("Confluence with more than 3 rivers"),
             sink=self.pointFlagSink,
         )
         list(
@@ -824,11 +824,11 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         if nFeats == 0:
             return
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setProgressText(self.tr(f"Validating drainages end points."))
+        multiStepFeedback.setProgressText(self.tr("Validating drainages end points."))
         multiStepFeedback.setCurrentStep(0)
         flagPointLambda = lambda geom: self.flagFeature(
             geom,
-            flagText=self.tr(f"Invalid intersection of drainage end point."),
+            flagText=self.tr("Invalid intersection of drainage end point."),
             sink=self.pointFlagSink,
         )
 

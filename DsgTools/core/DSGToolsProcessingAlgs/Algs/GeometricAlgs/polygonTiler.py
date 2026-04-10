@@ -252,7 +252,7 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
             # Skip invalid, empty, or non-polygon geometries
             if geom.isEmpty() or geom.type() != QgsWkbTypes.GeometryType.PolygonGeometry:
                 feedback.pushInfo(
-                    self.tr(f"Skipping feature {feature.id()} - not a valid polygon")
+                    self.tr("Skipping feature {0} - not a valid polygon").format(feature.id())
                 )
                 continue
 
@@ -294,7 +294,7 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
         expression = QgsExpression(expression_string)
         if expression.hasParserError():
             raise QgsProcessingException(
-                self.tr(f"Error in {parameter_name} expression: {expression.parserErrorString()}")
+                self.tr("Error in {0} expression: {1}").format(parameter_name, expression.parserErrorString())
             )
         
         result = expression.evaluate(context)
@@ -303,7 +303,7 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
             return float(result)
         except (ValueError, TypeError):
             raise QgsProcessingException(
-                self.tr(f"{parameter_name} expression must evaluate to a numeric value. Got: {result}")
+                self.tr("{0} expression must evaluate to a numeric value. Got: {1}").format(parameter_name, result)
             )
 
     def _process_fixed_size_mode(self, feature, geom, bbox, parameters, context, 
@@ -320,20 +320,20 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
         
         if tile_width <= 0 or tile_height <= 0:
             feedback.pushInfo(
-                self.tr(f"Skipping feature {feature.id()} - invalid tile dimensions ({tile_width} × {tile_height})")
+                self.tr("Skipping feature {0} - invalid tile dimensions ({1} x {2})").format(feature.id(), tile_width, tile_height)
             )
             return 0
 
         # Validate overlaps - cannot be equal or greater than tile dimensions
         if overlap_x >= tile_width:
             feedback.pushInfo(
-                self.tr(f"Warning: X overlap ({overlap_x}) adjusted from {overlap_x} to {tile_width * 0.9} (90% of tile width)")
+                self.tr("Warning: X overlap ({0}) adjusted to {1} (90% of tile width)").format(overlap_x, tile_width * 0.9)
             )
             overlap_x = tile_width * 0.9
             
         if overlap_y >= tile_height:
             feedback.pushInfo(
-                self.tr(f"Warning: Y overlap ({overlap_y}) adjusted from {overlap_y} to {tile_height * 0.9} (90% of tile height)")
+                self.tr("Warning: Y overlap ({0}) adjusted to {1} (90% of tile height)").format(overlap_y, tile_height * 0.9)
             )
             overlap_y = tile_height * 0.9
 
@@ -352,9 +352,9 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
         rows = max(1, math.ceil((bbox.height() - tile_height) / step_y) + 1) if bbox.height() > tile_height else 1
         
         feedback.pushInfo(
-            self.tr(f"Feature {feature.id()}: Creating {rows}×{cols} sliding window tiles "
-                   f"(tile size: {tile_width:.1f}×{tile_height:.1f}, overlap: {overlap_x:.1f}×{overlap_y:.1f}, "
-                   f"step: {step_x:.1f}×{step_y:.1f})")
+            self.tr("Feature {0}: Creating {1}x{2} sliding window tiles "
+                   "(tile size: {3:.1f}x{4:.1f}, overlap: {5:.1f}x{6:.1f}, "
+                   "step: {7:.1f}x{8:.1f})").format(feature.id(), rows, cols, tile_width, tile_height, overlap_x, overlap_y, step_x, step_y)
         )
         
         tiles_count = 0
@@ -409,7 +409,7 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
         cell_height = base_cell_height * (1.0 + overlap_y_fraction)
         
         feedback.pushInfo(
-            self.tr(f"Feature {feature.id()}: Creating {rows}×{columns} grid tiles")
+            self.tr("Feature {0}: Creating {1}x{2} grid tiles").format(feature.id(), rows, columns)
         )
         
         tiles_count = 0

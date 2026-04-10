@@ -233,7 +233,7 @@ class SnapHierarchyWrapper(WidgetWrapper):
                 QMessageBox.warning(
                     iface.mainWindow(),
                     self.tr("Unable to import {0}").format(filepath),
-                    "Check file {0}:\n{1}".format(filepath, "\n".join(e.args)),
+                    self.tr("Check file {0}:\n{1}").format(filepath, "\n".join(e.args)),
                 )
                 self.panel.setHeaders(self.panel.headers)
 
@@ -271,7 +271,7 @@ class SnapHierarchyWrapper(WidgetWrapper):
                 QMessageBox.warning(
                     iface.mainWindow(),
                     self.tr("Unable to export {0}").format(filepath),
-                    "Check file {0}:\n{1}".format(filepath, "\n".join(e.args)),
+                    self.tr("Check file {0}:\n{1}").format(filepath, "\n".join(e.args)),
                 )
 
         # Apply our custom methods

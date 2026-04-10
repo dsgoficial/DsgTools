@@ -78,7 +78,7 @@ class ImportExportFileWidget(QtWidgets.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_exportFilePushButton_clicked(self):
         if self.fileContent is None:
-            raise Exception("Invalid file content.")
+            raise Exception(self.tr("Invalid file content."))
         fd = QFileDialog()
         fd.setDirectory(QDir.homePath())
         filename = fd.getSaveFileName(caption=self.caption, filter=self.filter)

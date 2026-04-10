@@ -14,7 +14,7 @@ class TabEditorWidget(TableEditorWidget):
                 self.getRowData(index.row()), self.updateTab
             )
         except Exception as e:
-            self.showError("Erro", str(e))
+            self.showError(self.tr("Error"), str(e))
 
     def handleDeleteBtn(self, index):
         try:
@@ -22,7 +22,7 @@ class TabEditorWidget(TableEditorWidget):
             self.getController().deleteTabMenuEditor(deletedTabData["id"])
             self.tableWidget.removeRow(index.row())
         except Exception as e:
-            self.showError("Erro", str(e))
+            self.showError(self.tr("Error"), str(e))
 
     def addRow(self, tabId, tabName):
         idx = self.getRowIndex(tabId)
@@ -70,7 +70,7 @@ class TabEditorWidget(TableEditorWidget):
         try:
             self.getController().openAddTabDialog(self.addTab)
         except Exception as e:
-            self.showError("Erro", str(e))
+            self.showError(self.tr("Error"), str(e))
 
     def addTab(self, data):
         if not data:
