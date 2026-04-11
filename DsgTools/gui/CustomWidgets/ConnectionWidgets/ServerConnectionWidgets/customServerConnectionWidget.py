@@ -53,10 +53,6 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.factory = SqlGeneratorFactory()
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.populatePostgisSelector)
-        self.spatialiteCustomFileSelector.filesSelected.connect(
-            self.populateSpatialiteSelector
-        )
-        # self.gpkgCustomFileSelector.filesSelected.connect(self.populateGeopackageSelector)
         self.comboDict = {
             self.tr("Load Database Model EDGV Version 2.1.3"): "2.1.3",
             self.tr("Load Database Model EDGV Version 2.1.3 Pro"): "2.1.3 Pro",
@@ -68,22 +64,11 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.dbNameDict = dict()
         self.selectedDbsDict = defaultdict()
         self.postgisCustomSelector.selectionChanged.connect(self.selectedDatabases)
-        self.spatialiteCustomSelector.selectionChanged.connect(self.selectedFiles)
-        # self.gpkgCustomSelector.selectionChanged.connect(self.selectedGeopackageFiles)
-        self.path = None
-        self.spatialiteCustomFileSelector.setCaption(
-            self.tr("Select a DSGTools Spatialite File")
-        )
-        self.spatialiteCustomFileSelector.setFilter(
-            self.tr("Spatialite file databases (*.sqlite)")
-        )
-        self.spatialiteCustomFileSelector.setType("multi")
 
     def selectedDatabases(self, dbList, type):
         """
         Selects databases from a name list and database type
         """
-        # 1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
         if type == "added":
             (
                 host,
@@ -102,44 +87,11 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 )
                 self.selectedDbsDict[dbNameAlias] = localDb
             self.dbDictChanged.emit("added", dbList)
-        # 2- Iterate over selectedDbsDict and if there is a key not in dbList, close db and pop item
         if type == "removed":
             for dbNameAlias in list(self.selectedDbsDict.keys()):
                 if dbNameAlias in dbList:
                     self.selectedDbsDict.pop(dbNameAlias)
             self.dbDictChanged.emit("removed", dbList)
-
-    def selectedFiles(self, dbList, type):
-        """
-        Selects databases from a name list and database type
-        """
-        # 1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
-        if type == "added":
-            for dbName in dbList:
-                if dbName in self.selectedDbsDict:
-                    continue
-                localDb = self.dbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
-                localDb.connectDatabase(conn=self.spatialiteDict[dbName])
-                self.selectedDbsDict[dbName] = localDb
-            self.dbDictChanged.emit("added", dbList)
-        # 2- Iterate over selectedDbsDict and if there is a key not in dbList, close db and pop item
-        if type == "removed":
-            for dbName in list(self.selectedDbsDict.keys()):
-                if dbName in dbList:
-                    self.selectedDbsDict.pop(dbName)
-            self.dbDictChanged.emit("removed", dbList)
-
-    @pyqtSlot(int)
-    def on_serverConnectionTab_currentChanged(self, currentTab):
-        """
-        Changes the database type (spatialite/postgis/geopackage)
-        """
-        if currentTab == 0:
-            self.clearSpatialiteTab()
-            self.populatePostgisSelector()
-        elif currentTab == 1:
-            self.clearPostgisTab()
-            self.populateSpatialiteSelector()
 
     def populatePostgisSelector(self):
         """
@@ -176,57 +128,9 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
             displayString = f"{dbName} ({dbversion} impl. {dbimplversion})"
         return displayString
 
-    def populateSpatialiteSelector(self):
-        """
-        Populates the spatialite database list according to the databse type
-        """
-        self.dbNameDict = {}
-        self.spatialiteDict = dict()
-        dbList = []
-        try:
-            fileNameList = (
-                self.spatialiteCustomFileSelector.fileNameList[0]
-                if self.spatialiteCustomFileSelector.fileNameList
-                else []
-            )
-            for dbPath in fileNameList:
-                auxAbstractDb = self.dbFactory.createDbFactory(
-                    DsgEnums.DriverSpatiaLite
-                )
-                dbName = os.path.basename(dbPath).split(".")[0]
-                self.path = os.path.dirname(dbPath)
-                auxAbstractDb.connectDatabase(conn=dbPath)
-                version = auxAbstractDb.getDatabaseVersion()
-                dbimplversion = auxAbstractDb.getImplementationVersion()
-                dbList.append((dbName, version, dbimplversion))
-                self.spatialiteDict[
-                    self.getDisplayString(dbName, version, dbimplversion)
-                ] = dbPath
-        except Exception as e:
-            QMessageBox.critical(self, self.tr("Critical!"), ":".join(e.args))
-            self.clearSpatialiteTab()
-        dbList.sort()
-        for (dbname, dbversion, dbimplversion) in dbList:
-            self.dbNameDict[
-                self.getDisplayString(dbName, dbversion, dbimplversion)
-            ] = dbName
-        self.spatialiteCustomSelector.setInitialState(self.dbNameDict.keys())
-
-    def clearSpatialiteTab(self):
-        """
-        Clears the postgis tab, returning it to the original state
-        """
-        self.spatialiteCustomSelector.clearAll()
-        self.serverWidget.clearAll()
-        self.dbNameDict = {}
-        self.spatialiteCustomFileSelector.resetAll()
-        self.edgvType = None
-        self.selectedDbsDict = dict()
-        self.resetAll.emit()
-
     def clearPostgisTab(self):
         """
-        Clears the spatialite tab, returning it to the original state
+        Clears the postgis tab, returning it to the original state
         """
         self.postgisCustomSelector.clearAll()
         self.serverWidget.clearAll()

@@ -237,6 +237,30 @@ class PsycopgDbAdapter:
         return self._connection.cursor()
 
     # ------------------------------------------------------------------
+    # Autocommit DDL helper
+    # ------------------------------------------------------------------
+    @contextmanager
+    def autocommit_block(self):
+        """
+        Context manager for DDL statements that PostgreSQL forbids inside a
+        transaction (CREATE DATABASE, DROP DATABASE, etc.).
+
+        Commits any pending transaction, switches to autocommit=True, yields
+        the underlying connection, then restores autocommit=False.
+        """
+        if not self.isOpen():
+            raise RuntimeError("Cannot execute DDL: connection is not open.")
+        try:
+            self._connection.commit()
+        except Exception:
+            self._connection.rollback()
+        self._connection.autocommit = True
+        try:
+            yield self._connection
+        finally:
+            self._connection.autocommit = False
+
+    # ------------------------------------------------------------------
     # Ephemeral / server-level connection helper
     # ------------------------------------------------------------------
     @contextmanager

@@ -86,16 +86,12 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.crs = None
 
         self.abstractDb = None
-        self.isSpatialite = False
         self.abstractDbFactory = DbFactory()
         self.utils = Utils()
 
         # populating the postgis combobox
         self.comboBoxPostgis.clear()
-        self.spatialiteFileEdit.setReadOnly(True)
         self.postGISCrsEdit.setReadOnly(True)
-        self.spatialiteCrsEdit.setReadOnly(True)
-        self.edgvSpatialiteVersionEdit.setReadOnly(True)
         self.edgvPostgisVersionEdit.setReadOnly(True)
 
     def setInitialState(self):
@@ -108,7 +104,6 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.crs = None
 
         self.abstractDb = None
-        self.isSpatialite = False
         self.tabWidget.setCurrentIndex(0)
         self.abstractDbFactory = DbFactory()
         self.utils = Utils()
@@ -116,10 +111,7 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
 
         # populating the postgis combobox
         self.comboBoxPostgis.clear()
-        self.spatialiteFileEdit.setReadOnly(True)
         self.postGISCrsEdit.setReadOnly(True)
-        self.spatialiteCrsEdit.setReadOnly(True)
-        self.edgvSpatialiteVersionEdit.setReadOnly(True)
         self.edgvPostgisVersionEdit.setReadOnly(True)
 
     @pyqtSlot(int)
@@ -135,77 +127,24 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
             self.loadDatabase()
             self.connectionChanged.emit()
 
-    @pyqtSlot(bool)
-    def on_pushButtonOpenFile_clicked(self):
-        """
-        Loads a spatialite database
-        """
-        self.loadDatabase()
-        if self.isDBConnected():
-            self.connectionChanged.emit()
-
-    @pyqtSlot(int)
-    def on_tabWidget_currentChanged(self):
-        """
-        Changes the tab to work with spatialite or postgis databases
-        """
-        self.filename = ""
-        self.comboBoxPostgis.clear()
-        self.dbLoaded = False
-        self.epsg = 0
-        self.crs = None
-        self.dbVersion = ""
-        self.serverWidget.serversCombo.setCurrentIndex(0)
-        self.spatialiteFileEdit.setReadOnly(True)
-        self.spatialiteFileEdit.setText(self.filename)
-        self.postGISCrsEdit.setText("")
-        self.postGISCrsEdit.setReadOnly(True)
-        self.spatialiteCrsEdit.setText("")
-        self.spatialiteCrsEdit.setReadOnly(True)
-        self.edgvSpatialiteVersionEdit.setText("")
-        self.edgvSpatialiteVersionEdit.setReadOnly(True)
-        self.edgvPostgisVersionEdit.setText("")
-        self.edgvPostgisVersionEdit.setReadOnly(True)
-        self.mGroupBox.setTitle(self.tr("Database connection"))
-
-        # Setting the database type
-        if self.tabWidget.currentIndex() == 1:
-            self.isSpatialite = True
-        else:
-            self.isSpatialite = False
-
     def loadDatabase(self):
         """
         Loads the selected database
         """
         self.closeDatabase()
         try:
-            if self.isSpatialite:
-                self.abstractDb = self.abstractDbFactory.createDbFactory(
-                    DsgEnums.DriverSpatiaLite
-                )
-                self.abstractDb.connectDatabase()
-                self.spatialiteFileEdit.setText(self.abstractDb.db.databaseName())
-                self.edgvSpatialiteVersionEdit.setText(
-                    self.abstractDb.getDatabaseVersion()
-                )
-
-            else:
-                self.abstractDb = self.abstractDbFactory.createDbFactory(
-                    DsgEnums.DriverPostGIS
-                )
-                (host, port, user, password) = self.serverWidget.getServerParameters()
-                dbName = self.comboBoxPostgis.currentText()
-                self.abstractDb.connectDatabaseWithParameters(
-                    host, port, dbName, user, password
-                )
-                self.edgvPostgisVersionEdit.setText(
-                    self.abstractDb.getDatabaseVersion()
-                )
-                serverName = self.serverWidget.serversCombo.currentText()
-                newText = dbName + self.tr(" on ") + serverName
-                self.mGroupBox.setToolTip(newText)
-                # self.mGroupBox.setTitle(newText)
+            self.abstractDb = self.abstractDbFactory.createDbFactory(
+                DsgEnums.DriverPostGIS
+            )
+            (host, port, user, password) = self.serverWidget.getServerParameters()
+            dbName = self.comboBoxPostgis.currentText()
+            self.abstractDb.connectDatabaseWithParameters(
+                host, port, dbName, user, password
+            )
+            self.edgvPostgisVersionEdit.setText(self.abstractDb.getDatabaseVersion())
+            serverName = self.serverWidget.serversCombo.currentText()
+            newText = dbName + self.tr(" on ") + serverName
+            self.mGroupBox.setToolTip(newText)
 
             self.abstractDb.checkAndOpenDb()
             self.dbLoaded = True
@@ -242,12 +181,8 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 self.crs = QgsCoordinateReferenceSystem(
                     self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId
                 )
-                if self.isSpatialite:
-                    self.spatialiteCrsEdit.setText(self.crs.description())
-                    self.spatialiteCrsEdit.setReadOnly(True)
-                else:
-                    self.postGISCrsEdit.setText(self.crs.description())
-                    self.postGISCrsEdit.setReadOnly(True)
+                self.postGISCrsEdit.setText(self.crs.description())
+                self.postGISCrsEdit.setReadOnly(True)
         except Exception as e:
             self.problemOccurred.emit(
                 self.tr("A problem occurred! Check log for details.")

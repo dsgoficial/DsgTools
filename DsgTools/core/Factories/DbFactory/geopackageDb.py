@@ -23,9 +23,9 @@
 
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtWidgets import QFileDialog
-from qgis.core import QgsCoordinateReferenceSystem
+from qgis.core import QgsCoordinateReferenceSystem, QgsVariantUtils
 
-from .spatialiteDb import SpatialiteDb
+from .abstractDb import AbstractDb
 from .pgDataTypes import GeomDictResult, GeomTableEntry
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.core.dsgEnums import DsgEnums
@@ -34,34 +34,520 @@ from osgeo import ogr, osr
 import os
 
 
-class GeopackageDb(SpatialiteDb):
-    """
-    Geopackage is an OGC format base on SpatiLite, hence, it
-    should inherit methods from SpatiaLite driver.
-    """
-
+class GeopackageDb(AbstractDb):
     def __init__(self):
         """
         Constructor.
         """
         super(GeopackageDb, self).__init__()
+        self.db = QSqlDatabase("QSQLITE")
         self.gen = SqlGeneratorFactory().createSqlGenerator(
             driver=DsgEnums.DriverGeopackage
         )
 
+    # ------------------------------------------------------------------ #
+    # Methods inherited from SpatialiteDb (internalized)                  #
+    # ------------------------------------------------------------------ #
+
+    def closeDatabase(self):
+        if self.db is not None and self.db.isOpen():
+            self.db.close()
+
+    def connectDatabase(self, conn=None):
+        if conn is None:
+            self.connectDatabaseWithGui()
+        else:
+            self.db.setDatabaseName(conn)
+
+    def listGeomClassesFromDatabase(self, primitiveFilter=[]):
+        self.checkAndOpenDb()
+        classList = []
+        sql = self.gen.getTablesFromDatabase()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.close()
+            raise Exception(
+                self.tr("Problem listing geom classes: ") + query.lastError().text()
+            )
+        while query.next():
+            tableName = str(query.value(0))
+            layerName = tableName
+            if tableName[-2:].lower() in ["_p", "_l", "_a"]:
+                classList.append(layerName)
+        return classList
+
+    def listComplexClassesFromDatabase(self):
+        self.checkAndOpenDb()
+        classList = []
+        sql = self.gen.getTablesFromDatabase()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.close()
+            raise Exception(
+                self.tr("Problem listing complex classes: ") + query.lastError().text()
+            )
+        while query.next():
+            tableName = str(query.value(0))
+            layerName = tableName
+            tableSchema = layerName.split("_")[0]
+            if tableSchema == "complexos":
+                classList.append(layerName)
+        return classList
+
+    def getStructureDict(self):
+        self.checkAndOpenDb()
+        classDict = dict()
+        sql = self.gen.getStructure(self.getDatabaseVersion())
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.close()
+            raise Exception(
+                self.tr("Problem getting database structure: ")
+                + query.lastError().text()
+            )
+        while query.next():
+            className = str(query.value(0))
+            classSql = str(query.value(1))
+            if className.split("_")[0] == "complexos" or className.split("_")[-1] in [
+                "p",
+                "l",
+                "a",
+            ]:
+                if className not in list(classDict.keys()):
+                    classDict[className] = dict()
+                classSql = classSql.split(className)[1]
+                sqlList = (
+                    classSql.replace("(", "")
+                    .replace(")", "")
+                    .replace('"', "")
+                    .replace("'", "")
+                    .split(",")
+                )
+                for s in sqlList:
+                    fieldName = str(s.strip().split(" ")[0])
+                    classDict[className][fieldName] = fieldName
+
+                if "GEOMETRY" in list(classDict[className].keys()):
+                    classDict[className]["GEOMETRY"] = "geom"
+                if "geometry" in list(classDict[className].keys()):
+                    classDict[className]["geometry"] = "geom"
+                if "OGC_FID" in list(classDict[className].keys()):
+                    classDict[className]["OGC_FID"] = "id"
+
+        return classDict
+
+    def makeOgrConn(self):
+        constring = self.db.databaseName()
+        return constring
+
+    def validateWithOutputDatabaseSchema(self, outputAbstractDb):
+        self.checkAndOpenDb()
+        invalidated = self.buildInvalidatedDict()
+        inputdbStructure = self.getStructureDict()
+        outputdbStructure = outputAbstractDb.getStructureDict()
+        domainDict = outputAbstractDb.getDomainDict()
+        classes = self.listClassesWithElementsFromDatabase()
+        notNullDict = outputAbstractDb.getNotNullDict()
+
+        for inputClass in list(classes.keys()):
+            outputClass = self.translateAbstractDbLayerNameToOutputFormat(
+                inputClass, outputAbstractDb
+            )
+            (schema, className) = self.getTableSchema(inputClass)
+            if outputClass in list(outputdbStructure.keys()):
+                outputAttrList = self.reorderTupleList(
+                    list(outputdbStructure[outputClass].keys())
+                )
+                inputAttrList = self.reorderTupleList(
+                    list(inputdbStructure[inputClass].keys())
+                )
+
+                sql = self.gen.getFeaturesWithSQL(inputClass, inputAttrList)
+                query = QSqlQuery(sql, self.db)
+                if not query.isActive():
+                    self.db.close()
+                    raise Exception(
+                        self.tr("Problem executing query: ") + query.lastError().text()
+                    )
+
+                while query.next():
+                    id = query.value(0)
+                    for i in range(len(inputAttrList)):
+                        nullLine = True
+                        value = query.value(i)
+                        if value is not None:
+                            nullLine = False
+                            break
+                    if nullLine:
+                        if inputClass not in list(invalidated["nullLine"].keys()):
+                            invalidated["nullLine"][inputClass] = 0
+                        invalidated["nullLine"][inputClass] += 1
+
+                    if id is None and (not nullLine):
+                        if inputClass not in list(invalidated["nullPk"].keys()):
+                            invalidated["nullPk"][inputClass] = 0
+                        invalidated["nullPk"][inputClass] += 1
+
+                    for i in range(len(inputAttrList)):
+                        value = query.value(i)
+                        if outputClass in list(domainDict.keys()):
+                            if inputAttrList[i] in list(domainDict[outputClass].keys()):
+                                if value not in domainDict[outputClass][
+                                    inputAttrList[i]
+                                ] and (not nullLine):
+                                    invalidated = self.utils.buildNestedDict(
+                                        invalidated,
+                                        [
+                                            "notInDomain",
+                                            inputClass,
+                                            id,
+                                            inputAttrList[i],
+                                        ],
+                                        value,
+                                    )
+                        if outputClass in list(notNullDict.keys()):
+                            if outputClass in list(domainDict.keys()):
+                                if inputAttrList[i] in notNullDict[
+                                    outputClass
+                                ] and inputAttrList[i] not in list(
+                                    domainDict[outputClass].keys()
+                                ):
+                                    if (
+                                        (value is None)
+                                        and (not nullLine)
+                                        and (
+                                            inputAttrList[i]
+                                            not in list(domainDict[outputClass].keys())
+                                        )
+                                    ):
+                                        invalidated = self.utils.buildNestedDict(
+                                            invalidated,
+                                            [
+                                                "nullAttribute",
+                                                inputClass,
+                                                id,
+                                                inputAttrList[i],
+                                            ],
+                                            value,
+                                        )
+                            else:
+                                if inputAttrList[i] in notNullDict[outputClass]:
+                                    if QgsVariantUtils.isNull(value):
+                                        invalidated = self.utils.buildNestedDict(
+                                            invalidated,
+                                            [
+                                                "nullAttribute",
+                                                inputClass,
+                                                id,
+                                                inputAttrList[i],
+                                            ],
+                                            value,
+                                        )
+                                    elif (
+                                        (value is None)
+                                        and (not nullLine)
+                                        and (
+                                            inputAttrList[i]
+                                            not in list(domainDict[outputClass].keys())
+                                        )
+                                    ):
+                                        invalidated = self.utils.buildNestedDict(
+                                            invalidated,
+                                            [
+                                                "nullAttribute",
+                                                inputClass,
+                                                id,
+                                                inputAttrList[i],
+                                            ],
+                                            value,
+                                        )
+                        if outputClass in list(domainDict.keys()):
+                            if (
+                                inputAttrList[i]
+                                not in ["geom", "GEOMETRY", "geometry", "id", "OGC_FID"]
+                                and schema != "complexos"
+                            ) or (schema == "complexos" and inputAttrList[i] != "id"):
+                                if inputAttrList[i] not in list(
+                                    outputdbStructure[outputClass].keys()
+                                ):
+                                    invalidated = self.utils.buildNestedDict(
+                                        invalidated,
+                                        ["attributeNotFoundInOutput", inputClass],
+                                        [inputAttrList[i]],
+                                    )
+                        if "id_" == inputAttrList[0:3]:
+                            if not self.validateUUID(value):
+                                if inputAttrList[i] not in list(
+                                    outputdbStructure[outputClass].keys()
+                                ):
+                                    invalidated = self.utils.buildNestedDict(
+                                        invalidated,
+                                        ["nullComplexFk", inputClass],
+                                        [inputAttrList[i]],
+                                    )
+            else:
+                invalidated["classNotFoundInOutput"].append(inputAttrList)
+        return invalidated
+
+    def translateAbstractDbLayerNameToOutputFormat(self, lyr, outputAbstractDb):
+        if outputAbstractDb.db.driverName() == "QSQLITE":
+            return lyr
+        if outputAbstractDb.db.driverName() == "QPSQL":
+            return str(lyr.split("_")[0] + "." + "_".join(lyr.split("_")[1::]))
+
+    def translateOGRLayerNameToOutputFormat(self, lyr, ogrOutput):
+        if ogrOutput.GetDriver().name == "SQLite":
+            return lyr
+        if ogrOutput.GetDriver().name == "PostgreSQL":
+            return str(lyr.split("_")[0] + "." + "_".join(lyr.split("_")[1::]))
+
+    def getTableSchema(self, lyr):
+        schema = lyr.split("_")[0]
+        className = "_".join(lyr.split("_")[1::])
+        return (schema, className)
+
+    def convertToPostgis(self, outputAbstractDb, type=None):
+        (
+            inputOgrDb,
+            outputOgrDb,
+            fieldMap,
+            inputLayerList,
+            errorDict,
+        ) = self.prepareForConversion(outputAbstractDb)
+        invalidated = self.validateWithOutputDatabaseSchema(outputAbstractDb)
+        hasErrors = self.makeValidationSummary(invalidated)
+        if type == "untouchedData":
+            if hasErrors:
+                self.signals.updateLog.emit(
+                    "\n\n\n"
+                    + self.tr(
+                        "Conversion not perfomed due to validation errors! Check log above for more information."
+                    )
+                )
+                return False
+            else:
+                status = self.translateDS(
+                    inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict
+                )
+                return status
+        if type == "fixData":
+            if hasErrors:
+                status = self.translateDS(
+                    inputOgrDb,
+                    outputOgrDb,
+                    fieldMap,
+                    inputLayerList,
+                    errorDict,
+                    invalidated,
+                )
+                return status
+            else:
+                status = self.translateDS(
+                    inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict
+                )
+                return status
+        return False
+
+    def getDatabaseVersion(self):
+        self.checkAndOpenDb()
+        version = "2.1.3"
+        sql = self.gen.getEDGVVersion()
+        query = QSqlQuery(sql, self.db)
+        while query.next():
+            version = query.value(0)
+        return version
+
+    def obtainLinkColumn(self, complexClass, aggregatedClass):
+        self.checkAndOpenDb()
+        sql = self.gen.getLinkColumn(
+            complexClass.replace("complexos_", ""), aggregatedClass
+        )
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.close()
+            raise Exception(
+                self.tr("Problem obtaining link column: ") + query.lastError().text()
+            )
+        column_name = ""
+        while query.next():
+            column_name = query.value(0)
+        return column_name
+
+    def loadAssociatedFeatures(self, complex):
+        self.checkAndOpenDb()
+        associatedDict = dict()
+        complexName = complex.replace("complexos_", "")
+        sql = self.gen.getComplexLinks(complexName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            self.db.close()
+            raise Exception(
+                self.tr("Problem loading associated features: ")
+                + query.lastError().text()
+            )
+
+        while query.next():
+            complex_schema = query.value(0)
+            complex = query.value(1)
+            aggregated_schema = query.value(2)
+            aggregated_class = query.value(3)
+            column_name = query.value(4)
+
+            if aggregated_class.split("_")[-1] not in ["p", "l", "a"]:
+                continue
+
+            sql = self.gen.getComplexData(complex_schema, complex)
+            complexQuery = QSqlQuery(sql, self.db)
+            if not complexQuery.isActive():
+                self.db.close()
+                raise Exception(
+                    self.tr("Problem executing query: ")
+                    + complexQuery.lastError().text()
+                )
+
+            while next(complexQuery):
+                complex_uuid = complexQuery.value(0)
+                name = complexQuery.value(1)
+
+                if not (complex_uuid and name):
+                    continue
+
+                associatedDict = self.utils.buildNestedDict(
+                    associatedDict, [name, complex_uuid, aggregated_class], []
+                )
+
+                sql = self.gen.getAssociatedFeaturesData(
+                    aggregated_schema, aggregated_class, column_name, complex_uuid
+                )
+                associatedQuery = QSqlQuery(sql, self.db)
+                if not associatedQuery.isActive():
+                    self.db.close()
+                    raise Exception(
+                        self.tr("Problem executing query: ")
+                        + associatedQuery.lastError().text()
+                    )
+
+                while next(associatedQuery):
+                    ogc_fid = associatedQuery.value(0)
+                    associatedDict = self.utils.buildNestedDict(
+                        associatedDict,
+                        [name, complex_uuid, aggregated_class],
+                        [ogc_fid],
+                    )
+        return associatedDict
+
+    def isComplexClass(self, className):
+        self.checkAndOpenDb()
+        query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
+        if not query.isActive():
+            self.db.close()
+            raise Exception(
+                self.tr("Problem executing query: ") + query.lastError().text()
+            )
+
+        while query.next():
+            if query.value(0) == "complexos_" + className:
+                return True
+        return False
+
+    def disassociateComplexFromComplex(self, aggregated_class, link_column, id):
+        sql = self.gen.disassociateComplexFromComplex(
+            "complexos_" + aggregated_class, link_column, id
+        )
+        query = QSqlQuery(self.db)
+        if not query.exec(sql):
+            self.db.close()
+            raise Exception(
+                self.tr("Problem disassociating complex from complex: ")
+                + "\n"
+                + query.lastError().text()
+            )
+
+    def getFrameLayerName(self):
+        return "public_aux_moldura_a"
+
+    def getOrphanGeomTablesWithElements(self, loading=False):
+        return []
+
+    def getOrphanGeomTables(self):
+        return []
+
+    def checkAndCreateStyleTable(self):
+        return None
+
+    def getStylesFromDb(self, dbVersion):
+        return None
+
+    def createFrame(self, type, scale, param, paramDict=dict()):
+        mi, inom, frame = self.prepareCreateFrame(type, scale, param)
+        self.insertFrame(scale, mi, inom, frame.asWkb())
+        return frame
+
+    def insertFrame(self, scale, mi, inom, frame):
+        self.checkAndOpenDb()
+        srid = self.findEPSG()
+        geoSrid = (
+            QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(":")[-1]
+        )
+        ogr.UseExceptions()
+        outputDS = self.buildOgrDatabase()
+        outputLayer = outputDS.GetLayerByName("public_aux_moldura_a")
+        newFeat = ogr.Feature(outputLayer.GetLayerDefn())
+        auxGeom = ogr.CreateGeometryFromWkb(frame)
+        geoSrs = ogr.osr.SpatialReference()
+        geoSrs.ImportFromEPSG(int(geoSrid))
+        auxGeom.AssignSpatialReference(geoSrs)
+        outSpatialRef = outputLayer.GetSpatialRef()
+        coordTrans = osr.CoordinateTransformation(geoSrs, outSpatialRef)
+        auxGeom.Transform(coordTrans)
+        newFeat.SetGeometry(auxGeom)
+        newFeat.SetField("mi", mi)
+        newFeat.SetField("inom", inom)
+        newFeat.SetField("escala", str(scale))
+        out = outputLayer.CreateFeature(newFeat)
+        outputDS.Destroy()
+
+    def databaseInfo(self):
+        self.checkAndOpenDb()
+        sql = self.gen.databaseInfo()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(
+                self.tr("Problem getting geom schemas from db: ")
+                + query.lastError().text()
+            )
+        out = []
+        while query.next():
+            rowDict = dict()
+            rowDict["schema"] = query.value(0).split("_")[0]
+            rowDict["layer"] = query.value(0)[len(rowDict["schema"]) + 1 :]
+            rowDict["geomCol"] = query.value(1)
+            rowDict["geomType"] = query.value(2)
+            rowDict["srid"] = str(query.value(3))
+            out.append(rowDict)
+        return out
+
+    def tableFields(self, table):
+        attrs = list()
+        self.checkAndOpenDb()
+        sql = self.gen.tableFields(table)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(
+                self.tr("Problem getting geom tuple list: ") + query.lastError().text()
+            )
+        while query.next():
+            attrs.append(query.value(1))
+        return attrs
+
+    # ------------------------------------------------------------------ #
+    # GeoPackage-specific implementations                                  #
+    # ------------------------------------------------------------------ #
+
     def getDatabaseName(self):
-        """
-        Gets the database name.
-        :return: (str) database name.
-        """
-        # reimplementation
         return os.path.basename(self.db.databaseName()).split(".gpkg")[0]
 
     def connectDatabaseWithGui(self):
-        """
-        Connects to database using user interface dialog
-        """
-        # reimplementation
         fd = QFileDialog()
         filename = fd.getOpenFileName(
             caption=self.tr("Select a DSGTools Geopackage file"),
@@ -71,10 +557,6 @@ class GeopackageDb(SpatialiteDb):
         self.db.setDatabaseName(filename)
 
     def listClassesFromDatabase(self):
-        """
-        Gets a list with all classes from database.
-        :return: (str) list of all classes in the database.
-        """
         self.checkAndOpenDb()
         classList = []
         sql = self.gen.getTablesFromDatabase()
@@ -89,10 +571,6 @@ class GeopackageDb(SpatialiteDb):
         return classList
 
     def getTablesFromDatabase(self):
-        """
-        Gets all tables from database except for configuration tables.
-        """
-        # reimplementation
         self.checkAndOpenDb()
         ret = []
 
@@ -106,7 +584,6 @@ class GeopackageDb(SpatialiteDb):
             )
 
         while query.next():
-            # table name
             table = query.value(0)
             if (
                 "gpkg_" not in table.lower()
@@ -117,9 +594,6 @@ class GeopackageDb(SpatialiteDb):
         return ret
 
     def getGeomColumnDict(self):
-        """
-        Dict in the form 'geomName':[-list of table names-]
-        """
         self.checkAndOpenDb()
         sql = self.gen.getGeomColumnDict()
         query = QSqlQuery(sql, self.db)
@@ -173,10 +647,6 @@ class GeopackageDb(SpatialiteDb):
         return geomDict
 
     def getGeomDict(self, getCentroids=False) -> GeomDictResult:
-        """
-        Returns geometry metadata for all tables in the database as a
-        :class:`GeomDictResult`.
-        """
         self.checkAndOpenDb()
         edgvVersion = self.getDatabaseVersion()
         sql = self.gen.getGeomTablesFromGeometryColumns(edgvVersion)
@@ -208,10 +678,6 @@ class GeopackageDb(SpatialiteDb):
         return result
 
     def getGeomColumnTupleList(self, showViews=False):
-        """
-        list in the format [(table_schema, table_name, geometryColumn, geometryType, tableType)]
-        centroids are hidden by default
-        """
         self.checkAndOpenDb()
         edgvVersion = self.getDatabaseVersion()
         sql = self.gen.getGeomColumnTupleList(edgvVersion)
@@ -259,8 +725,4 @@ class GeopackageDb(SpatialiteDb):
         )
 
     def getType(self):
-        """
-        Gets the driver name.
-        :return: (str) driver name.
-        """
         return "GPKG"

@@ -29,12 +29,6 @@ from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.postg
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newPostgisWidget import (
     NewPostgisWidget,
 )
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.spatialiteWidget import (
-    SpatialiteWidget,
-)
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newSpatialiteWidget import (
-    NewSpatialiteWidget,
-)
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.shapefileWidget import (
     ShapefileWidget,
 )
@@ -66,8 +60,6 @@ class DatasourceSelectionWidgetFactory:
             DsgEnums.NoDriver: lambda: QWidget(),  # returns a parent class empty object, to minimize standard distorsion
             DsgEnums.PostGIS: lambda: PostgisWidget(parent=parent),
             DsgEnums.NewPostGIS: lambda: NewPostgisWidget(parent=parent),
-            DsgEnums.SpatiaLite: lambda: SpatialiteWidget(parent=parent),
-            DsgEnums.NewSpatiaLite: lambda: NewSpatialiteWidget(parent=parent),
             DsgEnums.Shapefile: lambda: ShapefileWidget(parent=parent),
             DsgEnums.NewShapefile: lambda: NewShapefileWidget(parent=parent),
             DsgEnums.Geopackage: lambda: GeopackageWidget(parent=parent),

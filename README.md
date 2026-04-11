@@ -28,9 +28,8 @@ Este projeto visa cumprir a missão estabelecida no Plano Estratégico do Exérc
 A versão atual do complemento possui as seguintes funcionalidades:
 
 ### Gestão de Bancos de Dados
-- Criação de bancos de dados em Spatialite e PostGIS de acordo com os modelos EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto e EDGV 3.0 Topo
+- Criação de bancos de dados PostGIS de acordo com os modelos EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto e EDGV 3.0 Topo
 - Criação, armazenamento e remoção de configuração de servidores PostGIS
-- Conversão entre formatos de bancos de dados (PostGIS para Spatialite e vice-versa)
 - Conversão de dados entre modelagens de banco no formato PostGIS utilizando o json de mapeamento
 - Validação da estrutura do banco de dados em relação ao masterfile
 
@@ -99,9 +98,8 @@ This project fulfills the mission established in the Brazilian Army Strategic Pl
 The plugin is in version 4.17.27 and has the following features:
 
 ### Database Management
-- Database creation using Spatialite and PostGIS according to EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto, and EDGV 3.0 Topo models
+- Database creation using PostGIS according to EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto, and EDGV 3.0 Topo models
 - Creation, storage, and deletion of PostGIS server configurations
-- Conversion between database formats (PostGIS to Spatialite and vice versa)
 - Database structure validation against the masterfile
 
 ### Layer Loading and Management

@@ -91,6 +91,21 @@ class PostgisDb(AbstractDb):
             raise Exception(str(e))
         return cursor
 
+    def _execute_autocommit(self, sql, params=None):
+        """
+        Execute *sql* outside any transaction (autocommit mode).
+        Required for PostgreSQL DDL that cannot run inside a transaction:
+        CREATE DATABASE, DROP DATABASE, etc.
+        """
+        with self.db.autocommit_block() as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute(sql, params)
+            except Exception as e:
+                raise Exception(str(e))
+            finally:
+                cursor.close()
+
     def _fetch_all(self, sql, params=None):
         """
         Execute *sql* and return all rows as a list of tuples.
@@ -532,24 +547,6 @@ class PostgisDb(AbstractDb):
         className = "_".join(lyr.split(".")[1::])
         return (schema, className)
 
-    def convertToSpatialite(self, outputAbstractDb, type=None):
-        """
-        Converts this to a spatialite database
-        outputAbstractDb: spatialite output
-        type: conversion type
-        """
-        (
-            inputOgrDb,
-            outputOgrDb,
-            fieldMap,
-            inputLayerList,
-            errorDict,
-        ) = self.prepareForConversion(outputAbstractDb)
-        status = self.translateDS(
-            inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict
-        )
-        return status
-
     @ensure_connected
     def obtainLinkColumn(self, complexClass, aggregatedClass):
         """
@@ -979,7 +976,7 @@ class PostgisDb(AbstractDb):
             if dropTemplate:
                 self.setDbAsTemplate(dbName=candidateName, setTemplate=False)
             self.dropAllConections(candidateName)
-            self._execute(self.gen.dropDatabase(candidateName))
+            self._execute_autocommit(self.gen.dropDatabase(candidateName))
         else:
             raise Exception(
                 self.tr(
@@ -2346,7 +2343,7 @@ class PostgisDb(AbstractDb):
         self.dropAllConections(templateName)
         if parentWidget:
             progress.step()
-        self._execute(self.gen.createFromTemplate(dbName, templateName))
+        self._execute_autocommit(self.gen.createFromTemplate(dbName, templateName))
         self.checkAndCreateStyleTable()
         # this close is to allow creation from template
         self.db.close()
@@ -2435,7 +2432,7 @@ class PostgisDb(AbstractDb):
         """
         Creates a database with a given name
         """
-        self._execute(self.gen.getCreateDatabase(dbName))
+        self._execute_autocommit(self.gen.getCreateDatabase(dbName))
 
     def getTemplateName(self, version):
         if version == "2.1.3":

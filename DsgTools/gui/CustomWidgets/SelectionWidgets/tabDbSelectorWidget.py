@@ -46,17 +46,6 @@ class TabDbSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.serverWidget.populateServersCombo()
-        self.setSpatiaLitePage()
-        # self.setGeopackagePage()
-
-    def setSpatiaLitePage(self):
-        """
-        By default, select files comes "clean", this method adapts it for SpatiaLite databases.
-        """
-        self.outputDirSelector.setCaption(
-            self.tr("Select a path to save the SpatiaLite database")
-        )
-        self.outputDirSelector.setType("dir")
 
     def setGeopackagePage(self):
         """
@@ -73,7 +62,6 @@ class TabDbSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         Changes the database type tab and resets the previous one
         """
         self.serverWidget.clearAll()
-        self.outputDirSelector.resetAll()
         # self.outputDirSelectorGeopackage.resetAll()
 
     def validate(self):
@@ -88,15 +76,7 @@ class TabDbSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
                 return False
             else:
                 return True
-        elif self.tabWidget.currentIndex() == 1:
-            if self.outputDirSelector.fileNameList == []:
-                QMessageBox.critical(
-                    self, self.tr("Critical!"), self.tr("Select a folder!")
-                )
-                return False
-            else:
-                return True
-        # elif self.tabWidget.currentIndex() == 2:
+        # elif self.tabWidget.currentIndex() == 1:
         #     if self.outputDirSelectorGeopackage.fileNameList == []:
         #         QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a folder!'))
         #         return False
@@ -112,12 +92,7 @@ class TabDbSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
             and self.serverWidget.serversCombo.currentIndex() > 0
         ):
             return self.serverWidget.abstractDb
-        elif (
-            self.tabWidget.currentIndex() == 1
-            and self.outputDirSelector.fileNameList != []
-        ):
-            return self.outputDirSelector.fileNameList[0]
-        # elif self.tabWidget.currentIndex() == 2 and self.outputDirSelectorGeopackage.fileNameList != []:
+        # elif self.tabWidget.currentIndex() == 1 and self.outputDirSelectorGeopackage.fileNameList != []:
         #     return self.outputDirSelectorGeopackage.fileNameList[0]
         else:
             return None
@@ -128,7 +103,5 @@ class TabDbSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         if self.tabWidget.currentIndex() == 0:
             return "QPSQL"
-        elif self.tabWidget.currentIndex() == 1:
-            return "QSQLITE"
-        # elif self.tabWidget.currentIndex() == 2:
+        # elif self.tabWidget.currentIndex() == 1:
         #     return 'GPKG'

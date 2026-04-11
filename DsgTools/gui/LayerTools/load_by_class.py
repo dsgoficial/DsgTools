@@ -130,7 +130,7 @@ class LoadByClass(QtWidgets.QDialog, FORM_CLASS):
                 ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
             )
 
-        if self.onlyParentsCheckBox.isChecked() and not self.widget.isSpatialite:
+        if self.onlyParentsCheckBox.isChecked():
             self.classesListWidget.addItems(self.parentClassList)
         else:
             self.classesListWidget.addItems(self.classes)

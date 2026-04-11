@@ -63,9 +63,6 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         self.customServerConnectionWidget.postgisCustomSelector.setTitle(
             self.tr("Select Databases")
         )
-        self.customServerConnectionWidget.spatialiteCustomSelector.setTitle(
-            self.tr("Selected Spatialites")
-        )
         # self.customServerConnectionWidget.gpkgCustomSelector.setTitle(self.tr('Selected Geopackages'))
         self.layersCustomSelector.setTitle(self.tr("Select layers to be loaded"))
         self.customServerConnectionWidget.dbDictChanged.connect(

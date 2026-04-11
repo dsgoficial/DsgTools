@@ -27,7 +27,6 @@ from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtSql import QSqlDatabase
 
 # DSG Tools imports
-from .spatialiteDbCreator import SpatialiteDbCreator
 from .postgisDbCreator import PostgisDbCreator
 from .geopackageDbCreator import GeopackageDbCreator
 
@@ -50,7 +49,6 @@ class DbCreatorFactory(object):
             )
             return None
         creators = {
-            "QSQLITE": SpatialiteDbCreator,
             "QPSQL": PostgisDbCreator,
             "GPKG": GeopackageDbCreator,
         }
