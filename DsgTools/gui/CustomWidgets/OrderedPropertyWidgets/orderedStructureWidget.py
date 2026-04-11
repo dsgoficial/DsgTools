@@ -147,7 +147,7 @@ class OrderedStructureWidget(QtWidgets.QWidget, FORM_CLASS):
         for i in range(self.tableWidget.rowCount()):
             if not self.tableWidget.cellWidget(i, 0).validate():
                 msg += (
-                    self.tr("Error for rule #{0}:\n".format(i + 1))
+                    self.tr("Error for rule #{0}:\n").format(i + 1)
                     + self.tableWidget.cellWidget(i, 0).invalidatedReason()
                 )
         return msg

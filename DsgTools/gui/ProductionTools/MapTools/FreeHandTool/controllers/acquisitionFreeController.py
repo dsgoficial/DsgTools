@@ -39,6 +39,9 @@ from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree i
 
 
 class AcquisitionFreeController(object):
+    def tr(self, string):
+        return QCoreApplication.translate("AcquisitionFreeController", string)
+
     def __init__(self, acquisitionFree, iface):
         """
         Class constructor.
@@ -344,7 +347,7 @@ class AcquisitionFreeController(object):
     def addFeatureWithForm(self, layer, feature):
         # Método para adicionar a feição com formulário
         # Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
-        layer.beginEditCommand("dsgtools freehand feature added")
+        layer.beginEditCommand(self.tr("DSGTools freehand feature added"))
         self.loadDefaultFields(layer, feature)
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
         attrDialog.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose)
@@ -359,7 +362,7 @@ class AcquisitionFreeController(object):
     def addFeatureWithoutForm(self, layer, feature):
         # Método para adicionar a feição sem formulário
         # Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
-        layer.beginEditCommand("dsgtools freehand feature added")
+        layer.beginEditCommand(self.tr("DSGTools freehand feature added"))
         self.loadDefaultFields(layer, feature)
         layer.addFeatures([feature])
         layer.removeSelection()

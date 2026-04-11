@@ -597,7 +597,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         for row in range(self.modelCount()):
             msg = self.validateRowContents(self.readRow(row))
             if msg:
-                return "Row {row}: '{error}'".format(row=row + 1, error=msg)
+                return self.tr("Row {row}: '{error}'").format(row=row + 1, error=msg)
         if len(self.workflowItems()) != self.modelCount():
             return self.tr("Check if no model name is repeated.")
         return ""

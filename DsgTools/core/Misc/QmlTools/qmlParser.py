@@ -23,6 +23,7 @@
 from builtins import range
 from builtins import object
 from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtXml import QDomDocument
 
 

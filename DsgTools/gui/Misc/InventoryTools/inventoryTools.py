@@ -168,11 +168,11 @@ class InventoryTools(QDialog, FORM_CLASS):
             fileName, __ = QFileDialog.getSaveFileName(
                 parent=self,
                 caption=self.tr("Save Output File"),
-                filter="Shapefile (*.shp)",
+                filter=self.tr("Shapefile (*.shp)"),
             )
         else:
             fileName, __ = QFileDialog.getSaveFileName(
-                parent=self, caption=self.tr("Save Output File"), filter="CSV (*.csv)"
+                parent=self, caption=self.tr("Save Output File"), filter=self.tr("CSV (*.csv)")
             )
         self.outputFileEdit.setText(fileName)
 

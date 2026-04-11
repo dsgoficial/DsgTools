@@ -157,7 +157,7 @@ class RaiseFlagsAlgorithm(QgsProcessingAlgorithm):
         )
         parameterDict = layerHandler.getDestinationParameters(outputLyr)
         outputLyr.startEditing()
-        outputLyr.beginEditCommand("Adding flag features")
+        outputLyr.beginEditCommand(self.tr("Adding flag features"))
         count = inputLyr.featureCount()
         progress_count = 100 / count if count else 0
         for current, feat in enumerate(inputLyr.getFeatures()):

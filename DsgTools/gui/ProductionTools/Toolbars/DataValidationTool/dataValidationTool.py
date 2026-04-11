@@ -303,7 +303,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
             modelPath = self.modelPath()
         else:
             modelPath = os.path.join(self.defaultModelPath(), modelName)
-        msg = self.tr("Remove model '{modelName}'?".format(modelName=modelName))
+        msg = self.tr("Remove model '{modelName}'?").format(modelName=modelName)
         if self.confirmAction(msg) and self.modelExists(modelName):
             try:
                 os.remove(modelPath)

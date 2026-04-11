@@ -100,7 +100,7 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
     def removeFeatures(self, inputLyr, flagLyr, feedback):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)
         localTotal = 100 / total if total else 0
-        inputLyr.beginEditCommand("Removing duplicates")
+        inputLyr.beginEditCommand(self.tr("Removing duplicates"))
         inputLyr.startEditing()
         removeSet = set()
         for current, feat in enumerate(featureList):

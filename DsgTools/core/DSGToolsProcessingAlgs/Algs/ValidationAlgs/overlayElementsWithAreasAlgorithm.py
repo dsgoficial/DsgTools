@@ -190,7 +190,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
                 return outputDiffLyr
         if behavior == OverlayElementsWithAreasAlgorithm.OverlayAndKeep:
             outputLyr.startEditing()
-            outputLyr.beginEditCommand("")
+            outputLyr.beginEditCommand(self.tr("Overlay elements with areas"))
             outputLyr.addFeatures(outputDiffLyr.getFeatures())
             outputLyr.endEditCommand()
             outputLyr.commitChanges()

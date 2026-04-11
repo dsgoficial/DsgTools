@@ -164,8 +164,8 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
             self.messageBar.pushMessage(
                 self.tr(
                     "Unexpected error while trying to reach server. "
-                    "Check your parameters. Error message: {}".format(e)
-                ),
+                    "Check your parameters. Error message: {0}"
+                ).format(e),
                 level=Qgis.MessageLevel.Warning,
             )
             workspaceList = list()

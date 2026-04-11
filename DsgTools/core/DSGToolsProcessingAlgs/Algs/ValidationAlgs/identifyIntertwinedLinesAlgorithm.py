@@ -119,7 +119,7 @@ class IdentifyIntertwinedLinesAlgorithm(ValidationAlgorithm):
         for current, intersection in enumerate(intersectionsSet):
             if feedback is not None and feedback.isCanceled():
                 return {self.FLAGS: self.flag_id}
-            flagText = f"More than {tolerance} intersections"
+            flagText = self.tr("More than {0} intersections").format(tolerance)
             self.flagFeature(intersection, flagText)
             multiStepFeedback.setProgress(current * stepSize)
         return {self.FLAGS: self.flag_id}

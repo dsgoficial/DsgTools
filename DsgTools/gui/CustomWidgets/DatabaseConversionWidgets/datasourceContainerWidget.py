@@ -154,7 +154,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.connectionWidget.getDatasource(),
         )
         self.filterDlg.setWindowTitle(
-            "{0}: {2} ({1})".format(
+            self.tr("{0}: {2} ({1})").format(
                 self.groupBox.title(),
                 self.connectionWidget.getDatasourcePath(),
                 self.connectionWidget.getDatasourceConnectionName(),

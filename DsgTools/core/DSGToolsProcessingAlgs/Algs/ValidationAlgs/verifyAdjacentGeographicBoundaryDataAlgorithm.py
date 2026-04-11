@@ -553,7 +553,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
 
     def removePolygonsTempLyr(self, tempPolyLyr, listPolyOut):
         tempPolyLyr.startEditing()
-        tempPolyLyr.beginEditCommand("Filter Polygons")
+        tempPolyLyr.beginEditCommand(self.tr("Filter Polygons"))
         tempPolyLyr.deleteFeatures(listPolyOut)
         tempPolyLyr.commitChanges()
 

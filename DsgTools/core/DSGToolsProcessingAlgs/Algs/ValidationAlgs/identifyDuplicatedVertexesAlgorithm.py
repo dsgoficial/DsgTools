@@ -163,7 +163,7 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
             self.flagFeature(
                 flagGeom=flagGeom,
                 fromWkb=True,
-                flagText=f"Duplicated vertex.",
+                flagText=self.tr("Duplicated vertex."),
             )
             if feedback is not None:
                 feedback.setProgress(current * size)

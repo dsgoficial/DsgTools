@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt.QtCore import QCoreApplication, QFile, QIODevice
+from qgis.PyQt.QtWidgets import QMessageBox
 
 
 def generateQml(filename, attrs, codelists):

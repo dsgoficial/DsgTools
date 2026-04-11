@@ -278,7 +278,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
 
     def addFeatureAsPoint(self, inputLyr, outputLyr, feedback=None, targetCrs=None):
         features = inputLyr.getFeatures()
-        outputLyr.beginEditCommand("Add features")
+        outputLyr.beginEditCommand(self.tr("Add features"))
         total = 100.0 / inputLyr.featureCount() if inputLyr.featureCount() else 0
         inputCrs = inputLyr.crs()
         if targetCrs is not None:

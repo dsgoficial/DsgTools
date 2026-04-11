@@ -117,7 +117,7 @@ class AssignBoundingBoxFilterToLayersAlgorithm(QgsProcessingAlgorithm):
                 feedback.pushInfo(
                     self.tr(
                         "Operation only defined for postgres provider. Layer {layer} will be skipped."
-                    )
+                    ).format(layer=lyr.name())
                 )
                 continue
             bboxClause = self.buildSpatialClause(lyr, boundingBoxGeometry)

@@ -733,7 +733,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             return
         stepSize = 100 / nEdges
         networkLayer.startEditing()
-        networkLayer.beginEditCommand("Fixing drainage flow")
+        networkLayer.beginEditCommand(self.tr("Fixing drainage flow"))
         for current, (p0, pn) in enumerate(DiG.edges):
             if feedback.isCanceled():
                 break

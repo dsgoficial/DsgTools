@@ -190,7 +190,7 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
         """
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         layerBuffredString, layerApre, layerBpre, distance = layers
-        feedbackTxt = f"Verifying {layerApre} x {layerBpre}"
+        feedbackTxt = self.tr("Verifying {0} x {1}").format(layerApre, layerBpre)
         multiStepFeedback.setProgressText(feedbackTxt)
         layerAbuffered = tempLayersDict[layerBuffredString]
         layerA = tempLayersDict[layerApre]

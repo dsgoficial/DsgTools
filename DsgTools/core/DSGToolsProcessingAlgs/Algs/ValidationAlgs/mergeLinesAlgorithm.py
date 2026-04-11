@@ -382,7 +382,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
 
         inputLyr.startEditing()
         inputLyr.beginEditCommand(
-            f"Merging lines with same attribute set from {inputLyr.name()}"
+            self.tr("Merging lines with same attribute set from {0}").format(inputLyr.name())
         )
         list(map(updateLambda, outputFeatSet))
         inputLyr.deleteFeatures(list(idsToDeleteSet))

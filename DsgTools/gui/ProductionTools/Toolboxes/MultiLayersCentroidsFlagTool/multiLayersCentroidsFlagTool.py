@@ -543,7 +543,7 @@ class MultiLayersCentroidsFlagDockWidget(
             if row == index.row():
                 continue
             lyrPointsReference.startEditing()
-            lyrPointsReference.beginEditCommand("Updating flags")
+            lyrPointsReference.beginEditCommand(self.tr("Updating flags"))
             if lyrid == lyridReference:
                 self.setLayerFeatures(
                     feat, referenceDict, lyrid, lyrPointsReference, row
@@ -566,7 +566,7 @@ class MultiLayersCentroidsFlagDockWidget(
                 lyrPointsReference.addFeature(newFeat)
                 lyrPoint = self.pointLayerDict[lyrid]
                 lyrPoint.startEditing()
-                lyrPoint.beginEditCommand("Updating flags")
+                lyrPoint.beginEditCommand(self.tr("Updating flags"))
                 lyrPoint.deleteFeature(feat.id())
                 lyrPoint.endEditCommand()
                 self.lyrsNRowPointDict[row] = (lyridReference, newFeat)

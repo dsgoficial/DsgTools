@@ -248,7 +248,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         for containers in self.activeDrivers.values():
             for container in containers:
                 if not container.isValid():
-                    return "{0} {1}: {2}".format(
+                    return self.tr("{0} {1}: {2}").format(
                         pageError, container.groupBox.title(), container.validate()
                     )
         # validate selection widget

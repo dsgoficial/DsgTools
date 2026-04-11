@@ -112,7 +112,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
             ]
             if missconstructedFeaturesIds != []:
                 snappedLayer.startEditing()
-                snappedLayer.beginEditCommand("Removing missconstructed")
+                snappedLayer.beginEditCommand(self.tr("Removing malformed geometries"))
                 snappedLayer.deleteFeatures(missconstructedFeaturesIds)
                 snappedLayer.endEditCommand()
         multiStepFeedback.setCurrentStep(2)

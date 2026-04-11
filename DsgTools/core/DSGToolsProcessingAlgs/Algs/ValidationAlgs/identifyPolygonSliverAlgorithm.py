@@ -152,7 +152,7 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
                 flags[layer] = slivers
                 flagCount += len(slivers)
             multiStepFeedback.setCurrentStep(step + 1)
-        self.tr("Populating flags layer...")
+        multiStepFeedback.setProgressText(self.tr("Populating flags layer..."))
         self.flagPolygonSlivers(flags, flagCount, multiStepFeedback)
         multiStepFeedback.setCurrentStep(step + 2)
         return {self.FLAGS: self.flag_id}

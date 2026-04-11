@@ -70,7 +70,7 @@ class DsgTools(object):
         # Declare instance attributes
         self.actions = []
         self.menu = "&DSGTools"
-        self.toolbar = self.iface.addToolBar("DsgTools")
+        self.toolbar = self.iface.addToolBar(self.tr("DsgTools"))
         self.toolbar.setObjectName("DsgTools")
 
         self.dsgTools = None
@@ -117,7 +117,7 @@ class DsgTools(object):
 
         self.dsgTools = QMenu(self.iface.mainWindow())
         self.dsgTools.setObjectName("DsgTools")
-        self.dsgTools.setTitle("DSGTools")
+        self.dsgTools.setTitle(self.tr("DSGTools"))
         self.menuBar.insertMenu(
             self.iface.firstRightStandardMenu().menuAction(), self.dsgTools
         )

@@ -126,7 +126,7 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
                 break
             self.flagFeature(
                 flagGeom=outDict["geom"],
-                flagText=f"""Reason: {outDict["reason"]}""",
+                flagText=self.tr("Reason: {0}").format(outDict["reason"]),
                 featid=outDict["featid"],
             )
             multiStepFeedback.setProgress(current * progressSize)

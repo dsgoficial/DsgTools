@@ -401,7 +401,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         nFeats = clippedPolygons.featureCount()
         if nFeats == 0:
             return None
-        clippedPolygons.beginEditCommand("Updating features")
+        clippedPolygons.beginEditCommand(self.tr("Updating features"))
         clippedPolygonsDataProvider = clippedPolygons.dataProvider()
         if not any(i.name() == classFieldName for i in clippedPolygons.fields()):
             clippedPolygonsDataProvider.addAttributes(

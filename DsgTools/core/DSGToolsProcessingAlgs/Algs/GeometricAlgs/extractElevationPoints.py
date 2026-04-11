@@ -1314,7 +1314,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         self, lyr: QgsVectorLayer, featList: List, context: QgsProcessingContext
     ) -> None:
         lyr.startEditing()
-        lyr.beginEditCommand("adding features")
+        lyr.beginEditCommand(self.tr("Adding features"))
         lyr.addFeatures(featList)
         lyr.endEditCommand()
         lyr.commitChanges()
@@ -1361,7 +1361,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         ]
         if emptyList != []:
             clippedContourLyr.startEditing()
-            clippedContourLyr.beginEditCommand("deleting empty")
+            clippedContourLyr.beginEditCommand(self.tr("Deleting empty geometries"))
             clippedContourLyr.deleteFeatures(emptyList)
             clippedContourLyr.endEditCommand()
             clippedContourLyr.commitChanges()
@@ -2126,7 +2126,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         context: QgsProcessingContext,
     ) -> None:
         exclusionLyr.startEditing()
-        exclusionLyr.beginEditCommand("updating exclusion layer")
+        exclusionLyr.beginEditCommand(self.tr("Updating exclusion layer"))
         for feat in pointList:
             geom = feat.geometry()
             buffer = (

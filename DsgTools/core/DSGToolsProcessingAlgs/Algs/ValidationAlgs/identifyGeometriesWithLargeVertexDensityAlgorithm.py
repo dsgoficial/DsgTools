@@ -149,7 +149,7 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
                 self.flagFeature(
                     flagGeom=flagGeom,
                     fromWkb=True,
-                    flagText=f"Vertex from feature {featId} is too close to another vertex.",
+                    flagText=self.tr("Vertex from feature {0} is too close to another vertex.").format(featId),
                 )
             if feedback is not None:
                 feedback.setProgress(current * size)

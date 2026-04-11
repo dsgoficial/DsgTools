@@ -356,11 +356,17 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     # Hard errors: structural mismatches
                     hardDiffs = []
                     if added:
-                        hardDiffs.append(f"Added fields: {added}")
+                        hardDiffs.append(
+                            self.tr("Added fields: {0}").format(added)
+                        )
                     if removed:
-                        hardDiffs.append(f"Removed fields: {removed}")
+                        hardDiffs.append(
+                            self.tr("Removed fields: {0}").format(removed)
+                        )
                     if typeChanged:
-                        hardDiffs.append(f"Changed field types: {typeChanged}")
+                        hardDiffs.append(
+                            self.tr("Changed field types: {0}").format(typeChanged)
+                        )
 
                     if hardDiffs:
                         raise QgsProcessingException(
@@ -377,9 +383,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     # Soft warnings: length-only mismatches
                     if lengthOnly:
                         lengthDetails = ", ".join(
-                            f"{f} "
-                            f"(ref={refSchema[f][1]}, "
-                            f"current={currentSchema[f][1]})"
+                            self.tr("{0} (ref={1}, current={2})").format(
+                                f, refSchema[f][1], currentSchema[f][1]
+                            )
                             for f in lengthOnly
                         )
                         msg = self.tr(
