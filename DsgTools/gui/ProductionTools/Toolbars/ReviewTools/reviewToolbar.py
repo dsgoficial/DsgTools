@@ -361,7 +361,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             return
         layer.setReadOnly(False)
         layer.startEditing()
-        layer.beginEditCommand("DSGTools review tool")
+        layer.beginEditCommand(self.tr("DSGTools review tool"))
         for feat in layer.getFeatures():
             feat[visitedField] = False
             layer.updateFeature(feat)
@@ -438,7 +438,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         dateTimeField = None if dateTimeFieldList == [] else dateTimeFieldList[0]
         layer.setReadOnly(False)
         layer.startEditing()
-        layer.beginEditCommand("DSGTools review tool")
+        layer.beginEditCommand(self.tr("DSGTools review tool"))
         for feat in featureList:
             feat[visitedField] = not feat[visitedField]
             if dateTimeField is not None:

@@ -98,7 +98,7 @@ class AttributeTableWidget(QtWidgets.QWidget):
         return wd
 
     def createComboBox(self, values):
-        data = {"IGNORAR": None}
+        data = {self.tr("IGNORE"): None}
         data.update(values)
         wd = QtWidgets.QWidget()
         layout = QtWidgets.QHBoxLayout(wd)

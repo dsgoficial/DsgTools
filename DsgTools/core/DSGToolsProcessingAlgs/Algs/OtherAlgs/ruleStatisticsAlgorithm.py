@@ -202,11 +202,11 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
 
     def print_log(self, number, text, feedback):
         feedback.pushInfo(
-            "{0}{1}LOG START - {2}{1}{0}\n\n".format("*" * 10, " " * 3, number + 1)
+            self.tr("{0}{1}LOG START - {2}{1}{0}\n\n").format("*" * 10, " " * 3, number + 1)
         )
         feedback.pushInfo(text)
         feedback.pushInfo(
-            "{0}{1}LOG END - {2}{1}{0}\n\n".format("*" * 10, " " * 3, number + 1)
+            self.tr("{0}{1}LOG END - {2}{1}{0}\n\n").format("*" * 10, " " * 3, number + 1)
         )
 
     def load_rules_from_parameters(self, parameters):

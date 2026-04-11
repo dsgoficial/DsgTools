@@ -338,8 +338,8 @@ class DSGToolsWorkflowItem(QObject):
         """Pause the workflow item before running."""
         self.executionOutput = ModelExecutionOutput(
             executionMessage=self.tr(
-                f"Workflow item {self.displayName} execution paused by previous step."
-            ),
+                "Workflow item {0} execution paused by previous step."
+            ).format(self.displayName),
             status=ExecutionStatus.PAUSED_BEFORE_RUNNING,
         )
 
@@ -351,15 +351,15 @@ class DSGToolsWorkflowItem(QObject):
             self.changeCurrentStatus(
                 status=ExecutionStatus.FINISHED_WITH_FLAGS,
                 executionMessage=self.tr(
-                    f"Workflow item {self.displayName} status changed from ignore flags to finished with flags."
-                ),
+                    "Workflow item {0} status changed from ignore flags to finished with flags."
+                ).format(self.displayName),
             )
             return
         self.changeCurrentStatus(
             status=ExecutionStatus.IGNORE_FLAGS,
             executionMessage=self.tr(
-                f"Workflow item {self.displayName} flags were ignored by the user."
-            ),
+                "Workflow item {0} flags were ignored by the user."
+            ).format(self.displayName),
         )
         # não emite sinal pois esse passo é feito fora da execução.
 
@@ -396,8 +396,8 @@ class DSGToolsWorkflowItem(QObject):
         self.changeCurrentStatus(
             status=ExecutionStatus.CANCELED,
             executionMessage=self.tr(
-                f"Workflow item {self.displayName} canceled by user."
-            ),
+                "Workflow item {0} canceled by user."
+            ).format(self.displayName),
         )
 
     def getTaskRunningFunction(self) -> Callable:
@@ -445,8 +445,8 @@ class DSGToolsWorkflowItem(QObject):
                 )
                 self.executionOutput = ModelExecutionOutput(
                     executionMessage=self.tr(
-                        f"Workflow item {self.displayName} execution has failed:\n {str(exception)}"
-                    ),
+                        "Workflow item {0} execution has failed:\n {1}"
+                    ).format(self.displayName, str(exception)),
                     status=ExecutionStatus.FAILED,
                 )
                 self.workflowItemExecutionFinished.emit(self)
@@ -471,15 +471,15 @@ class DSGToolsWorkflowItem(QObject):
                 self.changeCurrentStatus(
                     status=status,
                     executionMessage=self.tr(
-                        f"Workflow item {self.displayName} {statusMsg}"
-                    ),
+                        "Workflow item {0} {1}"
+                    ).format(self.displayName, statusMsg),
                 )
                 self.feedback.setProgress(100)
             else:
                 self.executionOutput = ModelExecutionOutput(
                     executionMessage=self.tr(
-                        f"Workflow item {self.displayName} execution was canceled by the user."
-                    ),
+                        "Workflow item {0} execution was canceled by the user."
+                    ).format(self.displayName),
                     status=ExecutionStatus.CANCELED,
                 )
             self.currentTask = None

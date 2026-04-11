@@ -778,7 +778,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
 
         except ImportError:
             feedback.reportError(
-                "rasterio não disponível, alinhamento pode não ser perfeito"
+                self.tr("rasterio not available, alignment may not be perfect")
             )
             # Fallback sem alinhamento garantido
             reprojected_pred = algRunner.runGdalWarp(

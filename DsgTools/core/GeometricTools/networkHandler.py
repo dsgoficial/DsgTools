@@ -823,7 +823,7 @@ class NetworkHandler(QObject):
         :param nodeIdList: (list-of-int) list of node IDs to be cleared from layer.
         :param commitToLayer: (bool) indicates whether changes should be commited to layer.
         """
-        nodeLayer.beginEditCommand("Clear Nodes")
+        nodeLayer.beginEditCommand(self.tr("Clear Nodes"))
         if not nodeIdList:
             nodeIdList = [feat.id() for feat in nodeLayer.getFeatures()]
         nodeLayer.deleteFeatures(nodeIdList)
@@ -843,7 +843,7 @@ class NetworkHandler(QObject):
         self.clearHidNodeLayer(nodeLayer=nodeLayer, commitToLayer=commitToLayer)
         # get fields from layer in order to create new feature with the same attribute map
         fields = nodeLayer.fields()
-        nodeLayer.beginEditCommand("Create Nodes")
+        nodeLayer.beginEditCommand(self.tr("Create Nodes"))
         # to avoid unnecessary calculation inside loop
         nodeTypeKeys = self.nodeTypeDict.keys()
         # initiate new features list
@@ -1905,7 +1905,7 @@ class NetworkHandler(QObject):
         # invalid reason texts
         invalidReason = self.tr("Connected to invalid hidrography node.")
         nonVisitedReason = self.tr("Line not yet visited.")
-        invalidLinesLayer.beginEditCommand("Clear Invalid Lines")
+        invalidLinesLayer.beginEditCommand(self.tr("Clear Invalid Lines"))
         if lineIdList is None:
             # define a function to get only feature ids for invalid lines registered in invalidLinesLayer and use it in map, for speed-up
             getInvalidLineFunc = (
@@ -2046,8 +2046,8 @@ class NetworkHandler(QObject):
         max_amount_cycles = max_amount_cycles if max_amount_cycles > 0 else 1
         # validation method FINALLY starts...
         # to speed up modifications made to layers
-        networkNodeLayer.beginEditCommand("Reclassify Nodes")
-        networkLayer.beginEditCommand("Flip/Merge Lines")
+        networkNodeLayer.beginEditCommand(self.tr("Reclassify Nodes"))
+        networkLayer.beginEditCommand(self.tr("Flip/Merge Lines"))
         cycleCount = 0
         while True:
             if feedback is not None:

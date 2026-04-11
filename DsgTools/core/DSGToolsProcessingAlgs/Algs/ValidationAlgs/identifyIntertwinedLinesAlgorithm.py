@@ -251,7 +251,7 @@ class IdentifyIntertwinedLinesAlgorithm(ValidationAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "Verifica linhas entrelaçadas: linhas que se cruzam mais vezes que a tolerância. Retorna os pontos de interseção."
+            "Checks for intertwined lines: lines that cross each other more times than the tolerance. Returns the intersection points."
         )
 
     def tr(self, string):

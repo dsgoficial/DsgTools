@@ -667,7 +667,7 @@ class RasterRemapAlgorithm(QgsProcessingAlgorithm):
                                     'Type: %s\n'
                                     'Message: %s\n') % (errorType, errorMsg)
                 if gdalError:
-                    fullError += 'GDAL: %s\n' % gdalError
+                    fullError += self.tr('GDAL: %s\n') % gdalError
                 fullError += self.tr('Path: %s\n') % outputPath
 
                 feedback.reportError(fullError)
@@ -800,4 +800,4 @@ class RasterRemapAlgorithm(QgsProcessingAlgorithm):
             feedback.reportError(tb)
             feedback.reportError('=' * 60)
 
-            raise QgsProcessingException('%s: %s' % (errorType, str(e)))
+            raise QgsProcessingException(self.tr('%s: %s') % (errorType, str(e)))

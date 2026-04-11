@@ -134,9 +134,9 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
         percFunc = functools.partial(self.percentile, frequency=0.9)
         perc = percFunc(distanceList)
         mean = sum(distanceList) / n
-        feedback.pushInfo("MEAN: {mean}".format(mean=mean))
-        feedback.pushInfo("RMS: {rms}".format(rms=rms))
-        feedback.pushInfo("PERC: {perc}".format(perc=perc))
+        feedback.pushInfo(self.tr("MEAN: {mean}").format(mean=mean))
+        feedback.pushInfo(self.tr("RMS: {rms}").format(rms=rms))
+        feedback.pushInfo(self.tr("PERC: {perc}").format(perc=perc))
 
         return {}
 

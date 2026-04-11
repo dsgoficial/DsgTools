@@ -397,7 +397,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "Dentre outros inputs, este algoritmo recebe uma expressão, que será utilizada para distinguir as feições de baixa prioridade (as que satisfazem à expressão). A partindo daí, o processing executa os seguintes passos: \n1.Eliminar genéricas próximas de edificações específicas;\n2. Eliminar edificações próximas de mesmo tipo;"
+            "Among other inputs, this algorithm receives an expression used to distinguish low priority features (those that satisfy the expression). From there, the processing executes the following steps: \n1. Eliminate generic buildings near specific buildings;\n2. Eliminate nearby buildings of the same type;"
         )
 
     def createInstance(self):

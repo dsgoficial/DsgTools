@@ -599,5 +599,5 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "O algoritmo orderna ou direciona fluxo, como linhas de drenagem e confronta com as curvas de nível, verificando se as drenagens estão correndo de montante para jusante."
+            "The algorithm orders or directs flow, such as drainage lines, and compares them against contour lines, verifying whether the drainages are flowing from upstream to downstream."
         )

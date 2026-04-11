@@ -375,7 +375,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                         "{model} {layername}".format(model=modelName, layername=var)
                     )
                     self.addLayerToGroup(
-                        value, "DSGTools Validation Toolbar Output", modelName
+                        value, self.tr("DSGTools Validation Toolbar Output"), modelName
                     )
         except Exception as e:
             msg = self.tr(

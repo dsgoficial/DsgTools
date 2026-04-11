@@ -265,7 +265,6 @@
                      core/DSGToolsWorkflow/workflowItem.py \
                      core/DbModels/Geopackage/__init__.py \
                      core/DbModels/PostGIS/__init__.py \
-                     core/DbModels/SpatiaLite/__init__.py \
                      core/DbModels/__init__.py \
                      core/DbTools/__init__.py \
                      core/DbTools/dbConversionHandler.py \
@@ -280,37 +279,24 @@
                      core/Factories/DbCreatorFactory/dbCreatorFactory.py \
                      core/Factories/DbCreatorFactory/geopackageDbCreator.py \
                      core/Factories/DbCreatorFactory/postgisDbCreator.py \
-                     core/Factories/DbCreatorFactory/spatialiteDbCreator.py \
-                     core/Factories/DbCustomizationFactory/__init__.py \
-                     core/Factories/DbCustomizationFactory/attributeCustomization.py \
-                     core/Factories/DbCustomizationFactory/classCustomization.py \
-                     core/Factories/DbCustomizationFactory/codeNameCustomization.py \
-                     core/Factories/DbCustomizationFactory/dbCustomization.py \
-                     core/Factories/DbCustomizationFactory/dbCustomizationFactory.py \
-                     core/Factories/DbCustomizationFactory/defaultCustomization.py \
-                     core/Factories/DbCustomizationFactory/domainValueCustomization.py \
-                     core/Factories/DbCustomizationFactory/filterCustomization.py \
-                     core/Factories/DbCustomizationFactory/newDomainTableCustomization.py \
-                     core/Factories/DbCustomizationFactory/newDomainValueCustomization.py \
-                     core/Factories/DbCustomizationFactory/nullityCustomization.py \
                      core/Factories/DbFactory/__init__.py \
                      core/Factories/DbFactory/abstractDb.py \
                      core/Factories/DbFactory/dbFactory.py \
                      core/Factories/DbFactory/geopackageDb.py \
+                     core/Factories/DbFactory/pgConnectionAdapter.py \
+                     core/Factories/DbFactory/pgDataTypes.py \
+                     core/Factories/DbFactory/pgDecorators.py \
                      core/Factories/DbFactory/postgisDb.py \
                      core/Factories/DbFactory/shapefileDb.py \
-                     core/Factories/DbFactory/spatialiteDb.py \
                      core/Factories/LayerLoaderFactory/__init__.py \
                      core/Factories/LayerLoaderFactory/edgvLayerLoader.py \
                      core/Factories/LayerLoaderFactory/geopackageLayerLoader.py \
                      core/Factories/LayerLoaderFactory/layerLoaderFactory.py \
                      core/Factories/LayerLoaderFactory/postgisLayerLoader.py \
                      core/Factories/LayerLoaderFactory/shapefileLayerLoader.py \
-                     core/Factories/LayerLoaderFactory/spatialiteLayerLoader.py \
                      core/Factories/SqlFactory/__init__.py \
                      core/Factories/SqlFactory/geopackageSqlGenerator.py \
                      core/Factories/SqlFactory/postgisSqlGenerator.py \
-                     core/Factories/SqlFactory/spatialiteSqlGenerator.py \
                      core/Factories/SqlFactory/sqlGenerator.py \
                      core/Factories/SqlFactory/sqlGeneratorFactory.py \
                      core/Factories/ThreadFactory/__init__.py \
@@ -348,20 +334,10 @@
                      core/NetworkTools/BDGExRequestHandler.py \
                      core/NetworkTools/ExternalFilesHandler.py \
                      core/NetworkTools/__init__.py \
-                     core/Qmls/qgis_26/edgv_213_pro/__init__.py \
-                     core/Qmls/qgis_26/edgv_3_pro/__init__.py \
-                     core/Qmls/qgis_26/edgv_3_topo/__init__.py \
                      core/Qmls/qgis_37/edgv_3_pro/__init__.py \
                      core/Qmls/qgis_37/edgv_3_topo/__init__.py \
                      core/Qmls/qgis_37_impl_2/edgv_3_pro/__init__.py \
                      core/Qmls/qgis_37_impl_2/edgv_3_topo/__init__.py \
-                     core/ServerManagementTools/__init__.py \
-                     core/ServerManagementTools/attributeRulesManager.py \
-                     core/ServerManagementTools/customizationManager.py \
-                     core/ServerManagementTools/earthCoverageManager.py \
-                     core/ServerManagementTools/genericDbManager.py \
-                     core/ServerManagementTools/permissionManager.py \
-                     core/ServerManagementTools/validationWorkflowManager.py \
                      core/Utils/FrameTools/__init__.py \
                      core/Utils/FrameTools/map_index.py \
                      core/Utils/__init__.py \
@@ -411,24 +387,12 @@
                      gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py \
                      gui/CustomWidgets/ConnectionWidgets/__init__.py \
                      gui/CustomWidgets/ConnectionWidgets/connectionWidget.py \
-                     gui/CustomWidgets/CustomDbManagementWidgets/__init__.py \
-                     gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py \
-                     gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py \
-                     gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py \
-                     gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py \
-                     gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py \
-                     gui/CustomWidgets/CustomDbManagementWidgets/domainSetter.py \
-                     gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py \
-                     gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py \
-                     gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py \
-                     gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/__init__.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/abstractMultiDsSelectorWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiGeopackageSelectorWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiShapefileSelectorWidget.py \
-                     gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiSpatialiteSelectorWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/__init__.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/multiDsWidgetFactory.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/__init__.py \
@@ -437,30 +401,17 @@
                      gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newGeopackageWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newPostgisWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newShapefileWidget.py \
-                     gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newSpatialiteWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/postgisWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/shapefileWidget.py \
-                     gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/spatialiteWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/datasourceSelectionWidgetFactory.py \
                      gui/CustomWidgets/DatabaseConversionWidgets/filterDialog.py \
-                     gui/CustomWidgets/DatabaseCustomizationWidgets/__init__.py \
-                     gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py \
                      gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/__init__.py \
                      gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py \
-                     gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py \
-                     gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageWidget.py \
-                     gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py \
                      gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py \
-                     gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py \
-                     gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py \
-                     gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py \
                      gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/__init__.py \
-                     gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/attributeRulesCompactPropertyManagerWidget.py \
-                     gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py \
-                     gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/validationWorkflowCompactPropertyManagerWidget.py \
                      gui/CustomWidgets/DatabasePropertiesWidgets/__init__.py \
                      gui/CustomWidgets/OrderedPropertyWidgets/__init__.py \
                      gui/CustomWidgets/OrderedPropertyWidgets/orderedAttributeRuleTypesWidget.py \
@@ -497,23 +448,6 @@
                      gui/DatabaseTools/DbTools/SingleDbCreator/__init__.py \
                      gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py \
                      gui/DatabaseTools/DbTools/__init__.py \
-                     gui/DatabaseTools/UserTools/PermissionManagerWizard/__init__.py \
-                     gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizard.py \
-                     gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizardProfile.py \
-                     gui/DatabaseTools/UserTools/__init__.py \
-                     gui/DatabaseTools/UserTools/alter_user_password.py \
-                     gui/DatabaseTools/UserTools/assign_profiles.py \
-                     gui/DatabaseTools/UserTools/createProfileWithProfileManager.py \
-                     gui/DatabaseTools/UserTools/create_profile.py \
-                     gui/DatabaseTools/UserTools/create_user.py \
-                     gui/DatabaseTools/UserTools/dbProfileManager.py \
-                     gui/DatabaseTools/UserTools/manageServerUsers.py \
-                     gui/DatabaseTools/UserTools/permission_properties.py \
-                     gui/DatabaseTools/UserTools/profileUserManager.py \
-                     gui/DatabaseTools/UserTools/profile_editor.py \
-                     gui/DatabaseTools/UserTools/profiles/__init__.py \
-                     gui/DatabaseTools/UserTools/serverProfilesManager.py \
-                     gui/DatabaseTools/UserTools/user_profiles.py \
                      gui/DatabaseTools/__init__.py \
                      gui/DatabaseTools/databaseManager.py \
                      gui/LayerTools/CreateFrameTool/__init__.py \
@@ -522,21 +456,12 @@
                      gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py \
                      gui/LayerTools/__init__.py \
                      gui/LayerTools/layerToolsGuiManager.py \
-                     gui/LayerTools/loadAuxStruct.py \
                      gui/LayerTools/load_by_class.py \
                      gui/Misc/ImageTools/__init__.py \
                      gui/Misc/ImageTools/processingTools.py \
                      gui/Misc/ImageTools/raster_processing.py \
                      gui/Misc/InventoryTools/__init__.py \
                      gui/Misc/InventoryTools/inventoryTools.py \
-                     gui/Misc/PostgisCustomization/CustomJSONTools/__init__.py \
-                     gui/Misc/PostgisCustomization/CustomJSONTools/customJSONBuilder.py \
-                     gui/Misc/PostgisCustomization/CustomJSONTools/customJSONValidator.py \
-                     gui/Misc/PostgisCustomization/CustomJSONValidator/__init__.py \
-                     gui/Misc/PostgisCustomization/CustomJSONValidator/customJSONValidator.py \
-                     gui/Misc/PostgisCustomization/__init__.py \
-                     gui/Misc/PostgisCustomization/createDatabaseCustomization.py \
-                     gui/Misc/PostgisCustomization/dbCustomizer.py \
                      gui/Misc/ProcessingTools/__init__.py \
                      gui/Misc/ProcessingTools/processManager.py \
                      gui/Misc/ToolboxTools/__init__.py \
@@ -609,15 +534,10 @@
                      gui/ProductionTools/Toolbars/ReviewTools/__init__.py \
                      gui/ProductionTools/Toolbars/ReviewTools/reviewToolbar.py \
                      gui/ProductionTools/Toolbars/ReviewTools/review_ui.py \
-                     gui/ProductionTools/Toolbars/StyleManagerTool/__init__.py \
-                     gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py \
                      gui/ProductionTools/Toolbars/__init__.py \
                      gui/ProductionTools/Toolbars/toolBarsGuiManager.py \
                      gui/ProductionTools/Toolboxes/AttributeTools/__init__.py \
                      gui/ProductionTools/Toolboxes/AttributeTools/code_list.py \
-                     gui/ProductionTools/Toolboxes/ComplexTools/__init__.py \
-                     gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py \
-                     gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py \
                      gui/ProductionTools/Toolboxes/ContourTool/__init__.py \
                      gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py \
                      gui/ProductionTools/Toolboxes/ContourTool/contour_tool.py \
@@ -633,16 +553,9 @@
                      gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py \
                      gui/ProductionTools/__init__.py \
                      gui/ProductionTools/productionToolsGuiManager.py \
-                     gui/ServerTools/BatchDbManagerGui/__init__.py \
-                     gui/ServerTools/BatchDbManagerGui/batchDbManagerGui.py \
                      gui/ServerTools/ViewServersGui/__init__.py \
                      gui/ServerTools/ViewServersGui/viewServersGui.py \
                      gui/ServerTools/__init__.py \
-                     gui/ServerTools/batchDbManager.py \
-                     gui/ServerTools/createView.py \
-                     gui/ServerTools/exploreDb.py \
-                     gui/ServerTools/manageDBAuxiliarStructure.py \
-                     gui/ServerTools/selectStyles.py \
                      gui/ServerTools/serverConfigurator.py \
                      gui/ServerTools/serverDBExplorer.py \
                      gui/ServerTools/serverToolsGuiManager.py \
@@ -688,29 +601,16 @@
                      gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui \
                      gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.ui \
                      gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui \
-                     gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui \
-                     gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.ui \
-                     gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.ui \
-                     gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.ui \
-                     gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.ui \
-                     gui/CustomWidgets/CustomDbManagementWidgets/domainSetter.ui \
-                     gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.ui \
-                     gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui \
-                     gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.ui \
-                     gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.ui \
                      gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui \
                      gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.ui \
                      gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.ui \
                      gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.ui \
                      gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.ui \
                      gui/CustomWidgets/DatabaseConversionWidgets/filterDialog.ui \
-                     gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui \
                      gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui \
-                     gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageWidget.ui \
                      gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui \
                      gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.ui \
                      gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui \
-                     gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui \
                      gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.ui \
                      gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui \
                      gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.ui \
@@ -733,28 +633,12 @@
                      gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.ui \
                      gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.ui \
                      gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.ui \
-                     gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizard.ui \
-                     gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizardProfile.ui \
-                     gui/DatabaseTools/UserTools/alter_user_password.ui \
-                     gui/DatabaseTools/UserTools/assign_profiles.ui \
-                     gui/DatabaseTools/UserTools/createProfileWithProfileManager.ui \
-                     gui/DatabaseTools/UserTools/create_profile.ui \
-                     gui/DatabaseTools/UserTools/create_user.ui \
-                     gui/DatabaseTools/UserTools/dbProfileManager.ui \
-                     gui/DatabaseTools/UserTools/manageServerUsers.ui \
-                     gui/DatabaseTools/UserTools/permission_properties.ui \
-                     gui/DatabaseTools/UserTools/profileUserManager.ui \
-                     gui/DatabaseTools/UserTools/profile_editor.ui \
-                     gui/DatabaseTools/UserTools/serverProfilesManager.ui \
-                     gui/DatabaseTools/UserTools/user_profiles.ui \
                      gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui \
                      gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui \
-                     gui/LayerTools/loadAuxStruct.ui \
                      gui/LayerTools/load_by_category_dialog.ui \
                      gui/LayerTools/load_by_class_base.ui \
                      gui/Misc/ImageTools/ui_processingTools.ui \
                      gui/Misc/InventoryTools/ui_inventoryTools.ui \
-                     gui/Misc/PostgisCustomization/createDatabaseCustomization.ui \
                      gui/Misc/ToolboxTools/models_and_scripts_installer.ui \
                      gui/ProductionTools/MapTools/AuxTools/changeCRS.ui \
                      gui/ProductionTools/Toolbars/CenterPointAndBoundariesToolbar/centerPointAndBoundaries.ui \
@@ -764,20 +648,12 @@
                      gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui \
                      gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.ui \
                      gui/ProductionTools/Toolbars/ReviewTools/review.ui \
-                     gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.ui \
                      gui/ProductionTools/Toolboxes/AttributeTools/code_list.ui \
-                     gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui \
-                     gui/ProductionTools/Toolboxes/ComplexTools/ui_manageComplex.ui \
                      gui/ProductionTools/Toolboxes/ContourTool/calc_contour.ui \
                      gui/ProductionTools/Toolboxes/ContourTool/contour_value.ui \
                      gui/ProductionTools/Toolboxes/MultiLayersCentroidsFlagTool/multiLayersCentroidsFlagTool.ui \
                      gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowDockWidget.ui \
                      gui/ProductionTools/Toolboxes/WorkflowToolBox/workflowSetupDialog.ui \
-                     gui/ServerTools/batchDbManager.ui \
-                     gui/ServerTools/createView.ui \
-                     gui/ServerTools/exploreDb.ui \
-                     gui/ServerTools/manageDBAuxiliarStructure.ui \
-                     gui/ServerTools/selectStyles.ui \
                      gui/ServerTools/ui_serverConfigurator.ui \
                      gui/ServerTools/ui_serverDBExplorer.ui \
                      gui/ServerTools/ui_viewServers.ui 

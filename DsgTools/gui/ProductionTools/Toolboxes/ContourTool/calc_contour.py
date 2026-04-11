@@ -28,7 +28,7 @@ from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QMessageBox
 
 # QGIS imports
-from qgis.core import QgsVectorLayer, QgsGeometry, Qgis, QgsProject, QgsWkbTypes
+from qgis.core import QgsVectorLayer, QgsGeometry, Qgis, QgsProject
 
 # DSGTools imports
 from DsgTools.gui.ProductionTools.Toolboxes.ContourTool.dsg_line_tool import DsgLineTool
@@ -98,7 +98,7 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
         for layer in layers:
             if (
                 isinstance(layer, QgsVectorLayer)
-                and layer.geometryType() == QgsWkbTypes.GeometryType.LineGeometry
+                and layer.geometryType() == Qgis.GeometryType.Line
             ):
                 self.layerCombo.addItem(layer.name())
 
@@ -209,5 +209,5 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
         fields = currentLayer.fields()
         field_names = [field.name() for field in fields]
         self.attributeCombo.clear()
-        self.attributeCombo.addItem("Select a field")
+        self.attributeCombo.addItem(self.tr("Select a field"))
         self.attributeCombo.addItems(field_names)

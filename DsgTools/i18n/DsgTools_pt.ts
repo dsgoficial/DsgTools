@@ -2,16 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="pt_BR">
 <context>
-    <name>@default</name>
-    <message>
-        <source>Probably too many smoothing iteration, try reducing it (3 usually is enough). Geometry was not smoothened.</source>
-        <translation type="vanished">Provável execução de excessivos ciclos de suavização, tente reduzir o número de ciclos (em geral, 3 é suficiente). Geometria não foi suavizada.</translation>
-    </message>
-    <message>
-        <source>Error!</source>
-        <translation type="vanished">Erro!</translation>
-    </message>
-</context><context>
     <name>AboutAndFurtherInfoGuiManager</name>
     <message>
         <location filename="..\gui\AboutAndFurtherInfo\aboutAndFurtherInfoGuiManager.py" line="61" />
@@ -53,11 +43,7 @@
         <source>Info</source>
         <translation>Informação</translation>
     </message>
-    <message>
-        <source>Everyting up to date</source>
-        <translation type="vanished">Tudo atualizado</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>AboutDialog</name>
     <message>
         <location filename="..\gui\AboutAndFurtherInfo\ui_about_.ui" line="0" />
@@ -91,19 +77,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:14pt; font-weight:600;"&gt;For suggestions and feedback, feel free to contact us at dsgtools@dsg.eb.mil.br&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Este plugin foi desenvolvido pelo Serviço Geográfico do Exército Brasileiro de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais do Brasil. Versão do Plugin: 5.0.0. Para sugestões e comentários, entre em contato pelo e-mail dsgtools@dsg.eb.mil.br</translation>
     </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;"&gt;
-&lt;p align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:14pt; font-weight:600;"&gt;This plugin was developed by the Brazilian Army Geographic Service according to the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
-&lt;p align="justify" style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600;"&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:14pt; font-weight:600;"&gt;Plugin Version: 4.17.28&lt;/span&gt;&lt;/p&gt;
-&lt;p align="center" style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600;"&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:14pt; font-weight:600;"&gt;For suggestions and feedback, feel free to contact us at dsgtools@dsg.eb.mil.br&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="vanished">Este plugin foi desenvolvido pelo Serviço Geográfico do Exército Brasileiro de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais do Brasil. Versão do Plugin: 4.17.28. Para sugestões e comentários, entre em contato pelo e-mail dsgtools@dsg.eb.mil.br</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>AbstractDatabaseAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\DataManagementAlgs\abstractConvertDatabaseAlgorithm.py" line="154" />
@@ -120,15 +94,7 @@ p, li { white-space: pre-wrap; }
         <source>Converting Features: step {0}/{1}</source>
         <translation>Convertendo feições: passo {0}/{1}</translation>
     </message>
-    <message>
-        <source>Converting Features: step 1/{nStepsOnText}</source>
-        <translation type="vanished">Convertendo feições: etapa 1/{nStepsOnText}</translation>
-    </message>
-    <message>
-        <source>Converting Features: step {currentConversionStep}/{len(conversionMapList)}</source>
-        <translation type="vanished">Convertendo feições: etapa {currentConversionStep}/{len(conversionMapList)}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>AbstractDb</name>
     <message>
         <location filename="..\core\Factories\DbFactory\abstractDb.py" line="82" />
@@ -810,25 +776,7 @@ Mensagens de erro para cada usuário foram registradas no log do QGIS.</translat
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
-    <message>
-        <source>User </source>
-        <translation type="vanished">Usuário </translation>
-    </message>
-    <message>
-        <source> password successfully updated on database </source>
-        <translation type="vanished"> senha atualizada com sucesso no banco de dados </translation>
-    </message>
-    <message>
-        <source>Alter operation on server </source>
-        <translation type="vanished">Operação de alteração no servidor </translation>
-    </message>
-    <message>
-        <source> complete!
-</source>
-        <translation type="vanished"> concluída!
-</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>AnchoredSnapperAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\anchoredSnapperAlgorithm.py" line="62" />
@@ -950,59 +898,7 @@ Mensagens de erro para cada usuário foram registradas no log do QGIS.</translat
         <source>QA Tools: Snap Processes</source>
         <translation>Ferramentas de QA: Processos de Aproximação</translation>
     </message>
-    <message>
-        <source>Input layer to be snapped</source>
-        <translation type="vanished">Camada de entrada a ser ajustada</translation>
-    </message>
-    <message>
-        <source>Process only selected features from input layer</source>
-        <translation type="vanished">Processar apenas feições selecionadas da camada de entrada</translation>
-    </message>
-    <message>
-        <source>Snap to anchor nodes (single layer only)</source>
-        <translation type="vanished">Ajustar aos nós de ancoragem (apenas uma camada)</translation>
-    </message>
-    <message>
-        <source>You must provide at least one anchor layer (line or polygon)</source>
-        <translation type="vanished">Você deve fornecer ao menos uma camada de ancoragem (linha ou polígono)</translation>
-    </message>
-    <message>
-        <source>Creating auxiliary structure for input layer...</source>
-        <translation type="vanished">Criando estrutura auxiliar para a camada de entrada...</translation>
-    </message>
-    <message>
-        <source>Creating spatial index for input layer...</source>
-        <translation type="vanished">Criando índice espacial para a camada de entrada...</translation>
-    </message>
-    <message>
-        <source>Converting polygons to lines...</source>
-        <translation type="vanished">Convertendo polígonos em linhas...</translation>
-    </message>
-    <message>
-        <source>Merging all line layers...</source>
-        <translation type="vanished">Mesclando todas as camadas de linha...</translation>
-    </message>
-    <message>
-        <source>Converting lines to single parts...</source>
-        <translation type="vanished">Convertendo linhas em partes simples...</translation>
-    </message>
-    <message>
-        <source>Creating spatial index on anchor layer...</source>
-        <translation type="vanished">Criando índice espacial na camada de ancoragem...</translation>
-    </message>
-    <message>
-        <source>Running snap operation...</source>
-        <translation type="vanished">Executando operação de aproximação...</translation>
-    </message>
-    <message>
-        <source>Adding unshared vertices on intersections and shared edges...</source>
-        <translation type="vanished">Adicionando vértices não compartilhados em interseções e arestas compartilhadas...</translation>
-    </message>
-    <message>
-        <source>Updating original layers...</source>
-        <translation type="vanished">Atualizando camadas originais...</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>AppendFeaturesToLayerAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\DataManagementAlgs\appendFeaturesToLayerAlgorithm.py" line="51" />
@@ -1420,6 +1316,30 @@ Mensagens de erro para cada usuário foram registradas no log do QGIS.</translat
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\LayerManagementAlgs\assignFormatRulesToLayersAlgorithm.py" line="315" />
         <source>Layer Management Algorithms</source>
         <translation>Algoritmos de gestão de camadas</translation>
+    </message>
+    <message>
+        <source>Invalid conditional style:
+{0}
+{1}</source>
+        <translation>Estilo condicional inválido:
+{0}
+{1}</translation>
+    </message>
+    <message>
+        <source>Error while trying to apply rule:
+ {0}
+current field: {1}
+current layer name: {2}</source>
+        <translation>Erro ao tentar aplicar regra:
+ {0}
+campo atual: {1}
+nome da camada atual: {2}</translation>
+    </message>
+    <message>
+        <source>Invalid expression:
+{0}</source>
+        <translation>Expressão inválida:
+{0}</translation>
     </message>
 </context><context>
     <name>AssignMeasureColumnToLayersAlgorithm</name>
@@ -2161,41 +2081,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>Line-Centroid Structure</source>
         <translation>Estrutura linha-centróide</translation>
     </message>
-    <message>
-        <source>Do you really want to drop databases: </source>
-        <translation type="vanished">Você realmente quer apagar os bancos de dados: </translation>
-    </message>
-    <message>
-        <source>Drop operation complete.
-</source>
-        <translation type="vanished">Operação de exclusão concluída.
-</translation>
-    </message>
-    <message>
-        <source>Upgrade Posgtis operation complete.
-</source>
-        <translation type="vanished">Operação de atualização do PostGIS concluída.
-</translation>
-    </message>
-    <message>
-        <source>Import operation complete.
-</source>
-        <translation type="vanished">Operação de importação concluída.
-</translation>
-    </message>
-    <message>
-        <source>Delete operation complete.
-</source>
-        <translation type="vanished">Operação de exclusão concluída.
-</translation>
-    </message>
-    <message>
-        <source>Customize from SQL file operation complete.
-</source>
-        <translation type="vanished">Operação de customização a partir de arquivo SQL concluída.
-</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>BatchDbManagerGui</name>
     <message>
         <location filename="..\gui\ServerTools\BatchDbManagerGui\batchDbManagerGui.py" line="48" />
@@ -2265,19 +2151,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>The algorithm converts input rasters to .tif with specs required by BDGEx. It also builds the XML of each file according to the template.</source>
         <translation>O algoritmo converte rasters de entrada para .tif com as especificações exigidas pelo BDGEx. Também constrói o XML de cada arquivo conforme o template.</translation>
     </message>
-    <message>
-        <source>Pasta com os arquivos no formato tif</source>
-        <translation type="vanished">Pasta com os arquivos no formato tif</translation>
-    </message>
-    <message>
-        <source>Pasta para salvar os arquivos exportados</source>
-        <translation type="vanished">Pasta para salvar os arquivos exportados</translation>
-    </message>
-    <message>
-        <source>Evaluating {currentSeamline+1}/{nInputs//2} seamlines</source>
-        <translation type="vanished">Avaliando {currentSeamline+1}/{nInputs//2} seamlines</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>BatchRunAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\OtherAlgs\batchRunAlgorithm.py" line="66" />
@@ -2339,23 +2213,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>Model Helpers</source>
         <translation>Auxiliares de Modelo</translation>
     </message>
-    <message>
-        <source>Layer {layerName} not found. Skipping step.</source>
-        <translation type="vanished">Camada {layerName} não encontrada. Fase não executada.</translation>
-    </message>
-    <message>
-        <source>Step {idx+1}/{nSteps}: Running algorithm {algName} on {layerName}</source>
-        <translation type="vanished">Etapa {idx+1}/{nSteps}: Executando algoritmo {algName} em {layerName}</translation>
-    </message>
-    <message>
-        <source>Layer {layerName} is read only. Skipping step.</source>
-        <translation type="vanished">Camada {layerName} é somente leitura. Etapa ignorada.</translation>
-    </message>
-    <message>
-        <source>Layer {layerName} is empty. Skipping step.</source>
-        <translation type="vanished">Camada {layerName} está vazia. Etapa ignorada.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>BatchRunAlgorithmWithGeographicBoundsConstraint</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\OtherAlgs\batchRunAlgorithmWithGeographicBoundsConstraint.py" line="72" />
@@ -2447,23 +2305,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>Model Helpers</source>
         <translation>Auxiliares de Modelo</translation>
     </message>
-    <message>
-        <source>Step {idx+1}/{nSteps}: Running algorithm {algName} on {layerName}</source>
-        <translation type="vanished">Etapa {idx+1}/{nSteps}: Executando algoritmo {algName} em {layerName}</translation>
-    </message>
-    <message>
-        <source>Layer {layerName} not found. Skipping step.</source>
-        <translation type="vanished">Camada {layerName} não encontrada. Fase não executada.</translation>
-    </message>
-    <message>
-        <source>Layer {layerName} is read only. Skipping step.</source>
-        <translation type="vanished">Camada {layerName} é somente leitura. Etapa ignorada.</translation>
-    </message>
-    <message>
-        <source>Layer {layerName} is empty. Skipping step.</source>
-        <translation type="vanished">Camada {layerName} está vazia. Etapa ignorada.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>BuildJoinsOnLayersAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\LayerManagementAlgs\buildJoinsOnLayersAlgorithm.py" line="66" />
@@ -2907,27 +2749,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>QA Tools: Polygon Handling</source>
         <translation>Ferramentas de QA: Manipulação de Polígonos</translation>
     </message>
-    <message>
-        <source>Invalid Polygon Location Flags from {0}</source>
-        <translation type="vanished">Erros de localização inválida dos polígonos de {0}</translation>
-    </message>
-    <message>
-        <source>Unused Boundary Flags from {0}</source>
-        <translation type="vanished">Erros de limites não utilizados de {0}</translation>
-    </message>
-    <message>
-        <source>Polygon Flags from {0}</source>
-        <translation type="vanished">Erros de polígonos de {0}</translation>
-    </message>
-    <message>
-        <source>Building polygons from region {current+1}/{nRegions} is done.</source>
-        <translation type="vanished">Construção de polígonos da região {current+1}/{nRegions} concluída.</translation>
-    </message>
-    <message>
-        <source>Verifying unused boundaries from region {current+1}/{nRegions} is done.</source>
-        <translation type="vanished">Verificação de limites não utilizados da região {current+1}/{nRegions} concluída.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>BuildZipPackageAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\LayerManagementAlgs\buildZipPackagesAlgorithm.py" line="49" />
@@ -2959,15 +2781,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>This algorithm loads shapefiles from folders. If a folder with subfolders is selected, one extra node is created for each subfolder</source>
         <translation>Este algoritmo carrega shapefiles de pastas. Se uma pasta com subpastas for selecionada, um nó extra é criado para cada subpasta</translation>
     </message>
-    <message>
-        <source>Pasta com Shapefiles</source>
-        <translation type="vanished">Pasta com shapefiles</translation>
-    </message>
-    <message>
-        <source>Pasta de destino</source>
-        <translation type="vanished">Pasta de destino</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ButtonEditorWidget</name>
     <message>
         <location filename="..\Modules\acquisitionMenu\widgets\buttonEditorWidget.py" line="20" />
@@ -3313,6 +3127,10 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <location filename="..\gui\ProductionTools\Toolboxes\ContourTool\calc_contour.py" line="187" />
         <source>Assign a value for the selected attribute of the first crossed feature!</source>
         <translation>Atribua um valor para o atributo selecionado da primeira feição cruzada!</translation>
+    </message>
+    <message>
+        <source>Select a field</source>
+        <translation>Selecione um campo</translation>
     </message>
 </context><context>
     <name>CenterPointAndBoundariesToolbar</name>
@@ -3718,11 +3536,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>Data Management Algorithms</source>
         <translation>Algoritmos de Gerenciamento de Dados</translation>
     </message>
-    <message>
-        <source>Commiting changes for layer {lyrName}</source>
-        <translation type="vanished">Confirmando alterações para a camada {lyrName}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>CloseLinesTool</name>
     <message>
         <location filename="..\gui\ProductionTools\MapTools\AuxTools\closeLinesTool.py" line="58" />
@@ -4090,11 +3904,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>Search</source>
         <translation>Pesquisar</translation>
     </message>
-    <message>
-        <source> on </source>
-        <translation type="vanished"> no </translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ConvertDatabasesAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\DataManagementAlgs\convertDatabaseAlgorithm.py" line="104" />
@@ -4186,11 +3996,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>Data Management Algorithms</source>
         <translation>Algoritmos de Gerenciamento de Dados</translation>
     </message>
-    <message>
-        <source>Commiting changes for layer {lyrName}</source>
-        <translation type="vanished">Confirmando alterações para a camada {lyrName}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ConvertLayer2LayerAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\OtherAlgs\convertLayer2LayerAlgorithm.py" line="69" />
@@ -4358,11 +4164,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>WizardPage</source>
         <translation>WizardPage</translation>
     </message>
-    <message>
-        <source>Process finished.</source>
-        <translation type="vanished">Processo finalizado.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>CreateBatchIncrementing</name>
     <message>
         <location filename="..\gui\DatabaseTools\DbTools\BatchDbCreator\createBatchIncrementing.py" line="101" />
@@ -4406,11 +4208,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>Number of Databases</source>
         <translation>Número de bancos</translation>
     </message>
-    <message>
-        <source>Process finished.</source>
-        <translation type="vanished">Processo finalizado.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>CreateDatabaseCustomization</name>
     <message>
         <location filename="..\gui\Misc\PostgisCustomization\createDatabaseCustomization.py" line="202" />
@@ -4548,23 +4346,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
-    <message>
-        <source>Errors occured while trying to export customs built. Check qgis log for further details.</source>
-        <translation type="vanished">Ocorreram erros durante a exportação de customizações. Verifique o log do QGIS para mais detalhes.</translation>
-    </message>
-    <message>
-        <source>Customization error: </source>
-        <translation type="vanished">Erro de customização: </translation>
-    </message>
-    <message>
-        <source>Database Customization </source>
-        <translation type="vanished">Customização de bancos de dados </translation>
-    </message>
-    <message>
-        <source> created successfuly!</source>
-        <translation type="vanished"> criada com sucesso!</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>CreateEditingGridAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\EditingAlgs\createEditingGridAlgorithm.py" line="84" />
@@ -4981,19 +4763,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>FTer_2a_Ed</source>
         <translation>FTer_2a_Ed</translation>
     </message>
-    <message>
-        <source>Profile </source>
-        <translation type="vanished">Perfil </translation>
-    </message>
-    <message>
-        <source> for EDGV </source>
-        <translation type="vanished"> para EDGV </translation>
-    </message>
-    <message>
-        <source> already exists!</source>
-        <translation type="vanished"> já existe!</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>CreateReviewGridAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\OtherAlgs\createReviewGridAlgorithm.py" line="60" />
@@ -5084,11 +4854,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>Create a PostGIS, SpatiaLite or Geopackage Database</source>
         <translation>Criação de bancos PostGIS, SpatiaLite ou Geopackage</translation>
     </message>
-    <message>
-        <source>Process finished.</source>
-        <translation type="vanished">Processo finalizado.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>CreateUser</name>
     <message>
         <location filename="..\gui\DatabaseTools\UserTools\create_user.py" line="84" />
@@ -5142,15 +4908,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>Close</source>
         <translation>Fechar</translation>
     </message>
-    <message>
-        <source>User </source>
-        <translation type="vanished">Usuário </translation>
-    </message>
-    <message>
-        <source> created successfully on server </source>
-        <translation type="vanished"> criado com sucesso no servidor </translation>
-    </message>
-</context><context>
+    </context><context>
     <name>CreateView</name>
     <message>
         <location filename="..\gui\ServerTools\createView.py" line="67" />
@@ -5648,27 +5406,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>Delete Selected</source>
         <translation>Apagar selecionado</translation>
     </message>
-    <message>
-        <source>View User Perspective</source>
-        <translation type="vanished">Ver perspectiva do usuário</translation>
-    </message>
-    <message>
-        <source>Do you really want to delete customization </source>
-        <translation type="vanished">Você realmente deseja apagar a customização </translation>
-    </message>
-    <message>
-        <source>Customization </source>
-        <translation type="vanished">Customização </translation>
-    </message>
-    <message>
-        <source> successfully deleted.</source>
-        <translation type="vanished"> apagada com sucesso.</translation>
-    </message>
-    <message>
-        <source>Error! Problem deleting customization: </source>
-        <translation type="vanished">Erro! Problema ao tentar apagar customização: </translation>
-    </message>
-</context><context>
+    </context><context>
     <name>DSGToolsWorkflow</name>
     <message>
         <location filename="..\core\DSGToolsWorkflow\workflow.py" line="300" />
@@ -5687,37 +5425,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>finished.</source>
         <translation>finalizado.</translation>
     </message>
-    <message>
-        <source>Workflow item {self.displayName} execution paused by previous step.</source>
-        <translation type="vanished">O item de fluxo de trabalho {self.displayName} foi pausado pela etapa anterior.</translation>
-    </message>
-    <message>
-        <source>Workflow item {self.displayName} status changed from ignore flags to finished with flags.</source>
-        <translation type="vanished">O item de fluxo de trabalho {self.displayName} teve o status alterado de ignorar flags para finalizado com flags.</translation>
-    </message>
-    <message>
-        <source>Workflow item {self.displayName} flags were ignored by the user.</source>
-        <translation type="vanished">As flags do item de fluxo de trabalho {self.displayName} foram ignoradas pelo usuário.</translation>
-    </message>
-    <message>
-        <source>Workflow item {self.displayName} canceled by user.</source>
-        <translation type="vanished">O item de fluxo de trabalho {self.displayName} foi cancelado pelo usuário.</translation>
-    </message>
-    <message>
-        <source>Workflow item {self.displayName} execution has failed:
- {str(exception)}</source>
-        <translation type="vanished">A execução do item de fluxo de trabalho {self.displayName} falhou:
- {str(exception)}</translation>
-    </message>
-    <message>
-        <source>Workflow item {self.displayName} {statusMsg}</source>
-        <translation type="vanished">O item de fluxo de trabalho {self.displayName} {statusMsg}</translation>
-    </message>
-    <message>
-        <source>Workflow item {self.displayName} execution was canceled by the user.</source>
-        <translation type="vanished">A execução do item de fluxo de trabalho {self.displayName} foi cancelada pelo usuário.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>DataValidationTool</name>
     <message>
         <location filename="..\gui\ProductionTools\Toolbars\DataValidationTool\dataValidationTool.py" line="134" />
@@ -5844,14 +5552,11 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation>Executar o modelo atual.</translation>
     </message>
     <message>
-        <source>Remove model '{modelName}'?</source>
-        <translation type="vanished">Remover modelo '{modelName}'?</translation>
+        <location filename="..\gui\ProductionTools\Toolbars\DataValidationTool\dataValidationTool.py" line="378" />
+        <source>DSGTools Validation Toolbar Output</source>
+        <translation>Saída da barra de validação DSGTools</translation>
     </message>
-    <message>
-        <source>Sucess</source>
-        <translation type="vanished">Sucesso</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>DatabaseFileLineEdit</name>
     <message>
         <location filename="..\gui\CustomWidgets\ConnectionWidgets\AdvancedConnectionWidgets\databaseFileLineEdit.py" line="64" />
@@ -6511,19 +6216,7 @@ Mensagens de erro para cada perfil foram geradas no log do QGIS.</translation>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
-    <message>
-        <source>Manage permissions to user </source>
-        <translation type="vanished">Gerenciar permissão do usuário </translation>
-    </message>
-    <message>
-        <source> on database </source>
-        <translation type="vanished"> no banco de dados </translation>
-    </message>
-    <message>
-        <source>Profiles with error:</source>
-        <translation type="vanished">Perfis com erro:</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>DeaggregatorAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\deaggregateGeometriesAlgorithm.py" line="58" />
@@ -6646,11 +6339,7 @@ Verifique a camada {0} quanto a valores vazios ou nulos.
         <source>QA Tools: Basic Geometry Construction Issues Handling</source>
         <translation>Ferramentas de QA: Tratamento de Problemas Básicos de Construção de Geometria</translation>
     </message>
-    <message>
-        <source>Check layer {lyrName} for empty or null values.</source>
-        <translation type="vanished">Verificar camada {lyrName} para valores vazios ou nulos.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>Dialog</name>
     <message>
         <location filename="..\Modules\acquisitionMenu\uis\reclassifyDialog.ui" line="0" />
@@ -7448,115 +7137,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation />
     </message>
-    <message>
-        <source>&amp;Cancelar</source>
-        <translation type="vanished">&amp;Cancelar</translation>
-    </message>
-    <message>
-        <source>&amp;Confirmar</source>
-        <translation type="vanished">&amp;Confirmar</translation>
-    </message>
-    <message>
-        <source>Botão</source>
-        <translation type="vanished">Botão</translation>
-    </message>
-    <message>
-        <source>Botão ( preview ):</source>
-        <translation type="vanished">Botão ( preview ):</translation>
-    </message>
-    <message>
-        <source>Nome: </source>
-        <translation type="vanished">Nome: </translation>
-    </message>
-    <message>
-        <source>Aba: </source>
-        <translation type="vanished">Aba: </translation>
-    </message>
-    <message>
-        <source>Ferramenta de Aquisição: </source>
-        <translation type="vanished">Ferramenta de Aquisição: </translation>
-    </message>
-    <message>
-        <source>Cor do Texto: </source>
-        <translation type="vanished">Cor do Texto: </translation>
-    </message>
-    <message>
-        <source>Cor de Fundo: </source>
-        <translation type="vanished">Cor de Fundo: </translation>
-    </message>
-    <message>
-        <source>Camada: </source>
-        <translation type="vanished">Camada: </translation>
-    </message>
-    <message>
-        <source>Palavras Chaves (;): </source>
-        <translation type="vanished">Palavras Chaves (;): </translation>
-    </message>
-    <message>
-        <source>Suprimir Formulário:</source>
-        <translation type="vanished">Suprimir Formulário:</translation>
-    </message>
-    <message>
-        <source>Suprimir Formulário de Relassificação:</source>
-        <translation type="vanished">Suprimir Formulário de Reclassificação:</translation>
-    </message>
-    <message>
-        <source>Atributos:</source>
-        <translation type="vanished">Atributos:</translation>
-    </message>
-    <message>
-        <source>Cancelar</source>
-        <translation type="vanished">Cancelar</translation>
-    </message>
-    <message>
-        <source>Salvar</source>
-        <translation type="vanished">Salvar</translation>
-    </message>
-    <message>
-        <source>Editor de Menu</source>
-        <translation type="vanished">Editor de Menu</translation>
-    </message>
-    <message>
-        <source>Menu Nome:</source>
-        <translation type="vanished">Menu Nome:</translation>
-    </message>
-    <message>
-        <source>Excluir Menu</source>
-        <translation type="vanished">Excluir Menu</translation>
-    </message>
-    <message>
-        <source>Importar Menu</source>
-        <translation type="vanished">Importar Menu</translation>
-    </message>
-    <message>
-        <source>Exportar Menu</source>
-        <translation type="vanished">Exportar Menu</translation>
-    </message>
-    <message>
-        <source>Criar Menu</source>
-        <translation type="vanished">Criar Menu</translation>
-    </message>
-    <message>
-        <source>Abas</source>
-        <translation type="vanished">Abas</translation>
-    </message>
-    <message>
-        <source>Botões</source>
-        <translation type="vanished">Botões</translation>
-    </message>
-    <message>
-        <source>&lt;span style="color:red"&gt;&lt;b&gt;Ordene abas e botões arrastando!&lt;/b&gt;&lt;/span&gt;</source>
-        <translation type="vanished">&lt;span style="color:red"&gt;&lt;b&gt;Ordene abas e botões arrastando!&lt;/b&gt;&lt;/span&gt;</translation>
-    </message>
-    <message>
-        <source>Mudar CRS?</source>
-        <translation type="vanished">Mudar CRS?</translation>
-    </message>
-    <message>
-        <source>Deseja mudar o CRS das feições antes de copiar?</source>
-        <translation type="vanished">Deseja mudar o CRS das feições antes de copiar?</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>DissolvePolygonsWithSameAttributesAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\dissolvePolygonsWithSameAttributesAlgorithm.py" line="55" />
@@ -7814,19 +7395,7 @@ p, li { white-space: pre-wrap; }
         <source>Search Button</source>
         <translation>Pesquisar Botão</translation>
     </message>
-    <message>
-        <source>Menu Atual: </source>
-        <translation type="vanished">Menu Atual: </translation>
-    </message>
-    <message>
-        <source>reclassificar</source>
-        <translation type="vanished">reclassificar</translation>
-    </message>
-    <message>
-        <source>Pesquisar Botão</source>
-        <translation type="vanished">Pesquisar Botão</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>DomainSetter</name>
     <message>
         <location filename="..\gui\CustomWidgets\CustomDbManagementWidgets\domainSetter.ui" line="0" />
@@ -8651,39 +8220,7 @@ Processamento concluído!</translation>
         <translation>Exclusão da configuração de cobertura terrestre concluída. 
 </translation>
     </message>
-    <message>
-        <source>Field Toolbox Configuration </source>
-        <translation type="vanished">Ajustes de Reclassificação </translation>
-    </message>
-    <message>
-        <source> created successfuly!</source>
-        <translation type="vanished"> criado com sucesso!</translation>
-    </message>
-    <message>
-        <source>Update Earth Coverage configuration complete.
-</source>
-        <translation type="vanished">Atualização da configuração de cobertura terrestre concluída.
-</translation>
-    </message>
-    <message>
-        <source>Uninstall Earth Coverage configuration complete.
-</source>
-        <translation type="vanished">Desinstalação da configuração de cobertura terrestre concluída.
-</translation>
-    </message>
-    <message>
-        <source>Install Earth Coverage configuration complete.
-</source>
-        <translation type="vanished">Instalação da configuração de cobertura terrestre concluída.
-</translation>
-    </message>
-    <message>
-        <source>Delete Earth Coverage configuration complete.
-</source>
-        <translation type="vanished">Exclusão da configuração de cobertura terrestre concluída.
-</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>EarthCoverageWidget</name>
     <message>
         <location filename="..\gui\CustomWidgets\DatabasePropertiesWidgets\BasicPropertyWidgets\earthCoverageWidget.py" line="108" />
@@ -8890,27 +8427,7 @@ Processamento concluído!</translation>
         <source>Set of DSGTools Attribute Rules</source>
         <translation>Conjunto de regras de atributos do DSGTools</translation>
     </message>
-    <message>
-        <source>Rule number {} : {} - is not a valid color.</source>
-        <translation type="vanished">Regra número {} : {} - não é uma cor válida.</translation>
-    </message>
-    <message>
-        <source>Rule number {} : {} - is not a valid string.</source>
-        <translation type="vanished">Regra número {} : {} - não é uma string válida.</translation>
-    </message>
-    <message>
-        <source>Rule number {} : {} - is not a valid expression.</source>
-        <translation type="vanished">Regra número {} : {} - não é uma expressão válida.</translation>
-    </message>
-    <message>
-        <source>Rule number {} : {} - is not a valid length = 2 list.</source>
-        <translation type="vanished">Regra número {} : {} - não é uma lista válida com comprimento igual a 2.</translation>
-    </message>
-    <message>
-        <source>Rule number {} : {} - is not a valid string description.</source>
-        <translation type="vanished">Regra número {} : {} - não é uma descrição válida.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>EnforceSpatialRuleWrapper</name>
     <message>
         <location filename="..\gui\ProcessingUI\enforceSpatialRuleWrapper.py" line="76" />
@@ -9011,7 +8528,7 @@ Processamento concluído!</translation>
     <message>
         <location filename="..\gui\ProcessingUI\enforceSpatialRuleWrapper.py" line="509" />
         <source>DSGTools: importing spatial rules</source>
-        <translation>DSGTools: importing spatial rules</translation>
+        <translation>DSGTools: importando regras espaciais</translation>
     </message>
     <message>
         <location filename="..\gui\ProcessingUI\enforceSpatialRuleWrapper.py" line="512" />
@@ -9237,15 +8754,7 @@ Processamento concluído!</translation>
         <source>Select a database to manage auxiliar structure</source>
         <translation>Selecione um banco de dados para gerenciar a estrutura auxiliar</translation>
     </message>
-    <message>
-        <source>Database </source>
-        <translation type="vanished">Banco de dados </translation>
-    </message>
-    <message>
-        <source> dropped successfully!</source>
-        <translation type="vanished"> apagado com sucesso!</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ExploreServerWidget</name>
     <message>
         <location filename="..\gui\CustomWidgets\ConnectionWidgets\ServerConnectionWidgets\exploreServerWidget.py" line="229" />
@@ -9298,11 +8807,7 @@ Processamento concluído!</translation>
         <source>Select Server</source>
         <translation>Selecione um servidor</translation>
     </message>
-    <message>
-        <source>Problem executing query: </source>
-        <translation type="vanished">Problema executando a query: </translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ExportFeaturesByAttributeAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\OtherAlgs\exportFeaturesByAttributeAlgorithm.py" line="71" />
@@ -9471,11 +8976,7 @@ Processamento concluído!</translation>
         <source>Data Management Algorithms</source>
         <translation>Algoritmos de Gerenciamento de Dados</translation>
     </message>
-    <message>
-        <source>Processing MI {geographicBoundsFeat[miField]} ({i}/{nGeographicBoundsFeats})</source>
-        <translation type="vanished">Processando MI {geographicBoundsFeat[miField]} ({i}/{nGeographicBoundsFeats})</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ExportToMemoryLayer</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\OtherAlgs\exportToMemoryLayer.py" line="57" />
@@ -9502,19 +9003,7 @@ Processamento concluído!</translation>
         <source>Model Helpers</source>
         <translation>Auxiliares de Modelo</translation>
     </message>
-    <message>
-        <source>Camada de entrada</source>
-        <translation type="vanished">Camada de entrada</translation>
-    </message>
-    <message>
-        <source>Nome da camada de saída</source>
-        <translation type="vanished">Nome da camada de saída</translation>
-    </message>
-    <message>
-        <source>Estilo da camada de saída</source>
-        <translation type="vanished">Estilo da camada de saída</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ExtendLinesToGeographicBoundsAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\extendLinesToGeographicBoundsAlgorithm.py" line="55" />
@@ -9578,15 +9067,7 @@ Processamento concluído!</translation>
         <source>Could not download the following files: {0}</source>
         <translation>Não foi possível baixar os seguintes arquivos: {0}</translation>
     </message>
-    <message>
-        <source>The following files: {} are not downloaded. Do you want to download them?</source>
-        <translation type="vanished">Os seguintes arquivos: {} não foram baixados. Deseja baixá-los?</translation>
-    </message>
-    <message>
-        <source>Could not download the following files: {}</source>
-        <translation type="vanished">Não foi possível baixar os seguintes arquivos: {}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ExtractByDE9IMAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeometricAlgs\extractByDE9IM.py" line="93" />
@@ -9841,23 +9322,7 @@ Processamento concluído!</translation>
         <source>This algorithm extracts elevation points from DEM. The output crs is always 4674.</source>
         <translation>Este algoritmo extrai pontos cotados a partir do MDE. O SRC de saída é sempre 4674.</translation>
     </message>
-    <message>
-        <source>Evaluating region {currentStepInsideLoop-currentStep+1}/{nFeats}</source>
-        <translation type="vanished">Avaliando região {currentStepInsideLoop-currentStep+1}/{nFeats}</translation>
-    </message>
-    <message>
-        <source>{self.currentStepText}: Running clip on area without information...</source>
-        <translation type="vanished">{self.currentStepText}: Recortando área sem informação...</translation>
-    </message>
-    <message>
-        <source>{self.currentStepText}: Building masked raster...</source>
-        <translation type="vanished">{self.currentStepText}: Construindo raster mascarado...</translation>
-    </message>
-    <message>
-        <source>This algorithm extracts elevation points from DEM.</source>
-        <translation type="vanished">Este algoritmo extrai pontos cotados a partir do MDE.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ExtractMiddleVertexOnLineAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeometricAlgs\extractMiddleVertexOnLineAlgorithm.py" line="51" />
@@ -9946,11 +9411,7 @@ Processamento concluído!</translation>
         <source>Use proxy</source>
         <translation>Usar proxy</translation>
     </message>
-    <message>
-        <source>Unexpected error while trying to reach server. Check your parameters. Error message: {}</source>
-        <translation type="vanished">Erro inesperado ao tentar acessar o servidor. Verifique seus parâmetros. Mensagem de erro: {}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>FeatureHandler</name>
     <message>
         <location filename="..\core\GeometricTools\featureHandler.py" line="427" />
@@ -10475,23 +9936,7 @@ Processamento concluído!</translation>
         <source>QA Tools: Drainage Flow Processes</source>
         <translation>Ferramentas de QA: Processos de Fluxo de Drenagem</translation>
     </message>
-    <message>
-        <source>Found {pointFlagLyr.featureCount()} points of flow issues.</source>
-        <translation type="vanished">Encontrados {pointFlagLyr.featureCount()} pontos com problemas de fluxo.</translation>
-    </message>
-    <message>
-        <source>Found {lineFlagLyr.featureCount()} lines of flow issues.</source>
-        <translation type="vanished">Encontradas {lineFlagLyr.featureCount()} linhas com problemas de fluxo.</translation>
-    </message>
-    <message>
-        <source>Found {polygonFlagLyr.featureCount()} polygon of flow issues.</source>
-        <translation type="vanished">Encontrados {polygonFlagLyr.featureCount()} polígonos com problemas de fluxo.</translation>
-    </message>
-    <message>
-        <source>Found {lineFlagLyr.featureCount()} loop issues.</source>
-        <translation type="vanished">Encontrados {lineFlagLyr.featureCount()} problemas de loop.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>FixDrainageVersusWaterBodyAttributeAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\fixDrainageVersusWaterBodyAttributeAlgorithm.py" line="65" />
@@ -10553,15 +9998,7 @@ Processamento concluído!</translation>
         <source>QA Tools: Drainage Flow Processes</source>
         <translation>Ferramentas de QA: Processos de Fluxo de Drenagem</translation>
     </message>
-    <message>
-        <source>{len(featIdsToUpdate)} outside polygons changed to {polygonRelationshipAttribute} = {outsidePolygonValue}</source>
-        <translation type="vanished">{len(featIdsToUpdate)} polígonos externos alterados para {polygonRelationshipAttribute} = {outsidePolygonValue}</translation>
-    </message>
-    <message>
-        <source>Updating drainage lines inside water bodies with value {insideValue}</source>
-        <translation type="vanished">Atualizando linhas de drenagem dentro de corpos d'água com valor {insideValue}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>FixNetworkAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\fixNetworkAlgorithm.py" line="56" />
@@ -11004,27 +10441,7 @@ Feição(ões) não invertidas: </translation>
         <source>Add</source>
         <translation>Adicionar</translation>
     </message>
-    <message>
-        <source>Pesquisar</source>
-        <translation type="vanished">Pesquisar</translation>
-    </message>
-    <message>
-        <source>Aba</source>
-        <translation type="vanished">Aba</translation>
-    </message>
-    <message>
-        <source>Botão</source>
-        <translation type="vanished">Botão</translation>
-    </message>
-    <message>
-        <source>Opções</source>
-        <translation type="vanished">Opções</translation>
-    </message>
-    <message>
-        <source>Adicionar</source>
-        <translation type="vanished">Adicionar</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>FreeHandMain</name>
     <message>
         <location filename="..\gui\ProductionTools\MapTools\FreeHandTool\freeHandMain.py" line="50" />
@@ -11310,122 +10727,14 @@ Parâmetros:
     </message>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeneralizationAlgs\generalizeEdificationsAlgorithm.py" line="399" />
-        <source>Dentre outros inputs, este algoritmo recebe uma expressão, que será utilizada para distinguir as feições de baixa prioridade (as que satisfazem à expressão). A partindo daí, o processing executa os seguintes passos: 
-1.Eliminar genéricas próximas de edificações específicas;
-2. Eliminar edificações próximas de mesmo tipo;</source>
-        <translation>Dentre outros inputs, este algoritmo recebe uma expressão, que será utilizada para distinguir as feições de baixa prioridade (as que satisfazem à expressão). A partindo daí, o processing executa os seguintes passos:
-1.Eliminar genéricas próximas de edificações específicas;
-2. Eliminar edificações próximas de mesmo tipo;</translation>
-    </message>
-    <message>
-        <source>Dentre outros inputs, este algoritmo recebe uma expressão, que será utilizada para distinguir as feições de baixa prioridade (as que satisfazem à expressão). A partindo daí, o processing executa os seguintes passos:
-1.Eliminar genéricas próximas de edificações específicas;
-2. Eliminar edificações próximas de mesmo tipo;</source>
-        <translation type="vanished">Dentre outros inputs, este algoritmo recebe uma expressão, que será utilizada para distinguir as feições de baixa prioridade (as que satisfazem à expressão). A partindo daí, o processing executa os seguintes passos:
+        <source>Among other inputs, this algorithm receives an expression used to distinguish low priority features (those that satisfy the expression). From there, the processing executes the following steps: 
+1. Eliminate generic buildings near specific buildings;
+2. Eliminate nearby buildings of the same type;</source>
+        <translation>Dentre outros inputs, este algoritmo recebe uma expressão, que será utilizada para distinguir as feições de baixa prioridade (as que satisfazem à expressão). A partindo daí, o processing executa os seguintes passos: 
 1.Eliminar genéricas próximas de edificações específicas;
 2. Eliminar edificações próximas de mesmo tipo;</translation>
     </message>
-    <message>
-        <source>Camada de Entrada de Pontos</source>
-        <translation type="vanished">Camada de Entrada de Pontos</translation>
-    </message>
-    <message>
-        <source>Expressão de filtro correspondente às edificações de baixa prioridade</source>
-        <translation type="vanished">Expressão de filtro correspondente às edificações de baixa prioridade</translation>
-    </message>
-    <message>
-        <source>Tolerancia</source>
-        <translation type="vanished">Tolerância</translation>
-    </message>
-    <message>
-        <source>Edificações não eliminadas (alta prioridade próximas)</source>
-        <translation type="vanished">Edificações não eliminadas (alta prioridade próximas)</translation>
-    </message>
-    <message>
-        <source>Passando de multipart para singlepart...</source>
-        <translation type="vanished">Passando de multipart para singlepart...</translation>
-    </message>
-    <message>
-        <source>Multipart para Singlepart completo...</source>
-        <translation type="vanished">Multipart para Singlepart completo...</translation>
-    </message>
-    <message>
-        <source>Clusterizando...</source>
-        <translation type="vanished">Clusterizando...</translation>
-    </message>
-    <message>
-        <source>Clusterização completa...</source>
-        <translation type="vanished">Clusterização completa...</translation>
-    </message>
-    <message>
-        <source>Filtrando pontos...</source>
-        <translation type="vanished">Filtrando pontos...</translation>
-    </message>
-    <message>
-        <source>Filtragem completa...</source>
-        <translation type="vanished">Filtragem completa...</translation>
-    </message>
-    <message>
-        <source>Criando buffers a partir dos pontos...</source>
-        <translation type="vanished">Criando buffers a partir dos pontos...</translation>
-    </message>
-    <message>
-        <source>Criação de buffers concluída...</source>
-        <translation type="vanished">Criação de buffers concluída...</translation>
-    </message>
-    <message>
-        <source>Preparando para rodar em paralelo...</source>
-        <translation type="vanished">Preparando para rodar em paralelo...</translation>
-    </message>
-    <message>
-        <source>Análise 'alta prioridade - alta prioridade' completa...</source>
-        <translation type="vanished">Análise 'alta prioridade - alta prioridade' completa...</translation>
-    </message>
-    <message>
-        <source>Iniciando criação de dicionários...</source>
-        <translation type="vanished">Iniciando criação de dicionários...</translation>
-    </message>
-    <message>
-        <source>Criação de dicionários completa...</source>
-        <translation type="vanished">Criação de dicionários completa...</translation>
-    </message>
-    <message>
-        <source>Chamando a função 'compute' para rodar em paralelo...</source>
-        <translation type="vanished">Chamando a função 'compute' para rodar em paralelo...</translation>
-    </message>
-    <message>
-        <source>Processo em paralelo completo...</source>
-        <translation type="vanished">Processo em paralelo completo...</translation>
-    </message>
-    <message>
-        <source>Adicionando feições ao sink...</source>
-        <translation type="vanished">Adicionando feições ao sink...</translation>
-    </message>
-    <message>
-        <source>Adição de feições ao Sink completa...</source>
-        <translation type="vanished">Adição de feições ao Sink completa...</translation>
-    </message>
-    <message>
-        <source>Deletando feições selecionadas...</source>
-        <translation type="vanished">Deletando feições selecionadas...</translation>
-    </message>
-    <message>
-        <source>Feições deletadas...</source>
-        <translation type="vanished">Feições deletadas...</translation>
-    </message>
-    <message>
-        <source>Generalizar Edificações</source>
-        <translation type="vanished">Generalizar Edificações</translation>
-    </message>
-    <message>
-        <source>Dentre outros inputs, este algoritmo recebe uma expressão, que será utilizada para distinguir as feições de baixa prioridade (as que satisfazem à expressão). A partindo daí, o processing executa os seguintes passos:
-1.Eliminar genéricas próximas de edificações específicas;
-2. Eliminar edificações próximas de mesmo tipo;</source>
-        <translation type="vanished">Dentre outros inputs, este algoritmo recebe uma expressão, que será utilizada para distinguir as feições de baixa prioridade (as que satisfazem à expressão). A partindo daí, o processing executa os seguintes passos:
-1.Eliminar genéricas próximas de edificações específicas;
-2. Eliminar edificações próximas de mesmo tipo;</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>GeneralizeEdificationsAreaAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeneralizationAlgs\generalizeEdificationsAreaAlgorithm.py" line="46" />
@@ -11492,47 +10801,7 @@ Parâmetros:
         <source>This algorithm receives a point layer and a polygon layer as inputs. Polygon features with an area smaller than the established minimum will be removed from the original layer and a point corresponding to the centroid of each polygon will be inserted into the point layer. Additionally, an output layer contains the polygon features that were removed from the original layer. Note: The area values to be entered as input are relative to the map area (which will be corrected by the scale), in the metric system of the input layers.</source>
         <translation>Este algoritmo recebe uma camada do tipo ponto e uma do tipo polígono como inputs. As feições do tipo polígono que tiverem uma área menor que o mínimo estabelecido serão excluídas da camada original e um ponto correspondente ao centroide de cada um desses polígonos será inserido na camada de pontos. Além disso, uma camada de output contém as feições do tipo polígono que foram excluídas da camada original. Obs.: Os valores de área a ser inseridos no input são relativos à área no mapa (que será corrigida pela escala), no sistema métrico das camadas inseridas.</translation>
     </message>
-    <message>
-        <source>Camada de Entrada de Polígonos</source>
-        <translation type="vanished">Camada de Entrada de Polígonos</translation>
-    </message>
-    <message>
-        <source>Camada de Entrada de Pontos</source>
-        <translation type="vanished">Camada de Entrada de Pontos</translation>
-    </message>
-    <message>
-        <source>Escala</source>
-        <translation type="vanished">Escala</translation>
-    </message>
-    <message>
-        <source>Área Mínima no Mapa (graus² na carta)</source>
-        <translation type="vanished">Área Mínima no Mapa (graus² na carta)</translation>
-    </message>
-    <message>
-        <source>Edificações áreas transformadas em pontos</source>
-        <translation type="vanished">Edificações áreas transformadas em pontos</translation>
-    </message>
-    <message>
-        <source>Selecionando feições com area menor que o mínimo estabelecido...</source>
-        <translation type="vanished">Selecionando feições com area menor que o mínimo estabelecido...</translation>
-    </message>
-    <message>
-        <source>Deletando da camada de input os polígonos com área menor que o mínimo...</source>
-        <translation type="vanished">Deletando da camada de input os polígonos com área menor que o mínimo...</translation>
-    </message>
-    <message>
-        <source>Algoritmo completo...</source>
-        <translation type="vanished">Algoritmo completo...</translation>
-    </message>
-    <message>
-        <source>Generalizar Edificações - Area</source>
-        <translation type="vanished">Generalizar Edificações - Área</translation>
-    </message>
-    <message>
-        <source>Este algoritmo recebe uma camada do tipo ponto e uma do tipo polígono como inputs. As feições do tipo polígono que tiverem uma área menor que o mínimo estabecido serão excluídas da camada original e um ponto correspondente ao centroide de cada um desses polígonos será inserido na camada de pontos. Além disso, uma camada de output contém as feições do tipo polígono que foram excluídas da camada original. Obs.: Os valores de área a ser inseridos no input são relativos à área no mapa(que será corrigida pela escala), no sistema métrico das camadas inseridas.</source>
-        <translation type="vanished">Este algoritmo recebe uma camada do tipo ponto e uma do tipo polígono como inputs. As feições do tipo polígono que tiverem uma área menor que o mínimo estabecido serão excluídas da camada original e um ponto correspondente ao centroide de cada um desses polígonos será inserido na camada de pontos. Além disso, uma camada de output contém as feições do tipo polígono que foram excluídas da camada original. Obs.: Os valores de área a ser inseridos no input são relativos à área no mapa(que será corrigida pela escala), no sistema métrico das camadas inseridas.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>GeneralizeHighwaysAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeneralizationAlgs\generalizeHighwaysAlgorithm.py" line="50" />
@@ -11599,39 +10868,7 @@ Parâmetros:
         <source>Generalization Algorithms</source>
         <translation>Algoritmos de Generalização</translation>
     </message>
-    <message>
-        <source>Camada de rodovias</source>
-        <translation type="vanished">Camada de rodovias</translation>
-    </message>
-    <message>
-        <source>Escala</source>
-        <translation type="vanished">Escala</translation>
-    </message>
-    <message>
-        <source>Área mínima para rotatórias na carta</source>
-        <translation type="vanished">Área mínima para rotatórias na carta</translation>
-    </message>
-    <message>
-        <source>Comprimento mínimo das estradas com pontas soltas</source>
-        <translation type="vanished">Comprimento mínimo das estradas com pontas soltas</translation>
-    </message>
-    <message>
-        <source>Calculando tamanhos</source>
-        <translation type="vanished">Calculando tamanhos</translation>
-    </message>
-    <message>
-        <source>Generalizando</source>
-        <translation type="vanished">Generalizando</translation>
-    </message>
-    <message>
-        <source>Retornando</source>
-        <translation type="vanished">Retornando</translation>
-    </message>
-    <message>
-        <source>Generalizar Rodovias</source>
-        <translation type="vanished">Generalizar Rodovias</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>GeneralizeLandingStripAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeneralizationAlgs\generalizeLandingStrip.py" line="50" />
@@ -11757,99 +10994,7 @@ Se a área da pista de pouso for menor que a mínima ou sua largura for menor qu
 Obs.1: Os parâmetros de área e largura têm unidade de medida correspondente às unidades da camada de entrada. Assim, se a camada tem uma projeção métrica, os valores de largura e área serão recebidos pelo algoritmo em metros e metros quadrados, respectivamente.
 Obs.2: O valor default da suavização do 'simplify' corresponde a uma projeção geográfica (unidades em graus). Para um sistema de referência métrico, valor de suavização deve ser corrigido, sendo multiplicado por um valor na ordem de grandeza de 10^5.</translation>
     </message>
-    <message>
-        <source>Camada de Entrada de Polígonos</source>
-        <translation type="vanished">Camada de Entrada de Polígonos</translation>
-    </message>
-    <message>
-        <source>Escala</source>
-        <translation type="vanished">Escala</translation>
-    </message>
-    <message>
-        <source>Área Mínima no Mapa (na carta)</source>
-        <translation type="vanished">Área Mínima no Mapa (na carta)</translation>
-    </message>
-    <message>
-        <source>Largura mínima no Mapa (na carta)</source>
-        <translation type="vanished">Largura mínima no Mapa (na carta)</translation>
-    </message>
-    <message>
-        <source>valor da suavização voronoi</source>
-        <translation type="vanished">valor da suavização voronoi</translation>
-    </message>
-    <message>
-        <source>valor da suavização do 'simplify'</source>
-        <translation type="vanished">valor da suavização do 'simplify'</translation>
-    </message>
-    <message>
-        <source>Linhas</source>
-        <translation type="vanished">Linhas</translation>
-    </message>
-    <message>
-        <source>Iniciando atribuição 'id' às feições da camada...</source>
-        <translation type="vanished">Iniciando atribuição 'id' às feições da camada...</translation>
-    </message>
-    <message>
-        <source>Atribuição de 'id' às feições da camada completa...</source>
-        <translation type="vanished">Atribuição de 'id' às feições da camada completa...</translation>
-    </message>
-    <message>
-        <source>Iniciando algoritmo de polo de inacessibilidade...</source>
-        <translation type="vanished">Iniciando algoritmo de polo de inacessibilidade...</translation>
-    </message>
-    <message>
-        <source>algoritmo de polo de inacessibilidade completo...</source>
-        <translation type="vanished">algoritmo de polo de inacessibilidade completo...</translation>
-    </message>
-    <message>
-        <source>Iniciando determinação da largura das pistas de pouso...</source>
-        <translation type="vanished">Iniciando determinação da largura das pistas de pouso...</translation>
-    </message>
-    <message>
-        <source>Determinação da largura das pistas de pouso completa...</source>
-        <translation type="vanished">Determinação da largura das pistas de pouso completa...</translation>
-    </message>
-    <message>
-        <source>Iniciando Seleção das pistas de pouso...</source>
-        <translation type="vanished">Iniciando Seleção das pistas de pouso...</translation>
-    </message>
-    <message>
-        <source>Seleção das pistas de pouso completo...</source>
-        <translation type="vanished">Seleção das pistas de pouso completo...</translation>
-    </message>
-    <message>
-        <source>Iniciando obtenção das linhas a partir das áreas...</source>
-        <translation type="vanished">Iniciando obtenção das linhas a partir das áreas...</translation>
-    </message>
-    <message>
-        <source>Aplicando a esqueletização de voronoi...</source>
-        <translation type="vanished">Aplicando a esqueletização de voronoi...</translation>
-    </message>
-    <message>
-        <source>Ajustando campos da tabela de atributos...</source>
-        <translation type="vanished">Ajustando campos da tabela de atributos...</translation>
-    </message>
-    <message>
-        <source>Retirando vértices dos extremos e aplicando a suavização...</source>
-        <translation type="vanished">Retirando vértices dos extremos e aplicando a suavização...</translation>
-    </message>
-    <message>
-        <source>Generalizar Pistas de pouso</source>
-        <translation type="vanished">Generalizar Pistas de pouso</translation>
-    </message>
-    <message>
-        <source>Este algoritmo recebe uma camada do tipo polígono com feições que correspondem a pistas de pouso.
-Se a área da pista de pouso for menor que a mínima ou sua largura for menor que a mínima, o algoritmo cria uma linha centra para representar a pista de pouso e elimina o polígono da camada de polígonos original.
- A camada de output são as linhas criadas correspondentes às respectivas pistas de pouso.
-Obs.1: Os parâmetros de área e largura têm unidade de medida correspondente às unidades da camada de entrada. Assim, se a camada tem uma projeção métrica, os valores de largura e área serão recebidos pelo algoritmo em metros e metros quadrados, respectivamente.
-Obs.2: O valor default da suavização do 'simplify' corresponde a uma projeção geográfica (unidades em graus). Para um sistema de referência métrico, valor de suavização deve ser corrigido, sendo multiplicado por um valor na ordem de grandeza de 10^5.</source>
-        <translation type="vanished">Este algoritmo recebe uma camada do tipo polígono com feições que correspondem a pistas de pouso.
-Se a área da pista de pouso for menor que a mínima ou sua largura for menor que a mínima, o algoritmo cria uma linha centra para representar a pista de pouso e elimina o polígono da camada de polígonos original.
- A camada de output são as linhas criadas correspondentes às respectivas pistas de pouso.
-Obs.1: Os parâmetros de área e largura têm unidade de medida correspondente às unidades da camada de entrada. Assim, se a camada tem uma projeção métrica, os valores de largura e área serão recebidos pelo algoritmo em metros e metros quadrados, respectivamente.
-Obs.2: O valor default da suavização do 'simplify' corresponde a uma projeção geográfica (unidades em graus). Para um sistema de referência métrico, valor de suavização deve ser corrigido, sendo multiplicado por um valor na ordem de grandeza de 10^5.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>GeneralizeNetworkEdgesWithLengthAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeneralizationAlgs\generalizeNetworkEdgesFromLengthAlgorithm.py" line="69" />
@@ -12013,35 +11158,7 @@ Obs.2: O valor default da suavização do 'simplify' corresponde a uma projeçã
         <source>Generalization Algorithms</source>
         <translation>Algoritmos de Generalização</translation>
     </message>
-    <message>
-        <source>Camada de rodovias</source>
-        <translation type="vanished">Camada de rodovias</translation>
-    </message>
-    <message>
-        <source>Escala</source>
-        <translation type="vanished">Escala</translation>
-    </message>
-    <message>
-        <source>Área mínima para rotatórias na carta</source>
-        <translation type="vanished">Área mínima para rotatórias na carta</translation>
-    </message>
-    <message>
-        <source>Calculando tamanhos</source>
-        <translation type="vanished">Calculando tamanhos</translation>
-    </message>
-    <message>
-        <source>Generalizando</source>
-        <translation type="vanished">Generalizando</translation>
-    </message>
-    <message>
-        <source>Retornando</source>
-        <translation type="vanished">Retornando</translation>
-    </message>
-    <message>
-        <source>Generalizar Rotatórias</source>
-        <translation type="vanished">Generalizar Rotatórias</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>GeneralizeWaterBodyAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeneralizationAlgs\generalizeWaterBodyAlgorithm.py" line="82" />
@@ -12398,34 +11515,34 @@ Obs.2: O valor default da suavização do 'simplify' corresponde a uma projeçã
     </message>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeneralizationAlgs\generalizeWaterBodyAlgorithm.py" line="975" />
-        <source>Generaliza massas d'água, ilhas, trechos de drenagem e barragens.
-Flow types expression: Escolha os números relacionados aos rios que possuem fluxo na tabela de atributos. Exemplo: 'tipo in (1,2,9,10)'.
-Scale: Escolha a escala desejada. Exemplo: '50' para 50k.
-Minimum waterbody width tolerance: Escolha o comprimento mínimo da massa d'água em graus. Exemplo: '0,000008' para 0,8mm.
-Minimum waterbody area tolerance: Escolha a área mínima da massa d'água em graus quadrados. Exemplo: '0,0000000004' para 4mm².
-Minimum island area tolerance: Escolha a área mínima da ilha em graus quadrados. Exemplo: '0,0000000004' para 4mm².
-Minimum drainage line width tolerance: Escolha o comprimento mínimo do trecho de drenagem em graus. Exemplo: '0,000008' para 0,8mm.
-Select field from Drainage Lines to classify outside polygons: Escolha a coluna da tabela de atributos relacionada à situação da linha de drenagem dentro do polígono para alterá-la para fora do polígono.
-Value for outside polygon: Escolha ovalor númerico úmero relacionado à coluna escolhida anteriormente que se refere aos elementos fora do polígono.
-Value for secondary lines (inside polygons): Escolha o valor relacionado à coluna escolhida anteriormente que se refere aos elementos dentro dos polígonos (linhas de drenagem secundárias).
-Reference layer: Escolha a camada de referência para o plugin Generalize Network Edges With Length.
-Point constraint layers: Escolha as camadas relacionadas à restrição de pontos para o plugin Generalize Network Edges With Length.
-Line constraint layers: Escolha as camadas relacionadas à restrição de linhas para o plugin Generalize Network Edges With Length.
-Polygon constraint layers: Escolha as camadas relacionadas à restrição de polígonos para o plugin Generalize Network Edges With Length.</source>
+        <source>Generalizes water bodies, islands, drainage segments and dams.
+Flow types expression: Choose the numbers related to rivers that have flow in the attribute table. Example: 'tipo in (1,2,9,10)'.
+Scale: Choose the desired scale. Example: '50' for 50k.
+Minimum waterbody width tolerance: Choose the minimum water body length in degrees. Example: '0.000008' for 0.8mm.
+Minimum waterbody area tolerance: Choose the minimum water body area in square degrees. Example: '0.0000000004' for 4mm².
+Minimum island area tolerance: Choose the minimum island area in square degrees. Example: '0.0000000004' for 4mm².
+Minimum drainage line width tolerance: Choose the minimum drainage segment length in degrees. Example: '0.000008' for 0.8mm.
+Select field from Drainage Lines to classify outside polygons: Choose the attribute table column related to the drainage line situation inside the polygon to change it to outside the polygon.
+Value for outside polygon: Choose the numeric value related to the previously chosen column that refers to elements outside the polygon.
+Value for secondary lines (inside polygons): Choose the value related to the previously chosen column that refers to elements inside the polygons (secondary drainage lines).
+Reference layer: Choose the reference layer for the Generalize Network Edges With Length plugin.
+Point constraint layers: Choose the layers related to point constraints for the Generalize Network Edges With Length plugin.
+Line constraint layers: Choose the layers related to line constraints for the Generalize Network Edges With Length plugin.
+Polygon constraint layers: Choose the layers related to polygon constraints for the Generalize Network Edges With Length plugin.</source>
         <translation>Generaliza massas d'água, ilhas, trechos de drenagem e barragens.
-Flow types expression: Escolha os números relacionados aos rios que possuem fluxo na tabela de atributos. Exemplo: 'tipo in (1,2,9,10)'.
-Scale: Escolha a escala desejada. Exemplo: '50' para 50k.
-Minimum waterbody width tolerance: Escolha o comprimento mínimo da massa d'água em graus. Exemplo: '0,000008' para 0,8mm.
-Minimum waterbody area tolerance: Escolha a área mínima da massa d'água em graus quadrados. Exemplo: '0,0000000004' para 4mm².
-Minimum island area tolerance: Escolha a área mínima da ilha em graus quadrados. Exemplo: '0,0000000004' para 4mm².
-Minimum drainage line width tolerance: Escolha o comprimento mínimo do trecho de drenagem em graus. Exemplo: '0,000008' para 0,8mm.
-Select field from Drainage Lines to classify outside polygons: Escolha a coluna da tabela de atributos relacionada à situação da linha de drenagem dentro do polígono para alterá-la para fora do polígono.
-Value for outside polygon: Escolha ovalor númerico úmero relacionado à coluna escolhida anteriormente que se refere aos elementos fora do polígono.
-Value for secondary lines (inside polygons): Escolha o valor relacionado à coluna escolhida anteriormente que se refere aos elementos dentro dos polígonos (linhas de drenagem secundárias).
-Reference layer: Escolha a camada de referência para o plugin Generalize Network Edges With Length.
-Point constraint layers: Escolha as camadas relacionadas à restrição de pontos para o plugin Generalize Network Edges With Length.
-Line constraint layers: Escolha as camadas relacionadas à restrição de linhas para o plugin Generalize Network Edges With Length.
-Polygon constraint layers: Escolha as camadas relacionadas à restrição de polígonos para o plugin Generalize Network Edges With Length.</translation>
+Expressão de tipos de fluxo: Escolha os números relacionados aos rios que possuem fluxo na tabela de atributos. Exemplo: 'tipo in (1,2,9,10)'.
+Escala: Escolha a escala desejada. Exemplo: '50' para 50k.
+Tolerância mínima de largura do corpo d'água: Escolha o comprimento mínimo da massa d'água em graus. Exemplo: '0,000008' para 0,8mm.
+Tolerância mínima de área do corpo d'água: Escolha a área mínima da massa d'água em graus quadrados. Exemplo: '0,0000000004' para 4mm².
+Tolerância mínima de área da ilha: Escolha a área mínima da ilha em graus quadrados. Exemplo: '0,0000000004' para 4mm².
+Tolerância mínima de largura da linha de drenagem: Escolha o comprimento mínimo do trecho de drenagem em graus. Exemplo: '0,000008' para 0,8mm.
+Selecionar campo das linhas de drenagem para classificar polígonos externos: Escolha a coluna da tabela de atributos relacionada à situação da linha de drenagem dentro do polígono para alterá-la para fora do polígono.
+Valor para polígono externo: Escolha ovalor númerico úmero relacionado à coluna escolhida anteriormente que se refere aos elementos fora do polígono.
+Valor para linhas secundárias (dentro dos polígonos): Escolha o valor relacionado à coluna escolhida anteriormente que se refere aos elementos dentro dos polígonos (linhas de drenagem secundárias).
+Camada de referência: Escolha a camada de referência para o plugin Generalize Network Edges With Length.
+Camadas de restrição de ponto: Escolha as camadas relacionadas à restrição de pontos para o plugin Generalize Network Edges With Length.
+Camadas de restrição de linha: Escolha as camadas relacionadas à restrição de linhas para o plugin Generalize Network Edges With Length.
+Camadas de restrição de polígono: Escolha as camadas relacionadas à restrição de polígonos para o plugin Generalize Network Edges With Length.</translation>
     </message>
 </context><context>
     <name>GenericCompactPropertyManagerWidget</name>
@@ -12588,11 +11705,7 @@ Polygon constraint layers: Escolha as camadas relacionadas à restrição de pol
         <source>Error! Problem updating {0}</source>
         <translation>Erro! Falhas ao tentar atualizar {0}</translation>
     </message>
-    <message>
-        <source>Sucess!</source>
-        <translation type="vanished">Sucesso!</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>GenericDbManager</name>
     <message>
         <location filename="..\core\ServerManagementTools\genericDbManager.py" line="149" />
@@ -13001,53 +12114,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do QGIS
         <source>Uninstall Settings from Selected Databases</source>
         <translation>Desinstalar ajustes dos bancos selecionados</translation>
     </message>
-    <message>
-        <source>View Setting Perspective</source>
-        <translation type="vanished">Ver perspectiva do ajuste</translation>
-    </message>
-    <message>
-        <source> successfully imported.</source>
-        <translation type="vanished"> importado com sucesso.</translation>
-    </message>
-    <message>
-        <source>Error! Problem importing </source>
-        <translation type="vanished">Erro! Problema ao tentar importar </translation>
-    </message>
-    <message>
-        <source> successfully exported.</source>
-        <translation type="vanished"> exportado com sucesso.</translation>
-    </message>
-    <message>
-        <source>Error! Problem exporting </source>
-        <translation type="vanished">Erro! Problema ao tentar exportar </translation>
-    </message>
-    <message>
-        <source> on databases </source>
-        <translation type="vanished"> nos bancos </translation>
-    </message>
-    <message>
-        <source>
-Config with error:</source>
-        <translation type="vanished">
-Configuração com erro:</translation>
-    </message>
-    <message>
-        <source>Error for config </source>
-        <translation type="vanished">Erro para a configuração </translation>
-    </message>
-    <message>
-        <source>Do you really want to delete </source>
-        <translation type="vanished">Você realmente deseja apagar </translation>
-    </message>
-    <message>
-        <source>Do you really want to apply selected operation on </source>
-        <translation type="vanished">Você realmente deseja aplicar a operação selecionada em </translation>
-    </message>
-    <message>
-        <source> (Data may be lost in the process)</source>
-        <translation type="vanished"> (dados podem ser perdidos no processo)</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>GenericParameterSetter</name>
     <message>
         <location filename="..\gui\CustomWidgets\DatabasePropertiesWidgets\BasicPropertyWidgets\genericParameterSetter.py" line="65" />
@@ -13146,15 +12213,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>Not Selected Features</source>
         <translation>Feições não selecionadas</translation>
     </message>
-    <message>
-        <source>{cl.name()} (Memory Layer)</source>
-        <translation type="vanished">{cl.name()} (Camada em Memória)</translation>
-    </message>
-    <message>
-        <source>{0} from layer {1}</source>
-        <translation type="vanished">{0} da camada {1}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>GenericSelectionToolParametersAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\EnvironmentSetterAlgs\genericSelectionToolParametersAlgorithm.py" line="45" />
@@ -13182,6 +12241,11 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <location filename="..\core\GeometricTools\geometryHandler.py" line="700" />
         <source>Cannot infer directions for lines {0} and {1} (Right Angle)</source>
         <translation>Não foi possível inferir as direções das linhas {0} e {1} (ângulo reto)</translation>
+    </message>
+    <message>
+        <location filename="..\core\GeometricTools\geometryHandler.py" line="200" />
+        <source>Flipping feature</source>
+        <translation>Invertendo feição</translation>
     </message>
 </context><context>
     <name>GeopackageDb</name>
@@ -13419,23 +12483,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>QA Tools: Snap Processes</source>
         <translation>Ferramentas de QA: Processos de Ajuste</translation>
     </message>
-    <message>
-        <source>Snapping {referenceLayerName} to geographic boundary.</source>
-        <translation type="vanished">Ajustando {referenceLayerName} ao limite geográfico.</translation>
-    </message>
-    <message>
-        <source>Performing snap internally on {referenceLayerName}.</source>
-        <translation type="vanished">Realizando ajuste interno em {referenceLayerName}.</translation>
-    </message>
-    <message>
-        <source>Starting snapping with reference layer {referenceLayerName}.</source>
-        <translation type="vanished">Iniciando ajuste com camada de referência {referenceLayerName}.</translation>
-    </message>
-    <message>
-        <source>Updating changes on {lyrName}</source>
-        <translation type="vanished">Atualizando alterações em {lyrName}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>IdentifyAndFixInvalidGeometriesAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyAndFixInvalidGeometriesAlgorithm.py" line="66" />
@@ -13568,7 +12616,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyAttributeChangesInLines.py" line="343" />
-        <source>O algoritmo identifica se existe alguma mudança de atributos entre linhas nos campos escolhidos e dentro da tolerância para continuidade</source>
+        <source>The algorithm identifies whether there are any attribute changes between lines in the selected fields and within the continuity tolerance</source>
         <translation>O algoritmo identifica se existe alguma mudança de atributos entre linhas nos campos escolhidos e dentro da tolerância para continuidade</translation>
     </message>
 </context><context>
@@ -13610,19 +12658,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>QA Tools: Object Proximity and Relationships</source>
         <translation>Ferramentas de QA: Proximidade e Relacionamento de Objetos</translation>
     </message>
-    <message>
-        <source>with {lyrAPkFieldName}</source>
-        <translation type="vanished">com {lyrAPkFieldName}</translation>
-    </message>
-    <message>
-        <source>with {lyrBPkFieldName}</source>
-        <translation type="vanished">com {lyrBPkFieldName}</translation>
-    </message>
-    <message>
-        <source>Feature from layer {layerApre} with {idAText}={featA[lyrAPkFieldName]} has distance smaller than {distance} from feature from layer {layerBpre} with {idBText}={featB[lyrAPkFieldName]}</source>
-        <translation type="vanished">Feição da camada {layerApre} com {idAText}={featA[lyrAPkFieldName]} tem distância menor que {distance} da feição da camada {layerBpre} com {idBText}={featB[lyrAPkFieldName]}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>IdentifyCountourStreamIntersectionAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyCountourStreamIntersectionAlgorithm.py" line="56" />
@@ -13703,7 +12739,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyCrossingLinesAlgorithm.py" line="260" />
-        <source>Verifica linhas que se cruzam (descartado primeiro e último vértice da camada de entrada). Para camadas do tipo polígono, apenas as bordas dos polígonos são utilizadas para a comparação.</source>
+        <source>Checks for crossing lines (discarding the first and last vertex of the input layer). For polygon-type layers, only the polygon boundaries are used for comparison.</source>
         <translation>Verifica linhas que se cruzam (descartado primeiro e último vértice da camada de entrada). Para camadas do tipo polígono, apenas as bordas dos polígonos são utilizadas para a comparação.</translation>
     </message>
 </context><context>
@@ -14166,18 +13202,10 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyDrainageAndContourInconsistencies.py" line="599" />
-        <source>O algoritmo orderna ou direciona fluxo, como linhas de drenagem e confronta com as curvas de nível, verificando se as drenagens estão correndo de montante para jusante.</source>
+        <source>The algorithm orders or directs flow, such as drainage lines, and compares them against contour lines, verifying whether the drainages are flowing from upstream to downstream.</source>
         <translation>O algoritmo orderna ou direciona fluxo, como linhas de drenagem e confronta com as curvas de nível, verificando se as drenagens estão correndo de montante para jusante.</translation>
     </message>
-    <message>
-        <source>Drainage flow issue: All drainage lines are flowing {t}.</source>
-        <translation type="vanished">Problema de fluxo: Todas as linhas de drenagem estão fluindo para {t}.</translation>
-    </message>
-    <message>
-        <source>Drainage encounter with different known height values: {h1} and {h2}.</source>
-        <translation type="vanished">Confluência de drenagens com diferentes cotas conhecidas: {h1} e {h2}.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>IdentifyDrainageAngleIssues</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyDrainageAngleIssues.py" line="47" />
@@ -14431,23 +13459,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>QA Tools: Drainage Flow Processes</source>
         <translation>Ferramentas de QA: Processos de Fluxo de Drenagem</translation>
     </message>
-    <message>
-        <source>Invalid intersection between {pointStr} feature and {polygonStr} feature.</source>
-        <translation type="vanished">Interseção inválida entre feição {pointStr} e feição {polygonStr}.</translation>
-    </message>
-    <message>
-        <source>Validating drainages with {waterBodyName}</source>
-        <translation type="vanished">Validando drenagens com {waterBodyName}</translation>
-    </message>
-    <message>
-        <source>Invalid intersection of drainage and {waterBodyName}.</source>
-        <translation type="vanished">Interseção inválida de drenagem e {waterBodyName}.</translation>
-    </message>
-    <message>
-        <source>Invalid flow on polygon of {waterBodyName}</source>
-        <translation type="vanished">Fluxo inválido no polígono de {waterBodyName}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>IdentifyDrainageLoops</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyDrainageLoops.py" line="55" />
@@ -14567,15 +13579,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>QA Tools: Drainage Flow Processes</source>
         <translation>Ferramentas de QA: Processos de Fluxo de Drenagem</translation>
     </message>
-    <message>
-        <source>Features outside water body with attribute inside water body ({polygonRelationshipAttribute} != {outsidePolygonValue}).</source>
-        <translation type="vanished">Feições fora do corpo d'água com atributo dentro do corpo d'água ({polygonRelationshipAttribute} != {outsidePolygonValue}).</translation>
-    </message>
-    <message>
-        <source>Features inside water body with attribute inside water body ({polygonRelationshipAttribute} = {outsidePolygonValue}).</source>
-        <translation type="vanished">Feições dentro do corpo d'água com atributo dentro do corpo d'água ({polygonRelationshipAttribute} = {outsidePolygonValue}).</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>IdentifyDuplicatedFeaturesAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyDuplicatedFeaturesAlgorithm.py" line="55" />
@@ -14854,11 +13858,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>QA Tools: Terrain Processes</source>
         <translation>Ferramentas de QA: Processos de Terreno</translation>
     </message>
-    <message>
-        <source>Contour with height {feat[heightFieldName]} has invalid index (attributes: {attrDict})</source>
-        <translation type="vanished">Curva com cota {feat[heightFieldName]} possui índice inválido (atributos: {attrDict})</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>IdentifyGapsAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyGapsAlgorithm.py" line="53" />
@@ -15063,7 +14063,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyIntertwinedLinesAlgorithm.py" line="253" />
-        <source>Verifica linhas entrelaçadas: linhas que se cruzam mais vezes que a tolerância. Retorna os pontos de interseção.</source>
+        <source>Checks for intertwined lines: lines that cross each other more times than the tolerance. Returns the intersection points.</source>
         <translation>Verifica linhas entrelaçadas: linhas que se cruzam mais vezes que a tolerância. Retorna os pontos de interseção.</translation>
     </message>
 </context><context>
@@ -15776,11 +14776,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>QA Tools: Basic Geometry Construction Issues Handling</source>
         <translation>Ferramentas de QA: Tratamento de Problemas Básicos de Construção de Geometria</translation>
     </message>
-    <message>
-        <source>Iterating over {nFeats} segments...</source>
-        <translation type="vanished">Iterando sobre {nFeats} segmentos...</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>IdentifyOverlapsAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyOverlapsAlgorithm.py" line="66" />
@@ -16070,11 +15066,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>QA Tools: Small Object Handling</source>
         <translation>Ferramentas de QA: Tratamento de pequenos objetos</translation>
     </message>
-    <message>
-        <source>First order dangle on {inputLyr.name()} smaller than {minLength}</source>
-        <translation type="vanished">Ponta solta de primeira ordem na camada {inputLyr.name()} menor que {minLength}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>IdentifySmallHolesAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifySmallHolesAlgorithm.py" line="54" />
@@ -16111,11 +15103,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>QA Tools: Small Object Handling</source>
         <translation>Ferramentas de QA: Tratamento de Pequenos Objetos</translation>
     </message>
-    <message>
-        <source>Holes smaller than {str(maxSize)} were not found</source>
-        <translation type="vanished">Buracos menores que {str(maxSize)} não foram encontrados</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>IdentifySmallLinesAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifySmallLinesAlgorithm.py" line="57" />
@@ -16313,11 +15301,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>QA Tools: Terrain Processes</source>
         <translation>Ferramentas de QA: Processos de Terreno</translation>
     </message>
-    <message>
-        <source>Identification of region {current+1}/{nRegions} is done.</source>
-        <translation type="vanished">Identificação da região {current+1}/{nRegions} concluída.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>IdentifyUncoveredStartAndEndPointsAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyUncoveredStartAndEndPointsAlgorithm.py" line="59" />
@@ -16369,11 +15353,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>QA Tools: Object Proximity and Relationships</source>
         <translation>Ferramentas de QA: Proximidade e Relacionamentos de Objetos</translation>
     </message>
-    <message>
-        <source>Feature (id={featid}) from layer {inputLyr.name()} with uncovered start/end point.</source>
-        <translation type="vanished">Feição (id={featid}) da camada {inputLyr.name()} com ponto inicial/final não coberto.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>IdentifyUnmergedLinesWithSameAttributeSetAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyUnmergedLinesWithSameAttributeSetAlgorithm.py" line="68" />
@@ -16757,8 +15737,8 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\identifyWaterBodyAndContourInconsistencies.py" line="269" />
-        <source>O algoritmo confronta massas d'água com as curvas de nível, verificando se uma curva intersecta mais de uma vez uma curva de nível.</source>
-        <translation>O algoritmo confronta massas d'água com as curvas de nível, verificando se há inconsistências topológicas.</translation>
+        <source>The algorithm compares water bodies against contour lines, checking whether a contour intersects a water body more than once.</source>
+        <translation>O algoritmo confronta massas d'água com as curvas de nível, verificando se uma curva intersecta mais de uma vez uma curva de nível.</translation>
     </message>
 </context><context>
     <name>IdentifyWrongBuildingAnglesAlgorithm</name>
@@ -17291,22 +16271,26 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <translation>DsgTools adicionando vértices ausentes</translation>
     </message>
     <message>
-        <source>Building {lyr.name()} input dict</source>
-        <translation type="vanished">Construindo dicionário de entrada de {lyr.name()}</translation>
+        <location filename="..\core\GeometricTools\layerHandler.py" line="494" />
+        <source>Updating layer {0}</source>
+        <translation>Atualizando camada {0}</translation>
     </message>
     <message>
-        <source>Populating {lyr.name()} input dict</source>
-        <translation type="vanished">Populando dicionário de entrada de {lyr.name()}</translation>
+        <location filename="..\core\GeometricTools\layerHandler.py" line="1067" />
+        <source>Filter dangles</source>
+        <translation>Filtrar pontas soltas</translation>
     </message>
     <message>
-        <source>Updating {lyr.name()} features</source>
-        <translation type="vanished">Atualizando feições de {lyr.name()}</translation>
+        <location filename="..\core\GeometricTools\layerHandler.py" line="1216" />
+        <source>Snapping Features</source>
+        <translation>Ajustando feições</translation>
     </message>
     <message>
-        <source>Evaluated {current}/{nSteps} results.</source>
-        <translation type="vanished">Avaliados {current}/{nSteps} resultados.</translation>
+        <location filename="..\core\GeometricTools\layerHandler.py" line="1522" />
+        <source>Fixing geometries</source>
+        <translation>Corrigindo geometrias</translation>
     </message>
-</context><context>
+    </context><context>
     <name>LayerToolsGuiManager</name>
     <message>
         <location filename="..\gui\LayerTools\layerToolsGuiManager.py" line="41" />
@@ -17350,11 +16334,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <source>The algorithm converts touching lines to multiline</source>
         <translation>O algoritmo converte linhas que se tocam para multilinha</translation>
     </message>
-    <message>
-        <source>O algoritmo converte linhas que se tocam para multilinha</source>
-        <translation type="vanished">O algoritmo converte linhas que se tocam para multilinha</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>LineOnAreaOverlayerAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeometricAlgs\lineOnAreaOverlayer.py" line="55" />
@@ -18111,11 +17091,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <source>This algorithm loads shapefiles from folders. If a folder with subfolders is selected, one extra node is created for each subfolder</source>
         <translation>Este algoritmo carrega shapefiles a partir de pastas. Se uma pasta com subpastas for selecionada, um nó extra é criado para cada subpasta</translation>
     </message>
-    <message>
-        <source>Pasta com Shapefiles</source>
-        <translation type="vanished">Pasta com shapefiles</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>LoadThemesAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\LayerManagementAlgs\loadThemesAlgorithm.py" line="58" />
@@ -19149,6 +18125,26 @@ O processo pode ser cancelado a qualquer momento usando o botão Cancelar na jan
         <source>SIZES</source>
         <translation>TAMANHOS</translation>
     </message>
+    <message>
+        <source>25mm²</source>
+        <translation>25mm²</translation>
+    </message>
+    <message>
+        <source>4mm²</source>
+        <translation>4mm²</translation>
+    </message>
+    <message>
+        <source>0.8x0.8mm²</source>
+        <translation>0,8x0,8mm²</translation>
+    </message>
+    <message>
+        <source>1x1mm²</source>
+        <translation>1x1mm²</translation>
+    </message>
+    <message>
+        <source>0.8mm</source>
+        <translation>0,8mm</translation>
+    </message>
 </context><context>
     <name>ModelsAndScriptsInstaller</name>
     <message>
@@ -19158,11 +18154,7 @@ O processo pode ser cancelado a qualquer momento usando o botão Cancelar na jan
         <translation>Erro ao copiar arquivo: {0}
 {1}</translation>
     </message>
-    <message>
-        <source>Error copying file: </source>
-        <translation type="vanished">Erro copiando arquivo: </translation>
-    </message>
-</context><context>
+    </context><context>
     <name>MultiGeopackageSelectorWidget</name>
     <message>
         <location filename="..\gui\CustomWidgets\DatabaseConversionWidgets\MultiDsSelectorWidgets\SupportedDrivers\multiGeopackageSelectorWidget.py" line="66" />
@@ -19221,15 +18213,7 @@ O processo pode ser cancelado a qualquer momento usando o botão Cancelar na jan
         <source>Select the center point layers</source>
         <translation>Selecione as camadas de pontos centrais</translation>
     </message>
-    <message>
-        <source>{field.name()}</source>
-        <translation type="vanished">{field.name()}</translation>
-    </message>
-    <message>
-        <source>Camada</source>
-        <translation type="vanished">Camada</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>MultiNewDsSelector</name>
     <message>
         <location filename="..\gui\CustomWidgets\DatabaseConversionWidgets\MultiDsSelectorWidgets\SupportedDrivers\multiNewDsSelector.py" line="81" />
@@ -19703,14 +18687,31 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation>Linhas inválidas expostas na camada de flags do tipo linha.</translation>
     </message>
     <message>
-        <source>{0} nodes may be invalid ({1:.2f}% of network is well directed). Check flags.</source>
-        <translation type="vanished">{0} nós podem estar inválidos ({1:.2f}%) da rede está direcionada corretamente). Verifique as flags.</translation>
+        <location filename="..\core\GeometricTools\networkHandler.py" line="826" />
+        <source>Clear Nodes</source>
+        <translation>Limpar nós</translation>
     </message>
     <message>
-        <source>{1:.2f}% of network is well directed.</source>
-        <translation type="vanished">{1:.2f}%) da rede está direcionada corretamente.</translation>
+        <location filename="..\core\GeometricTools\networkHandler.py" line="846" />
+        <source>Create Nodes</source>
+        <translation>Criar nós</translation>
     </message>
-</context><context>
+    <message>
+        <location filename="..\core\GeometricTools\networkHandler.py" line="1908" />
+        <source>Clear Invalid Lines</source>
+        <translation>Limpar linhas inválidas</translation>
+    </message>
+    <message>
+        <location filename="..\core\GeometricTools\networkHandler.py" line="2049" />
+        <source>Reclassify Nodes</source>
+        <translation>Reclassificar nós</translation>
+    </message>
+    <message>
+        <location filename="..\core\GeometricTools\networkHandler.py" line="2050" />
+        <source>Flip/Merge Lines</source>
+        <translation>Inverter/Mesclar linhas</translation>
+    </message>
+    </context><context>
     <name>NewAttributeWidget</name>
     <message>
         <location filename="..\gui\CustomWidgets\CustomDbManagementWidgets\newAttributeWidget.py" line="89" />
@@ -20093,19 +19094,7 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <source>Geometric Algorithms</source>
         <translation>Algoritmos Geométricos</translation>
     </message>
-    <message>
-        <source>Insira a camada de polígonos</source>
-        <translation type="vanished">Insira a camada de polígonos</translation>
-    </message>
-    <message>
-        <source>Indique a direção de numeração:</source>
-        <translation type="vanished">Indique a direção de numeração:</translation>
-    </message>
-    <message>
-        <source>Insira o nome do atributo de ordenamento</source>
-        <translation type="vanished">Insira o nome do atributo de ordenamento</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>Options</name>
     <message>
         <location filename="..\gui\AboutAndFurtherInfo\Options\options.py" line="93" />
@@ -20340,13 +19329,7 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <source>Move down</source>
         <translation>Descer</translation>
     </message>
-    <message>
-        <source>Error for rule #{0}:
-</source>
-        <translation type="vanished">Erro para a regra #{0}:
-</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>OrderedTableWidget</name>
     <message>
         <location filename="..\gui\CustomWidgets\OrderedPropertyWidgets\orderedTableWidget.py" line="208" />
@@ -20631,6 +19614,18 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <source>Data Quality</source>
         <translation>Qualidade de Dados</translation>
     </message>
+    <message>
+        <source>MEAN: {mean}</source>
+        <translation>MÉDIA: {mean}</translation>
+    </message>
+    <message>
+        <source>RMS: {rms}</source>
+        <translation>RMS: {rms}</translation>
+    </message>
+    <message>
+        <source>PERC: {perc}</source>
+        <translation>PERC: {perc}</translation>
+    </message>
 </context><context>
     <name>PermissionManager</name>
     <message>
@@ -20867,35 +19862,7 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <source>Manage Profiles</source>
         <translation>Gerenciar perfis</translation>
     </message>
-    <message>
-        <source>View User Perspective</source>
-        <translation type="vanished">Ver perspectiva do usuário</translation>
-    </message>
-    <message>
-        <source>Revoke for user </source>
-        <translation type="vanished">Revogar para o usuário </translation>
-    </message>
-    <message>
-        <source> on profile </source>
-        <translation type="vanished"> no perfil </translation>
-    </message>
-    <message>
-        <source> of database </source>
-        <translation type="vanished"> do banco </translation>
-    </message>
-    <message>
-        <source> complete.</source>
-        <translation type="vanished"> completo.</translation>
-    </message>
-    <message>
-        <source>Error! Problem importing permission: </source>
-        <translation type="vanished">Erro! Problema ao tentar importar permissão: </translation>
-    </message>
-    <message>
-        <source>Error! Problem exporting permission: </source>
-        <translation type="vanished">Erro! Problema ao tentar exportar permissão: </translation>
-    </message>
-</context><context>
+    </context><context>
     <name>PermissionWizard</name>
     <message>
         <location filename="..\gui\DatabaseTools\UserTools\PermissionManagerWizard\permissionWizard.py" line="52" />
@@ -20945,15 +19912,7 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <source>Not possible to digitise, segment smaller than minimum distance.</source>
         <translation>Não é possível digitalizar, segmento menor que a distância mínima.</translation>
     </message>
-    <message>
-        <source>Not possible to digitise, segment smaller than minimun distance.</source>
-        <translation type="vanished">Não foi possível adquirir o nó: distância menor que a tolerância.</translation>
-    </message>
-    <message>
-        <source>Not possible to digitize, segment smaller than minimun distance.</source>
-        <translation type="vanished">Não é possível digitalizar, segmento menor que a distância mínima.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>PolygonTilerAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeometricAlgs\polygonTiler.py" line="84" />
@@ -21075,31 +20034,7 @@ Ambas as dimensões suportam expressões para cálculo dinâmico baseado em atri
         <source>Feature {0}: Creating {1}x{2} grid tiles</source>
         <translation>Feição {0}: Criando {1}x{2} células da grade</translation>
     </message>
-    <message>
-        <source>Number of rows</source>
-        <translation type="vanished">Número de linhas</translation>
-    </message>
-    <message>
-        <source>Number of columns</source>
-        <translation type="vanished">Número de colunas</translation>
-    </message>
-    <message>
-        <source>Skipping feature %1 - not a valid polygon</source>
-        <translation type="vanished">Ignorando feição %1 - não é um polígono válido</translation>
-    </message>
-    <message>
-        <source>Warning: Very small cell size for feature %1. Consider using fewer rows/columns.</source>
-        <translation type="vanished">Aviso: Tamanho de célula muito pequeno para a feição %1. Considere usar menos linhas/colunas.</translation>
-    </message>
-    <message>
-        <source>Created %1 tiles from %2 input features</source>
-        <translation type="vanished">%1 células criadas a partir de %2 feições de entrada</translation>
-    </message>
-    <message>
-        <source>This algorithm splits input polygons into a grid of the specified number of rows and columns.</source>
-        <translation type="vanished">Este algoritmo divide polígonos em uma grade com o número especificado de linhas e colunas.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>PostGISLayerLoader</name>
     <message>
         <location filename="..\core\Factories\LayerLoaderFactory\postgisLayerLoader.py" line="205" />
@@ -21585,7 +20520,7 @@ Ambas as dimensões suportam expressões para cálculo dinâmico baseado em atri
     <message>
         <location filename="..\core\Factories\DbFactory\postgisDb.py" line="3228" />
         <source>Problem getting getDomainDictFromDomainTable from table {table_name}:{query_error}</source>
-        <translation>Problema ao obter getDomainDictFromDomainTable from table {table_name}:{query_error}</translation>
+        <translation>Problema ao obter getDomainDictFromDomainTable da tabela {table_name}:{query_error}</translation>
     </message>
     <message>
         <location filename="..\core\Factories\DbFactory\postgisDb.py" line="3265" />
@@ -21941,24 +20876,7 @@ Ambas as dimensões suportam expressões para cálculo dinâmico baseado em atri
         <source>Problem getting domain json list: </source>
         <translation>Problemas ao tentar ler lista de JSON de domínios: </translation>
     </message>
-    <message>
-        <source>Error parsing check constraint!
-:</source>
-        <translation type="vanished">Erro ao decodificar o check constraint! :</translation>
-    </message>
-    <message>
-        <source>Problem creating temp table {}: </source>
-        <translation type="vanished">Problema criando tabela temporária {}: </translation>
-    </message>
-    <message>
-        <source>Problem creating spatial index on temp table {}: </source>
-        <translation type="vanished">Problema criando índice espacial na tabela temporária {}: </translation>
-    </message>
-    <message>
-        <source>Problem dropping temp table {}: </source>
-        <translation type="vanished">Problema ao apagar a tabela temporária {}: </translation>
-    </message>
-</context><context>
+    </context><context>
     <name>PostgisDbMessages</name>
     <message>
         <location filename="..\core\Factories\ThreadFactory\postgisDbThread.py" line="52" />
@@ -22040,15 +20958,7 @@ Ambas as dimensões suportam expressões para cálculo dinâmico baseado em atri
         <source>The algorithm unzips the inputs and builds the seamlines files with necessary information.</source>
         <translation>O algoritmo descompacta as entradas e constroi os arquivos de seamlines com as informacoes necessarias.</translation>
     </message>
-    <message>
-        <source>Pasta com os arquivos no formato zip</source>
-        <translation type="vanished">Pasta com os arquivos no formato zip</translation>
-    </message>
-    <message>
-        <source>Pasta para salvar os arquivos exportados</source>
-        <translation type="vanished">Pasta para salvar os arquivos exportados</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ProcessManager</name>
     <message>
         <location filename="..\gui\Misc\ProcessingTools\processManager.py" line="104" />
@@ -22270,23 +21180,7 @@ Ambas as dimensões suportam expressões para cálculo dinâmico baseado em atri
         <translation>Problema ao excluir perfil!
 {0}</translation>
     </message>
-    <message>
-        <source>Do you really want to remove profile </source>
-        <translation type="vanished">Você realmente deseja remover o perfil </translation>
-    </message>
-    <message>
-        <source>Problem saving file!
-</source>
-        <translation type="vanished">Problema ao salvar arquivo!
-</translation>
-    </message>
-    <message>
-        <source>Problem deleting profile!
-</source>
-        <translation type="vanished">Problema ao excluir perfil!
-</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ProfileUserManager</name>
     <message>
         <location filename="..\gui\DatabaseTools\UserTools\profileUserManager.py" line="66" />
@@ -22344,30 +21238,12 @@ Mensagens de erro para cada usuário foram registradas no log do QGIS.</translat
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
-    <message>
-        <source>Manage user permissions to profile </source>
-        <translation type="vanished">Gerenciar permissões de usuário do perfil </translation>
-    </message>
-    <message>
-        <source> on database </source>
-        <translation type="vanished"> no banco </translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ProgressWidget</name>
     <message>
         <location filename="..\gui\CustomWidgets\BasicInterfaceWidgets\progressWidget.py" line="50" />
         <source>INFO: </source>
         <translation>INFO: </translation>
-    </message>
-</context><context>
-    <name>QCoreApplication.self</name>
-    <message>
-        <source>Attribute Rules Set</source>
-        <translation type="vanished">Conjunto de regras de atributo</translation>
-    </message>
-    <message>
-        <source>Set of attribute rules. Used on Attribute Rules Checker.</source>
-        <translation type="vanished">Conjunto de regras de atributo. Usado no verificador de regras.</translation>
     </message>
 </context><context>
     <name>QgisCtrl</name>
@@ -22541,6 +21417,68 @@ Mensagens de erro para cada usuário foram registradas no log do QGIS.</translat
 {}</source>
         <translation>Erro ao clipar raster: {}
 {}</translation>
+    </message>
+    <message>
+        <source>Output file {0} is locked or in use</source>
+        <translation>Arquivo de saída {0} está bloqueado ou em uso</translation>
+    </message>
+    <message>
+        <source>No write permission in directory {0}</source>
+        <translation>Sem permissão de escrita no diretório {0}</translation>
+    </message>
+    <message>
+        <source>Input raster or dataset is None</source>
+        <translation>Raster ou dataset de entrada é None</translation>
+    </message>
+    <message>
+        <source>Invalid array shape: {0}</source>
+        <translation>Formato de array inválido: {0}</translation>
+    </message>
+    <message>
+        <source>Failed to get GTiff driver</source>
+        <translation>Falha ao obter driver GTiff</translation>
+    </message>
+    <message>
+        <source>MEM driver not available</source>
+        <translation>Driver MEM não disponível</translation>
+    </message>
+    <message>
+        <source>Failed to write raster:
+{0}
+{1}</source>
+        <translation>Falha ao escrever raster:
+{0}
+{1}</translation>
+    </message>
+    <message>
+        <source>bbox and pixelSize are required when width/height/transform are not provided</source>
+        <translation>bbox e pixelSize são obrigatórios quando width/height/transform não são fornecidos</translation>
+    </message>
+    <message>
+        <source>Invalid raster dimensions: {0}x{1}</source>
+        <translation>Dimensões de raster inválidas: {0}x{1}</translation>
+    </message>
+    <message>
+        <source>No valid geometry found for rasterization</source>
+        <translation>Nenhuma geometria válida encontrada para rasterização</translation>
+    </message>
+    <message>
+        <source>Error rasterizing polygons: {0}
+{1}</source>
+        <translation>Erro ao rasterizar polígonos: {0}
+{1}</translation>
+    </message>
+    <message>
+        <source>The 'rasterio' library is not installed.</source>
+        <translation>A biblioteca 'rasterio' não está instalada.</translation>
+    </message>
+    <message>
+        <source>The 'rasterio' library is not installed. Install it with: pip install rasterio</source>
+        <translation>A biblioteca 'rasterio' não está instalada. Instale com: pip install rasterio</translation>
+    </message>
+    <message>
+        <source>Different dimensions: {0} vs {1}</source>
+        <translation>Dimensões diferentes: {0} vs {1}</translation>
     </message>
 </context><context>
     <name>RasterRemapAlgorithm</name>
@@ -23170,6 +22108,18 @@ Soluções:
         <source>Full traceback:</source>
         <translation>Rastreamento completo:</translation>
     </message>
+    <message>
+        <location filename="..\core\DSGToolsProcessingAlgs\Algs\RasterAlgs\rasterRemapAlgorithm.py" line="0" />
+        <source>GDAL: %s
+</source>
+        <translation>GDAL: %s
+</translation>
+    </message>
+    <message>
+        <location filename="..\core\DSGToolsProcessingAlgs\Algs\RasterAlgs\rasterRemapAlgorithm.py" line="0" />
+        <source>%s: %s</source>
+        <translation>%s: %s</translation>
+    </message>
 </context><context>
     <name>RasterizePolygonsWithBufferAlgorithm</name>
     <message>
@@ -23579,79 +22529,7 @@ As regras padrão são pré-configuradas para cobertura da terra brasileira (cob
         <source>Reclassifies small polygons in a land cover dataset to the class of the adjacent neighbor with the longest shared boundary.</source>
         <translation>Reclassifica polígonos pequenos em um conjunto de dados de cobertura da terra para a classe do vizinho adjacente com o maior limite compartilhado.</translation>
     </message>
-    <message>
-        <source>Input Polygon Layer</source>
-        <translation type="vanished">Camada de Polígonos de Entrada</translation>
-    </message>
-    <message>
-        <source>Process only selected features</source>
-        <translation type="vanished">Processar apenas feições selecionadas</translation>
-    </message>
-    <message>
-        <source>Class label field on input polygons</source>
-        <translation type="vanished">Campo de rótulo de classe nos polígonos de entrada</translation>
-    </message>
-    <message>
-        <source>Filter expression for input</source>
-        <translation type="vanished">Expressão da camada de entrada</translation>
-    </message>
-    <message>
-        <source>Label order</source>
-        <translation type="vanished">Ordem dos rótulos</translation>
-    </message>
-    <message>
-        <source>Dissolve Output</source>
-        <translation type="vanished">Dissolver Saída</translation>
-    </message>
-    <message>
-        <source>Fields to consider on dissolve</source>
-        <translation type="vanished">Campos a considerar na dissolução</translation>
-    </message>
-    <message>
-        <source>Output</source>
-        <translation type="vanished">Saída</translation>
-    </message>
-    <message>
-        <source>Creating cache layer</source>
-        <translation type="vanished">Criando camada de cache</translation>
-    </message>
-    <message>
-        <source>Creating spatial index on cache</source>
-        <translation type="vanished">Criando índice espacial no cache</translation>
-    </message>
-    <message>
-        <source>Building aux structures</source>
-        <translation type="vanished">Construindo estruturas auxiliares</translation>
-    </message>
-    <message>
-        <source>Performing reclassification</source>
-        <translation type="vanished">Realizando reclassificação</translation>
-    </message>
-    <message>
-        <source>Changing attributes from cache</source>
-        <translation type="vanished">Alterando atributos do cache</translation>
-    </message>
-    <message>
-        <source>Dissolving Polygons</source>
-        <translation type="vanished">Dissolvendo Polígonos</translation>
-    </message>
-    <message>
-        <source>Building Outputs</source>
-        <translation type="vanished">Construindo Saídas</translation>
-    </message>
-    <message>
-        <source>Starting the processess of building graph using parallel computing. Evaluating {nFeats:n} features.</source>
-        <translation type="vanished">Iniciando o processo de construção do grafo usando computação paralela. Avaliando {nFeats:n} feições.</translation>
-    </message>
-    <message>
-        <source>Evaluated {candidateCount:n} / {nFeats:n} features.</source>
-        <translation type="vanished">Avaliadas {candidateCount:n} / {nFeats:n} feições.</translation>
-    </message>
-    <message>
-        <source>{nFeats:n} evaluated. Found {candidateCount:n} candidates to evaluate in next step.</source>
-        <translation type="vanished">{nFeats:n} avaliadas. Encontrados {candidateCount:n} candidatos para avaliar na próxima etapa.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ReclassifyDialog</name>
     <message>
         <location filename="..\Modules\acquisitionMenu\widgets\reclassifyDialog.py" line="52" />
@@ -23827,245 +22705,7 @@ Gravando raster de saída final</translation>
         <source>Generalization Algorithms</source>
         <translation>Algoritmos de Generalização</translation>
     </message>
-    <message>
-        <source>Minimun area to process. If feature's area is smaller than this value, the feature will not be split, but only reclassified to the nearest neighbour. Area in meters.</source>
-        <translation type="vanished">Área mínima para processamento. Se a área da feição for menor que este valor, a feição não será dividida, apenas reclassificada para o vizinho mais próximo. Área em metros.</translation>
-    </message>
-    <message>
-        <source>Running initial polygonize</source>
-        <translation type="vanished">Executando poligonização inicial</translation>
-    </message>
-    <message>
-        <source>Reading input numpy array</source>
-        <translation type="vanished">Lendo array numpy de entrada</translation>
-    </message>
-    <message>
-        <source>Masking for each polygon</source>
-        <translation type="vanished">Mascarando para cada polígono</translation>
-    </message>
-    <message>
-        <source>Writing output</source>
-        <translation type="vanished">Escrevendo saída</translation>
-    </message>
-    <message>
-        <source>Evaluating remaining polygons</source>
-        <translation type="vanished">Avaliando polígonos restantes</translation>
-    </message>
-    <message>
-        <source>Evaluating {remainingFeatCount} groups of remaining pixels</source>
-        <translation type="vanished">Avaliando {remainingFeatCount} grupos de pixels restantes</translation>
-    </message>
-</context><context>
-    <name>ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2</name>
-    <message>
-        <source>Input Single Band Image</source>
-        <translation type="vanished">Imagem de Banda Única de Entrada</translation>
-    </message>
-    <message>
-        <source>Minimun area to process. If feature's area is smaller than this value, the feature will not be split, but only reclassified to the nearest neighbour. Area in meters.</source>
-        <translation type="vanished">Área mínima para processamento. Se a área da feição for menor que este valor, a feição não será dividida, apenas reclassificada para o vizinho mais próximo. Área em metros.</translation>
-    </message>
-    <message>
-        <source>NODATA pixel value</source>
-        <translation type="vanished">Valor de pixel NODATA</translation>
-    </message>
-    <message>
-        <source>Use multithreading</source>
-        <translation type="vanished">Usar multithreading</translation>
-    </message>
-    <message>
-        <source>Output Raster</source>
-        <translation type="vanished">Raster de Saída</translation>
-    </message>
-    <message>
-        <source>This algorithm requires scipy. Please install this library and try again.</source>
-        <translation type="vanished">Este algoritmo requer scipy. Por favor, instale esta biblioteca e tente novamente.</translation>
-    </message>
-    <message>
-        <source>This algorithm requires networkx. Please install this library and try again.</source>
-        <translation type="vanished">Este algoritmo requer networkx. Por favor, instale esta biblioteca e tente novamente.</translation>
-    </message>
-    <message>
-        <source>Running initial polygonize</source>
-        <translation type="vanished">Executando poligonização inicial</translation>
-    </message>
-    <message>
-        <source>Reading input numpy array</source>
-        <translation type="vanished">Lendo array numpy de entrada</translation>
-    </message>
-    <message>
-        <source>Masking for each polygon</source>
-        <translation type="vanished">Mascarando para cada polígono</translation>
-    </message>
-    <message>
-        <source>Writing output</source>
-        <translation type="vanished">Escrevendo saída</translation>
-    </message>
-    <message>
-        <source>Evaluating remaining polygons</source>
-        <translation type="vanished">Avaliando polígonos restantes</translation>
-    </message>
-    <message>
-        <source>Evaluating {remainingFeatCount} groups of remaining pixels</source>
-        <translation type="vanished">Avaliando {remainingFeatCount} grupos de pixels restantes</translation>
-    </message>
-    <message>
-        <source>Reclassify Groups of Pixels to Nearest Neighbor Algorithm V2</source>
-        <translation type="vanished">Algoritmo de Reclassificação de Grupos de Pixels pelo Vizinho Mais Próximo V2</translation>
-    </message>
-    <message>
-        <source>Generalization Algorithms</source>
-        <translation type="vanished">Algoritmos de Generalização</translation>
-    </message>
-</context><context>
-    <name>ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3</name>
-    <message>
-        <source>Input Single Band Image</source>
-        <translation type="vanished">Imagem de Banda Única de Entrada</translation>
-    </message>
-    <message>
-        <source>Minimun area to process. If feature's area is smaller than this value, the feature will not be split, but only reclassified to the nearest neighbour. Area in meters.</source>
-        <translation type="vanished">Área mínima para processamento. Se a área da feição for menor que este valor, a feição não será dividida, apenas reclassificada para o vizinho mais próximo. Área em metros.</translation>
-    </message>
-    <message>
-        <source>NODATA pixel value</source>
-        <translation type="vanished">Valor de pixel NODATA</translation>
-    </message>
-    <message>
-        <source>Output Raster</source>
-        <translation type="vanished">Raster de Saída</translation>
-    </message>
-    <message>
-        <source>Reclassified groups of pixels (Optional)</source>
-        <translation type="vanished">Grupos de pixels reclassificados (Opcional)</translation>
-    </message>
-    <message>
-        <source>This algorithm requires the Python scipy library. Please install this library and try again.</source>
-        <translation type="vanished">Este algoritmo requer a biblioteca Python scipy. Por favor, instale esta biblioteca e tente novamente.</translation>
-    </message>
-    <message>
-        <source>This algorithm requires networkx. Please install this library and try again.</source>
-        <translation type="vanished">Este algoritmo requer networkx. Por favor, instale esta biblioteca e tente novamente.</translation>
-    </message>
-    <message>
-        <source>Running initial polygonize</source>
-        <translation type="vanished">Executando poligonização inicial</translation>
-    </message>
-    <message>
-        <source>Reading input numpy array</source>
-        <translation type="vanished">Lendo array numpy de entrada</translation>
-    </message>
-    <message>
-        <source>Masking for each polygon</source>
-        <translation type="vanished">Mascarando para cada polígono</translation>
-    </message>
-    <message>
-        <source>Writing output</source>
-        <translation type="vanished">Escrevendo saída</translation>
-    </message>
-    <message>
-        <source>Evaluating remaining polygons:</source>
-        <translation type="vanished">Avaliando polígonos restantes:</translation>
-    </message>
-    <message>
-        <source>Evaluating remaining polygons: Loop {nIterations+1}</source>
-        <translation type="vanished">Avaliando polígonos restantes: Iteração {nIterations+1}</translation>
-    </message>
-    <message>
-        <source>Evaluating {remainingFeatCount} groups of remaining pixels</source>
-        <translation type="vanished">Avaliando {remainingFeatCount} grupos de pixels restantes</translation>
-    </message>
-    <message>
-        <source>Reclassify Groups of Pixels to Nearest Neighbor Algorithm V3</source>
-        <translation type="vanished">Algoritmo de Reclassificação de Grupos de Pixels pelo Vizinho Mais Próximo V3</translation>
-    </message>
-    <message>
-        <source>Generalization Algorithms</source>
-        <translation type="vanished">Algoritmos de Generalização</translation>
-    </message>
-</context><context>
-    <name>ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm</name>
-    <message>
-        <source>Input Single Band Image</source>
-        <translation type="vanished">Imagem de Banda Única de Entrada</translation>
-    </message>
-    <message>
-        <source>Minimun area to process. If feature's area is smaller than this value, the feature will not be split, but only reclassified to the nearest neighbour. Area in meters.</source>
-        <translation type="vanished">Área mínima para processamento. Se a área da feição for menor que este valor, a feição não será dividida, apenas reclassificada para o vizinho mais próximo. Área em metros.</translation>
-    </message>
-    <message>
-        <source>NODATA pixel value</source>
-        <translation type="vanished">Valor de pixel NODATA</translation>
-    </message>
-    <message>
-        <source>Horizontal tile size</source>
-        <translation type="vanished">Tamanho horizontal do bloco</translation>
-    </message>
-    <message>
-        <source>Vertical tile size</source>
-        <translation type="vanished">Tamanho vertical do bloco</translation>
-    </message>
-    <message>
-        <source>Horizontal tile superposition</source>
-        <translation type="vanished">Sobreposição horizontal do bloco</translation>
-    </message>
-    <message>
-        <source>Vertical tile superposition</source>
-        <translation type="vanished">Sobreposição vertical do bloco</translation>
-    </message>
-    <message>
-        <source>Polygons with nodata values</source>
-        <translation type="vanished">Polígonos com valores nodata</translation>
-    </message>
-    <message>
-        <source>Negative buffer distance</source>
-        <translation type="vanished">Distância de buffer negativo</translation>
-    </message>
-    <message>
-        <source>Output Raster</source>
-        <translation type="vanished">Raster de Saída</translation>
-    </message>
-    <message>
-        <source>This algorithm requires the Python scipy library. Please install this library and try again.</source>
-        <translation type="vanished">Este algoritmo requer a biblioteca Python scipy. Por favor, instale esta biblioteca e tente novamente.</translation>
-    </message>
-    <message>
-        <source>Preparing output raster</source>
-        <translation type="vanished">Preparando raster de saída</translation>
-    </message>
-    <message>
-        <source>Running initial polygonize</source>
-        <translation type="vanished">Executando poligonização inicial</translation>
-    </message>
-    <message>
-        <source>Building grid</source>
-        <translation type="vanished">Construindo um grid</translation>
-    </message>
-    <message>
-        <source>Reading output raster</source>
-        <translation type="vanished">Lendo raster de saída</translation>
-    </message>
-    <message>
-        <source>Computing tiles</source>
-        <translation type="vanished">Computando blocos</translation>
-    </message>
-    <message>
-        <source>Submitting tasks to thread...</source>
-        <translation type="vanished">Submetendo tarefas à thread...</translation>
-    </message>
-    <message>
-        <source>Processing thread output for tile {current+1}/{nTiles}</source>
-        <translation type="vanished">Processando saída da thread para bloco {current+1}/{nTiles}</translation>
-    </message>
-    <message>
-        <source>Reclassify Groups of Pixels to Nearest Neighbor With Sliding Window Algorithm</source>
-        <translation type="vanished">Algoritmo de Reclassificação de Grupos de Pixels pelo Vizinho Mais Próximo com Janela Deslizante</translation>
-    </message>
-    <message>
-        <source>Generalization Algorithms</source>
-        <translation type="vanished">Algoritmos de Generalização</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>RemoveDuplicateVertexesAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\removeDuplicateNodesAlgorithm.py" line="52" />
@@ -24426,10 +23066,11 @@ Gravando raster de saída final</translation>
         <translation>Barra de Revisão</translation>
     </message>
     <message>
-        <source>Inspect Features Tool</source>
-        <translation type="vanished">Ferramenta de inspeção de feições</translation>
+        <location filename="..\gui\ProductionTools\Toolbars\ReviewTools\reviewToolbar.py" line="364" />
+        <source>DSGTools review tool</source>
+        <translation>Ferramenta de revisão DSGTools</translation>
     </message>
-</context><context>
+    </context><context>
     <name>RightAngleToolParametersAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\EnvironmentSetterAlgs\rightAngleToolParametersAlgorithm.py" line="47" />
@@ -24512,10 +23153,24 @@ Gravando raster de saída final</translation>
         <translation>Ferramentas de QA: Tratamento de Atributos</translation>
     </message>
     <message>
-        <source>Atributos incomuns</source>
-        <translation type="vanished">Atributos incomuns</translation>
+        <location filename="..\core\DSGToolsProcessingAlgs\Algs\OtherAlgs\ruleStatisticsAlgorithm.py" line="0" />
+        <source>{0}{1}LOG START - {2}{1}{0}
+
+</source>
+        <translation>{0}{1}INÍCIO DO LOG - {2}{1}{0}
+
+</translation>
     </message>
-</context><context>
+    <message>
+        <location filename="..\core\DSGToolsProcessingAlgs\Algs\OtherAlgs\ruleStatisticsAlgorithm.py" line="0" />
+        <source>{0}{1}LOG END - {2}{1}{0}
+
+</source>
+        <translation>{0}{1}FIM DO LOG - {2}{1}{0}
+
+</translation>
+    </message>
+    </context><context>
     <name>RunFMESAPAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\OtherAlgs\runFMESAPAlgorithm.py" line="78" />
@@ -24611,15 +23266,7 @@ Gravando raster de saída final</translation>
         <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
-    <message>
-        <source>Unable to get the routine's output from FME Manager: '{0}'</source>
-        <translation type="vanished">Não foi possível obter a saída da rotina do FME Manager: '{0}'</translation>
-    </message>
-    <message>
-        <source>Unable to send processing request to FME Manager: '{0}'</source>
-        <translation type="vanished">Não foi possível enviar a solicitação de processamento para o Gerente FME: '{0}'</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>SapLoadLayersAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\LayerManagementAlgs\sapLoadLayersAlgorithm.py" line="82" />
@@ -25057,43 +23704,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <source>Clear All</source>
         <translation>Limpar tudo</translation>
     </message>
-    <message>
-        <source>Permission </source>
-        <translation type="vanished">Permissão </translation>
-    </message>
-    <message>
-        <source> successfully deleted.</source>
-        <translation type="vanished"> apagada com sucesso.</translation>
-    </message>
-    <message>
-        <source>Error! Problem deleting permission: </source>
-        <translation type="vanished">Erro! Problema ao tentar apagar permissão: </translation>
-    </message>
-    <message>
-        <source> successfully updated.</source>
-        <translation type="vanished"> atualizado com sucesso.</translation>
-    </message>
-    <message>
-        <source>Error! Problem updating permission: </source>
-        <translation type="vanished">Erro! Problema ao tentar atualizar permissão: </translation>
-    </message>
-    <message>
-        <source>Profile </source>
-        <translation type="vanished">Perfil </translation>
-    </message>
-    <message>
-        <source> for EDGV </source>
-        <translation type="vanished"> para EDGV </translation>
-    </message>
-    <message>
-        <source> already exists!</source>
-        <translation type="vanished"> já existe!</translation>
-    </message>
-    <message>
-        <source> created successfully!</source>
-        <translation type="vanished"> criado com sucesso!</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ServerToolsGuiManager</name>
     <message>
         <location filename="..\gui\ServerTools\serverToolsGuiManager.py" line="48" />
@@ -26171,19 +24782,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <translation>A regra "{0}" nãp gerou flags
 </translation>
     </message>
-    <message>
-        <source>Elevation point with height {pointHeight} out of threshold. This value is on a hilltop and should be between {h_max} and {h_max+threshold}</source>
-        <translation type="vanished">Ponto de elevação com altitude {pointHeight} fora do limiar. Este valor está em um topo e deveria estar entre {h_max} e {h_max+threshold}</translation>
-    </message>
-    <message>
-        <source>Elevation point with height {pointHeight} out of threshold. This value is on a valley/depression and should be between {h_min} and {h_min-threshold}</source>
-        <translation type="vanished">Ponto de elevação com altitude {pointHeight} fora do limiar. Este valor está em um vale/depressão e deveria estar entre {h_min} e {h_min-threshold}</translation>
-    </message>
-    <message>
-        <source>Elevation point with height {pointHeight} out of threshold. This value should be between {h_min} and {h_max}</source>
-        <translation type="vanished">Ponto de elevação com altitude {pointHeight} fora do limiar. Este valor deveria estar entre {h_min} e {h_max}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>SpatialRule</name>
     <message>
         <location filename="..\core\GeometricTools\spatialRelationsHandler.py" line="2129" />
@@ -26379,11 +24978,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <source>QA Tools: Attribute Handling</source>
         <translation>Ferramentas de QA: Tratamento de Atributos</translation>
     </message>
-    <message>
-        <source>{self.displayName()} Flags</source>
-        <translation type="vanished">{self.displayName()} Flags</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>SplitContoursAtMaximumLengthAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\splitContoursAtMaximumLengthAlgorithm.py" line="56" />
@@ -26459,8 +25054,8 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     </message>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeometricAlgs\splitLinesAtMaximumLengthAlgorithm.py" line="132" />
-        <source>Processing {} closed lines...</source>
-        <translation>Processando {} linhas fechadas...</translation>
+        <source>Processing {0} closed lines...</source>
+        <translation>Processando {0} linhas fechadas...</translation>
     </message>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\GeometricAlgs\splitLinesAtMaximumLengthAlgorithm.py" line="212" />
@@ -26596,11 +25191,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <source>Processed {0}/{1}.</source>
         <translation>Processado {0}/{1}.</translation>
     </message>
-    <message>
-        <source>Processed {current}/{nFeats}.</source>
-        <translation type="vanished">Processadas {current}/{nFeats}.</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>StreamOrder</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\streamOrder.py" line="47" />
@@ -26719,11 +25310,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <source>Refresh database list</source>
         <translation>Recarregar lista de bancos de dados</translation>
     </message>
-    <message>
-        <source>Error setting style </source>
-        <translation type="vanished">Erro ao tentar carregar o estilo </translation>
-    </message>
-</context><context>
+    </context><context>
     <name>StyleManagerWidget</name>
     <message>
         <location filename="..\gui\CustomWidgets\DatabasePropertiesWidgets\BasicPropertyWidgets\styleManagerWidget.py" line="78" />
@@ -26767,55 +25354,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <translation>Configuração de exclusão de estilo concluída.
 </translation>
     </message>
-    <message>
-        <source>Update Style configuration complete.
-</source>
-        <translation type="vanished">Configuração de atualização de estilo concluída.
-</translation>
-    </message>
-    <message>
-        <source>Uninstall Style configuration complete.
-</source>
-        <translation type="vanished">Configuração de desinstalação de estilo concluída.
-</translation>
-    </message>
-    <message>
-        <source>Install Style configuration complete.
-</source>
-        <translation type="vanished">Configuração de instalação de estilo concluída.
-</translation>
-    </message>
-    <message>
-        <source>Delete Style configuration complete.
-</source>
-        <translation type="vanished">Configuração de exclusão de estilo concluída.
-</translation>
-    </message>
-    <message>
-        <source>Update Style configuration complete.
-</source>
-        <translation type="vanished">Atualização de configuração de estilo concluída.
-</translation>
-    </message>
-    <message>
-        <source>Uninstall Style configuration complete.
-</source>
-        <translation type="vanished">Desinstalação de configuração de estilo concluída.
-</translation>
-    </message>
-    <message>
-        <source>Install Style configuration complete.
-</source>
-        <translation type="vanished">Instalação de configuração de estilo concluída.
-</translation>
-    </message>
-    <message>
-        <source>Delete Style configuration complete.
-</source>
-        <translation type="vanished">Exclusão de configuração de estilo concluída.
-</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>StyleSelector</name>
     <message>
         <location filename="..\gui\ServerTools\selectStyles.ui" line="0" />
@@ -27029,38 +25568,14 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <source>Checking spot elevations with contour interval multiples</source>
         <translation>Verificando pontos cotados com múltiplos do intervalo de contorno</translation>
     </message>
-    <message>
-        <source>Invalid contour lines intersection: lines with height {feat[self.contourElevationFieldName]} and {feat[f"{self.contourElevationFieldName}_2"]} touch each other.</source>
-        <translation type="vanished">Interseção inválida de curvas de nível: linhas com cota {feat[self.contourElevationFieldName]} e {feat[f"{self.contourElevationFieldName}_2"]} se tocam.</translation>
-    </message>
-    <message>
-        <source>Spot elevation with height {feat[self.spotElevationFieldName]} (featid={feat.id()}) intersects contour line.</source>
-        <translation type="vanished">Ponto cotado com altitude {feat[self.spotElevationFieldName]} (featid={feat.id()}) intersecta curva de nível.</translation>
-    </message>
-    <message>
-        <source>Elevation point with height {pointHeight} out of threshold. This value is on a hilltop and should be between {h_max} and {h_max+self.threshold}</source>
-        <translation type="vanished">Ponto de elevação com altitude {pointHeight} fora do limiar. Este valor está em um topo e deveria estar entre {h_max} e {h_max+self.threshold}</translation>
-    </message>
-    <message>
-        <source>Elevation point with height {pointHeight} out of threshold. This value is on a valley/depression and should be between {h_min} and {h_min-self.threshold}</source>
-        <translation type="vanished">Ponto de elevação com altitude {pointHeight} fora do limiar. Este valor está em um vale/depressão e deveria estar entre {h_min} e {h_min-self.threshold}</translation>
-    </message>
-    <message>
-        <source>Elevation point with height {pointHeight} out of threshold. This value should be between {self.h_min} and {self.h_max}</source>
-        <translation type="vanished">Ponto de elevação com altitude {pointHeight} fora do limiar. Este valor deveria estar entre {self.h_min} e {self.h_max}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>TerrainSlice</name>
     <message>
         <location filename="..\core\GeometricTools\terrainHandler.py" line="96" />
         <source>Contour band with missing contour value between {0} and {1}</source>
         <translation>Faixa de contorno com valor de contorno ausente entre {0} e {1}</translation>
     </message>
-    <message>
-        <source>Contour band with missing contour value between {self.minHeighFeatOnSlice[self.contourElevationFieldName]} and {self.maxHeightFeatOnSlice[self.contourElevationFieldName]}</source>
-        <translation type="vanished">Banda de curva de nível com valor de cota ausente entre {self.minHeighFeatOnSlice[self.contourElevationFieldName]} e {self.maxHeightFeatOnSlice[self.contourElevationFieldName]}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>TextBrowserDialog</name>
     <message>
         <location filename="..\gui\CustomWidgets\BasicInterfaceWidgets\textBrowserDialog.py" line="76" />
@@ -27520,19 +26035,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <source>QA Tools: Network Processes</source>
         <translation>Ferramentas de QA: Processos de Rede</translation>
     </message>
-    <message>
-        <source>Snap radius</source>
-        <translation type="vanished">Raio de atração</translation>
-    </message>
-    <message>
-        <source>Identifying dangles on {layer}...</source>
-        <translation type="vanished">Identificando pontas soltas na camada {layer}...</translation>
-    </message>
-    <message>
-        <source>Snapping layer {layer} to dangles...</source>
-        <translation type="vanished">Atraindo a camada {layer} às pontas soltas encontradas...</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>TrataRasterAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\RasterAlgs\trataRasterAlgorithm.py" line="116" />
@@ -28229,26 +26732,10 @@ Parâmetros:
     </message>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\ValidationAlgs\unicodeFilterAlgorithm.py" line="201" />
-        <source>O algoritmo identifica se existe algum atributo com um unicode que não está na whitelist</source>
+        <source>The algorithm identifies whether any attribute contains a unicode character that is not in the whitelist</source>
         <translation>O algoritmo identifica se existe algum atributo com um unicode que não está na whitelist</translation>
     </message>
-    <message>
-        <source>Selecionar camadas</source>
-        <translation type="vanished">Selecionar camadas</translation>
-    </message>
-    <message>
-        <source>Flag - unicode não permitido (ponto)</source>
-        <translation type="vanished">Flag - unicode não permitido (ponto)</translation>
-    </message>
-    <message>
-        <source>Flag - unicode não permitido (linha)</source>
-        <translation type="vanished">Flag - unicode não permitido (linha)</translation>
-    </message>
-    <message>
-        <source>Flag - unicode não permitido (área)</source>
-        <translation type="vanished">Flag - unicode não permitido (área)</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>UpdateRunwayAltitudeAlgorithm</name>
     <message>
         <location filename="..\core\DSGToolsProcessingAlgs\Algs\OtherAlgs\updateRunwayAltitudeAlgorithm.py" line="31" />
@@ -28427,17 +26914,7 @@ Parâmetros:
         <source>Tracker Algorithms</source>
         <translation>Algoritmos de Rastreio</translation>
     </message>
-    <message>
-        <source>Expected value for {key} type was {dictExpectedType[key]} but {dictActualType[key]} was given instead</source>
-        <translation type="vanished">O valor esperado para o tipo {key} era {dictExpectedType[key]}, mas {dictActualType[key]} foi fornecido</translation>
-    </message>
-    <message>
-        <source>{diffDaysBiggerThanTolerance} features found at least {toleranceDays}-day difference from today
-</source>
-        <translation type="vanished">{diffDaysBiggerThanTolerance} feições encontradas com pelo menos {toleranceDays} dias de diferença de hoje
-</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>ValidatedItemDelegate</name>
     <message>
         <location filename="..\gui\CustomWidgets\CustomDbManagementWidgets\newDomainWidget.py" line="62" />
@@ -29264,56 +27741,49 @@ Versão do fluxo de trabalho: {1}
         <source>Error importing workflow. Error message: {msg}'</source>
         <translation>Erro ao importar workflow. Mensagem de erro: {msg}'</translation>
     </message>
-    <message>
-        <source>Ignore false positive flags on model {modelName}</source>
-        <translation type="vanished">Ignorar flags de falso positivo no modelo {modelName}</translation>
-    </message>
-    <message>
-        <source>Would you like to set model '{currentWorkflowItem.displayName}' as current model of workflow '{workflow.displayName}'?</source>
-        <translation type="vanished">Gostaria de definir o modelo '{currentWorkflowItem.displayName}' como modelo atual do workflow '{workflow.displayName}'?</translation>
-    </message>
-    <message>
-        <source>The user has set the current workflow item of the workflow '{workflow.displayName}' as '{currentWorkflowItem.displayName}'.</source>
-        <translation type="vanished">O usuário definiu o item atual do workflow '{workflow.displayName}' como '{currentWorkflowItem.displayName}'.</translation>
-    </message>
-    <message>
-        <source>Workflow author: {metadata.author}
-Workflow version: {metadata.version}
-Last modification: {metadata.lastModified}</source>
-        <translation type="vanished">Autor do workflow: {metadata.author}
-Versão do workflow: {metadata.version}
-Última modificação: {metadata.lastModified}</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to remove workflow {name}?</source>
-        <translation type="vanished">Tem certeza que deseja remover o workflow {name}?</translation>
-    </message>
-    <message>
-        <source>Workflow {currentWorkflow.displayName} execution has finished.</source>
-        <translation type="vanished">A execução do workflow {currentWorkflow.displayName} foi concluída.</translation>
-    </message>
-    <message>
-        <source>model {workflowItem.displayName} status changed to {status}.</source>
-        <translation type="vanished">status do modelo {workflowItem.displayName} alterado para {status}.</translation>
-    </message>
-    <message>
-        <source>Model {workflowItem.displayName} status changed to {status}.</source>
-        <translation type="vanished">Status do modelo {workflowItem.displayName} alterado para {status}.</translation>
-    </message>
-    <message>
-        <source>Model name: {workflowItem.displayName}</source>
-        <translation type="vanished">Nome do modelo: {workflowItem.displayName}</translation>
-    </message>
-    <message>
-        <source>Would you like to restart workflow '{workflow.displayName}'?</source>
-        <translation type="vanished">Gostaria de reiniciar o workflow '{workflow.displayName}'?</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>WorkflowItem</name>
     <message>
         <location filename="..\core\DSGToolsWorkflow\workflowItem.py" line="96" />
         <source>Invalid on flags raised flag.</source>
         <translation>Flag inválida de flags levantadas.</translation>
+    </message>
+    <message>
+        <location filename="..\core\DSGToolsWorkflow\workflowItem.py" line="0" />
+        <source>Workflow item {0} execution paused by previous step.</source>
+        <translation>Item de fluxo de trabalho {0} execução pausada pelo passo anterior.</translation>
+    </message>
+    <message>
+        <location filename="..\core\DSGToolsWorkflow\workflowItem.py" line="0" />
+        <source>Workflow item {0} status changed from ignore flags to finished with flags.</source>
+        <translation>Status do item de fluxo de trabalho {0} alterado de ignorar flags para concluído com flags.</translation>
+    </message>
+    <message>
+        <location filename="..\core\DSGToolsWorkflow\workflowItem.py" line="0" />
+        <source>Workflow item {0} flags were ignored by the user.</source>
+        <translation>As flags do item de fluxo de trabalho {0} foram ignoradas pelo usuário.</translation>
+    </message>
+    <message>
+        <location filename="..\core\DSGToolsWorkflow\workflowItem.py" line="0" />
+        <source>Workflow item {0} canceled by user.</source>
+        <translation>Item de fluxo de trabalho {0} cancelado pelo usuário.</translation>
+    </message>
+    <message>
+        <location filename="..\core\DSGToolsWorkflow\workflowItem.py" line="0" />
+        <source>Workflow item {0} execution has failed:
+ {1}</source>
+        <translation>A execução do item de fluxo de trabalho {0} falhou:
+ {1}</translation>
+    </message>
+    <message>
+        <location filename="..\core\DSGToolsWorkflow\workflowItem.py" line="0" />
+        <source>Workflow item {0} {1}</source>
+        <translation>Item de fluxo de trabalho {0} {1}</translation>
+    </message>
+    <message>
+        <location filename="..\core\DSGToolsWorkflow\workflowItem.py" line="0" />
+        <source>Workflow item {0} execution was canceled by the user.</source>
+        <translation>A execução do item de fluxo de trabalho {0} foi cancelada pelo usuário.</translation>
     </message>
 </context><context>
     <name>WorkflowSetupDialog</name>
@@ -29569,11 +28039,7 @@ Versão do workflow: {metadata.version}
         <source>Import workflow from a JSON file</source>
         <translation>Importe um fluxo de trabalho de um arquivo JSON</translation>
     </message>
-    <message>
-        <source>Model source exported to file {x}</source>
-        <translation type="vanished">Fonte do modelo exportada para o arquivo {x}</translation>
-    </message>
-</context><context>
+    </context><context>
     <name>addAttributeWidget</name>
     <message>
         <location filename="..\gui\CustomWidgets\CustomDbManagementWidgets\addAttributeWidget.ui" line="0" />
@@ -29726,48 +28192,6 @@ Lógico</translation>
         <location filename="..\gui\Misc\PostgisCustomization\createDatabaseCustomization.ui" line="0" />
         <source>Remove Selected</source>
         <translation>Remover selecionados</translation>
-    </message>
-</context><context>
-    <name>identifyZAnglesBetweenFeaturesAlgorithm</name>
-    <message>
-        <source>Minimum angle</source>
-        <translation type="vanished">Ângulo mínimo</translation>
-    </message>
-    <message>
-        <source>Flags</source>
-        <translation type="vanished">Flags</translation>
-    </message>
-    <message>
-        <source>Identify Z Angles Between Features</source>
-        <translation type="vanished">Identifica ângulos Z entre feições</translation>
-    </message>
-    <message>
-        <source>Input</source>
-        <translation type="vanished">Entrada</translation>
-    </message>
-    <message>
-        <source>Evaluating z within lines</source>
-        <translation type="vanished">Avaliando z dentro de linhas</translation>
-    </message>
-    <message>
-        <source>Evaluating z within features geometries</source>
-        <translation type="vanished">Avaliando z dentro das geometrias das feições</translation>
-    </message>
-    <message>
-        <source>Evaluating z within polygons</source>
-        <translation type="vanished">Avaliando z dentro de polígonos</translation>
-    </message>
-    <message>
-        <source>Submitting tasks to thread</source>
-        <translation type="vanished">Submetendo tarefas à thread</translation>
-    </message>
-    <message>
-        <source>Evaluating tasks</source>
-        <translation type="vanished">Avaliando tarefas</translation>
-    </message>
-    <message>
-        <source>QA Tools: Basic Geometry Construction Issues Handling</source>
-        <translation type="vanished">Ferramentas de QA: Tratamento de Problemas Básicos de Construção de Geometria</translation>
     </message>
 </context><context>
     <name>minimumAreaTool</name>
@@ -29963,5 +28387,26 @@ Lógico</translation>
         <location filename="..\gui\DatabaseTools\ConversionTools\datasourceConversion.ui" line="0" />
         <source>Datasource Conversion</source>
         <translation>Conversão de Fontes de Dados</translation>
+    </message>
+</context><context>
+    <name>AttributeTableWidget</name>
+    <message>
+        <location filename="..\Modules\acquisitionMenu\widgets\attributeTableWidget.py" line="101" />
+        <source>IGNORE</source>
+        <translation>IGNORAR</translation>
+    </message>
+</context><context>
+    <name>RestoreFields</name>
+    <message>
+        <location filename="..\Modules\qgis\actions\restoreFields.py" line="8" />
+        <source>restore layer</source>
+        <translation>restaurar camada</translation>
+    </message>
+</context><context>
+    <name>SetDefaultFields</name>
+    <message>
+        <location filename="..\Modules\qgis\actions\setDefaultFields.py" line="8" />
+        <source>create more like this</source>
+        <translation>criar mais como esse</translation>
     </message>
 </context></TS>
