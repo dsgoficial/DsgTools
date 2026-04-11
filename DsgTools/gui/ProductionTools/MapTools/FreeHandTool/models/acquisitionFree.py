@@ -351,7 +351,7 @@ class AcquisitionFree(gui.QgsMapTool):
                     measure_dist, QgsUnitTypes.DistanceMeters
                 )
                 # Tr
-                txt = f"<b>Length: {dist:.3f} m</b><br/>"
+                txt = "<b>" + self.tr("Length: {0} m").format(f"{dist:.3f}") + "</b><br/>"
                 self.tooltip.showText(
                     self.canvas.mapToGlobal(self.canvas.mouseLastXY()),
                     txt,
@@ -369,7 +369,7 @@ class AcquisitionFree(gui.QgsMapTool):
                     measure_dist, QgsUnitTypes.AreaSquareMeters
                 )
                 # Tr
-                txt = f"<b>Area: {dist:.3f} m²</b><br/>"
+                txt = "<b>" + self.tr("Area: {0} m²").format(f"{dist:.3f}") + "</b><br/>"
                 self.tooltip.showText(
                     self.canvas.mapToGlobal(self.canvas.mouseLastXY()),
                     txt,
@@ -434,7 +434,7 @@ class AcquisitionFree(gui.QgsMapTool):
             if not toolbar.objectName().lower() == "dsgtools":
                 continue
             for action in toolbar.actions():
-                if not action.text() == "DSGTools: Measure while digitizing":
+                if not action.text() == self.tr("DSGTools: Measure while digitizing"):
                     continue
                 self.measureAction = action
 

@@ -1,6 +1,8 @@
 import json
 import os
 
+from qgis.PyQt.QtCore import QCoreApplication
+
 
 class HTMLHelpCreator(object):
     def __init__(self):
@@ -31,7 +33,7 @@ class HTMLHelpCreator(object):
 
             return html_string.format(image_path)
         except:
-            return "No help available for this algorithm."
+            return QCoreApplication.translate("HTMLHelpCreator", "No help available for this algorithm.")
 
     def helpUrl(self, algorithm_name):
 

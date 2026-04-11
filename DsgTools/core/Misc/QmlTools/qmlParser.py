@@ -22,6 +22,7 @@
 """
 from builtins import range
 from builtins import object
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtXml import QDomDocument
 
 
@@ -102,9 +103,10 @@ class QmlParser(object):
         if not self.loadFileContent():
             QMessageBox.warning(
                 self.iface.mainWindow(),
-                self.tr("Warning!"),
-                self.tr(
-                    "QML file not loaded properly. Enum values won't be available."
+                QCoreApplication.translate("QmlParser", "Warning!"),
+                QCoreApplication.translate(
+                    "QmlParser",
+                    "QML file not loaded properly. Enum values won't be available.",
                 ),
             )
             return

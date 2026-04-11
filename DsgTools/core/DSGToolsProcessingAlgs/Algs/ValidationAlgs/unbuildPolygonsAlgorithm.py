@@ -347,8 +347,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.pushInfo(
             self.tr(
-                f"Created {polygonizeOutput.featureCount()} polygons from line network"
-            )
+                "Created {0} polygons from line network"
+            ).format(polygonizeOutput.featureCount())
         )
 
         currentStep += 1
@@ -398,8 +398,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.pushInfo(
             self.tr(
-                f"Extracted {centerPointsInsideInput.featureCount()} center points inside polygons"
-            )
+                "Extracted {0} center points inside polygons"
+            ).format(centerPointsInsideInput.featureCount())
         )
 
         currentStep += 1
@@ -417,8 +417,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             )
             multiStepFeedback.pushInfo(
                 self.tr(
-                    f"Filtered to {centerPointsInsideInput.featureCount()} center points within boundary"
-                )
+                    "Filtered to {0} center points within boundary"
+                ).format(centerPointsInsideInput.featureCount())
             )
 
         currentStep += 1
@@ -449,8 +449,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.pushInfo(
             self.tr(
-                f"Successfully joined attributes to {final_result_lyr.featureCount()} center points"
-            )
+                "Successfully joined attributes to {0} center points"
+            ).format(final_result_lyr.featureCount())
         )
 
         def outputFeature(feat):
@@ -713,8 +713,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.pushInfo(
             self.tr(
-                f"Created grid with {referencePolygonLayer.featureCount()} cells for parallel processing"
-            )
+                "Created grid with {0} cells for parallel processing"
+            ).format(referencePolygonLayer.featureCount())
         )
 
         outputSet = set()
@@ -792,14 +792,14 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             if processedCount % 5 == 0 or processedCount == totalFutures:
                 multiStepFeedback.pushInfo(
                     self.tr(
-                        f"Processed {processedCount}/{totalFutures} grid cells, found {len(outputSet)} unique boundaries so far"
-                    )
+                        "Processed {0}/{1} grid cells, found {2} unique boundaries so far"
+                    ).format(processedCount, totalFutures, len(outputSet))
                 )
 
         multiStepFeedback.pushInfo(
             self.tr(
-                f"Parallel processing complete. Total unique boundaries: {len(outputSet)}"
-            )
+                "Parallel processing complete. Total unique boundaries: {0}"
+            ).format(len(outputSet))
         )
         return outputSet
 
@@ -866,8 +866,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             subFeedback.setCurrentStep(batch_idx)
             subFeedback.pushInfo(
                 self.tr(
-                    f"Processing batch {batch_idx + 1}/{num_batches} with {len(batch_ids)} boundaries"
-                )
+                    "Processing batch {0}/{1} with {2} boundaries"
+                ).format(batch_idx + 1, num_batches, len(batch_ids))
             )
 
             # Create filter expression for this batch
@@ -896,8 +896,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         # Return the combined layer
         feedback.pushInfo(
             self.tr(
-                f"Successfully processed all {total_ids} boundaries in {num_batches} batches"
-            )
+                "Successfully processed all {0} boundaries in {1} batches"
+            ).format(total_ids, num_batches)
         )
         return result_layer
 

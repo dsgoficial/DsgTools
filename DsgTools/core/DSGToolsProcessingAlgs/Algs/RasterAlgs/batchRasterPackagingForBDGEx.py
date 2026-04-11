@@ -127,7 +127,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         nInputs = len(inputFiles)
         if nInputs == 0:
             raise QgsProcessingException(
-                "Não foram encontrados arquivos .tif na pasta de entrada."
+                self.tr("No .tif files found in the input folder.")
             )
 
         self.tempFolder = Path(QgsProcessingUtils.tempFolder()) / uuid4().hex

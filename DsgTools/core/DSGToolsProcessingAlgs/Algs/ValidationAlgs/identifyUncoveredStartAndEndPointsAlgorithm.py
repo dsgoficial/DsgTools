@@ -228,8 +228,8 @@ class IdentifyUncoveredStartAndEndPointsAlgorithm(ValidationAlgorithm):
             self.flagFeature(
                 flagGeom=geomWkb,
                 flagText=self.tr(
-                    f"Feature (id={featid}) from layer {inputLyr.name()} with uncovered start/end point."
-                ),
+                    "Feature (id={0}) from layer {1} with uncovered start/end point."
+                ).format(featid, inputLyr.name()),
                 fromWkb=True,
             )
             multiStepFeedback.setProgress(current * stepSize)

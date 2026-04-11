@@ -121,7 +121,7 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
 
         if not groupOriginal or not groupReviewed:
             raise QgsProcessingException(
-                "Must have a input group original and input review"
+                self.tr("Must have a input group original and input review")
             )
 
         project = context.project()
@@ -132,7 +132,7 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
 
         if not groupO or not groupR:
             raise QgsProcessingException(
-                "Input group original and input review group not found"
+                self.tr("Input group original and input review group not found")
             )
 
         dictLyrsOriginals, crs = self.dictNameLyrCrs(groupO)
@@ -166,7 +166,7 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
 
             if nameLyrOriginal not in dictLyrsReviewed:
                 raise QgsProcessingException(
-                    "There is no correspondence of layers between the groups"
+                    self.tr("There is no correspondence of layers between the groups")
                 )
 
             lyrOriginal = dictLyrsOriginals[nameLyrOriginal]

@@ -344,8 +344,8 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
                 multiStepFeedback.setCurrentStep(currentStep)
                 multiStepFeedback.pushInfo(
                     self.tr(
-                        f"Converting Features: step {currentConversionStep}/{len(conversionMapList)}"
-                    )
+                        "Converting Features: step {0}/{1}"
+                    ).format(currentConversionStep, len(conversionMapList))
                 )
             featureProcessor = MappingFeatureProcessor(
                 mappingDictPath=conversionData["conversionJson"],

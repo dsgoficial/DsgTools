@@ -30,7 +30,7 @@ from xml.dom.minidom import parse, parseString
 from qgis.utils import iface
 from qgis.core import Qgis, QgsMessageLog, QgsExpression
 from qgis.gui import QgsGui
-from qgis.PyQt.QtCore import QMetaType, QObject, QSettings
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType, QObject, QSettings
 from qgis.PyQt.QtWidgets import QAction, QToolBar, QMessageBox, QTreeWidgetItem
 from qgis.PyQt.QtGui import QColor
 
@@ -519,20 +519,20 @@ class ValidateImportedDataMethods:
         :return: (signal) value returned from the clicked button.
         """
         msg = QMessageBox()
-        msg.setWindowTitle(self.tr("Invalid Rules Information"))
+        msg.setWindowTitle(QCoreApplication.translate("ValidateImportedDataMethods", "Invalid Rules Information"))
 
         if lyrList and msgType == "invalid":
             msg.setIcon(QMessageBox.Icon.Critical)
-            msg.setText(self.tr("Some rules have invalid items!"))
+            msg.setText(QCoreApplication.translate("ValidateImportedDataMethods", "Some rules have invalid items!"))
             msg.setInformativeText(
-                self.tr("If you ignore, the invalid rules may not be loaded.")
+                QCoreApplication.translate("ValidateImportedDataMethods", "If you ignore, the invalid rules may not be loaded.")
             )
 
             textLyrList = sorted(set(lyrList))
             formatedLyrList = ["{}" for item in textLyrList]
             msgString = ",".join(formatedLyrList).replace(",", "\n")
             formatedMsgString = (
-                self.tr("The following rules are not valid:\n") + msgString.format(*textLyrList)
+                QCoreApplication.translate("ValidateImportedDataMethods", "The following rules are not valid:\n") + msgString.format(*textLyrList)
             )
 
             msg.setDetailedText(formatedMsgString)
@@ -540,7 +540,7 @@ class ValidateImportedDataMethods:
             msg.setDefaultButton(QMessageBox.StandardButton.Cancel)
         else:
             msg.setIcon(QMessageBox.Icon.Information)
-            msg.setText(self.tr("Successfully loaded rules!"))
+            msg.setText(QCoreApplication.translate("ValidateImportedDataMethods", "Successfully loaded rules!"))
 
         choice = msg.exec()
         return choice

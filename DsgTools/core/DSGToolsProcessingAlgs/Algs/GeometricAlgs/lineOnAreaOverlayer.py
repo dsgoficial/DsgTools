@@ -139,12 +139,12 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
         current_step = 0
 
         multiStepFeedback.setCurrentStep(current_step)
-        multiStepFeedback.pushInfo("Starting polygon splitting algorithm...")
+        multiStepFeedback.pushInfo(self.tr("Starting polygon splitting algorithm..."))
 
         # Step 1: Convert the original polygons to lines
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step 1/{}:Converting polygons to lines...".format(total_steps)
+            self.tr("Step 1/{}:Converting polygons to lines...").format(total_steps)
         )
         polygon_lines_layer = algRunner.runPolygonsToLines(
             parameters[self.INPUT_POLYGONS],
@@ -153,7 +153,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
         )
 
         polygon_lines_layer.setName("original_polygon")
-        multiStepFeedback.pushInfo("Merging overlay line layers...")
+        multiStepFeedback.pushInfo(self.tr("Merging overlay line layers..."))
         overlay_lines_merged = algRunner.runMergeVectorLayers(
             [polygon_lines_layer] + overlay_line_layers,
             context,
@@ -164,7 +164,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
 
         # Step 3: Split all lines with each other
         multiStepFeedback.setCurrentStep(current_step)
-        multiStepFeedback.pushInfo("Step 3/{}:Splitting lines...".format(total_steps))
+        multiStepFeedback.pushInfo(self.tr("Step 3/{}:Splitting lines...").format(total_steps))
 
         # First, merge polygon lines and overlay lines
         all_line_layers = [polygon_lines_layer]
@@ -188,7 +188,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 4: First polygonize attempt
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step 4/{}:Initial polygonization...".format(total_steps)
+            self.tr("Step 4/{}:Initial polygonization...").format(total_steps)
         )
         polygonized_layer = algRunner.runPolygonize(
             exploded_lines, context, keepFields=True, feedback=multiStepFeedback
@@ -211,7 +211,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
         current_step += 1
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}:Calculating point on surface...".format(
+            self.tr("Step {}/{}:Calculating point on surface...").format(
                 current_step + 1, total_steps
             )
         )
@@ -232,7 +232,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step: Join attributes from original polygons
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}:Joining attributes from original polygons...".format(
+            self.tr("Step {}/{}:Joining attributes from original polygons...").format(
                 current_step + 1, total_steps
             )
         )
@@ -241,7 +241,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
 
         # Create spatial indexes for better performance in spatial joins
         multiStepFeedback.pushInfo(
-            "Creating spatial indexes for final attribute joins..."
+            self.tr("Creating spatial indexes for final attribute joins...")
         )
         algRunner.runCreateSpatialIndex(
             center_point_layer, context, feedback=multiStepFeedback
@@ -268,7 +268,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Final step: Spatial join back to the filtered polygons
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}:Final spatial join...".format(current_step + 1, total_steps)
+            self.tr("Step {}/{}:Final spatial join...").format(current_step + 1, total_steps)
         )
 
         # Create spatial indexes for better performance
@@ -289,7 +289,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
         )
 
-        multiStepFeedback.pushInfo("Algorithm completed successfully!")
+        multiStepFeedback.pushInfo(self.tr("Algorithm completed successfully!"))
 
         def outputFeature(feat):
             newFeat = QgsFeature(outputFields)

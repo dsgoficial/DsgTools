@@ -22,6 +22,7 @@
 """
 # DsgTools imports
 from builtins import object
+from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.Factories.DbCustomizationFactory.attributeCustomization import (
     AttributeCustomization,
 )
@@ -67,4 +68,4 @@ class DbCustomizationFactory(object):
         elif type == "filter":
             return FilterCustomization(validatedJSONDict)
         else:
-            raise Exception(self.tr("Customization type not defined."))
+            raise Exception(QCoreApplication.translate("DbCustomizationFactory", "Customization type not defined."))

@@ -101,7 +101,7 @@ class ProcessManager(QObject):
 
         if feedback == 1:
             progressBar.setValue(progressBar.maximum())
-        QMessageBox.information(self.iface.mainWindow(), "DSG Tools", message)
+        QMessageBox.information(self.iface.mainWindow(), self.tr("DSG Tools"), message)
 
     def prepareProcess(self, process, message):
         """

@@ -788,8 +788,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             localPolygonFeatList, localFlagDict = future.result()
             multiStepFeedback.pushInfo(
                 self.tr(
-                    f"Building polygons from region {current+1}/{nRegions} is done."
-                )
+                    "Building polygons from region {0}/{1} is done."
+                ).format(current+1, nRegions)
             )
             multiStepFeedback.setProgress(current * stepSize)
             polygonFeatList += localPolygonFeatList
@@ -968,8 +968,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             localFlagLyr = future.result()
             multiStepFeedback.pushInfo(
                 self.tr(
-                    f"Verifying unused boundaries from region {current+1}/{nRegions} is done."
-                )
+                    "Verifying unused boundaries from region {0}/{1} is done."
+                ).format(current+1, nRegions)
             )
             multiStepFeedback.setProgress(current * stepSize)
             if localFlagLyr is None or localFlagLyr.featureCount() == 0:

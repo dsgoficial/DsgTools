@@ -72,7 +72,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
         nInputs = len(inputFiles)
         if nInputs == 0:
             raise QgsProcessingException(
-                "Não foram encontrados arquivos .zip na pasta de entrada."
+                self.tr("No .zip files found in the input folder.")
             )
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
@@ -177,7 +177,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
             # Check for cancellation
             if multiStepFeedback and multiStepFeedback.isCanceled():
                 if multiStepFeedback is not None:
-                    multiStepFeedback.pushInfo("Process canceled by user")
+                    multiStepFeedback.pushInfo(self.tr("Process canceled by user"))
                 return
 
             # Find the PRODUCT_SHAPE shapefile
@@ -204,7 +204,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                     )
                     if not source_layer.isValid():
                         raise QgsProcessingException(
-                            f"Failed to load source layer: {product_shape_file}"
+                            self.tr("Failed to load source layer: {}").format(product_shape_file)
                         )
 
                     # Create new filename
@@ -236,7 +236,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
 
                     if writer.hasError() != QgsVectorFileWriter.NoError:
                         raise QgsProcessingException(
-                            f"Error creating writer for {output_file}"
+                            self.tr("Error creating writer for {}").format(output_file)
                         )
 
                     # Get total feature count for progress
@@ -248,7 +248,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                         if multiStepFeedback and multiStepFeedback.isCanceled():
                             del writer
                             if multiStepFeedback is not None:
-                                multiStepFeedback.pushInfo("Process canceled by user")
+                                multiStepFeedback.pushInfo(self.tr("Process canceled by user"))
                             return
 
                         # Update progress message
@@ -288,7 +288,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                     # Clean up
                     del writer
                     if multiStepFeedback is not None:
-                        multiStepFeedback.pushInfo(f"Created {output_file}")
+                        multiStepFeedback.pushInfo(self.tr("Created {0}").format(output_file))
                 except PermissionError:
                     if multiStepFeedback is not None:
                         multiStepFeedback.reportError(
@@ -303,7 +303,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                     continue
 
         if multiStepFeedback is not None:
-            multiStepFeedback.pushInfo("Processing completed")
+            multiStepFeedback.pushInfo(self.tr("Processing completed"))
 
     def getRasterLayer(self, input_path: str) -> QgsRasterLayer:
         options = QgsRasterLayer.LayerOptions()

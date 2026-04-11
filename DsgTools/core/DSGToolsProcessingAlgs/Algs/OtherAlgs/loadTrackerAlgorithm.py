@@ -357,14 +357,14 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
             onlySelected=onlySelected,
         )
         multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo("Updating database.")
+        multiStepFeedback.pushInfo(self.tr("Updating database."))
 
         outputLyr.startEditing()
         self.addFeatureAsPoint(
             tempLyr, outputLyr, feedback=multiStepFeedback, targetCrs=outputLyr.crs()
         )
         multiStepFeedback.setCurrentStep(4)
-        multiStepFeedback.pushInfo("Loading complete.")
+        multiStepFeedback.pushInfo(self.tr("Loading complete."))
 
         return {self.OUTPUT_DB: outputLyr}
 

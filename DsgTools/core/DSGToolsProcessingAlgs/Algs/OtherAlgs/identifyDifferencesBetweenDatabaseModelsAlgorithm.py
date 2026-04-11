@@ -151,7 +151,7 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
         nameTableMsgDict.update(nameTableMsgDictTwo)
 
         for table in nameTableMsgDict:
-            msg += f"Erro na tabela = {table}: \n"
+            msg += self.tr("Error in table = {0}: \n").format(table)
             for typeMsg in nameTableMsgDict[table]:
                 if nameTableMsgDict[table][typeMsg] == []:
                     continue
@@ -169,20 +169,20 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
     def pushOutputMessage(self, feedback, msg, fileTxt):
         if msg == "":
             feedback.pushInfo(
-                "A estrutura do banco de entrada corresponde à estrutura definida pelo masterfile de entrada."
+                self.tr("The input database structure matches the structure defined by the input masterfile.")
             )
             with open(f"{fileTxt}", "w") as file:
                 file.write(
-                    "A estrutura do banco de entrada corresponde à estrutura definida pelo masterfile de entrada."
+                    self.tr("The input database structure matches the structure defined by the input masterfile.")
                 )
         else:
             feedback.pushInfo(
-                "A estrutura do banco de entrada não corresponde à estrutura definida pelo masterfile de entrada:"
+                self.tr("The input database structure does not match the structure defined by the input masterfile:")
             )
             feedback.pushInfo(msg)
             with open(f"{fileTxt}", "w") as file:
                 file.write(
-                    "A estrutura do banco de entrada não corresponde à estrutura definida pelo masterfile de entrada:\n"
+                    self.tr("The input database structure does not match the structure defined by the input masterfile:\n")
                 )
                 file.write(f"{msg}")
         file.close()
@@ -194,7 +194,7 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
 
     def getMasterDict(self, masterFile):
         """
-        Leitura do masterfile
+        Read the masterfile
         """
         masterFile = open(masterFile)
         masterDict = json.load(masterFile)
@@ -210,11 +210,11 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
             edgvVersion != masterDict["modelo"]
             or implementationVersion != masterDict["versao"]
         ):
-            msg += "Erro de versão:\n"
+            msg += self.tr("Version error:\n")
         if edgvVersion != masterDict["modelo"]:
-            msg += f"   A versão do banco ({edgvVersion}) não corresponde à versão do masterfile ({masterDict['modelo']})\n"
+            msg += self.tr("   Database version ({0}) does not match masterfile version ({1})\n").format(edgvVersion, masterDict['modelo'])
         if implementationVersion != masterDict["versao"]:
-            msg += f"   A versão de implementação do banco ({implementationVersion}) não corresponde à versão de implementação do masterfile ({masterDict['versao']})\n"
+            msg += self.tr("   Database implementation version ({0}) does not match masterfile implementation version ({1})\n").format(implementationVersion, masterDict['versao'])
         return msg
 
     def validateDomainTables(self, masterDict, abstractDb):
@@ -227,8 +227,8 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
         """
         msg = ""
         if not abstractDb.checkIfSchemaExistsInDatabase(masterDict["schema_dominios"]):
-            msg += "Erro no Schema de domínios:\n"
-            msg += f"   A o esquema de domínios {masterDict['schema_dominios']} não está implementado no banco."
+            msg += self.tr("Domain schema error:\n")
+            msg += self.tr("   The domain schema {0} is not implemented in the database.").format(masterDict['schema_dominios'])
             return msg
         masterDictDomainNameSet = set(i["nome"] for i in masterDict["dominios"])
         dbDomainNameSet = abstractDb.getTableListFromSchema(
@@ -239,16 +239,16 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
         inDbNotInMasterDictSet = dbDomainNameSet.difference(masterDictDomainNameSet)
 
         if len(inMasterDictNotInDbSet) > 0 or len(inDbNotInMasterDictSet) > 0:
-            msg += "Erro, há disparidade entre as tabelas do banco de dados e do Masterfile no Schema dominios:\n"
+            msg += self.tr("Error, there is a discrepancy between database tables and Masterfile in the domains schema:\n")
 
         if len(inMasterDictNotInDbSet) > 0:
-            msg += "    Os domínios que existem no masterDict, mas não exitem no banco (tabelas que faltam no banco) são: "
+            msg += self.tr("    Domains that exist in the masterDict but not in the database (missing tables in the database) are: ")
             for e in inMasterDictNotInDbSet:
                 msg += f"{e}, "
             msg = msg[: len(msg) - 2] + "\n\n"
 
         if len(inDbNotInMasterDictSet) > 0:
-            msg += "    Os domínios que existem no banco, mas não estão previstas no masterDict (tabelas excedentes no banco) são: "
+            msg += self.tr("    Domains that exist in the database but are not defined in the masterDict (extra tables in the database) are: ")
             for e in inDbNotInMasterDictSet:
                 msg += f"{e}, "
             msg = msg[: len(msg) - 2] + "\n\n"
@@ -280,31 +280,31 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                 inDbNotInMasterDictSet = tableColumnsSetDict[domainName].difference(
                     columnsMasterFileSet
                 )
-                msg += "Erro no Schema dominios colunas 'code' e 'value':\n"
-                msg += f"   A tabela {domainName} "
+                msg += self.tr("Error in domains schema columns 'code' and 'value':\n")
+                msg += self.tr("   Table {0} ").format(domainName)
                 if len(inMasterDictNotInDbSet) > 0:
-                    msg += "possui as seguintes colunas no MasterFile, mas não no banco de dados:\n"
+                    msg += self.tr("has the following columns in the MasterFile but not in the database:\n")
                     msg += ", ".join(list(inMasterDictNotInDbSet)) + "\n\n"
                 if len(inDbNotInMasterDictSet) > 0:
-                    msg += "possui as seguintes colunas no banco de dados, mas não no MasterFile:\n"
+                    msg += self.tr("has the following columns in the database but not in the MasterFile:\n")
                     msg += ", ".join(list(inDbNotInMasterDictSet)) + "\n\n"
                 continue
 
             # 2. verificar se a chave primária é a coluna code
             setPrimaryKey = tablePrimaryKeySetDict[domainName]
             if len(setPrimaryKey) > 1:
-                msg += "Erro Primary Key:\n"
-                msg += "    A coluna 'code' deve ser a chave primária, mas foram passadas como chaves primárias:\n"
+                msg += self.tr("Primary Key error:\n")
+                msg += self.tr("    The 'code' column should be the primary key, but the following were passed as primary keys:\n")
                 msg += ", ".join(list(setPrimaryKey)) + "\n\n"
             elif len(setPrimaryKey) == 1:
                 for pk in setPrimaryKey:
                     break
                 if pk != "code":
-                    msg += "Erro Primary Key:\n"
-                    msg += f"   A coluna 'code' deve ser a chave primária da tabela {domainName}, mas a chava primária passada foi: {pk}\n\n"
+                    msg += self.tr("Primary Key error:\n")
+                    msg += self.tr("   The 'code' column should be the primary key of table {0}, but the primary key passed was: {1}\n\n").format(domainName, pk)
             else:
-                msg += "Erro Primary Key:\n"
-                msg += f"   A tabela {domainName} não possui chave primária.\n\n"
+                msg += self.tr("Primary Key error:\n")
+                msg += self.tr("   Table {0} does not have a primary key.\n\n").format(domainName)
             # 3. comparar os valores do masterfile, incluindo o valor a ser preenchido, com os valores populados no banco
             # Início da parte 3
             # monta o conjunto de tuplas do masterfile
@@ -353,18 +353,18 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                 inDbDomainNotInMasterFileDomainSet = dbDomainTupleSet.difference(
                     masterFileDomainTupleSet
                 )
-                msg += "Erro valores no Schema dominios:\n"
-                msg += f"   A tabela {domainName} apresenta os seguintes erros:\n"
+                msg += self.tr("Value errors in domains schema:\n")
+                msg += self.tr("   Table {0} has the following errors:\n").format(domainName)
                 if len(inMasterFileDomainNotInDbDomainSet) > 0:
                     if not masterDict["dominios"][nameIdxDict[domainName]].get(
                         "filtro", False
                     ):
-                        msg += f"- Valores no MasterFile sem correspondência no banco de dados: "
+                        msg += self.tr("- Values in MasterFile without correspondence in the database: ")
                         for valor in inMasterFileDomainNotInDbDomainSet:
                             msg += f"'code': {valor[0]}, 'code_name': {valor[1]}"
                         msg += "\n"
                     else:
-                        msg += f"- Valores no MasterFile sem correspondência no banco de dados: "
+                        msg += self.tr("- Values in MasterFile without correspondence in the database: ")
                         for valor in inMasterFileDomainNotInDbDomainSet:
                             msg += f"'code': {valor[0]}, 'code_name': {valor[1]}, 'filter': {valor[2]}"
                         msg += "\n"
@@ -372,12 +372,12 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                     if not masterDict["dominios"][nameIdxDict[domainName]].get(
                         "filtro", False
                     ):
-                        msg += f"- Valores no banco de dados sem correspondência no MasterFile: "
+                        msg += self.tr("- Values in database without correspondence in the MasterFile: ")
                         for valor in inDbDomainNotInMasterFileDomainSet:
                             msg += f"'code': {valor[0]}, 'code_name': {valor[1]}"
                         msg += "\n"
                     else:
-                        msg += f"- Valores no banco de dados sem correspondência no MasterFile: "
+                        msg += self.tr("- Values in database without correspondence in the MasterFile: ")
                         for valor in inDbDomainNotInMasterFileDomainSet:
                             msg += f"'code': {valor[0]}, 'code_name': {valor[1]}, 'filter': {valor[2]}"
                         msg += "\n"
@@ -393,8 +393,8 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
         """
         msg = ""
         if not abstractDb.checkIfSchemaExistsInDatabase(masterDict["schema_dados"]):
-            msg += f"""Erro Schema {masterDict["schema_dados"]}: \n"""
-            msg += f"""    O schema '{masterDict["schema_dados"]}' não está presente no banco de dados.\n"""
+            msg += self.tr("Schema {0} error: \n").format(masterDict["schema_dados"])
+            msg += self.tr("    The schema '{0}' is not present in the database.\n").format(masterDict["schema_dados"])
             return msg
         dbEDGVNameSet = abstractDb.getTableListFromSchema(masterDict["schema_dados"])
         masterDictEDGVSet = set(
@@ -410,14 +410,14 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
         inMasterDictNotInDbSet = masterDictEDGVSet.difference(dbEDGVNameSet)
         inDbNotInMasterDictSet = dbEDGVNameSet.difference(masterDictEDGVSet)
         if len(inMasterDictNotInDbSet) > 0 or len(inDbNotInMasterDictSet) > 0:
-            msg += "Erro, há divergência de tabelas no banco de dados e Masterfile:\n"
+            msg += self.tr("Error, there is a table discrepancy between the database and Masterfile:\n")
         if len(inMasterDictNotInDbSet) > 0:
-            msg += f"""    As tabelas do {masterDict["schema_dados"]} que estão no MasterFile, mas não estão do banco de dados são: """
+            msg += self.tr("    Tables from {0} that are in the MasterFile but not in the database are: ").format(masterDict["schema_dados"])
             for table in inMasterDictNotInDbSet:
                 msg += f"{table}, "
             msg = msg[: len(msg) - 2] + "\n\n"
         if len(inDbNotInMasterDictSet) > 0:
-            msg += f"""    As tabelas do {masterDict["schema_dados"]} que estão no banco de dados, mas não estão no MasterFile são: """
+            msg += self.tr("    Tables from {0} that are in the database but not in the MasterFile are: ").format(masterDict["schema_dados"])
             for table in inDbNotInMasterDictSet:
                 msg += f"{table}, "
             msg = msg[: len(msg) - 2] + "\n\n"
@@ -430,15 +430,15 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
             if tableNamePrimaryKeyDict[tableName] == {"id"}:
                 continue
             if not nameTableMsgDict[tableName].get(
-                "chave primária diferente do 'id' a chava primária é/são da tabela: ",
+                "primary key differs from 'id', the primary key(s) of the table are: ",
                 False,
             ):
                 nameTableMsgDict[tableName][
-                    "chave primária diferente do 'id' a chava primária é/são da tabela: "
+                    "primary key differs from 'id', the primary key(s) of the table are: "
                 ] = []
             for pk in tableNamePrimaryKeyDict[tableName]:
                 nameTableMsgDict[tableName][
-                    "chave primária diferente do 'id' a chava primária é/são da tabela: "
+                    "primary key differs from 'id', the primary key(s) of the table are: "
                 ].append(f"{pk}, ")
 
         edgvDict = {
@@ -555,30 +555,30 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                 )
                 if len(inMasterNotInDbSet) > 0 or len(inDbNotInMasterSet) > 0:
                     if not nameTableMsgDict[edgvName].get(
-                        "Os seguintes valores estão presentes no banco de dados, mas não estão no Masterfile: ",
+                        "The following values are present in the database but not in the Masterfile: ",
                         False,
                     ):
                         nameTableMsgDict[edgvName][
-                            "Os seguintes valores estão presentes no banco de dados, mas não estão no Masterfile: "
+                            "The following values are present in the database but not in the Masterfile: "
                         ] = []
                     if not nameTableMsgDict[edgvName].get(
-                        "Os seguintes valores estão presentes no Masterfile, mas não estão no banco de dados: ",
+                        "The following values are present in the Masterfile but not in the database: ",
                         False,
                     ):
                         nameTableMsgDict[edgvName][
-                            "Os seguintes valores estão presentes no Masterfile, mas não estão no banco de dados: "
+                            "The following values are present in the Masterfile but not in the database: "
                         ] = []
                 if len(inMasterNotInDbSet) > 0:
                     for valor in inMasterNotInDbSet:
                         if len(valor) == 3:
                             nameTableMsgDict[edgvName][
-                                "Os seguintes valores estão presentes no Masterfile, mas não estão no banco de dados: "
+                                "The following values are present in the Masterfile but not in the database: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, "
                             )
                         else:
                             nameTableMsgDict[edgvName][
-                                "Os seguintes valores estão presentes no Masterfile, mas não estão no banco de dados: "
+                                "The following values are present in the Masterfile but not in the database: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, mapa_valor = {valor[3]}, "
                             )
@@ -586,13 +586,13 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                     for valor in inDbNotInMasterSet:
                         if len(valor) == 3:
                             nameTableMsgDict[edgvName][
-                                "Os seguintes valores estão presentes no banco de dados, mas não estão no Masterfile: "
+                                "The following values are present in the database but not in the Masterfile: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, "
                             )
                         else:
                             nameTableMsgDict[edgvName][
-                                "Os seguintes valores estão presentes no banco de dados, mas não estão no Masterfile: "
+                                "The following values are present in the database but not in the Masterfile: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, mapa_valor = {valor[3]}, "
                             )
@@ -762,28 +762,28 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
         nameTableMsgDict = defaultdict(dict)
         if len(inDbNotInMasterSet) > 0 or len(inMasterNotInMasterSet) > 0:
             if not nameTableMsgDict[table].get(
-                "As chaves check que estão presentes no banco de dados, mas não estão no MasterFile: ",
+                "Check constraints present in the database but not in the MasterFile: ",
                 False,
             ):
                 nameTableMsgDict[table][
-                    "As chaves check que estão presentes no banco de dados, mas não estão no MasterFile: "
+                    "Check constraints present in the database but not in the MasterFile: "
                 ] = []
             if not nameTableMsgDict[table].get(
-                "As chaves check que estão presentes no Materfile, mas não estão no banco de dados: ",
+                "Check constraints present in the Masterfile but not in the database: ",
                 False,
             ):
                 nameTableMsgDict[table][
-                    "As chaves check que estão presentes no Materfile, mas não estão no banco de dados: "
+                    "Check constraints present in the Masterfile but not in the database: "
                 ] = []
         if len(inDbNotInMasterSet) > 0:
             for check in inDbNotInMasterSet:
                 nameTableMsgDict[table][
-                    "As chaves check que estão presentes no banco de dados, mas não estão no MasterFile: "
+                    "Check constraints present in the database but not in the MasterFile: "
                 ].append(f"{check}, ")
         if len(inMasterNotInMasterSet) > 0:
             for check in inMasterNotInMasterSet:
                 nameTableMsgDict[table][
-                    "As chaves check que estão presentes no Materfile, mas não estão no banco de dados: "
+                    "Check constraints present in the Masterfile but not in the database: "
                 ].append(f"{check}, ")
         return nameTableMsgDict
 

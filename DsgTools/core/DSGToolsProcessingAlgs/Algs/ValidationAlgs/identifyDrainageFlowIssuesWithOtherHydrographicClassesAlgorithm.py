@@ -184,7 +184,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             oceanFilterExpression = None
         if waterBodyLayer is not None and oceanFilterExpression is None:
             raise QgsProcessingException(
-                "There must be a oceanFilterExpression if a water body layer is selected."
+                self.tr("There must be a oceanFilterExpression if a water body layer is selected.")
             )
         waterBodyWithFlowFilterExpression = self.parameterAsExpression(
             parameters, self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION, context
@@ -201,7 +201,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             or waterBodyWithoutFlowFilterExpression is None
         ):
             raise QgsProcessingException(
-                "There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected."
+                self.tr("There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected.")
             )
         sinkAndSpillwayLayer = self.parameterAsLayer(
             parameters, self.SINK_AND_SPILLWAY_LAYER, context
@@ -220,7 +220,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             sinkFilterExpression is None or spillwayFilterExpression is None
         ):
             raise QgsProcessingException(
-                "There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected."
+                self.tr("There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected.")
             )
         geographicBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
@@ -627,8 +627,8 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                     lyrA=pointLyr,
                     lyrB=polygonLyr,
                     flagText=self.tr(
-                        f"Invalid intersection between {pointStr} feature and {polygonStr} feature."
-                    ),
+                        "Invalid intersection between {0} feature and {1} feature."
+                    ).format(pointStr, polygonStr),
                     context=context,
                     feedback=multiStepFeedback,
                 )

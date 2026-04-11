@@ -30,6 +30,7 @@ from .affine import Affine
 import numpy as np
 from osgeo import gdal, ogr
 from osgeo.gdal import Dataset
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsFeature,
     QgsFields,
@@ -58,7 +59,7 @@ def readAsNumpy(
     try:
         ds = gdal.Open(inputRaster)
     except Exception:
-        raise QgsProcessingException(f"Could not open raster: {inputRaster}")
+        raise QgsProcessingException(QCoreApplication.translate("RasterHandler", "Could not open raster: {}").format(inputRaster))
     npArray = (
         np.array(ds.GetRasterBand(1).ReadAsArray().transpose())
         if dtype is None
@@ -265,7 +266,7 @@ def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
     try:
         _raster = gdal.GetDriverByName("GTiff").Create(_out, cols, rows, 1, gdal.GDT_Byte)
     except Exception:
-        raise QgsProcessingException("GTiff driver not available")
+        raise QgsProcessingException(QCoreApplication.translate("RasterHandler", "GTiff driver not available"))
     _raster.SetGeoTransform((x_min, x_res, 0, y_max, 0, -y_res))
     _band = _raster.GetRasterBand(1)
     _band.SetNoDataValue(NoData_value)
@@ -275,7 +276,7 @@ def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
         try:
             ds = gdal.Open(_out)
         except Exception:
-            raise QgsProcessingException(f"Could not open raster: {_out}")
+            raise QgsProcessingException(QCoreApplication.translate("RasterHandler", "Could not open raster: {}").format(_out))
         npRaster = np.array(ds.GetRasterBand(1).ReadAsArray())
         ds = None
         return npRaster
@@ -293,7 +294,7 @@ def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
         driver = ogr.GetDriverByName("ESRI Shapefile")
         source_ds = driver.Open(_temp_in, 0)
     except Exception:
-        raise QgsProcessingException(f"Could not open shapefile: {_temp_in}")
+        raise QgsProcessingException(QCoreApplication.translate("RasterHandler", "Could not open shapefile: {}").format(_temp_in))
     source_layer = source_ds.GetLayer()
 
     gdal.RasterizeLayer(_raster, [1], source_layer, burn_values=[255.0])
@@ -301,7 +302,7 @@ def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
     try:
         ds = gdal.Open(_out)
     except Exception:
-        raise QgsProcessingException(f"Could not open raster: {_out}")
+        raise QgsProcessingException(QCoreApplication.translate("RasterHandler", "Could not open raster: {}").format(_out))
     npRaster = np.array(ds.GetRasterBand(1).ReadAsArray(), dtype=float)
     ds = None
     npRaster[npRaster == 255.0] = np.nan
@@ -405,7 +406,7 @@ def writeOutputRaster(outputRaster, npRaster, ds=None, outputType=None):
     try:
         driver = gdal.GetDriverByName("GTiff")
     except Exception:
-        raise RuntimeError("GTiff driver not available")
+        raise RuntimeError(QCoreApplication.translate("RasterHandler", "GTiff driver not available"))
     ds = (
         ds
         if ds is not None
@@ -606,7 +607,7 @@ def buildNumpyNodataMaskForPolygon(
     try:
         _raster = gdal.GetDriverByName("GTiff").Create(_out, cols, rows, 1, gdal.GDT_Byte)
     except Exception:
-        raise QgsProcessingException("GTiff driver not available")
+        raise QgsProcessingException(QCoreApplication.translate("RasterHandler", "GTiff driver not available"))
     # _raster.SetGeoTransform(transform.to_gdal())
     _raster.SetGeoTransform((x_min, x_res, 0, y_max, 0, -y_res))
     _band = _raster.GetRasterBand(1)
@@ -627,7 +628,7 @@ def buildNumpyNodataMaskForPolygon(
         driver = ogr.GetDriverByName("ESRI Shapefile")
         source_ds = driver.Open(_temp_in, 0)
     except Exception:
-        raise QgsProcessingException(f"Could not open shapefile: {_temp_in}")
+        raise QgsProcessingException(QCoreApplication.translate("RasterHandler", "Could not open shapefile: {}").format(_temp_in))
     source_layer = source_ds.GetLayer()
 
     gdal.RasterizeLayer(_raster, [1], source_layer, burn_values=[255.0])
@@ -635,7 +636,7 @@ def buildNumpyNodataMaskForPolygon(
     try:
         ds = gdal.Open(_out)
     except Exception:
-        raise QgsProcessingException(f"Could not open raster: {_out}")
+        raise QgsProcessingException(QCoreApplication.translate("RasterHandler", "Could not open raster: {}").format(_out))
     outputNpRaster = np.array(ds.GetRasterBand(1).ReadAsArray(), dtype=float)
     ds = None
     outputNpRaster[outputNpRaster == 255.0] = valueToBurnAsMask
@@ -704,12 +705,12 @@ def rasterizePolygonsToFile(
         field_names = [field.name() for field in vectorLayer.fields()]
         if classField not in field_names:
             raise QgsProcessingException(
-                f'Field "{classField}" not found in layer'
+                QCoreApplication.translate("RasterHandler", 'Field "{}" not found in layer').format(classField)
             )
         
         # Verificar se há features
         if vectorLayer.featureCount() == 0:
-            raise QgsProcessingException("Layer contains no features")
+            raise QgsProcessingException(QCoreApplication.translate("RasterHandler", "Layer contains no features"))
         
         # Calcular dimensões do raster
         if width is not None and height is not None and transform_affine is not None:
@@ -766,21 +767,26 @@ def rasterizePolygonsToFile(
                     geom_dict = mapping(shapely_geom)
                 except ImportError:
                     raise QgsProcessingException(
-                        f"Erro ao converter geometria. "
-                        f"Instale shapely: pip install shapely"
+                        QCoreApplication.translate(
+                            "RasterHandler",
+                            "Error converting geometry. Install shapely: pip install shapely",
+                        )
                     )
                 except Exception as e2:
                     raise QgsProcessingException(
-                        f"Erro ao converter geometria: {str(e2)}"
+                        QCoreApplication.translate(
+                            "RasterHandler",
+                            "Error converting geometry: {}",
+                        ).format(str(e2))
                     )
-            
+
             shapes.append((geom_dict, class_value))
-        
+
         if not shapes:
             raise QgsProcessingException(
                 "No valid geometry found for rasterization"
             )
-        
+
         # Mapear dtype string para numpy dtype
         dtype_map = {
             'int16': np.int16,
@@ -791,7 +797,7 @@ def rasterizePolygonsToFile(
             'float64': np.float64,
         }
         np_dtype = dtype_map.get(dtype, np.int16)
-        
+
         # Rasterizar
         raster_array = rasterize(
             shapes=shapes,
@@ -801,7 +807,7 @@ def rasterizePolygonsToFile(
             dtype=np_dtype,
             all_touched=True,  # Incluir pixels que tocam os polígonos
         )
-        
+
         # Salvar como GeoTIFF
         with rasterio.open(
             outputPath,
@@ -902,12 +908,12 @@ def rasterizePolygonsToArray(
         field_names = [field.name() for field in vectorLayer.fields()]
         if classField not in field_names:
             raise QgsProcessingException(
-                f'Field "{classField}" not found in layer'
+                QCoreApplication.translate("RasterHandler", 'Field "{}" not found in layer').format(classField)
             )
         
         # Verificar se há features
         if vectorLayer.featureCount() == 0:
-            raise QgsProcessingException("Layer contains no features")
+            raise QgsProcessingException(QCoreApplication.translate("RasterHandler", "Layer contains no features"))
         
         # Calcular dimensões do raster
         xmin, ymin, xmax, ymax = bbox.toRectF().getCoords()
@@ -954,21 +960,26 @@ def rasterizePolygonsToArray(
                     geom_dict = mapping(shapely_geom)
                 except ImportError:
                     raise QgsProcessingException(
-                        f"Erro ao converter geometria. "
-                        f"Instale shapely: pip install shapely"
+                        QCoreApplication.translate(
+                            "RasterHandler",
+                            "Error converting geometry. Install shapely: pip install shapely",
+                        )
                     )
                 except Exception as e2:
                     raise QgsProcessingException(
-                        f"Erro ao converter geometria: {str(e2)}"
+                        QCoreApplication.translate(
+                            "RasterHandler",
+                            "Error converting geometry: {}",
+                        ).format(str(e2))
                     )
-            
+
             shapes.append((geom_dict, class_value))
-        
+
         if not shapes:
             raise QgsProcessingException(
                 "No valid geometry found for rasterization"
             )
-        
+
         # Mapear dtype string para numpy dtype
         dtype_map = {
             'int16': np.int16,
@@ -979,7 +990,7 @@ def rasterizePolygonsToArray(
             'float64': np.float64,
         }
         np_dtype = dtype_map.get(dtype, np.int16)
-        
+
         # Rasterizar
         raster_array = rasterize(
             shapes=shapes,
@@ -989,9 +1000,9 @@ def rasterizePolygonsToArray(
             dtype=np_dtype,
             all_touched=True,
         )
-        
+
         return raster_array
-    
+
     except ImportError:
         raise
     except QgsProcessingException:
@@ -1041,7 +1052,7 @@ def clipRasterByVectorMask(
         # Obter a geometria da máscara
         features = list(mask_layer.getFeatures())
         if not features:
-            raise QgsProcessingException("Mask layer contains no features")
+            raise QgsProcessingException(QCoreApplication.translate("RasterHandler", "Mask layer contains no features"))
         
         # Usar a primeira feature como máscara
         mask_geom = features[0].geometry()
@@ -1086,7 +1097,10 @@ def clipRasterByVectorMask(
     except Exception as e:
         import traceback
         raise QgsProcessingException(
-            f"Erro ao clipar raster: {str(e)}\n{traceback.format_exc()}"
+            QCoreApplication.translate(
+                "RasterHandler",
+                "Error clipping raster: {}\n{}",
+            ).format(str(e), traceback.format_exc())
         )
 
 def calculateSegmentationMetricsFromArrays(

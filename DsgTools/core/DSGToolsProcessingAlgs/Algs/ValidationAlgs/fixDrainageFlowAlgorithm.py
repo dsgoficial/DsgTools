@@ -216,7 +216,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             oceanFilterExpression = None
         if waterBodyLayer is not None and oceanFilterExpression is None:
             raise QgsProcessingException(
-                "There must be a oceanFilterExpression if a water body layer is selected."
+                self.tr("There must be a oceanFilterExpression if a water body layer is selected.")
             )
         waterBodyWithFlowFilterExpression = self.parameterAsExpression(
             parameters, self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION, context
@@ -233,7 +233,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             or waterBodyWithoutFlowFilterExpression is None
         ):
             raise QgsProcessingException(
-                "There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected."
+                self.tr("There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected.")
             )
         sinkAndSpillwayLayer = self.parameterAsLayer(
             parameters, self.SINK_AND_SPILLWAY_LAYER, context
@@ -252,7 +252,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             sinkFilterExpression is None or spillwayFilterExpression is None
         ):
             raise QgsProcessingException(
-                "There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected."
+                self.tr("There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected.")
             )
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context

@@ -147,12 +147,12 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(total_steps, feedback)
         current_step = 0
 
-        multiStepFeedback.pushInfo("Starting line-on-line overlay algorithm...")
+        multiStepFeedback.pushInfo(self.tr("Starting line-on-line overlay algorithm..."))
 
         # Step 1: Merge all reference line layers into one
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Merging reference line layers...".format(
+            self.tr("Step {}/{}: Merging reference line layers...").format(
                 current_step + 1, total_steps
             )
         )
@@ -181,7 +181,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 2: Create spatial indexes for better performance
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Creating spatial indexes...".format(
+            self.tr("Step {}/{}: Creating spatial indexes...").format(
                 current_step + 1, total_steps
             )
         )
@@ -197,7 +197,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 3: Find intersection points between input lines and reference lines
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Finding line intersections...".format(
+            self.tr("Step {}/{}: Finding line intersections...").format(
                 current_step + 1, total_steps
             )
         )
@@ -214,7 +214,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 4: Split input lines at intersection points
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Splitting input lines at intersections...".format(
+            self.tr("Step {}/{}: Splitting input lines at intersections...").format(
                 current_step + 1, total_steps
             )
         )
@@ -252,7 +252,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 5: Convert split lines to single parts (in case multipart geometries were created)
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Converting to single part geometries...".format(
+            self.tr("Step {}/{}: Converting to single part geometries...").format(
                 current_step + 1, total_steps
             )
         )
@@ -268,7 +268,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 6: Snap intersection points to reference lines to add vertices
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Adding intersection vertices to reference lines...".format(
+            self.tr("Step {}/{}: Adding intersection vertices to reference lines...").format(
                 current_step + 1, total_steps
             )
         )
@@ -287,7 +287,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 7: Clean and prepare the split input lines
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Cleaning split lines...".format(current_step + 1, total_steps)
+            self.tr("Step {}/{}: Cleaning split lines...").format(current_step + 1, total_steps)
         )
 
         # Remove any null geometries that might have been created during processing
@@ -301,7 +301,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Step 8: Output the results
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            "Step {}/{}: Writing output features...".format(
+            self.tr("Step {}/{}: Writing output features...").format(
                 current_step + 1, total_steps
             )
         )
@@ -323,7 +323,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
         )
 
         multiStepFeedback.pushInfo(
-            "Line-on-line overlay algorithm completed successfully!"
+            self.tr("Line-on-line overlay algorithm completed successfully!")
         )
 
         return {

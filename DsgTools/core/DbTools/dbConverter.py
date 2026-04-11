@@ -202,7 +202,7 @@ class DbConverter(QgsTask):
             if abstractDb is not None:
                 abstractDb.closeDatabase()
                 abstractDb = None
-            msg = "{0} dataset creation has failed: '{1}'".format(
+            msg = self.tr("{0} dataset creation has failed: '{1}'").format(
                 output, "; ".join(map(str, e.args))
             )
         return abstractDb, msg

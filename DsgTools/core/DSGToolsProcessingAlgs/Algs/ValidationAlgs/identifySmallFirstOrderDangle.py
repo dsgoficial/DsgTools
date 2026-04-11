@@ -204,8 +204,8 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
         flagLambda = lambda x: self.flagFeature(
             x.geometry(),
             flagText=self.tr(
-                f"First order dangle on {inputLyr.name()} smaller than {minLength}"
-            ),
+                "First order dangle on {0} smaller than {1}"
+            ).format(inputLyr.name(), minLength),
         )
         list(
             map(

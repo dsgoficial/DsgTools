@@ -282,8 +282,8 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
         mode_name = "fixed size" if tiling_mode == 0 else "grid division"
         feedback.pushInfo(
             self.tr(
-                f"Created {tiles_created} tiles from {source.featureCount()} input features using {mode_name} mode"
-            )
+                "Created {0} tiles from {1} input features using {2} mode"
+            ).format(tiles_created, source.featureCount(), mode_name)
         )
 
         # Return the output layer

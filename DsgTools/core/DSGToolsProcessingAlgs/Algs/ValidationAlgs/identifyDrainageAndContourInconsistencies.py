@@ -284,18 +284,18 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                     continue
                 if diff < 0:
                     flagText = self.tr(
-                        f"Drainage line going uphill. This drainage already intercepted countour with height {f2[contourAttr]} after intercepting contour with height {f1[contourAttr]}."
-                    )
+                        "Drainage line going uphill. This drainage already intercepted countour with height {0} after intercepting contour with height {1}."
+                    ).format(f2[contourAttr], f1[contourAttr])
                 elif diff == 0:
                     if f1.geometry().intersects(f2.geometry()):
                         continue
                     flagText = self.tr(
-                        f"Invalid intersection between drainage and contour lines. This drainage intercepted twice the countour with height {f2[contourAttr]}."
-                    )
+                        "Invalid intersection between drainage and contour lines. This drainage intercepted twice the countour with height {0}."
+                    ).format(f2[contourAttr])
                 else:
                     flagText = self.tr(
-                        f"Drainage line intercepted countour with height {f2[contourAttr]} after intercepting contour with height {f1[contourAttr]}. Since the contour interval is {contourInterval}, there are missing contours in this region. Check the contours for missing features."
-                    )
+                        "Drainage line intercepted countour with height {0} after intercepting contour with height {1}. Since the contour interval is {2}, there are missing contours in this region. Check the contours for missing features."
+                    ).format(f2[contourAttr], f1[contourAttr], contourInterval)
                 g1 = f1.geometry()
                 g2 = f2.geometry()
                 flagGeom = g1.combine(g2)
@@ -429,16 +429,16 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                         continue
                     if diff < 0:
                         flagText = self.tr(
-                            f"Drainage newtwork going uphill. This network branch has already intercepted countour with height {h2} after intercepting contour with height {h1}."
-                        )
+                            "Drainage newtwork going uphill. This network branch has already intercepted countour with height {0} after intercepting contour with height {1}."
+                        ).format(h2, h1)
                     elif diff == 0:
                         flagText = self.tr(
-                            f"Invalid intercection between drainage and contour lines. This network branch has already intercepted twice the countour with height {h2}."
-                        )
+                            "Invalid intercection between drainage and contour lines. This network branch has already intercepted twice the countour with height {0}."
+                        ).format(h2)
                     else:
                         flagText = self.tr(
-                            f"Drainage network intercepted countour with height {h2} after intercepting contour with height {h1}. Since the contour interval is {contourInterval}, there are missing contours in this region. Check the contours for missing features."
-                        )
+                            "Drainage network intercepted countour with height {0} after intercepting contour with height {1}. Since the contour interval is {2}, there are missing contours in this region. Check the contours for missing features."
+                        ).format(h2, h1, contourInterval)
                     g1 = nodesDict[node1].geometry()
                     g2 = nodesDict[node2].geometry()
                     flagGeom = g1.combine(g2)
@@ -538,8 +538,8 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                 ):
                     t = "in" if len(succ) == 0 else "out"
                     flagText = self.tr(
-                        f"Drainage flow issue: All drainage lines are flowing {t}."
-                    )
+                        "Drainage flow issue: All drainage lines are flowing {0}."
+                    ).format(t)
                     flagGeom = nodesDict[node].geometry()
                     flagDict[flagGeom.asWkb()] = flagText
                     continue
@@ -555,8 +555,8 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                 if (h1 == d[node] or h2 == d[node]) and abs(h1 - h2) == contourInterval:
                     continue
                 flagText = self.tr(
-                    f"Drainage encounter with different known height values: {h1} and {h2}."
-                )
+                    "Drainage encounter with different known height values: {0} and {1}."
+                ).format(h1, h2)
                 flagGeom = nodesDict[node].geometry()
                 flagDict[flagGeom.asWkb()] = flagText
             nodesToVisit = newNodesToVisit

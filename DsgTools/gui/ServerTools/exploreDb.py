@@ -76,7 +76,7 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
         dbList.sort()
         for (dbname, dbversion) in dbList:
             item = QListWidgetItem(self.dbListWidget)
-            item.setText(dbname + " (EDGV v. " + dbversion + ")")
+            item.setText(self.tr("{0} (EDGV v. {1})").format(dbname, dbversion))
             item.setData(Qt.ItemDataRole.UserRole, dbname)
 
     @pyqtSlot(bool)

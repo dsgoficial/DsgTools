@@ -272,7 +272,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(self.OUTPUT, "Output spot elevation")
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT, self.tr("Output spot elevation")
+            )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -513,8 +515,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 break
             multiStepFeedback.setCurrentStep(currentStepInsideLoop)
             self.currentStepText = self.tr(
-                f"Evaluating region {currentStepInsideLoop-currentStep+1}/{nFeats}"
-            )
+                "Evaluating region {0}/{1}"
+            ).format(currentStepInsideLoop-currentStep+1, nFeats)
             multiStepFeedback.setProgressText(self.currentStepText)
             localBoundsLyr = layerHandler.createMemoryLayerWithFeature(
                 geographicBoundaryLyr, feat, context
@@ -671,8 +673,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 multiStepFeedback.setCurrentStep(currentStep)
                 multiStepFeedback.pushInfo(
                     self.tr(
-                        f"{self.currentStepText}: Running clip on area without information..."
-                    )
+                        "{0}: Running clip on area without information..."
+                    ).format(self.currentStepText)
                 )
             areaWithoutInformationLyr = self.algRunner.runClip(
                 areaWithoutInformationLyr,

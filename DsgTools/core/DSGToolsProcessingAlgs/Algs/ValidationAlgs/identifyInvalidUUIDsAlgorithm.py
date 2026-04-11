@@ -163,8 +163,8 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
                         }
                     )
                     for descr, hasError in [
-                        ("uuid inválido", not isValidUuid),
-                        ("uuid duplicado", hasDuplicateValues),
+                        (self.tr("invalid uuid"), not isValidUuid),
+                        (self.tr("duplicate uuid"), hasDuplicateValues),
                     ]
                     if hasError
                 ]

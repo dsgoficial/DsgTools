@@ -101,9 +101,9 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         :return: (QComboBox) configured error selection widget.
         """
         errorTypeList = [
-            "Atributo de valor incomum",
-            "Atributo com valor incorreto",
-            "Preencher atributo",
+            self.tr("Uncommon attribute value"),
+            self.tr("Incorrect attribute value"),
+            self.tr("Fill attribute"),
         ]
 
         cb = QComboBox()

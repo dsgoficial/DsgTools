@@ -259,8 +259,8 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
             except Exception as e:
                 feedback.pushWarning(
                     self.tr(
-                        f"Failed to add field {fieldName} to layer {layer.name()}: {str(e)}"
-                    )
+                        "Failed to add field {0} to layer {1}: {2}"
+                    ).format(fieldName, layer.name(), str(e))
                 )
                 continue
 
@@ -282,8 +282,8 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
             except Exception as e:
                 feedback.pushWarning(
                     self.tr(
-                        f"Failed to add class_name field to layer {layer.name()}: {str(e)}"
-                    )
+                        "Failed to add class_name field to layer {0}: {1}"
+                    ).format(layer.name(), str(e))
                 )
                 continue
 

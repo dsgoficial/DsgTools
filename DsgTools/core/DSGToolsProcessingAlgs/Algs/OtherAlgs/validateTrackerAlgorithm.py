@@ -150,8 +150,8 @@ class ValidateTrackerAlgorithm(QgsProcessingAlgorithm):
         for key in dictExpectedType.keys():
             if not dictExpectedType[key] == dictActualType[key]:
                 dictDiff[key] = self.tr(
-                    f"Expected value for {key} type was {dictExpectedType[key]} but {dictActualType[key]} was given instead"
-                )
+                    "Expected value for {0} type was {1} but {2} was given instead"
+                ).format(key, dictExpectedType[key], dictActualType[key])
         return dictDiff
 
     def validateDate(self, inputLyr, creation_time, toleranceDays):
@@ -212,7 +212,7 @@ class ValidateTrackerAlgorithm(QgsProcessingAlgorithm):
             inputLyr, creation, toleranceDays
         )
         multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo("Checking dates (tracker).")
+        multiStepFeedback.pushInfo(self.tr("Checking dates (tracker)."))
         diffBiggerThan1Day = self.diffBiggerThan1Day(inputLyr, creation)
         errorMessage = ""
         if dictDiffFieldType:
@@ -220,11 +220,11 @@ class ValidateTrackerAlgorithm(QgsProcessingAlgorithm):
                 errorMessage += message + "\n"
         if diffDaysBiggerThanTolerance:
             errorMessage += self.tr(
-                f"{diffDaysBiggerThanTolerance} features found at least {toleranceDays}-day difference from today\n"
-            )
+                "{0} features found at least {1}-day difference from today\n"
+            ).format(diffDaysBiggerThanTolerance, toleranceDays)
         if diffBiggerThan1Day:
             errorMessage += self.tr(
-                f"Latest date more than 24 hours after earlier date"
+                "Latest date more than 24 hours after earlier date"
             )
         if (
             (not dictDiffFieldType)
@@ -233,7 +233,7 @@ class ValidateTrackerAlgorithm(QgsProcessingAlgorithm):
         ):
             errorMessage += self.tr("No inconsistencies found")
         multiStepFeedback.setCurrentStep(4)
-        multiStepFeedback.pushInfo("Loading complete.")
+        multiStepFeedback.pushInfo(self.tr("Loading complete."))
 
         return {self.OUTPUT: errorMessage}
 

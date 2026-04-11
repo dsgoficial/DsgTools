@@ -268,8 +268,8 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
                 multiStepFeedback.setCurrentStep(currentStep)
                 multiStepFeedback.setProgressText(
                     self.tr(
-                        f"Processing MI {geographicBoundsFeat[miField]} ({i}/{nGeographicBoundsFeats})"
-                    )
+                        "Processing MI {0} ({1}/{2})"
+                    ).format(geographicBoundsFeat[miField], i, nGeographicBoundsFeats)
                 )
             clippedLayerDict = self.prepareInputData(
                 inputLayerList,

@@ -214,7 +214,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
 
             index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
             feedback.setProgress(int((i / total) * 100))
-            feedback.pushInfo(f"Processing index {i+1}/{total}: {inputIndex}")
+            feedback.pushInfo(self.tr("Processing index {0}/{1}: {2}").format(i+1, total, inputIndex))
 
             featureHandler.getSystematicGridFeatures(
                 featureList,

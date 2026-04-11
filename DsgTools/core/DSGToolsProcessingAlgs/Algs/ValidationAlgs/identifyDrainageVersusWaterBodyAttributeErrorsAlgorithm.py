@@ -214,8 +214,8 @@ class IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(ValidationAlgorith
             flagGeom=x.geometry(),
             featid=x["featid"],
             flagText=self.tr(
-                f"Features outside water body with attribute inside water body ({polygonRelationshipAttribute} != {outsidePolygonValue})."
-            ),
+                "Features outside water body with attribute inside water body ({0} != {1})."
+            ).format(polygonRelationshipAttribute, outsidePolygonValue),
         )
         list(map(flagLambda, drainagesOutsideWithWrongAttributes.getFeatures()))
         currentStep += 1
@@ -243,8 +243,8 @@ class IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(ValidationAlgorith
             flagGeom=x.geometry(),
             featid=x["featid"],
             flagText=self.tr(
-                f"Features inside water body with attribute inside water body ({polygonRelationshipAttribute} = {outsidePolygonValue})."
-            ),
+                "Features inside water body with attribute inside water body ({0} = {1})."
+            ).format(polygonRelationshipAttribute, outsidePolygonValue),
         )
         list(map(flagLambda, drainagesInsideWithWrongAttributes.getFeatures()))
 

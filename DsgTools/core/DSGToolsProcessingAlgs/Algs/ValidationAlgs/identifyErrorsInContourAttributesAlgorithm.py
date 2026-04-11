@@ -164,8 +164,8 @@ class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):
             self.flagFeature(
                 flagGeom=feat.geometry(),
                 flagText=self.tr(
-                    f"Contour with height {feat[heightFieldName]} has invalid index (attributes: {attrDict})"
-                ),
+                    "Contour with height {0} has invalid index (attributes: {1})"
+                ).format(feat[heightFieldName], attrDict),
                 featid=feat.id(),
             )
         return {self.FLAGS: self.flag_id}

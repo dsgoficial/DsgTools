@@ -248,7 +248,12 @@ class EventFilter(QObject):
                 dist = self.dist_area.convertLengthMeasurement(
                     measure_dist, QgsUnitTypes.DistanceMeters
                 )
-                txt = f"<b>Parcial: {dist:.3f} m</b><br/><b>Total: {distAcum:.3f} m</b></p>"
+                txt = "<b>{partial} {dist:.3f} m</b><br/><b>{total} {distAcum:.3f} m</b></p>".format(
+                    partial=self.tr("Partial:"),
+                    total=self.tr("Total:"),
+                    dist=dist,
+                    distAcum=distAcum,
+                )
                 tooltip.showText(
                     self.mapCanvas.mapToGlobal(self.mapCanvas.mouseLastXY()),
                     txt,

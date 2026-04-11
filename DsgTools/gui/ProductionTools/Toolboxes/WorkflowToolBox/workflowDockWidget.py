@@ -241,7 +241,7 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             if key < idx:
                 continue
             for action in menu.actions():
-                if "Ignore false positive flags on model" not in action.text():
+                if self.tr("Ignore false positive flags on model") not in action.text():
                     continue
                 action.setChecked(False)
 

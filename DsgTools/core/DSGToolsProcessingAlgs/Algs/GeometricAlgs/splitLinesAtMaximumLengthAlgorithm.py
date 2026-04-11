@@ -129,7 +129,7 @@ class SplitLinesAtMaximumLengthAlgorithm(QgsProcessingAlgorithm):
         # Process closed lines
         if closed_lines.featureCount() > 0:
             multiStepFeedback.pushInfo(
-                f"Processing {closed_lines.featureCount()} closed lines..."
+                self.tr("Processing {} closed lines...").format(closed_lines.featureCount())
             )
 
             # Process closed lines one by one to determine length correctly

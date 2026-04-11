@@ -60,27 +60,27 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUTLAYERS, "Camadas de entrada :"
+                self.INPUTLAYERS, self.tr("Input layers:")
             )
         )
         self.addParameter(
             QgsProcessingParameterFile(
                 self.RULEFILE,
-                description='Arquivo ".json" com regras :',
+                description=self.tr('".json" file with rules:'),
                 defaultValue=".json",
             )
         )
         self.addParameter(
             QgsProcessingParameterString(
                 self.RULEDATA,
-                description='Regras no formato "json" :',
+                description=self.tr('Rules in "json" format:'),
                 multiLine=True,
                 defaultValue="{}",
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.UNUSUAL_ATTRIBUTES, self.tr("Atributos incomuns")
+                self.UNUSUAL_ATTRIBUTES, self.tr("Unusual attributes")
             )
         )
         self.addParameter(
@@ -143,7 +143,7 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
             result[row["type"]].append(failed)
         if not input_data:
             self.print_log(
-                "Carregue um arquivos com as Regras ou insira as Regras!", feedback
+                self.tr("Load a file with the Rules or enter the Rules!"), feedback
             )
             return {
                 self.OUTPUT: "",
@@ -246,7 +246,7 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
     def format_output_result(self, result):
         html = ""
         for ruleName in sorted(result.keys()):
-            row = "[REGRAS] : {0}\n\n".format(ruleName)
+            row = self.tr("[RULES] : {0}\n\n").format(ruleName)
             html += row
             failedLayers = []
             for layers in result[ruleName]:
@@ -262,7 +262,7 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
                 for layerName in sorted(failedLayers):
                     rows += "{0}\n\n".format(layerName)
             else:
-                rows = "As camadas passaram em todas as regras.\n\n"
+                rows = self.tr("All layers passed all rules.\n\n")
             html += rows
         return html
 

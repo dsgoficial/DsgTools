@@ -202,7 +202,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         if dbversion in ["2.1.3", "3.0", "2.1.3 Pro", "3.0 Pro"]:
             dbversion = f"EDGV {dbversion}"
         if dbversion == "Non_EDGV":
-            displayString = f"{dbName} (Unknown model)"
+            displayString = dbName + " (" + self.tr("Unknown model") + ")"
         elif dbimplversion == -1:
             displayString = f"{dbName} ({dbversion})"
         else:
