@@ -204,7 +204,9 @@ class AcquisitionFreeController(object):
                     QCoreApplication.translate("AcquisitionFreeController", "Error!"),
                     msg
                 )
-                QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.MessageLevel.Critical)
+                QgsMessageLog.logMessage(
+                    msg, "DSGTools Plugin", Qgis.MessageLevel.Critical
+                )
                 return geom
         finalGeom = sGeom.simplify(self.getFinalTolerance())
         tr = core.QgsCoordinateTransform(
@@ -253,9 +255,13 @@ class AcquisitionFreeController(object):
         formSuppressOnLayer = layer.editFormConfig().suppress()
         formSuppressOnSettings = self.getFormSuppressStateSettings()
         featureAdded = True
-        if formSuppressOnLayer == core.QgsEditFormConfig.FeatureFormSuppress.SuppressOn or (
-            formSuppressOnLayer == core.QgsEditFormConfig.FeatureFormSuppress.SuppressDefault
-            and formSuppressOnSettings == "true"
+        if (
+            formSuppressOnLayer == core.QgsEditFormConfig.FeatureFormSuppress.SuppressOn
+            or (
+                formSuppressOnLayer
+                == core.QgsEditFormConfig.FeatureFormSuppress.SuppressDefault
+                and formSuppressOnSettings == "true"
+            )
         ):
             self.addFeatureWithoutForm(layer, feature)
         else:

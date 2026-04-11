@@ -212,7 +212,7 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
         elif isinstance(line, QgsLineString):
             geometry = QgsGeometry(line)
         else:
-            print('oi')
+            print("oi")
             pass
         vertexPoint = geometry.closestVertexWithContext(point)[1]
         adjpoints = geometry.adjacentVertices(vertexPoint)

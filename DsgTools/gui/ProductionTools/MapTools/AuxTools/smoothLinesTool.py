@@ -30,6 +30,7 @@ from qgis.core import (
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
 
+
 class SmoothLinesTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
@@ -38,15 +39,15 @@ class SmoothLinesTool(QgsMapTool):
         super(SmoothLinesTool, self).__init__(self.canvas)
 
     def addTool(
-            self, 
-            manager, 
-            callback, 
-            parentMenu, 
-            iconBasePath,
-            parentButton=None,
-            defaultButton=False,
-        ):
-        self.parentButton=parentButton
+        self,
+        manager,
+        callback,
+        parentMenu,
+        iconBasePath,
+        parentButton=None,
+        defaultButton=False,
+    ):
+        self.parentButton = parentButton
         icon_path = iconBasePath + "/smoothLines.png"
         toolTip = self.tr("DSGTools: Smooth Selected Lines")
         action = manager.add_action(
@@ -97,7 +98,7 @@ class SmoothLinesTool(QgsMapTool):
             enabled = True
         self.toolAction.setEnabled(enabled) if self.toolAction else None
         return enabled
-    
+
     def getParametersFromConfig(self):
         # Método para obter as configurações da tool do QSettings
         # Parâmetro de retorno: parameters (Todas os parâmetros do QSettings usado na ferramenta)
@@ -112,30 +113,35 @@ class SmoothLinesTool(QgsMapTool):
         layer = iface.activeLayer()
         if not layer:
             iface.messageBar().pushMessage(
-                self.tr("Error"), 
-                self.tr("Select a valid layer"), 
-                level=Qgis.MessageLevel.Critical, 
-                duration=5
+                self.tr("Error"),
+                self.tr("Select a valid layer"),
+                level=Qgis.MessageLevel.Critical,
+                duration=5,
             )
             return
         selectedFeatures = layer.selectedFeatureCount()
         if selectedFeatures == 0:
             iface.messageBar().pushMessage(
                 self.tr("Error"),
-                self.tr("Select at least one feature in the source layer"), 
-                level=Qgis.MessageLevel.Critical, 
-                duration=5
+                self.tr("Select at least one feature in the source layer"),
+                level=Qgis.MessageLevel.Critical,
+                duration=5,
             )
             return
-        numberSmoothingIterations, fractionLineCreateNewVertices = self.getParametersFromConfig()
+        (
+            numberSmoothingIterations,
+            fractionLineCreateNewVertices,
+        ) = self.getParametersFromConfig()
         for feat in layer.selectedFeatures():
             geom = feat.geometry()
-            geom_smooth = geom.smooth(numberSmoothingIterations, fractionLineCreateNewVertices)
+            geom_smooth = geom.smooth(
+                numberSmoothingIterations, fractionLineCreateNewVertices
+            )
             feat.setGeometry(geom_smooth)
             layer.updateFeature(feat)
         iface.mapCanvas().refresh()
-        return (True, '')
-    
+        return (True, "")
+
     def deactivate(self):
         QgsMapTool.deactivate(self)
         self.canvas.unsetMapTool(self)

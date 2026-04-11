@@ -156,11 +156,17 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
             for value in unique_values:
                 # Create symbol based on geometry type
                 if layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
-                    symbol = QgsSymbol.defaultSymbol(QgsWkbTypes.GeometryType.PointGeometry)
+                    symbol = QgsSymbol.defaultSymbol(
+                        QgsWkbTypes.GeometryType.PointGeometry
+                    )
                 elif layer.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
-                    symbol = QgsSymbol.defaultSymbol(QgsWkbTypes.GeometryType.LineGeometry)
+                    symbol = QgsSymbol.defaultSymbol(
+                        QgsWkbTypes.GeometryType.LineGeometry
+                    )
                 else:  # Polygon
-                    symbol = QgsSymbol.defaultSymbol(QgsWkbTypes.GeometryType.PolygonGeometry)
+                    symbol = QgsSymbol.defaultSymbol(
+                        QgsWkbTypes.GeometryType.PolygonGeometry
+                    )
 
                 # Set random color
                 color = self.generateRandomColor()

@@ -14,7 +14,8 @@ class Ui_Form(object):
         Form.setObjectName("Form")
         Form.resize(858, 36)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.MinimumExpanding
+            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -32,7 +33,8 @@ class Ui_Form(object):
         self.splitter.setObjectName("splitter")
         self.mMapLayerComboBox = QgsMapLayerComboBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -89,7 +91,8 @@ class Ui_Form(object):
         self.zoomPercentageSpinBox.setObjectName("zoomPercentageSpinBox")
         self.mScaleWidget = QgsScaleWidget(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -101,7 +104,8 @@ class Ui_Form(object):
         self.mScaleWidget.setObjectName("mScaleWidget")
         self.idSpinBox = QtWidgets.QSpinBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -109,12 +113,15 @@ class Ui_Form(object):
         self.idSpinBox.setSizePolicy(sizePolicy)
         self.idSpinBox.setMinimumSize(QtCore.QSize(40, 20))
         self.idSpinBox.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.idSpinBox.setButtonSymbols(QtWidgets.QAbstractSpinBox.ButtonSymbols.NoButtons)
+        self.idSpinBox.setButtonSymbols(
+            QtWidgets.QAbstractSpinBox.ButtonSymbols.NoButtons
+        )
         self.idSpinBox.setSuffix("")
         self.idSpinBox.setObjectName("idSpinBox")
         self.usePanCkb = QtWidgets.QCheckBox(self.tr("Use pan"), self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -169,7 +176,8 @@ class Ui_Form(object):
         self.nextInspectButton.setObjectName("nextInspectButton")
         self.mFieldExpressionWidget = QgsFieldExpressionWidget(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Preferred
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Preferred,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -206,7 +214,8 @@ class Ui_Form(object):
         self.splitter2.setObjectName("splitter2")
         self.mFieldComboBox = QgsFieldComboBox(self.splitter2)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -289,7 +298,10 @@ class Ui_Form(object):
         self.inspectPushButton.setObjectName("inspectPushButton")
         self.gridLayout.addWidget(self.inspectPushButton, 0, 0, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(
-            10, 20, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum
+            10,
+            20,
+            QtWidgets.QSizePolicy.Policy.Fixed,
+            QtWidgets.QSizePolicy.Policy.Minimum,
         )
         self.gridLayout.addItem(spacerItem, 0, 1, 1, 1)
 

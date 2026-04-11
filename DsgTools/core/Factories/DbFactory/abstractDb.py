@@ -44,7 +44,7 @@ class AbstractDb(QObject):
         Constructor
         """
         super(AbstractDb, self).__init__()
-        self.conversionTypeDict = dict({"QPSQL": "postgis", "QSQLITE": "spatialite"})
+        self.conversionTypeDict = dict({"QPSQL": "postgis"})
         self.utils = Utils()
         self.signals = DbSignals()
         self.slotConnected = False
@@ -245,8 +245,6 @@ class AbstractDb(QObject):
         self.signals.clearLog.emit()
         if outputAbstractDb.db.driverName() == "QPSQL":
             return self.convertToPostgis(outputAbstractDb, type)
-        if outputAbstractDb.db.driverName() == "QSQLITE":
-            return self.convertToSpatialite(outputAbstractDb, type)
         return None
 
     def makeValidationSummary(self, invalidatedDataDict):
@@ -850,21 +848,14 @@ class AbstractDb(QObject):
         Gets the QML directory
         """
         currentPath = os.path.dirname(__file__)
-        if Qgis.QGIS_VERSION_INT >= 30000:
-            # treat old implementations (bug fixes on domain values)
-            implVersion = self.implementationVersion()
-            if implVersion == "" or float(implVersion) < 3:
-                qmlVersionPath = os.path.join(
-                    currentPath, "..", "..", "Qmls", "qgis_37_impl_2"
-                )
-            else:
-                qmlVersionPath = os.path.join(
-                    currentPath, "..", "..", "Qmls", "qgis_37"
-                )
-        elif Qgis.QGIS_VERSION_INT >= 20600:
-            qmlVersionPath = os.path.join(currentPath, "..", "..", "Qmls", "qgis_26")
+        # treat old implementations (bug fixes on domain values)
+        implVersion = self.implementationVersion()
+        if implVersion == "" or float(implVersion) < 3:
+            qmlVersionPath = os.path.join(
+                currentPath, "..", "..", "Qmls", "qgis_37_impl_2"
+            )
         else:
-            qmlVersionPath = os.path.join(currentPath, "..", "..", "Qmls", "qgis_22")
+            qmlVersionPath = os.path.join(currentPath, "..", "..", "Qmls", "qgis_37")
 
         version = self.getDatabaseVersion()
         if version == "3.0":

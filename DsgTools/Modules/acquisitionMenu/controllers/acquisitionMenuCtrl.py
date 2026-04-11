@@ -249,8 +249,12 @@ class AcquisitionMenuCtrl:
                 QgsWkbTypes.GeometryType.PointGeometry,
                 QgsWkbTypes.GeometryType.PolygonGeometry,
             ),
-            QgsWkbTypes.GeometryType.LineGeometry: (QgsWkbTypes.GeometryType.LineGeometry,),
-            QgsWkbTypes.GeometryType.PolygonGeometry: (QgsWkbTypes.GeometryType.PolygonGeometry,),
+            QgsWkbTypes.GeometryType.LineGeometry: (
+                QgsWkbTypes.GeometryType.LineGeometry,
+            ),
+            QgsWkbTypes.GeometryType.PolygonGeometry: (
+                QgsWkbTypes.GeometryType.PolygonGeometry,
+            ),
         }
         return [
             l

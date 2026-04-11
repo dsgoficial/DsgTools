@@ -210,7 +210,10 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
 
         # Função de filtro para remover MI que não intersectam com a camada original
         def filterFunc(feat):
-            if hasattr(inputOld, "type") and inputOld.type() == QgsMapLayer.LayerType.RasterLayer:
+            if (
+                hasattr(inputOld, "type")
+                and inputOld.type() == QgsMapLayer.LayerType.RasterLayer
+            ):
                 geom = feat.geometry()
                 extent_geom = QgsGeometry.fromRect(inputOld.extent())
                 return geom.intersects(extent_geom)

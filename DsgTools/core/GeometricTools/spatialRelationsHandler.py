@@ -1907,7 +1907,8 @@ class SpatialRule(QObject):
             acceptable = QRegularExpressionValidator.State.Acceptable
             return (
                 isinstance(pred, str)
-                and QRegularExpressionValidator(regex).validate(pred, 9)[0] == acceptable
+                and QRegularExpressionValidator(regex).validate(pred, 9)[0]
+                == acceptable
             )
         else:
             return pred in SpatialRelationsHandler().availablePredicates()

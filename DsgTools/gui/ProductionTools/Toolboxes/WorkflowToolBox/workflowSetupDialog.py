@@ -250,14 +250,18 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                         self,
                         self.tr("Confirm Action"),
                         msg,
-                        QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
+                        QMessageBox.StandardButton.Ok
+                        | QMessageBox.StandardButton.Cancel,
                     )
                     == QMessageBox.StandardButton.Ok
                 )
             else:
                 return (
                     QMessageBox.question(
-                        self, self.tr("Confirm Action"), msg, QMessageBox.StandardButton.Ok
+                        self,
+                        self.tr("Confirm Action"),
+                        msg,
+                        QMessageBox.StandardButton.Ok,
                     )
                     == QMessageBox.StandardButton.Ok
                 )
@@ -266,13 +270,20 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             return self.promptToAll
         # prompt to all == true daqui para frente e self.promptToAll is None
         # (o usuario nao mandou algum sim ou nao para todos)
-        buttonPromptList = QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.YesAll | QMessageBox.StandardButton.NoAll
+        buttonPromptList = (
+            QMessageBox.StandardButton.Ok
+            | QMessageBox.StandardButton.YesAll
+            | QMessageBox.StandardButton.NoAll
+        )
         if showCancel:
             buttonPromptList = buttonPromptList | QMessageBox.StandardButton.Cancel
         answer = QMessageBox.question(
             self, self.tr("Confirm Action"), msg, buttonPromptList
         )
-        if answer in [QMessageBox.StandardButton.YesAll, QMessageBox.StandardButton.NoAll]:
+        if answer in [
+            QMessageBox.StandardButton.YesAll,
+            QMessageBox.StandardButton.NoAll,
+        ]:
             self.promptToAll = answer == QMessageBox.StandardButton.YesAll
             return self.promptToAll
         return answer == QMessageBox.StandardButton.Ok
@@ -409,7 +420,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
 
     def loadFlagLayers(self):
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Minimum
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Minimum,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -652,7 +664,10 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         msg = self.validate()
         if msg != "":
             self.messageBar.pushMessage(
-                self.tr("Invalid workflow"), msg, level=Qgis.MessageLevel.Warning, duration=5
+                self.tr("Invalid workflow"),
+                msg,
+                level=Qgis.MessageLevel.Warning,
+                duration=5,
             )
             return False
         fd = QFileDialog()

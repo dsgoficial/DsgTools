@@ -275,7 +275,9 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
                 self.tr("Critical!"),
                 self.tr("A problem occurred! Check log for details."),
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
             abstractDb.closeDatabase()
             return False
 

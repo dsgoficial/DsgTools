@@ -291,7 +291,9 @@ class PostgisDbThread(GenericThread):
             )
             return (-1, self.messenger.getUserCanceledFeedbackMessage())
         QgsMessageLog.logMessage(
-            self.messenger.getSuccessFeedbackMessage(), "DSGTools Plugin", Qgis.MessageLevel.Info
+            self.messenger.getSuccessFeedbackMessage(),
+            "DSGTools Plugin",
+            Qgis.MessageLevel.Info,
         )
         return (1, self.messenger.getSuccessFeedbackMessage())
 

@@ -46,7 +46,9 @@ class TableEditorWidget(QtWidgets.QWidget):
 
     def createNotEditableItem(self, value):
         item = QtWidgets.QTableWidgetItem(self.validateValue(value))
-        item.setFlags(QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable)
+        item.setFlags(
+            QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
+        )
         return item
 
     def createEditableItem(self, value):

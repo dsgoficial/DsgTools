@@ -128,10 +128,8 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
         polygonRelationshipAttribute = self.parameterAsStrings(
             parameters, self.INSIDE_POLYGON_ATTRIBUTE, context
         )[0]
-        polygonRelationshipAttributeIdx = (
-            inputDrainagesLyr.fields().lookupField(
-                polygonRelationshipAttribute
-            )
+        polygonRelationshipAttributeIdx = inputDrainagesLyr.fields().lookupField(
+            polygonRelationshipAttribute
         )
         outsidePolygonValue = self.parameterAsString(
             parameters, self.OUTSIDE_POLYGON_ATTRIBUTE_VALUE, context

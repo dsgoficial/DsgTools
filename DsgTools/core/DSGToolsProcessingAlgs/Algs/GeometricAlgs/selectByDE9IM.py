@@ -50,10 +50,7 @@ class ValidationString(QgsProcessingParameterString):
 
     def checkValueIsAcceptable(self, value, context=None):
         regex = QRegularExpression("^[FfTt012\\*]{9}$")
-        return (
-            isinstance(value, str)
-            and regex.match(value).hasMatch()
-        )
+        return isinstance(value, str) and regex.match(value).hasMatch()
 
 
 class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):

@@ -141,8 +141,12 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
             outputDict[layer.geometryType()].append(outputLyr)
 
         flagLambdaDict = {
-            QgsWkbTypes.GeometryType.LineGeometry: lambda x: self.lineFlagSink.addFeature(x),
-            QgsWkbTypes.GeometryType.PolygonGeometry: lambda x: self.polygonFlagSink.addFeature(x),
+            QgsWkbTypes.GeometryType.LineGeometry: lambda x: self.lineFlagSink.addFeature(
+                x
+            ),
+            QgsWkbTypes.GeometryType.PolygonGeometry: lambda x: self.polygonFlagSink.addFeature(
+                x
+            ),
         }
         for currentStep, (wkbType, featList) in enumerate(
             outputDict.items(), start=currentStep + 1

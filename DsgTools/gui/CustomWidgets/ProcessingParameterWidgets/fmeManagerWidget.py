@@ -150,7 +150,8 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
             workspaceList = list()
         except ConnectTimeout:
             self.messageBar.pushMessage(
-                self.tr("Connection timed out (max attempts)."), level=Qgis.MessageLevel.Warning
+                self.tr("Connection timed out (max attempts)."),
+                level=Qgis.MessageLevel.Warning,
             )
             workspaceList = list()
         except InvalidSchema:

@@ -389,36 +389,24 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 lyr.editFormConfig().setReadOnly(i, True)
             else:
                 if lyrName in domainDict.keys():
-                    if attrName in list(domainDict[lyrName]["columns"].keys()):
-                        refTable = domainDict[lyrName]["columns"][attrName][
-                            "references"
-                        ]
-                        refPk = domainDict[lyrName]["columns"][attrName]["refPk"]
-                        otherKey = domainDict[lyrName]["columns"][attrName]["otherKey"]
-                        valueDict = domainDict[lyrName]["columns"][attrName]["values"]
+                    if attrName in domainDict[lyrName].columns:
+                        colInfo = domainDict[lyrName].columns[attrName]
+                        refTable = colInfo.references
+                        refPk = colInfo.refPk
+                        otherKey = colInfo.otherKey
+                        valueDict = colInfo.values
                         isMulti = self.checkMulti(lyrName, attrName, multiColumnsDict)
                         if isMulti:
                             # make filter
-                            if "constraintList" in list(
-                                domainDict[lyrName]["columns"][attrName].keys()
-                            ):
+                            if colInfo.constraintList:
                                 # make editDict
                                 if lyrName in domLayerDict:
                                     if attrName in domLayerDict[lyrName]:
                                         filter = "{0} in ({1})".format(
                                             refPk,
-                                            ",".join(
-                                                map(
-                                                    str,
-                                                    domainDict[lyrName]["columns"][
-                                                        attrName
-                                                    ]["constraintList"],
-                                                )
-                                            ),
+                                            ",".join(map(str, colInfo.constraintList)),
                                         )
-                                        allowNull = domainDict[lyrName]["columns"][
-                                            attrName
-                                        ]["nullable"]
+                                        allowNull = colInfo.nullable
                                         dom = domLayerDict[lyrName][attrName]
                                         editDict = {
                                             "Layer": dom.id(),
@@ -434,9 +422,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                                         lyr.setEditorWidgetSetup(i, widgetSetup)
                         else:
                             # filter value dict
-                            constraintList = domainDict[lyrName]["columns"][attrName][
-                                "constraintList"
-                            ]
+                            constraintList = colInfo.constraintList
                             valueRelationDict = dict()
                             for key in list(valueDict.keys()):
                                 if len(constraintList) > 0:

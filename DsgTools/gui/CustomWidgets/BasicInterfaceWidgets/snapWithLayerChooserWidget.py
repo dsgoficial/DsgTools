@@ -56,7 +56,8 @@ class SnapWithLayerChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         self.snapDoubleSpinBox.setMaximum(1000000)
         self.snapDoubleSpinBox.setMinimum(0.00000000000000001)
         self.layerComboBox.setFilters(
-            QgsMapLayerProxyModel.Filter.HasGeometry | QgsMapLayerProxyModel.Filter.VectorLayer
+            QgsMapLayerProxyModel.Filter.HasGeometry
+            | QgsMapLayerProxyModel.Filter.VectorLayer
         )
         if blackList is not None:
             self.layerComboBox.setExceptedLayerList(blackList)

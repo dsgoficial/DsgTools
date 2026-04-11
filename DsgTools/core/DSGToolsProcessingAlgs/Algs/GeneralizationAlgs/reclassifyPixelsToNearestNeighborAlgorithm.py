@@ -102,7 +102,7 @@ class ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         original_dtype = npRaster.dtype
         # Convert to numpy array with original dtype
         npRaster = np.array(npRaster, dtype=original_dtype)
-        
+
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr("Masking values"))
         stepSize = 100 / nValues

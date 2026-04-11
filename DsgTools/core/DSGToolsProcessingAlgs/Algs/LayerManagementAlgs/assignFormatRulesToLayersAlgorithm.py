@@ -231,7 +231,7 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
         )
         if not conditionalStyle.isValid():
             raise Exception(
-                f"Invalid conditional style: \n{data['descricao']}\n{data['regra']}"
+                self.tr("Invalid conditional style: \n{0}\n{1}").format(data['descricao'], data['regra'])
             )
         return conditionalStyle
 
@@ -254,14 +254,14 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
             )
             if not self.expressionHasParseError(expressionString):
                 raise Exception(
-                    f"Error while trying to apply rule:\n {data}\ncurrent field: {fieldName}\ncurrent layer name: {key}"
+                    self.tr("Error while trying to apply rule:\n {0}\ncurrent field: {1}\ncurrent layer name: {2}").format(data, fieldName, key)
                 )
         expressionString += """ELSE ''\nEND"""
         if expressionString == "CASE\nELSE ''\nEND":  ## did not apply any rule
             return
         expression = QgsExpression(expressionString)
         if expression.hasParserError():
-            raise Exception(f"Invalid expression: \n{expressionString}")
+            raise Exception(self.tr("Invalid expression: \n{0}").format(expressionString))
         lyr.addExpressionField(
             expressionString, QgsField("attribute_error_description", QMetaType.Type.QString)
         )

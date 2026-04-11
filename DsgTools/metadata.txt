@@ -11,13 +11,13 @@ name=DSG Tools
 qgisMinimumVersion=4.0
 supportsQt6=True
 description=Brazilian Army Cartographic Production Tools
-version=5.0.0
+version=5.1.1
 author=Brazilian Army Geographic Service
 email=dsgtools@dsg.eb.mil.br
 about=
 	DSGTools with the following features:
 	-Creation, Storage and Deletion of PostGIS servers configurations
-	-Database creation using Spatialite and PostGIS according to EDGV version 2.1.3 and 3.0 (cadaster)
+	-Database creation using PostGIS according to EDGV version 2.1.3 and 3.0 (cadaster)
 	-Layer loading by category and class as defined by EDGV version 2.1.3 and EDGV version 3.0 (cadaster)
 	-Manipulation of complex features (Creation, Editing, Deletion, Zoom, Association, Disassociation) and
 	-Access to some WM(T)S services provided by BDGEx.
@@ -27,7 +27,7 @@ about=
 	-Database user profile management (e.g. Grant/Revoke predifined roles to/from user ).
 	-Create/Remove PostgreSQL users.
 	-Alter PostgreSQL user Password.
-	-Conversion tools between postgis and spatialite EDGV databases.
+	-Conversion tools between PostGIS EDGV databases.
 	-Tool to assign elevation values to contour lines in a simple way.
 	-EDGV code list viewer to aid attributes queries using our EDGV databases.
 	-Drop EDGV databases
@@ -45,6 +45,9 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+	5.0.1
+		Correções de bug:
+			- Corrige imports da shapely em ambientes que não tem ela instalada.
 	5.0.0
 		Novas Funcionalidades:
 			- Migração do DSGTools para o QGIS 4;
@@ -493,7 +496,7 @@ changelog=
 			- Corrigido bug na SQL de filtragem do carregamento de camadas com elementos quando se utiliza o postgres mais novo;
 
 # Tags are comma separated with spaces allowed
-tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
+tags=EDGV,PostGIS,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
 
 homepage=https://github.com/dsgoficial/DsgTools/wiki
 tracker=https://github.com/dsgoficial/DsgTools/issues

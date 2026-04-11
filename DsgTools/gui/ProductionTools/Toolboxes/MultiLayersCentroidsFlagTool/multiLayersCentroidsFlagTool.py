@@ -90,7 +90,9 @@ class MultiLayersCentroidsFlagDockWidget(
         self.attributeTable.cellClicked.connect(self.panAndFlashFeature)
 
         # Make the entire table read-only
-        self.attributeTable.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.attributeTable.setEditTriggers(
+            QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers
+        )
 
         self.pointLayerDict: Dict[str, QgsVectorLayer] = dict()
         self.lyrsNRowPointDict: DefaultDict[int, Tuple[str, QgsFeature]] = defaultdict(

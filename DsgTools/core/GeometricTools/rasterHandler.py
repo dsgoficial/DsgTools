@@ -425,33 +425,33 @@ def writeOutputRaster(outputRaster, npRaster, ds=None, outputType=None):
                 with open(outputRaster, "r+b"):
                     pass
             except IOError:
-                raise RuntimeError(f"Output file {outputRaster} is locked or in use")
+                raise RuntimeError(QCoreApplication.translate("RasterHandler", "Output file {0} is locked or in use").format(outputRaster))
 
         # 2. Check directory permissions
         output_dir = os.path.dirname(outputRaster)
         if not os.access(output_dir, os.W_OK):
-            raise RuntimeError(f"No write permission in directory {output_dir}")
+            raise RuntimeError(QCoreApplication.translate("RasterHandler", "No write permission in directory {0}").format(output_dir))
 
         # 3. Verify input data
         if npRaster is None or ds is None:
-            raise ValueError("Input raster or dataset is None")
+            raise ValueError(QCoreApplication.translate("RasterHandler", "Input raster or dataset is None"))
 
         # 5. Verify array isn't empty and has valid dimensions
         if npRaster.size == 0 or len(npRaster.shape) != 2:
-            raise ValueError(f"Invalid array shape: {npRaster.shape}")
+            raise ValueError(QCoreApplication.translate("RasterHandler", "Invalid array shape: {0}").format(npRaster.shape))
 
         outputType = gdal.GDT_Int32 if outputType is None else outputType
         options = ["COMPRESS=LZW", "TILED=YES"]
 
         # 6. Verify driver
         if driver is None:
-            raise RuntimeError("Failed to get GTiff driver")
+            raise RuntimeError(QCoreApplication.translate("RasterHandler", "Failed to get GTiff driver"))
 
         # 7. Create output dataset with error catching
         try:
             mem_driver = gdal.GetDriverByName("MEM")
         except Exception:
-            raise RuntimeError("MEM driver not available")
+            raise RuntimeError(QCoreApplication.translate("RasterHandler", "MEM driver not available"))
         temp_ds = mem_driver.Create(
             "", int(npRaster.shape[1]), int(npRaster.shape[0]), 1, gdal.GDT_Int16
         )
@@ -470,7 +470,7 @@ def writeOutputRaster(outputRaster, npRaster, ds=None, outputType=None):
     except Exception as e:
         import traceback
 
-        error_msg = f"Failed to write raster:\n{str(e)}\n{traceback.format_exc()}"
+        error_msg = QCoreApplication.translate("RasterHandler", "Failed to write raster:\n{0}\n{1}").format(str(e), traceback.format_exc())
         raise RuntimeError(error_msg)
     finally:
         # Clean up
@@ -694,8 +694,7 @@ def rasterizePolygonsToFile(
         from rasterio.transform import from_bounds
     except ImportError:
         raise ImportError(
-            "The 'rasterio' library is not installed. "
-            "Install it with: pip install rasterio"
+            QCoreApplication.translate("RasterHandler", "The 'rasterio' library is not installed. Install it with: pip install rasterio")
         )
     
     import json
@@ -720,7 +719,7 @@ def rasterizePolygonsToFile(
             # Calcular a partir do bbox e pixelSize
             if bbox is None or pixelSize is None:
                 raise QgsProcessingException(
-                    "bbox and pixelSize are required when width/height/transform are not provided"
+                    QCoreApplication.translate("RasterHandler", "bbox and pixelSize are required when width/height/transform are not provided")
                 )
             
             xmin, ymin, xmax, ymax = bbox.toRectF().getCoords()
@@ -729,7 +728,7 @@ def rasterizePolygonsToFile(
             
             if width <= 0 or height <= 0:
                 raise QgsProcessingException(
-                    f"Invalid raster dimensions: {width}x{height}"
+                    QCoreApplication.translate("RasterHandler", "Invalid raster dimensions: {0}x{1}").format(width, height)
                 )
             
             # Criar transformação afim
@@ -784,7 +783,7 @@ def rasterizePolygonsToFile(
 
         if not shapes:
             raise QgsProcessingException(
-                "No valid geometry found for rasterization"
+                QCoreApplication.translate("RasterHandler", "No valid geometry found for rasterization")
             )
 
         # Mapear dtype string para numpy dtype
@@ -832,7 +831,7 @@ def rasterizePolygonsToFile(
     except Exception as e:
         import traceback
         raise QgsProcessingException(
-            f"Error rasterizing polygons: {str(e)}\n{traceback.format_exc()}"
+            QCoreApplication.translate("RasterHandler", "Error rasterizing polygons: {0}\n{1}").format(str(e), traceback.format_exc())
         )
 
 def calculateSegmentationMetrics(
@@ -848,7 +847,7 @@ def calculateSegmentationMetrics(
     try:
         import rasterio
     except ImportError:
-        raise ImportError("The 'rasterio' library is not installed.")
+        raise ImportError(QCoreApplication.translate("RasterHandler", "The 'rasterio' library is not installed."))
     
     import numpy as np
     
@@ -897,8 +896,7 @@ def rasterizePolygonsToArray(
         from rasterio.transform import from_bounds
     except ImportError:
         raise ImportError(
-            "The 'rasterio' library is not installed. "
-            "Install it with: pip install rasterio"
+            QCoreApplication.translate("RasterHandler", "The 'rasterio' library is not installed. Install it with: pip install rasterio")
         )
     
     import json
@@ -977,7 +975,7 @@ def rasterizePolygonsToArray(
 
         if not shapes:
             raise QgsProcessingException(
-                "No valid geometry found for rasterization"
+                QCoreApplication.translate("RasterHandler", "No valid geometry found for rasterization")
             )
 
         # Mapear dtype string para numpy dtype
@@ -1010,7 +1008,7 @@ def rasterizePolygonsToArray(
     except Exception as e:
         import traceback
         raise QgsProcessingException(
-            f"Error rasterizing polygons: {str(e)}\n{traceback.format_exc()}"
+            QCoreApplication.translate("RasterHandler", "Error rasterizing polygons: {0}\n{1}").format(str(e), traceback.format_exc())
         )
 
 def clipRasterByVectorMask(
@@ -1041,8 +1039,7 @@ def clipRasterByVectorMask(
         from rasterio.warp import calculate_default_transform, reproject, Resampling
     except ImportError:
         raise ImportError(
-            "The 'rasterio' library is not installed. "
-            "Install it with: pip install rasterio"
+            QCoreApplication.translate("RasterHandler", "The 'rasterio' library is not installed. Install it with: pip install rasterio")
         )
     
     import json
@@ -1117,7 +1114,7 @@ def calculateSegmentationMetricsFromArrays(
         class_names = {}
     
     if ground_truth_array.shape != prediction_array.shape:
-        raise ValueError(f"Different dimensions: {ground_truth_array.shape} vs {prediction_array.shape}")
+        raise ValueError(QCoreApplication.translate("RasterHandler", "Different dimensions: {0} vs {1}").format(ground_truth_array.shape, prediction_array.shape))
     
     valid_mask = (ground_truth_array != nodata_value) & (prediction_array != nodata_value)
     

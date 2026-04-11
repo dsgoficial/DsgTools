@@ -750,7 +750,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             msgBar.resize(
                 QSize(self.geometry().size().width(), msgBar.geometry().height())
             )
-            msgBar.pushMessage(self.tr("Warning!"), msg, level=Qgis.MessageLevel.Warning, duration=5)
+            msgBar.pushMessage(
+                self.tr("Warning!"), msg, level=Qgis.MessageLevel.Warning, duration=5
+            )
             QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.MessageLevel.Critical)
         return msg == ""
 
@@ -885,7 +887,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                     "Dataset conversion has finished with some errors. Check conversion log for details."
                 )
                 iface.messageBar().pushMessage(
-                    self.tr("Warning!"), msg, level=Qgis.MessageLevel.Warning, duration=5
+                    self.tr("Warning!"),
+                    msg,
+                    level=Qgis.MessageLevel.Warning,
+                    duration=5,
                 )
             else:
                 self.resetInterface()
@@ -899,7 +904,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             iface.messageBar().pushMessage(
                 self.tr("Warning!"), msg, level=Qgis.MessageLevel.Warning, duration=5
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
         summaryDlg.exec()
 
     def startConversion(self, exportMap=False):

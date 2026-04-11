@@ -126,9 +126,11 @@ class LoadByClass(QtWidgets.QDialog, FORM_CLASS):
                 self.tr("A problem occurred! Check log for details."),
                 level=QgsMessageBar.CRITICAL,
             )
-            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical)
+            QgsMessageLog.logMessage(
+                ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
+            )
 
-        if self.onlyParentsCheckBox.isChecked() and not self.widget.isSpatialite:
+        if self.onlyParentsCheckBox.isChecked():
             self.classesListWidget.addItems(self.parentClassList)
         else:
             self.classesListWidget.addItems(self.classes)

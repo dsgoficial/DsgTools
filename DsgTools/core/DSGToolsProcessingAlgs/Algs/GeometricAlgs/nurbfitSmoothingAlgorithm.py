@@ -234,7 +234,7 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
         return "DSGTools - Geometric Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate("Processing", string)
+        return QCoreApplication.translate("NURBFitSmoothingAlgorithm", string)
 
     def createInstance(self):
         return NURBFitSmoothingAlgorithm()

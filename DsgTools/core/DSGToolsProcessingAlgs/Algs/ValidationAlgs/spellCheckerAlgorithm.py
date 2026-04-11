@@ -71,7 +71,9 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         attributeName = self.parameterAsStrings(
             parameters, self.ATTRIBUTE_NAME, context
         )[0]
-        pkField = self.parameterAsStrings(parameters, self.PRIMARY_KEY_FIELD, context)[0]
+        pkField = self.parameterAsStrings(parameters, self.PRIMARY_KEY_FIELD, context)[
+            0
+        ]
 
         fields = QgsFields()
         fields.append(QgsField("column_name", QMetaType.Type.QString))

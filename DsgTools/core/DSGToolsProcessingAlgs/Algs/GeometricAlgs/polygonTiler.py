@@ -131,9 +131,9 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Tiling mode"),
                 options=[
                     self.tr("Fixed tile size (map units)"),
-                    self.tr("Grid division (number of tiles)")
+                    self.tr("Grid division (number of tiles)"),
                 ],
-                defaultValue=0  # Fixed tile size as default
+                defaultValue=0,  # Fixed tile size as default
             )
         )
 
@@ -144,7 +144,7 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
                 self.tr("X dimension (width in map units OR number of columns)"),
                 "1000",  # Default expression
                 self.INPUT,  # Parent layer for context
-                False  # Required parameter
+                False,  # Required parameter
             )
         )
 
@@ -155,7 +155,7 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Y dimension (height in map units OR number of rows)"),
                 "1000",  # Default expression
                 self.INPUT,  # Parent layer for context
-                False  # Required parameter
+                False,  # Required parameter
             )
         )
 
@@ -206,13 +206,15 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
         # Retrieve the parameters
         source = self.parameterAsSource(parameters, self.INPUT, context)
         tiling_mode = self.parameterAsEnum(parameters, self.TILING_MODE, context)
-        
+
         # Create expression context
         expression_context = self.createExpressionContext(parameters, context, source)
-        
+
         overlap_x = self.parameterAsDouble(parameters, self.OVERLAP_X, context)
         overlap_y = self.parameterAsDouble(parameters, self.OVERLAP_Y, context)
-        include_partial = self.parameterAsBool(parameters, self.INCLUDE_PARTIAL, context)
+        include_partial = self.parameterAsBool(
+            parameters, self.INCLUDE_PARTIAL, context
+        )
 
         # Check for cancellation
         if feedback.isCanceled():
@@ -250,7 +252,10 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
             geom = feature.geometry()
 
             # Skip invalid, empty, or non-polygon geometries
-            if geom.isEmpty() or geom.type() != QgsWkbTypes.GeometryType.PolygonGeometry:
+            if (
+                geom.isEmpty()
+                or geom.type() != QgsWkbTypes.GeometryType.PolygonGeometry
+            ):
                 feedback.pushInfo(
                     self.tr("Skipping feature {0} - not a valid polygon").format(feature.id())
                 )
@@ -262,17 +267,35 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
             # Set feature-specific context variables
             feature_context = QgsExpressionContext(expression_context)
             feature_context.setFeature(feature)
-            
+
             # Process based on tiling mode
             if tiling_mode == 0:  # Fixed tile size mode
                 tiles_created += self._process_fixed_size_mode(
-                    feature, geom, bbox, parameters, context, feature_context, 
-                    overlap_x, overlap_y, include_partial, sink, feedback
+                    feature,
+                    geom,
+                    bbox,
+                    parameters,
+                    context,
+                    feature_context,
+                    overlap_x,
+                    overlap_y,
+                    include_partial,
+                    sink,
+                    feedback,
                 )
             else:  # Grid division mode
                 tiles_created += self._process_grid_mode(
-                    feature, geom, bbox, parameters, context, feature_context,
-                    overlap_x, overlap_y, include_partial, sink, feedback
+                    feature,
+                    geom,
+                    bbox,
+                    parameters,
+                    context,
+                    feature_context,
+                    overlap_x,
+                    overlap_y,
+                    include_partial,
+                    sink,
+                    feedback,
                 )
 
             # Update the progress
@@ -294,53 +317,78 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
         expression = QgsExpression(expression_string)
         if expression.hasParserError():
             raise QgsProcessingException(
-                self.tr("Error in {0} expression: {1}").format(parameter_name, expression.parserErrorString())
+                self.tr(
+                    "Error in {0} expression: {1}"
+                ).format(parameter_name, expression.parserErrorString())
             )
-        
+
         result = expression.evaluate(context)
-        
+
         try:
             return float(result)
         except (ValueError, TypeError):
             raise QgsProcessingException(
-                self.tr("{0} expression must evaluate to a numeric value. Got: {1}").format(parameter_name, result)
+                self.tr(
+                    "{0} expression must evaluate to a numeric value. Got: {1}"
+                ).format(parameter_name, result)
             )
 
-    def _process_fixed_size_mode(self, feature, geom, bbox, parameters, context, 
-                                feature_context, overlap_x, overlap_y, 
-                                include_partial, sink, feedback):
+    def _process_fixed_size_mode(
+        self,
+        feature,
+        geom,
+        bbox,
+        parameters,
+        context,
+        feature_context,
+        overlap_x,
+        overlap_y,
+        include_partial,
+        sink,
+        feedback,
+    ):
         """Process tiling using fixed tile sizes with sliding window overlap."""
-        
+
         # Get dimensions from expressions (interpreted as tile width and height)
         x_dimension_expr = self.parameterAsString(parameters, self.X_DIMENSION, context)
         y_dimension_expr = self.parameterAsString(parameters, self.Y_DIMENSION, context)
-        
-        tile_width = self._evaluate_expression(x_dimension_expr, feature_context, "X dimension (tile width)")
-        tile_height = self._evaluate_expression(y_dimension_expr, feature_context, "Y dimension (tile height)")
-        
+
+        tile_width = self._evaluate_expression(
+            x_dimension_expr, feature_context, "X dimension (tile width)"
+        )
+        tile_height = self._evaluate_expression(
+            y_dimension_expr, feature_context, "Y dimension (tile height)"
+        )
+
         if tile_width <= 0 or tile_height <= 0:
             feedback.pushInfo(
-                self.tr("Skipping feature {0} - invalid tile dimensions ({1} x {2})").format(feature.id(), tile_width, tile_height)
+                self.tr(
+                    "Skipping feature {0} - invalid tile dimensions ({1} × {2})"
+                ).format(feature.id(), tile_width, tile_height)
             )
             return 0
 
         # Validate overlaps - cannot be equal or greater than tile dimensions
         if overlap_x >= tile_width:
             feedback.pushInfo(
-                self.tr("Warning: X overlap ({0}) adjusted to {1} (90% of tile width)").format(overlap_x, tile_width * 0.9)
+                self.tr(
+                    "Warning: X overlap ({0}) adjusted from {0} to {1} (90% of tile width)"
+                ).format(overlap_x, tile_width * 0.9)
             )
             overlap_x = tile_width * 0.9
-            
+
         if overlap_y >= tile_height:
             feedback.pushInfo(
-                self.tr("Warning: Y overlap ({0}) adjusted to {1} (90% of tile height)").format(overlap_y, tile_height * 0.9)
+                self.tr(
+                    "Warning: Y overlap ({0}) adjusted from {0} to {1} (90% of tile height)"
+                ).format(overlap_y, tile_height * 0.9)
             )
             overlap_y = tile_height * 0.9
 
         # Calculate step sizes for sliding window (distance between tile centers)
         step_x = tile_width - overlap_x
         step_y = tile_height - overlap_y
-        
+
         # Ensure minimum step size
         if step_x <= 0:
             step_x = tile_width * 0.1
@@ -348,130 +396,168 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
             step_y = tile_height * 0.1
 
         # Calculate number of tiles needed to cover the entire area
-        cols = max(1, math.ceil((bbox.width() - tile_width) / step_x) + 1) if bbox.width() > tile_width else 1
-        rows = max(1, math.ceil((bbox.height() - tile_height) / step_y) + 1) if bbox.height() > tile_height else 1
-        
-        feedback.pushInfo(
-            self.tr("Feature {0}: Creating {1}x{2} sliding window tiles "
-                   "(tile size: {3:.1f}x{4:.1f}, overlap: {5:.1f}x{6:.1f}, "
-                   "step: {7:.1f}x{8:.1f})").format(feature.id(), rows, cols, tile_width, tile_height, overlap_x, overlap_y, step_x, step_y)
+        cols = (
+            max(1, math.ceil((bbox.width() - tile_width) / step_x) + 1)
+            if bbox.width() > tile_width
+            else 1
         )
-        
+        rows = (
+            max(1, math.ceil((bbox.height() - tile_height) / step_y) + 1)
+            if bbox.height() > tile_height
+            else 1
+        )
+
+        feedback.pushInfo(
+            self.tr(
+                "Feature {0}: Creating {1}×{2} sliding window tiles "
+                "(tile size: {3}×{4}, overlap: {5}×{6}, "
+                "step: {7}×{8})"
+            ).format(
+                feature.id(), rows, cols,
+                f"{tile_width:.1f}", f"{tile_height:.1f}",
+                f"{overlap_x:.1f}", f"{overlap_y:.1f}",
+                f"{step_x:.1f}", f"{step_y:.1f}",
+            )
+        )
+
         tiles_count = 0
-        
+
         # Create tiles using sliding window approach
         for row in range(rows):
             for col in range(cols):
                 if feedback.isCanceled():
                     break
-                    
+
                 # Calculate tile bounds using step size (sliding window)
                 tile_min_x = bbox.xMinimum() + col * step_x
                 tile_min_y = bbox.yMinimum() + row * step_y
                 tile_max_x = tile_min_x + tile_width
                 tile_max_y = tile_min_y + tile_height
-                
+
                 tile_bbox = QgsRectangle(tile_min_x, tile_min_y, tile_max_x, tile_max_y)
                 tile_geom = QgsGeometry.fromRect(tile_bbox)
-                
+
                 # Check intersection and create tile feature
                 if self._create_tile_feature(
                     feature, geom, tile_geom, row, col, include_partial, sink
                 ):
                     tiles_count += 1
-        
+
         return tiles_count
 
-    def _process_grid_mode(self, feature, geom, bbox, parameters, context, 
-                          feature_context, overlap_x, overlap_y, 
-                          include_partial, sink, feedback):
+    def _process_grid_mode(
+        self,
+        feature,
+        geom,
+        bbox,
+        parameters,
+        context,
+        feature_context,
+        overlap_x,
+        overlap_y,
+        include_partial,
+        sink,
+        feedback,
+    ):
         """Process tiling using grid divisions (X=columns, Y=rows as numbers)."""
-        
+
         # Get dimensions from expressions (interpreted as number of columns and rows)
         x_dimension_expr = self.parameterAsString(parameters, self.X_DIMENSION, context)
         y_dimension_expr = self.parameterAsString(parameters, self.Y_DIMENSION, context)
-        
-        columns_float = self._evaluate_expression(x_dimension_expr, feature_context, "X dimension (number of columns)")
-        rows_float = self._evaluate_expression(y_dimension_expr, feature_context, "Y dimension (number of rows)")
-        
+
+        columns_float = self._evaluate_expression(
+            x_dimension_expr, feature_context, "X dimension (number of columns)"
+        )
+        rows_float = self._evaluate_expression(
+            y_dimension_expr, feature_context, "Y dimension (number of rows)"
+        )
+
         columns = max(1, min(1000, int(columns_float)))
         rows = max(1, min(1000, int(rows_float)))
-        
+
         # Calculate base cell dimensions
         base_cell_width = bbox.width() / columns
         base_cell_height = bbox.height() / rows
-        
+
         # Apply overlap (as percentage)
         overlap_x_fraction = overlap_x / 100.0
         overlap_y_fraction = overlap_y / 100.0
-        
+
         cell_width = base_cell_width * (1.0 + overlap_x_fraction)
         cell_height = base_cell_height * (1.0 + overlap_y_fraction)
-        
+
         feedback.pushInfo(
-            self.tr("Feature {0}: Creating {1}x{2} grid tiles").format(feature.id(), rows, columns)
+            self.tr("Feature {0}: Creating {1}×{2} grid tiles").format(feature.id(), rows, columns)
         )
-        
+
         tiles_count = 0
-        
+
         # Create tiles
         for row in range(rows):
             for col in range(columns):
                 if feedback.isCanceled():
                     break
-                    
+
                 # Calculate tile center and bounds
                 center_x = bbox.xMinimum() + (col + 0.5) * base_cell_width
                 center_y = bbox.yMinimum() + (row + 0.5) * base_cell_height
-                
+
                 tile_min_x = center_x - cell_width / 2.0
                 tile_min_y = center_y - cell_height / 2.0
                 tile_max_x = center_x + cell_width / 2.0
                 tile_max_y = center_y + cell_height / 2.0
-                
+
                 tile_bbox = QgsRectangle(tile_min_x, tile_min_y, tile_max_x, tile_max_y)
                 tile_geom = QgsGeometry.fromRect(tile_bbox)
-                
+
                 # Check intersection and create tile feature
                 if self._create_tile_feature(
                     feature, geom, tile_geom, row, col, include_partial, sink
                 ):
                     tiles_count += 1
-        
+
         return tiles_count
 
-    def _create_tile_feature(self, original_feature, original_geom, tile_geom, 
-                           row, col, include_partial, sink):
+    def _create_tile_feature(
+        self,
+        original_feature,
+        original_geom,
+        tile_geom,
+        row,
+        col,
+        include_partial,
+        sink,
+    ):
         """Helper method to create and add a tile feature."""
-        
+
         # Check intersection with original geometry
         if not tile_geom.intersects(original_geom):
             return False
-            
+
         # Get the intersection
         intersection = tile_geom.intersection(original_geom)
-        
+
         # Skip empty intersections
         if intersection.isEmpty():
             return False
-            
+
         # Skip if we don't want partial intersections and the tile is not completely within the original geometry
         if not include_partial and not original_geom.contains(tile_geom):
             return False
-            
+
         # Create a new feature for the tile
         new_feat = QgsFeature(self.fields)
-        
+
         # Copy attributes from the original feature
         for i in range(original_feature.fields().count()):
             new_feat[i] = original_feature[i]
-            
+
         # Set the tile identification attributes
         new_feat["_tile_row"] = row
         new_feat["_tile_col"] = col
         new_feat["_tile_id"] = f"{row}_{col}"
         new_feat.setGeometry(intersection)
-        
+
         # Add the feature to the sink
         sink.addFeature(new_feat)
         return True

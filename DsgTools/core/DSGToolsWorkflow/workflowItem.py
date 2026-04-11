@@ -439,7 +439,9 @@ class DSGToolsWorkflowItem(QObject):
         def on_finished_func(exception, result=None):
             if exception is not None:
                 QgsMessageLog.logMessage(
-                    f"Exception: {exception}", "DSGTools Plugin", Qgis.MessageLevel.Critical
+                    f"Exception: {exception}",
+                    "DSGTools Plugin",
+                    Qgis.MessageLevel.Critical,
                 )
                 self.executionOutput = ModelExecutionOutput(
                     executionMessage=self.tr(

@@ -26,7 +26,6 @@ from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.core import QgsMessageLog, Qgis
 
 # DSG Tools imports
-from .spatialiteDb import SpatialiteDb
 from .postgisDb import PostgisDb
 from .geopackageDb import GeopackageDb
 from .shapefileDb import ShapefileDb
@@ -44,7 +43,6 @@ class DbFactory(object):
         if not ("QSQLITE" in QSqlDatabase.drivers()):  # Driver wasn't loaded
             raise Exception(QCoreApplication.translate("DbFactory", "QT QSQLITE driver not installed!"))
         dbs = {
-            DsgEnums.DriverSpatiaLite: lambda: SpatialiteDb(),
             DsgEnums.DriverPostGIS: lambda: PostgisDb(),
             DsgEnums.DriverGeopackage: lambda: GeopackageDb(),
             DsgEnums.DriverShapefile: lambda: ShapefileDb(),

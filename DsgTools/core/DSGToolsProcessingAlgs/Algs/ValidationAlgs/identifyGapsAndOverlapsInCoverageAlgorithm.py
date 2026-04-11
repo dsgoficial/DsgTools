@@ -186,8 +186,10 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         # identify all holes in coverage layer first
         coverageHolesParam = {"INPUT": coverage, "FLAGS": "memory:", "SELECTED": False}
         coverageHoles = runProcessing(
-            "dsgtools:identifygaps", coverageHolesParam,
-            context=context, feedback=feedback,
+            "dsgtools:identifygaps",
+            coverageHolesParam,
+            context=context,
+            feedback=feedback,
         )["FLAGS"]
         geometryHandler = GeometryHandler()
         gapSet = set()
@@ -214,8 +216,11 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             "OUTPUT": "memory:",
         }
         differenceOutput = runProcessing(
-            "native:difference", differenceParameters,
-            context=context, feedback=feedback, onFinish=onFinish,
+            "native:difference",
+            differenceParameters,
+            context=context,
+            feedback=feedback,
+            onFinish=onFinish,
         )
         for feat in differenceOutput["OUTPUT"].getFeatures():
             for geom in geometryHandler.deaggregateGeometry(feat.geometry()):

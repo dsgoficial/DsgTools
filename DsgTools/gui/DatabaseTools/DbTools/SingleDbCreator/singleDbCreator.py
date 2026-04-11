@@ -68,9 +68,6 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
         self.databaseParameterWidget.comboBoxPostgis.parent = self
         self.databaseParameterWidget.useFrame = False
         self.databaseParameterWidget.setDbNameVisible(True)
-        self.tabDbSelectorWidget.outputDirSelector.label.setText(
-            self.tr("Select Database Path")
-        )
         self.okPushButton.clicked.connect(self.validateParameters)
         self.cancelPushButton.clicked.connect(self.close_)
 
@@ -184,7 +181,7 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
         """
         callback = lambda: self.manager.createDatabase(isBatchCreation=False)
         self.manager.addTool(
-            text=self.tr("Create a PostGIS, SpatiaLite or Geopackage Database"),
+            text=self.tr("Create a PostGIS Database"),
             callback=callback,
             parentMenu=self.parentMenu,
             icon="database.png",

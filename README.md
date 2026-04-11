@@ -7,8 +7,8 @@
 
 |branch|status|version|
 |-------|--------|--------|
-|master|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=master)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|5.0.0|
-|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|5.1.0|
+|master|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=master)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|5.0.1|
+|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|5.1.1|
 
 ------------------------------------
 # Complemento DSGTools
@@ -28,9 +28,8 @@ Este projeto visa cumprir a missão estabelecida no Plano Estratégico do Exérc
 A versão atual do complemento possui as seguintes funcionalidades:
 
 ### Gestão de Bancos de Dados
-- Criação de bancos de dados em Spatialite e PostGIS de acordo com os modelos EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto e EDGV 3.0 Topo
+- Criação de bancos de dados PostGIS de acordo com os modelos EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto e EDGV 3.0 Topo
 - Criação, armazenamento e remoção de configuração de servidores PostGIS
-- Conversão entre formatos de bancos de dados (PostGIS para Spatialite e vice-versa)
 - Conversão de dados entre modelagens de banco no formato PostGIS utilizando o json de mapeamento
 - Validação da estrutura do banco de dados em relação ao masterfile
 
@@ -69,11 +68,6 @@ A versão atual do complemento possui as seguintes funcionalidades:
 - Ferramentas para extração de pontos cotados e validação do terreno
 - Ferramentas para numeração de polígonos e generalização
 
-### Gerenciamento de Usuários e Segurança
-- Gerenciamento de permissões de usuários
-- Criação/Remoção de usuários no PostgreSQL
-- Alteração de senha de usuários no PostgreSQL
-
 ### Outros
 - Visualizador de valores de códigos da EDGV para auxiliar em consultas por atributos
 - Ferramenta para preparação de arquivos para empacotamento no BDGEx
@@ -84,13 +78,6 @@ O plugin foi todo desenvolvido em Python e está disponível para download pelo 
 Para acessar o histórico completo de mudanças, visite: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
 
 Para maiores informações, acesse https://github.com/dsgoficial/DsgTools/wiki ou https://bdgex.eb.mil.br/portal/index.php?option=com_content&view=article&id=96&Itemid=380&lang=pt
-
-## Requisitos para Linux (Ubuntu/Debian)
-
-Instalar os seguintes pacotes de acordo com o código abaixo:
-```
-sudo apt-get install libqt5sql5-psql
-sudo apt-get install libqt5sql5-sqlite
 ```
 
 ------------------------------------
@@ -111,9 +98,8 @@ This project fulfills the mission established in the Brazilian Army Strategic Pl
 The plugin is in version 4.17.27 and has the following features:
 
 ### Database Management
-- Database creation using Spatialite and PostGIS according to EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto, and EDGV 3.0 Topo models
+- Database creation using PostGIS according to EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto, and EDGV 3.0 Topo models
 - Creation, storage, and deletion of PostGIS server configurations
-- Conversion between database formats (PostGIS to Spatialite and vice versa)
 - Database structure validation against the masterfile
 
 ### Layer Loading and Management
@@ -151,10 +137,6 @@ The plugin is in version 4.17.27 and has the following features:
 - Tools for spot elevation extraction and terrain validation
 - Tools for polygon numbering and generalization
 
-### User and Security Management
-- User permissions management
-- User creation/removal in PostgreSQL
-- Password changing for PostgreSQL users
 
 ### Others
 - EDGV code list viewer to aid attribute queries
@@ -166,11 +148,3 @@ The plugin was fully developed in Python and is available for download through Q
 For the complete changelog, visit: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
 
 For further information, go to https://github.com/dsgoficial/DsgTools/wiki or https://bdgex.eb.mil.br/portal/index.php?option=com_content&view=article&id=96&Itemid=380&lang=pt
-
-## Requirements for LINUX (Ubuntu/Debian)
-
-Install the following packages as follows:
-```
-sudo apt-get install libqt5sql5-psql
-sudo apt-get install libqt5sql5-sqlite
-```

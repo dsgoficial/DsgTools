@@ -273,7 +273,9 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                 self,
                 self.tr("DSGTools Q&A Tool Box: Confirm action"),
                 msg,
-                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel if showCancel else QMessageBox.StandardButton.Ok,
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel
+                if showCancel
+                else QMessageBox.StandardButton.Ok,
             )
             == QMessageBox.StandardButton.Ok
         )

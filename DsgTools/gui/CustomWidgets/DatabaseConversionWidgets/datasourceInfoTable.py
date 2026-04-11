@@ -96,7 +96,9 @@ class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
         )
         # set resize policy for each column
         [
-            header.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+            header.setSectionResizeMode(
+                i, QtWidgets.QHeaderView.ResizeMode.ResizeToContents
+            )
             for i in range(self.COLUMN_COUNT)
         ]
         # connect header double click signal to order by that column
@@ -118,15 +120,15 @@ class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
 
     def addRow(self, row, content):
         """
-        Adds a full row provided a dictionary with its contents.
+        Adds a full row provided a DatabaseLayerInfo (or legacy dict) with its contents.
         :param row: (int) row index to be added.
-        :param content: (dict) contents to be displayed in the selected row.
+        :param content: (DatabaseLayerInfo) contents to be displayed in the selected row.
         """
-        self.addItem(row=row, col=self.Schema, text=content["schema"])
-        self.addItem(row=row, col=self.Layer, text=content["layer"])
-        self.addItem(row=row, col=self.GeomCol, text=content["geomCol"])
-        self.addItem(row=row, col=self.GeomType, text=content["geomType"])
-        self.addItem(row=row, col=self.Srid, text=content["srid"])
+        self.addItem(row=row, col=self.Schema, text=content.schema)
+        self.addItem(row=row, col=self.Layer, text=content.layer)
+        self.addItem(row=row, col=self.GeomCol, text=content.geomCol)
+        self.addItem(row=row, col=self.GeomType, text=content.geomType)
+        self.addItem(row=row, col=self.Srid, text=str(content.srid))
 
     def setTable(self, contents):
         """

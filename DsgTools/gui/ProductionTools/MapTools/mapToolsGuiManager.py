@@ -272,7 +272,7 @@ class MapToolsGuiManager(QObject):
 
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
-    
+
     def activateTrimExtend(self):
         self.iface.mapCanvas().setMapTool(self.trimExtendTool)
 

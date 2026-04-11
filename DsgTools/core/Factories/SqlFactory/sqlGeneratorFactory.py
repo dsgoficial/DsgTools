@@ -23,7 +23,6 @@
 from builtins import object
 import os
 
-from .spatialiteSqlGenerator import SpatialiteSqlGenerator
 from .postgisSqlGenerator import PostGISSqlGenerator
 from .geopackageSqlGenerator import GeopackageSqlGenerator
 from DsgTools.core.dsgEnums import DsgEnums
@@ -38,7 +37,6 @@ class SqlGeneratorFactory(object):
         """
         genDict = {
             DsgEnums.DriverGeopackage: lambda: GeopackageSqlGenerator(),
-            DsgEnums.DriverSpatiaLite: lambda: SpatialiteSqlGenerator(),
             DsgEnums.DriverPostGIS: lambda: PostGISSqlGenerator(),
         }
         return genDict[driver]()

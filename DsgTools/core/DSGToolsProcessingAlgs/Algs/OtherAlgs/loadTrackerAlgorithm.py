@@ -329,9 +329,9 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
         elevacao = self.parameterAsStrings(parameters, self.ELEVATION_FIELD, context)[0]
         creation = self.parameterAsStrings(parameters, self.CREATION_FIELD, context)[0]
         trackid = self.parameterAsStrings(parameters, self.TRACKID_FIELD, context)[0]
-        tracksegid = self.parameterAsStrings(parameters, self.TRACKSEGID_FIELD, context)[
-            0
-        ]
+        tracksegid = self.parameterAsStrings(
+            parameters, self.TRACKSEGID_FIELD, context
+        )[0]
         tracksegpointid = self.parameterAsStrings(
             parameters, self.TRACKSEGPOINTID_FIELD, context
         )[0]

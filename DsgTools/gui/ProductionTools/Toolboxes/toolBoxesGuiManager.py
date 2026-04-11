@@ -34,7 +34,6 @@ from DsgTools.Modules.acquisitionMenu.controllers.acquisitionMenuCtrl import (
     AcquisitionMenuCtrl,
 )
 from .ContourTool.calc_contour import CalcContour
-from .ComplexTools.complexWindow import ComplexWindow
 from .WorkflowToolBox.workflowDockWidget import (
     WorkflowDockWidget,
 )
@@ -117,11 +116,6 @@ class ToolBoxesGuiManager(QObject):
             "codelist.png",
             self.tr("View Code List Codes and Values"),
         )
-        self.complexWindow = None
-        self.addTool(
-            self.showComplexDock, "complex.png", self.tr("Build Complex Structures")
-        )
-
         # Load state for current project
         self.loadStateFromProject()
 
@@ -200,7 +194,9 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.workflowToolBox)
         else:
             self.workflowToolBox = WorkflowDockWidget(self.iface)
-        self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.workflowToolBox)
+        self.iface.addDockWidget(
+            Qt.DockWidgetArea.RightDockWidgetArea, self.workflowToolBox
+        )
 
     def showMultiLayersCentroidsFlagTool(self):
         if self.multiLayersCentroidsFlagToolBox is not None:
@@ -221,17 +217,9 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.calcContour)
         else:
             self.calcContour = CalcContour(self.iface)
-        self.iface.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.calcContour)
-
-    def showComplexDock(self):
-        """
-        Shows the Manage Complex features Dock
-        """
-        if self.complexWindow:
-            self.iface.removeDockWidget(self.complexWindow)
-        else:
-            self.complexWindow = ComplexWindow(self.iface)
-        self.iface.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.complexWindow)
+        self.iface.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, self.calcContour
+        )
 
     def saveStateOnProject(self):
         """

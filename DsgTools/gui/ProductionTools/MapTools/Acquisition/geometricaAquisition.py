@@ -277,7 +277,9 @@ class GeometricaAcquisition(QgsMapTool):
         return rubberBand
 
     def getSnapRubberBand(self):
-        rubberBand = QgsRubberBand(self.canvas, geometryType=QgsWkbTypes.GeometryType.PointGeometry)
+        rubberBand = QgsRubberBand(
+            self.canvas, geometryType=QgsWkbTypes.GeometryType.PointGeometry
+        )
         rubberBand.setFillColor(QColor(255, 0, 0, 40))
         rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)

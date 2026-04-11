@@ -9,7 +9,9 @@ class CustomComboBox(QComboBox):
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setEditable(True)
         self.completer = QCompleter(self)
-        self.completer.setCompletionMode(QCompleter.CompletionMode.UnfilteredPopupCompletion)
+        self.completer.setCompletionMode(
+            QCompleter.CompletionMode.UnfilteredPopupCompletion
+        )
         self.pFilterModel = QSortFilterProxyModel(self)
         self.pFilterModel.setFilterCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.completer.setPopup(self.view())

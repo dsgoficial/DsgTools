@@ -166,9 +166,9 @@ class BDGExRequestHandler(QObject):
             )
             MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             return ""
-        
+
         response = resp.read()
-        
+
         # Verificar se a resposta não está vazia
         if not response:
             title = self.tr("BDGEx layers (DSGTools)")
@@ -177,17 +177,19 @@ class BDGExRequestHandler(QObject):
             )
             MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             return ""
-        
+
         # Verificar se a resposta não é HTML de erro
-        response_str = response.decode('utf-8', errors='ignore')
-        if response_str.strip().lower().startswith('<!doctype html') or response_str.strip().lower().startswith('<html'):
+        response_str = response.decode("utf-8", errors="ignore")
+        if response_str.strip().lower().startswith(
+            "<!doctype html"
+        ) or response_str.strip().lower().startswith("<html"):
             title = self.tr("BDGEx layers (DSGTools)")
             msg = self.tr(
                 "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
             )
             MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             return ""
-        
+
         try:
             myDom = parseString(response)
         except Exception as e:
@@ -197,7 +199,7 @@ class BDGExRequestHandler(QObject):
             )
             MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             return ""
-        
+
         return myDom
 
     def parseCapabilitiesXML(self, capabilitiesDom):

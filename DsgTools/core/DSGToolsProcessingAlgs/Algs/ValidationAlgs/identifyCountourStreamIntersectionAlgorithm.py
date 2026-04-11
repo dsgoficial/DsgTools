@@ -112,19 +112,28 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             streamLayerInput, context=context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
-        self.runCreateSpatialIndex(auxStreamLayerInput, context=context, feedback=multiStepFeedback)
+        self.runCreateSpatialIndex(
+            auxStreamLayerInput, context=context, feedback=multiStepFeedback
+        )
 
         multiStepFeedback.setCurrentStep(2)
-        auxCountourLayer = self.runAddCount(countourLayer, context=context, feedback=multiStepFeedback)
+        auxCountourLayer = self.runAddCount(
+            countourLayer, context=context, feedback=multiStepFeedback
+        )
         multiStepFeedback.setCurrentStep(3)
-        self.runCreateSpatialIndex(auxCountourLayer, context=context, feedback=multiStepFeedback)
+        self.runCreateSpatialIndex(
+            auxCountourLayer, context=context, feedback=multiStepFeedback
+        )
         multiStepFeedback.setCurrentStep(4)
         idDict = {feat["AUTO"]: feat for feat in auxCountourLayer.getFeatures()}
 
         multiStepFeedback.setCurrentStep(5)
         multiStepFeedback.pushInfo(self.tr("Doing spatial join"))
         spatialJoinOutput = self.runSpatialJoin(
-            auxStreamLayerInput, auxCountourLayer, context=context, feedback=multiStepFeedback
+            auxStreamLayerInput,
+            auxCountourLayer,
+            context=context,
+            feedback=multiStepFeedback,
         )
 
         multiStepFeedback.setCurrentStep(6)

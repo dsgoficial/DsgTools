@@ -41,7 +41,9 @@ class DsgCustomComboBox(QComboBox):
         # add a completer, which uses the filter model
         self.completer = QCompleter(self.pFilterModel, self)
         # always show all (filtered) completions
-        self.completer.setCompletionMode(QCompleter.CompletionMode.UnfilteredPopupCompletion)
+        self.completer.setCompletionMode(
+            QCompleter.CompletionMode.UnfilteredPopupCompletion
+        )
         self.setCompleter(self.completer)
 
         # connect signals

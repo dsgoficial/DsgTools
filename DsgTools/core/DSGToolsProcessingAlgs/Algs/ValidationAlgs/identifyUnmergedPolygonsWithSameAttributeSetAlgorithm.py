@@ -123,7 +123,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
             QgsProcessingParameterNumber.Double,
             defaultValue=None,
             optional=True,
-            minValue=0.0
+            minValue=0.0,
         )
         areaFilter.setFlags(
             areaFilter.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
@@ -139,7 +139,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
         """
         Here is where the processing itself takes place.
         """
-        area_filter = self.parameterAsDouble(parameters, 'AREA_FILTER', context)
+        area_filter = self.parameterAsDouble(parameters, "AREA_FILTER", context)
         self.layerHandler = LayerHandler()
         self.algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
@@ -153,7 +153,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
         attributeBlackList = self.parameterAsStrings(
             parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
-        
+
         multiStepFeedback = QgsProcessingMultiStepFeedback(14, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
@@ -173,9 +173,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(
-            self.tr("Calculating polygon areas...")
-        )
+        multiStepFeedback.setProgressText(self.tr("Calculating polygon areas..."))
         localCache = self.algRunner.runCreateFieldWithExpression(
             inputLyr=localCache,
             expression="$area",
@@ -195,7 +193,9 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Explodes boundary lines of polygons..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Explodes boundary lines of polygons...")
+        )
         explodeLinesLyr = self.algRunner.runExplodeLines(
             inputLyr=boundaryPolygonLyr,
             context=context,
@@ -203,7 +203,9 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Finding the attributes that will be analyzed..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Finding the attributes that will be analyzed...")
+        )
         attributeNameList = self.layerHandler.getAttributesFromBlackList(
             localCache,
             attributeBlackList,
@@ -214,7 +216,9 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
                 parameters, self.IGNORE_PK_FIELDS, context
             ),
         )
-        attributeNameList = attributeNameList + ["area"] if area_filter > 0 else attributeNameList
+        attributeNameList = (
+            attributeNameList + ["area"] if area_filter > 0 else attributeNameList
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
 
@@ -229,12 +233,14 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
         else:
             lineFilterLyr = None
         if lineFilterLyr is not None:
-            self.algRunner.runCreateSpatialIndex(lineFilterLyr, context, is_child_algorithm=True)
+            self.algRunner.runCreateSpatialIndex(
+                lineFilterLyr, context, is_child_algorithm=True
+            )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         idAttributesDictList = self.getValuesAttributesForEachFeat(
-            attributeNameList=attributeNameList, 
+            attributeNameList=attributeNameList,
             lyr=localCache,
             feedback=multiStepFeedback,
         )
@@ -248,8 +254,12 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Creating spatial index in explode lines layer..."))
-        self.algRunner.runCreateSpatialIndex(explodeLinesLyr, context, is_child_algorithm=True)
+        multiStepFeedback.setProgressText(
+            self.tr("Creating spatial index in explode lines layer...")
+        )
+        self.algRunner.runCreateSpatialIndex(
+            explodeLinesLyr, context, is_child_algorithm=True
+        )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -262,24 +272,24 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
             joinFields=attributeNameList,
             method=0,
             discardNonMatching=False,
-            prefix='join_',
+            prefix="join_",
             feedback=multiStepFeedback,
         )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         duplicateLinesDict = self.getDuplicatesLines(
-            lyr=joinAttributesByLocationLyr, 
+            lyr=joinAttributesByLocationLyr,
             attributeNameList=attributeNameList,
             area_filter=area_filter,
             feedback=multiStepFeedback,
         )
-        
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         flagLinesGeomSet = self.verifyDesconnectedPolygons(
-            duplicateLinesDict=duplicateLinesDict, 
-            idAttributesDictList=idAttributesDictList, 
+            duplicateLinesDict=duplicateLinesDict,
+            idAttributesDictList=idAttributesDictList,
             featidAndFeatDict=featidAndFeatDict,
             feedback=multiStepFeedback,
         )
@@ -287,26 +297,28 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         flagLinesGeomList = self.verifyReallyFlagFeatures(
-            flagLinesGeomSet=flagLinesGeomSet, 
+            flagLinesGeomSet=flagLinesGeomSet,
             lineFilterLyr=lineFilterLyr,
             feedback=multiStepFeedback,
         )
-        
+
         def flagLambda(x):
             return self.flagFeature(
                 flagGeom=x,
-                flagText=self.tr("Polygons with same attribute set that are not merged."),
+                flagText=self.tr(
+                    "Polygons with same attribute set that are not merged."
+                ),
                 fromWkb=False,
             )
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Raising flags"))
         list(map(flagLambda, flagLinesGeomList))
         return {"FLAGS": self.flag_id}
 
     def verifyReallyFlagFeatures(
-        self, 
-        flagLinesGeomSet: Set[QgsGeometry], 
+        self,
+        flagLinesGeomSet: Set[QgsGeometry],
         lineFilterLyr: QgsVectorLayer,
         feedback: QgsProcessingMultiStepFeedback,
     ) -> List[QgsGeometry]:
@@ -316,12 +328,17 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
             if feedback.isCanceled():
                 break
             bbox = geomFlag.boundingBox()
-            if lineFilterLyr is not None and any(geomFlag.intersection(f.geometry()).type() == QgsWkbTypes.GeometryType.LineGeometry and geomFlag.intersection(f.geometry()).length() > 0 for f in lineFilterLyr.getFeatures(bbox)):
+            if lineFilterLyr is not None and any(
+                geomFlag.intersection(f.geometry()).type()
+                == QgsWkbTypes.GeometryType.LineGeometry
+                and geomFlag.intersection(f.geometry()).length() > 0
+                for f in lineFilterLyr.getFeatures(bbox)
+            ):
                 continue
             flagLinesGeomList.append(geomFlag)
             feedback.setProgress(size * current)
         return flagLinesGeomList
-    
+
     def getFeatForEachFeatid(
         self,
         lyr: QgsVectorLayer,
@@ -336,9 +353,10 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
             feedback.setProgress(size * current)
         return featidAndFeatDict
 
-    def getValuesAttributesForEachFeat(self, 
-        attributeNameList: List[str], 
-        lyr:QgsVectorLayer,
+    def getValuesAttributesForEachFeat(
+        self,
+        attributeNameList: List[str],
+        lyr: QgsVectorLayer,
         feedback: QgsProcessingMultiStepFeedback,
     ) -> Dict[int, List[str]]:
         idAttributesDictList = dict()
@@ -352,10 +370,10 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
                     continue
                 idAttributesDictList[feat["featid"]].append(feat[attr])
             feedback.setProgress(size * current)
-        return idAttributesDictList            
+        return idAttributesDictList
 
     def getDuplicatesLines(
-        self, 
+        self,
         lyr: QgsVectorLayer,
         attributeNameList: List[str],
         area_filter: float,
@@ -366,24 +384,30 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
         for current, feat in enumerate(lyr.getFeatures()):
             if feedback.isCanceled():
                 break
-            if (feat["featid"] == feat["join_featid"]) or ("area" in attributeNameList and feat["area"] > area_filter and feat["join_area"] > area_filter):
+            if (feat["featid"] == feat["join_featid"]) or (
+                "area" in attributeNameList
+                and feat["area"] > area_filter
+                and feat["join_area"] > area_filter
+            ):
                 continue
-            duplicateLinesDict[tuple(sorted([feat["featid"], feat["join_featid"]]))].add(feat.id())
+            duplicateLinesDict[
+                tuple(sorted([feat["featid"], feat["join_featid"]]))
+            ].add(feat.id())
             feedback.setProgress(size * current)
         return duplicateLinesDict
-    
+
     def getBoundaryOfPolygon(
-            self, 
-            feat: QgsFeature,
-        ) -> QgsGeometry:
+        self,
+        feat: QgsFeature,
+    ) -> QgsGeometry:
         geom = feat.geometry()
         boundary = QgsGeometry(geom.constGet().boundary())
         return boundary
-    
+
     def verifyDesconnectedPolygons(
-        self, 
-        duplicateLinesDict: Dict[Tuple[int, int], Set[int]], 
-        idAttributesDictList: Dict[int, QgsFeature], 
+        self,
+        duplicateLinesDict: Dict[Tuple[int, int], Set[int]],
+        idAttributesDictList: Dict[int, QgsFeature],
         featidAndFeatDict: Dict[int, QgsFeature],
         feedback: QgsProcessingMultiStepFeedback,
     ) -> Set[QgsGeometry]:
@@ -401,7 +425,11 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
             boundary1 = self.getBoundaryOfPolygon(feat1)
             boundary2 = self.getBoundaryOfPolygon(feat2)
             flagGeomIntersection: QgsGeometry = boundary1.intersection(boundary2)
-            if flagGeomIntersection.isNull() or flagGeomIntersection.isEmpty() or flagGeomIntersection.type() != QgsWkbTypes.GeometryType.LineGeometry:
+            if (
+                flagGeomIntersection.isNull()
+                or flagGeomIntersection.isEmpty()
+                or flagGeomIntersection.type() != QgsWkbTypes.GeometryType.LineGeometry
+            ):
                 continue
             flagLinesGeomSet.add(flagGeomIntersection)
             feedback.setProgress(size * current)

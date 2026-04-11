@@ -40,7 +40,9 @@ class DsgLineTool(QgsMapTool):
         self.canvas = canvas
         self.rubberBand = None
         self.geometryType = (
-            QgsWkbTypes.GeometryType.LineGeometry if geometryType is None else geometryType
+            QgsWkbTypes.GeometryType.LineGeometry
+            if geometryType is None
+            else geometryType
         )
         self.reset()
 

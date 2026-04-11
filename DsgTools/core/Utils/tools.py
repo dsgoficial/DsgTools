@@ -103,7 +103,7 @@ def toolBoxesNames():
     Lists all non-i18n names for DSGTools tool boxes.
     :return: (list-of-str) list of non-i18n of all available tool boxes.
     """
-    return ["qaToolBox", "cfToolbox", "calcContour", "codeList", "complexWindow"]
+    return ["qaToolBox", "cfToolbox", "calcContour", "codeList"]
 
 
 def toolBoxes():

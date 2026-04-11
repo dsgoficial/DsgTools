@@ -22,67 +22,77 @@
 """
 
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
-from qgis.core import (QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature, QgsGeometry, QgsPointXY,
-                       QgsField, QgsFields, QgsWkbTypes,
-                       QgsProcessingException, QgsRectangle,
-                       QgsCoordinateTransform, QgsProject,
-                       QgsCoordinateReferenceSystem)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsGeometry,
+    QgsPointXY,
+    QgsField,
+    QgsFields,
+    QgsWkbTypes,
+    QgsProcessingException,
+    QgsRectangle,
+    QgsCoordinateTransform,
+    QgsProject,
+    QgsCoordinateReferenceSystem,
+)
 import random
 import math
 from itertools import product
 
+
 class ETCQDGGridGenerator(QgsProcessingAlgorithm):
     # Parâmetros
-    INPUT_MOLDURA = 'INPUT_MOLDURA'
-    ESCALA = 'ESCALA'
-    LQA = 'LQA'
-    TIPO_LOTE = 'TIPO_LOTE'
-    OUTPUT_GRID = 'OUTPUT_GRID'
-    OUTPUT_AMOSTRA = 'OUTPUT_AMOSTRA'
-    
+    INPUT_MOLDURA = "INPUT_MOLDURA"
+    ESCALA = "ESCALA"
+    LQA = "LQA"
+    TIPO_LOTE = "TIPO_LOTE"
+    OUTPUT_GRID = "OUTPUT_GRID"
+    OUTPUT_AMOSTRA = "OUTPUT_AMOSTRA"
+
     # Tabela 44 - Letra código ISO 2859-1
     TABELA_44 = [
-        (2, 8, 'A', 'A', 'B'),
-        (9, 15, 'A', 'B', 'C'),
-        (16, 25, 'B', 'C', 'D'),
-        (26, 50, 'C', 'D', 'E'),
-        (51, 90, 'C', 'E', 'F'),
-        (91, 150, 'D', 'F', 'G'),
-        (151, 280, 'E', 'G', 'H'),
-        (281, 500, 'F', 'H', 'J'),
-        (501, 1200, 'G', 'J', 'K'),
-        (1201, 3200, 'H', 'K', 'L'),
-        (3201, 10000, 'J', 'L', 'M'),
-        (10001, 35000, 'K', 'M', 'N'),
-        (35001, 150000, 'L', 'N', 'P'),
-        (150001, 500000, 'M', 'P', 'Q'),
-        (500001, float('inf'), 'N', 'Q', 'R')
+        (2, 8, "A", "A", "B"),
+        (9, 15, "A", "B", "C"),
+        (16, 25, "B", "C", "D"),
+        (26, 50, "C", "D", "E"),
+        (51, 90, "C", "E", "F"),
+        (91, 150, "D", "F", "G"),
+        (151, 280, "E", "G", "H"),
+        (281, 500, "F", "H", "J"),
+        (501, 1200, "G", "J", "K"),
+        (1201, 3200, "H", "K", "L"),
+        (3201, 10000, "J", "L", "M"),
+        (10001, 35000, "K", "M", "N"),
+        (35001, 150000, "L", "N", "P"),
+        (150001, 500000, "M", "P", "Q"),
+        (500001, float("inf"), "N", "Q", "R"),
     ]
-    
+
     # Tabela 45 - Tamanho amostra e Ac - ISO 2859-1 (inspeção normal, nível II)
     TABELA_45 = {
-        'A': {1.0: (2, 0), 4.0: (2, 0), 10: (2, 1)},
-        'B': {1.0: (3, 0), 4.0: (3, 0), 10: (3, 1)},
-        'C': {1.0: (5, 0), 4.0: (5, 0), 10: (5, 2)},
-        'D': {1.0: (8, 0), 4.0: (8, 1), 10: (8, 2)},
-        'E': {1.0: (13, 0), 4.0: (13, 1), 10: (13, 3)},
-        'F': {1.0: (20, 0), 4.0: (20, 2), 10: (20, 5)},
-        'G': {1.0: (32, 1), 4.0: (32, 3), 10: (32, 7)},
-        'H': {1.0: (50, 1), 4.0: (50, 5), 10: (50, 10)},
-        'J': {1.0: (80, 2), 4.0: (80, 7), 10: (80, 14)},
-        'K': {1.0: (125, 3), 4.0: (125, 10), 10: (125, 21)},
-        'L': {1.0: (200, 5), 4.0: (200, 14), 10: (200, 21)},
-        'M': {1.0: (315, 7), 4.0: (315, 21), 10: (315, 21)},
-        'N': {1.0: (500, 10), 4.0: (500, 21), 10: (500, 21)},
-        'P': {1.0: (800, 14), 4.0: (800, 21), 10: (800, 21)},
-        'Q': {1.0: (1250, 21), 4.0: (1250, 21), 10: (1250, 21)},
-        'R': {1.0: (2000, 21), 4.0: (2000, 21), 10: (2000, 21)}
+        "A": {1.0: (2, 0), 4.0: (2, 0), 10: (2, 1)},
+        "B": {1.0: (3, 0), 4.0: (3, 0), 10: (3, 1)},
+        "C": {1.0: (5, 0), 4.0: (5, 0), 10: (5, 2)},
+        "D": {1.0: (8, 0), 4.0: (8, 1), 10: (8, 2)},
+        "E": {1.0: (13, 0), 4.0: (13, 1), 10: (13, 3)},
+        "F": {1.0: (20, 0), 4.0: (20, 2), 10: (20, 5)},
+        "G": {1.0: (32, 1), 4.0: (32, 3), 10: (32, 7)},
+        "H": {1.0: (50, 1), 4.0: (50, 5), 10: (50, 10)},
+        "J": {1.0: (80, 2), 4.0: (80, 7), 10: (80, 14)},
+        "K": {1.0: (125, 3), 4.0: (125, 10), 10: (125, 21)},
+        "L": {1.0: (200, 5), 4.0: (200, 14), 10: (200, 21)},
+        "M": {1.0: (315, 7), 4.0: (315, 21), 10: (315, 21)},
+        "N": {1.0: (500, 10), 4.0: (500, 21), 10: (500, 21)},
+        "P": {1.0: (800, 14), 4.0: (800, 21), 10: (800, 21)},
+        "Q": {1.0: (1250, 21), 4.0: (1250, 21), 10: (1250, 21)},
+        "R": {1.0: (2000, 21), 4.0: (2000, 21), 10: (2000, 21)},
     }
-    
+
     # Tabela 47 - Lote isolado ISO 2859-2
     TABELA_47 = {
         (16, 25): {20: (13, 0), 32: (9, 0)},
@@ -96,20 +106,20 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         (3201, 10000): {20: (80, 5), 32: (80, 10)},
         (10001, 35000): {20: (125, 10), 32: (125, 18)},
         (35001, 150000): {20: (200, 18), 32: (200, 18)},
-        (150001, float('inf')): {20: (200, 18), 32: (200, 18)}
+        (150001, float("inf")): {20: (200, 18), 32: (200, 18)},
     }
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate("ETCQDGGridGenerator", string)
 
     def createInstance(self):
         return ETCQDGGridGenerator()
 
     def name(self):
-        return 'cqdggridgenerator'
+        return "cqdggridgenerator"
 
     def displayName(self):
-        return self.tr('ET-CQDG Tile Grid Generator')
+        return self.tr("ET-CQDG Tile Grid Generator")
 
     def group(self):
         """
@@ -122,7 +132,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         Returns the unique ID of the group this algorithm belongs to.
         """
         return "DSGTools - Data Quality"
-    
+
     def getSirgasAuthIdByPointLatLong(self, lat, long):
         """
         Calculates SIRGAS 2000 epsg.
@@ -139,13 +149,27 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         Returns SIRGAS 2000 EPSG code for a given UTM zone.
         """
         options = {
-            "11N": "EPSG:31965", "12N": "EPSG:31966", "13N": "EPSG:31967",
-            "14N": "EPSG:31968", "15N": "EPSG:31969", "16N": "EPSG:31970",
-            "17N": "EPSG:31971", "18N": "EPSG:31972", "19N": "EPSG:31973",
-            "20N": "EPSG:31974", "21N": "EPSG:31975", "22N": "EPSG:31976",
-            "17S": "EPSG:31977", "18S": "EPSG:31978", "19S": "EPSG:31979",
-            "20S": "EPSG:31980", "21S": "EPSG:31981", "22S": "EPSG:31982",
-            "23S": "EPSG:31983", "24S": "EPSG:31984", "25S": "EPSG:31985",
+            "11N": "EPSG:31965",
+            "12N": "EPSG:31966",
+            "13N": "EPSG:31967",
+            "14N": "EPSG:31968",
+            "15N": "EPSG:31969",
+            "16N": "EPSG:31970",
+            "17N": "EPSG:31971",
+            "18N": "EPSG:31972",
+            "19N": "EPSG:31973",
+            "20N": "EPSG:31974",
+            "21N": "EPSG:31975",
+            "22N": "EPSG:31976",
+            "17S": "EPSG:31977",
+            "18S": "EPSG:31978",
+            "19S": "EPSG:31979",
+            "20S": "EPSG:31980",
+            "21S": "EPSG:31981",
+            "22S": "EPSG:31982",
+            "23S": "EPSG:31983",
+            "24S": "EPSG:31984",
+            "25S": "EPSG:31985",
             "26S": "EPSG:5396",
         }
         return options.get(key, "")
@@ -156,13 +180,13 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         """
         # Fazer cópia para não modificar original
         centroid = geometry.centroid()
-        
+
         if not source_crs.isGeographic():
             # Transformar para WGS84 para calcular lat/long
             wgs84 = QgsCoordinateReferenceSystem("EPSG:4326")
             transform = QgsCoordinateTransform(source_crs, wgs84, QgsProject.instance())
             centroid.transform(transform)
-        
+
         point = QgsPointXY(centroid.constGet())
         utmString = self.getSirgasAuthIdByPointLatLong(point.y(), point.x())
         if not utmString:
@@ -171,10 +195,11 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         return utm
 
     def shortHelpString(self):
-        return self.tr("""
+        return self.tr(
+            """
         Generates evaluation tiles according to ET-CQDG (DSG/EB).
 
-        IMPORTANT: Only tiles COMPLETELY within the frame are
+        IMPORTANT: Only tiles COMPLETELY inside the frame are
         considered (tiles cut by the border are discarded).
 
         Each frame is processed individually with its specific UTM zone.
@@ -183,60 +208,59 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         - Frame Layer: Vector layer with the frames (MI)
         - Scale: Working scale (1:25,000, 1:50,000, 1:100,000, 1:250,000)
         - AQL (%): Acceptable Quality Limit (1%, 4% or 10%)
-        - Batch Type: Batch by batch (10+ products) or Isolated (1-9 products)
+        - Lot Type: Lot-by-lot (10+ products) or Isolated (1-9 products)
 
         Outputs:
-        - Complete grid: All complete tiles within the frame
+        - Full grid: All complete tiles inside the frame
         - Sample: Tiles randomly selected for evaluation
-        """)
+        """
+        )
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT_MOLDURA,
-                self.tr('Frame Layer (MI)'),
-                [QgsProcessing.TypeVectorPolygon]
+                self.tr("Frame Layer (MI)"),
+                [QgsProcessing.TypeVectorPolygon],
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.ESCALA,
-                self.tr('Scale'),
-                options=['1:25.000', '1:50.000', '1:100.000', '1:250.000'],
-                defaultValue=0
+                self.tr("Scale"),
+                options=["1:25.000", "1:50.000", "1:100.000", "1:250.000"],
+                defaultValue=0,
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.LQA,
-                self.tr('AQL - Acceptable Quality Limit (%)'),
-                options=['1%', '4%', '10%'],
-                defaultValue=1
+                self.tr("AQL - Acceptable Quality Limit (%)"),
+                options=["1%", "4%", "10%"],
+                defaultValue=1,
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.TIPO_LOTE,
-                self.tr('Batch Type'),
-                options=[self.tr('Batch by Batch (10+ products)'), self.tr('Isolated (1-9 products)')],
-                defaultValue=1
+                self.tr("Lot Type"),
+                options=["Lote a Lote (10+ produtos)", "Isolado (1-9 produtos)"],
+                defaultValue=1,
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT_GRID,
-                self.tr('Complete Tile Grid')
+                self.OUTPUT_GRID, self.tr("Full Tile Grid")
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT_AMOSTRA,
-                self.tr('Sampled Tiles')
+                self.OUTPUT_AMOSTRA, self.tr("Sampled Tiles")
             )
         )
 
@@ -246,188 +270,223 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         escala_idx = self.parameterAsEnum(parameters, self.ESCALA, context)
         lqa_idx = self.parameterAsEnum(parameters, self.LQA, context)
         tipo_lote = self.parameterAsEnum(parameters, self.TIPO_LOTE, context)
-        
+
         # Converter parâmetros
         escalas = [25000, 50000, 100000, 250000]
         escala = escalas[escala_idx]
-        
+
         lqas = [1.0, 4.0, 10.0]
         lqa = lqas[lqa_idx]
-        
+
         # Calcular tamanho da quadrícula (em metros)
         grid_size = 4 * escala / 100  # 4 cm na escala
-        
+
         # Obter CRS original
         original_crs = moldura_layer.sourceCrs()
-        
-        feedback.pushInfo(self.tr('Original reference system: %s') % original_crs.authid())
-        feedback.pushInfo(self.tr('Scale: 1:%s') % escala)
-        feedback.pushInfo(self.tr('Tile size: %s meters') % grid_size)
-        feedback.pushInfo(self.tr('AQL: %s%%') % lqa)
-        
+
+        feedback.pushInfo(
+            self.tr("Original reference system: {0}").format(original_crs.authid())
+        )
+        feedback.pushInfo(self.tr("Scale: 1:{0}").format(escala))
+        feedback.pushInfo(
+            self.tr("Tile size: {0} meters").format(grid_size)
+        )
+        feedback.pushInfo(self.tr("AQL: {0}%").format(lqa))
+
         # Criar campos de saída
         fields = QgsFields()
-        fields.append(QgsField('mi', QMetaType.Type.QString))
-        fields.append(QgsField('quadricula', QMetaType.Type.QString))
-        fields.append(QgsField('grid_x', QMetaType.Type.Int))
-        fields.append(QgsField('grid_y', QMetaType.Type.Int))
-        fields.append(QgsField('area_m2', QMetaType.Type.Double))
-        fields.append(QgsField('selecionada', QMetaType.Type.Int))
-        fields.append(QgsField('fuso_utm', QMetaType.Type.QString))
-        
+        fields.append(QgsField("mi", QMetaType.Type.QString))
+        fields.append(QgsField("quadricula", QMetaType.Type.QString))
+        fields.append(QgsField("grid_x", QMetaType.Type.Int))
+        fields.append(QgsField("grid_y", QMetaType.Type.Int))
+        fields.append(QgsField("area_m2", QMetaType.Type.Double))
+        fields.append(QgsField("selecionada", QMetaType.Type.Int))
+        fields.append(QgsField("fuso_utm", QMetaType.Type.QString))
+
         # Criar sinks (no CRS original)
         (sink_grid, dest_id_grid) = self.parameterAsSink(
-            parameters, self.OUTPUT_GRID, context,
-            fields, QgsWkbTypes.Polygon, original_crs
+            parameters,
+            self.OUTPUT_GRID,
+            context,
+            fields,
+            QgsWkbTypes.Polygon,
+            original_crs,
         )
-        
+
         (sink_amostra, dest_id_amostra) = self.parameterAsSink(
-            parameters, self.OUTPUT_AMOSTRA, context,
-            fields, QgsWkbTypes.Polygon, original_crs
+            parameters,
+            self.OUTPUT_AMOSTRA,
+            context,
+            fields,
+            QgsWkbTypes.Polygon,
+            original_crs,
         )
-        
+
         # Processar cada MI
         total_features = moldura_layer.featureCount()
-        
+
         for current, moldura_feat in enumerate(moldura_layer.getFeatures()):
             if feedback.isCanceled():
                 break
-                
+
             feedback.setProgress(int(current * 100 / total_features))
-            
+
             # Identificar MI
-            mi_nome = moldura_feat.attribute('mi') if moldura_feat.fields().lookupField('mi') >= 0 else f'MI_{current+1}'
-            feedback.pushInfo(self.tr('\nProcessing %s...') % mi_nome)
-            
+            mi_nome = (
+                moldura_feat.attribute("mi")
+                if moldura_feat.fields().lookupField("mi") >= 0
+                else f"MI_{current+1}"
+            )
+            feedback.pushInfo(
+                self.tr("\nProcessing {0}...").format(mi_nome)
+            )
+
             # Obter geometria da moldura (cópia para não modificar o original)
             moldura_geom_original = moldura_feat.geometry()
-            
+
             # Determinar fuso UTM específico para esta moldura
             utm_crs = self.getUtmRefSysFromGeometry(moldura_geom_original, original_crs)
-            
+
             if utm_crs is None or not utm_crs.isValid():
-                feedback.pushWarning(self.tr('Could not determine UTM system for %s. Skipping...') % mi_nome)
+                feedback.pushWarning(
+                    self.tr(
+                        "Could not determine the UTM system for {0}. Skipping..."
+                    ).format(mi_nome)
+                )
                 continue
-            
-            feedback.pushInfo(self.tr('UTM zone for this frame: %s') % utm_crs.authid())
-            
+
+            feedback.pushInfo(
+                self.tr("UTM zone for this frame: {0}").format(utm_crs.authid())
+            )
+
             # Criar transformadores específicos para esta moldura
             transform_to_utm = QgsCoordinateTransform(
-                original_crs, 
-                utm_crs, 
-                QgsProject.instance()
+                original_crs, utm_crs, QgsProject.instance()
             )
             transform_from_utm = QgsCoordinateTransform(
-                utm_crs, 
-                original_crs, 
-                QgsProject.instance()
+                utm_crs, original_crs, QgsProject.instance()
             )
-            
+
             # Reprojetar moldura para UTM (fazer cópia para não modificar original)
             moldura_geom_utm = QgsGeometry(moldura_geom_original)
             moldura_geom_utm.transform(transform_to_utm)
-            
+
             bbox = moldura_geom_utm.boundingBox()
-            
+
             # Ajustar bbox para grid UTM (valores inteiros baseados no grid_size)
             xmin = math.floor(bbox.xMinimum() / grid_size) * grid_size
             ymin = math.floor(bbox.yMinimum() / grid_size) * grid_size
             xmax = math.ceil(bbox.xMaximum() / grid_size) * grid_size
             ymax = math.ceil(bbox.yMaximum() / grid_size) * grid_size
-            
+
             # Gerar quadrículas em UTM
             quadriculas_utm = []
             quadriculas_descartadas = 0
-            
+
             # Calcular número de células em cada direção
             n_cols = int((xmax - xmin) / grid_size)
             n_rows = int((ymax - ymin) / grid_size)
             total_celulas = n_cols * n_rows
-            
+
             # Usar itertools.product para gerar todas as combinações de índices
             for grid_x_idx, grid_y_idx in product(range(n_cols), range(n_rows)):
                 x = xmin + grid_x_idx * grid_size
                 y = ymin + grid_y_idx * grid_size
-                
+
                 # Criar geometria da quadrícula em UTM
                 rect = QgsRectangle(x, y, x + grid_size, y + grid_size)
                 quad_geom_utm = QgsGeometry.fromRect(rect)
-                
+
                 # Verificar se a quadrícula está COMPLETAMENTE dentro da moldura (em UTM)
                 if moldura_geom_utm.contains(quad_geom_utm):
                     # Identificador da quadrícula (ex: K1, K2, L1, L2...)
                     col_letter = chr(65 + grid_x_idx)  # A, B, C...
-                    quad_id = f'{col_letter}{grid_y_idx + 1}'
-                    
+                    quad_id = f"{col_letter}{grid_y_idx + 1}"
+
                     # Armazenar informações da quadrícula em UTM
-                    quadriculas_utm.append({
-                        'geom_utm': quad_geom_utm,
-                        'mi': mi_nome,
-                        'quadricula': quad_id,
-                        'grid_x': grid_x_idx,
-                        'grid_y': grid_y_idx,
-                        'area_m2': grid_size * grid_size,
-                        'fuso_utm': utm_crs.authid()
-                    })
+                    quadriculas_utm.append(
+                        {
+                            "geom_utm": quad_geom_utm,
+                            "mi": mi_nome,
+                            "quadricula": quad_id,
+                            "grid_x": grid_x_idx,
+                            "grid_y": grid_y_idx,
+                            "area_m2": grid_size * grid_size,
+                            "fuso_utm": utm_crs.authid(),
+                        }
+                    )
                 else:
                     quadriculas_descartadas += 1
-            
+
             # Calcular tamanho da amostra
             n_total = len(quadriculas_utm)
-            feedback.pushInfo(self.tr('Grid cells: %s') % total_celulas)
-            feedback.pushInfo(self.tr('Complete tiles: %s') % n_total)
-            feedback.pushInfo(self.tr('Discarded tiles (partial): %s') % quadriculas_descartadas)
-            
+            feedback.pushInfo(
+                self.tr("Grid cells: {0}").format(total_celulas)
+            )
+            feedback.pushInfo(
+                self.tr("Complete tiles: {0}").format(n_total)
+            )
+            feedback.pushInfo(
+                self.tr("Discarded tiles (partial): {0}").format(
+                    quadriculas_descartadas
+                )
+            )
+
             if n_total == 0:
-                feedback.pushWarning(self.tr('No tiles generated for %s') % mi_nome)
+                feedback.pushWarning(
+                    self.tr("No tiles generated for {0}").format(mi_nome)
+                )
                 continue
-            
+
             # Determinar tamanho da amostra
             if tipo_lote == 0:  # Lote a lote
                 n_amostra, ac = self._calcular_amostra_lote(n_total, lqa)
             else:  # Isolado
                 n_amostra, ac = self._calcular_amostra_isolado(n_total, lqa)
-            
-            feedback.pushInfo(self.tr('Sample size: %s') % n_amostra)
-            feedback.pushInfo(self.tr('Acceptance number: %s') % ac)
-            
+
+            feedback.pushInfo(
+                self.tr("Sample size: {0}").format(n_amostra)
+            )
+            feedback.pushInfo(
+                self.tr("Acceptance number: {0}").format(ac)
+            )
+
             # Selecionar aleatoriamente os índices
-            indices_amostra = set(random.sample(range(n_total), min(n_amostra, n_total)))
-            
+            indices_amostra = set(
+                random.sample(range(n_total), min(n_amostra, n_total))
+            )
+
             # Reprojetar quadrículas de volta para CRS original e adicionar aos sinks
             for idx, quad_info in enumerate(quadriculas_utm):
                 # Reprojetar geometria de volta para CRS original
-                quad_geom_original = QgsGeometry(quad_info['geom_utm'])
+                quad_geom_original = QgsGeometry(quad_info["geom_utm"])
                 quad_geom_original.transform(transform_from_utm)
-                
+
                 # Criar feature
                 feat = QgsFeature(fields)
                 feat.setGeometry(quad_geom_original)
-                feat.setAttribute('mi', quad_info['mi'])
-                feat.setAttribute('quadricula', quad_info['quadricula'])
-                feat.setAttribute('grid_x', quad_info['grid_x'])
-                feat.setAttribute('grid_y', quad_info['grid_y'])
-                feat.setAttribute('area_m2', quad_info['area_m2'])
-                feat.setAttribute('fuso_utm', quad_info['fuso_utm'])
-                
+                feat.setAttribute("mi", quad_info["mi"])
+                feat.setAttribute("quadricula", quad_info["quadricula"])
+                feat.setAttribute("grid_x", quad_info["grid_x"])
+                feat.setAttribute("grid_y", quad_info["grid_y"])
+                feat.setAttribute("area_m2", quad_info["area_m2"])
+                feat.setAttribute("fuso_utm", quad_info["fuso_utm"])
+
                 # Verificar se foi selecionada na amostra
                 selecionada = 1 if idx in indices_amostra else 0
-                feat.setAttribute('selecionada', selecionada)
-                
+                feat.setAttribute("selecionada", selecionada)
+
                 # Adicionar ao grid completo
                 sink_grid.addFeature(feat)
-                
+
                 # Se foi selecionada, adicionar também à amostra
                 if selecionada:
                     sink_amostra.addFeature(feat)
-        
-        feedback.pushInfo(self.tr('\nProcessing completed!'))
-        
-        return {
-            self.OUTPUT_GRID: dest_id_grid,
-            self.OUTPUT_AMOSTRA: dest_id_amostra
-        }
-    
+
+        feedback.pushInfo(self.tr("\nProcessing completed!"))
+
+        return {self.OUTPUT_GRID: dest_id_grid, self.OUTPUT_AMOSTRA: dest_id_amostra}
+
     def _calcular_amostra_lote(self, tamanho_lote, lqa):
         """Calcula tamanho da amostra para lote a lote (ISO 2859-1)"""
         # Encontrar letra código (Tabela 44, nível II)
@@ -436,31 +495,39 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             if min_val <= tamanho_lote <= max_val:
                 letra = nivel_ii
                 break
-        
+
         if not letra:
-            raise QgsProcessingException(self.tr('Could not determine code letter for batch of size %s') % tamanho_lote)
-        
+            raise QgsProcessingException(
+                self.tr(
+                    "Could not determine code letter for lot of size {0}"
+                ).format(tamanho_lote)
+            )
+
         # Buscar na tabela 45
         if letra in self.TABELA_45 and lqa in self.TABELA_45[letra]:
             return self.TABELA_45[letra][lqa]
-        
-        raise QgsProcessingException(self.tr('Combination letter=%s, AQL=%s not found in table') % (letra, lqa))
-    
+
+        raise QgsProcessingException(
+            self.tr(
+                "Combination letter={0}, AQL={1} not found in table"
+            ).format(letra, lqa)
+        )
+
     def _calcular_amostra_isolado(self, tamanho_lote, lqa):
         """Calcula tamanho da amostra para lote isolado (ISO 2859-2)"""
         # Converter LQA para QL usando Tabela 46 (simplificada)
         ql_map = {1.0: 20, 4.0: 20, 10.0: 32}
         ql = ql_map.get(lqa, 20)
-        
+
         # Encontrar faixa na Tabela 47
         for (min_val, max_val), valores in self.TABELA_47.items():
             if min_val <= tamanho_lote <= max_val:
                 if ql in valores:
                     return valores[ql]
-        
+
         # Padrão conservador
         return (min(tamanho_lote, 50), 1)
-    
+
     def getUtmRefSys(self, frameLayer):
         features = frameLayer.getFeatures()
         first_feature = next(features, None)
@@ -475,6 +542,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         utmString = getSirgasAuthIdByPointLatLong(point.y(), point.x())
         utm = QgsCoordinateReferenceSystem(utmString)
         return utm
+
 
 def getSirgasAuthIdByPointLatLong(lat, long):
     """

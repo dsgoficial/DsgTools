@@ -112,7 +112,10 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
                 pass
         # connecting signals to new layer
         if isinstance(self.currentLayer, QgsVectorLayer):
-            if self.currentLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
+            if (
+                self.currentLayer.geometryType()
+                == QgsWkbTypes.GeometryType.PointGeometry
+            ):
                 self.currentLayer.editingStarted.connect(self.activateAlias)
                 self.currentLayer.editingStopped.connect(self.deactivateAlias)
 
@@ -315,7 +318,9 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, canvasCrs)
         mousePos = mousePosGeom.asPoint()
         # identify pixel(s) information
-        i = rasterLayer.dataProvider().identify(mousePos, QgsRaster.IdentifyFormat.IdentifyFormatValue)
+        i = rasterLayer.dataProvider().identify(
+            mousePos, QgsRaster.IdentifyFormat.IdentifyFormatValue
+        )
         if i.isValid():
             text = ", ".join(
                 ["{0:g}".format(r) for r in list(i.results().values()) if r is not None]

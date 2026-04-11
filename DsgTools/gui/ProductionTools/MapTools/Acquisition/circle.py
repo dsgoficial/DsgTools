@@ -64,7 +64,9 @@ class Circle(GeometricaAcquisition):
     def canvasMoveEvent(self, event):
         if self.snapCursorRubberBand:
             self.snapCursorRubberBand.hide()
-            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.GeometryType.PointGeometry)
+            self.snapCursorRubberBand.reset(
+                geometryType=QgsWkbTypes.GeometryType.PointGeometry
+            )
             self.snapCursorRubberBand = None
         oldPoint = QgsPointXY(event.mapPoint())
         event.snapPoint()

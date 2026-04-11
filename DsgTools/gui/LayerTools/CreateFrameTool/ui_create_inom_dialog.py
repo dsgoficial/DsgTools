@@ -154,16 +154,6 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
                 "tableSchema": "public",
                 "tableType": "BASE TABLE",
             }
-        elif loader.provider == "spatialite":
-            layerMeta = {
-                "cat": "aux",
-                "geom": "GEOMETRY",
-                "geomType": "MULTIPOLYGON",
-                "lyrName": "moldura_a",
-                "tableName": "aux_moldura_a",
-                "tableSchema": "public",
-                "tableType": "BASE TABLE",
-            }
         else:
             layerMeta = None
         layerDict = loader.load([layerMeta], uniqueLoad=True)
@@ -356,7 +346,9 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
             validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "500k":
-            regex = QtCore.QRegularExpression("[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}")
+            regex = QtCore.QRegularExpression(
+                "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}"
+            )
             validator = QtGui.QRegularExpressionValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
         elif self.scaleCombo.currentText() == "250k":

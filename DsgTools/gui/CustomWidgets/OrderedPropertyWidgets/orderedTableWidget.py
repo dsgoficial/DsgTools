@@ -77,7 +77,9 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         self.showSaveLoadButtons(showButtons)
         self.setHeaders(headerMap or {})
         self.setHeaderDoubleClickBehaviour()
-        self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.tableWidget.setSelectionMode(
+            QAbstractItemView.SelectionMode.ExtendedSelection
+        )
 
     def showSaveLoadButtons(self, showButtons=False):
         """
@@ -441,9 +443,13 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param row: (int) index for the row to be added to selection.
         """
         if row not in self.selectedRows():
-            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+            self.tableWidget.setSelectionMode(
+                QAbstractItemView.SelectionMode.MultiSelection
+            )
             self.tableWidget.selectRow(row)
-            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+            self.tableWidget.setSelectionMode(
+                QAbstractItemView.SelectionMode.ExtendedSelection
+            )
 
     def removeRowFromSelection(self, row):
         """
@@ -451,9 +457,13 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param row: (int) index for the row to be removed from selection.
         """
         if row in self.selectedRows():
-            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+            self.tableWidget.setSelectionMode(
+                QAbstractItemView.SelectionMode.MultiSelection
+            )
             self.tableWidget.selectRow(row)
-            self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+            self.tableWidget.setSelectionMode(
+                QAbstractItemView.SelectionMode.ExtendedSelection
+            )
 
     def clearRowSelection(self):
         """

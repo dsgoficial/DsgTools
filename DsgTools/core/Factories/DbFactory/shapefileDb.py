@@ -27,6 +27,7 @@ from qgis.core import QgsCoordinateReferenceSystem
 from qgis.utils import iface
 
 from .abstractDb import AbstractDb
+from .pgDataTypes import GeomDictResult, GeomTableEntry
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
     LayerLoaderFactory,
@@ -423,30 +424,28 @@ class ShapefileDb(AbstractDb):
                 geomDict[geomType].append(layer)
         return geomDict
 
-    def getGeomDict(self, getCentroids=False):
-        pass
+    def getGeomDict(self, getCentroids=False) -> GeomDictResult:
         """
-        returns a dict like this:
-        {'tablePerspective' : {
-            'layerName' :
+        Returns geometry metadata for all layers in the shapefile database as a
+        :class:`GeomDictResult`.
         """
         self.checkAndOpenDb()
-        geomDict = dict()
-        geomDict["primitivePerspective"] = self.getGeomTypeDict()
-        geomDict["tablePerspective"] = dict()
+        result = GeomDictResult(primitivePerspective=self.getGeomTypeDict())
         if self.databaseName() != "" and self.layerGeomCrsDict != dict():
             for shpLayer in self.getTablesFromDatabase():
-                srid = self.layerGeomCrsDict[shpLayer]["crs"].authid().split(":")[-1]
+                srid_str = (
+                    self.layerGeomCrsDict[shpLayer]["crs"].authid().split(":")[-1]
+                )
                 geometryType = self.layerGeomCrsDict[shpLayer]["geomType"]
                 schema, layerName = self.getTableSchema(lyr=shpLayer)
-                # start this layer's dict and fill it up
-                geomDict["tablePerspective"][layerName] = dict()
-                geomDict["tablePerspective"][layerName]["schema"] = schema
-                geomDict["tablePerspective"][layerName]["srid"] = str(srid)
-                geomDict["tablePerspective"][layerName]["geometryColumn"] = "N/A"
-                geomDict["tablePerspective"][layerName]["geometryType"] = geometryType
-                geomDict["tablePerspective"][layerName]["tableName"] = shpLayer
-        return geomDict
+                result.tablePerspective[layerName] = GeomTableEntry(
+                    schema=schema,
+                    srid=int(srid_str) if srid_str.isdigit() else 0,
+                    geometryColumn="N/A",
+                    geometryType=geometryType,
+                    tableName=shpLayer,
+                )
+        return result
 
     def getGeomColumnDict(self):
         pass

@@ -239,7 +239,9 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
                 feed, attributes, dictVertInFrame, stepSize, point_flag_sink, fields
             )
 
-        elif inputLinePolyLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
+        elif (
+            inputLinePolyLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
+        ):
             multiChildTwo = QgsProcessingMultiStepFeedback(4, multiStepFeedback)
             multiChildTwo.setCurrentStep(0)
 

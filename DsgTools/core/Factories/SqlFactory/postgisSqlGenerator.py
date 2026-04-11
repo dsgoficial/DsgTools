@@ -22,7 +22,6 @@
 """
 from builtins import str
 from builtins import map
-from qgis.PyQt.QtCore import QCoreApplication
 from .sqlGenerator import SqlGenerator
 from ...dsgEnums import DsgEnums
 
@@ -32,9 +31,8 @@ DB_ENCODING = "utf-8"
 class PostGISSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
         sql = (
-            "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = '"
-            + complex
-            + "'"
+            "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = '%s'"
+            % self._el(complex)
         )
         return sql
 
@@ -43,35 +41,30 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getComplexData(self, complex_schema, complex):
-        sql = "SELECT id, nome from " + complex_schema + "." + complex
+        sql = "SELECT id, nome from %s.%s" % (
+            self._qi(complex_schema),
+            self._qi(complex),
+        )
         return sql
 
     def getAssociatedFeaturesData(
         self, aggregated_schema, aggregated_class, column_name, complex_uuid
     ):
-        sql = (
-            "SELECT id from only "
-            + aggregated_schema
-            + "."
-            + aggregated_class
-            + " where "
-            + column_name
-            + "="
-            + "'"
-            + complex_uuid
-            + "'"
+        sql = "SELECT id from only %s.%s where %s='%s'" % (
+            self._qi(aggregated_schema),
+            self._qi(aggregated_class),
+            self._qi(column_name),
+            self._el(complex_uuid),
         )
         return sql
 
     def getLinkColumn(self, complexClass, aggregatedClass):
         sql = (
-            "SELECT column_name from complex_schema where complex = '"
-            + complexClass
-            + "'"
-            + " and aggregated_class = "
-            + "'"
-            + aggregatedClass
-            + "'"
+            "SELECT column_name from complex_schema where complex = '%s' and aggregated_class = '%s'"
+            % (
+                self._el(complexClass),
+                self._el(aggregatedClass),
+            )
         )
         return sql
 
@@ -103,15 +96,10 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
-        sql = (
-            "UPDATE complexos."
-            + aggregated_class
-            + " SET "
-            + link_column
-            + "=NULL WHERE id = "
-            + "'"
-            + uuid
-            + "'"
+        sql = "UPDATE complexos.%s SET %s=NULL WHERE id = '%s'" % (
+            self._qi(aggregated_class),
+            self._qi(link_column),
+            self._el(uuid),
         )
         return sql
 
@@ -121,9 +109,8 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def allowConnections(self, name):
         sql = (
-            "ALTER DATABASE "
-            + name
-            + " SET search_path = public, topology, cb, cc, complexos, ct;"
+            "ALTER DATABASE %s SET search_path = public, topology, cb, cc, complexos, ct;"
+            % self._qi(name)
         )
         return sql
 
@@ -145,7 +132,10 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def insertFrameIntoTable(self, wkt):
-        sql = "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText(" + wkt + "))"
+        sql = (
+            "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText('%s'))"
+            % self._el(wkt)
+        )
         return sql
 
     def getElementCountFromLayer(self, table):
@@ -164,7 +154,12 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getElementCountFromLayerWithInh(self, layer):
-        sql = "SELECT count(*) FROM " + layer
+        parts = str(layer).split(".")
+        if len(parts) == 2:
+            quoted = "%s.%s" % (self._qi(parts[0]), self._qi(parts[1]))
+        else:
+            quoted = self._qi(layer)
+        sql = "SELECT count(*) FROM %s" % quoted
         return sql
 
     def getDatabasesFromServer(self):
@@ -264,16 +259,16 @@ class PostGISSqlGenerator(SqlGenerator):
                     END
                 $BODY$ LANGUAGE plpgsql;#
             """
-        sql += "SELECT droprole('" + role + "')#"
-        sql += "DROP ROLE IF EXISTS " + role
+        sql += "SELECT droprole('%s')#" % self._el(role)
+        sql += "DROP ROLE IF EXISTS %s" % self._qi(role)
         return sql
 
     def grantRole(self, user, role):
-        sql = "GRANT " + role + " TO " + user
+        sql = "GRANT %s TO %s" % (self._qi(role), self._qi(user))
         return sql
 
     def revokeRole(self, user, role):
-        sql = "REVOKE " + role + " FROM " + user
+        sql = "REVOKE %s FROM %s" % (self._qi(role), self._qi(user))
         return sql
 
     def getRoles(self):
@@ -281,13 +276,12 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getUserRelatedRoles(self, username):
-        sql = (
-            """select rolname, usename from
-                    (select * from pg_roles as r where r.rolcanlogin = \'f\' and r.rolname<>\'postgres\') as listaRoles left join
-                    (select * from pg_auth_members as m join pg_user as u on m.member = u.usesysid and u.usename=\'%s\')
-                    as euTenho on euTenho.roleid=listaRoles.oid  where rolname in (select split_part(unnest(nspacl)::text, \'=\', 1) from pg_namespace where nspname = \'pg_catalog\')
-                """
-            % username
+        sql = """select rolname, usename from
+                    (select * from pg_roles as r where r.rolcanlogin = 'f' and r.rolname<>'postgres') as listaRoles left join
+                    (select * from pg_auth_members as m join pg_user as u on m.member = u.usesysid and u.usename='%s')
+                    as euTenho on euTenho.roleid=listaRoles.oid  where rolname in (select split_part(unnest(nspacl)::text, '=', 1) from pg_namespace where nspname = 'pg_catalog')
+                """ % self._el(
+            username
         )
         return sql
 
@@ -298,22 +292,25 @@ class PostGISSqlGenerator(SqlGenerator):
     def createUser(self, user, password, isSuperuser):
         if isSuperuser:
             sql = (
-                "CREATE ROLE "
-                + user
-                + " WITH SUPERUSER CREATEDB CREATEROLE REPLICATION LOGIN PASSWORD '"
-                + password
-                + "';"
+                "CREATE ROLE %s WITH SUPERUSER CREATEDB CREATEROLE REPLICATION LOGIN PASSWORD '%s';"
+                % (
+                    self._qi(user),
+                    self._el(password),
+                )
             )
         else:
-            sql = "CREATE ROLE " + user + " WITH LOGIN PASSWORD '" + password + "';"
+            sql = "CREATE ROLE %s WITH LOGIN PASSWORD '%s';" % (
+                self._qi(user),
+                self._el(password),
+            )
         return sql
 
     def removeUser(self, user):
-        sql = "DROP ROLE " + user
+        sql = "DROP ROLE %s" % self._qi(user)
         return sql
 
     def alterUserPass(self, user, newPass):
-        sql = "ALTER ROLE " + user + " WITH PASSWORD '" + newPass + "'"
+        sql = "ALTER ROLE %s WITH PASSWORD '%s'" % (self._qi(user), self._el(newPass))
         return sql
 
     def validateWithDomain(self, schemaList):
@@ -363,8 +360,13 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getFeaturesWithSQL(self, layer, attrList):
-        ls = ",".join(attrList)
-        sql = "SELECT %s FROM ONLY %s" % (ls, layer)
+        ls = ",".join(self._qi(a) for a in attrList)
+        parts = str(layer).split(".")
+        if len(parts) == 2:
+            quoted_layer = "%s.%s" % (self._qi(parts[0]), self._qi(parts[1]))
+        else:
+            quoted_layer = self._qi(layer)
+        sql = "SELECT %s FROM ONLY %s" % (ls, quoted_layer)
         return sql
 
     def getStructure(self, edgvVersion):
@@ -382,13 +384,21 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getAggregatorFromId(self, className, id):
-        sql = "SELECT id from %s where id ='%s'" % (className, id)
+        parts = str(className).split(".")
+        if len(parts) == 2:
+            quoted_class = "%s.%s" % (self._qi(parts[0]), self._qi(parts[1]))
+        else:
+            quoted_class = self._qi(className)
+        sql = "SELECT id from %s where id ='%s'" % (quoted_class, self._el(id))
         return sql
 
     def getAggregatorFromComplexSchema(self, aggregated, aggregationColumn):
         sql = (
             "SELECT complex from public.complex_schema where aggregated_class = '%s' and aggregationColumn = '%s'"
-            % (aggregated, aggregationColumn)
+            % (
+                self._el(aggregated),
+                self._el(aggregationColumn),
+            )
         )
         return sql
 
@@ -421,12 +431,15 @@ class PostGISSqlGenerator(SqlGenerator):
     def getRolePrivileges(self, role, dbname):
         sql = (
             "SELECT * FROM information_schema.role_table_grants where grantee = '%s' and table_catalog = '%s' ORDER BY table_name"
-            % (role, dbname)
+            % (
+                self._el(role),
+                self._el(dbname),
+            )
         )
         return sql
 
     def isSuperUser(self, user):
-        sql = "SELECT rolsuper FROM pg_roles WHERE rolname = '%s'" % user
+        sql = "SELECT rolsuper FROM pg_roles WHERE rolname = '%s'" % self._el(user)
         return sql
 
     def getInvalidGeom(self, tableSchema, tableName, geometryColumn, keyColumn):
@@ -492,10 +505,9 @@ class PostGISSqlGenerator(SqlGenerator):
             id serial NOT NULL,
             scale character varying(10),
             tolerance float,
-            earthcoverage text,
             CONSTRAINT settings_pk PRIMARY KEY (id)
         )#
-        INSERT INTO validation.settings(earthcoverage) VALUES (NULL)#
+        INSERT INTO validation.settings DEFAULT VALUES#
         INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')
         """ % (
             srid,
@@ -507,21 +519,25 @@ class PostGISSqlGenerator(SqlGenerator):
     def validationStatus(self, processName):
         sql = (
             "SELECT status FROM validation.process_history where process_name = '%s' ORDER BY finished DESC LIMIT 1; "
-            % processName
+            % self._el(processName)
         )
         return sql
 
     def validationStatusText(self, processName):
         sql = (
             "SELECT sta.status FROM validation.process_history as hist left join validation.status as sta on sta.id = hist.status where hist.process_name = '%s' ORDER BY hist.finished DESC LIMIT 1 "
-            % processName
+            % self._el(processName)
         )
         return sql
 
     def setValidationStatusQuery(self, processName, log, status):
         sql = (
             "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)"
-            % (processName, log, status)
+            % (
+                self._el(processName),
+                self._el(log),
+                status,
+            )
         )
         return sql
 
@@ -546,15 +562,15 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """INSERT INTO validation.{0} (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values
         ('{1}','{2}',{3},'{4}',ST_Transform(ST_SetSRID(ST_Multi('{5}'),{6}),{7}), {8}, '{9}');""".format(
             tableName,
-            processName,
-            layer,
+            self._el(processName),
+            self._el(layer),
             str(feat_id),
-            reason,
-            geom,
+            self._el(reason),
+            self._el(geom),
             srid,
             flagSRID,
             dimension,
-            geometryColumn,
+            self._el(geometryColumn),
         )
         return sql
 
@@ -568,10 +584,10 @@ class PostGISSqlGenerator(SqlGenerator):
         else:
             clauseList = []
             if processName:
-                processClause = """process_name = '{0}'""".format(processName)
+                processClause = """process_name = '%s'""" % self._el(processName)
                 clauseList.append(processClause)
             if className:
-                classClause = """layer = '{0}'""".format(className)
+                classClause = """layer = '%s'""" % self._el(className)
                 clauseList.append(classClause)
             if flagId:
                 try:
@@ -731,7 +747,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getDimension(self, geom):
-        sql = "select ST_Dimension('%s')" % geom
+        sql = "select ST_Dimension('%s')" % self._el(geom)
         return sql
 
     def getMulti(self, cl):
@@ -887,7 +903,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getFlagsByProcess(self, processName):
         sql = (
             """select layer, feat_id, geometry_column from validation.aux_flags_validacao where process_name = '%s'"""
-            % processName
+            % self._el(processName)
         )
         return sql
 
@@ -979,54 +995,11 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "select id from %s limit 1" % orphan
         return sql
 
-    def checkCentroidAuxStruct(self):
-        sql = "select distinct count(column_name) from information_schema.columns where column_name = 'centroid' group by column_name"
-        return sql
-
-    def dropCentroid(self, table):
-        table = '"' + '"."'.join(table.replace('"', "").split(".")) + '"'
-        sql = "alter table %s drop column if exists centroid" % table
-        return sql
-
-    def createCentroidColumn(self, table_schema, table_name, srid):
-        sql = """alter table "{1}"."{2}" add column centroid geometry('POINT',{0})#
-        alter table "{1}"."{2}" alter column geom drop not null#
-        CREATE INDEX {3} ON "{1}"."{2}" USING gist(centroid)""".format(
-            srid, table_schema, table_name, table_name[:-2] + "_c_gist"
-        )
-        return sql
-
-    def createCentroidGist(self, table_schema, table_name):
-        gistName = table_name[:-2] + "_c_gist"
-        sql = """CREATE INDEX {0} ON "{1}"."{2}" USING gist(centroid)""".format(
-            gistName, table_schema, table_name
-        )
-        return sql
-
-    def getEarthCoverageClasses(self):
-        sql = "select distinct table_schema || '.' || table_name from information_schema.columns where column_name = 'centroid'"
-        return sql
-
-    def getEarthCoverageDict(self):
-        sql = "select earthcoverage from validation.settings limit 1"
-        return sql
-
-    def setEarthCoverageDict(self, earthDict):
-        if earthDict:
-            sql = "update validation.settings set earthcoverage = '%s'" % earthDict
-        else:
-            sql = "update validation.settings set earthcoverage = NULL"
-        return sql
-
     def makeRelationDict(self, table, codes):
         sql = """select code, code_name from dominios.%s where code in %s""" % (
-            table,
+            self._qi(table),
             codes,
         )
-        return sql
-
-    def getEarthCoverageCentroids(self):
-        sql = "select distinct table_name from information_schema.columns where column_name = 'centroid'"
         return sql
 
     def getWhoAmI(self, cl, id):
@@ -1231,26 +1204,6 @@ class PostGISSqlGenerator(SqlGenerator):
     def updateStyle(self, styleName, table_name, parsedQml, tableSchema):
         sql = """UPDATE public.layer_styles SET styleqml = '{0}', update_time = now() where f_table_name = '{1}' and description = '{2}'""".format(
             parsedQml.replace("'", "''"), table_name, styleName
-        )
-        return sql
-
-    def importStyle(self, styleName, table_name, parsedQml, tableSchema, dbName):
-        # TODO:REDO it
-        if table_name[-1] == "c":
-            geomColumn = "centroid"
-        else:
-            geomColumn = "geom"
-        sql = (
-            """INSERT INTO  public.layer_styles (styleqml, f_table_name, description, f_geometry_column, stylename, f_table_schema, f_table_catalog, useasdefault) VALUES ('"""
-            + parsedQml.replace("'", "''")
-            + """','{0}','{1}','{2}','{3}','{4}','{5}',FALSE)""".format(
-                table_name,
-                styleName,
-                geomColumn,
-                styleName.split("/")[-1] + "/" + table_name,
-                tableSchema,
-                dbName,
-            )
         )
         return sql
 
@@ -1574,87 +1527,6 @@ class PostGISSqlGenerator(SqlGenerator):
         )
         return sql
 
-    def hasAdminDb(self):
-        sql = """SELECT datname from pg_database where datname = 'dsgtools_admindb';"""
-        return sql
-
-    def getRolesDict(self):
-        sql = """select row_to_json(a) from (select distinct  pgd.datname as dbname, pgr.rolname as rolename from pg_shdepend as shd join (
-            select * from pg_roles where rolcanlogin = 'f'
-            ) as pgr on shd.refobjid = pgr.oid join pg_database as pgd on shd.dbid = pgd.oid) as a
-            """
-        return sql
-
-    def getSettingTable(self, settingType):
-        if settingType == "Permission":
-            tableName = "permission_profile"
-        elif settingType == "Customization":
-            tableName = "customization"
-        elif settingType == "EarthCoverage":
-            tableName = "earth_coverage"
-        elif settingType == "Style":
-            tableName = "style"
-        elif settingType == "FieldToolBoxConfig":
-            tableName = "field_toolbox_config"
-        elif settingType == "ValidationConfig":
-            tableName = "validation_config"
-        elif settingType == "AttributeRules":
-            tableName = "attribute_rules"
-        elif settingType == "SpatialRules":
-            tableName = "spatial_rules"
-        elif settingType == "ValidationWorkflow":
-            tableName = "validation_workflow"
-        else:
-            raise Exception(QCoreApplication.translate("PostGISSqlGenerator", "Setting type not defined!"))
-        return tableName
-
-    def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):
-        tableName = self.getSettingTable(settingType)
-        sql = """INSERT INTO "public"."{0}" (name, jsondict, edgvversion) VALUES ('{1}','{2}','{3}'); """.format(
-            tableName, name, jsondict, edgvversion
-        )
-        return sql
-
-    def getSettingFromAdminDb(self, settingType, name, edgvversion):
-        tableName = self.getSettingTable(settingType)
-        sql = """select jsondict as jsondict from "public"."{0}" where name = '{1}' and edgvversion = '{2}';""".format(
-            tableName, name, edgvversion
-        )
-        return sql
-
-    def deleteSettingFromAdminDb(self, settingType, name, edgvversion):
-        tableName = self.getSettingTable(settingType)
-        sql = """DELETE FROM "public"."{0}" where name = '{1}' and  edgvversion = '{2}';""".format(
-            tableName, name, edgvversion
-        )
-        return sql
-
-    def getAllSettingsFromAdminDb(self, settingType):
-        tableName = self.getSettingTable(settingType)
-        sql = """select row_to_json(a) from (
-                    select edgvversion, array_agg(name) as settings from public.{0} group by edgvversion
-                ) as a;""".format(
-            tableName
-        )
-        return sql
-
-    def dropRoleOnDatabase(self, roleName):
-        sql = """drop owned by "{0}" cascade;
-            drop role "{0}";""".format(
-            roleName
-        )
-        return sql
-
-    def getRolesWithGrantedUsers(self):
-        sql = """select row_to_json(a) from (
-                    select pgr.rolname as profile, array_agg(pgr2.rolname) as users  from pg_auth_members as pgam
-                        left join pg_roles as pgr on pgam.roleid = pgr.oid
-                        left join pg_roles as pgr2 on pgam.member = pgr2.oid
-                    group by pgr.rolname
-                ) as a;
-        """
-        return sql
-
     def getDomainTables(self):
         sql = """select distinct table_name from information_schema.columns where table_schema = 'dominios' order by table_name asc"""
         return sql
@@ -1859,139 +1731,6 @@ class PostGISSqlGenerator(SqlGenerator):
     def checkIfTableExists(self, schema, tableName):
         sql = """select table_name from information_schema.tables where table_schema = '{0}' and table_name = '{1}' limit 1""".format(
             schema, tableName
-        )
-        return sql
-
-    def getRecordFromAdminDb(self, settingType, propertyName, edgvVersion):
-        tableName = self.getSettingTable(settingType)
-        sql = """SELECT id, name, jsondict, edgvversion from public.{0} where name = '{1}' and edgvversion = '{2}' """.format(
-            tableName, propertyName, edgvVersion
-        )
-        return sql
-
-    def createPropertyTable(self, settingType, isAdminDb=False):
-        tableName = self.getSettingTable(settingType)
-        sql = """CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
-        CREATE TABLE IF NOT EXISTS public.{0}(
-                id uuid NOT NULL DEFAULT uuid_generate_v4(),
-                name text,
-                jsondict text NOT NULL,
-                edgvversion text,
-                CONSTRAINT {0}_pk PRIMARY KEY (id),
-                CONSTRAINT {0}_unique_name_and_version UNIQUE (name,edgvversion)
-                );
-            """.format(
-            tableName
-        )
-        if isAdminDb:
-            sql += """CREATE TABLE public.applied_{0}(
-                id uuid NOT NULL DEFAULT uuid_generate_v4(),
-                id_{0} uuid NOT NULL,
-                dboid oid NOT NULL,
-                CONSTRAINT applied_{0}_pk PRIMARY KEY (id),
-                CONSTRAINT applied_{0}_id_{0}_config_fk FOREIGN KEY (id_{0}) REFERENCES public.{0} (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
-            );
-            ALTER TABLE public.applied_{0} OWNER TO postgres;
-            """.format(
-                tableName
-            )
-        return sql
-
-    def getPropertyPerspectiveDict(self, settingType, perspective, versionFilter=None):
-        if versionFilter:
-            versionFilter = """ where edgvversion = '{0}' """.format(versionFilter)
-        else:
-            versionFilter = ""
-        tableName = self.getSettingTable(settingType)
-        if perspective == DsgEnums.Property:
-            sql = """select row_to_json(a) from (
-                        select name, array_agg(datname) from public.{0} as custom
-                            left join applied_{0} as appcust on custom.id = appcust.id_{0}
-                            left join pg_database as pgd on pgd.oid = appcust.dboid
-                            {1}
-                            group by name
-                    ) as a""".format(
-                tableName, versionFilter
-            )
-        if perspective == DsgEnums.Database:
-            sql = """select row_to_json(a) from (
-                        select datname as name, array_agg(name) from public.{0} as custom
-                            right join applied_{0} as appcust on custom.id = appcust.id_{0}
-                            left join pg_database as pgd on pgd.oid = appcust.dboid
-                            {1}
-                            group by datname
-                    ) as a""".format(
-                tableName, versionFilter
-            )
-        return sql
-
-    def insertRecordInsidePropertyTable(self, settingType, settingDict):
-        tableName = self.getSettingTable(settingType)
-        sql = """INSERT INTO public.{0} (name, jsondict, edgvversion) VALUES ('{1}','{2}','{3}')""".format(
-            tableName,
-            settingDict["name"],
-            settingDict["jsondict"],
-            settingDict["edgvversion"],
-        )
-        return sql
-
-    def insertInstalledRecordIntoAdminDb(self, settingType, recDict, dbOid):
-        settingTable = self.getSettingTable(settingType)
-        tableName = "applied_" + settingTable
-        idName = "id_" + settingTable
-        sql = """INSERT INTO public.{0} ({1}, dboid) VALUES ('{2}',{3})""".format(
-            tableName, idName, recDict["id"], dbOid
-        )
-        return sql
-
-    def getDbOID(self, dbName):
-        sql = """SELECT oid from pg_database where datname = '{0}' """.format(dbName)
-        return sql
-
-    def getAllPropertiesFromDb(self, settingType):
-        tableName = self.getSettingTable(settingType)
-        sql = """select edgvversion, name, jsondict from public.{0}""".format(tableName)
-        return sql
-
-    def removeRecordFromPropertyTable(self, settingType, configName, edgvVersion):
-        tableName = self.getSettingTable(settingType)
-        if not edgvVersion:
-            sql = """DELETE FROM public.{0} where name = '{1}';""".format(
-                tableName, configName
-            )
-        else:
-            sql = """DELETE FROM public.{0} where name = '{1}' and edgvversion = '{2}';""".format(
-                tableName, configName, edgvVersion
-            )
-        return sql
-
-    def updateRecordFromPropertyTable(
-        self, settingType, configName, edgvVersion, jsonDict
-    ):
-        tableName = self.getSettingTable(settingType)
-        sql = """UPDATE public.{0} SET jsondict = '{1}' where name = '{2}' and edgvversion = '{3}';""".format(
-            tableName, jsonDict, configName, edgvVersion
-        )
-        return sql
-
-    def uninstallPropertyOnAdminDb(
-        self, settingType, configName, edgvVersion, dbName=None
-    ):
-        tableName = self.getSettingTable(settingType)
-        dbNameFilterClause = ""
-        if dbName:
-            dbNameFilterClause = """dboid in (select oid from pg_database where datname ='{0}') and """.format(
-                dbName
-            )
-        sql = """DELETE FROM public.applied_{0} where {1} id_{0} in (select id from public.{0} where name = '{2}' and edgvversion = '{3}');""".format(
-            tableName, dbNameFilterClause, configName, edgvVersion
-        )
-        return sql
-
-    def getSettingVersion(self, settingType, settingName):
-        tableName = self.getSettingTable(settingType)
-        sql = """select edgvversion from public.{0} where name = '{1}' """.format(
-            tableName, settingName
         )
         return sql
 
