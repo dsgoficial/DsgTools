@@ -20,7 +20,7 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 
 
 from qgis.PyQt.QtCore import Qt
-from qgis.core import QgsPointXY, Qgis, QgsGeometry, QgsWkbTypes
+from qgis.core import QgsPointXY, Qgis, QgsGeometry
 
 from .geometricaAquisition import GeometricaAcquisition
 
@@ -35,12 +35,12 @@ class Polygon(GeometricaAcquisition):
         if len(self.geometry) > 2:
             if (
                 self.iface.activeLayer().geometryType()
-                == QgsWkbTypes.GeometryType.PolygonGeometry
+                == Qgis.GeometryType.Polygon
             ):
                 geom = QgsGeometry.fromPolygonXY([self.geometry])
             elif (
                 self.iface.activeLayer().geometryType()
-                == QgsWkbTypes.GeometryType.LineGeometry
+                == Qgis.GeometryType.Line
             ):
                 geom = QgsGeometry.fromPolylineXY(self.geometry)
             self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
@@ -50,12 +50,12 @@ class Polygon(GeometricaAcquisition):
         if len(self.geometry) > 2:
             if (
                 self.iface.activeLayer().geometryType()
-                == QgsWkbTypes.GeometryType.PolygonGeometry
+                == Qgis.GeometryType.Polygon
             ):
                 geom = QgsGeometry.fromPolygonXY([self.geometry])
             elif (
                 self.iface.activeLayer().geometryType()
-                == QgsWkbTypes.GeometryType.LineGeometry
+                == Qgis.GeometryType.Line
             ):
                 geom = QgsGeometry.fromPolylineXY(self.geometry + [self.geometry[0]])
             self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
@@ -75,7 +75,7 @@ class Polygon(GeometricaAcquisition):
         event.snapPoint()  # snap!!!
         if self.snapCursorRubberBand:
             self.snapCursorRubberBand.reset(
-                geometryType=QgsWkbTypes.GeometryType.PointGeometry
+                geometryType=Qgis.GeometryType.Point
             )
             self.snapCursorRubberBand.hide()
             self.snapCursorRubberBand = None
@@ -183,7 +183,7 @@ class Polygon(GeometricaAcquisition):
         if self.snapCursorRubberBand:
             self.snapCursorRubberBand.hide()
             self.snapCursorRubberBand.reset(
-                geometryType=QgsWkbTypes.GeometryType.PointGeometry
+                geometryType=Qgis.GeometryType.Point
             )
             self.snapCursorRubberBand = None
         oldPoint = QgsPointXY(event.mapPoint())

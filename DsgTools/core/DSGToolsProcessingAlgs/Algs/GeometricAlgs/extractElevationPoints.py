@@ -2131,7 +2131,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             geom = feat.geometry()
             buffer = (
                 geom.buffer(distance, 10, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1)
-                if geom.type() == QgsWkbTypes.GeometryType.PointGeometry
+                if geom.type() == Qgis.GeometryType.Point
                 else geom
             )
             newFeat = QgsVectorLayerUtils.createFeature(exclusionLyr, buffer)

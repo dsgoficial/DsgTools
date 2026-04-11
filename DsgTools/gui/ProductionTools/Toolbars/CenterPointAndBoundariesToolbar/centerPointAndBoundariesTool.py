@@ -31,6 +31,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcess
 from processing.gui.MultipleInputDialog import MultipleInputDialog
 
 from qgis.core import (
+    Qgis,
     QgsProject,
     QgsVectorLayer,
     QgsWkbTypes,
@@ -176,7 +177,7 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
                 i
                 for i in QgsProject.instance().mapLayers().values()
                 if isinstance(i, QgsVectorLayer)
-                and i.geometryType() == QgsWkbTypes.GeometryType.LineGeometry
+                and i.geometryType() == Qgis.GeometryType.Line
             ],
             key=lambda x: x.id(),
         )

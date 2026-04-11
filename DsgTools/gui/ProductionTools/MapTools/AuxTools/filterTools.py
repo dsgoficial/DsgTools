@@ -22,6 +22,7 @@
  ***************************************************************************/
 """
 from qgis import core
+from qgis.core import Qgis
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QObject
@@ -120,7 +121,7 @@ class FilterTools(QgsMapTool):
         selectedFeatures = layer.selectedFeatures()
         if not selectedFeatures:
             return
-        if not (layer.geometryType() == core.QgsWkbTypes.GeometryType.PolygonGeometry):
+        if not (layer.geometryType() == core.Qgis.GeometryType.Polygon):
             return
         multiPolygon = core.QgsMultiPolygon()
         for feature in selectedFeatures:

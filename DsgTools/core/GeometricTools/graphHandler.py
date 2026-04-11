@@ -31,6 +31,7 @@ from itertools import product
 from itertools import combinations
 
 from qgis.core import (
+    Qgis,
     QgsGeometry,
     QgsFeature,
     QgsProcessingMultiStepFeedback,
@@ -1566,12 +1567,12 @@ def find_constraint_points(
             context=context,
             is_child_algorithm=True,
         )
-        if constraintLayer.geometryType() != QgsWkbTypes.GeometryType.PointGeometry and useBuffer
+        if constraintLayer.geometryType() != Qgis.GeometryType.Point and useBuffer
         else constraintLayer
     )
     predicate = (
         AlgRunner.Intersects
-        if constraintLayer.geometryType() != QgsWkbTypes.GeometryType.PointGeometry
+        if constraintLayer.geometryType() != Qgis.GeometryType.Point
         else AlgRunner.Equals
     )
     selectedNodesFromOcean = algRunner.runExtractByLocation(

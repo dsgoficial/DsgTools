@@ -491,7 +491,7 @@ class LayerHandler(QObject):
         if nSteps == 0 or feedback.isCanceled():
             return
         lyr.startEditing()
-        lyr.beginEditCommand("Updating layer {0}".format(lyr.name()))
+        lyr.beginEditCommand(self.tr("Updating layer {0}").format(lyr.name()))
         localTotal = 100 / len(inputDict) if inputDict else 0
         futures = set()
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
@@ -1064,7 +1064,7 @@ class LayerHandler(QObject):
                 multiStepFeedback.setProgress(size * current)
 
         lyr.startEditing()
-        lyr.beginEditCommand("Filter dangles")
+        lyr.beginEditCommand(self.tr("Filter dangles"))
         lyr.deleteFeatures(list(deleteSet))
         lyr.commitChanges()
 
@@ -1213,7 +1213,7 @@ class LayerHandler(QObject):
         size = 100 / featCount
         deleteSet = set()
         inputLyr.startEditing()
-        inputLyr.beginEditCommand("Snapping Features")
+        inputLyr.beginEditCommand(self.tr("Snapping Features"))
 
         def evaluate(feat):
             if feedback is not None and feedback.isCanceled():
@@ -1223,7 +1223,7 @@ class LayerHandler(QObject):
             if not feat.hasGeometry() or geom.isNull() or geom.isEmpty():
                 return featid
             if (
-                geom.type() == QgsWkbTypes.GeometryType.LineGeometry
+                geom.type() == Qgis.GeometryType.Line
                 and geom.length() < tol
             ):
                 return featid
@@ -1479,7 +1479,7 @@ class LayerHandler(QObject):
             )
             if not isValid:
                 break
-        if isValid and geom.type() == QgsWkbTypes.GeometryType.PolygonGeometry:
+        if isValid and geom.type() == Qgis.GeometryType.Polygon:
             self.analyze_polygon_boundary_and_holes(flagDict, geom)
         return flagDict
 
@@ -1519,7 +1519,7 @@ class LayerHandler(QObject):
         if newFeatSet == set() and deleteFeatSet == set():
             return
         inputLyr.startEditing()
-        inputLyr.beginEditCommand("Fixing geometries")
+        inputLyr.beginEditCommand(self.tr("Fixing geometries"))
         if newFeatSet != set():
             inputLyr.addFeatures(list(newFeatSet))
         if deleteFeatSet != set():
@@ -1570,7 +1570,7 @@ class LayerHandler(QObject):
                 ):
                     flagGeom = find_nan_or_inf_vertex_neighbor(geom)
                 if (
-                    geom.type() == QgsWkbTypes.GeometryType.LineGeometry
+                    geom.type() == Qgis.GeometryType.Line
                     and ignoreClosed
                     and self.isClosedAndFlagIsAtStartOrEnd(geom, flagGeom)
                 ):
@@ -1682,7 +1682,7 @@ class LayerHandler(QObject):
         :param tol: (float) search radius
         :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
         """
-        if inputLyr.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
+        if inputLyr.geometryType() == Qgis.GeometryType.Point:
             raise Exception(self.tr("Vertex near edge not defined for point geometry"))
         algRunner = AlgRunner() if algRunner is None else algRunner
         context = (
@@ -1736,7 +1736,7 @@ class LayerHandler(QObject):
         """
         nSteps = (
             3
-            if inputLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
+            if inputLyr.geometryType() == Qgis.GeometryType.Polygon
             else 2
         )
         algRunner = AlgRunner() if algRunner is None else algRunner
@@ -1748,7 +1748,7 @@ class LayerHandler(QObject):
         multiStepFeedback.setCurrentStep(currentStep)
         edgeLyr = (
             inputLyr
-            if inputLyr.geometryType() == QgsWkbTypes.GeometryType.LineGeometry
+            if inputLyr.geometryType() == Qgis.GeometryType.Line
             else algRunner.runPolygonsToLines(
                 inputLyr, context, feedback=multiStepFeedback
             )
@@ -3281,7 +3281,7 @@ class LayerHandler(QObject):
         :return: (list-of-QgsFeature) list of all polygon slivers found in the
                  in the input layer.
         """
-        if not layer.geometryType() != QgsWkbTypes.GeometryType.PolygonGeometry:
+        if not layer.geometryType() != Qgis.GeometryType.Polygon:
             Exception(self.tr("Input layer is not polygon."))
         slivers = list()
         feats = list(layer.getSelectedFeatures() if selected else layer.getFeatures())
@@ -3549,9 +3549,9 @@ class LayerHandler(QObject):
             context=context,
             feedback=multiStepFeedback,
         )
-        if mergedLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
+        if mergedLayer.geometryType() == Qgis.GeometryType.Point:
             return mergedLayer
-        if mergedLayer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
+        if mergedLayer.geometryType() == Qgis.GeometryType.Polygon:
             # TODO: adicionar lógica de dissolver polígonos de borda
             return mergedLayer
         if multiStepFeedback is not None:

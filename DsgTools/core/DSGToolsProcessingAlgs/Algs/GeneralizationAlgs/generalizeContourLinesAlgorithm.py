@@ -16,6 +16,7 @@ import uuid
 
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.core import (
+    Qgis,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsDistanceArea,
@@ -307,14 +308,14 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
                 # Extract only line parts from geometry collection
                 lineParts = []
                 for part in clipped.asGeometryCollection():
-                    if part.type() == QgsWkbTypes.LineGeometry:
+                    if part.type() == Qgis.GeometryType.Line:
                         lineParts.append(part)
                 if not lineParts:
                     continue
                 clipped = QgsGeometry.collectGeometry(lineParts)
 
             # Skip non-line results (point intersections, etc.)
-            if clipped.type() != QgsWkbTypes.LineGeometry:
+            if clipped.type() != Qgis.GeometryType.Line:
                 continue
 
             outFeat = QgsFeature(outFields)

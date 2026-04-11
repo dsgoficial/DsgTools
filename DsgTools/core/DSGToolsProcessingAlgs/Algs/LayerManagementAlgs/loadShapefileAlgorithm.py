@@ -26,6 +26,7 @@ from pathlib import Path
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsProcessingAlgorithm,
     QgsProcessingOutputMultipleLayers,
     QgsProcessingParameterFile,
@@ -82,13 +83,13 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
             rootNode = QgsProject.instance().layerTreeRoot().addGroup(rootNodeName)
             rootNodeList.append(rootNode)
             groupDict[rootNodeName] = {
-                QgsWkbTypes.GeometryType.PointGeometry: self.createGroup(
+                Qgis.GeometryType.Point: self.createGroup(
                     "Ponto", rootNode
                 ),
-                QgsWkbTypes.GeometryType.LineGeometry: self.createGroup(
+                Qgis.GeometryType.Line: self.createGroup(
                     "Linha", rootNode
                 ),
-                QgsWkbTypes.GeometryType.PolygonGeometry: self.createGroup(
+                Qgis.GeometryType.Polygon: self.createGroup(
                     "Area", rootNode
                 ),
             }

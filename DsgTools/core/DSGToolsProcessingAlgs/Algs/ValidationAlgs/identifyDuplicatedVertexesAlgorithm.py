@@ -26,6 +26,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
+    Qgis,
     QgsDataSourceUri,
     QgsFeature,
     QgsFeatureSink,
@@ -113,7 +114,7 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
         pointDict = self.buildPointDict(
             vertexLayer,
             inpuIsPolygon=inputLyr.geometryType()
-            == QgsWkbTypes.GeometryType.PolygonGeometry,
+            == Qgis.GeometryType.Polygon,
             feedback=multiStepFeedback,
         )
         multiStepFeedback.setCurrentStep(3)

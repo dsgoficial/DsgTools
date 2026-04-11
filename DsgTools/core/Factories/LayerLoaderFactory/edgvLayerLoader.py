@@ -122,11 +122,11 @@ class EDGVLayerLoader(QObject):
             return parentTreeNode
 
     def createMeasureColumn(self, layer):
-        if layer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
+        if layer.geometryType() == Qgis.GeometryType.Polygon:
             layer.addExpressionField(
                 "$area", QgsField(self.tr("area_otf"), QMetaType.Type.Double)
             )
-        elif layer.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
+        elif layer.geometryType() == Qgis.GeometryType.Line:
             layer.addExpressionField(
                 "$length", QgsField(self.tr("length_otf"), QMetaType.Type.Double)
             )

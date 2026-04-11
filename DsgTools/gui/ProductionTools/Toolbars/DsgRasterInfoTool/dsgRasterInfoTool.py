@@ -114,7 +114,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         if isinstance(self.currentLayer, QgsVectorLayer):
             if (
                 self.currentLayer.geometryType()
-                == QgsWkbTypes.GeometryType.PointGeometry
+                == Qgis.GeometryType.Point
             ):
                 self.currentLayer.editingStarted.connect(self.activateAlias)
                 self.currentLayer.editingStopped.connect(self.deactivateAlias)
@@ -219,7 +219,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         layer = self.iface.mapCanvas().currentLayer()
         if layer and isinstance(layer, QgsVectorLayer):
             if (
-                layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+                layer.geometryType() == Qgis.GeometryType.Point
                 and layer.isEditable()
                 and not self.rasterComboBox.currentLayer() is None
             ):

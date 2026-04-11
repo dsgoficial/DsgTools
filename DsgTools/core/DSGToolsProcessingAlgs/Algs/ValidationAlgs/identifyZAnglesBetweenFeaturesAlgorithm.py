@@ -25,6 +25,7 @@ import os
 
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
+    Qgis,
     QgsFeature,
     QgsFeatureRequest,
     QgsField,
@@ -139,14 +140,14 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
         geometry_type = QgsWkbTypes.geometryType(inputSource.wkbType())
 
         # Set up multistep feedback
-        nSteps = 2 if geometry_type == QgsWkbTypes.GeometryType.LineGeometry else 1
+        nSteps = 2 if geometry_type == Qgis.GeometryType.Line else 1
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback) if nSteps > 1 else feedback
         )
         currentStep = 0
 
         # Process based on geometry type
-        if geometry_type == QgsWkbTypes.GeometryType.LineGeometry:
+        if geometry_type == Qgis.GeometryType.Line:
             # First process Z angles within each line
             multiStepFeedback.setProgressText(
                 self.tr("Evaluating Z angles within lines")

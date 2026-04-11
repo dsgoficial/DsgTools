@@ -2,6 +2,7 @@
 from collections import defaultdict
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
@@ -128,19 +129,19 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
             parameters, context, self.OUTPUT1, QgsWkbTypes.MultiPoint, fields
         )
         returnDict[self.OUTPUT1] = point_sink_id
-        sinkDict[QgsWkbTypes.GeometryType.PointGeometry] = point_sink
+        sinkDict[Qgis.GeometryType.Point] = point_sink
 
         line_sink, line_sink_id = self.createOutput(
             parameters, context, self.OUTPUT2, QgsWkbTypes.MultiLineString, fields
         )
         returnDict[self.OUTPUT2] = line_sink_id
-        sinkDict[QgsWkbTypes.GeometryType.LineGeometry] = line_sink
+        sinkDict[Qgis.GeometryType.Line] = line_sink
 
         polygon_sink, polygon_sink_id = self.createOutput(
             parameters, context, self.OUTPUT3, QgsWkbTypes.MultiPolygon, fields
         )
         returnDict[self.OUTPUT3] = polygon_sink_id
-        sinkDict[QgsWkbTypes.GeometryType.PolygonGeometry] = polygon_sink
+        sinkDict[Qgis.GeometryType.Polygon] = polygon_sink
 
         return returnDict, sinkDict
 
@@ -199,5 +200,5 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "O algoritmo identifica se existe algum atributo com um unicode que não está na whitelist"
+            "The algorithm identifies whether any attribute contains a unicode character that is not in the whitelist"
         )

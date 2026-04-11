@@ -25,6 +25,7 @@ from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from processing.gui.wrappers import WidgetWrapper
 from qgis.core import (
+    Qgis,
     QgsFeature,
     QgsFeatureSink,
     QgsProcessingParameterDefinition,
@@ -349,9 +350,9 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
         return listWhiteAttributes
 
     def typeOfLayer(self, addedLyr):
-        lyrPoint = addedLyr.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
-        lyrLine = addedLyr.geometryType() == QgsWkbTypes.GeometryType.LineGeometry
-        lyrPolygon = addedLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
+        lyrPoint = addedLyr.geometryType() == Qgis.GeometryType.Point
+        lyrLine = addedLyr.geometryType() == Qgis.GeometryType.Line
+        lyrPolygon = addedLyr.geometryType() == Qgis.GeometryType.Polygon
         return lyrPoint, lyrLine, lyrPolygon
 
     def dictNameLyrCrs(self, group):

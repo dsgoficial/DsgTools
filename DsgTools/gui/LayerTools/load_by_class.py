@@ -103,7 +103,7 @@ class LoadByClass(QtWidgets.QDialog, FORM_CLASS):
         for i in range(tam + 1, 1, -1):
             item = self.classesListWidget.takeItem(i - 2)
 
-        self.selectAllCheck.setCheckState(0)
+        self.selectAllCheck.setCheckState(Qt.CheckState.Unchecked)
 
     def listClassesFromDatabase(self):
         """

@@ -609,7 +609,7 @@ class MultiLayersCentroidsFlagDockWidget(
                 i
                 for i in QgsProject.instance().mapLayers().values()
                 if isinstance(i, QgsVectorLayer)
-                and i.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+                and i.geometryType() == Qgis.GeometryType.Point
             ],
             key=lambda x: x.id(),
         )
@@ -710,7 +710,7 @@ class MultiLayersCentroidsFlagDockWidget(
                 if (
                     layer
                     and isinstance(layer, QgsVectorLayer)
-                    and layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+                    and layer.geometryType() == Qgis.GeometryType.Point
                 ):
                     self.pointLayerDict[layer_id] = layer
 

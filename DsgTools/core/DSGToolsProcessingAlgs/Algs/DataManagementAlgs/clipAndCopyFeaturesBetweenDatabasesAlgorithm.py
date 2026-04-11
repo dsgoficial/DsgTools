@@ -37,6 +37,7 @@ from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingException,
     QgsProviderConnectionException,
@@ -93,7 +94,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterGeometry(
                 self.WKT_POLYGON,
                 self.tr("WKT Geographic Bounds"),
-                geometryTypes=[QgsWkbTypes.GeometryType.PolygonGeometry],
+                geometryTypes=[Qgis.GeometryType.Polygon],
                 allowMultipart=True,
                 optional=True,
             )

@@ -29,6 +29,7 @@ from functools import partial
 
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.core import (
+    Qgis,
     QgsPointXY,
     QgsRectangle,
     QgsFeatureRequest,
@@ -62,10 +63,10 @@ class AbstractSelectionTool(QgsMapTool):
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
         self.rubberBand = QgsRubberBand(
-            self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry
+            self.canvas, Qgis.GeometryType.Polygon
         )
         self.hoverRubberBand = QgsRubberBand(
-            self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry
+            self.canvas, Qgis.GeometryType.Polygon
         )
         mFillColor = QColor(254, 178, 76, 63)
         self.rubberBand.setColor(mFillColor)
@@ -93,7 +94,7 @@ class AbstractSelectionTool(QgsMapTool):
         """
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
-        self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+        self.rubberBand.reset(Qgis.GeometryType.Polygon)
 
     def canvasMoveEvent(self, e):
         """
@@ -101,7 +102,7 @@ class AbstractSelectionTool(QgsMapTool):
         """
         if self.menuHovered:
             # deactivates rubberband when the context menu is "destroyed"
-            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+            self.hoverRubberBand.reset(Qgis.GeometryType.Polygon)
         if not self.isEmittingPoint:
             return
         self.endPoint = self.toMapCoordinates(e.pos())
@@ -154,9 +155,9 @@ class AbstractSelectionTool(QgsMapTool):
         primitiveDict = dict()
         geometryFilter = (
             [
-                QgsWkbTypes.GeometryType.PointGeometry,
-                QgsWkbTypes.GeometryType.LineGeometry,
-                QgsWkbTypes.GeometryType.PolygonGeometry,
+                Qgis.GeometryType.Point,
+                Qgis.GeometryType.Line,
+                Qgis.GeometryType.Polygon,
             ]
             if geometryFilter is None
             else geometryFilter
@@ -202,7 +203,7 @@ class AbstractSelectionTool(QgsMapTool):
         Deactivate tool.
         """
         QApplication.restoreOverrideCursor()
-        self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+        self.hoverRubberBand.reset(Qgis.GeometryType.Polygon)
         try:
             self.rubberBand.reset()
             if self.toolAction:
@@ -257,11 +258,11 @@ class AbstractSelectionTool(QgsMapTool):
         :param geom: int indicating geometry type of target feature
         """
         if geom == 0:
-            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PointGeometry)
+            self.hoverRubberBand.reset(Qgis.GeometryType.Point)
         elif geom == 1:
-            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.LineGeometry)
+            self.hoverRubberBand.reset(Qgis.GeometryType.Line)
         else:
-            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+            self.hoverRubberBand.reset(Qgis.GeometryType.Polygon)
         self.hoverRubberBand.addGeometry(feature.geometry(), layer)
         # to inform the code that menu has been hovered over
         self.menuHovered = True
@@ -274,11 +275,11 @@ class AbstractSelectionTool(QgsMapTool):
         # only one type of geometry at a time will have rubberbands around it
         geom = list(dictLayerFeature.keys())[0].geometryType()
         if geom == 0:
-            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PointGeometry)
+            self.hoverRubberBand.reset(Qgis.GeometryType.Point)
         elif geom == 1:
-            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.LineGeometry)
+            self.hoverRubberBand.reset(Qgis.GeometryType.Line)
         else:
-            self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+            self.hoverRubberBand.reset(Qgis.GeometryType.Polygon)
         for layer, features in dictLayerFeature.items():
             for feat in features:
                 self.hoverRubberBand.addGeometry(feat.geometry(), layer)
@@ -580,7 +581,7 @@ class GenericSelectionTool(AbstractSelectionTool):
         """
         Builds rubberband rect.
         """
-        self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+        self.rubberBand.reset(Qgis.GeometryType.Polygon)
         if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
             return
         point1 = QgsPointXY(startPoint.x(), startPoint.y())

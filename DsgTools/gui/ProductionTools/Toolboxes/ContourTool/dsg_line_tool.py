@@ -24,7 +24,7 @@
 from qgis.PyQt.QtCore import Qt, QSettings, pyqtSignal
 from qgis.PyQt.QtGui import QColor
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import QgsGeometry, QgsWkbTypes
+from qgis.core import Qgis, QgsGeometry
 
 
 class DsgLineTool(QgsMapTool):
@@ -40,7 +40,7 @@ class DsgLineTool(QgsMapTool):
         self.canvas = canvas
         self.rubberBand = None
         self.geometryType = (
-            QgsWkbTypes.GeometryType.LineGeometry
+            Qgis.GeometryType.Line
             if geometryType is None
             else geometryType
         )
@@ -125,5 +125,5 @@ class DsgLineTool(QgsMapTool):
 class DsgPolygonTool(DsgLineTool):
     def __init__(self, canvas):
         super(DsgPolygonTool, self).__init__(
-            canvas, geometryType=QgsWkbTypes.GeometryType.PolygonGeometry
+            canvas, geometryType=Qgis.GeometryType.Polygon
         )

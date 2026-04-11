@@ -23,6 +23,7 @@
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
@@ -150,11 +151,11 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         geomTypeLyr = (
             inputLyr.geometryType()
             if hasattr(inputLyr, "geometryType")
-            else QgsWkbTypes.GeometryType.PolygonGeometry
+            else Qgis.GeometryType.Polygon
         )
         if (
-            geomTypeLyr == QgsWkbTypes.GeometryType.PointGeometry
-            or geomTypeLyr == QgsWkbTypes.GeometryType.LineGeometry
+            geomTypeLyr == Qgis.GeometryType.Point
+            or geomTypeLyr == Qgis.GeometryType.Line
         ):
             inputLyr = algRunner.runBuffer(
                 inputLayer=inputLyr, distance=10 ** (-5), context=context
@@ -229,7 +230,7 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         if hasattr(inputOld, "type"):
             if (
                 inputOld.type() == QgsMapLayer.LayerType.VectorLayer
-                and inputOld.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
+                and inputOld.geometryType() == Qgis.GeometryType.Polygon
             ):
                 needsFiltering = False
 

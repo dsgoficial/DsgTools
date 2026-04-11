@@ -24,6 +24,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
@@ -145,9 +146,9 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
         Returns a dictionary with geometry types as keys and lists of layers as values.
         """
         grouped = {
-            QgsWkbTypes.GeometryType.PointGeometry: [],
-            QgsWkbTypes.GeometryType.LineGeometry: [],
-            QgsWkbTypes.GeometryType.PolygonGeometry: [],
+            Qgis.GeometryType.Point: [],
+            Qgis.GeometryType.Line: [],
+            Qgis.GeometryType.Polygon: [],
         }
         
         for layer in layers:

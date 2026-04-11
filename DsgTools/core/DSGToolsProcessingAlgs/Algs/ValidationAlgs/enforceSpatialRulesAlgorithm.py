@@ -23,6 +23,7 @@
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsProject,
     QgsFeature,
     QgsWkbTypes,
@@ -141,9 +142,9 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         gh = GeometryHandler()
         fields = self.getFlagFields()
         layerMap = {
-            QgsWkbTypes.GeometryType.PointGeometry: ptLayer,
-            QgsWkbTypes.GeometryType.LineGeometry: lLayer,
-            QgsWkbTypes.GeometryType.PolygonGeometry: polLayer,
+            Qgis.GeometryType.Point: ptLayer,
+            Qgis.GeometryType.Line: lLayer,
+            Qgis.GeometryType.Polygon: polLayer,
         }
         for ruleName, flags in flagDict.items():
             flagText = self.tr('Rule "{name}" broken: {{text}}').format(name=ruleName)

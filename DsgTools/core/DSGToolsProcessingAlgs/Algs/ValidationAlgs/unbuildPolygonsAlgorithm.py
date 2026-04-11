@@ -29,6 +29,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools import graphHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
@@ -570,7 +571,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            if inputLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
+            if inputLyr.geometryType() == Qgis.GeometryType.Polygon:
                 multiStepFeedback.pushInfo(self.tr("Converting polygons to lines"))
         linesLyr = (
             self.algRunner.runPolygonsToLines(
@@ -579,12 +580,12 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
                 feedback=multiStepFeedback,
                 is_child_algorithm=True,
             )
-            if inputLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
+            if inputLyr.geometryType() == Qgis.GeometryType.Polygon
             else layerWithId
         )
         if (
             multiStepFeedback is not None
-            and inputLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
+            and inputLyr.geometryType() == Qgis.GeometryType.Polygon
         ):
             multiStepFeedback.pushInfo(
                 self.tr("Polygons converted to lines successfully")

@@ -90,7 +90,7 @@ class SmoothLinesTool(QgsMapTool):
         if (
             not layer
             or not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() != QgsWkbTypes.GeometryType.LineGeometry
+            or layer.geometryType() != Qgis.GeometryType.Line
             or not layer.isEditable()
         ):
             enabled = False

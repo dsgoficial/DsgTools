@@ -89,7 +89,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         """
         self.layersCustomSelector.clearAll()
         # TODO: refresh optional parameters
-        self.checkBoxOnlyWithElements.setCheckState(0)
+        self.checkBoxOnlyWithElements.setCheckState(Qt.CheckState.Unchecked)
 
     @pyqtSlot()
     def on_buttonBox_rejected(self):

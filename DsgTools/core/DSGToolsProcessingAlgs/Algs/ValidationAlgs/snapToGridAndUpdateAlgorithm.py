@@ -24,6 +24,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
@@ -101,7 +102,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         snappedLayer = algRunner.runSnapToGrid(
             auxLyr, tol, context, feedback=multiStepFeedback
         )
-        if inputLyr.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
+        if inputLyr.geometryType() == Qgis.GeometryType.Line:
             missconstructedFeaturesIds = [
                 f.id()
                 for f in snappedLayer.getFeatures()

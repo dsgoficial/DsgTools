@@ -28,6 +28,7 @@ import concurrent.futures
 import os
 from itertools import product, chain
 from qgis.core import (
+    Qgis,
     QgsGeometry,
     QgsProcessing,
     QgsProcessingException,
@@ -747,7 +748,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 intersection = geomEngine.intersection(drainageGeom.constGet())
                 if (
                     QgsWkbTypes.geometryType(intersection.wkbType())
-                    == QgsWkbTypes.GeometryType.PointGeometry
+                    == Qgis.GeometryType.Point
                 ):
                     outCount += (
                         0
@@ -846,7 +847,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 candidateGeom = candidateFeat.geometry()
                 if QgsWkbTypes.geometryType(
                     candidateGeom.wkbType()
-                ) == QgsWkbTypes.GeometryType.PointGeometry and geomEngine.intersects(
+                ) == Qgis.GeometryType.Point and geomEngine.intersects(
                     candidateGeom.constGet()
                 ):
                     return None

@@ -25,6 +25,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis import core
 from qgis.core import (
+    Qgis,
     QgsFeature,
     QgsFeatureSink,
     QgsProcessing,
@@ -193,7 +194,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
         # List of attributes
         attributes = self.listAttributes(inputLinePolyLyr, inputLyrAttributes)
 
-        if inputLinePolyLyr.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
+        if inputLinePolyLyr.geometryType() == Qgis.GeometryType.Line:
             # Extract specific vertices
             extractSpecifVertLyr = algRunner.runExtractSpecificVertices(
                 inputLyr=inputLinePolyLyr,
@@ -240,7 +241,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
             )
 
         elif (
-            inputLinePolyLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
+            inputLinePolyLyr.geometryType() == Qgis.GeometryType.Polygon
         ):
             multiChildTwo = QgsProcessingMultiStepFeedback(4, multiStepFeedback)
             multiChildTwo.setCurrentStep(0)

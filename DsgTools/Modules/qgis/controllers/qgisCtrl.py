@@ -4,7 +4,7 @@ from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 from qgis.PyQt.QtCore import QCoreApplication
 import json
 from DsgTools.Modules.qgis.factories.actionsFactory import ActionsFactory
-from qgis.core import QgsWkbTypes
+from qgis.core import Qgis
 
 
 class QgisCtrl:
@@ -218,7 +218,7 @@ class QgisCtrl:
                     feature.setAttribute(indx, valueMap[attributeValue])
             elif attributeValue and attributeValue in ["NULL"]:
                 feature.setAttribute(indx, None)
-            elif attributeValue and not (attributeValue in ["NULL", "IGNORAR"]):
+            elif attributeValue and not (attributeValue in ["NULL", QCoreApplication.translate("AttributeTableWidget", "IGNORE")]):
                 """if re.match('^\@value\(".+"\)$', value):
                 variable = value.split('"')[-2]
                 value = ProjectQgis(self.iface).getVariableProject(variable)"""
@@ -256,7 +256,7 @@ class QgisCtrl:
                     feature.setAttribute(indx, valueMap[attributeValue])
             elif attributeValue and attributeValue in ["NULL"]:
                 feature.setAttribute(indx, None)
-            elif attributeValue and not (attributeValue in ["NULL", "IGNORAR"]):
+            elif attributeValue and not (attributeValue in ["NULL", QCoreApplication.translate("AttributeTableWidget", "IGNORE")]):
                 """if re.match('^\@value\(".+"\)$', value):
                 variable = value.split('"')[-2]
                 value = ProjectQgis(self.iface).getVariableProject(variable)"""
@@ -264,15 +264,15 @@ class QgisCtrl:
 
     def cutAndPasteSelectedFeatures(self, layer, destinatonLayer, attributes):
         geometryFilterDict = {
-            QgsWkbTypes.GeometryType.PointGeometry: (
-                QgsWkbTypes.GeometryType.PointGeometry,
+            Qgis.GeometryType.Point: (
+                Qgis.GeometryType.Point,
             ),
-            QgsWkbTypes.GeometryType.LineGeometry: (
-                QgsWkbTypes.GeometryType.LineGeometry,
+            Qgis.GeometryType.Line: (
+                Qgis.GeometryType.Line,
             ),
-            QgsWkbTypes.GeometryType.PolygonGeometry: (
-                QgsWkbTypes.GeometryType.PointGeometry,
-                QgsWkbTypes.GeometryType.PolygonGeometry,
+            Qgis.GeometryType.Polygon: (
+                Qgis.GeometryType.Point,
+                Qgis.GeometryType.Polygon,
             ),
         }
         if (
@@ -290,9 +290,9 @@ class QgisCtrl:
             newGeom = (
                 feature.geometry().pointOnSurface()
                 if destinatonLayer.geometryType()
-                == core.QgsWkbTypes.GeometryType.PointGeometry
+                == core.Qgis.GeometryType.Point
                 and layer.geometryType()
-                == core.QgsWkbTypes.GeometryType.PolygonGeometry
+                == core.Qgis.GeometryType.Polygon
                 else feature.geometry()
             )
             newFeat.setGeometry(newGeom)

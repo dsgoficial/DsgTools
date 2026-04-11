@@ -24,6 +24,7 @@
 from collections import defaultdict
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsFeatureRequest,
     QgsWkbTypes,
     QgsGeometry,
@@ -116,13 +117,13 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
             self.POLYGON_FLAGS,
         )
         func_dict = {
-            QgsWkbTypes.GeometryType.LineGeometry: lambda x: algRunner.runIdentifySmallLines(
+            Qgis.GeometryType.Line: lambda x: algRunner.runIdentifySmallLines(
                 inputLyr=x[0],
                 tol=x[1],
                 context=context,
                 feedback=x[2],
             ),
-            QgsWkbTypes.GeometryType.PolygonGeometry: lambda x: algRunner.runIdentifySmallPolygons(
+            Qgis.GeometryType.Polygon: lambda x: algRunner.runIdentifySmallPolygons(
                 inputLyr=x[0],
                 tol=x[1],
                 context=context,
@@ -141,10 +142,10 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
             outputDict[layer.geometryType()].append(outputLyr)
 
         flagLambdaDict = {
-            QgsWkbTypes.GeometryType.LineGeometry: lambda x: self.lineFlagSink.addFeature(
+            Qgis.GeometryType.Line: lambda x: self.lineFlagSink.addFeature(
                 x
             ),
-            QgsWkbTypes.GeometryType.PolygonGeometry: lambda x: self.polygonFlagSink.addFeature(
+            Qgis.GeometryType.Polygon: lambda x: self.polygonFlagSink.addFeature(
                 x
             ),
         }

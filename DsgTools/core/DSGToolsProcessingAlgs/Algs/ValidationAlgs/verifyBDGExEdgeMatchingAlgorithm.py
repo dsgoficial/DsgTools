@@ -28,6 +28,7 @@ from pathlib import Path
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import runProcessing
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
+    Qgis,
     QgsFeature,
     QgsFeatureRequest,
     QgsFeatureSink,
@@ -290,11 +291,11 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     continue
 
                 geomType = lyr.geometryType()
-                if geomType == QgsWkbTypes.GeometryType.PointGeometry:
+                if geomType == Qgis.GeometryType.Point:
                     layersByType["points"][layerName] = lyr
-                elif geomType == QgsWkbTypes.GeometryType.LineGeometry:
+                elif geomType == Qgis.GeometryType.Line:
                     layersByType["lines"][layerName] = lyr
-                elif geomType == QgsWkbTypes.GeometryType.PolygonGeometry:
+                elif geomType == Qgis.GeometryType.Polygon:
                     layersByType["polygons"][layerName] = lyr
 
             zipData[str(zipPath)] = layersByType

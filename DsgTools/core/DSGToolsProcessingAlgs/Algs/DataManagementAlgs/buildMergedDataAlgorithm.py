@@ -24,6 +24,7 @@
 import random
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsProject,
     QgsFeature,
     QgsWkbTypes,
@@ -155,17 +156,17 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
             categories = []
             for value in unique_values:
                 # Create symbol based on geometry type
-                if layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
+                if layer.geometryType() == Qgis.GeometryType.Point:
                     symbol = QgsSymbol.defaultSymbol(
-                        QgsWkbTypes.GeometryType.PointGeometry
+                        Qgis.GeometryType.Point
                     )
-                elif layer.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
+                elif layer.geometryType() == Qgis.GeometryType.Line:
                     symbol = QgsSymbol.defaultSymbol(
-                        QgsWkbTypes.GeometryType.LineGeometry
+                        Qgis.GeometryType.Line
                     )
                 else:  # Polygon
                     symbol = QgsSymbol.defaultSymbol(
-                        QgsWkbTypes.GeometryType.PolygonGeometry
+                        Qgis.GeometryType.Polygon
                     )
 
                 # Set random color

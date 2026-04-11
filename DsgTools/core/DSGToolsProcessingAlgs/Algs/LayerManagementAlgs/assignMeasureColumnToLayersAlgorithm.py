@@ -23,6 +23,7 @@
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtCore import QMetaType
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
@@ -98,11 +99,11 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         return {self.OUTPUT: [lyr.id() for lyr in inputLyrList]}
 
     def createMeasureColumn(self, layer):
-        if layer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
+        if layer.geometryType() == Qgis.GeometryType.Polygon:
             layer.addExpressionField(
                 "$area", QgsField("area_otf", QMetaType.Type.Double)
             )
-        elif layer.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
+        elif layer.geometryType() == Qgis.GeometryType.Line:
             layer.addExpressionField(
                 "$length", QgsField("length_otf", QMetaType.Type.Double)
             )

@@ -3,7 +3,7 @@ from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.Modules.qgis.controllers.qgisCtrl import QgisCtrl
 import json
-from qgis.core import QgsWkbTypes
+from qgis.core import Qgis
 from qgis.utils import iface
 
 
@@ -245,15 +245,15 @@ class AcquisitionMenuCtrl:
     def getLayersForReclassification(self, layerName, geometryType):
         layers = self.qgis.getLoadedVectorLayers()
         geometryFilterDict = {
-            QgsWkbTypes.GeometryType.PointGeometry: (
-                QgsWkbTypes.GeometryType.PointGeometry,
-                QgsWkbTypes.GeometryType.PolygonGeometry,
+            Qgis.GeometryType.Point: (
+                Qgis.GeometryType.Point,
+                Qgis.GeometryType.Polygon,
             ),
-            QgsWkbTypes.GeometryType.LineGeometry: (
-                QgsWkbTypes.GeometryType.LineGeometry,
+            Qgis.GeometryType.Line: (
+                Qgis.GeometryType.Line,
             ),
-            QgsWkbTypes.GeometryType.PolygonGeometry: (
-                QgsWkbTypes.GeometryType.PolygonGeometry,
+            Qgis.GeometryType.Polygon: (
+                Qgis.GeometryType.Polygon,
             ),
         }
         return [

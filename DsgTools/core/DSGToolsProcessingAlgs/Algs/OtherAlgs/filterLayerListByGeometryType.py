@@ -22,6 +22,7 @@
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingOutputMultipleLayers,
@@ -72,9 +73,9 @@ class FilterLayerListByGeometryType(QgsProcessingAlgorithm):
         listSize = len(inputLyrList)
         stepSize = 100 / listSize if listSize else 0
         geometryDict = {
-            QgsWkbTypes.GeometryType.PointGeometry: [],
-            QgsWkbTypes.GeometryType.LineGeometry: [],
-            QgsWkbTypes.GeometryType.PolygonGeometry: [],
+            Qgis.GeometryType.Point: [],
+            Qgis.GeometryType.Line: [],
+            Qgis.GeometryType.Polygon: [],
         }
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
@@ -82,9 +83,9 @@ class FilterLayerListByGeometryType(QgsProcessingAlgorithm):
             geometryDict[lyr.geometryType()].append(lyr.id())
             feedback.setProgress(current * stepSize)
         return {
-            self.POINT_OUTPUT: geometryDict[QgsWkbTypes.GeometryType.PointGeometry],
-            self.LINE_OUTPUT: geometryDict[QgsWkbTypes.GeometryType.LineGeometry],
-            self.POLYGON_OUTPUT: geometryDict[QgsWkbTypes.GeometryType.PolygonGeometry],
+            self.POINT_OUTPUT: geometryDict[Qgis.GeometryType.Point],
+            self.LINE_OUTPUT: geometryDict[Qgis.GeometryType.Line],
+            self.POLYGON_OUTPUT: geometryDict[Qgis.GeometryType.Polygon],
         }
 
     def name(self):

@@ -49,6 +49,7 @@ from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingException,
     QgsProviderConnectionException,
@@ -139,7 +140,7 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS,
                 self.tr("Geographic Bounds"),
-                [QgsWkbTypes.GeometryType.PolygonGeometry],
+                [Qgis.GeometryType.Polygon],
                 optional=True,
             )
         )

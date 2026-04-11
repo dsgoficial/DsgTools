@@ -22,6 +22,7 @@
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterEnum,
@@ -254,7 +255,7 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
             # Skip invalid, empty, or non-polygon geometries
             if (
                 geom.isEmpty()
-                or geom.type() != QgsWkbTypes.GeometryType.PolygonGeometry
+                or geom.type() != Qgis.GeometryType.Polygon
             ):
                 feedback.pushInfo(
                     self.tr("Skipping feature {0} - not a valid polygon").format(feature.id())

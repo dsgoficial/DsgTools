@@ -28,6 +28,7 @@ import gc
 from qgis.PyQt.QtCore import QCoreApplication
 
 from qgis.core import (
+    Qgis,
     QgsProject,
     QgsProcessing,
     QgsProcessingException,
@@ -157,7 +158,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                     tol=item["snap"],
                     behavior=self.algRunner.MoveEndPointsOnlyPreferClosestPoint
                     if snapStructure[referenceLayerName]["originalLayer"].geometryType()
-                    == QgsWkbTypes.GeometryType.LineGeometry
+                    == Qgis.GeometryType.Line
                     else item["snap"],
                     context=context,
                     feedback=multiStepFeedback,
@@ -351,9 +352,9 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
             return snappedLyr
         primitiveDict = {
-            QgsWkbTypes.GeometryType.PointGeometry: [],
-            QgsWkbTypes.GeometryType.LineGeometry: [],
-            QgsWkbTypes.GeometryType.PolygonGeometry: [],
+            Qgis.GeometryType.Point: [],
+            Qgis.GeometryType.Line: [],
+            Qgis.GeometryType.Polygon: [],
         }
         for lyrName in [snappedLyr, referenceLayer]:
             lyr = (
@@ -363,8 +364,8 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 lyr = QgsProcessingUtils.mapLayerFromString(lyrName, context)
             primitiveDict[lyr.geometryType()].append(lyr)
         self.algRunner.runAddUnsharedVertexOnSharedEdges(
-            inputLinesList=primitiveDict[QgsWkbTypes.GeometryType.LineGeometry],
-            inputPolygonsList=primitiveDict[QgsWkbTypes.GeometryType.PolygonGeometry],
+            inputLinesList=primitiveDict[Qgis.GeometryType.Line],
+            inputPolygonsList=primitiveDict[Qgis.GeometryType.Polygon],
             searchRadius=tol,
             context=context,
             feedback=multiStepFeedback,

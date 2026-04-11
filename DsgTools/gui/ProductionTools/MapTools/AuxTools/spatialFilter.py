@@ -22,6 +22,7 @@
 """
 
 from qgis import gui, core
+from qgis.core import Qgis
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
 from qgis.PyQt import QtGui, QtCore
@@ -56,7 +57,7 @@ class SpatialFilter(QgsMapTool):
         self.isActive = not self.isActive
         if self.isActive:
             self.myRubberBand = gui.QgsRubberBand(
-                iface.mapCanvas(), core.QgsWkbTypes.GeometryType.PolygonGeometry
+                iface.mapCanvas(), core.Qgis.GeometryType.Polygon
             )
             color = QtGui.QColor(78, 97, 114)
             color.setAlpha(190)
@@ -117,7 +118,7 @@ class SpatialFilter(QgsMapTool):
             )
 
             core.QgsProject.instance().addMapLayer(vlyr)
-            self.myRubberBand.reset(core.QgsWkbTypes.GeometryType.PolygonGeometry)
+            self.myRubberBand.reset(core.Qgis.GeometryType.Polygon)
             string = f"(geom && ST_GEOMFROMEWKT('SRID={rep};{g}')) AND ST_INTERSECTS(geom, ST_GEOMFROMEWKT('SRID={rep};{g}'))"
             layers = core.QgsProject.instance().mapLayers().values()
 
@@ -135,7 +136,7 @@ class SpatialFilter(QgsMapTool):
                 except Exception:
                     pass
 
-            self.myRubberBand.reset(core.QgsWkbTypes.GeometryType.PolygonGeometry)
+            self.myRubberBand.reset(core.Qgis.GeometryType.Polygon)
             self.disconnect()
 
     def getLayersBacklist(self):

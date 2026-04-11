@@ -114,7 +114,7 @@ class TrimExtendTool(AbstractSelectionTool):
         if (
             not layer
             or not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() != QgsWkbTypes.GeometryType.LineGeometry
+            or layer.geometryType() != Qgis.GeometryType.Line
             or not layer.isEditable()
         ):
             enabled = False
@@ -185,7 +185,7 @@ class TrimExtendTool(AbstractSelectionTool):
         ) = self.getNearestVertexOnSelectedObject(referenceFeat, destinationFeat)
         boundary = (
             QgsGeometry(destinationGeom.constGet().boundary())
-            if destinationGeom.type() == QgsWkbTypes.GeometryType.PolygonGeometry
+            if destinationGeom.type() == Qgis.GeometryType.Polygon
             else destinationGeom
         )
         pointInDestinationFeat = (
@@ -316,8 +316,8 @@ class TrimExtendTool(AbstractSelectionTool):
         super().createContextMenu(
             e=e,
             geometryFilter=[
-                QgsWkbTypes.GeometryType.LineGeometry,
-                QgsWkbTypes.GeometryType.PolygonGeometry,
+                Qgis.GeometryType.Line,
+                Qgis.GeometryType.Polygon,
             ],
         )
 

@@ -29,6 +29,7 @@ from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree i
     AcquisitionFree,
 )
 from qgis.core import (
+    Qgis,
     QgsCoordinateTransformContext,
     QgsDistanceArea,
     QgsGeometry,
@@ -97,7 +98,7 @@ class MeasureTool(QObject):
         layer = self.iface.activeLayer()
         if (
             not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+            or layer.geometryType() == Qgis.GeometryType.Point
             or not layer.isEditable()
         ):
             enabled = False
@@ -235,7 +236,7 @@ class EventFilter(QObject):
         area = None
         if (
             self.iface.mapCanvas().currentLayer().geometryType()
-            == QgsWkbTypes.GeometryType.LineGeometry
+            == Qgis.GeometryType.Line
         ):
             if len(self.pointList) > 1:
                 line_dist = QgsGeometry.fromPolylineXY(self.pointList[:2])
@@ -268,7 +269,7 @@ class EventFilter(QObject):
                 tooltip.hideText()
         elif (
             self.iface.mapCanvas().currentLayer().geometryType()
-            == QgsWkbTypes.GeometryType.PolygonGeometry
+            == Qgis.GeometryType.Polygon
         ):
             tempPointList = []
             if len(self.pointList) > 2:

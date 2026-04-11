@@ -24,6 +24,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
@@ -129,7 +130,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         if (
-            inputLyr.wkbType() == QgsWkbTypes.GeometryType.PolygonGeometry
+            inputLyr.wkbType() == Qgis.GeometryType.Polygon
             and geographicBoundsLyr is not None
         ):
             raise NotImplementedError(
