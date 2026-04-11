@@ -1704,6 +1704,111 @@ class PostgisDb(AbstractDb):
         return row[0] if row else None
 
     @ensure_connected
+    def getLayersWithElementsV2(self, layerList, useInheritance=False):
+        lyrWithElemList = []
+        for layer in layerList:
+            if isinstance(layer, dict):
+                schema = layer["tableSchema"]
+                lyr = layer["tableName"]
+            else:
+                if "." in layer:
+                    schema, lyr = layer.replace('"', "").split(".")
+                else:
+                    lyr = layer
+                    schema = self.getTableSchemaFromDb(lyr)
+            sql = self.gen.getElementCountFromLayerV2(schema, lyr, useInheritance)
+            try:
+                row = self._fetch_one(sql)
+            except Exception:
+                QgsMessageLog.logMessage(
+                    self.tr("Unable to read table {schema}.{table}").format(
+                        schema=schema, table=lyr
+                    ),
+                    "DSGTools Plugin",
+                    Qgis.MessageLevel.Warning,
+                )
+                continue
+            if row is not None and row[0] > 0:
+                lyrWithElemList.append(lyr)
+        return lyrWithElemList
+
+    @ensure_connected
+    def countElements(self, layers):
+        listaQuantidades = []
+        for layer in layers:
+            (schema, className) = self.getTableSchema(layer)
+            if layer.split("_")[-1].lower() in ["p", "l", "a"] or schema == "complexos":
+                sql = self.gen.getElementCountFromLayer(layer)
+                row = self._fetch_one(sql)
+                if row is None:
+                    raise Exception(
+                        self.tr("Problem counting elements: ") + layer
+                    )
+                listaQuantidades.append([layer, row[0]])
+        return listaQuantidades
+
+    @ensure_connected
+    def findEPSG(self, parameters=None):
+        parameters = dict() if parameters is None else parameters
+        sql = self.gen.getSrid(parameters=parameters)
+        row = self._fetch_one(sql)
+        return row[0] if row else -1
+
+    @ensure_connected
+    def getImplementationVersion(self):
+        sql = self.gen.getImplementationVersion()
+        row = self._fetch_one(sql)
+        if row is None:
+            raise Exception(
+                self.tr("Problem getting implementation version.")
+            )
+        return row[0]
+
+    @ensure_connected
+    def implementationVersion(self):
+        sql = self.gen.implementationVersion()
+        try:
+            row = self._fetch_one(sql)
+        except Exception:
+            return ""
+        if row is None or row[0] is None:
+            return ""
+        return row[0]
+
+    @ensure_connected
+    def insertFrame(self, scale, mi, inom, frame, paramDict=dict()):
+        from qgis.core import QgsCoordinateReferenceSystem
+
+        srid = self.findEPSG()
+        geoSrid = (
+            QgsCoordinateReferenceSystem(int(srid)).geographicCrsAuthId().split(":")[-1]
+        )
+        sql = self.gen.insertFrame(
+            scale, mi, inom, frame, srid, geoSrid, paramDict=paramDict
+        )
+        self._execute(sql)
+        self.db.commit()
+
+    @ensure_connected
+    def getQmlRecordDict(self, inputLayer):
+        if isinstance(inputLayer, list):
+            sql = self.gen.getQmlRecords(inputLayer)
+        else:
+            sql = self.gen.getQmlRecords([inputLayer])
+        rows = self._fetch_all(sql)
+        if not rows:
+            raise Exception(
+                self.tr("Problem getting qmlRecordDict.")
+            )
+        qmlDict = dict()
+        for row in rows:
+            if isinstance(inputLayer, list):
+                qmlDict[row[0]] = row[1]
+            else:
+                return row[1]
+        return qmlDict
+
+    @ensure_connected
     def getAllStylesDict(self, perspective="style"):
         """
         Returns a dict of styles in a form acording to perspective:
