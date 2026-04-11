@@ -74,7 +74,7 @@ class AzimuthCalculationAlgorithm(QgsProcessingAlgorithm):
         )
 
         if inputLyr is None:
-            raise QgsProcessingException("Choose a layer for azimuth calculation")
+            raise QgsProcessingException(self.tr("Choose a layer for azimuth calculation"))
 
         attributeAzim = self.parameterAsStrings(parameters, self.ATTRIBUTE, context)[0]
 

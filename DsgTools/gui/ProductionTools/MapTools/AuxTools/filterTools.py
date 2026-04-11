@@ -106,8 +106,8 @@ class FilterTools(QgsMapTool):
         iface.mapCanvas().refresh()
         if showMessage:
             iface.messageBar().pushMessage(
-                "Attention",
-                "Enabled layers for edition have not been unfiltered.",
+                self.tr("Attention"),
+                self.tr("Enabled layers for edition have not been unfiltered."),
                 level=core.Qgis.MessageLevel.Info,
                 duration=3,
             )

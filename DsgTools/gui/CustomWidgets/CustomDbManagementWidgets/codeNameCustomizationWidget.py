@@ -92,7 +92,7 @@ class CodeNameCustomizationWidget(QtWidgets.QWidget, FORM_CLASS):
             domainName = self.domainComboBox.currentText()
             self.oldCodeNameComboBox.setEnabled(True)
             self.oldCodeNameComboBox.clear()
-            self.oldCodeNameComboBox.addItem("Choose a code name")
+            self.oldCodeNameComboBox.addItem(self.tr("Choose a code name"))
             self.domainDict = self.abstractDb.getDomainDictV2("dominios." + domainName)
             for codeName in list(self.domainDict.keys()):
                 self.oldCodeNameComboBox.addItem(codeName)

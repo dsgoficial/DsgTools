@@ -48,7 +48,7 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDER_SHAPEFILES,
-                self.tr("Pasta com Shapefiles"),
+                self.tr("Folder with Shapefiles"),
                 behavior=QgsProcessingParameterFile.Folder,
             )
         )

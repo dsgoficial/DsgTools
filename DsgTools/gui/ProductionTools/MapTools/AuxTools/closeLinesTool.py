@@ -148,7 +148,7 @@ class CloseLinesTool(QgsMapTool):
             featuresToAdd = featuresToAdd.union(features)
         if featuresIdsToDelete:
             layer.startEditing()
-            layer.beginEditCommand(f"Fechando linhas {layer.name()}")
+            layer.beginEditCommand(self.tr("Closing lines {0}").format(layer.name()))
             layer.deleteFeatures(list(featuresIdsToDelete))
             layer.addFeatures(list(featuresToAdd))
             layer.endEditCommand()

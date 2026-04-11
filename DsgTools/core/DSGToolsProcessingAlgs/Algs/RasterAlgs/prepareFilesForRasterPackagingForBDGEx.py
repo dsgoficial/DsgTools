@@ -53,13 +53,13 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.INPUT_FOLDER,
-                self.tr("Pasta com os arquivos no formato zip"),
+                self.tr("Folder with zip files"),
                 behavior=QgsProcessingParameterFile.Folder,
             )
         )
         self.addParameter(
             QgsProcessingParameterFolderDestination(
-                self.OUTPUT_FOLDER, self.tr("Pasta para salvar os arquivos exportados")
+                self.OUTPUT_FOLDER, self.tr("Folder to save exported files")
             )
         )
 

@@ -127,7 +127,7 @@ class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):
             masterContourExpression if masterContourExpression != "" else None
         )
         if masterContourExpression is None:
-            raise QgsProcessingException("invalid expression")
+            raise QgsProcessingException(self.tr("invalid expression"))
         self.prepareFlagSink(
             parameters, inputLyr, QgsWkbTypes.LineString, context, addFeatId=True
         )

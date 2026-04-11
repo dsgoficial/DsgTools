@@ -145,18 +145,18 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
             try:
                 return json.loads(inputText)
             except json.JSONDecodeError as e:
-                raise QgsProcessingException(f"Erro ao decodificar JSON do texto: {str(e)}")
+                raise QgsProcessingException(self.tr("Error decoding JSON from text: %s") % str(e))
         
         # Se não há texto válido, tenta carregar do arquivo
         inputFile = self.parameterAsFile(parameters, self.FILE, context)
         
         # Verifica se o arquivo foi fornecido
         if not inputFile or inputFile.strip() == "":
-            raise QgsProcessingException("Nenhum texto JSON ou arquivo foi fornecido.")
+            raise QgsProcessingException(self.tr("No JSON text or file was provided."))
         
         # Verifica se o arquivo existe
         if not os.path.exists(inputFile):
-            raise QgsProcessingException(f"Arquivo não encontrado: {inputFile}")
+            raise QgsProcessingException(self.tr("File not found: %s") % inputFile)
         
         # Carrega o arquivo com encoding adequado
         try:
@@ -164,9 +164,9 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
                 rulesData = json.load(f)
             return rulesData
         except json.JSONDecodeError as e:
-            raise QgsProcessingException(f"Erro ao decodificar JSON do arquivo: {str(e)}")
+            raise QgsProcessingException(self.tr("Error decoding JSON from file: %s") % str(e))
         except Exception as e:
-            raise QgsProcessingException(f"Erro ao ler o arquivo: {str(e)}")
+            raise QgsProcessingException(self.tr("Error reading file: %s") % str(e))
 
     def buildRuleDict(self, inputData, inputLyrNamesWithSchemaList):
         ruleDict = defaultdict(lambda: defaultdict(list))

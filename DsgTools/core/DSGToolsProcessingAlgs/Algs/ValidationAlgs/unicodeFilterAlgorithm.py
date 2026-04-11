@@ -32,7 +32,7 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 "INPUT_LAYER_LIST",
-                self.tr("Selecionar camadas"),
+                self.tr("Select layers"),
                 QgsProcessing.TypeVectorAnyGeometry,
             )
         )

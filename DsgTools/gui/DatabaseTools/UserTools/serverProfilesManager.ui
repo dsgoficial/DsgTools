@@ -150,7 +150,7 @@
           </attribute>
           <column>
            <property name="text">
-            <string notr="true">Locale</string>
+            <string>Locale</string>
            </property>
           </column>
           <column>

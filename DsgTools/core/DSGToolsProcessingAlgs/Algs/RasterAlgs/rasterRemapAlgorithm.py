@@ -66,677 +66,738 @@ class RasterRemapAlgorithm(QgsProcessingAlgorithm):
         return "DSGTools - Raster Handling"
 
     def shortHelpString(self):
-        return """
-        Remapeia valores de raster usando arquivo JSON de mapeamento.
-        OTIMIZADO COM DIVISÃO ADAPTATIVA PARA GRANDES RASTERS.
-        
-        Parâmetros:
-        - Input Raster: Raster de entrada
-        - Mapping File: Arquivo JSON com mapeamento de valores
-        - Output Raster: Raster de saída remapeado
-        - Force Chunked Processing: Forçar processamento em chunks (padrão: Não)
-        
-        ESTRATÉGIA DE PROCESSAMENTO:
-        
-        O algoritmo tenta processar o raster inteiro de uma vez para máxima
-        performance com NumPy. Se houver erro de memória, divide automaticamente:
-        
-        1ª tentativa: Processar tudo (1x1 = 1 bloco)
-        2ª tentativa: Dividir em 2x2 (4 blocos)
-        3ª tentativa: Dividir em 4x4 (16 blocos)
-        4ª tentativa: Dividir em 8x8 (64 blocos)
-        ... e assim por diante até conseguir
-        
-        Isso maximiza o uso eficiente do NumPy e minimiza loops Python.
-        
-        FORMATO DO ARQUIVO JSON:
-        
-        {
-          "description": "Descrição do mapeamento",
-          "nodata_value": -9999,
-          "mapping": {
-            "0": -9999,
-            "3": 601,
-            "15": 901
-          }
-        }
-        
-        CAMPOS OBRIGATÓRIOS:
-        - mapping: Objeto com pares "valor_origem": valor_destino
-        - nodata_value: Valor para pixels sem dados
-        """
+        return self.tr(
+            "Remaps raster values using a JSON mapping file.\n"
+            "OPTIMIZED WITH ADAPTIVE SPLITTING FOR LARGE RASTERS.\n"
+            "\n"
+            "Parameters:\n"
+            "- Input Raster: The input raster\n"
+            "- Mapping File: JSON file with value mapping\n"
+            "- Output Raster: The remapped output raster\n"
+            "- Force Chunked Processing: Force chunked processing (default: No)\n"
+            "\n"
+            "PROCESSING STRATEGY:\n"
+            "\n"
+            "The algorithm attempts to process the entire raster at once for maximum\n"
+            "performance with NumPy. If a memory error occurs, it automatically splits:\n"
+            "\n"
+            "1st attempt: Process everything (1x1 = 1 block)\n"
+            "2nd attempt: Split into 2x2 (4 blocks)\n"
+            "3rd attempt: Split into 4x4 (16 blocks)\n"
+            "4th attempt: Split into 8x8 (64 blocks)\n"
+            "... and so on until successful\n"
+            "\n"
+            "This maximizes efficient NumPy usage and minimizes Python loops.\n"
+            "\n"
+            "JSON FILE FORMAT:\n"
+            "\n"
+            "{\n"
+            '  "description": "Mapping description",\n'
+            '  "nodata_value": -9999,\n'
+            '  "mapping": {\n'
+            '    "0": -9999,\n'
+            '    "3": 601,\n'
+            '    "15": 901\n'
+            "  }\n"
+            "}\n"
+            "\n"
+            "REQUIRED FIELDS:\n"
+            "- mapping: Object with \"source_value\": target_value pairs\n"
+            "- nodata_value: Value for nodata pixels"
+        )
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterRasterLayer(
                 self.INPUT_RASTER,
-                'Input Raster',
+                self.tr('Input Raster'),
                 [QgsProcessing.TypeRaster]
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterFile(
                 self.MAPPING_FILE,
-                'Mapping JSON File',
+                self.tr('Mapping JSON File'),
                 extension='json'
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterRasterDestination(
                 self.OUTPUT_RASTER,
-                'Output Raster'
+                self.tr('Output Raster')
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.FORCE_CHUNKED,
-                'Force Chunked Processing',
+                self.tr('Force Chunked Processing'),
                 defaultValue=False,
                 optional=True
             )
         )
 
-    def load_mapping(self, mapping_file, feedback):
-        """Carrega e valida o arquivo de mapeamento JSON"""
+    def loadMapping(self, mappingFile, feedback):
+        """Loads and validates the JSON mapping file."""
         try:
-            with open(mapping_file, 'r', encoding='utf-8') as f:
-                mapping_data = json.load(f)
-            
-            if 'mapping' not in mapping_data:
+            with open(mappingFile, 'r', encoding='utf-8') as f:
+                mappingData = json.load(f)
+
+            if 'mapping' not in mappingData:
                 raise QgsProcessingException(
-                    'Arquivo JSON deve conter o campo "mapping".'
+                    self.tr('JSON file must contain the "mapping" field.')
                 )
-            
-            mapping = mapping_data['mapping']
-            nodata_value = mapping_data.get('nodata_value', -9999)
-            
+
+            mapping = mappingData['mapping']
+            nodataValue = mappingData.get('nodata_value', -9999)
+
             if not mapping:
-                raise QgsProcessingException('O campo "mapping" não pode estar vazio.')
-            
-            # Converter para tipos numéricos
-            mapping_numeric = {}
-            invalid_mappings = []
-            
+                raise QgsProcessingException(
+                    self.tr('The "mapping" field cannot be empty.')
+                )
+
+            # Convert to numeric types
+            mappingNumeric = {}
+            invalidMappings = []
+
             for key, value in mapping.items():
                 try:
-                    input_val = int(key)
-                    output_val = int(value)
-                    mapping_numeric[input_val] = output_val
+                    inputVal = int(key)
+                    outputVal = int(value)
+                    mappingNumeric[inputVal] = outputVal
                 except ValueError:
-                    invalid_mappings.append(f'{key} -> {value}')
-            
-            if invalid_mappings:
+                    invalidMappings.append('%s -> %s' % (key, value))
+
+            if invalidMappings:
                 feedback.pushWarning(
-                    f'Valores inválidos ignorados: {", ".join(invalid_mappings)}'
+                    self.tr('Invalid values ignored: %s') % ', '.join(invalidMappings)
                 )
-            
-            if not mapping_numeric:
-                raise QgsProcessingException('Nenhum mapeamento válido encontrado.')
-            
-            feedback.pushInfo(f'Mapeamento carregado: {len(mapping_numeric)} classes')
-            feedback.pushInfo(f'Valor NoData: {nodata_value}')
-            
-            return mapping_numeric, nodata_value
-            
-        except json.JSONDecodeError as e:
-            raise QgsProcessingException(f'Erro ao decodificar JSON: {str(e)}')
-        except FileNotFoundError:
-            raise QgsProcessingException(f'Arquivo não encontrado: {mapping_file}')
-        except Exception as e:
-            raise QgsProcessingException(f'Erro ao carregar JSON: {str(e)}')
 
-    def determine_output_dtype(self, mapping_numeric, nodata_value):
-        """Determina o tipo de dados ideal para o raster de saída"""
-        mapped_values = list(mapping_numeric.values())
-        min_val = min(mapped_values + [nodata_value])
-        max_val = max(mapped_values + [nodata_value])
-        
-        if min_val >= -128 and max_val <= 127:
-            output_dtype = gdal.GDT_Byte if min_val >= 0 else gdal.GDT_Int16
-            numpy_dtype = np.uint8 if min_val >= 0 else np.int16
-        elif min_val >= -32768 and max_val <= 32767:
-            output_dtype = gdal.GDT_Int16
-            numpy_dtype = np.int16
-        elif min_val >= 0 and max_val <= 65535:
-            output_dtype = gdal.GDT_UInt16
-            numpy_dtype = np.uint16
-        elif min_val >= -2147483648 and max_val <= 2147483647:
-            output_dtype = gdal.GDT_Int32
-            numpy_dtype = np.int32
-        else:
-            output_dtype = gdal.GDT_Float32
-            numpy_dtype = np.float32
-        
-        return output_dtype, numpy_dtype
+            if not mappingNumeric:
+                raise QgsProcessingException(
+                    self.tr('No valid mapping found.')
+                )
 
-    def remap_array(self, input_array, mapping_numeric, nodata_value, input_nodata, numpy_dtype):
-        """Aplica o remapeamento em um array NumPy"""
-        output_array = np.full(input_array.shape, nodata_value, dtype=numpy_dtype)
-        
-        # Aplicar mapeamento - operação vetorizada do NumPy
-        for input_val, output_val in mapping_numeric.items():
-            mask = input_array == input_val
-            output_array[mask] = output_val
-        
-        # Tratar valores nodata da entrada
-        if input_nodata is not None:
-            output_array[input_array == input_nodata] = nodata_value
-        
-        return output_array
-
-    def process_band_whole(self, input_band, output_band, mapping_numeric, 
-                          nodata_value, input_nodata, numpy_dtype, feedback):
-        """Tenta processar a banda inteira de uma vez"""
-        try:
-            feedback.pushInfo('Tentando processar banda inteira...')
-            
-            # Ler array completo
-            input_array = input_band.ReadAsArray()
-            
-            if input_array is None:
-                raise MemoryError('Falha ao ler array')
-            
-            # Aplicar remapeamento
-            output_array = self.remap_array(
-                input_array, mapping_numeric, nodata_value, 
-                input_nodata, numpy_dtype
+            feedback.pushInfo(
+                self.tr('Mapping loaded: %s classes') % len(mappingNumeric)
             )
-            
-            # Escrever resultado
-            output_band.WriteArray(output_array)
-            output_band.SetNoDataValue(nodata_value)
-            output_band.FlushCache()
-            
-            feedback.pushInfo('✓ Banda processada com sucesso (modo completo)')
+            feedback.pushInfo(
+                self.tr('NoData value: %s') % nodataValue
+            )
+
+            return mappingNumeric, nodataValue
+
+        except json.JSONDecodeError as e:
+            raise QgsProcessingException(
+                self.tr('Error decoding JSON: %s') % str(e)
+            )
+        except FileNotFoundError:
+            raise QgsProcessingException(
+                self.tr('File not found: %s') % mappingFile
+            )
+        except Exception as e:
+            raise QgsProcessingException(
+                self.tr('Error loading JSON: %s') % str(e)
+            )
+
+    def determineOutputDtype(self, mappingNumeric, nodataValue):
+        """Determines the optimal data type for the output raster."""
+        mappedValues = list(mappingNumeric.values())
+        minVal = min(mappedValues + [nodataValue])
+        maxVal = max(mappedValues + [nodataValue])
+
+        if minVal >= -128 and maxVal <= 127:
+            outputDtype = gdal.GDT_Byte if minVal >= 0 else gdal.GDT_Int16
+            numpyDtype = np.uint8 if minVal >= 0 else np.int16
+        elif minVal >= -32768 and maxVal <= 32767:
+            outputDtype = gdal.GDT_Int16
+            numpyDtype = np.int16
+        elif minVal >= 0 and maxVal <= 65535:
+            outputDtype = gdal.GDT_UInt16
+            numpyDtype = np.uint16
+        elif minVal >= -2147483648 and maxVal <= 2147483647:
+            outputDtype = gdal.GDT_Int32
+            numpyDtype = np.int32
+        else:
+            outputDtype = gdal.GDT_Float32
+            numpyDtype = np.float32
+
+        return outputDtype, numpyDtype
+
+    def remapArray(self, inputArray, mappingNumeric, nodataValue, inputNodata, numpyDtype):
+        """Applies remapping on a NumPy array."""
+        outputArray = np.full(inputArray.shape, nodataValue, dtype=numpyDtype)
+
+        # Apply mapping - NumPy vectorized operation
+        for inputVal, outputVal in mappingNumeric.items():
+            mask = inputArray == inputVal
+            outputArray[mask] = outputVal
+
+        # Handle input nodata values
+        if inputNodata is not None:
+            outputArray[inputArray == inputNodata] = nodataValue
+
+        return outputArray
+
+    def processBandWhole(self, inputBand, outputBand, mappingNumeric,
+                         nodataValue, inputNodata, numpyDtype, feedback):
+        """Attempts to process the entire band at once."""
+        try:
+            feedback.pushInfo(self.tr('Attempting to process entire band...'))
+
+            # Read full array
+            inputArray = inputBand.ReadAsArray()
+
+            if inputArray is None:
+                raise MemoryError(self.tr('Failed to read array'))
+
+            # Apply remapping
+            outputArray = self.remapArray(
+                inputArray, mappingNumeric, nodataValue,
+                inputNodata, numpyDtype
+            )
+
+            # Write result
+            outputBand.WriteArray(outputArray)
+            outputBand.SetNoDataValue(nodataValue)
+            outputBand.FlushCache()
+
+            feedback.pushInfo(self.tr('Band processed successfully (full mode)'))
             return True
-            
+
         except (MemoryError, Exception) as e:
-            feedback.pushInfo(f'✗ Não foi possível processar banda inteira: {str(e)}')
+            feedback.pushInfo(
+                self.tr('Could not process entire band: %s') % str(e)
+            )
             return False
 
-    def process_band_chunked(self, input_band, output_band, cols, rows,
-                            mapping_numeric, nodata_value, input_nodata, 
-                            numpy_dtype, feedback):
-        """Processa a banda em chunks com divisão adaptativa"""
-        
-        # Começar com divisão 2x2
+    def processBandChunked(self, inputBand, outputBand, cols, rows,
+                           mappingNumeric, nodataValue, inputNodata,
+                           numpyDtype, feedback):
+        """Processes the band in chunks with adaptive splitting."""
+
+        # Start with 2x2 split
         divisions = 2
-        max_divisions = 64  # Limite máximo para evitar chunks muito pequenos
-        
-        while divisions <= max_divisions:
+        maxDivisions = 64  # Maximum limit to avoid very small chunks
+
+        while divisions <= maxDivisions:
             try:
-                feedback.pushInfo(f'Tentando processar em {divisions}x{divisions} chunks...')
-                
-                # Calcular tamanho dos chunks
-                chunk_rows = rows // divisions
-                chunk_cols = cols // divisions
-                
-                # Calcular tamanho estimado em GB
-                estimated_size_gb = (chunk_rows * chunk_cols * np.dtype(numpy_dtype).itemsize) / (1024**3)
-                feedback.pushInfo(f'Tamanho estimado por chunk: {estimated_size_gb:.2f} GB')
-                
-                total_chunks = divisions * divisions
-                current_chunk = 0
-                
-                # Processar cada chunk
+                feedback.pushInfo(
+                    self.tr('Attempting to process in %sx%s chunks...') % (divisions, divisions)
+                )
+
+                # Calculate chunk size
+                chunkRows = rows // divisions
+                chunkCols = cols // divisions
+
+                # Calculate estimated size in GB
+                estimatedSizeGb = (chunkRows * chunkCols * np.dtype(numpyDtype).itemsize) / (1024**3)
+                feedback.pushInfo(
+                    self.tr('Estimated size per chunk: %.2f GB') % estimatedSizeGb
+                )
+
+                totalChunks = divisions * divisions
+                currentChunk = 0
+
+                # Process each chunk
                 for i in range(divisions):
                     if feedback.isCanceled():
                         return False
-                    
-                    # Calcular limites em Y
-                    y_start = i * chunk_rows
+
+                    # Calculate Y bounds
+                    yStart = i * chunkRows
                     if i == divisions - 1:
-                        y_end = rows
+                        yEnd = rows
                     else:
-                        y_end = (i + 1) * chunk_rows
-                    y_size = y_end - y_start
-                    
+                        yEnd = (i + 1) * chunkRows
+                    ySize = yEnd - yStart
+
                     for j in range(divisions):
                         if feedback.isCanceled():
                             return False
-                        
-                        # Calcular limites em X
-                        x_start = j * chunk_cols
+
+                        # Calculate X bounds
+                        xStart = j * chunkCols
                         if j == divisions - 1:
-                            x_end = cols
+                            xEnd = cols
                         else:
-                            x_end = (j + 1) * chunk_cols
-                        x_size = x_end - x_start
-                        
-                        # Ler chunk
-                        input_chunk = input_band.ReadAsArray(x_start, y_start, x_size, y_size)
-                        
-                        if input_chunk is None:
-                            raise MemoryError(f'Falha ao ler chunk ({i},{j})')
-                        
-                        # Aplicar remapeamento
-                        output_chunk = self.remap_array(
-                            input_chunk, mapping_numeric, nodata_value,
-                            input_nodata, numpy_dtype
-                        )
-                        
-                        # Escrever chunk
-                        output_band.WriteArray(output_chunk, x_start, y_start)
-                        
-                        # Atualizar progresso
-                        current_chunk += 1
-                        progress = int((current_chunk / total_chunks) * 100)
-                        feedback.setProgress(progress)
-                        
-                        if current_chunk % max(1, total_chunks // 10) == 0:
-                            feedback.pushInfo(
-                                f'Progresso: {current_chunk}/{total_chunks} chunks '
-                                f'({progress}%)'
+                            xEnd = (j + 1) * chunkCols
+                        xSize = xEnd - xStart
+
+                        # Read chunk
+                        inputChunk = inputBand.ReadAsArray(xStart, yStart, xSize, ySize)
+
+                        if inputChunk is None:
+                            raise MemoryError(
+                                self.tr('Failed to read chunk (%s,%s)') % (i, j)
                             )
-                
-                output_band.SetNoDataValue(nodata_value)
-                output_band.FlushCache()
-                
+
+                        # Apply remapping
+                        outputChunk = self.remapArray(
+                            inputChunk, mappingNumeric, nodataValue,
+                            inputNodata, numpyDtype
+                        )
+
+                        # Write chunk
+                        outputBand.WriteArray(outputChunk, xStart, yStart)
+
+                        # Update progress
+                        currentChunk += 1
+                        progress = int((currentChunk / totalChunks) * 100)
+                        feedback.setProgress(progress)
+
+                        if currentChunk % max(1, totalChunks // 10) == 0:
+                            feedback.pushInfo(
+                                self.tr('Progress: %s/%s chunks (%s%%)') % (
+                                    currentChunk, totalChunks, progress
+                                )
+                            )
+
+                outputBand.SetNoDataValue(nodataValue)
+                outputBand.FlushCache()
+
                 feedback.pushInfo(
-                    f'✓ Banda processada com sucesso em {divisions}x{divisions} chunks '
-                    f'(total: {total_chunks} chunks)'
+                    self.tr('Band processed successfully in %sx%s chunks '
+                            '(total: %s chunks)') % (divisions, divisions, totalChunks)
                 )
                 return True
-                
+
             except (MemoryError, Exception) as e:
                 feedback.pushWarning(
-                    f'✗ Falha com {divisions}x{divisions} chunks: {str(e)}'
+                    self.tr('Failed with %sx%s chunks: %s') % (divisions, divisions, str(e))
                 )
-                # Dobrar o número de divisões
+                # Double the number of divisions
                 divisions *= 2
                 continue
-        
+
         raise QgsProcessingException(
-            f'Não foi possível processar mesmo com {max_divisions}x{max_divisions} chunks. '
-            'Raster muito grande ou memória insuficiente.'
+            self.tr('Could not process even with %sx%s chunks. '
+                    'Raster too large or insufficient memory.') % (maxDivisions, maxDivisions)
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        # Configurar GDAL para reportar erros
+        # Configure GDAL to report errors
         gdal.UseExceptions()
-        
+
         try:
-            # Obter parâmetros
-            input_raster = self.parameterAsRasterLayer(parameters, self.INPUT_RASTER, context)
-            mapping_file = self.parameterAsString(parameters, self.MAPPING_FILE, context)
-            output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT_RASTER, context)
-            force_chunked = self.parameterAsBool(parameters, self.FORCE_CHUNKED, context)
-            
-            # Validar caminho de saída
-            if not output_path:
-                raise QgsProcessingException('Caminho de saída não especificado')
-            
-            # Avisar se está usando caminho de rede
-            if output_path.startswith('\\\\') or output_path.startswith('//'):
-                feedback.pushWarning(
-                    'ATENÇÃO: Caminho de rede detectado no arquivo de saída.\n'
-                    'Processamento pode ser mais lento. Considere usar disco local.'
+            # Get parameters
+            inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT_RASTER, context)
+            mappingFile = self.parameterAsString(parameters, self.MAPPING_FILE, context)
+            outputPath = self.parameterAsOutputLayer(parameters, self.OUTPUT_RASTER, context)
+            forceChunked = self.parameterAsBool(parameters, self.FORCE_CHUNKED, context)
+
+            # Validate output path
+            if not outputPath:
+                raise QgsProcessingException(
+                    self.tr('Output path not specified')
                 )
-            
-            if not input_raster or not input_raster.isValid():
-                raise QgsProcessingException('Raster de entrada inválido')
-            
-            # Carregar mapeamento
+
+            # Warn if using network path
+            if outputPath.startswith('\\\\') or outputPath.startswith('//'):
+                feedback.pushWarning(
+                    self.tr('WARNING: Network path detected for output file.\n'
+                            'Processing may be slower. Consider using a local disk.')
+                )
+
+            if not inputRaster or not inputRaster.isValid():
+                raise QgsProcessingException(
+                    self.tr('Invalid input raster')
+                )
+
+            # Load mapping
             feedback.pushInfo('=' * 60)
-            feedback.pushInfo('CARREGANDO MAPEAMENTO')
+            feedback.pushInfo(self.tr('LOADING MAPPING'))
             feedback.pushInfo('=' * 60)
-            mapping_numeric, nodata_value = self.load_mapping(mapping_file, feedback)
-            
-            # Abrir raster
+            mappingNumeric, nodataValue = self.loadMapping(mappingFile, feedback)
+
+            # Open raster
             feedback.pushInfo('=' * 60)
-            feedback.pushInfo('ABRINDO RASTER')
+            feedback.pushInfo(self.tr('OPENING RASTER'))
             feedback.pushInfo('=' * 60)
-            input_path = input_raster.source()
-            feedback.pushInfo(f'Caminho: {input_path}')
-            
+            inputPath = inputRaster.source()
+            feedback.pushInfo(self.tr('Path: %s') % inputPath)
+
             try:
-                dataset = gdal.Open(input_path, gdal.GA_ReadOnly)
-                
+                dataset = gdal.Open(inputPath, gdal.GA_ReadOnly)
+
                 if dataset is None:
-                    gdal_error = gdal.GetLastErrorMsg()
+                    gdalError = gdal.GetLastErrorMsg()
                     raise QgsProcessingException(
-                        f'Não foi possível abrir o raster de entrada.\n'
-                        f'Erro GDAL: {gdal_error}\n'
-                        f'Caminho: {input_path}'
+                        self.tr('Could not open the input raster.\n'
+                                'GDAL error: %s\n'
+                                'Path: %s') % (gdalError, inputPath)
                     )
-                
-                feedback.pushInfo('✓ Raster aberto com sucesso')
-                
+
+                feedback.pushInfo(self.tr('Raster opened successfully'))
+
             except Exception as e:
                 raise QgsProcessingException(
-                    f'Erro ao abrir raster: {str(e)}\n'
-                    f'Caminho: {input_path}'
+                    self.tr('Error opening raster: %s\n'
+                            'Path: %s') % (str(e), inputPath)
                 )
-            
-            # Obter informações do raster
+
+            # Get raster information
             cols = dataset.RasterXSize
             rows = dataset.RasterYSize
             bands = dataset.RasterCount
             geotransform = dataset.GetGeoTransform()
             projection = dataset.GetProjection()
-            
-            feedback.pushInfo(f'Dimensões: {cols:,} x {rows:,} pixels')
-            feedback.pushInfo(f'Bandas: {bands}')
-            
-            # Calcular tamanho estimado
-            input_band = dataset.GetRasterBand(1)
-            input_nodata = input_band.GetNoDataValue()
-            input_dtype = gdal.GetDataTypeName(input_band.DataType)
-            
-            size_gb = (cols * rows * input_band.DataType) / (1024**3)
-            feedback.pushInfo(f'Tamanho estimado: {size_gb:.2f} GB')
-            feedback.pushInfo(f'Tipo de dados entrada: {input_dtype}')
-            
-            # Determinar tipo de saída
-            output_dtype, numpy_dtype = self.determine_output_dtype(
-                mapping_numeric, nodata_value
+
+            feedback.pushInfo(
+                self.tr('Dimensions: %s x %s pixels') % ('{:,}'.format(cols), '{:,}'.format(rows))
             )
-            feedback.pushInfo(f'Tipo de dados saída: {gdal.GetDataTypeName(output_dtype)}')
-            
-            # Criar raster de saída
+            feedback.pushInfo(self.tr('Bands: %s') % bands)
+
+            # Calculate estimated size
+            inputBand = dataset.GetRasterBand(1)
+            inputNodata = inputBand.GetNoDataValue()
+            inputDtype = gdal.GetDataTypeName(inputBand.DataType)
+
+            sizeGb = (cols * rows * inputBand.DataType) / (1024**3)
+            feedback.pushInfo(self.tr('Estimated size: %.2f GB') % sizeGb)
+            feedback.pushInfo(self.tr('Input data type: %s') % inputDtype)
+
+            # Determine output type
+            outputDtype, numpyDtype = self.determineOutputDtype(
+                mappingNumeric, nodataValue
+            )
+            feedback.pushInfo(
+                self.tr('Output data type: %s') % gdal.GetDataTypeName(outputDtype)
+            )
+
+            # Create output raster
             feedback.pushInfo('=' * 60)
-            feedback.pushInfo('CRIANDO RASTER DE SAÍDA')
+            feedback.pushInfo(self.tr('CREATING OUTPUT RASTER'))
             feedback.pushInfo('=' * 60)
-            feedback.pushInfo(f'Caminho de saída: {output_path}')
-            
-            # Validar diretório de saída
-            output_dir = os.path.dirname(output_path)
-            if not output_dir:
-                output_dir = '.'
-            
-            feedback.pushInfo(f'Diretório de saída: {output_dir}')
-            
-            if not os.path.exists(output_dir):
+            feedback.pushInfo(self.tr('Output path: %s') % outputPath)
+
+            # Validate output directory
+            outputDir = os.path.dirname(outputPath)
+            if not outputDir:
+                outputDir = '.'
+
+            feedback.pushInfo(self.tr('Output directory: %s') % outputDir)
+
+            if not os.path.exists(outputDir):
                 try:
-                    os.makedirs(output_dir, exist_ok=True)
-                    feedback.pushInfo(f'✓ Diretório criado: {output_dir}')
+                    os.makedirs(outputDir, exist_ok=True)
+                    feedback.pushInfo(self.tr('Directory created: %s') % outputDir)
                 except Exception as e:
                     raise QgsProcessingException(
-                        f'Não foi possível criar diretório de saída:\n'
-                        f'{output_dir}\n'
-                        f'Erro: {str(e)}'
+                        self.tr('Could not create output directory:\n'
+                                '%s\n'
+                                'Error: %s') % (outputDir, str(e))
                     )
             else:
-                feedback.pushInfo(f'✓ Diretório existe: {output_dir}')
-            
-            # Testar permissão de escrita
-            test_file = os.path.join(output_dir, '.test_write_permission')
+                feedback.pushInfo(self.tr('Directory exists: %s') % outputDir)
+
+            # Test write permission
+            testFile = os.path.join(outputDir, '.test_write_permission')
             try:
-                with open(test_file, 'w') as f:
+                with open(testFile, 'w') as f:
                     f.write('test')
-                os.remove(test_file)
-                feedback.pushInfo('✓ Permissão de escrita verificada')
+                os.remove(testFile)
+                feedback.pushInfo(self.tr('Write permission verified'))
             except Exception as e:
                 raise QgsProcessingException(
-                    f'Sem permissão de escrita no diretório:\n'
-                    f'{output_dir}\n'
-                    f'Erro: {str(e)}'
+                    self.tr('No write permission in directory:\n'
+                            '%s\n'
+                            'Error: %s') % (outputDir, str(e))
                 )
-            
-            # Verificar espaço em disco disponível (Windows)
+
+            # Check available disk space (Windows)
             try:
                 import shutil
-                total, used, free = shutil.disk_usage(output_dir)
-                available_gb = free / (1024**3)
-                required_gb = size_gb * 1.5  # Adicionar margem de 50%
-                
-                feedback.pushInfo(f'Espaço disponível: {available_gb:.1f} GB')
-                feedback.pushInfo(f'Espaço necessário (estimado): {required_gb:.1f} GB')
-                
-                if available_gb < required_gb:
+                total, used, free = shutil.disk_usage(outputDir)
+                availableGb = free / (1024**3)
+                requiredGb = sizeGb * 1.5  # Add 50% margin
+
+                feedback.pushInfo(
+                    self.tr('Available space: %.1f GB') % availableGb
+                )
+                feedback.pushInfo(
+                    self.tr('Required space (estimated): %.1f GB') % requiredGb
+                )
+
+                if availableGb < requiredGb:
                     raise QgsProcessingException(
-                        f'ESPAÇO EM DISCO INSUFICIENTE!\n'
-                        f'Disponível: {available_gb:.1f} GB\n'
-                        f'Necessário: {required_gb:.1f} GB\n'
-                        f'Libere espaço no disco ou escolha outro local.'
+                        self.tr('INSUFFICIENT DISK SPACE!\n'
+                                'Available: %.1f GB\n'
+                                'Required: %.1f GB\n'
+                                'Free up disk space or choose another location.') % (
+                            availableGb, requiredGb
+                        )
                     )
                 else:
-                    feedback.pushInfo('✓ Espaço em disco suficiente')
-                    
+                    feedback.pushInfo(self.tr('Sufficient disk space'))
+
             except QgsProcessingException:
                 raise
             except Exception as e:
-                feedback.pushWarning(f'Não foi possível verificar espaço em disco: {str(e)}')
-            
-            # Verificar se arquivo já existe
-            if os.path.exists(output_path):
-                feedback.pushWarning(f'Arquivo já existe e será sobrescrito: {output_path}')
+                feedback.pushWarning(
+                    self.tr('Could not check disk space: %s') % str(e)
+                )
+
+            # Check if file already exists
+            if os.path.exists(outputPath):
+                feedback.pushWarning(
+                    self.tr('File already exists and will be overwritten: %s') % outputPath
+                )
                 try:
-                    os.remove(output_path)
-                    feedback.pushInfo('✓ Arquivo anterior removido')
+                    os.remove(outputPath)
+                    feedback.pushInfo(self.tr('Previous file removed'))
                 except Exception as e:
                     raise QgsProcessingException(
-                        f'Não foi possível remover arquivo existente:\n'
-                        f'{output_path}\n'
-                        f'Erro: {str(e)}\n'
-                        f'O arquivo pode estar em uso por outro programa.'
+                        self.tr('Could not remove existing file:\n'
+                                '%s\n'
+                                'Error: %s\n'
+                                'The file may be in use by another program.') % (
+                            outputPath, str(e)
+                        )
                     )
-            
+
             try:
-                feedback.pushInfo('Obtendo driver GTiff...')
+                feedback.pushInfo(self.tr('Getting GTiff driver...'))
                 driver = gdal.GetDriverByName('GTiff')
                 if driver is None:
-                    raise QgsProcessingException('Driver GTiff não disponível no GDAL')
-                
-                feedback.pushInfo('✓ Driver GTiff obtido')
-                
-                # Preparar opções de criação
-                create_options = ['COMPRESS=LZW', 'TILED=YES', 'BIGTIFF=YES']
-                feedback.pushInfo(f'Opções de criação: {", ".join(create_options)}')
-                
-                # Log dos parâmetros
-                feedback.pushInfo(f'Parâmetros de criação:')
-                feedback.pushInfo(f'  - Colunas: {cols:,}')
-                feedback.pushInfo(f'  - Linhas: {rows:,}')
-                feedback.pushInfo(f'  - Bandas: {bands}')
-                feedback.pushInfo(f'  - Tipo: {gdal.GetDataTypeName(output_dtype)}')
-                
-                feedback.pushInfo('Criando dataset GDAL...')
-                
-                output_dataset = driver.Create(
-                    output_path,
+                    raise QgsProcessingException(
+                        self.tr('GTiff driver not available in GDAL')
+                    )
+
+                feedback.pushInfo(self.tr('GTiff driver obtained'))
+
+                # Prepare creation options
+                createOptions = ['COMPRESS=LZW', 'TILED=YES', 'BIGTIFF=YES']
+                feedback.pushInfo(
+                    self.tr('Creation options: %s') % ', '.join(createOptions)
+                )
+
+                # Log parameters
+                feedback.pushInfo(self.tr('Creation parameters:'))
+                feedback.pushInfo(self.tr('  - Columns: %s') % '{:,}'.format(cols))
+                feedback.pushInfo(self.tr('  - Rows: %s') % '{:,}'.format(rows))
+                feedback.pushInfo(self.tr('  - Bands: %s') % bands)
+                feedback.pushInfo(
+                    self.tr('  - Type: %s') % gdal.GetDataTypeName(outputDtype)
+                )
+
+                feedback.pushInfo(self.tr('Creating GDAL dataset...'))
+
+                outputDataset = driver.Create(
+                    outputPath,
                     cols,
                     rows,
                     bands,
-                    output_dtype,
-                    options=create_options
+                    outputDtype,
+                    options=createOptions
                 )
-                
-                feedback.pushInfo('Chamada Create() concluída')
-                
-                if output_dataset is None:
-                    # Capturar erro do GDAL
-                    gdal_error = gdal.GetLastErrorMsg()
-                    gdal_error_num = gdal.GetLastErrorNo()
-                    gdal_error_type = gdal.GetLastErrorType()
-                    
-                    error_details = (
-                        f'Não foi possível criar o raster de saída.\n'
-                        f'Caminho: {output_path}\n'
-                        f'GDAL Error Number: {gdal_error_num}\n'
-                        f'GDAL Error Type: {gdal_error_type}\n'
-                        f'GDAL Error Message: {gdal_error}\n\n'
-                        f'Possíveis causas:\n'
-                        f'- Caminho inválido ou muito longo\n'
-                        f'- Caracteres especiais no nome do arquivo\n'
-                        f'- Unidade de rede inacessível\n'
-                        f'- Problema com driver GTiff\n'
-                        f'- Arquivo/processo bloqueado por antivírus\n'
-                    )
-                    raise QgsProcessingException(error_details)
-                
-                feedback.pushInfo('✓ Arquivo de saída criado')
-                
-                output_dataset.SetGeoTransform(geotransform)
-                output_dataset.SetProjection(projection)
-                feedback.pushInfo('✓ Georreferenciamento configurado')
-                
-                # Validar que conseguimos acessar as bandas
+
+                feedback.pushInfo(self.tr('Create() call completed'))
+
+                if outputDataset is None:
+                    # Capture GDAL error
+                    gdalError = gdal.GetLastErrorMsg()
+                    gdalErrorNum = gdal.GetLastErrorNo()
+                    gdalErrorType = gdal.GetLastErrorType()
+
+                    errorDetails = self.tr(
+                        'Could not create the output raster.\n'
+                        'Path: %s\n'
+                        'GDAL Error Number: %s\n'
+                        'GDAL Error Type: %s\n'
+                        'GDAL Error Message: %s\n\n'
+                        'Possible causes:\n'
+                        '- Invalid or too long path\n'
+                        '- Special characters in file name\n'
+                        '- Inaccessible network drive\n'
+                        '- GTiff driver issue\n'
+                        '- File/process blocked by antivirus'
+                    ) % (outputPath, gdalErrorNum, gdalErrorType, gdalError)
+                    raise QgsProcessingException(errorDetails)
+
+                feedback.pushInfo(self.tr('Output file created'))
+
+                outputDataset.SetGeoTransform(geotransform)
+                outputDataset.SetProjection(projection)
+                feedback.pushInfo(self.tr('Georeferencing configured'))
+
+                # Validate that we can access the bands
                 for b in range(1, bands + 1):
-                    band = output_dataset.GetRasterBand(b)
+                    band = outputDataset.GetRasterBand(b)
                     if band is None:
                         raise QgsProcessingException(
-                            f'Não foi possível criar banda {b} no raster de saída'
+                            self.tr('Could not create band %s in the output raster') % b
                         )
-                feedback.pushInfo(f'✓ {bands} banda(s) criada(s) com sucesso')
-                
-                # Tentar forçar flush inicial para detectar erros de I/O
+                feedback.pushInfo(
+                    self.tr('%s band(s) created successfully') % bands
+                )
+
+                # Try initial flush to detect I/O errors
                 try:
-                    output_dataset.FlushCache()
-                    feedback.pushInfo('✓ Validação de escrita em disco OK')
-                except Exception as flush_error:
+                    outputDataset.FlushCache()
+                    feedback.pushInfo(self.tr('Disk write validation OK'))
+                except Exception as flushError:
                     raise QgsProcessingException(
-                        f'Erro ao escrever no disco: {str(flush_error)}\n'
-                        f'Possíveis causas:\n'
-                        f'- Espaço em disco insuficiente\n'
-                        f'- Permissões de escrita\n'
-                        f'- Caminho de rede com problemas'
+                        self.tr('Error writing to disk: %s\n'
+                                'Possible causes:\n'
+                                '- Insufficient disk space\n'
+                                '- Write permissions\n'
+                                '- Network path issues') % str(flushError)
                     )
-                
+
             except Exception as e:
-                # Tentar limpar arquivo parcial
+                # Try to clean up partial file
                 try:
-                    if output_dataset is not None:
-                        output_dataset = None
-                    if os.path.exists(output_path):
-                        os.remove(output_path)
-                        feedback.pushInfo('Arquivo parcial removido')
+                    if outputDataset is not None:
+                        outputDataset = None
+                    if os.path.exists(outputPath):
+                        os.remove(outputPath)
+                        feedback.pushInfo(self.tr('Partial file removed'))
                 except:
                     pass
-                
-                # Re-raise com mais contexto
-                error_type = type(e).__name__
-                error_msg = str(e)
-                gdal_error = gdal.GetLastErrorMsg()
-                
-                full_error = f'Erro ao criar raster de saída:\n'
-                full_error += f'Tipo: {error_type}\n'
-                full_error += f'Mensagem: {error_msg}\n'
-                if gdal_error:
-                    full_error += f'GDAL: {gdal_error}\n'
-                full_error += f'Caminho: {output_path}\n'
-                
-                feedback.reportError(full_error)
-                
-                raise QgsProcessingException(full_error)
-            
-            # Processar cada banda
+
+                # Re-raise with more context
+                errorType = type(e).__name__
+                errorMsg = str(e)
+                gdalError = gdal.GetLastErrorMsg()
+
+                fullError = self.tr('Error creating output raster:\n'
+                                    'Type: %s\n'
+                                    'Message: %s\n') % (errorType, errorMsg)
+                if gdalError:
+                    fullError += 'GDAL: %s\n' % gdalError
+                fullError += self.tr('Path: %s\n') % outputPath
+
+                feedback.reportError(fullError)
+
+                raise QgsProcessingException(fullError)
+
+            # Process each band
             feedback.pushInfo('=' * 60)
-            feedback.pushInfo('PROCESSANDO BANDAS')
+            feedback.pushInfo(self.tr('PROCESSING BANDS'))
             feedback.pushInfo('=' * 60)
-            
-            for band_idx in range(1, bands + 1):
-                feedback.pushInfo(f'\nBanda {band_idx}/{bands}')
+
+            for bandIdx in range(1, bands + 1):
+                feedback.pushInfo(
+                    self.tr('\nBand %s/%s') % (bandIdx, bands)
+                )
                 feedback.pushInfo('-' * 60)
-                
+
                 if feedback.isCanceled():
                     break
-                
-                input_band = dataset.GetRasterBand(band_idx)
-                output_band = output_dataset.GetRasterBand(band_idx)
-                
-                # Decidir estratégia de processamento
-                if force_chunked:
-                    feedback.pushInfo('Modo chunked forçado pelo usuário')
-                    success = self.process_band_chunked(
-                        input_band, output_band, cols, rows,
-                        mapping_numeric, nodata_value, input_nodata,
-                        numpy_dtype, feedback
+
+                inputBand = dataset.GetRasterBand(bandIdx)
+                outputBand = outputDataset.GetRasterBand(bandIdx)
+
+                # Decide processing strategy
+                if forceChunked:
+                    feedback.pushInfo(self.tr('Chunked mode forced by user'))
+                    success = self.processBandChunked(
+                        inputBand, outputBand, cols, rows,
+                        mappingNumeric, nodataValue, inputNodata,
+                        numpyDtype, feedback
                     )
                 else:
-                    # Tentar modo completo primeiro
-                    success = self.process_band_whole(
-                        input_band, output_band, mapping_numeric,
-                        nodata_value, input_nodata, numpy_dtype, feedback
+                    # Try full mode first
+                    success = self.processBandWhole(
+                        inputBand, outputBand, mappingNumeric,
+                        nodataValue, inputNodata, numpyDtype, feedback
                     )
-                    
-                    # Se falhar, usar modo chunked
+
+                    # If it fails, use chunked mode
                     if not success:
-                        feedback.pushInfo('Alternando para modo chunked...')
-                        success = self.process_band_chunked(
-                            input_band, output_band, cols, rows,
-                            mapping_numeric, nodata_value, input_nodata,
-                            numpy_dtype, feedback
+                        feedback.pushInfo(self.tr('Switching to chunked mode...'))
+                        success = self.processBandChunked(
+                            inputBand, outputBand, cols, rows,
+                            mappingNumeric, nodataValue, inputNodata,
+                            numpyDtype, feedback
                         )
-                
+
                 if not success:
-                    raise QgsProcessingException(f'Falha ao processar banda {band_idx}')
-            
-            # Fechar datasets e garantir flush final
+                    raise QgsProcessingException(
+                        self.tr('Failed to process band %s') % bandIdx
+                    )
+
+            # Close datasets and ensure final flush
             feedback.pushInfo('=' * 60)
-            feedback.pushInfo('FINALIZANDO')
+            feedback.pushInfo(self.tr('FINALIZING'))
             feedback.pushInfo('=' * 60)
-            
+
             try:
-                # Forçar flush de todas as bandas
-                for band_idx in range(1, bands + 1):
-                    band = output_dataset.GetRasterBand(band_idx)
+                # Force flush all bands
+                for bandIdx in range(1, bands + 1):
+                    band = outputDataset.GetRasterBand(bandIdx)
                     if band:
                         band.FlushCache()
-                
-                output_dataset.FlushCache()
-                feedback.pushInfo('✓ Dados gravados no disco')
-                
-                # Fechar datasets
+
+                outputDataset.FlushCache()
+                feedback.pushInfo(self.tr('Data written to disk'))
+
+                # Close datasets
                 dataset = None
-                output_dataset = None
-                feedback.pushInfo('✓ Arquivos fechados')
-                
-                # Verificar se arquivo foi criado
-                if not os.path.exists(output_path):
+                outputDataset = None
+                feedback.pushInfo(self.tr('Files closed'))
+
+                # Verify that file was created
+                if not os.path.exists(outputPath):
                     raise QgsProcessingException(
-                        'Arquivo de saída não foi criado. Verifique permissões e espaço em disco.'
+                        self.tr('Output file was not created. Check permissions and disk space.')
                     )
-                
-                file_size_gb = os.path.getsize(output_path) / (1024**3)
-                feedback.pushInfo(f'✓ Arquivo criado: {file_size_gb:.2f} GB')
-                
+
+                fileSizeGb = os.path.getsize(outputPath) / (1024**3)
+                feedback.pushInfo(
+                    self.tr('File created: %.2f GB') % fileSizeGb
+                )
+
             except Exception as e:
-                raise QgsProcessingException(f'Erro ao finalizar arquivo: {str(e)}')
-            
+                raise QgsProcessingException(
+                    self.tr('Error finalizing file: %s') % str(e)
+                )
+
             feedback.pushInfo('=' * 60)
-            feedback.pushInfo('CONCLUÍDO COM SUCESSO!')
-            feedback.pushInfo(f'Arquivo salvo: {output_path}')
+            feedback.pushInfo(self.tr('COMPLETED SUCCESSFULLY!'))
+            feedback.pushInfo(self.tr('File saved: %s') % outputPath)
             feedback.pushInfo('=' * 60)
-            
-            return {self.OUTPUT_RASTER: output_path}
-            
+
+            return {self.OUTPUT_RASTER: outputPath}
+
         except QgsProcessingException:
-            # Re-raise QgsProcessingException sem modificar
+            # Re-raise QgsProcessingException without modifying
             raise
         except MemoryError as e:
-            error_msg = (
-                f'ERRO DE MEMÓRIA: {str(e)}\n\n'
-                f'O raster é muito grande para processar.\n'
-                f'Soluções:\n'
-                f'1. Marque a opção "Force Chunked Processing"\n'
-                f'2. Feche outros programas para liberar memória\n'
-                f'3. Processe em uma máquina com mais RAM'
-            )
-            feedback.reportError(error_msg)
-            raise QgsProcessingException(error_msg)
+            errorMsg = self.tr(
+                'MEMORY ERROR: %s\n\n'
+                'The raster is too large to process.\n'
+                'Solutions:\n'
+                '1. Check the "Force Chunked Processing" option\n'
+                '2. Close other programs to free memory\n'
+                '3. Process on a machine with more RAM'
+            ) % str(e)
+            feedback.reportError(errorMsg)
+            raise QgsProcessingException(errorMsg)
         except Exception as e:
-            error_type = type(e).__name__
-            error_msg = f'ERRO INESPERADO [{error_type}]: {str(e)}'
-            feedback.reportError(error_msg)
+            errorType = type(e).__name__
+            errorMsg = self.tr('UNEXPECTED ERROR [%s]: %s') % (errorType, str(e))
+            feedback.reportError(errorMsg)
             feedback.reportError('=' * 60)
-            
-            # Tentar obter mais informações do GDAL
+
+            # Try to get more GDAL information
             try:
-                gdal_error = gdal.GetLastErrorMsg()
-                gdal_error_num = gdal.GetLastErrorNo()
-                if gdal_error:
-                    feedback.reportError(f'GDAL Error #{gdal_error_num}: {gdal_error}')
+                gdalError = gdal.GetLastErrorMsg()
+                gdalErrorNum = gdal.GetLastErrorNo()
+                if gdalError:
+                    feedback.reportError(
+                        self.tr('GDAL Error #%s: %s') % (gdalErrorNum, gdalError)
+                    )
             except:
                 pass
-            
-            # Adicionar traceback para debug
+
+            # Add traceback for debug
             tb = traceback.format_exc()
-            feedback.reportError('Traceback completo:')
+            feedback.reportError(self.tr('Full traceback:'))
             feedback.reportError(tb)
             feedback.reportError('=' * 60)
-            
-            raise QgsProcessingException(f'{error_type}: {str(e)}')
+
+            raise QgsProcessingException('%s: %s' % (errorType, str(e)))

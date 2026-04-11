@@ -277,8 +277,8 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         except ImportError:
             raise QgsProcessingException(
                 self.tr(
-                    "Este algoritmo requer a biblioteca scipy. "
-                    "Instale com: pip install scipy"
+                    "This algorithm requires the scipy library. "
+                    "Install with: pip install scipy"
                 )
             )
 
@@ -500,7 +500,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             if not os.path.exists(outputPath):
                 feedback.pushWarning(
                     self.tr(
-                        "Sieve nao produziu saida. Retornando sem alteracao."
+                        "Sieve did not produce output. Returning without changes."
                     )
                 )
                 return npRaster
@@ -541,11 +541,8 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         if needsReproject:
             innerFeedback.setCurrentStep(currentStep)
             innerFeedback.pushInfo(
-                self.tr(
-                    f"  Reprojetando de "
-                    f"{polygonLayer.crs().authid()} para "
-                    f"{targetCrs.authid()}..."
-                )
+                self.tr("  Reprojecting from %s to %s...")
+                % (polygonLayer.crs().authid(), targetCrs.authid())
             )
             layerToProcess = self.algRunner.runReprojectLayer(
                 layer=polygonLayer,
@@ -585,7 +582,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         ds = gdal.Open(rasterPath)
         if ds is None:
             raise QgsProcessingException(
-                self.tr("Nao foi possivel abrir: %s") % rasterPath
+                self.tr("Could not open: %s") % rasterPath
             )
         npRaster = ds.GetRasterBand(1).ReadAsArray().astype(np.int16)
         geotransform = ds.GetGeoTransform()
@@ -605,13 +602,13 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             for vectorLayer, burnValue in layerValuePairs:
                 feedback.pushInfo(
-                    self.tr("  Queimando DN=%d...") % burnValue
+                    self.tr("  Burning DN=%d...") % burnValue
                 )
                 rasterLayer = QgsRasterLayer(tmpPath, "temp_burn")
                 if not rasterLayer.isValid():
                     raise QgsProcessingException(
                         self.tr(
-                            "Erro ao carregar raster temporario para rasterizacao."
+                            "Error loading temporary raster for rasterization."
                         )
                     )
 
@@ -662,8 +659,8 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             if not os.path.exists(tmpOutput):
                 feedback.pushWarning(
                     self.tr(
-                        "Generalizacao nao produziu arquivo de saida. "
-                        "Retornando sem alteracao."
+                        "Generalization did not produce output file. "
+                        "Returning without changes."
                     )
                 )
                 return npRaster
@@ -673,10 +670,10 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             if result.shape != npRaster.shape:
                 feedback.pushWarning(
                     self.tr(
-                        f"Generalizacao produziu raster com dimensoes diferentes: "
-                        f"{result.shape} vs {npRaster.shape}. "
-                        f"Retornando sem alteracao."
+                        "Generalization produced raster with different dimensions: "
+                        "%s vs %s. Returning without changes."
                     )
+                    % (result.shape, npRaster.shape)
                 )
                 return npRaster
 

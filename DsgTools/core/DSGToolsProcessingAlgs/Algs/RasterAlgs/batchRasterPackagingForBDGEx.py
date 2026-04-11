@@ -72,7 +72,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.INPUT_FOLDER,
-                self.tr("Pasta com os arquivos no formato tif"),
+                self.tr("Folder with tif files"),
                 behavior=QgsProcessingParameterFile.Folder,
             )
         )
@@ -85,8 +85,8 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             )
         )
         self.image_sensors = [
-            self.tr("Imagens BECA"),
-            self.tr("Imagens MAXAR"),
+            self.tr("BECA Images"),
+            self.tr("MAXAR Images"),
         ]
 
         self.addParameter(
@@ -99,7 +99,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFolderDestination(
-                self.OUTPUT_FOLDER, self.tr("Pasta para salvar os arquivos exportados")
+                self.OUTPUT_FOLDER, self.tr("Folder to save exported files")
             )
         )
 
@@ -168,7 +168,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     "path", None
                 )
                 if input_path is None:
-                    raise QgsProcessingException("Invalid Path")
+                    raise QgsProcessingException(self.tr("Invalid Path"))
                 relative_path = Path(input_path).relative_to(input_folder_path).parent
                 output_dir = output_base_path / relative_path
                 output_dir.mkdir(parents=True, exist_ok=True)

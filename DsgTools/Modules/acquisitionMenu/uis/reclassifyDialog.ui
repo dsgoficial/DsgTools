@@ -30,14 +30,14 @@
      <item>
       <widget class="QPushButton" name="cancelBtn">
        <property name="text">
-        <string>&amp;Cancelar</string>
+        <string>&amp;Cancel</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="saveBtn">
        <property name="text">
-        <string>&amp;Confirmar</string>
+        <string>&amp;Confirm</string>
        </property>
       </widget>
      </item>

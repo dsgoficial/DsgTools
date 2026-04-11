@@ -132,11 +132,11 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
         )
-        multiStepFeedback.setProgressText(self.tr("Calculando tamanhos"))
+        multiStepFeedback.setProgressText(self.tr("Calculating sizes"))
         areaminima = minArea * (escala**2)
         compMinimo = minLength * escala
 
-        multiStepFeedback.setProgressText(self.tr("Generalizando"))
+        multiStepFeedback.setProgressText(self.tr("Generalizing"))
         algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(
             inputLayer=lineLayer,
             context=context,
@@ -167,7 +167,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Retornando"))
+        multiStepFeedback.setProgressText(self.tr("Returning"))
 
         return {}
 

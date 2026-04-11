@@ -260,10 +260,10 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         # Obter CRS original
         original_crs = moldura_layer.sourceCrs()
         
-        feedback.pushInfo(f'Sistema de referência original: {original_crs.authid()}')
-        feedback.pushInfo(f'Escala: 1:{escala}')
-        feedback.pushInfo(f'Tamanho da quadrícula: {grid_size} metros')
-        feedback.pushInfo(f'LQA: {lqa}%')
+        feedback.pushInfo(self.tr('Original reference system: %s') % original_crs.authid())
+        feedback.pushInfo(self.tr('Scale: 1:%s') % escala)
+        feedback.pushInfo(self.tr('Tile size: %s meters') % grid_size)
+        feedback.pushInfo(self.tr('AQL: %s%%') % lqa)
         
         # Criar campos de saída
         fields = QgsFields()
@@ -297,7 +297,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             
             # Identificar MI
             mi_nome = moldura_feat.attribute('mi') if moldura_feat.fields().lookupField('mi') >= 0 else f'MI_{current+1}'
-            feedback.pushInfo(f'\nProcessando {mi_nome}...')
+            feedback.pushInfo(self.tr('\nProcessing %s...') % mi_nome)
             
             # Obter geometria da moldura (cópia para não modificar o original)
             moldura_geom_original = moldura_feat.geometry()
@@ -306,10 +306,10 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             utm_crs = self.getUtmRefSysFromGeometry(moldura_geom_original, original_crs)
             
             if utm_crs is None or not utm_crs.isValid():
-                feedback.pushWarning(f'Não foi possível determinar o sistema UTM para {mi_nome}. Ignorando...')
+                feedback.pushWarning(self.tr('Could not determine UTM system for %s. Skipping...') % mi_nome)
                 continue
             
-            feedback.pushInfo(f'Fuso UTM para esta moldura: {utm_crs.authid()}')
+            feedback.pushInfo(self.tr('UTM zone for this frame: %s') % utm_crs.authid())
             
             # Criar transformadores específicos para esta moldura
             transform_to_utm = QgsCoordinateTransform(
@@ -374,12 +374,12 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             
             # Calcular tamanho da amostra
             n_total = len(quadriculas_utm)
-            feedback.pushInfo(f'Células do grid: {total_celulas}')
-            feedback.pushInfo(f'Quadrículas completas: {n_total}')
-            feedback.pushInfo(f'Quadrículas descartadas (parciais): {quadriculas_descartadas}')
+            feedback.pushInfo(self.tr('Grid cells: %s') % total_celulas)
+            feedback.pushInfo(self.tr('Complete tiles: %s') % n_total)
+            feedback.pushInfo(self.tr('Discarded tiles (partial): %s') % quadriculas_descartadas)
             
             if n_total == 0:
-                feedback.pushWarning(f'Nenhuma quadrícula gerada para {mi_nome}')
+                feedback.pushWarning(self.tr('No tiles generated for %s') % mi_nome)
                 continue
             
             # Determinar tamanho da amostra
@@ -388,8 +388,8 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             else:  # Isolado
                 n_amostra, ac = self._calcular_amostra_isolado(n_total, lqa)
             
-            feedback.pushInfo(f'Tamanho da amostra: {n_amostra}')
-            feedback.pushInfo(f'Número de aceitação: {ac}')
+            feedback.pushInfo(self.tr('Sample size: %s') % n_amostra)
+            feedback.pushInfo(self.tr('Acceptance number: %s') % ac)
             
             # Selecionar aleatoriamente os índices
             indices_amostra = set(random.sample(range(n_total), min(n_amostra, n_total)))
@@ -421,7 +421,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
                 if selecionada:
                     sink_amostra.addFeature(feat)
         
-        feedback.pushInfo('\nProcessamento concluído!')
+        feedback.pushInfo(self.tr('\nProcessing completed!'))
         
         return {
             self.OUTPUT_GRID: dest_id_grid,
@@ -438,13 +438,13 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
                 break
         
         if not letra:
-            raise QgsProcessingException(f'Não foi possível determinar letra código para lote de tamanho {tamanho_lote}')
+            raise QgsProcessingException(self.tr('Could not determine code letter for batch of size %s') % tamanho_lote)
         
         # Buscar na tabela 45
         if letra in self.TABELA_45 and lqa in self.TABELA_45[letra]:
             return self.TABELA_45[letra][lqa]
         
-        raise QgsProcessingException(f'Combinação letra={letra}, LQA={lqa} não encontrada na tabela')
+        raise QgsProcessingException(self.tr('Combination letter=%s, AQL=%s not found in table') % (letra, lqa))
     
     def _calcular_amostra_isolado(self, tamanho_lote, lqa):
         """Calcula tamanho da amostra para lote isolado (ISO 2859-2)"""

@@ -260,7 +260,7 @@ class GenericCompactPropertyManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             QApplication.restoreOverrideCursor()
             QMessageBox.information(
                 self,
-                self.tr("Sucess!"),
+                self.tr("Success!"),
                 self.tr(
                     "Success! {0} successfully imported and installed in {1}."
                 ).format(widgetType, settingName),

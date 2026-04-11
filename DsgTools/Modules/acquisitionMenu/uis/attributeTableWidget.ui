@@ -29,7 +29,7 @@
    <item row="0" column="0">
     <widget class="QLineEdit" name="searchLe">
      <property name="placeholderText">
-      <string>Pesquisar</string>
+      <string>Search</string>
      </property>
     </widget>
    </item>

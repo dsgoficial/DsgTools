@@ -24,6 +24,7 @@ from builtins import object
 import os
 
 from qgis.core import Qgis, QgsMessageLog
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtSql import QSqlDatabase
 
 # DSG Tools imports
@@ -37,12 +38,12 @@ class DbCreatorFactory(object):
         # TODO Treat none return
         if not ("QPSQL" in QSqlDatabase.drivers()):  # Driver wasn't loaded
             QgsMessageLog.logMessage(
-                "QT PSQL driver not installed!", "DSGTools Plugin", Qgis.MessageLevel.Critical
+                QCoreApplication.translate("DbCreatorFactory", "QT PSQL driver not installed!"), "DSGTools Plugin", Qgis.MessageLevel.Critical
             )
             return None
         if not ("QSQLITE" in QSqlDatabase.drivers()):  # Driver wasn't loaded
             QgsMessageLog.logMessage(
-                "QT QSQLITE driver not installed!", "DSGTools Plugin", Qgis.MessageLevel.Critical
+                QCoreApplication.translate("DbCreatorFactory", "QT QSQLITE driver not installed!"), "DSGTools Plugin", Qgis.MessageLevel.Critical
             )
             return None
         creators = {

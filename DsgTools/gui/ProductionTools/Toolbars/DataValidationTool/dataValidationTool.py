@@ -354,7 +354,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         try:
             out = processing.run(alg, param)
             self.iface.messageBar().pushMessage(
-                self.tr("Sucess"),
+                self.tr("Success"),
                 self.tr("model {model} finished.").format(model=modelName),
                 level=Qgis.MessageLevel.Info,
                 duration=5,

@@ -135,7 +135,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
         )
         if output:
             message = (
-                self.tr("Everyting up to date")
+                self.tr("Everything up to date")
                 if output == 1
                 else self.tr("External files updated")
             )

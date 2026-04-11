@@ -97,7 +97,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         layer.startEditing()
         attributeIndex = self.getAttributeIndex(attributeName, layer)
         if attributeIndex < 0 or pkField not in [f.name() for f in layer.fields()]:
-            feedback.pushWarning("Attribute index not found")
+            feedback.pushWarning(self.tr("Attribute index not found"))
             return {self.FLAGS: flag_id}
         fieldRelation = layer.fields().field(pkField)
         auxLayer = core.QgsAuxiliaryStorage().createAuxiliaryLayer(fieldRelation, layer)
@@ -135,7 +135,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             auxFeature["ASPK"] = feature[pkField]
             auxFeature["_{}".format(errorFieldName)] = ";".join(wrongWords)
             auxLayer.addFeature(auxFeature)
-        feedback.pushInfo(f"Field {errorFieldName} added/edited")
+        feedback.pushInfo(self.tr("Field %s added/edited") % errorFieldName)
         nErrors = auxLayer.featureCount()
         if nErrors == 0:
             return {self.FLAGS: flag_id}

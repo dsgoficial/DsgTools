@@ -326,7 +326,7 @@ class MultiLayersCentroidsFlagDockWidget(
         if lyrsPointsInsideFlagPolygonDict is None:
             self.setHeader([])
             return
-        self.setHeader([self.tr("Camada")] + self.columns)
+        self.setHeader([self.tr("Layer")] + self.columns)
         self.valuesInTable(lyrsPointsInsideFlagPolygonDict)
 
     def tableContextMenu(self) -> None:

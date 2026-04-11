@@ -46,7 +46,7 @@ class BuildZipPackageAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.INPUT_SHAPEFILE_FOLDER,
-                self.tr("Pasta com Shapefiles"),
+                self.tr("Folder with Shapefiles"),
                 behavior=QgsProcessingParameterFile.Folder,
             )
         )
@@ -64,7 +64,7 @@ class BuildZipPackageAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.OUTPUT_ZIP_FOLDER,
-                self.tr("Pasta de destino"),
+                self.tr("Destination folder"),
                 behavior=QgsProcessingParameterFile.Folder,
             )
         )

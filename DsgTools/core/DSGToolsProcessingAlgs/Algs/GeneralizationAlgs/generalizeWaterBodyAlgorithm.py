@@ -280,7 +280,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             or island_point_layer is None
             or drainage_lines_layer is None
         ):
-            feedback.reportError("Layers not defined correctly.")
+            feedback.reportError(self.tr("Layers not defined correctly."))
             return {}
 
         min_water_body_width_tolerance = min_waterbody_width * scale

@@ -100,7 +100,7 @@ class Polygon(GeometricaAcquisition):
                                 self.iface.messageBar().pushMessage(
                                     self.tr("Info:"),
                                     self.tr(
-                                        "Not possible to digitize, segment smaller than minimun distance."
+                                        "Not possible to digitize, segment smaller than minimum distance."
                                     ),
                                     level=Qgis.MessageLevel.Info,
                                 )
@@ -134,7 +134,7 @@ class Polygon(GeometricaAcquisition):
                         self.iface.messageBar().pushMessage(
                             self.tr("Info:"),
                             self.tr(
-                                "Not possible to digitise, segment smaller than minimun distance."
+                                "Not possible to digitise, segment smaller than minimum distance."
                             ),
                             level=Qgis.MessageLevel.Info,
                         )
@@ -160,7 +160,7 @@ class Polygon(GeometricaAcquisition):
                             self.iface.messageBar().pushMessage(
                                 self.tr("Info:"),
                                 self.tr(
-                                    "Not possible to digitise, segment smaller than minimun distance."
+                                    "Not possible to digitise, segment smaller than minimum distance."
                                 ),
                                 level=Qgis.MessageLevel.Info,
                             )

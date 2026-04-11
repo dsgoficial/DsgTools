@@ -154,7 +154,7 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
 
         nFeatures = len(matched_features)
         if nFeatures == 0:
-            feedback.pushInfo("Nenhum recurso encontrado com o valor especificado.")
+            feedback.pushInfo(self.tr("No features found with the specified value."))
             return {self.OUTPUT: dest_id}
 
         stepSize = 100 / nFeatures
