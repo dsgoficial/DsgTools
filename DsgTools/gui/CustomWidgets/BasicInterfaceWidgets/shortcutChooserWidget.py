@@ -134,7 +134,7 @@ class ShortcutChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         self.keySequence = QKeySequence(shortcut)
         self.assignShortcutPushButton.setChecked(False)
         self.assignShortcutPushButton.setText(
-            self.keySequence.toString(format=QKeySequence.NativeText)
+            self.keySequence.toString(format=QKeySequence.SequenceFormat.NativeText)
         )
 
     def getShortcut(self, asQKeySequence=False):
@@ -148,6 +148,6 @@ class ShortcutChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         # this uses QKeySequence.NativeText to show in the interface. To store data, no filter should be provided
         self.assignShortcutPushButton.setText(
             self.tr("Input: {0}").format(
-                self.keySequence.toString(format=QKeySequence.NativeText)
+                self.keySequence.toString(format=QKeySequence.SequenceFormat.NativeText)
             )
         )

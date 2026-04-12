@@ -69,7 +69,7 @@ class SelectFileWidget(QtWidgets.QWidget, FORM_CLASS):
             selectedFiles = fd.getExistingDirectory(
                 directory=os.path.expanduser("~"),
                 caption=self.caption,
-                options=QFileDialog.ShowDirsOnly,
+                options=QFileDialog.Option.ShowDirsOnly,
             )
             if selectedFiles != "":
                 self.fileNameList = [selectedFiles]

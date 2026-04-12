@@ -885,7 +885,7 @@ class MyWidgetWrapper(WidgetWrapper):
 
     def createWidget(self):
         self._lineedit = QLineEdit()
-        self._lineedit.setEchoMode(QLineEdit.Password)
+        self._lineedit.setEchoMode(QLineEdit.EchoMode.Password)
         # if self.placeholder:
         #     self._lineedit.setPlaceholderText(self.placeholder)
         return self._lineedit

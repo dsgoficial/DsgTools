@@ -109,7 +109,7 @@ class InventoryTools(QDialog, FORM_CLASS):
             self,
             self.tr("Type the extension"),
             self.tr("File extension"),
-            mode=QLineEdit.Normal,
+            mode=QLineEdit.EchoMode.Normal,
         )
         item = QTreeWidgetItem(self.treeWidget.invisibleRootItem())
         item.setText(0, text[0])

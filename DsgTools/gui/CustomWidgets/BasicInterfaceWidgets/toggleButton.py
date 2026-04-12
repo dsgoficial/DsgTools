@@ -79,7 +79,7 @@ class Toggle(QCheckBox):
         handleRadius = round(0.24 * contRect.height())
 
         p = QPainter(self)
-        p.setRenderHint(QPainter.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         p.setPen(self._transparent_pen)
         barRect = QRectF(
