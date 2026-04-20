@@ -378,9 +378,9 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
                 if attr == outsidePolygonValue:
                     continue
                 neighborAttributeDict[attr] += 1
-            if len(neighborAttributeDict) > 1:
+            if len(neighborAttributeDict) != 1:
                 continue
-            attrValue = [i for i in neighborAttributeDict.keys()][0]
+            attrValue = next(iter(neighborAttributeDict))
             insideValueFeatsMap[attrValue].add(featid)
         return insideValueFeatsMap
 
