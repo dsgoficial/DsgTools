@@ -259,6 +259,7 @@ class PostgisDb(AbstractDb):
         try:
             rows = self._fetch_all(self.gen.getEDGVVersion())
         except Exception:
+            self.db.rollback()
             return "Non_EDGV"
         version = "-1"
         for row in rows:
