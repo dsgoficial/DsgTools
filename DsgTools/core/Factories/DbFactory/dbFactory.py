@@ -38,8 +38,6 @@ import os
 class DbFactory(object):
     def createDbFactory(self, driver):
         # TODO Treat none return
-        if not ("QPSQL" in QSqlDatabase.drivers()):  # Driver wasn't loaded
-            raise Exception(QCoreApplication.translate("DbFactory", "QT PSQL driver not installed!"))
         if not ("QSQLITE" in QSqlDatabase.drivers()):  # Driver wasn't loaded
             raise Exception(QCoreApplication.translate("DbFactory", "QT QSQLITE driver not installed!"))
         dbs = {

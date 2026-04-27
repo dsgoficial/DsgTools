@@ -35,11 +35,6 @@ from .geopackageDbCreator import GeopackageDbCreator
 class DbCreatorFactory(object):
     def createDbCreatorFactory(self, driverName, createParam, parentWidget=None):
         # TODO Treat none return
-        if not ("QPSQL" in QSqlDatabase.drivers()):  # Driver wasn't loaded
-            QgsMessageLog.logMessage(
-                QCoreApplication.translate("DbCreatorFactory", "QT PSQL driver not installed!"), "DSGTools Plugin", Qgis.MessageLevel.Critical
-            )
-            return None
         if not ("QSQLITE" in QSqlDatabase.drivers()):  # Driver wasn't loaded
             QgsMessageLog.logMessage(
                 QCoreApplication.translate("DbCreatorFactory", "QT QSQLITE driver not installed!"), "DSGTools Plugin", Qgis.MessageLevel.Critical
