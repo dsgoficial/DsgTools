@@ -36,7 +36,6 @@ from qgis.core import (
     QgsWkbTypes,
 )
 import numpy as np
-from scipy.interpolate import splprep, splev
 
 
 class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
@@ -89,6 +88,14 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
         )
 
     def processAlgorithm(self, parameters, context, feedback):
+        try:
+            from scipy.interpolate import splprep, splev
+        except ImportError:
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires the Python scipy library. Please install this library and try again."
+                )
+            )
         inputLayer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         elevAttr = self.parameterAsString(parameters, self.ELEVATION_ATTR, context)
         minClosedLength = self.parameterAsDouble(
@@ -419,6 +426,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
 
     def _nurbfitLine(self, line, degree=3):
         """Apply B-spline interpolation to a polyline."""
+        from scipy.interpolate import splprep, splev
         if len(line) <= degree + 1:
             return line
 

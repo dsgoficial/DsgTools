@@ -26,7 +26,6 @@ from qgis.core import (
     QgsPointXY,
 )
 import numpy as np
-from scipy.interpolate import splprep, splev
 
 
 class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
@@ -80,6 +79,14 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
         )
 
     def processAlgorithm(self, parameters, context, feedback):
+        try:
+            from scipy.interpolate import splprep, splev
+        except ImportError:
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires the Python scipy library. Please install this library and try again."
+                )
+            )
         input_layer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         degree = self.parameterAsInt(parameters, self.DEGREE, context)
         smoothing_factor = self.parameterAsDouble(
@@ -148,6 +155,7 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
 
     def _smooth_line(self, line, degree, smoothing_factor, segment_length, feedback=None):
         """Apply B-spline smoothing to a line"""
+        from scipy.interpolate import splprep, splev
         if len(line) <= degree + 1:
             return line
 
