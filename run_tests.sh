@@ -5,6 +5,9 @@
 #   ./run_tests.sh tests/test_graphHandler.py
 #   ./run_tests.sh -k test_identifydangles  # run a single test by name
 #   ./run_tests.sh -x                       # stop on first failure
+#   ./run_tests.sh -m unit                  # run only unit tests
+#   ./run_tests.sh -m integration           # run only integration tests
+#   ./run_tests.sh --cov=DsgTools/core      # run with coverage report
 
 set -euo pipefail
 
