@@ -634,7 +634,7 @@ def buildAuxFlowGraph(
     G,
     fixedInNodeSet: Set[int],
     fixedOutNodeSet: Set[int],
-    nodeIdDict: Dict[int, QByteArray],
+    nodeIdDict: Optional[Dict[int, QByteArray]] = None,
     constantSinkPointSet: Optional[Set[int]] = None,
     DiG: Optional[Any] = None,
     feedback: Optional[QgsFeedback] = None,
@@ -707,6 +707,8 @@ def buildAuxFlowGraph(
         currentEdge = 0
 
     def distance(start, end):
+        if nodeIdDict is None:
+            return 0.0
         startGeom, endGeom = QgsGeometry(), QgsGeometry()
         startGeom.fromWkb(nodeIdDict[start])
         endGeom.fromWkb(nodeIdDict[end])
@@ -715,7 +717,7 @@ def buildAuxFlowGraph(
     pairList = sorted(
         (
             (start, end)
-            for start, end in product(fixedInNodeSet, fixedOutNodeSet)
+            for start, end in product(sorted(fixedInNodeSet), sorted(fixedOutNodeSet))
             if nx.has_path(G, start, end)
         ),
         key=lambda x: (
@@ -780,8 +782,8 @@ def buildAuxFlowGraph(
         stepSize = 100 / remainingEdges
         currentEdge = 0
     for (a, b) in G.edges:
-        if ((a, b) in DiG.edges and DiG[a][b]["featid"] == G[a][b]["featid"]) or (
-            (b, a) in DiG.edges and DiG[b][a]["featid"] == G[b][a]["featid"]
+        if ((a, b) in DiG.edges and DiG[a][b].get("featid") == G[a][b].get("featid")) or (
+            (b, a) in DiG.edges and DiG[b][a].get("featid") == G[b][a].get("featid")
         ):
             continue
         add_edge_from_graph_to_digraph(G, DiG, a, b)

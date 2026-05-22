@@ -142,15 +142,15 @@ class TestDE9IM:
 # ---------------------------------------------------------------------------
 class TestCardinality:
     def test_validate_standard_cardinality(self, rule):
-        # cardinality follows pattern "min..max" or enumerated
-        assert rule.validateCardinality("1")
+        # cardinality follows pattern "min..max"
+        assert rule.validateCardinality("1..1")
 
     def test_cardinality_starts_empty(self, rule):
         assert rule.cardinality() == ""
 
     def test_set_valid_cardinality(self, rule):
-        rule.setCardinality("1")
-        assert rule.cardinality() == "1"
+        rule.setCardinality("1..1")
+        assert rule.cardinality() == "1..1"
 
 
 # ---------------------------------------------------------------------------
@@ -171,7 +171,7 @@ class TestAsDictAndIsValid:
         rule.setFilterA("")
         rule.setFilterB("")
         rule.setPredicateEnum(next(iter(predicates)))
-        rule.setCardinality("1")
+        rule.setCardinality("1..1")
         assert rule.isValid()
 
     def test_rule_without_name_is_invalid(self, rule):

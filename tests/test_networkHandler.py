@@ -17,7 +17,7 @@ from DsgTools.core.GeometricTools.networkHandler import NetworkHandler
 
 @pytest.fixture
 def handler():
-    return NetworkHandler(iface=None)
+    return NetworkHandler()
 
 
 # ---------------------------------------------------------------------------

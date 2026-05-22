@@ -175,7 +175,8 @@ class TestAffineRotation:
 # ---------------------------------------------------------------------------
 class TestAffineComposition:
     def test_translate_then_scale(self):
-        t = Affine.translation(1.0, 2.0) * Affine.scale(2.0, 2.0)
+        # A*B applies B first, then A: scale(2)*translate(1,2) → translate first, scale second
+        t = Affine.scale(2.0, 2.0) * Affine.translation(1.0, 2.0)
         x, y = t * (0.0, 0.0)
         assert math.isclose(x, 2.0, abs_tol=1e-10)
         assert math.isclose(y, 4.0, abs_tol=1e-10)

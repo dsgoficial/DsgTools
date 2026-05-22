@@ -4,7 +4,6 @@ services:
     container_name: dsgtools-testing-env
     tty: true
     volumes:
-      - ../DsgTools:/tests_directory
-      - ../tests:/tests_directory/tests
+      - ..:/tests_directory
     environment:
       - DISPLAY=:99

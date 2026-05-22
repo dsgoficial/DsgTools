@@ -28,7 +28,10 @@ import qgis  # NOQA switch sip api
 
 import os
 import yaml
-import nose2
+try:
+    import nose2
+except ImportError:
+    nose2 = None
 import shutil
 import glob
 import hashlib

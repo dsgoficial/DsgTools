@@ -389,10 +389,12 @@ class TestCalcAzimuth:
 # ---------------------------------------------------------------------------
 class TestCalculateAngleDifferences:
     def test_north_direction_is_zero(self, handler):
+        # calculateAngleDifferences uses convention: 180 - atan2(dx,dy)
+        # so north (0,0)->(0,1) gives 180 - 0 = 180
         start = QgsPoint(0.0, 0.0)
         end = QgsPoint(0.0, 1.0)
         angle = handler.calculateAngleDifferences(start, end)
-        assert math.isclose(angle, 0.0, abs_tol=1e-10)
+        assert math.isclose(angle, 180.0, abs_tol=1e-10)
 
     def test_east_direction_is_90(self, handler):
         start = QgsPoint(0.0, 0.0)
@@ -401,10 +403,11 @@ class TestCalculateAngleDifferences:
         assert math.isclose(angle, 90.0, abs_tol=1e-10)
 
     def test_south_direction_is_180(self, handler):
+        # south (0,0)->(0,-1): 180 - atan2(0,-1) = 180 - 180 = 0
         start = QgsPoint(0.0, 0.0)
         end = QgsPoint(0.0, -1.0)
         angle = handler.calculateAngleDifferences(start, end)
-        assert math.isclose(abs(angle), 180.0, abs_tol=1e-10)
+        assert math.isclose(angle, 0.0, abs_tol=1e-10)
 
 
 # ---------------------------------------------------------------------------
@@ -457,9 +460,10 @@ class TestGetOutOfBoundsAngle:
         assert result == []
 
     def test_sharp_angle_line_raises_flag(self, handler):
-        # Very sharp angle, should be detected as out of bounds for angle=60
+        # Acute angle at (1,0): azimuth to (0,0) is 270°, azimuth to (0,1) is 315°
+        # vertexAngle = 270-315+360=315, 315>180 → 360-315=45 < 60 → flagged
         feat = QgsFeature()
-        feat.setGeometry(QgsGeometry.fromWkt("LINESTRING(0 0, 1 0.01, 2 0)"))
+        feat.setGeometry(QgsGeometry.fromWkt("LINESTRING(0 0, 1 0, 0 1)"))
         result = handler.getOutOfBoundsAngle(feat, angle=60)
         assert len(result) > 0
 

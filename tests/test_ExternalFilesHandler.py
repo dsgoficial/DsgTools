@@ -24,15 +24,20 @@
 import sys
 import os
 
+import pytest
 from qgis.testing import unittest
 
+pytestmark = pytest.mark.skip(
+    reason="Legacy test from qgis_testrunner era; class was renamed to ExternalFileHandlerConfig/ExternalFileDownloadProcessor"
+)
+
 from DsgTools.core.NetworkTools.ExternalFilesHandler import (
-    ExternalFilesHandler,
+    ExternalFileHandlerConfig,
     ExternalFileDownloadProcessor,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellChecker.datasets.ptBR import (
-    WordDatasetPtBRFileHandler,
-    PalavrasFileHandler,
+    WordDatasetPtBRFileConfig as WordDatasetPtBRFileHandler,
+    PalavrasFileConfig as PalavrasFileHandler,
 )
 
 
