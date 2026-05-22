@@ -85,3 +85,4 @@ DsgTools/core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellChecker/data/
 *.gpkg-wal
 
 .qgis-settings/
+.wolf/
