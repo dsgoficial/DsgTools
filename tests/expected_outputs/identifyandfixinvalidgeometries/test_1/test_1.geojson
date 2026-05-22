@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "test_1",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Reason: GEOS invalid reason: Self-intersection\n", "featid": "2" }, "geometry": { "type": "Point", "coordinates": [ 282532.299989892519079, 9976061.796539818868041 ] } },
+{ "type": "Feature", "properties": { "reason": "Reason: GEOS invalid reason: Ring self-intersection\n", "featid": "1" }, "geometry": { "type": "Point", "coordinates": [ 282689.866001214366406, 9973741.159000007435679 ] } }
+]
+}

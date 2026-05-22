@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-docker exec -t dsgtools-testing-env sh -c "cd /tests_directory && qgis_testrunner.sh tests.test_ValidationAlgorithms"
-docker exec -t dsgtools-testing-env sh -c "cd /tests_directory && qgis_testrunner.sh tests.test_EnvironmentSetterAlgorithms"
-docker exec -t dsgtools-testing-env sh -c "cd /tests_directory && qgis_testrunner.sh tests.test_CustomButtonSetup"
-docker exec -t dsgtools-testing-env sh -c "cd /tests_directory && qgis_testrunner.sh tests.test_DsgToolsProcessingModel"
-docker exec -t dsgtools-testing-env sh -c "cd /tests_directory && qgis_testrunner.sh tests.test_OtherAlgorithms"
-docker exec -t dsgtools-testing-env sh -c "cd /tests_directory && qgis_testrunner.sh tests.test_graphHandler"
+docker exec -t dsgtools-testing-env sh -c "
+  export PYTHONPATH=/usr/share/qgis/python:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages:/tests_directory
+  export QT_QPA_PLATFORM=offscreen
+  cd /tests_directory && python3 -m pytest tests/ -v \
+    --cov=DsgTools/core \
+    --cov-report=term-missing \
+    --cov-report=xml:coverage.xml
+"

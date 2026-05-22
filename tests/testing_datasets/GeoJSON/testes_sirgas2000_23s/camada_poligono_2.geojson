@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "camada_poligono_2",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31983" } },
+"features": [
+{ "type": "Feature", "properties": { "int_attr": null, "float_attr": null, "str_attr": null, "bool_attr": false }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ -341070.045657948066946, 9988317.847029224038124 ], [ -340834.904715540935285, 9991632.575797993689775 ], [ -329328.168920971569605, 9993396.13286604732275 ], [ -332229.504742608172819, 9985841.281942253932357 ], [ -341070.045657948066946, 9988317.847029224038124 ] ] ] ] } }
+]
+}

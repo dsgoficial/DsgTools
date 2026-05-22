@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "test_1",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Unshared vertex between the intersections of input layers." }, "geometry": { "type": "Point", "coordinates": [ -0.04467517854452, 0.013963805283538 ] } },
+{ "type": "Feature", "properties": { "reason": "Unshared vertex between the intersections of input layers." }, "geometry": { "type": "Point", "coordinates": [ -0.006639753220289, -0.294929951895059 ] } }
+]
+}

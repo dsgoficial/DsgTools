@@ -129,7 +129,7 @@ class DSGToolsWorkflow(QObject):
             self.setCurrentWorkflowItem(0)
             return
         for idx, workflowItem in enumerate(self.workflowItemList):
-            if idx > len(data):
+            if idx >= len(data):
                 break
             d = data[idx]
             if d["workflowItem"] != workflowItem.displayName:
@@ -143,7 +143,7 @@ class DSGToolsWorkflow(QObject):
         initialIdx, _ = min(
             filter(lambda x: x[1] != ExecutionStatus.FINISHED, statusList),
             key=lambda x: x[0],
-            default=0,
+            default=(0, None),
         )
         self.setCurrentWorkflowItem(initialIdx)
 

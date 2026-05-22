@@ -1,0 +1,12 @@
+{
+"type": "FeatureCollection",
+"name": "test_1",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_hid_terreno_suj_inundacao_a with id=1 has angle of value 9.633427854424895 degrees, which is lesser than the tolerance of 10.0 degrees." }, "geometry": { "type": "Point", "coordinates": [ 305157.271986993029714, 9972839.948126092553139 ] } },
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_hid_terreno_suj_inundacao_a with id=3 has angle of value 3.0399860406760126e-10 degrees, which is lesser than the tolerance of 10.0 degrees." }, "geometry": { "type": "Point", "coordinates": [ 284187.29320515942527, 9983455.959893664345145 ] } },
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_hid_terreno_suj_inundacao_a with id=3 has angle of value 1.5126941352019685 degrees, which is lesser than the tolerance of 10.0 degrees." }, "geometry": { "type": "Point", "coordinates": [ 284297.03177930705715, 9983449.551814708858728 ] } },
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_hid_terreno_suj_inundacao_a with id=108 has angle of value 9.633427854424895 degrees, which is lesser than the tolerance of 10.0 degrees." }, "geometry": { "type": "Point", "coordinates": [ 305157.271986993029714, 9972839.948126092553139 ] } },
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_hid_terreno_suj_inundacao_a with id=215 has angle of value 9.633427854424895 degrees, which is lesser than the tolerance of 10.0 degrees." }, "geometry": { "type": "Point", "coordinates": [ 305157.271986993029714, 9972839.948126092553139 ] } }
+]
+}

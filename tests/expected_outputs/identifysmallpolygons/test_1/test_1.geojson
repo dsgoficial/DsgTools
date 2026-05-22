@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "test_1",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_veg_campo_a with id=4 has area of value 4.0399713516, which is lesser than the tolerance of 625.0 square units." }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 280630.059056505037006, 9993288.802057582885027 ], [ 280632.143296226335224, 9993289.21890552714467 ], [ 280632.664356156659778, 9993287.933624364435673 ], [ 280632.282245541049633, 9993287.551513750106096 ], [ 280631.031701708270703, 9993287.134665805846453 ], [ 280629.989581847621594, 9993287.516776420176029 ], [ 280630.059056505037006, 9993288.802057582885027 ] ] ] ] } },
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_veg_campo_a with id=5 has area of value 4.7977676507, which is lesser than the tolerance of 625.0 square units." }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 280807.740492745768279, 9993384.190762165933847 ], [ 280810.658428355585784, 9993379.883333409205079 ], [ 280809.963681781839114, 9993379.605434779077768 ], [ 280809.268935208034236, 9993380.300181353464723 ], [ 280807.601543430995662, 9993381.828623816370964 ], [ 280807.740492745768279, 9993384.190762165933847 ] ] ] ] } },
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_veg_campo_a with id=6 has area of value 79.3900224231, which is lesser than the tolerance of 625.0 square units." }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 280752.438665474008303, 9992739.326992399990559 ], [ 280761.331421618233435, 9992737.103803362697363 ], [ 280762.998813395272009, 9992733.213222550228238 ], [ 280762.443016136239748, 9992728.766844477504492 ], [ 280752.994462733040564, 9992730.990033514797688 ], [ 280752.438665474008303, 9992739.326992399990559 ] ] ] ] } }
+]
+}

@@ -115,7 +115,7 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         self.fromLs = []
         self.toLs = []
         self.fromTreeWidget.clear()
-        self.fromTreeWidget.clear()
+        self.toTreeWidget.clear()
         if not isinstance(fromDictList, int):
             self.addItemsToTree(
                 self.fromTreeWidget,

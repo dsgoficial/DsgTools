@@ -1,0 +1,12 @@
+{
+"type": "FeatureCollection",
+"name": "cb_adm_edif_pub_civil_p",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
+"features": [
+{ "type": "Feature", "properties": { "nome": null, "nomeabrev": "Teste", "geometriaaproximada": 1, "operacional": 2, "situacaofisica": 5, "matconstr": 8, "tipoedifcivil": 22, "tipousoedif": 1, "id_org_pub_civil": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 291346.100000985316001, 9977842.546000005677342 ] ] } },
+{ "type": "Feature", "properties": { "nome": null, "nomeabrev": "adas", "geometriaaproximada": 2, "operacional": 0, "situacaofisica": null, "matconstr": null, "tipoedifcivil": null, "tipousoedif": null, "id_org_pub_civil": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 290067.500001016946044, 9980627.114000003784895 ] ] } },
+{ "type": "Feature", "properties": { "nome": null, "nomeabrev": "asda", "geometriaaproximada": 1, "operacional": 3, "situacaofisica": null, "matconstr": null, "tipoedifcivil": null, "tipousoedif": null, "id_org_pub_civil": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 288624.330001052469015, 9980074.229000005871058 ] ] } },
+{ "type": "Feature", "properties": { "nome": null, "nomeabrev": "eqw", "geometriaaproximada": 2, "operacional": 1, "situacaofisica": 4, "matconstr": 6, "tipoedifcivil": null, "tipousoedif": null, "id_org_pub_civil": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 288535.000001055654138, 9979035.000000005587935 ] ] } },
+{ "type": "Feature", "properties": { "nome": null, "nomeabrev": "qwer", "geometriaaproximada": 2, "operacional": 1, "situacaofisica": 0, "matconstr": null, "tipoedifcivil": null, "tipousoedif": null, "id_org_pub_civil": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 285675.000001131556928, 9980755.000000005587935 ] ] } }
+]
+}

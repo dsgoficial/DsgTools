@@ -14,14 +14,37 @@ jobs:
         working-directory: .docker
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: 'true'
-      - name: Pull docker images
-        run: docker compose pull
+
+      - name: Get week number for cache key
+        id: date
+        run: echo "week=$(date +'%Y-%W')" >> $GITHUB_OUTPUT
+
+      - name: Cache QGIS Docker image
+        id: cache-docker
+        uses: actions/cache@v4
+        with:
+          path: /tmp/docker-cache
+          key: docker-qgis-latest-${{ steps.date.outputs.week }}
+
+      - name: Pull and save Docker image
+        if: steps.cache-docker.outputs.cache-hit != 'true'
+        run: |
+          docker compose pull
+          mkdir -p /tmp/docker-cache
+          docker save qgis/qgis:latest -o /tmp/docker-cache/qgis.tar
+
+      - name: Load Docker image from cache
+        if: steps.cache-docker.outputs.cache-hit == 'true'
+        run: docker load -i /tmp/docker-cache/qgis.tar
+
       - name: Start the environment
         run: ./start.sh
+
       - name: Tests
         run: ./exec.sh
+
       - name: Stop the environment
         run: docker compose down

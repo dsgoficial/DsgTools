@@ -1,0 +1,12 @@
+{
+"type": "FeatureCollection",
+"name": "test_1",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_hid_trecho_drenagem_l with id=135 has length of value 0.5940133679, which is lesser than the tolerance of 5.0 units." }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 293807.495000926603097, 9988777.857000002637506 ], [ 293808.088273055327591, 9988777.886665850877762 ] ] ] } },
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_hid_trecho_drenagem_l with id=136 has length of value 1.6397031531, which is lesser than the tolerance of 5.0 units." }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 296369.302000868716277, 9989307.490000002086163 ], [ 296369.483063271094579, 9989305.860324317589402 ] ] ] } },
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_hid_trecho_drenagem_l with id=410 has length of value 0.0058500560, which is lesser than the tolerance of 5.0 units." }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 301774.353000756236725, 9986895.246000001206994 ], [ 301774.357928072451614, 9986895.242846477776766 ] ] ] } },
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_hid_trecho_drenagem_l with id=411 has length of value 0.0663316132, which is lesser than the tolerance of 5.0 units." }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 302566.226000741007738, 9987100.535000002011657 ], [ 302566.254244448733516, 9987100.474981872364879 ] ] ] } },
+{ "type": "Feature", "properties": { "reason": "Feature from layer cb_hid_trecho_drenagem_l with id=657 has length of value 1.0896056294, which is lesser than the tolerance of 5.0 units." }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 295942.131000877358019, 9988769.3260000012815 ], [ 295942.131000877358019, 9988768.236394371837378 ] ] ] } }
+]
+}
