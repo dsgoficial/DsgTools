@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "test_1",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31983" } },
+"features": [
+{ "type": "Feature", "id": 1, "properties": { "int_attr": null, "float_attr": null, "str_attr": null, "bool_attr": false, "lenght_otf": 6203.2890882853626 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ -358101.143815222603735, 9996493.094287728890777 ], [ -354878.177804222679697, 9995572.246856013312936 ], [ -353266.694798722688574, 9993155.022347765043378 ] ] ] } },
+{ "type": "Feature", "id": 2, "properties": { "int_attr": null, "float_attr": null, "str_attr": null, "bool_attr": false, "lenght_otf": 3067.3394883674855 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ -354878.177804222679697, 9995572.246856013312936 ], [ -357007.637490061984863, 9997816.812470816075802 ] ] ] } }
+]
+}

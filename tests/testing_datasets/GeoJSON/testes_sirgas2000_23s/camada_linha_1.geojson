@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "camada_linha_1",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31983" } },
+"features": [
+{ "type": "Feature", "properties": { "int_attr": null, "float_attr": null, "str_attr": null, "bool_attr": false }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ -356893.072281642700545, 9990385.052833439782262 ], [ -356147.477284235181287, 9987803.843446224927902 ], [ -353645.717692446080036, 9986314.157784804701805 ] ] ] } },
+{ "type": "Feature", "properties": { "int_attr": null, "float_attr": null, "str_attr": null, "bool_attr": false }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ -350441.104491507983766, 9990483.522017812356353 ], [ -350224.492487701121718, 9987976.034580785781145 ], [ -348105.738262917962857, 9986247.190610848367214 ] ], [ [ -347890.387741338461637, 9990440.691395904868841 ], [ -347500.858117055031471, 9987933.344185814261436 ], [ -344993.00155866809655, 9985642.685989931225777 ] ] ] } },
+{ "type": "Feature", "properties": { "int_attr": null, "float_attr": null, "str_attr": null, "bool_attr": false }, "geometry": null }
+]
+}

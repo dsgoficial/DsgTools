@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "INVALID_POLYGON_LOCATION",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31983" } },
+"features": [
+
+]
+}

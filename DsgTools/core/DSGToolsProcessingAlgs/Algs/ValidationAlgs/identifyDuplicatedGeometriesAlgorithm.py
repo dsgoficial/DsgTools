@@ -95,7 +95,7 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
             if feedback.isCanceled():
                 break
             if len(featList) > 1:
-                idStrList = ", ".join(map(str, [feat.id() for feat in featList]))
+                idStrList = ", ".join(map(str, sorted(feat.id() for feat in featList)))
                 flagText = self.tr(
                     "Features from layer {0} with ids=({1}) have the same set of attributes."
                 ).format(inputLyr.name(), idStrList)

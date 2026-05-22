@@ -1,0 +1,4 @@
+# Test-only dependencies — never import these from the plugin codebase.
+pytest>=8.0
+pytest-qgis>=4.0
+pytest-xdist>=3.0

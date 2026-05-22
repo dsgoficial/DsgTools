@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "camada_linha_3",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31983" } },
+"features": [
+{ "type": "Feature", "properties": { "atr": "z" }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ -351892.382897158793639, 10005193.126091560348868 ], [ -350510.902972207171842, 10001721.714998092502356 ], [ -347925.05593319516629, 9999773.474078290164471 ] ] ] } },
+{ "type": "Feature", "properties": { "atr": "Z" }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ -347925.05593319516629, 9999773.474078290164471 ], [ -343497.235660914273467, 9999383.825894327834249 ] ] ] } }
+]
+}

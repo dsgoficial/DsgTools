@@ -284,6 +284,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             distance=1e-6,
             context=context,
             feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         if multiStepFeedback.isCanceled():
             return {}
@@ -296,14 +297,16 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             overlayLayer=bufferedBounds,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=False,
+            is_child_algorithm=True,
         )
         if multiStepFeedback.isCanceled():
             return {}
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(2)
         singlePartContours = self.algRunner.runMultipartToSingleParts(
-            inputLayer=clippedContours, context=context, feedback=multiStepFeedback
+            inputLayer=clippedContours,
+            context=context,
+            feedback=multiStepFeedback,
         )
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(3)

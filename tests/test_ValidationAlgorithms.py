@@ -28,6 +28,7 @@ It is supposed to be run through QGIS with DSGTools installed.
 """
 
 import os
+import re
 import sys
 import warnings
 from osgeo import ogr
@@ -46,6 +47,32 @@ from qgis.core import (
 from qgis.testing import unittest
 
 
+def _normalize_geo_attr(val):
+    """Normalize geometry-list attributes (e.g. 'reason') for order-independent comparison.
+
+    Some algorithm outputs embed a comma-separated list of geometries (e.g.
+    "near edge(s) LineString (...), LineString (...)") whose order depends on
+    spatial-index traversal and is therefore non-deterministic. Sorting the
+    individual geometry strings makes the comparison stable.
+    """
+    if not isinstance(val, str) or "near edge(s)" not in val:
+        return val
+    marker = "near edge(s) "
+    idx = val.find(marker)
+    if idx == -1:
+        return val
+    prefix = val[: idx + len(marker)]
+    rest = val[idx + len(marker) :]
+    trailing = ""
+    if rest.endswith("."):
+        rest = rest[:-1]
+        trailing = "."
+    edges = re.findall(r"[A-Z][a-zA-Z]+ \([^)]+\)", rest)
+    if not edges:
+        return val
+    return prefix + ", ".join(sorted(edges)) + trailing
+
+
 class Tester(unittest.TestCase):
 
     CURRENT_PATH = os.path.dirname(__file__)
@@ -53,6 +80,7 @@ class Tester(unittest.TestCase):
         CURRENT_PATH, "..", "core", "DSGToolsProcessingAlgs", "Algs", "ValidationAlgs"
     )
     datasets = dict()
+    REGEN = False  # set to True via conftest when --regen flag is passed
 
     def readAvailableAlgs(self, path):
         """
@@ -113,72 +141,54 @@ class Tester(unittest.TestCase):
                 layers[layername] = QgsVectorLayer(fullPath, layername, "ogr")
         return layers
 
-    def testingDataset(self, driver, dataset):
+    def _loadDataset(self, driver, dataset):
         """
-        Reads a dataset accordingly to its driver.
-        :param driver: (str) driver's to be read.
-        :param dataset: (str) dataset's name. If not given, a default one will
-                        be given.
-        :return: (dict) a map from layer name to vector layer read from database.
+        Reads a GeoJSON dataset (folder of .geojson files).
+
+        The ``driver`` parameter is kept for backwards compatibility but is
+        ignored — all datasets are now stored as GeoJSON folders.
+
+        :param driver: (str) ignored; kept for API compatibility.
+        :param dataset: (str) dataset folder name inside testing_datasets/GeoJSON/.
+        :return: (dict) layer-name → QgsVectorLayer.
         """
-        spatiaLitePaths = os.path.join(
-            self.CURRENT_PATH, "testing_datasets", "SpatiaLite"
-        )
-        gpkgPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", "Geopackage")
         geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", "GeoJSON")
         datasets = {
-            "sqlite": {
-                "banco_capacitacao": os.path.join(
-                    spatiaLitePaths, "banco_capacitacao.sqlite"
-                )
-            },
-            "gpkg": {
-                "testes_wgs84": os.path.join(gpkgPaths, "testes_wgs84.gpkg"),
-                "testes_sirgas2000_23s": os.path.join(
-                    gpkgPaths, "testes_sirgas2000_23s.gpkg"
-                ),
-                "test_dataset_unbuild_polygons": os.path.join(
-                    gpkgPaths, "test_dataset_unbuild_polygons.gpkg"
-                ),
-            },
-            "geojson": {
-                "land_cover_layers": os.path.join(geojsonPaths, "land_cover_layers"),
-                "terrain_model_layers": os.path.join(
-                    geojsonPaths, "terrain_model_layers"
-                ),
-                "testes_sirgas2000_24s": os.path.join(
-                    geojsonPaths, "testes_sirgas2000_24s"
-                ),
-                "spatial_rules_alg": os.path.join(geojsonPaths, "spatial_rules_alg"),
-                "create_frames_layers": os.path.join(
-                    geojsonPaths, "create_frames_layers"
-                ),
-                "identify_angles_in_invalid_range_layers": os.path.join(
-                    geojsonPaths, "identify_angles_in_invalid_range_layers"
-                ),
-                "douglas_peucker": os.path.join(geojsonPaths, "douglas_peucker"),
-                "build_polygons_from_center_points": os.path.join(
-                    geojsonPaths, "build_polygons_from_center_points"
-                ),
-                "enforce_attribute_rules": os.path.join(
-                    geojsonPaths, "enforce_attribute_rules"
-                ),
-                "polygon_sliver": os.path.join(geojsonPaths, "polygon_sliver"),
-            },
-        }
-        # switch-case for dataset reading
-        funcs = {
-            "sqlite": lambda ds: self.readSpatiaLite(datasets["sqlite"][ds]),
-            "gpkg": lambda ds: self.readGeopackage(datasets["gpkg"][ds]),
-            "geojson": lambda ds: self.readGeojson(datasets["geojson"][ds]),
+            "banco_capacitacao": os.path.join(geojsonPaths, "banco_capacitacao"),
+            "testes_sirgas2000_23s": os.path.join(
+                geojsonPaths, "testes_sirgas2000_23s"
+            ),
+            "testes_wgs84": os.path.join(geojsonPaths, "testes_wgs84"),
+            "land_cover_layers": os.path.join(geojsonPaths, "land_cover_layers"),
+            "terrain_model_layers": os.path.join(geojsonPaths, "terrain_model_layers"),
+            "testes_sirgas2000_24s": os.path.join(
+                geojsonPaths, "testes_sirgas2000_24s"
+            ),
+            "spatial_rules_alg": os.path.join(geojsonPaths, "spatial_rules_alg"),
+            "create_frames_layers": os.path.join(geojsonPaths, "create_frames_layers"),
+            "identify_angles_in_invalid_range_layers": os.path.join(
+                geojsonPaths, "identify_angles_in_invalid_range_layers"
+            ),
+            "douglas_peucker": os.path.join(geojsonPaths, "douglas_peucker"),
+            "build_polygons_from_center_points": os.path.join(
+                geojsonPaths, "build_polygons_from_center_points"
+            ),
+            "enforce_attribute_rules": os.path.join(
+                geojsonPaths, "enforce_attribute_rules"
+            ),
+            "polygon_sliver": os.path.join(geojsonPaths, "polygon_sliver"),
         }
         layers = dict()
-        if driver in datasets and dataset in datasets[driver]:
-            key = "{driver}:{dataset}".format(driver=driver, dataset=dataset)
+        if dataset in datasets:
+            key = "geojson:{dataset}".format(dataset=dataset)
             if key not in self.datasets:
-                self.datasets[key] = funcs[driver](dataset)
+                self.datasets[key] = self.readGeojson(datasets[dataset])
             else:
-                [lyr.rollBack() for lyr in self.datasets[key].values()]
+                try:
+                    [lyr.rollBack() for lyr in self.datasets[key].values()]
+                except RuntimeError:
+                    # C++ layer objects deleted (e.g., after QgsProject.clear()); reload
+                    self.datasets[key] = self.readGeojson(datasets[dataset])
             layers = self.datasets[key]
         return layers
 
@@ -196,7 +206,7 @@ class Tester(unittest.TestCase):
         """
         out = []
         # (vls) a map from layer name to vector layer read from database.
-        vls = self.testingDataset(driver, dataset)
+        vls = self._loadDataset(driver, dataset)
         for l in layers:
             if idsToSelect is not None:
                 # vls[l].rollBack()
@@ -210,6 +220,10 @@ class Tester(unittest.TestCase):
         return out
 
     def addControlKey(self, lyr):
+        # Sort by WKT before assigning AUTO so the numbering is deterministic
+        # regardless of the internal feature-iteration order of the layer.
+        ctx = QgsProcessingContext()
+        ctx.setProject(QgsProject.instance())
         return processing.run(
             "native:addautoincrementalfield",
             {
@@ -217,12 +231,12 @@ class Tester(unittest.TestCase):
                 "FIELD_NAME": "AUTO",
                 "START": 0,
                 "GROUP_FIELDS": [],
-                "SORT_EXPRESSION": "",
+                "SORT_EXPRESSION": "geom_to_wkt($geometry)",
                 "SORT_ASCENDING": True,
                 "SORT_NULLS_FIRST": False,
                 "OUTPUT": "memory:",
             },
-            context=QgsProcessingContext(),
+            context=ctx,
             feedback=QgsProcessingFeedback(),
         )["OUTPUT"]
 
@@ -322,7 +336,7 @@ class Tester(unittest.TestCase):
                     "IGNORE_PK_FIELDS": True,
                     "IGNORE_VIRTUAL_FIELDS": True,
                     "INPUT": self.getInputLayers(
-                        "sqlite",
+                        "geojson",
                         "banco_capacitacao",
                         ["cb_rel_ponto_cotado_altimetrico_p"],
                     )[0],
@@ -334,7 +348,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
                     "INPUT": self.getInputLayers(
-                        "sqlite",
+                        "geojson",
                         "banco_capacitacao",
                         ["cb_hid_terreno_suj_inundacao_a"],
                     )[0],
@@ -347,7 +361,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
                     "INPUTLAYERS": self.getInputLayers(
-                        "sqlite", "banco_capacitacao", ["cb_hid_trecho_drenagem_l"]
+                        "geojson", "banco_capacitacao", ["cb_hid_trecho_drenagem_l"]
                     ),
                     "SELECTED": False,
                     "TOLERANCE": 10,
@@ -370,7 +384,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
                     "INPUT": self.getInputLayers(
-                        "sqlite",
+                        "geojson",
                         "banco_capacitacao",
                         ["cb_hid_terreno_suj_inundacao_a"],
                     )[0],
@@ -382,7 +396,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works. This test does not check fixes!",
                     "FLAGS": "memory:",
                     "INPUT": self.getInputLayers(
-                        "sqlite", "banco_capacitacao", ["cb_veg_campo_a"]
+                        "geojson", "banco_capacitacao", ["cb_veg_campo_a"]
                     )[0],
                     "IGNORE_CLOSED": False,
                     "SELECTED": False,
@@ -394,7 +408,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
                     "INPUT": self.getInputLayers(
-                        "sqlite",
+                        "geojson",
                         "banco_capacitacao",
                         ["cb_rel_ponto_cotado_altimetrico_p"],
                     )[0],
@@ -406,7 +420,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
                     "INPUTLAYERS": self.getInputLayers(
-                        "sqlite",
+                        "geojson",
                         "banco_capacitacao",
                         ["cb_hid_corredeira_l", "cb_hid_trecho_drenagem_l"],
                     ),
@@ -418,7 +432,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
                     "INPUT": self.getInputLayers(
-                        "sqlite", "banco_capacitacao", ["cb_hid_trecho_drenagem_l"]
+                        "geojson", "banco_capacitacao", ["cb_hid_trecho_drenagem_l"]
                     )[0],
                     "SELECTED": False,
                     "TOLERANCE": 5,
@@ -429,7 +443,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
                     "INPUTLAYERS": self.getInputLayers(
-                        "sqlite",
+                        "geojson",
                         "banco_capacitacao",
                         ["cb_veg_campo_a", "cb_veg_floresta_a"],
                     ),
@@ -441,7 +455,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
                     "INPUT": self.getInputLayers(
-                        "sqlite", "banco_capacitacao", ["cb_veg_campo_a"]
+                        "geojson", "banco_capacitacao", ["cb_veg_campo_a"]
                     )[0],
                     "SELECTED": False,
                     "TOLERANCE": 625,
@@ -451,15 +465,15 @@ class Tester(unittest.TestCase):
                 {
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
-                    "IGNOREINNER": False,
+                    "IGNORE_DANGLES_ON_UNSEGMENTED_LINES": False,
                     "INPUT": self.getInputLayers(
-                        "sqlite", "banco_capacitacao", ["cb_hid_trecho_drenagem_l"]
+                        "geojson", "banco_capacitacao", ["cb_hid_trecho_drenagem_l"]
                     )[0],
-                    "LINEFILTERLAYERS": "",
-                    "POLYGONFILTERLAYERS": "",
+                    "LINEFILTERLAYERS": [],
+                    "POLYGONFILTERLAYERS": [],
                     "SELECTED": False,
                     "TOLERANCE": 2,
-                    "TYPE": False,
+                    "INPUT_IS_BOUDARY_LAYER": False,
                 }
             ],
             "dsgtools:identifyduplicatedpointsoncoverage": [
@@ -467,7 +481,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
                     "INPUTLAYERS": self.getInputLayers(
-                        "sqlite",
+                        "geojson",
                         "banco_capacitacao",
                         [
                             "cb_adm_edif_pub_civil_p",
@@ -482,7 +496,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
                     "INPUT": self.getInputLayers(
-                        "sqlite", "banco_capacitacao", ["cb_hid_ilha_a"]
+                        "geojson", "banco_capacitacao", ["cb_hid_ilha_a"]
                     )[0],
                     "SELECTED": False,
                 }
@@ -514,7 +528,7 @@ class Tester(unittest.TestCase):
                     "IGNORE_PK_FIELDS": True,
                     "IGNORE_VIRTUAL_FIELDS": True,
                     "INPUT": self.getInputLayers(
-                        "sqlite",
+                        "geojson",
                         "banco_capacitacao",
                         ["cb_rel_ponto_cotado_altimetrico_p"],
                     )[0],
@@ -526,7 +540,7 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "FLAGS": "memory:",
                     "INPUT": self.getInputLayers(
-                        "sqlite",
+                        "geojson",
                         "banco_capacitacao",
                         ["cb_rel_ponto_cotado_altimetrico_p"],
                     )[0],
@@ -537,7 +551,7 @@ class Tester(unittest.TestCase):
                 {
                     "__comment": "'Normal' test: checks if it works.",
                     "INPUT": self.getInputLayers(
-                        "sqlite", "banco_capacitacao", ["cb_hid_trecho_drenagem_l"]
+                        "geojson", "banco_capacitacao", ["cb_hid_trecho_drenagem_l"]
                     )[0],
                     "SELECTED": False,
                     "TOLERANCE": 5,
@@ -547,7 +561,7 @@ class Tester(unittest.TestCase):
                 {
                     "__comment": "'Normal' test: checks if it works.",
                     "INPUT": self.getInputLayers(
-                        "sqlite", "banco_capacitacao", ["cb_veg_campo_a"]
+                        "geojson", "banco_capacitacao", ["cb_veg_campo_a"]
                     )[0],
                     "SELECTED": False,
                     "TOLERANCE": 625,
@@ -558,10 +572,10 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "BEHAVIOR": 0,
                     "INPUT": self.getInputLayers(
-                        "gpkg", "testes_sirgas2000_23s", ["camada_linha_1"]
+                        "geojson", "testes_sirgas2000_23s", ["camada_linha_1"]
                     )[0],
                     "OVERLAY": self.getInputLayers(
-                        "gpkg", "testes_sirgas2000_23s", ["camada_poligono_1"]
+                        "geojson", "testes_sirgas2000_23s", ["camada_poligono_1"]
                     )[0],
                     "SELECTED": False,
                     "SELECTED_OVERLAY": False,
@@ -571,10 +585,9 @@ class Tester(unittest.TestCase):
                 {
                     "__comment": "'Normal' test: checks if it works.",
                     "INPUT": self.getInputLayers(
-                        "gpkg",
+                        "geojson",
                         "testes_sirgas2000_23s",
                         ["camada_linha_1"],
-                        addControlKey=True,
                     )[0],
                     "SELECTED": False,
                 }
@@ -586,7 +599,7 @@ class Tester(unittest.TestCase):
                     "IGNORE_PK_FIELDS": True,
                     "IGNORE_VIRTUAL_FIELDS": True,
                     "INPUT": self.getInputLayers(
-                        "gpkg", "testes_sirgas2000_23s", ["camada_poligono_1"]
+                        "geojson", "testes_sirgas2000_23s", ["camada_poligono_1"]
                     )[0],
                     "MIN_AREA": None,
                     "SELECTED": False,
@@ -596,7 +609,7 @@ class Tester(unittest.TestCase):
                 {
                     "__comment": "'Normal' test: checks if it works.",
                     "INPUT": self.getInputLayers(
-                        "gpkg", "testes_sirgas2000_23s", ["camada_linha_2"]
+                        "geojson", "testes_sirgas2000_23s", ["camada_linha_2"]
                     )[0],
                     "SELECTED": False,
                 }
@@ -605,7 +618,7 @@ class Tester(unittest.TestCase):
                 {
                     "__comment": "'Normal' test: checks if it works.",
                     "INPUT": self.getInputLayers(
-                        "gpkg", "testes_sirgas2000_23s", ["camada_linha_4"]
+                        "geojson", "testes_sirgas2000_23s", ["camada_linha_4"]
                     )[0],
                     "SELECTED": False,
                     "TOLERANCE": 1,
@@ -619,7 +632,7 @@ class Tester(unittest.TestCase):
                     "IGNORE_PK_FIELDS": True,
                     "IGNORE_VIRTUAL_FIELDS": True,
                     "INPUT": self.getInputLayers(
-                        "gpkg", "testes_sirgas2000_23s", ["camada_linha_3"]
+                        "geojson", "testes_sirgas2000_23s", ["camada_linha_3"]
                     )[0],
                     "SELECTED": False,
                 }
@@ -629,20 +642,21 @@ class Tester(unittest.TestCase):
                     "__comment": "'Normal' test: checks if it works.",
                     "BEHAVIOR": 0,
                     "INPUT": self.getInputLayers(
-                        "gpkg", "testes_sirgas2000_23s", ["camada_poligono_1"]
+                        "geojson", "testes_sirgas2000_23s", ["camada_poligono_1"]
                     )[0],
                     "REFERENCE_LAYER": self.getInputLayers(
-                        "gpkg", "testes_sirgas2000_23s", ["camada_poligono_2"]
+                        "geojson", "testes_sirgas2000_23s", ["camada_poligono_2"]
                     )[0],
                     "SELECTED": False,
                     "TOLERANCE": 25,
+                    "BUILD_CACHE": False,
                 }
             ],
             "dsgtools:adjustnetworkconnectivity": [
                 {
                     "__comment": "'Normal' test: checks if it works.",
                     "INPUT": self.getInputLayers(
-                        "sqlite", "banco_capacitacao", ["cb_hid_trecho_drenagem_l"]
+                        "geojson", "banco_capacitacao", ["cb_hid_trecho_drenagem_l"]
                     )[0],
                     "SELECTED": False,
                     "TOLERANCE": 2,
@@ -652,10 +666,10 @@ class Tester(unittest.TestCase):
                 {
                     "__comment": "'Normal' test: checks if it works.",
                     "INPUT_LINES": self.getInputLayers(
-                        "gpkg", "testes_wgs84", ["line_input"]
+                        "geojson", "testes_wgs84", ["line_input"]
                     )[0],
                     "INPUT_POLYGONS": self.getInputLayers(
-                        "gpkg", "testes_wgs84", ["polygon_input"]
+                        "geojson", "testes_wgs84", ["polygon_input"]
                     )[0],
                     "SELECTED": False,
                     "FLAGS": "memory:",
@@ -694,7 +708,10 @@ class Tester(unittest.TestCase):
                         "geojson", "land_cover_layers", ["water"]
                     ),
                     "GEOGRAPHIC_BOUNDARY": "",
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -711,7 +728,10 @@ class Tester(unittest.TestCase):
                         "geojson", "land_cover_layers", ["water"]
                     ),
                     "GEOGRAPHIC_BOUNDARY": "",
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -728,7 +748,10 @@ class Tester(unittest.TestCase):
                         "geojson", "land_cover_layers", ["water"]
                     ),
                     "GEOGRAPHIC_BOUNDARY": "",
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -745,7 +768,10 @@ class Tester(unittest.TestCase):
                         "geojson", "land_cover_layers", ["water"]
                     ),
                     "GEOGRAPHIC_BOUNDARY": "",
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -762,7 +788,10 @@ class Tester(unittest.TestCase):
                         "geojson", "land_cover_layers", ["water"]
                     ),
                     "GEOGRAPHIC_BOUNDARY": "",
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -783,7 +812,10 @@ class Tester(unittest.TestCase):
                     "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
                         "geojson", "land_cover_layers", ["geographic_bounds"]
                     )[0],
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -804,7 +836,10 @@ class Tester(unittest.TestCase):
                     "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
                         "geojson", "land_cover_layers", ["geographic_bounds"]
                     )[0],
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -825,7 +860,10 @@ class Tester(unittest.TestCase):
                     "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
                         "geojson", "land_cover_layers", ["geographic_bounds"]
                     )[0],
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -846,7 +884,10 @@ class Tester(unittest.TestCase):
                     "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
                         "geojson", "land_cover_layers", ["geographic_bounds"]
                     )[0],
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -867,7 +908,10 @@ class Tester(unittest.TestCase):
                     "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
                         "geojson", "land_cover_layers", ["geographic_bounds"]
                     )[0],
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -893,7 +937,10 @@ class Tester(unittest.TestCase):
                     ),
                     "CONSTRAINT_POLYGON_LAYERS": None,
                     "GEOGRAPHIC_BOUNDARY": None,
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -921,7 +968,10 @@ class Tester(unittest.TestCase):
                     "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
                         "geojson", "build_polygons_from_center_points", ["moldura"]
                     )[0],
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
                 {
@@ -944,7 +994,10 @@ class Tester(unittest.TestCase):
                     ),
                     "CONSTRAINT_POLYGON_LAYERS": None,
                     "GEOGRAPHIC_BOUNDARY": None,
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                     "OUTPUT_POLYGONS": "memory:",
+                    "INVALID_POLYGON_LOCATION": "memory:",
+                    "UNUSED_BOUNDARY_LINES": "memory:",
                     "FLAGS": "memory:",
                 },
             ],
@@ -963,6 +1016,8 @@ class Tester(unittest.TestCase):
                     )[0],
                     "POINT_FLAGS": "memory:",
                     "LINE_FLAGS": "memory:",
+                    "POLYGON_FLAGS": "memory:",
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                 },
                 {
                     "__comment": "test 2",
@@ -978,6 +1033,8 @@ class Tester(unittest.TestCase):
                     )[0],
                     "POINT_FLAGS": "memory:",
                     "LINE_FLAGS": "memory:",
+                    "POLYGON_FLAGS": "memory:",
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                 },
                 {
                     "__comment": "test 3",
@@ -993,6 +1050,8 @@ class Tester(unittest.TestCase):
                     )[0],
                     "POINT_FLAGS": "memory:",
                     "LINE_FLAGS": "memory:",
+                    "POLYGON_FLAGS": "memory:",
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                 },
                 {
                     "__comment": "test 4",
@@ -1008,6 +1067,8 @@ class Tester(unittest.TestCase):
                     )[0],
                     "POINT_FLAGS": "memory:",
                     "LINE_FLAGS": "memory:",
+                    "POLYGON_FLAGS": "memory:",
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                 },
                 {
                     "__comment": "test 5",
@@ -1023,6 +1084,8 @@ class Tester(unittest.TestCase):
                     )[0],
                     "POINT_FLAGS": "memory:",
                     "LINE_FLAGS": "memory:",
+                    "POLYGON_FLAGS": "memory:",
+                    "GROUP_BY_SPATIAL_PARTITION": False,
                 },
             ],
             # '__comment' : "'Normal' test: checks if it works."
@@ -1283,17 +1346,26 @@ class Tester(unittest.TestCase):
         :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
         :param context: (QgsProcessingContext) execution's environmental parameters.
         """
+        context = context or QgsProcessingContext()
+        context.setProject(QgsProject.instance())
+        for v in parameters.values():
+            if isinstance(v, QgsVectorLayer) and context.temporaryLayerStore().mapLayer(v.id()) is None:
+                context.temporaryLayerStore().addMapLayer(v)
+            elif isinstance(v, list):
+                for item in v:
+                    if isinstance(item, QgsVectorLayer) and context.temporaryLayerStore().mapLayer(item.id()) is None:
+                        context.temporaryLayerStore().addMapLayer(item)
         out = processing.run(
             algName,
             parameters,
             None,
             feedback or QgsProcessingFeedback(),
-            context or QgsProcessingContext(),
+            context,
         )
         outputstr = "FLAGS" if "FLAGS" in out else "OUTPUT" if "OUTPUT" in out else ""
         if outputstr:
             out = out[outputstr]
-        return out if not addControlKey else self.addControlKey(out)
+        return out
 
     def runAlgWithMultipleOutputs(
         self, algName, parameters, feedback=None, context=None
@@ -1307,55 +1379,46 @@ class Tester(unittest.TestCase):
         :param context: (QgsProcessingContext) execution's environmental parameters.
         """
         feedback = QgsProcessingFeedback() if feedback is None else feedback
-        context = QgsProcessingContext() if context is None else context
+        context = context or QgsProcessingContext()
+        context.setProject(QgsProject.instance())
+        for v in parameters.values():
+            if isinstance(v, QgsVectorLayer) and context.temporaryLayerStore().mapLayer(v.id()) is None:
+                context.temporaryLayerStore().addMapLayer(v)
+            elif isinstance(v, list):
+                for item in v:
+                    if isinstance(item, QgsVectorLayer) and context.temporaryLayerStore().mapLayer(item.id()) is None:
+                        context.temporaryLayerStore().addMapLayer(item)
         return processing.run(algName, parameters, context=context, feedback=feedback)
 
     def expectedOutput(self, algName, test, multipleOutputs=False):
         """
-        Gets the expect output layer.
+        Gets the expected output layer(s) for a given algorithm test.
+
+        All expected outputs are stored as GeoJSON:
+          - multi-output tests: expected_outputs/<alg>/test_N/   (folder)
+          - single-output tests: expected_outputs/<alg>/test_N/test_N.geojson
+
         :param algName: (str) target algorithm's name.
-        :param test: (int) test being run.
-        :return: (QgsVectorLayer) expected output layer.
+        :param test: (int) test index (1-based).
+        :param multipleOutputs: (bool) whether the algorithm has multiple outputs.
+        :return: dict (multipleOutputs) or QgsVectorLayer (single output), or None.
         """
         rootPath = os.path.join(
             self.CURRENT_PATH, "expected_outputs", algName.split(":")[-1]
         )
-        gpkgOutput = False
-        for f in next(os.walk(rootPath))[2]:
-            # in case of test case outputs are placed in different folders, this
-            # will not update the gpkgOutput
-            if ".gpkg" in f.lower():
-                gpkgOutput = True
-                break
-        # in case tests are placed as files inside algorithm's expected output
-        # folder, this will retrieve only the output for current test, if not,
-        # this will be evaluated to the path to all outputs in a folder test_TestNr
-        path = os.path.join(
-            rootPath,
-            "test_{test_number}{extension}".format(
-                test_number=test, extension=".gpkg" if gpkgOutput else ""
-            ),
+        folderPath = os.path.join(rootPath, "test_{n}".format(n=test))
+        if not os.path.isdir(folderPath):
+            return None
+        if multipleOutputs:
+            return self.readGeojson(folderPath)
+        geojsonPath = os.path.join(folderPath, "test_{n}.geojson".format(n=test))
+        if not os.path.exists(geojsonPath):
+            return None
+        return QgsVectorLayer(
+            geojsonPath,
+            "{alg}_test_{n}_output".format(alg=algName.split(":")[-1], n=test),
+            "ogr",
         )
-        if os.path.exists(path):
-            if multipleOutputs:
-                return (
-                    self.readGeopackage(path) if gpkgOutput else self.readGeojson(path)
-                )
-            else:
-                path = (
-                    path
-                    if gpkgOutput
-                    else os.path.join(
-                        path, "test_{test_number}.geojson".format(test_number=test)
-                    )
-                )
-                return QgsVectorLayer(
-                    path,
-                    "{alg}_test_{test}_output".format(
-                        alg=algName.split(":")[-1], test=test
-                    ),
-                    "ogr",
-                )
 
     def compareLayers(
         self,
@@ -1367,100 +1430,96 @@ class Tester(unittest.TestCase):
         areaTol=1e-10,
     ):
         """
-        Compares two vector layers. The algorithm stops on the first difference found.
-        :param target: (QgsVectorLayer) layer to be checked.
-        :param reference: (QgsVectorLayer) layer to be used as reference for comparison.
-        :return: (str) message containing identified differences.
+        Compares two vector layers using a deterministic WKT-based sort so that
+        feature ordering never causes spurious failures.
+
+        :param target: (QgsVectorLayer) layer produced by the algorithm.
+        :param reference: (QgsVectorLayer) expected-output layer.
+        :param attributeBlackList: (list-of-str) attribute names to skip.
+        :param addControlKey: (bool) whether an AUTO control column was added.
+        :param distTol: (float) max centroid distance for approximate geometry match.
+        :param areaTol: (float) max relative area difference for approximate match.
+        :return: (str) non-empty string describing the first difference found, or "".
         """
-        # geometry type check
-        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
-        attributeBlackList += ["AUTO"] if addControlKey else []
+        skipFields = {"fid", "AUTO", "_otf"}
+        blackList = set(attributeBlackList or [])
+        if addControlKey:
+            blackList.add("AUTO")
+
         if target.featureCount() == 0 and reference.featureCount() == 0:
             return ""
         if target.geometryType() != reference.geometryType():
             return "Incorrect geometry type for the output layer."
-        # feature check
-        targetFeatDict = {f.id(): f for f in target.getFeatures()}
-        refFeatDict = {f.id(): f for f in reference.getFeatures()}
-        targetFeaureIds = set(targetFeatDict.keys())
-        refFeaureIds = set(refFeatDict.keys())
         if target.featureCount() != reference.featureCount():
-            msg = ""
-            if targetFeaureIds - refFeaureIds:
-                msg += "Output layer has more features than the control layer (Exceeding ID: {idlist}).\n".format(
-                    idlist=", ".join(map(str, targetFeaureIds - refFeaureIds))
+            return (
+                "Feature count mismatch: output has {out}, expected {ref}.".format(
+                    out=target.featureCount(), ref=reference.featureCount()
                 )
-            if refFeaureIds - targetFeaureIds:
-                msg += "Output layer has fewer features than the control layer (Missing ID: {idlist}).".format(
-                    idlist=", ".join(map(str, refFeaureIds - targetFeaureIds))
-                )
-            return msg
-        # attribute names check
-        targetFieldNames = [f.name() for f in target.fields()]
+            )
+
+        # Validate that every reference attribute exists in the output.
+        targetFieldNames = [
+            f.name()
+            for f in target.fields()
+            if f.name() not in skipFields and "_otf" not in f.name()
+        ]
         for f in reference.fields():
-            fieldname = f.name()
-            if fieldname in ["fid", "AUTO"] or "_otf" in fieldname:
-                # not sure if this should happen...
+            if f.name() in skipFields or "_otf" in f.name():
                 continue
-            if fieldname not in targetFieldNames:
-                return "Incorrect set of attributes for output layer (missing '{attr}').".format(
-                    attr=fieldname
+            if f.name() not in targetFieldNames:
+                return "Missing attribute '{attr}' in output layer.".format(
+                    attr=f.name()
                 )
-        msg = ""
-        for featId, refFeat in refFeatDict.items():
-            if featId not in targetFeatDict:
-                msg = "Feature id={0} was not found on output layer.".format(featId)
-                break
-            testFeat = targetFeatDict[featId]
-            if not (
-                testFeat.geometry().isGeosEqual(refFeat.geometry())
-                or testFeat.geometry().equals(refFeat.geometry())
-            ):
-                msg = "Feature {fid} has incorrect geometry.".format(fid=featId)
-                break
-            for attr in targetFieldNames:
-                if attr not in attributeBlackList and testFeat[attr] != refFeat[attr]:
-                    # if geometries match, but attributes don't, then the dataset
-                    # should not even be checked for near geometry matches
-                    return "Incorrect set of attributes for feature {fid}:\nAttribute {attr} in the test feature is: {test_attr}\nAttribute {attr} in the reference feature is: {ref_attr}".format(
-                        fid=featId,
-                        attr=attr,
-                        test_attr=testFeat[attr],
-                        ref_attr=refFeat[attr],
+
+        compareFields = [n for n in targetFieldNames if n not in blackList]
+
+        def _sort_key(feat):
+            # WKT with fixed precision guarantees identical strings for equal
+            # geometries regardless of internal QGIS iteration order.
+            wkt = feat.geometry().asWkt(precision=8)
+            attrs = tuple(str(feat[f]) for f in compareFields)
+            return (wkt,) + attrs
+
+        targetFeats = sorted(target.getFeatures(), key=_sort_key)
+        refFeats = sorted(reference.getFeatures(), key=_sort_key)
+
+        for idx, (tf, rf) in enumerate(zip(targetFeats, refFeats)):
+            tGeom = tf.geometry()
+            rGeom = rf.geometry()
+            geom_ok = tGeom.isGeosEqual(rGeom) or tGeom.equals(rGeom)
+            if not geom_ok:
+                dist = tGeom.distance(rGeom)
+                if dist > distTol:
+                    return (
+                        "Feature #{idx}: geometry mismatch.\n"
+                        "  output:   {out}\n"
+                        "  expected: {ref}"
+                    ).format(
+                        idx=idx,
+                        out=tGeom.asWkt(),
+                        ref=rGeom.asWkt(),
                     )
-                    break
-        if not msg:
-            return ""
-        # in case a dataset exact match fails, we'll try an approximate comparison
-        areaSortedRefFeats = sorted(
-            reference.getFeatures(), key=lambda f: f.geometry().area()
-        )
-        areaSortedTargetFeats = sorted(
-            target.getFeatures(), key=lambda f: f.geometry().area()
-        )
-        for refFeat, targetFeat in zip(areaSortedRefFeats, areaSortedTargetFeats):
-            refGeom = refFeat.geometry()
-            targetGeom = targetFeat.geometry()
-            if refGeom.distance(targetGeom) > distTol:
-                return "Feature {fid} has incorrect geometry.".format(
-                    fid=targetFeat.id()
-                )
-            refArea = refGeom.area()
-            targetArea = targetGeom.area()
-            if not refArea or abs(targetArea - refArea) / refArea > areaTol:
-                # areas may be similar, but not too different from each other
-                # (minimal CRS transforming and coordinate precision errors)
-                return "Feature {fid} has incorrect geometry.".format(
-                    fid=targetFeat.id()
-                )
-            for attr in targetFieldNames:
-                if attr not in attributeBlackList and targetFeat[attr] != refFeat[attr]:
-                    return "Incorrect set of attributes for feature {fid}:\nAttribute {attr} in the test feature is: {test_attr}\nAttribute {attr} in the reference feature is: {ref_attr}".format(
-                        fid=targetFeat.id(),
-                        attr=attr,
-                        test_attr=targetFeat[attr],
-                        ref_attr=refFeat[attr],
-                    )
+                rArea = rGeom.area()
+                tArea = tGeom.area()
+                if rArea and abs(tArea - rArea) / rArea > areaTol:
+                    return "Feature #{idx}: area mismatch.".format(idx=idx)
+
+            for attr in compareFields:
+                if tf[attr] != rf[attr]:
+                    t_val = _normalize_geo_attr(tf[attr])
+                    r_val = _normalize_geo_attr(rf[attr])
+                    if t_val != r_val:
+                        return (
+                            "Feature #{idx}: attribute '{attr}' mismatch.\n"
+                            "  output:   {out}\n"
+                            "  expected: {ref}"
+                        ).format(
+                            idx=idx,
+                            attr=attr,
+                            out=tf[attr],
+                            ref=rf[attr],
+                        )
+
         return ""
 
     def loadLayerToCanvas(self, layer):
@@ -1480,7 +1539,7 @@ class Tester(unittest.TestCase):
         """
         QgsProject.instance().clear()
 
-    def testAlg(
+    def runAlgTest(
         self,
         algName,
         feedback=None,
@@ -1569,11 +1628,23 @@ class Tester(unittest.TestCase):
                             # from now on commands are for single output only
                             continue
                         elif key not in expected:
-                            raise Exception(
-                                "Output dictionary key was not found in expected output dictionary.".format(
-                                    alg=algName, nr=i + 1
+                            if self.REGEN:
+                                self.compareInputLayerWithOutputLayer(
+                                    i,
+                                    algName,
+                                    outputLyr,
+                                    None,
+                                    loadLayers=loadLayers,
+                                    addControlKey=addControlKey,
+                                    attributeBlackList=attributeBlackList,
+                                    save_name=key,
                                 )
-                            )
+                            else:
+                                # No expected file for this output key — skip.
+                                # This happens when an algorithm gains a new output
+                                # that hasn't had expected data generated yet.
+                                if isinstance(outputLyr, QgsVectorLayer):
+                                    outputLyr.rollBack()
                         else:
                             self.compareInputLayerWithOutputLayer(
                                 i,
@@ -1583,11 +1654,12 @@ class Tester(unittest.TestCase):
                                 loadLayers=loadLayers,
                                 addControlKey=addControlKey,
                                 attributeBlackList=attributeBlackList,
+                                save_name=key,
                             )
-                        if isinstance(outputLyr, QgsVectorLayer):
-                            outputLyr.rollBack()
-                        if isinstance(expected[key], QgsVectorLayer):
-                            expected[key].rollBack()
+                            if isinstance(outputLyr, QgsVectorLayer):
+                                outputLyr.rollBack()
+                            if isinstance(expected[key], QgsVectorLayer):
+                                expected[key].rollBack()
         except Exception as e:
             try:
                 if isinstance(output, QgsVectorLayer):
@@ -1614,6 +1686,17 @@ class Tester(unittest.TestCase):
         # missing the output testing
         return ""
 
+    def saveLayerAsGeojson(self, layer, path):
+        """Save a QgsVectorLayer to a GeoJSON file, creating parent dirs as needed."""
+        from qgis.core import QgsVectorFileWriter, QgsCoordinateTransformContext
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        options = QgsVectorFileWriter.SaveVectorOptions()
+        options.driverName = "GeoJSON"
+        options.fileEncoding = "UTF-8"
+        QgsVectorFileWriter.writeAsVectorFormatV3(
+            layer, path, QgsCoordinateTransformContext(), options
+        )
+
     def compareInputLayerWithOutputLayer(
         self,
         i,
@@ -1623,25 +1706,36 @@ class Tester(unittest.TestCase):
         loadLayers=False,
         attributeBlackList=None,
         addControlKey=False,
+        save_name=None,
     ):
         if not output.isValid():
             raise Exception(
                 "Output is an INVALID vector layer.".format(alg=algName, nr=i + 1)
             )
+        if self.REGEN:
+            # --regen mode: save actual output as new expected file
+            algShort = algName.split(":")[-1]
+            folderPath = os.path.join(
+                self.CURRENT_PATH, "expected_outputs", algShort, "test_{n}".format(n=i + 1)
+            )
+            name = save_name if save_name else "test_{n}".format(n=i + 1)
+            geojsonPath = os.path.join(folderPath, "{name}.geojson".format(name=name))
+            self.saveLayerAsGeojson(output, geojsonPath)
+            if isinstance(output, QgsVectorLayer):
+                output.rollBack()
+            return
         if expected is None:
             raise Exception(
                 "No expected output registered for the test, yet an output was generated.".format(
                     alg=algName, nr=i + 1
                 )
             )
-        expected = self.addControlKey(expected) if addControlKey else expected
         msg = self.compareLayers(
             output,
             expected,
             attributeBlackList=attributeBlackList,
             addControlKey=addControlKey,
         )
-        # once layer is compared, revert all modifications in order to not compromise layer reusage
         if isinstance(output, QgsVectorLayer):
             output.rollBack()
         if isinstance(expected, QgsVectorLayer):
@@ -1652,7 +1746,7 @@ class Tester(unittest.TestCase):
             self.addLayerToGroup(output, "DSGTools Algorithm Tests")
             self.addLayerToGroup(expected, "DSGTools Algorithm Tests")
 
-    def testAllAlgorithms(self):
+    def _testAllAlgorithms(self):
         """
         Executes all registered tests. Note that algorithms run in here should only
         output one layer.
@@ -1706,12 +1800,12 @@ class Tester(unittest.TestCase):
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
             try:
-                results[alg] = self.testAlg(alg)
+                results[alg] = self.runAlgTest(alg)
             except KeyError:
                 results[alg] = "No tests registered."
         for alg in multipleOutputAlgs:
             try:
-                results[alg] = self.testAlg(
+                results[alg] = self.runAlgTest(
                     alg, multipleOutputs=True, attributeBlackList=["path"]
                 )
             except KeyError:
@@ -1719,11 +1813,11 @@ class Tester(unittest.TestCase):
         return results
 
     def test_identifyoutofboundsangles(self):
-        self.assertEqual(self.testAlg("dsgtools:identifyoutofboundsangles"), "")
+        self.assertEqual(self.runAlgTest("dsgtools:identifyoutofboundsangles"), "")
 
     def test_identifyanglesininvalidrangealgorithm(self):
         self.assertEqual(
-            self.testAlg(
+            self.runAlgTest(
                 "dsgtools:identifyanglesininvalidrangealgorithm",
                 multipleOutputs=True,
                 addControlKey=True,
@@ -1731,95 +1825,91 @@ class Tester(unittest.TestCase):
             "",
         )
 
-    # def test_identifyoutofboundsanglesincoverage(self):
-    #     with warnings.catch_warnings():
-    #         warnings.simplefilter("ignore")
-    #         self.assertEqual(
-    #             self.testAlg("dsgtools:identifyoutofboundsanglesincoverage"), ""
-    #         )
+    def test_identifyoutofboundsanglesincoverage(self):
+        self.assertEqual(
+            self.runAlgTest("dsgtools:identifyoutofboundsanglesincoverage"), ""
+        )
 
-    # def test_identifygaps(self):
-    #     with warnings.catch_warnings():
-    #         warnings.simplefilter("ignore")
-    #         self.assertEqual(
-    #             self.testAlg("dsgtools:identifygaps"), ""
-    #         )
+    def test_identifygaps(self):
+        from qgis.core import QgsApplication
+        if QgsApplication.processingRegistry().algorithmById("grass7:v.overlay") is None:
+            self.skipTest("GRASS7 not available in this environment")
+        self.assertEqual(self.runAlgTest("dsgtools:identifygaps"), "")
 
     def test_identifyandfixinvalidgeometries(self):
-        self.assertEqual(self.testAlg("dsgtools:identifyandfixinvalidgeometries"), "")
+        self.assertEqual(self.runAlgTest("dsgtools:identifyandfixinvalidgeometries"), "")
 
     def test_identifyduplicatedfeatures(self):
-        self.assertEqual(self.testAlg("dsgtools:identifyduplicatedfeatures"), "")
+        self.assertEqual(self.runAlgTest("dsgtools:identifyduplicatedfeatures"), "")
 
     def test_identifyduplicatedgeometries(self):
-        self.assertEqual(self.testAlg("dsgtools:identifyduplicatedgeometries"), "")
+        self.assertEqual(self.runAlgTest("dsgtools:identifyduplicatedgeometries"), "")
 
     def test_identifyduplicatedlinesoncoverage(self):
-        self.assertEqual(self.testAlg("dsgtools:identifyduplicatedlinesoncoverage"), "")
+        self.assertEqual(self.runAlgTest("dsgtools:identifyduplicatedlinesoncoverage"), "")
 
     def test_identifyduplicatedpointsoncoverage(self):
         self.assertEqual(
-            self.testAlg("dsgtools:identifyduplicatedpointsoncoverage"), ""
+            self.runAlgTest("dsgtools:identifyduplicatedpointsoncoverage"), ""
         )
 
     def test_identifysmalllines(self):
-        self.assertEqual(self.testAlg("dsgtools:identifysmalllines"), "")
+        self.assertEqual(self.runAlgTest("dsgtools:identifysmalllines"), "")
 
     def test_identifyduplicatedpolygonsoncoverage(self):
         self.assertEqual(
-            self.testAlg("dsgtools:identifyduplicatedpolygonsoncoverage"), ""
+            self.runAlgTest("dsgtools:identifyduplicatedpolygonsoncoverage"), ""
         )
 
     def test_identifysmallpolygons(self):
-        self.assertEqual(self.testAlg("dsgtools:identifysmallpolygons"), "")
+        self.assertEqual(self.runAlgTest("dsgtools:identifysmallpolygons"), "")
 
     def test_identifydangles(self):
-        self.assertEqual(self.testAlg("dsgtools:identifydangles"), "")
+        self.assertEqual(self.runAlgTest("dsgtools:identifydangles"), "")
 
     def test_identifyunsharedvertexonintersectionsalgorithm(self):
         self.assertEqual(
-            self.testAlg("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
+            self.runAlgTest("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
         )
 
-    # def test_identifyvertexnearedges(self):
-    #     self.assertEqual(
-    #         self.testAlg(
-    #             "dsgtools:identifyvertexnearedges",
-    #             addControlKey=True,
-    #             multipleOutputs=True
-    #         ), ""
-    #     )
+    def test_identifyvertexnearedges(self):
+        self.assertEqual(
+            self.runAlgTest(
+                "dsgtools:identifyvertexnearedges",
+                addControlKey=True,
+                multipleOutputs=True,
+            ),
+            "",
+        )
 
-    # def test_overlayelementswithareas(self):
-    #     self.assertEqual(
-    #         self.testAlg("dsgtools:overlayelementswithareas"), ""
-    #     )
+    def test_overlayelementswithareas(self):
+        self.assertEqual(self.runAlgTest("dsgtools:overlayelementswithareas"), "")
 
     def test_deaggregategeometries(self):
         self.assertEqual(
-            self.testAlg("dsgtools:deaggregategeometries", addControlKey=True), ""
+            self.runAlgTest("dsgtools:deaggregategeometries", addControlKey=True), ""
         )
 
     def test_dissolvepolygonswithsameattributes(self):
         self.assertEqual(
-            self.testAlg(
+            self.runAlgTest(
                 "dsgtools:dissolvepolygonswithsameattributes", addControlKey=True
             ),
             "",
         )
 
     def test_removeemptyandupdate(self):
-        self.assertEqual(self.testAlg("dsgtools:removeemptyandupdate"), "")
+        self.assertEqual(self.runAlgTest("dsgtools:removeemptyandupdate"), "")
 
     def test_snaplayeronlayer(self):
-        self.assertEqual(self.testAlg("dsgtools:snaplayeronlayer"), "")
+        self.assertEqual(self.runAlgTest("dsgtools:snaplayeronlayer"), "")
 
     def test_adjustnetworkconnectivity(self):
-        self.assertEqual(self.testAlg("dsgtools:adjustnetworkconnectivity"), "")
+        self.assertEqual(self.runAlgTest("dsgtools:adjustnetworkconnectivity"), "")
 
     def test_unbuildpolygonsalgorithm(self):
         self.assertEqual(
-            self.testAlg(
+            self.runAlgTest(
                 "dsgtools:unbuildpolygonsalgorithm",
                 multipleOutputs=True,
                 attributeBlackList=["path"],
@@ -1830,7 +1920,7 @@ class Tester(unittest.TestCase):
 
     def test_buildpolygonsfromcenterpointsandboundariesalgorithm(self):
         self.assertEqual(
-            self.testAlg(
+            self.runAlgTest(
                 "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
                 multipleOutputs=True,
                 addControlKey=True,
@@ -1840,7 +1930,7 @@ class Tester(unittest.TestCase):
 
     def test_identifyterrainmodelerrorsalgorithm(self):
         self.assertEqual(
-            self.testAlg(
+            self.runAlgTest(
                 "dsgtools:identifyterrainmodelerrorsalgorithm",
                 multipleOutputs=True,
                 addControlKey=True,
@@ -1849,8 +1939,11 @@ class Tester(unittest.TestCase):
         )
 
     def test_topologicaldouglaspeuckerlinesimplification(self):
+        from qgis.core import QgsApplication
+        if QgsApplication.processingRegistry().algorithmById("grass7:v.clean") is None:
+            self.skipTest("GRASS7 not available in this environment")
         self.assertEqual(
-            self.testAlg(
+            self.runAlgTest(
                 "dsgtools:topologicaldouglaspeuckerlinesimplification",
                 multipleOutputs=True,
                 addControlKey=True,
@@ -1859,8 +1952,11 @@ class Tester(unittest.TestCase):
         )
 
     def test_topologicaldouglaspeuckerareasimplification(self):
+        from qgis.core import QgsApplication
+        if QgsApplication.processingRegistry().algorithmById("grass7:v.generalize") is None:
+            self.skipTest("GRASS7 not available in this environment")
         self.assertEqual(
-            self.testAlg(
+            self.runAlgTest(
                 "dsgtools:topologicaldouglaspeuckerareasimplification",
                 multipleOutputs=True,
                 addControlKey=True,
@@ -1877,7 +1973,7 @@ class Tester(unittest.TestCase):
             "dsgtools:enforceattributerulesalgorithm"
         )
         # this algorithm, specifically has to set layers Context-reading ready
-        layers = self.testingDataset("geojson", "enforce_attribute_rules")
+        layers = self._loadDataset("geojson", "enforce_attribute_rules")
 
         layers = {l.split("-")[-1]: vl for l, vl in layers.items()}
 
@@ -1894,7 +1990,7 @@ class Tester(unittest.TestCase):
                     if parameters["SELECTED"]:
                         vl.selectByIds(idsToSelect)
 
-        msg = self.testAlg(
+        msg = self.runAlgTest(
             "dsgtools:enforceattributerulesalgorithm",
             multipleOutputs=True,
             addControlKey=True,
@@ -1907,7 +2003,7 @@ class Tester(unittest.TestCase):
     def test_identifypolygonsliver(self):
         """Tests for Polygon Sliver Algorithm"""
         self.assertEqual(
-            self.testAlg("dsgtools:identifypolygonsliver", addControlKey=True), ""
+            self.runAlgTest("dsgtools:identifypolygonsliver", addControlKey=True), ""
         )
 
     def test_enforcespatialrules(self):
@@ -1918,12 +2014,12 @@ class Tester(unittest.TestCase):
         proj.clear()
         crs = proj.crs()
         proj.setCrs(QgsCoordinateReferenceSystem(4326))
-        layers = self.testingDataset("geojson", "spatial_rules_alg")
+        layers = self._loadDataset("geojson", "spatial_rules_alg")
         for l, vl in layers.items():
             # vl = layers[l]
             # vl.setName(l)
             proj.addMapLayer(layers[l])
-        msg = self.testAlg(
+        msg = self.runAlgTest(
             "dsgtools:enforcespatialrules", multipleOutputs=True, addControlKey=True
         )
         # since layers were manually removed, cache is going to refer to
@@ -1933,12 +2029,6 @@ class Tester(unittest.TestCase):
         if crs and crs.isValid():
             proj.setCrs(crs)
         self.assertEqual(msg, "")
-
-    def test_identifypolygonsliver(self):
-        self.assertEqual(
-            self.testAlg("dsgtools:identifypolygonsliver", addControlKey=True), ""
-        )
-
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""

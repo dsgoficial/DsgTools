@@ -2819,7 +2819,7 @@ class LayerHandler(QObject):
                 expression=expression,
                 fieldName="combined_attr",
                 fieldType=2,
-                fieldLength=200,
+                fieldLength=2048,
                 context=context,
                 feedback=multiStepFeedback,
             )

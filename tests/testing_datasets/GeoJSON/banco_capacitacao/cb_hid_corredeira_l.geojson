@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "cb_hid_corredeira_l",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
+"features": [
+{ "type": "Feature", "properties": { "nome": "Carecuru", "nomeabrev": "", "geometriaaproximada": 1 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 284253.188872905098833, 9983888.525371197611094 ], [ 284473.875426031998359, 9983922.052041640505195 ], [ 284630.69195479672635, 9983981.899107115343213 ] ] ] } },
+{ "type": "Feature", "properties": { "nome": "", "nomeabrev": "Aurora", "geometriaaproximada": 1 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 300665.276184307353105, 9976827.851825073361397 ], [ 300586.833710994455032, 9976688.102688359096646 ], [ 300526.727000780287199, 9976581.020000003278255 ] ] ] } },
+{ "type": "Feature", "properties": { "nome": "Rio Jari", "nomeabrev": null, "geometriaaproximada": 1 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 304993.237000694964081, 9972660.338000005111098 ], [ 304986.022992965648882, 9972615.551133714616299 ], [ 304988.979965902282856, 9972586.445215739309788 ], [ 304987.231960246805102, 9972569.653265262022614 ], [ 304941.448982031317428, 9972396.635793205350637 ], [ 304926.821302853757516, 9972357.463076524436474 ] ] ] } }
+]
+}
