@@ -20671,6 +20671,84 @@ Ambas as dimensões suportam expressões para cálculo dinâmico baseado em atri
     </message>
 </context>
 <context>
+    <name>OptimalTileBBoxAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="161"/>
+        <source>Tile layer</source>
+        <translation>Camada de tiles</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="168"/>
+        <source>Optimized bounding boxes</source>
+        <translation>Bounding boxes otimizados</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="175"/>
+        <source>Minimum coverage for rectangle merging (%)</source>
+        <translation>Cobertura mínima para fusão de retângulos (%)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="185"/>
+        <source>Parallel workers</source>
+        <translation>Workers paralelos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="198"/>
+        <source>[ 1/3 ] Reading tile geometries...</source>
+        <translation>[ 1/3 ] Lendo geometrias dos tiles...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="211"/>
+        <source>No tiles found.</source>
+        <translation>Nenhum tile encontrado.</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="213"/>
+        <source>       {0} tile(s) read.</source>
+        <translation>       {0} tile(s) lido(s).</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="215"/>
+        <source>[ 2/3 ] Building coordinate grid...</source>
+        <translation>[ 2/3 ] Construindo grade de coordenadas...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="239"/>
+        <source>[ 3/3 ] Detecting components and decomposing...</source>
+        <translation>[ 3/3 ] Detectando componentes e decompondo...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="259"/>
+        <source>       {0} component(s) detected.</source>
+        <translation>       {0} componente(s) detectada(s).</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="282"/>
+        <source>Error in component {0}: {1}</source>
+        <translation>Erro na componente {0}: {1}</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="287"/>
+        <source>       {0} rectangle(s) generated.</source>
+        <translation>       {0} retângulo(s) gerado(s).</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="330"/>
+        <source>Optimal Tile Bounding Boxes</source>
+        <translation>Bounding Boxes Ótimos por Tiles</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="333"/>
+        <source>Geometric Algorithms</source>
+        <translation>Algoritmos Geométricos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/optimalTileBBoxAlgorithm.py" line="340"/>
+        <source>&lt;b&gt;Decomposes tiles into optimal bounding boxes minimizing NoData.&lt;/b&gt;&lt;br&gt;&lt;br&gt;Use the output layer to clip rasters with QGIS native &quot;Clip Raster by Extent&quot; or via GDAL.&lt;br&gt;&lt;br&gt;&lt;u&gt;Threshold:&lt;/u&gt; the higher the value, the fewer merges are accepted and the more rectangles are generated. For distributions with significant gaps, use &amp;ge; 80%.</source>
+        <translation>&lt;b&gt;Decompõe tiles em bounding boxes ótimos minimizando NoData.&lt;/b&gt;&lt;br&gt;&lt;br&gt;Use a camada de saída para cortar rasters com o &quot;Clip Raster by Extent&quot; nativo do QGIS ou via GDAL.&lt;br&gt;&lt;br&gt;&lt;u&gt;Threshold:&lt;/u&gt; quanto maior, menos fusões são aceitas e mais retângulos são gerados. Para distribuições com buracos significativos, use &amp;ge; 80%.</translation>
+    </message>
+</context>
+<context>
     <name>PostGISLayerLoader</name>
     <message>
         <location filename="../core/Factories/LayerLoaderFactory/postgisLayerLoader.py" line="204"/>

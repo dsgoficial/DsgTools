@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## 5.1.1 - dev
+## 5.1.2 - dev
+
+Novas Funcionalidades:
+
+- Novo algoritmo de bounding boxes ótimos por tiles (Optimal Tile Bounding Boxes): decompõe uma camada de tiles em bounding boxes otimizados minimizando NoData, usando compressão de coordenadas, detecção de componentes conexas por BFS, decomposição por faixas horizontais e fusão greedy com threshold de cobertura configurável. Processamento paralelo via ThreadPoolExecutor;
 
 Melhorias:
 

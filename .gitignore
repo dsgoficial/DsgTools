@@ -83,3 +83,8 @@ DsgTools/core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellChecker/data/
 *.xsd
 *.gpkg-shm
 *.gpkg-wal
+
+.wolf/
+.qgis-settings/
+.coverage
+coverage.xml

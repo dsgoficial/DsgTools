@@ -76,6 +76,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.lineOnAreaOverlayer
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.nurbfitSmoothingAlgorithm import (
     NURBFitSmoothingAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.optimalTileBBoxAlgorithm import (
+    OptimalTileBBoxAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.polygonTiler import (
     PolygonTilerAlgorithm,
 )
@@ -828,6 +831,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             SplitContoursAtMaximumLengthAlgorithm(),
             LineOnAreaOverlayerAlgorithm(),
             PolygonTilerAlgorithm(),
+            OptimalTileBBoxAlgorithm(),
             AnchoredSnapperAlgorithm(),
             OverlayLinesWithLinesAndUpdate(),
             RasterRemapAlgorithm(),
