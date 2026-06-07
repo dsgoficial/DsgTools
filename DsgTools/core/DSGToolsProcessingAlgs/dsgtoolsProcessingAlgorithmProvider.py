@@ -885,20 +885,31 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     def unload(self):
         """
         Removes setting when the plugin is unloaded.
+
+        During application shutdown (for instance when the qgis_process command
+        line tool exits) the QgsApplication singleton and its processing
+        registry may already be gone, so guard against a missing instance to
+        avoid an AttributeError on teardown.
         """
         ProcessingConfig.removeSetting("ACTIVATE_DSGTools")
-        QgsApplication.instance().processingRegistry().removeParameterType(
-            self.parameterTypeSnapHierarchy
-        )
-        QgsApplication.instance().processingRegistry().removeParameterType(
-            self.parameterTypeFMEManager
-        )
-        QgsApplication.instance().processingRegistry().removeParameterType(
-            self.parameterSpatialRulesSetType
-        )
-        QgsApplication.instance().processingRegistry().removeParameterType(
-            self.parameterDistanceBetweenLayersType
-        )
+        app = QgsApplication.instance()
+        if app is None:
+            return
+        registry = app.processingRegistry()
+        if registry is None:
+            return
+        for attr in (
+            "parameterTypeSnapHierarchy",
+            "parameterTypeFMEManager",
+            "parameterSpatialRulesSetType",
+            "parameterDistanceBetweenLayersType",
+            "parameterDbConversionType",
+            "parameterLayersConfigType",
+        ):
+            # getattr defensivo: se load() falhou no meio, algum atributo pode nao existir.
+            parameterType = getattr(self, attr, None)
+            if parameterType is not None:
+                registry.removeParameterType(parameterType)
 
     def isActive(self):
         """

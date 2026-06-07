@@ -23,6 +23,16 @@ Este projeto visa cumprir a missão estabelecida no Plano Estratégico do Exérc
 * Iniciativa 6.3.1.1 - Ampliar a capacidade de uso de geoinformação digital da F Ter
 * Iniciativa 6.3.2.1 - Obter sistemas de produção de geoinformação com o uso de Inteligência Artificial
 
+## Execução por linha de comando
+
+Os algoritmos de Processing do DSGTools podem ser executados **headless, por linha de
+comando** (sem abrir o QGIS), permitindo automatizar fluxos e rodar processings em
+scripts ou servidores. A lista de algoritmos disponíveis, os parâmetros de cada um
+e as instruções de uso estão na pasta **[`dsgtools_cli/`](dsgtools_cli/)**:
+
+- [`dsgtools_cli/README.md`](dsgtools_cli/README.md) — guia de uso
+- `python dsgtools_cli/dsgtools_cli.py list` — lista os algoritmos; `describe <id>` mostra os parâmetros
+
 ## Principais Funcionalidades
 
 A versão atual do complemento possui as seguintes funcionalidades:

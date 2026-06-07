@@ -1,0 +1,3003 @@
+{
+  "_comment": "Conhecimento de domínio (curado) que enriquece a saída de `describe`. OPCIONAL: algoritmos sem entrada aqui funcionam normalmente via list/describe/run ao vivo. A chave é o id completo do algoritmo. Gerado por leitura do código-fonte.",
+  "dsgtools:gridzonegenerator": {
+    "description": "Gera a moldura (articulação) sistemática cartográfica brasileira a partir de um índice (MI/MIR ou INOM), subdividindo da escala-base até a escala desejada. Saída: polígonos com os campos 'inom' e 'mi'.",
+    "constraints": [
+      "START_SCALE é a escala do índice informado em INDEX; STOP_SCALE é a escala desejada (mais detalhada).",
+      "STOP_SCALE não pode ser mais grossa que START_SCALE.",
+      "INDEX_TYPE=0 (MI/MIR) só vale para escalas 250k e abaixo (START_SCALE >= 2); para 1000k/500k use INDEX_TYPE=1 (INOM).",
+      "INDEX aceita múltiplos índices separados por vírgula.",
+      "CRS deve ser um SRC válido, ex.: EPSG:31982 (SIRGAS 2000 / UTM 22S)."
+    ],
+    "example": {
+      "START_SCALE": 2,
+      "STOP_SCALE": 4,
+      "INDEX_TYPE": 1,
+      "INDEX": "SF-22-Y-D",
+      "CRS": "EPSG:31982",
+      "OUTPUT": "grid_50k.gpkg"
+    }
+  },
+  "dsgtools:createframeswithconstraintalgorithm": {
+    "description": "Gera a moldura sistemática que recobre/intersecta uma camada de entrada (vetor ou raster), na escala desejada. Saída: polígonos (campos 'inom' e 'mi') que intersectam a entrada.",
+    "constraints": [
+      "INPUT pode ser camada vetor (gpkg/shp/geojson/...) ou raster.",
+      "Se a entrada for polígono, todas as molduras são mantidas; para ponto/linha/raster, são filtradas as que intersectam a entrada.",
+      "O CRS da saída é herdado do CRS da camada de entrada."
+    ],
+    "example": {
+      "INPUT": "area.gpkg",
+      "STOP_SCALE": 3,
+      "OUTPUT": "frames_100k.gpkg"
+    }
+  },
+  "dsgtools:AssignCustomFormAndFormatRulesToLayersAlgorithm": {
+    "description": "Atribui formulários personalizados e/ou regras de formatação condicional (conditional styles) às camadas vetoriais de entrada, com opção de limpar as regras existentes antes da aplicação. O modo de operação permite aplicar apenas o formulário customizado, apenas as regras de formato ou ambos simultaneamente.",
+    "constraints": [
+      "Os três modos disponíveis são: 0 = somente formulário, 1 = somente regras de formato, 2 = ambos.",
+      "Com CLEAN_BEFORE_ASSIGN ativado, os estilos condicionais existentes nos campos são removidos antes da nova atribuição.",
+      "As regras são carregadas a partir da estrutura herdada de RuleStatisticsAlgorithm via load_rules_from_parameters."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1"
+      ],
+      "CLEAN_BEFORE_ASSIGN": true,
+      "MODE": 2
+    }
+  },
+  "dsgtools:LoadNonSpatialLayersFromPostgreSQLAlgorithm": {
+    "description": "Carrega tabelas não espaciais (sem geometria) de um esquema específico de um banco PostgreSQL no projeto QGIS, agrupando-as automaticamente em um grupo com o nome do esquema. Internamente utiliza o algoritmo dsgtools:grouplayers após o carregamento.",
+    "constraints": [
+      "Todas as tabelas informadas em LAYER_LIST são carregadas do esquema definido em SCHEMA_NAME.",
+      "Com UNIQUE_LOAD ativado, duplicatas são evitadas.",
+      "Este algoritmo não é thread-safe (FlagNoThreading)."
+    ],
+    "example": {
+      "HOST": "192.168.0.10",
+      "PORT": "5432",
+      "DATABASE": "bdgeo",
+      "USER": "postgres",
+      "PASSWORD": "senha123",
+      "LAYER_LIST": "dominios,metadados",
+      "LOAD_TO_CANVAS": true,
+      "UNIQUE_LOAD": true,
+      "SCHEMA_NAME": "dominio"
+    }
+  },
+  "dsgtools:addunsharedvertexonintersectionsalgorithm": {
+    "description": "Identifica vértices não compartilhados em interseções entre camadas de pontos, linhas e polígonos e os insere nas feições correspondentes. Opera fazendo snap das camadas sobre as localizações de vértice ausente para garantir conectividade topológica nas interseções.",
+    "constraints": [
+      "Pelo menos uma camada de entrada (pontos, linhas ou polígonos) deve ser fornecida; caso contrário, o algoritmo lança exceção.",
+      "O raio de busca (SEARCH_RADIUS) deve ser um valor positivo de distância.",
+      "O limite geográfico (GEOGRAPHIC_BOUNDARY), se informado, deve ser uma camada poligonal."
+    ],
+    "example": {
+      "INPUT_POINTS": [],
+      "INPUT_LINES": [
+        "linhas_drenagem.gpkg"
+      ],
+      "INPUT_POLYGONS": [
+        "massas_dagua.gpkg"
+      ],
+      "SELECTED": false,
+      "SEARCH_RADIUS": 0.001,
+      "GEOGRAPHIC_BOUNDARY": null
+    }
+  },
+  "dsgtools:addunsharedvertexonsharededgesalgorithm": {
+    "description": "Detecta e insere vértices não compartilhados em arestas coincidentes entre camadas de linhas e/ou polígonos. Garante que feições vizinhas com bordas sobrepostas possuam os mesmos vértices nos pontos de contato, resolvendo inconsistências topológicas em coberturas.",
+    "constraints": [
+      "Ao menos uma camada de linhas ou de polígonos deve ser informada; se ambas listas estiverem vazias, o algoritmo emite aviso e retorna sem processar.",
+      "O raio de busca (SEARCH_RADIUS) controla a tolerância de snap aplicada internamente.",
+      "O limite geográfico (GEOGRAPHIC_BOUNDARY), se informado, deve ser uma camada poligonal."
+    ],
+    "example": {
+      "INPUT_LINES": [
+        "curvas_nivel.gpkg"
+      ],
+      "INPUT_POLYGONS": [
+        "vegetacao.gpkg"
+      ],
+      "SELECTED": false,
+      "SEARCH_RADIUS": 0.0001,
+      "GEOGRAPHIC_BOUNDARY": null
+    }
+  },
+  "dsgtools:adjustnetworkconnectivity": {
+    "description": "Ajusta a conectividade topológica de uma rede de linhas identificando dangles, realizando snap dos pontos pendentes para a rede existente e consolidando as coordenadas dos nós para garantir coincidência exata entre extremidades de arcos vizinhos.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo linha (TypeVectorLine).",
+      "Requer a biblioteca Python 'networkx' instalada; caso contrário, o algoritmo aborta na etapa de consolidação de nós.",
+      "A tolerância (TOLERANCE) deve ser maior ou igual a zero."
+    ],
+    "example": {
+      "INPUT": "rede_drenagem.gpkg",
+      "SELECTED": false,
+      "TOLERANCE": 1.0
+    }
+  },
+  "dsgtools:anchoredsnapper": {
+    "description": "Realiza snap de camadas de entrada (de qualquer tipo de geometria) em relação a camadas âncora de ponto, linha e/ou polígono, agrupando as feições por tipo geométrico e aplicando o comportamento de snap selecionado. Ao menos uma camada âncora válida deve ser fornecida.",
+    "constraints": [
+      "Pelo menos uma camada de entrada e pelo menos uma camada âncora (ponto, linha ou polígono) devem ser informadas; caso contrário, o algoritmo lança exceção.",
+      "O comportamento (BEHAVIOR) é um índice inteiro de 0 a 6, correspondendo às opções de snap disponíveis.",
+      "A tolerância de snap (TOLERANCE) deve ser um valor positivo de distância."
+    ],
+    "example": {
+      "INPUT": [
+        "edificacoes.gpkg",
+        "vias.gpkg"
+      ],
+      "SELECTED": false,
+      "POINT_ANCHOR_LAYERS": [
+        "marcos_geodesicos.gpkg"
+      ],
+      "LINE_ANCHOR_LAYERS": [],
+      "POLYGON_ANCHOR_LAYERS": [],
+      "ANCHOR_SELECTED": false,
+      "TOLERANCE": 0.5,
+      "BEHAVIOR": 0,
+      "GEOGRAPHIC_BOUNDARY": null
+    }
+  },
+  "dsgtools:appendfeaturestolayeralgorithm": {
+    "description": "Copia feições de uma camada de origem para uma camada de destino já existente, adaptando automaticamente a geometria para o tipo (simples ou múltiplo) da camada destino e mapeando atributos por nome de campo. Feições com geometria nula ou vazia são ignoradas.",
+    "constraints": [
+      "A camada de origem e a camada de destino devem ter o mesmo tipo de geometria (ponto, linha ou polígono).",
+      "Campos com nomes que correspondem a chaves primárias na camada destino são ignorados no mapeamento de atributos.",
+      "A camada destino é colocada em modo de edição durante o processo."
+    ],
+    "example": {
+      "LAYER_WITH_FEATURES_TO_APPEND": "camada_origem",
+      "DESTINATION_LAYER": "camada_destino"
+    }
+  },
+  "dsgtools:applystylesfromdatabasetolayersalgorithm": {
+    "description": "Aplica estilos QML armazenados no banco de dados PostGIS às camadas de entrada, buscando o estilo pelo nome fornecido. Suporta dois padrões de busca: pelo nome exato do estilo ou pelo padrão composto 'nome_estilo/nome_camada'.",
+    "constraints": [
+      "O estilo deve estar salvo no banco de dados da camada (via 'Salvar estilo no banco de dados').",
+      "A correspondência é feita pelo nome exato do estilo ou pelo padrão 'STYLE_NAME/nome_da_camada'; camadas sem correspondência são silenciosamente ignoradas."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1"
+      ],
+      "STYLE_NAME": "estilo_padrao"
+    }
+  },
+  "dsgtools:assignactionstolayersalgorithm": {
+    "description": "Atribui ações QGIS (abrir URL, executar script Python, etc.) às camadas vetoriais de entrada a partir de um arquivo JSON ou texto JSON. Cada entrada do JSON especifica o nome da camada, o tipo de ação, a descrição e o caminho do documento de referência.",
+    "constraints": [
+      "A ação só é adicionada quando o nome da tabela da camada (uri().table()) coincide com 'camadaNome' no JSON.",
+      "Se o campo 'documentacao' estiver vazio no JSON, nenhuma ação é adicionada para aquela camada.",
+      "Os tipos de ação aceitos são: 'Generic', 'GenericPython', 'Mac', 'Windows', 'Unix', 'OpenUrl'."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1"
+      ],
+      "FILE": "/caminho/acoes.json",
+      "TEXT": "[]"
+    }
+  },
+  "dsgtools:assignaliasestolayersalgorithm": {
+    "description": "Atribui apelidos (aliases) ao nome da camada e aos atributos de camadas vetoriais a partir de um arquivo JSON ou texto JSON. Permite renomear visualmente camadas e campos no formulário de edição sem alterar os nomes internos no banco de dados.",
+    "constraints": [
+      "A correspondência entre camada e entrada JSON é feita pelo nome da tabela (uri().table() == camadaNome).",
+      "Campos com índice menor ou igual a zero não recebem alias.",
+      "O widget de edição existente no campo é preservado após a atribuição do alias."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1"
+      ],
+      "FILE": "/caminho/aliases.json",
+      "TEXT": "[]"
+    }
+  },
+  "dsgtools:assignboundingboxfiltertolayers": {
+    "description": "Aplica um filtro espacial de bounding box (ST_INTERSECTS com geometria do extent informado) às camadas PostGIS de entrada, com comportamento configurável de substituição ou acréscimo ao filtro SQL existente via AND ou OR.",
+    "constraints": [
+      "Apenas camadas cujo provedor seja 'postgres' são processadas; outras são ignoradas com mensagem informativa.",
+      "Camadas sem coluna de geometria (geometryColumn == '') são silenciosamente ignoradas.",
+      "O filtro espacial é construído como SQL PostGIS usando ST_INTERSECTS e ST_GEOMFROMEWKT com o SRID da camada."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1"
+      ],
+      "BB_FILTER": "-44.0,-23.0,-43.0,-22.0",
+      "BEHAVIOR": 2
+    }
+  },
+  "dsgtools:assignconditionalstyletolayersalgorithm": {
+    "description": "Aplica estilos condicionais (conditional styles) por atributo às camadas vetoriais de entrada, lendo as regras de cor e expressão de um arquivo JSON ou texto JSON. Permite destacar visualmente feições com base em condições definidas sobre os valores dos atributos.",
+    "constraints": [
+      "Apenas estilos do tipo 'atributo' (tipo == 'atributo') são aplicados via setFieldStyles; outros tipos são ignorados.",
+      "A correspondência entre camada e regra é feita pelo nome da tabela (uri().table() == camadaNome).",
+      "A cor deve ser fornecida no campo 'corRgb' no formato 'R,G,B' com valores inteiros de 0 a 255."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1"
+      ],
+      "FILE": "/caminho/estilos.json",
+      "TEXT": "[]"
+    }
+  },
+  "dsgtools:assigndefaultfieldvaluetolayersalgorithm": {
+    "description": "Define valores padrão de expressão para campos específicos de camadas vetoriais, a partir de um arquivo JSON ou texto JSON. O valor padrão é configurado como expressão literal de texto no formulário de edição do QGIS, sendo preenchido automaticamente em novas feições.",
+    "constraints": [
+      "A correspondência entre camada e regra é feita pelo nome da tabela (uri().table() == camadaNome).",
+      "Campos com índice negativo ou com valor vazio ('valor' falsy) são silenciosamente ignorados.",
+      "O valor é configurado como expressão do tipo string literal: \"'valor'\"."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1"
+      ],
+      "FILE": "/caminho/defaults.json",
+      "TEXT": "[]"
+    }
+  },
+  "dsgtools:assignexpressionfieldtolayersalgorithm": {
+    "description": "Adiciona campos virtuais de expressão (expression fields) às camadas vetoriais de entrada, configurando as expressões a partir de um arquivo JSON ou texto JSON. Os campos virtuais calculam seu valor dinamicamente sem modificar os dados da fonte.",
+    "constraints": [
+      "Campos cujo nome já exista na camada (indexOf >= 0) ou com valor de expressão vazio não são adicionados.",
+      "Os campos virtuais são criados com tipo QMetaType.Type.QString.",
+      "A correspondência entre camada e entrada JSON é feita pelo nome da tabela (uri().table() == camadaNome)."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1"
+      ],
+      "FILE": "/caminho/expressoes.json",
+      "TEXT": "[]"
+    }
+  },
+  "dsgtools:assignfiltertolayers": {
+    "description": "Aplica uma expressão de filtro SQL a múltiplas camadas vetoriais simultaneamente, com comportamento configurável: substituir o filtro existente, acrescentar com AND ou acrescentar com OR. O filtro é aplicado via setSubsetString em cada camada.",
+    "constraints": [
+      "O modo 0 (AND) e o modo 1 (OR) acrescentam ao filtro existente; o modo 2 substitui qualquer filtro anterior.",
+      "Se a camada não possuir filtro existente, qualquer modo de comportamento resulta na aplicação direta do novo filtro."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1",
+        "layer_id_2"
+      ],
+      "FILTER": "situacao_fisica = 1",
+      "BEHAVIOR": 0
+    }
+  },
+  "dsgtools:assignformatrulestolayersalgorithm": {
+    "description": "Aplica regras de formatação condicional (conditional styles) por atributo a camadas PostGIS, lendo as regras de um arquivo JSON ou texto JSON estruturado. Cria também um campo virtual 'attribute_error_description' com expressão CASE que descreve qual regra foi violada, e suporta padrões wildcard (*) na especificação das camadas-alvo.",
+    "constraints": [
+      "Apenas camadas cujo provedor de dados seja 'postgres' são processadas; outras são ignoradas.",
+      "O JSON deve conter as chaves 'grupo_estilo' (com tipo_estilo e cor_rgb) e 'regras' (com camadas, atributo, regra, descricao, tipo_estilo).",
+      "Camadas são identificadas no formato 'schema.tabela'; padrões wildcard são suportados na lista de camadas de cada regra."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1"
+      ],
+      "TEXT": "{}",
+      "FILE": "/caminho/regras.json",
+      "CLEAN_BEFORE_ASSIGN": true
+    }
+  },
+  "dsgtools:assignmeasurecolumntolayers": {
+    "description": "Adiciona um campo virtual de medida às camadas vetoriais de entrada: 'area_otf' (calculado com $area) para camadas de polígono e 'length_otf' (calculado com $length) para camadas de linha. Camadas de ponto são ignoradas silenciosamente.",
+    "constraints": [
+      "Somente camadas com tipo de geometria Polygon ou Line recebem o campo virtual.",
+      "Os campos virtuais criados são do tipo Double e calculados dinamicamente (on-the-fly)."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_poligono",
+        "layer_id_linha"
+      ]
+    }
+  },
+  "dsgtools:assignvaluemaptolayersalgorithm": {
+    "description": "Aplica mapas de valores (domínios) aos campos das camadas de entrada, configurando o widget 'ValueMap' no formulário de edição do QGIS. Os mapeamentos são lidos de um arquivo JSON ou de texto JSON fornecido diretamente, e os campos de chave primária (id / id_*) são marcados como somente leitura.",
+    "constraints": [
+      "A configuração de ValueMap só é aplicada quando o nome da tabela da camada coincide com uma chave no JSON de entrada.",
+      "Campos cujo nome seja 'id' ou contenha 'id_', ou que sejam chaves primárias, são definidos como somente leitura em vez de receber o mapa de valores.",
+      "O JSON de entrada deve seguir a estrutura: objeto indexado por nome de tabela contendo lista de {'attribute': ..., 'valueMap': {...}}."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1",
+        "layer_id_2"
+      ],
+      "VALUE_MAP_FILE": "/caminho/para/mapa.json",
+      "VALUE_MAP": "{}"
+    }
+  },
+  "dsgtools:azimuthcalculation": {
+    "description": "Calcula o azimute de cada feição (linha ou polígono) a partir da caixa delimitadora mínima orientada e preenche o resultado no campo selecionado. O valor é arredondado para inteiro.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo linha ou polígono.",
+      "O campo receptor do azimute deve existir na camada de entrada.",
+      "Se o parâmetro FEATURES_SELECTED for falso, feições com o campo já preenchido são ignoradas; se verdadeiro, todos são sobrescritos.",
+      "A camada é colocada em modo de edição durante o processamento."
+    ],
+    "example": {
+      "INPUT_LAYER": "edificacao_a",
+      "ATTRIBUTE": "azimute",
+      "FEATURES_SELECTED": false
+    }
+  },
+  "dsgtools:batchrasterpackagingforbdgex": {
+    "description": "Converte em lote arquivos raster (.tif) para o formato exigido pelo BDGEx, gerando também o arquivo XML de metadados para cada produto. Usa shapefiles de seamlines e tile shapes para relacionar os arquivos de entrada e controlar o recorte e a nomenclatura dos produtos.",
+    "constraints": [
+      "A pasta de entrada deve conter arquivos .tif e shapefiles *_SEAMLINES_SHAPE.shp e *_TILE_SHAPE.shp (ou .zip contendo-os).",
+      "Arquivos cujo nome contém 'browse' são ignorados automaticamente.",
+      "Rasters maiores que 2 GB são divididos em partes conforme o tamanho em disco.",
+      "O XML de saída é gerado a partir de um template com substituição de placeholders como X_MIN, X_MAX, DATA_IMAGEM e SENSOR_IMAGEM.",
+      "O sistema de referência de saída é sempre EPSG:4674."
+    ],
+    "example": {
+      "INPUT_FOLDER": "C:/dados/imagens_entrada",
+      "XML_TEMPLATE_FILE": "C:/templates/template_bdgex.xml",
+      "IMAGE_SENSOR": 0,
+      "OUTPUT_FOLDER": "C:/dados/saida_bdgex"
+    }
+  },
+  "dsgtools:batchrunalgorithm": {
+    "description": "Executa um algoritmo de processamento em lote sobre uma lista de camadas informadas como CSV, agregando todas as saídas de flags em uma única camada resultante. Camadas somente-leitura, inexistentes ou vazias são ignoradas automaticamente.",
+    "constraints": [
+      "O dicionário de parâmetros (PARAMETER_DICT) deve ser um JSON válido.",
+      "A camada de cada iteração deve ser editável (não somente-leitura) e não-vazia para ser processada.",
+      "O parâmetro OUTPUT_LAYER_PARAMETER_NAME deve corresponder à chave de saída do algoritmo filho; se omitido, nenhum resultado é coletado."
+    ],
+    "example": {
+      "INPUTLAYERS": "edificacao_a, via_deslocamento_l",
+      "ALG_NAME": "dsgtools:identifyduplicatedgeometries",
+      "INPUT_LAYER_PARAMETER_NAME": "INPUT",
+      "PARAMETER_DICT": "{}",
+      "OUTPUT_LAYER_PARAMETER_NAME": "FLAGS",
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:batchrunalgorithmwithgeographicboundsconstraint": {
+    "description": "Executa um algoritmo em lote sobre múltiplas camadas, com possibilidade de passar um limite geográfico (polígono) como parâmetro adicional ao algoritmo filho e de filtrar os resultados por interseção ou contenção dentro desse limite. Camadas somente-leitura, inexistentes ou vazias são ignoradas.",
+    "constraints": [
+      "O dicionário de parâmetros (PARAMETER_DICT) deve ser um JSON válido.",
+      "O modo de filtro 1 retém apenas feições que interseccionam o limite; o modo 2 retém apenas feições inteiramente dentro do limite; o modo 0 não aplica filtro.",
+      "A camada de limite geográfico deve ser do tipo polígono, quando fornecida."
+    ],
+    "example": {
+      "INPUTLAYERS": "edificacao_a, via_deslocamento_l",
+      "ALG_NAME": "dsgtools:identifyduplicatedgeometries",
+      "INPUT_LAYER_PARAMETER_NAME": "INPUT",
+      "GEOGRAPHIC_BOUNDARY": "limite_area_a",
+      "GEOGRAPHIC_BOUNDARY_PARAMETER_NAME": "GEOGRAPHIC_BOUNDARY",
+      "MODE": 1,
+      "PARAMETER_DICT": "{}",
+      "OUTPUT_LAYER_PARAMETER_NAME": "FLAGS",
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:buildjoinsonlayersalgorithm": {
+    "description": "Constrói joins entre camadas vetoriais com base nas relações de associação descobertas automaticamente pelo gerenciador de relações do projeto QGIS. Permite edição bidirecional nas camadas unidas e opcionalmente inicia o modo de edição nas camadas referenciadas.",
+    "constraints": [
+      "Apenas relações do tipo QgsRelation.Association são processadas; relações de composição são ignoradas.",
+      "As relações devem ter sido previamente configuradas no projeto QGIS.",
+      "Este algoritmo não é thread-safe (FlagNoThreading) devido ao uso de removeChildNode."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1",
+        "layer_id_2"
+      ],
+      "START_EDITING": true
+    }
+  },
+  "dsgtools:buildmergeddatawithfieldrefactor": {
+    "description": "Combina múltiplas camadas vetoriais em uma única camada de saída, adicionando campos de índice de classe (numérico) e nome de classe (texto) a cada feição, conforme configuração fornecida pelo usuário. A camada resultante recebe simbologia categorizada automaticamente pelo campo 'class_name'.",
+    "constraints": [
+      "É obrigatório fornecer a configuração de camadas (LAYERS_CONFIG); sem ela o algoritmo lança exceção.",
+      "Ao menos uma camada deve ser processada com sucesso para que a fusão ocorra.",
+      "O campo de nome de saída padrão é 'tipo' caso FIELD_NAME seja omitido."
+    ],
+    "example": {
+      "LAYERS_CONFIG": [
+        {
+          "layer": "edificacoes_p",
+          "expression": "",
+          "classIndex": 1,
+          "className": "Edificação"
+        },
+        {
+          "layer": "vegetacao_a",
+          "expression": "\"area\" > 100",
+          "classIndex": 2,
+          "className": "Vegetação"
+        }
+      ],
+      "OUTPUT_CRS": "EPSG:31983",
+      "FIELD_NAME": "tipo",
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm": {
+    "description": "Constrói polígonos a partir de pontos centrais (centroides) e camadas de fronteira/restrição, atribuindo aos polígonos gerados os atributos dos pontos centrais correspondentes. Produz saídas de polígonos construídos, flags de geometrias inválidas, linhas de fronteira não utilizadas e flags gerais.",
+    "constraints": [
+      "A camada de pontos centrais (INPUT_CENTER_POINTS) é obrigatória.",
+      "Deve haver ao menos uma camada de fronteira (BOUNDARY_LINE_LAYER) ou ao menos uma camada de restrição de linhas (CONSTRAINT_LINE_LAYERS); do contrário, o algoritmo lança exceção.",
+      "O processamento paralelo por partição espacial requer que GEOGRAPHIC_BOUNDARY tenha mais de uma feição para ser ativado."
+    ],
+    "example": {
+      "INPUT_CENTER_POINTS": "centroides_vegetacao.gpkg",
+      "ATTRIBUTE_BLACK_LIST": [],
+      "BOUNDARY_LINE_LAYER": "limites_vegetacao.gpkg",
+      "CONSTRAINT_LINE_LAYERS": [],
+      "CONSTRAINT_POLYGON_LAYERS": [],
+      "GEOGRAPHIC_BOUNDARY": "moldura.gpkg",
+      "SUPPRESS_AREA_WITHOUT_CENTROID_FLAG": false,
+      "CHECK_UNUSED_BOUNDARY_LINES": true,
+      "CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS": true,
+      "MERGE_OUTPUT_POLYGONS": false,
+      "GROUP_BY_SPATIAL_PARTITION": false,
+      "OUTPUT_POLYGONS": "poligonos_saida.gpkg",
+      "INVALID_POLYGON_LOCATION": "flags_invalidos.gpkg",
+      "UNUSED_BOUNDARY_LINES": "flags_fronteiras.gpkg",
+      "FLAGS": "flags_gerais.gpkg"
+    }
+  },
+  "dsgtools:buildzippackagealgorithm": {
+    "description": "Empacota subpastas de uma pasta de shapefiles em arquivos ZIP comprimidos individuais, criando um arquivo .zip por subpasta no diretório de destino. O nome de cada ZIP é formado pelo prefixo configurável concatenado ao nome da subpasta.",
+    "constraints": [
+      "A pasta de entrada deve conter subpastas; arquivos na raiz são ignorados.",
+      "Arquivos .DS_Store e entradas __MACOSX/ são excluídos automaticamente do ZIP.",
+      "Este algoritmo não é thread-safe (FlagNoThreading)."
+    ],
+    "example": {
+      "INPUT_SHAPEFILE_FOLDER": "/dados/shapefiles",
+      "OUTPUT_PREFIX": "Carta_Topografica_",
+      "OUTPUT_ZIP_FOLDER": "/saida/zips"
+    }
+  },
+  "dsgtools:cleangeometries": {
+    "description": "Executa limpeza topológica de geometrias de uma camada vetorial usando o algoritmo GRASS v.clean, removendo autointerseções, duplicatas e pequenos fragmentos. Gera flags indicando sobreposições remanescentes e erros de limpeza.",
+    "constraints": [
+      "Não suporta restrição espacial por limite geográfico para camadas poligonais (lança NotImplementedError se combinados).",
+      "O raio de snap (TOLERANCE) deve ser um valor de distância positivo.",
+      "A área mínima (MINAREA) deve ser maior ou igual a zero."
+    ],
+    "example": {
+      "INPUT": "edificacoes.gpkg",
+      "SELECTED": false,
+      "TOLERANCE": 0.001,
+      "MINAREA": 1e-08,
+      "GEOGRAPHIC_BOUNDARY": null,
+      "FLAGS": "flags_limpeza.gpkg"
+    }
+  },
+  "dsgtools:convertlayer2layer": {
+    "description": "Copia feições de uma camada de entrada para uma camada de saída, com opção de filtragem por expressão e por limite geográfico (interseção, recorte ou recorte com buffer). Permite mapear atributos via arquivo JSON de conversão.",
+    "constraints": [
+      "A camada de entrada deve ser diferente da camada de saída.",
+      "A camada de filtro, quando informada, deve ser do tipo polígono.",
+      "O comportamento de filtragem espacial é ignorado se nenhuma camada de filtro for fornecida."
+    ],
+    "example": {
+      "INPUT": "camada_origem",
+      "INPUT_FILTER_EXPRESSION": "",
+      "FILTER_LAYER": null,
+      "FL_FILTER_EXPRESSION": "",
+      "BEHAVIOR": 0,
+      "CONVERSION_MAP": null,
+      "OUTPUT": "camada_destino"
+    }
+  },
+  "dsgtools:cqdggridgenerator": {
+    "description": "Gera quadrículas de avaliação conforme a ET-CQDG (DSG/EB), calculando tiles completamente contidos nas molduras MI e selecionando aleatoriamente uma amostra estatística segundo a norma ISO 2859-1 (lote a lote) ou ISO 2859-2 (lote isolado). O tamanho da quadrícula é calculado como 4 cm na escala informada, com reprojeção individual por fuso UTM SIRGAS 2000.",
+    "constraints": [
+      "Apenas quadrículas COMPLETAMENTE dentro da moldura são consideradas; tiles cortados pela borda são descartados.",
+      "Cada moldura é processada com seu fuso UTM específico (SIRGAS 2000).",
+      "O campo 'mi' da camada de moldura é utilizado como identificador; se ausente, usa 'MI_{índice}'.",
+      "O LQA disponível é apenas 1%, 4% ou 10% (conforme ISO 2859).",
+      "Para lote isolado, o menor tamanho de lote suportado pela Tabela 47 é 16 tiles."
+    ],
+    "example": {
+      "INPUT_MOLDURA": "camada_molduras_mi",
+      "ESCALA": 0,
+      "LQA": 1,
+      "TIPO_LOTE": 1,
+      "OUTPUT_GRID": "TEMPORARY_OUTPUT",
+      "OUTPUT_AMOSTRA": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:createeditinggrid": {
+    "description": "Cria e aplica grade de edição UTM com cruzetas e rótulos de coordenadas geográficas sobre uma camada de polígono (moldura cartográfica), configurando a simbologia e os estilos de fonte e cor diretamente na camada de entrada. Não gera nova camada; retorna a camada original com os estilos atribuídos.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo polígono (TypeVectorPolygon).",
+      "Os parâmetros de fonte (FONT, FONT_LL) e cor (COLOR, COLOR_LL) utilizam widgets customizados do DSGTools.",
+      "MAP_SCALE é informado em milhares (ex.: 25 para escala 1:25.000).",
+      "O algoritmo usa a primeira feição da camada para gerar a grade."
+    ],
+    "example": {
+      "INPUT": "camada_moldura_cartografica",
+      "ATTRIBUTE_INDEX": "inom",
+      "ATTRIBUTE_ID": "id",
+      "ID_VALUE": 1,
+      "CROSSES_X": 4,
+      "CROSSES_Y": 4,
+      "SPACING": 4000,
+      "MAP_SCALE": 25.0,
+      "COLOR": null,
+      "FONT": null,
+      "FONT_SIZE": 1.5,
+      "FONT_LL": null,
+      "COLOR_LL": null
+    }
+  },
+  "dsgtools:creategridalonglinealgorithm": {
+    "description": "Gera uma grade de polígonos retangulares ao longo de feições lineares, dimensionada conforme escala e tamanho de papel informados, com sobreposição percentual configurável entre folhas. Cada polígono gerado é orientado conforme o azimute local da linha.",
+    "constraints": [
+      "A camada de entrada deve conter feições do tipo linha.",
+      "O valor de sobreposição deve estar entre 0 e 100%.",
+      "A escala aceita apenas os valores 1:1000, 1:2000, 1:5000 e 1:10000 (índices 0 a 3).",
+      "O formato de papel aceita apenas A4 (índice 0) ou A3 (índice 1)."
+    ],
+    "example": {
+      "INPUT_LAYER": "estrada_l",
+      "SCALE": 1,
+      "PAGE_SIZE": 0,
+      "OVERLAP": 10,
+      "START": 50,
+      "MARGINS_TOP": 10,
+      "MARGINS_BOTTOM": 10,
+      "MARGINS_LEFT": 10,
+      "MARGINS_RIGHT": 10,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:creategridfromcoordinatesalgorithm": {
+    "description": "Cria uma grade de polígonos retangulares a partir de coordenadas mínimas e máximas fornecidas, dividindo a extensão definida em N×M células. O CRS da grade é definido pelo usuário.",
+    "constraints": [
+      "O CRS informado deve ser válido.",
+      "O número de subdivisões em X deve ser maior que 0; em Y, maior que 1.",
+      "X_MAX deve ser maior que X_MIN e Y_MAX deve ser maior que Y_MIN para gerar células com dimensão positiva."
+    ],
+    "example": {
+      "X_MIN": -44.0,
+      "Y_MIN": -23.0,
+      "X_MAX": -43.0,
+      "Y_MAX": -22.0,
+      "N_TILES_X": 4,
+      "N_TILES_Y": 4,
+      "CRS": "EPSG:4674",
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:createreviewgridalgorithm": {
+    "description": "Cria uma grade de revisão sobre a extensão de uma camada polígono de entrada, filtrando apenas células que interseccionam a área de interesse. As células são ordenadas de cima para baixo e da esquerda para a direita, com atributos de rastreamento de tarefa.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo polígono.",
+      "O tamanho das células (X_GRID_SIZE e Y_GRID_SIZE) deve ser maior que zero.",
+      "Os parâmetros avançados RELATED_TASK_ID, UNIT_WORK_ID e STEP_ID são opcionais e usados apenas para rastreamento."
+    ],
+    "example": {
+      "INPUT": "area_trabalho_a",
+      "X_GRID_SIZE": 0.005,
+      "Y_GRID_SIZE": 0.005,
+      "RELATED_TASK_ID": null,
+      "UNIT_WORK_ID": null,
+      "STEP_ID": null,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:deaggregategeometries": {
+    "description": "Desagrega feições com geometrias multiparte em feições simples (singlepart), atualizando a camada original no lugar. Somente feições que possuem mais de uma parte são processadas e divididas.",
+    "constraints": [
+      "A camada de entrada pode ser de qualquer tipo de geometria vetorial.",
+      "Não gera saída separada: as alterações são feitas diretamente na camada de entrada."
+    ],
+    "example": {
+      "INPUT": "vegetacao_multipart.gpkg",
+      "SELECTED": false
+    }
+  },
+  "dsgtools:detectchangesbetweengroups": {
+    "description": "Compara dois grupos de camadas do projeto QGIS (original e revisado), identificando feições adicionadas, removidas ou com geometria/atributos alterados entre os grupos. Gera camadas de flags separadas para pontos, linhas e polígonos.",
+    "constraints": [
+      "Os grupos original (ORIGINAL) e revisado (REVIEWED) devem existir no projeto QGIS carregado; do contrário, o algoritmo lança exceção.",
+      "Cada camada do grupo original deve ter uma camada de mesmo nome no grupo revisado.",
+      "O atributo de chave primária (GROUP) deve existir em todas as camadas comparadas."
+    ],
+    "example": {
+      "ORIGINAL": "Grupo_Original",
+      "REVIEWED": "Grupo_Revisado",
+      "BLACK_ATTRIBUTES": "id, geom_id",
+      "GROUP": "id",
+      "POINT_FLAG": "flags_ponto.gpkg",
+      "LINE_FLAG": "flags_linha.gpkg",
+      "POLYGON_FLAG": "flags_poligono.gpkg"
+    }
+  },
+  "dsgtools:detectnullgeometriesalgorithm": {
+    "description": "Detecta feições com geometrias nulas ou vazias em múltiplas camadas vetoriais, adicionando estilo condicional de destaque vermelho às tabelas de atributos e um campo virtual de diagnóstico. Pode opcionalmente emitir avisos no log para cada camada afetada.",
+    "constraints": [
+      "A lista de camadas de entrada (INPUT_LAYERS) não pode estar vazia para que o algoritmo execute alguma ação.",
+      "Não produz camada de saída de feições; os resultados são estilos e campos virtuais aplicados nas camadas de entrada."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "edificacoes.gpkg",
+        "vias.gpkg"
+      ],
+      "RUN_CHECK_ON_INPUT": true
+    }
+  },
+  "dsgtools:dissolvepolygonswithsameattributes": {
+    "description": "Dissolve polígonos adjacentes que possuem o mesmo conjunto de atributos, podendo restringir o processo a polígonos com área inferior a um limite máximo especificado. Campos virtuais e de chave primária podem ser excluídos da comparação de atributos.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo polígono (TypeVectorPolygon).",
+      "A área máxima de dissolução (MIN_AREA) é opcional; se não informada ou igual a zero, todos os polígonos com mesmo atributo são fundidos independente de tamanho."
+    ],
+    "example": {
+      "INPUT": "uso_solo.gpkg",
+      "SELECTED": false,
+      "MIN_AREA": 0.0,
+      "ATTRIBUTE_BLACK_LIST": [
+        "observacao"
+      ],
+      "IGNORE_VIRTUAL_FIELDS": true,
+      "IGNORE_PK_FIELDS": true
+    }
+  },
+  "dsgtools:donutholeextractor": {
+    "description": "Separa polígonos em duas camadas distintas: cascas externas (outer shells) e buracos internos (donut holes). Permite processar ou analisar independentemente cada componente de polígonos complexos.",
+    "constraints": [
+      "O parâmetro SELECTED limita o processamento às feições selecionadas na camada de entrada.",
+      "Cada buraco interno é exportado como um polígono simples na camada DONUTHOLE.",
+      "Polígonos sem buracos aparecem apenas na camada OUTERSHELL."
+    ],
+    "example": {
+      "INPUT": "camada_poligonos",
+      "SELECTED": false,
+      "OUTERSHELL": "TEMPORARY_OUTPUT",
+      "DONUTHOLE": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:enforceattributerulesalgorithm": {
+    "description": "Aplica um conjunto de regras de atributos definidas pelo usuário sobre camadas vetoriais do projeto, marcando com estilo condicional as feições que violam as regras e gerando camadas de flags (ponto, linha e polígono) com as feições infratoras.",
+    "constraints": [
+      "O conjunto de regras (RULES_SET) não pode estar vazio; caso contrário, o algoritmo lança exceção.",
+      "As camadas referenciadas pelas regras devem estar carregadas no projeto QGIS."
+    ],
+    "example": {
+      "RULES_SET": {},
+      "SELECTED": false,
+      "POINT_FLAGS": "flags_atrib_ponto.gpkg",
+      "LINE_FLAGS": "flags_atrib_linha.gpkg",
+      "POLYGON_FLAGS": "flags_atrib_poligono.gpkg"
+    }
+  },
+  "dsgtools:enforcespatialrules": {
+    "description": "Verifica e aplica um conjunto de regras espaciais definidas pelo usuário entre camadas vetoriais, identificando feições que violam as relações topológicas esperadas e gerando flags por tipo de geometria (ponto, linha e polígono).",
+    "constraints": [
+      "O conjunto de regras (RULES_SET) deve conter ao menos uma regra válida com camadas carregadas no projeto; caso contrário, o algoritmo lança exceção.",
+      "Regras com camadas não carregadas no projeto são descartadas silenciosamente antes do processamento."
+    ],
+    "example": {
+      "RULES_SET": [],
+      "POINT_FLAGS": "flags_espacial_ponto.gpkg",
+      "LINE_FLAGS": "flags_espacial_linha.gpkg",
+      "POLYGON_FLAGS": "flags_espacial_poligono.gpkg"
+    }
+  },
+  "dsgtools:etcqdgsegmentationevaluator": {
+    "description": "Avalia métricas de segmentação semântica (Acurácia, IoU, Precisão, Recall, F1) comparando máscaras vetoriais de verdade de campo (ground truth) com resultados de inferência raster de múltiplos experimentos, tile a tile conforme a grade ET-CQDG. Gera CSVs consolidados por tile, por MI e por experimento, além de uma camada vetorial com métricas por tile.",
+    "constraints": [
+      "A camada de tiles deve conter os campos 'mi', 'quadricula' e 'fuso_utm'.",
+      "O valor nodata utilizado é fixo em 255; pixels com esse valor são ignorados nas métricas.",
+      "A classe 0 representa o fundo (Background) e é incluída nas métricas.",
+      "Requer a biblioteca rasterio instalada no ambiente Python do QGIS.",
+      "O campo de classe (CLASS_FIELD) deve conter valores inteiros; 0 é reservado para Background."
+    ],
+    "example": {
+      "INPUT_TILES": "camada_quadriculas_etcqdg",
+      "INPUT_MASK_LAYER": "camada_poligonos_ground_truth",
+      "CLASS_FIELD": "classe_id",
+      "CLASS_NAME_FIELD": "class_name",
+      "SEGMENTATION_RASTER": [
+        "experimento1.tif",
+        "experimento2.tif"
+      ],
+      "OUTPUT_FOLDER": "C:/avaliacao/saida",
+      "OUTPUT_LAYER": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:etcqdgsegmentationevaluatorfromraster": {
+    "description": "Avalia métricas de segmentação semântica comparando um raster de verdade de campo (Ground Truth) com rasters de inferência de múltiplos experimentos, tile a tile conforme a grade ET-CQDG. Diferencia-se da versão vetorial por trabalhar diretamente com GT raster, alinhando os rasters preditos ao GT por reamostragem nearest-neighbor.",
+    "constraints": [
+      "A camada de tiles deve conter os campos 'mi', 'quadricula' e 'fuso_utm'.",
+      "O valor nodata é fixo em 255; pixels com esse valor são ignorados nas métricas.",
+      "A classe 0 é tratada como Background e incluída nas métricas.",
+      "Requer a biblioteca rasterio instalada no ambiente Python do QGIS.",
+      "O mapeamento de classes via CLASS_NAMES_JSON deve ser um JSON válido com chaves inteiras (ex.: {\"0\": \"Background\", \"1\": \"Edificação\"})."
+    ],
+    "example": {
+      "INPUT_TILES": "camada_quadriculas_etcqdg",
+      "INPUT_GT_RASTER": "ground_truth.tif",
+      "SEGMENTATION_RASTER": [
+        "experimento1.tif",
+        "experimento2.tif"
+      ],
+      "CLASS_NAMES_JSON": "{\"0\": \"Background\", \"1\": \"Edificação\"}",
+      "OUTPUT_FOLDER": "C:/avaliacao/saida_raster",
+      "OUTPUT_LAYER": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:exportToMemoryLayer": {
+    "description": "Exporta uma camada vetorial existente para uma camada temporária em memória com nome e estilo QML configuráveis, adicionando-a automaticamente ao projeto ao final da execução. Funciona apenas no contexto de modelos de processamento.",
+    "constraints": [
+      "Suporta apenas geometrias do tipo Point, LineString e Polygon (índices 0, 1 e 2 respectivamente).",
+      "O estilo QML deve ser uma string XML válida; se inválida, a camada é criada sem estilo.",
+      "Projetado para uso em modelos de processamento; pode não funcionar corretamente fora desse contexto."
+    ],
+    "example": {
+      "INPUT_LAYER": "edificacao_a",
+      "OUTPUT_NAME": "resultado_edificacoes",
+      "OUTPUT_QML_STYLE": ""
+    }
+  },
+  "dsgtools:exportfeaturesbyattribute": {
+    "description": "Exporta feições de uma camada vetorial para uma camada de saída filtrando por um atributo e um operador de comparação (=, <>, >, >=, <, <=, begins with, contains, is null, is not null, does not contain). Equivale a um Extract by Attribute parametrizável.",
+    "constraints": [
+      "O campo selecionado deve existir na camada de entrada; caso contrário, nenhuma feição é exportada.",
+      "Operadores textuais (begins with, contains, does not contain) devem ser usados apenas com campos do tipo texto.",
+      "O parâmetro VALUE é ignorado para os operadores 'is null' e 'is not null'."
+    ],
+    "example": {
+      "INPUT": "edificacao_a",
+      "FIELD": "tipo",
+      "OPERATOR": 0,
+      "VALUE": "1",
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:extendlinestogeographicbounds": {
+    "description": "Estende as extremidades de linhas de entrada até o limite geográfico de referência, prolongando os pontos inicial e final das linhas que estejam próximos à borda da área de interesse. Linhas fechadas (is_closed) são ignoradas na extensão.",
+    "constraints": [
+      "A camada de limite geográfico (GEOGRAPHIC_BOUNDS_LAYER) é obrigatória e deve ser do tipo polígono.",
+      "O comprimento de extensão (EXTEND_LENGTH) deve ser maior ou igual a zero.",
+      "Linhas fechadas não são processadas."
+    ],
+    "example": {
+      "INPUT": "curvas_nivel.gpkg",
+      "SELECTED": false,
+      "GEOGRAPHIC_BOUNDS_LAYER": "moldura.gpkg",
+      "EXTEND_LENGTH": 0.0001
+    }
+  },
+  "dsgtools:extractbyde9im": {
+    "description": "Extrai feições da camada de entrada que satisfazem uma relação espacial DE-9IM específica com feições da camada de intersecção. Permite filtros espaciais precisos usando a matriz de relações topológicas DE-9IM.",
+    "constraints": [
+      "O parâmetro DE9IM deve ser uma string de 9 caracteres válida com o padrão [FfTt012*]{9}.",
+      "A relação é avaliada entre cada feição de INPUT e todas as feições de INTERSECT."
+    ],
+    "example": {
+      "INPUT": "camada_poligonos",
+      "INTERSECT": "camada_referencia",
+      "DE9IM": "T*F**FFF*",
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:extractelevationpoints": {
+    "description": "Extrai pontos cotados cartográficos (spot elevations) a partir de um MDE e camadas vetoriais auxiliares, usando múltiplos critérios: topos de morro, cruzamentos de estradas, interseções com rios, áreas planas e feições naturais de ponto. A saída é sempre em EPSG:4674.",
+    "constraints": [
+      "A saída é sempre reprojetada para EPSG:4674.",
+      "O parâmetro SCALE é um enum: 0=1:25k, 1=1:50k, 2=1:100k, 3=1:250k; define distâncias mínimas entre pontos.",
+      "Se ONLY_HILLTOPS for True, apenas pontos de topo de morro são extraídos.",
+      "Parâmetros de drenagem, estradas e corpos d'água são opcionais mas influenciam os critérios de seleção.",
+      "O parâmetro DEPRESSION_EXPRESSION filtra feições de curvas de depressão."
+    ],
+    "example": {
+      "INPUT_DEM": "mde.tif",
+      "CONTOUR_LINES": "camada_curvas_nivel",
+      "CONTOUR_ATTR": "cota",
+      "DEPRESSION_EXPRESSION": "\"depressao\" = 1",
+      "CONTOUR_INTERVAL": 10.0,
+      "GEOGRAPHIC_BOUNDARY": "camada_moldura",
+      "SCALE": 1,
+      "WATER_BODIES": null,
+      "AREA_WITHOUT_INFORMATION_POLYGONS": null,
+      "NATURAL_POINT_FEATURES": null,
+      "DRAINAGE_LINES": null,
+      "DRAINAGE_LINES_NAME_ATTRIBUTE": "",
+      "CONSIDER_DRAINAGES_WITHOUT_NAMES": false,
+      "ROADS": null,
+      "MAIN_ROADS_EXPRESSION": "",
+      "OTHER_ROADS_EXPRESSION": "",
+      "ONLY_HILLTOPS": false,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:extractmiddlevertexonlinealgorithm": {
+    "description": "Extrai o vértice do meio de cada parte de uma linha (índice = total_vértices // 2), gerando uma camada de pontos com o campo part_id identificando a parte de origem.",
+    "constraints": [
+      "Para linhas multipart, cada parte gera um ponto separado.",
+      "O campo part_id na saída corresponde ao índice da parte dentro da feição."
+    ],
+    "example": {
+      "INPUT": "camada_linhas",
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:filterlayerlistbygeographicboundary": {
+    "description": "Filtra uma lista de camadas vetoriais mantendo apenas as feições que interseccionam um limite geográfico (polígono), separando os resultados em três camadas de saída conforme o tipo de geometria: ponto, linha e polígono.",
+    "constraints": [
+      "A camada de limite geográfico deve ser do tipo polígono.",
+      "Se a camada de limite for nula ou vazia, todas as feições de entrada são incluídas sem filtragem espacial.",
+      "As camadas de saída são sempre criadas, mesmo que vazias."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "edificacao_a",
+        "via_deslocamento_l",
+        "posto_combustivel_p"
+      ],
+      "GEOGRAPHIC_BOUNDARY": "limite_municipio_a",
+      "POINT_OUTPUT": "TEMPORARY_OUTPUT",
+      "LINE_OUTPUT": "TEMPORARY_OUTPUT",
+      "POLYGON_OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:filterlayerlistbygeometrytype": {
+    "description": "Separa uma lista de camadas vetoriais em três listas de saída conforme o tipo de geometria: ponto, linha e polígono. Útil em modelos de processamento para roteamento condicional por tipo.",
+    "constraints": [
+      "Camadas com geometria desconhecida ou nula não são incluídas em nenhuma das saídas.",
+      "A operação é apenas de classificação; nenhuma feição é copiada ou modificada."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "edificacao_a",
+        "via_deslocamento_l",
+        "posto_combustivel_p"
+      ],
+      "POINT_OUTPUT": "OUTPUT",
+      "LINE_OUTPUT": "OUTPUT",
+      "POLYGON_OUTPUT": "OUTPUT"
+    }
+  },
+  "dsgtools:findsmallclosedlinesalgorithm": {
+    "description": "Identifica linhas fechadas (anéis) cujo comprimento total é menor que um limiar mínimo, com opção de removê-las ou selecioná-las na camada de entrada. Útil para eliminar artefatos de digitalização em camadas de curvas de nível ou hidrografia.",
+    "constraints": [
+      "Apenas linhas fechadas (primeiro vértice == último vértice após dissolução) são consideradas.",
+      "O parâmetro METHOD define o comportamento: 0 = remover feições da camada de entrada, 1 = selecionar feições removidas, 2 = remover e adicionar ao sink, 3 = selecionar na camada original, 4 = apenas retornar como sink."
+    ],
+    "example": {
+      "INPUT": "camada_curvas_nivel",
+      "MIN_LENGTH": 50.0,
+      "METHOD": 0
+    }
+  },
+  "dsgtools:fixdrainageflowalgorithm": {
+    "description": "Corrige automaticamente o sentido de fluxo de linhas de drenagem usando análise de grafos (networkx), orientando os arcos de acordo com restrições de fronteiras geográficas, corpos d'água, pontos de sumidouro e vertedouros. Ao final, pode executar verificações de fluxo e laços na rede corrigida.",
+    "constraints": [
+      "Requer a biblioteca Python 'networkx' instalada; do contrário, lança exceção.",
+      "Se uma camada de corpo d'água (WATER_BODY_LAYER) for informada, as expressões de filtro para corpos com fluxo, sem fluxo e oceano são todas obrigatórias.",
+      "Se uma camada de sumidouro/vertedouro (SINK_AND_SPILLWAY_LAYER) for informada, as expressões de filtro para sumidouro e vertedouro são obrigatórias.",
+      "Nós com grau maior que 3 (confluências inválidas) causam encerramento antecipado com flags de ponto.",
+      "A camada de limite geográfico (GEOGRAPHIC_BOUNDS_LAYER) é obrigatória."
+    ],
+    "example": {
+      "NETWORK_LAYER": "drenagem.gpkg",
+      "NETWORK_FILTER_EXPRESSION": "\"direcao_fixada\" = 1",
+      "GEOGRAPHIC_BOUNDS_LAYER": "moldura.gpkg",
+      "WATER_BODY_LAYER": "massa_dagua.gpkg",
+      "WATER_BODY_WITH_FLOW_FILTER_EXPRESSION": "\"tipo\" in (1,2,9,10)",
+      "WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION": "\"tipo\" in (6,7)",
+      "OCEAN_FILTER_EXPRESSION": "\"tipo\" in (3,4,5)",
+      "SINK_AND_SPILLWAY_LAYER": null,
+      "SINK_FILTER_EXPRESSION": "\"tipo\" in (3,4)",
+      "SPILLWAY_FILTER_EXPRESSION": "\"tipo\" in (5)",
+      "RUN_FLOW_CHECK": true,
+      "RUN_LOOP_CHECK": true,
+      "POINT_FLAGS": "flags_ponto.gpkg",
+      "LINE_FLAGS": "flags_linha.gpkg",
+      "POLYGON_FLAGS": "flags_poligono.gpkg"
+    }
+  },
+  "dsgtools:fixdrainageversuswaterbodyattributealgorithm": {
+    "description": "Corrige o atributo de relação com polígono (situacao_em_poligono) em linhas de drenagem, ajustando o valor do campo para refletir corretamente se o trecho está dentro ou fora de corpos d'água com fluxo. Usa análise de grafos de rede e operações de localização espacial para determinar o valor correto de cada segmento.",
+    "constraints": [
+      "Requer a biblioteca Python 'networkx' instalada.",
+      "O valor fora do polígono (OUTSIDE_POLYGON_ATTRIBUTE_VALUE) deve ser convertível para inteiro; do contrário, lança exceção.",
+      "As camadas de drenagem e corpo d'água devem estar carregadas."
+    ],
+    "example": {
+      "INPUT_DRAINAGES": "elemnat_trecho_drenagem_l.gpkg",
+      "INSIDE_POLYGON_ATTRIBUTE": "situacao_em_poligono",
+      "OUTSIDE_POLYGON_ATTRIBUTE_VALUE": "1",
+      "WATER_BODY": "cobter_massa_dagua_a.gpkg",
+      "WATER_BODY_WITH_FLOW_EXPRESSION": "\"tipo\" in (1,2,9,10)"
+    }
+  },
+  "dsgtools:fixsegmenterrorsbetweenlines": {
+    "description": "Corrige erros de segmento entre duas camadas de linhas (entrada e referência) detectando discrepâncias geométricas dentro do raio de busca e aplicando snap de ambas as camadas sobre os pontos de erro identificados.",
+    "constraints": [
+      "Ambas as camadas de entrada (INPUT e REFERENCE_LINE) devem ser do tipo linha.",
+      "O raio de busca (SEARCH_RADIUS) deve ser um número de ponto flutuante positivo."
+    ],
+    "example": {
+      "INPUT": "drenagem_entrada.gpkg",
+      "REFERENCE_LINE": "drenagem_referencia.gpkg",
+      "SEARCH_RADIUS": 0.5
+    }
+  },
+  "dsgtools:generalizecontourlines": {
+    "description": "Generaliza curvas de nível aplicando um pipeline completo: explosão de geometrias, fusão de conexas, remoção de duplicatas, filtragem de fechadas curtas, simplificação Douglas (2 m), suavização NURBfit (grau 3) e nova simplificação Douglas (3 m), com recorte pela moldura. A saída segue o esquema EDGV (cota, indice, depressao, visivel, etc.).",
+    "constraints": [
+      "Requer a biblioteca scipy instalada (para splprep/splev).",
+      "Curvas fechadas com comprimento inferior a MIN_CLOSED_LENGTH são removidas antes do suavização.",
+      "O recorte final é feito pela camada FRAME.",
+      "A saída possui campos fixos do esquema EDGV: id, cota, indice, depressao, visivel, dentro_massa_dagua, texto_edicao, observacao.",
+      "O atributo de elevação da camada de entrada é especificado por ELEVATION_ATTR."
+    ],
+    "example": {
+      "INPUT": "camada_curvas_nivel",
+      "ELEVATION_ATTR": "cota",
+      "MIN_CLOSED_LENGTH": 100.0,
+      "FRAME": "camada_moldura",
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:generalizeedificationsalgorithm": {
+    "description": "Generaliza camadas de edificações pontuais usando agrupamento DBSCAN e processamento paralelo: elimina edificações de baixa prioridade próximas a edificações de alta prioridade e remove duplicatas de mesma classe que estejam dentro da tolerância definida.",
+    "constraints": [
+      "O parâmetro FILTER_EXPRESSION distingue edificações de baixa prioridade (True) das de alta prioridade (False).",
+      "A distância de agrupamento DBSCAN é controlada pelo parâmetro TOL.",
+      "Utiliza ThreadPoolExecutor para processamento paralelo por cluster.",
+      "A saída inclui apenas feições que sobrevivem ao processo de generalização."
+    ],
+    "example": {
+      "INPUT_POINT": "camada_edificacoes_ponto",
+      "FILTER_EXPRESSION": "\"tipo\" = 'residencial'",
+      "TOL": 50.0,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:generalizeedificationsareaalgorithm": {
+    "description": "Remove polígonos de edificações cuja área seja inferior ao limiar calculado como AREAMINIMA × ESCALA², convertendo cada polígono eliminado em um ponto centróide adicionado à camada de pontos.",
+    "constraints": [
+      "O limiar de área é calculado dinamicamente como AREAMINIMA × ESCALA².",
+      "Polígonos abaixo do limiar são deletados da camada INPUT_POLYGON e seus centroides são inseridos em INPUT_POINT.",
+      "Ambas as camadas devem estar editáveis."
+    ],
+    "example": {
+      "INPUT_POLYGON": "camada_edificacoes_poligono",
+      "INPUT_POINT": "camada_edificacoes_ponto",
+      "ESCALA": 50000,
+      "AREAMINIMA": 0.0004,
+      "OUTPUTPOLYGON": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:generalizehighwaysalgorithm": {
+    "description": "Generaliza camadas de rodovias combinando a remoção de arestas curtas de dead-end na rede viária com a eliminação de polígonos de rotatórias (roundabouts) abaixo do limiar de área.",
+    "constraints": [
+      "Requer networkx instalado.",
+      "Internamente executa generalizenetworkedgeswithlengthalgorithm e generalizeroundaboutsalgorithm em sequência.",
+      "Feições nas camadas de restrição protegem nós da rede contra remoção."
+    ],
+    "example": {
+      "NETWORK_LAYER": "camada_rodovias",
+      "ESCALA": 50000,
+      "AREA_MINIMA": 0.0004,
+      "POINT_CONSTRAINT_LAYER_LIST": [],
+      "LINE_CONSTRAINT_LAYER_LIST": [],
+      "POLYGON_CONSTRAINT_LAYER_LIST": [],
+      "GEOGRAPHIC_BOUNDS_LAYER": "camada_moldura",
+      "MIN_LENGTH": 30.0
+    }
+  },
+  "dsgtools:generalizelandingstripalgorithm": {
+    "description": "Converte polígonos estreitos de pistas de pouso (helipontos ou pistas de terra) em linhas de eixo usando esqueletização por diagramas de Voronoi, removendo os polígonos originais da camada de entrada.",
+    "constraints": [
+      "Polígonos são candidatos quando sua área é inferior a AREAMINIMA × ESCALA² ou quando a largura mínima é inferior a LARGURAMINIMA × ESCALA.",
+      "O parâmetro SVORONOI controla a suavização do esqueleto Voronoi e SSIMPLIFY controla a simplificação final (parâmetros avançados).",
+      "A camada de polígonos original é editada in-place (feições processadas são removidas)."
+    ],
+    "example": {
+      "INPUT_POLYGON": "camada_pista_pouso",
+      "ESCALA": 25000,
+      "AREAMINIMA": 0.001,
+      "LARGURAMINIMA": 0.0001,
+      "SVORONOI": 0.0,
+      "SSIMPLIFY": 1.0,
+      "OUTPUTLINE": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:generalizenetworkedgeswithlengthalgorithm": {
+    "description": "Generaliza arestas de uma rede removendo segmentos mortos (dead-ends) cujo comprimento seja inferior ao limiar mínimo, respeitando pontos e feições de restrição. Suporta paralelismo por partição espacial usando networkx.",
+    "constraints": [
+      "Requer a biblioteca networkx instalada.",
+      "Apenas arestas do tipo dead-end (grau 1 no grafo) com comprimento abaixo de MIN_LENGTH são candidatas à remoção.",
+      "Feições das camadas de restrição (ponto, linha, polígono) protegem nós adjacentes de serem removidos.",
+      "Se GROUP_BY_SPATIAL_PARTITION for True, o processamento é dividido por partição espacial."
+    ],
+    "example": {
+      "NETWORK_LAYER": "camada_rede_viaria",
+      "MIN_LENGTH": 30.0,
+      "GEOGRAPHIC_BOUNDS_LAYER": "camada_moldura",
+      "GROUP_BY_SPATIAL_PARTITION": false,
+      "POINT_CONSTRAINT_LAYER_LIST": [],
+      "LINE_CONSTRAINT_LAYER_LIST": [],
+      "POLYGON_CONSTRAINT_LAYER_LIST": [],
+      "METHOD": 0
+    }
+  },
+  "dsgtools:generalizewaterbodyalgorithm": {
+    "description": "Generaliza corpos d'água aplicando buffer negativo/positivo a rios, convertendo ilhas pequenas em pontos, ajustando classificações de drenagem e filtrando barragens, editando todas as camadas de entrada in-place em ~53 etapas internas.",
+    "constraints": [
+      "As camadas de entrada (corpo d'água, drenagem, ilha, barragem) devem estar editáveis.",
+      "O limiar de área mínima de corpo d'água é dado em metros quadrados; o de largura em unidades do mapa.",
+      "Ilhas com área inferior a MIN_ISLAND_AREA são convertidas em pontos na camada ISLAND_POINT.",
+      "O parâmetro EXPRESSION filtra os tipos de fluxo relevantes para a generalização.",
+      "Feições que tocam a camada GEOGRAPHIC_BOUNDS_LAYER não são eliminadas."
+    ],
+    "example": {
+      "WATER_BODY": "camada_massa_dagua",
+      "EXPRESSION": "\"tipo\" IN (1, 2)",
+      "SCALE": 50000,
+      "MIN_WATERBODY_WIDTH": 25.0,
+      "MIN_WATERBODY_AREA": 15625.0,
+      "ISLAND": "camada_ilha_poligono",
+      "ISLAND_POINT": "camada_ilha_ponto",
+      "MIN_ISLAND_AREA": 10000.0,
+      "DRAINAGE_LINES": "camada_drenagem",
+      "DRAINAGE_FIELD": "regime",
+      "DRAINAGE_FIELD_VALUE": 1,
+      "DRAINAGE_FIELD_VALUE_SECUNDARY": 2,
+      "MIN_DRAINAGE_LINES_WIDTH": 10.0,
+      "GEOGRAPHIC_BOUNDS_LAYER": "camada_moldura",
+      "DAM": "camada_barragem",
+      "OUTPUT_POLYGON": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:genericselectiontoolparametersalgorithm": {
+    "description": "Configura a lista negra (blacklist) da Ferramenta de Seleção Genérica do DSGTools, armazenando os nomes de camadas que devem ser ignoradas durante a seleção. Os valores são persistidos no QSettings do QGIS.",
+    "constraints": [
+      "Os nomes de camadas na lista negra devem ser separados por ponto-e-vírgula (;).",
+      "Não produz saída vetorial; apenas grava configurações no QSettings."
+    ],
+    "example": {
+      "VALUE_LIST": "aux_grid_revisao_a;Created Review Grid;grid;moldura"
+    }
+  },
+  "dsgtools:grouplayers": {
+    "description": "Reorganiza camadas vetoriais na árvore de camadas do QGIS, agrupando-as hierarquicamente por banco de dados, tipo de geometria (Ponto, Linha, Polígono, Não espacial) e categoria derivada de uma expressão QGIS aplicada ao nome da camada. O agrupamento padrão extrai o primeiro segmento do nome antes de '_'.",
+    "constraints": [
+      "A expressão QGIS fornecida em CATEGORY_EXPRESSION deve ser válida; erros de parser ou avaliação lançam exceção.",
+      "Este algoritmo não é thread-safe (FlagNoThreading) devido ao uso de removeChildNode.",
+      "Camadas sem nó correspondente na árvore de camadas são ignoradas silenciosamente."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1",
+        "layer_id_2"
+      ],
+      "CATEGORY_EXPRESSION": "regexp_substr(@layer_name ,'([^_]+)')"
+    }
+  },
+  "dsgtools:hierarchicalsnaplayeronlayer": {
+    "description": "Realiza snap hierárquico entre camadas vetoriais, aplicando a operação de ajuste em ordem de prioridade definida pelo usuário (hierarquia de snap). Opcionalmente, restringe o processamento ao limite geográfico informado e suporta trabalhar apenas com feições selecionadas.",
+    "constraints": [
+      "A camada de limite geográfico (GEOGRAPHIC_BOUNDARY) não pode ser incluída na lista de hierarquia de snap.",
+      "A hierarquia de snap (SNAP_HIERARCHY) deve ser configurada via widget especializado SnapHierarchyWrapper.",
+      "Cada item da hierarquia deve conter pelo menos os campos 'referenceLayer', 'snapLayerList', 'snap' e 'mode'."
+    ],
+    "example": {
+      "SNAP_HIERARCHY": [
+        {
+          "referenceLayer": "camada_referencia",
+          "snapLayerList": [
+            "camada_alvo"
+          ],
+          "snap": 0.001,
+          "mode": 2
+        }
+      ],
+      "SELECTED": false,
+      "GEOGRAPHIC_BOUNDARY": null
+    }
+  },
+  "dsgtools:identifyandfixinvalidgeometries": {
+    "description": "Identifica geometrias inválidas em uma camada vetorial de qualquer tipo, sinalizando as inconsistências encontradas com flags do tipo ponto. Opcionalmente corrige as geometrias inválidas diretamente na camada de entrada.",
+    "constraints": [
+      "A camada de entrada (INPUT) aceita qualquer tipo de geometria vetorial.",
+      "O parâmetro IGNORE_CLOSED permite ignorar flags no ponto inicial ou final de linhas fechadas.",
+      "O parâmetro TYPE (Fix input geometries) quando verdadeiro aplica correção automática, além de identificar."
+    ],
+    "example": {
+      "INPUT": "entrada.gpkg|layername=camada",
+      "SELECTED": false,
+      "IGNORE_CLOSED": false,
+      "TYPE": false,
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifyanglesininvalidrangealgorithm": {
+    "description": "Identifica vértices em feições de linha ou polígono cujo ângulo interno está dentro de um intervalo considerado inválido, definido pelos parâmetros de ângulo mínimo e máximo. Gera flags de ponto nas posições dos ângulos problemáticos.",
+    "constraints": [
+      "A entrada (INPUT) deve ser do tipo linha ou polígono.",
+      "O ângulo máximo (MAX_ANGLE) deve ser estritamente maior que o mínimo (MIN_ANGLE); caso contrário, o algoritmo lança exceção.",
+      "Os valores de MIN_ANGLE e MAX_ANGLE devem ser maiores ou iguais a zero (minValue=0)."
+    ],
+    "example": {
+      "INPUT": "entrada.gpkg|layername=linhas",
+      "SELECTED": false,
+      "MIN_ANGLE": 80,
+      "MAX_ANGLE": 100,
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifyattributechangesinlines": {
+    "description": "Verifica se há mudanças de atributos entre linhas conectadas nos campos selecionados, dentro da tolerância de ângulo de continuidade. Linhas que formam continuidade geométrica (ângulo próximo a 180°) mas têm atributos diferentes nos campos indicados são sinalizadas como flags.",
+    "constraints": [
+      "A entrada (INPUT_LAYER) deve ser do tipo linha.",
+      "Os campos a verificar (INPUT_FIELDS) devem pertencer à camada de entrada.",
+      "O ângulo máximo entre linhas (INPUT_ANGLE) deve ser maior ou igual a zero.",
+      "O tamanho máximo (INPUT_MAX_SIZE) é opcional; quando maior que zero, filtra apenas feições com comprimento menor que o valor informado."
+    ],
+    "example": {
+      "INPUT_LAYER": "entrada.gpkg|layername=linhas",
+      "INPUT_FIELDS": [
+        "classe",
+        "tipo"
+      ],
+      "INPUT_ANGLE": 10.0,
+      "INPUT_MAX_SIZE": 0,
+      "OUTPUT": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifyclosefeaturesalgorithm": {
+    "description": "Verifica se há feições de diferentes camadas (ou da mesma camada) cuja distância é menor que o limite mínimo configurado para cada par de camadas. Utiliza um parâmetro especializado (DistanceBetweenLayers) para definir os pares e distâncias mínimas.",
+    "constraints": [
+      "O parâmetro DISTANCE_BETWEEN_LAYERS deve ser configurado via widget DistanceBetweenLayersWrapper e não pode estar vazio.",
+      "Cada entrada do parâmetro deve conter 'layerA', 'layerB' e 'distance'.",
+      "Se a camada A e B forem iguais, pares duplicados (mesma feição consigo mesma) são ignorados."
+    ],
+    "example": {
+      "DISTANCE_BETWEEN_LAYERS": [
+        {
+          "layerA": "camada_a",
+          "layerB": "camada_b",
+          "distance": 5.0
+        }
+      ],
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifycountourstreamintersection": {
+    "description": "Identifica interseções inválidas entre linhas de drenagem e curvas de nível, gerando flags de ponto para interseções múltiplas e flags de linha para sobreposições lineares. Usa processamento paralelo com ThreadPoolExecutor.",
+    "constraints": [
+      "A camada de drenagem (INPUT_STREAM) e a camada de curvas de nível (INPUT_COUNTOUR_LINES) devem ser do tipo linha.",
+      "São geradas duas saídas de flags: pontos (POINT_FLAGS) e linhas (LINE_FLAGS).",
+      "Interseções do tipo ponto único não são sinalizadas; apenas multipontos e linhas são considerados problemas."
+    ],
+    "example": {
+      "INPUT_STREAM": "entrada.gpkg|layername=drenagem",
+      "INPUT_COUNTOUR_LINES": "entrada.gpkg|layername=curvas_nivel",
+      "POINT_FLAGS": "saida_flags.gpkg|layername=flags_ponto",
+      "LINE_FLAGS": "saida_flags.gpkg|layername=flags_linha"
+    }
+  },
+  "dsgtools:identifycrossinglines": {
+    "description": "Identifica cruzamentos entre linhas da camada de entrada e linhas das camadas de comparação, descartando interseções que coincidam com o primeiro ou último vértice da linha de entrada. Para camadas de polígono, utiliza apenas os contornos poligonais.",
+    "constraints": [
+      "A entrada (INPUT) deve ser do tipo linha.",
+      "As camadas de comparação (COMPARE_INPUT) podem ser de qualquer geometria; camadas de ponto são ignoradas; camadas de polígono são convertidas para linhas.",
+      "Interseções que coincidem com vértices extremos da camada de entrada não são sinalizadas."
+    ],
+    "example": {
+      "INPUT": "entrada.gpkg|layername=linhas_entrada",
+      "COMPARE_INPUT": [
+        "entrada.gpkg|layername=linhas_comparacao"
+      ],
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifydangles": {
+    "description": "Identifica pontas soltas (dangles) em uma camada de linhas, com suporte a camadas de filtro (linhas e polígonos) e limite geográfico para restringir a saída. Permite configurar raio de busca e tratar a entrada como camada de fronteira.",
+    "constraints": [
+      "A entrada (INPUT) deve ser do tipo linha.",
+      "O raio de busca (TOLERANCE) deve ser maior ou igual a zero (padrão 0,0001).",
+      "As camadas de filtro de linha (LINEFILTERLAYERS) devem ser do tipo linha; as de polígono (POLYGONFILTERLAYERS) devem ser do tipo polígono.",
+      "O limite geográfico (GEOGRAPHIC_BOUNDARY) deve ser do tipo polígono e serve apenas para filtrar os dangles de saída, não para processar."
+    ],
+    "example": {
+      "INPUT": "entrada.gpkg|layername=linhas",
+      "SELECTED": false,
+      "INPUT_IS_BOUDARY_LAYER": false,
+      "TOLERANCE": 0.0001,
+      "LINEFILTERLAYERS": [],
+      "POLYGONFILTERLAYERS": [],
+      "IGNORE_DANGLES_ON_UNSEGMENTED_LINES": false,
+      "GEOGRAPHIC_BOUNDARY": null,
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifydifferencesbetweendatabasemodelsalgorithm": {
+    "description": "Compara a estrutura de um banco de dados PostGIS com um arquivo mestre (masterfile JSON) do modelo EDGV, identificando divergências em versões, tabelas de domínio, classes EDGV, colunas, cardinalidade e check constraints. O relatório de diferenças é salvo em arquivo .txt.",
+    "constraints": [
+      "O banco de dados alvo deve ser PostgreSQL/PostGIS acessível pelo IP e porta informados.",
+      "O arquivo mestre deve ser um JSON válido no formato DSGTools de masterfile EDGV.",
+      "A senha é inserida em campo mascarado; conexão sem SSL é padrão."
+    ],
+    "example": {
+      "MASTERFILE": "C:/modelos/edgv_3_0_masterfile.json",
+      "SERVERIP": "192.168.1.10",
+      "PORT": 5432,
+      "DBNAME": "producao_cartografica",
+      "USER": "postgres",
+      "PASSWORD": "senha_secreta",
+      "OUTPUT": "C:/relatorios/divergencias.txt"
+    }
+  },
+  "dsgtools:identifydrainageandcontourinconsistencies": {
+    "description": "Verifica inconsistências entre a rede de drenagem e as curvas de nível, analisando se as drenagens fluem de montante a jusante em relação às cotas das curvas interceptadas. Requer a biblioteca Python networkx e identifica erros de continuidade, inversão de fluxo e curvas ausentes.",
+    "constraints": [
+      "Requer a biblioteca Python networkx instalada; caso contrário, lança QgsProcessingException.",
+      "As entradas INPUT_DRAINAGES e INPUT_CONTOURS devem ser do tipo linha.",
+      "O campo de atributo de cota (CONTOUR_ATTR) deve pertencer à camada de curvas de nível.",
+      "O intervalo de curvas de nível (CONTOUR_INTERVAL) deve ser maior que zero."
+    ],
+    "example": {
+      "INPUT_DRAINAGES": "entrada.gpkg|layername=drenagem",
+      "INPUT_CONTOURS": "entrada.gpkg|layername=curvas_nivel",
+      "CONTOUR_ATTR": "cota",
+      "CONTOUR_INTERVAL": 10.0,
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifydrainageangleissues": {
+    "description": "Identifica pontos da rede de drenagem onde há uma curva brusca (variação de azimute superior a 90°) entre o fluxo de entrada e o fluxo de saída. Sinaliza com flags de ponto os locais onde a mudança de direção é considerada inválida.",
+    "constraints": [
+      "A entrada (INPUT) deve ser do tipo linha.",
+      "O critério de erro é a diferença entre os azimutes de entrada e saída superior a 90°.",
+      "Não há parâmetros numéricos configuráveis pelo usuário além da camada de entrada e saída de flags."
+    ],
+    "example": {
+      "INPUT": "entrada.gpkg|layername=drenagem",
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifydrainageflowissues": {
+    "description": "Verifica problemas no fluxo da rede de drenagem analisando os pontos de início e fim de cada linha, identificando confluências com 4 ou mais linhas, pontos sem linhas de entrada e pontos sem linhas de saída. Gera flags de ponto nas posições problemáticas.",
+    "constraints": [
+      "A entrada (INPUT) deve ser do tipo linha.",
+      "Pontos com apenas 1 linha conectada (ponta solta ou nascente/foz) são considerados válidos e não são sinalizados.",
+      "Pontos com 4 ou mais linhas conectadas são sempre sinalizados como erro.",
+      "Pontos onde todas as linhas chegam (nenhuma sai) ou todas as linhas saem (nenhuma chega) são sinalizados."
+    ],
+    "example": {
+      "INPUT": "entrada.gpkg|layername=drenagem",
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifydrainageflowissueswithhydrographyelementsalgorithm": {
+    "description": "Verifica problemas de fluxo na rede de drenagem em relação a outros elementos hidrográficos, incluindo corpos d'água (com e sem fluxo), oceano, sumidouros e deságues. Gera flags de ponto, linha e polígono para cada tipo de inconsistência encontrada.",
+    "constraints": [
+      "A camada de drenagem (INPUT_DRAINAGES) deve ser do tipo linha.",
+      "Se uma camada de corpo d'água (WATER_BODY_LAYER) for fornecida, as três expressões de filtro (com fluxo, sem fluxo e oceano) devem ser informadas.",
+      "Se uma camada de sumidouro/deságue (SINK_AND_SPILLWAY_LAYER) for fornecida, ambas as expressões de filtro (sinkFilterExpression e spillwayFilterExpression) devem ser informadas.",
+      "O limite geográfico (GEOGRAPHIC_BOUNDARY) é opcional e filtra apenas os pontos de início/fim analisados."
+    ],
+    "example": {
+      "INPUT_DRAINAGES": "entrada.gpkg|layername=drenagem",
+      "WATER_BODY_LAYER": "entrada.gpkg|layername=massa_dagua",
+      "WATER_BODY_WITH_FLOW_FILTER_EXPRESSION": "\"tipo\" in (1,2,9,10)",
+      "WATER_BODY_WITHOUT_FLOW_FILTER_EXPRESSION": "\"tipo\" in (6,7)",
+      "OCEAN_FILTER_EXPRESSION": "\"tipo\" in (3,4,5)",
+      "SINK_AND_SPILLWAY_LAYER": null,
+      "SINK_FILTER_EXPRESSION": null,
+      "SPILLWAY_FILTER_EXPRESSION": null,
+      "GEOGRAPHIC_BOUNDARY": "entrada.gpkg|layername=moldura",
+      "POINT_FLAGS": "saida_flags.gpkg|layername=flags_ponto",
+      "LINE_FLAGS": "saida_flags.gpkg|layername=flags_linha",
+      "POLYGON_FLAGS": "saida_flags.gpkg|layername=flags_poligono"
+    }
+  },
+  "dsgtools:identifydrainageloops": {
+    "description": "Detecta laços (loops) na rede de drenagem usando análise de grafos com a biblioteca networkx, identificando ciclos simples nas geometrias de linha. Gera flags do tipo linha representando os laços encontrados.",
+    "constraints": [
+      "Requer a biblioteca Python networkx instalada; caso contrário, lança QgsProcessingException.",
+      "A entrada (INPUT) deve ser do tipo linha.",
+      "O parâmetro BUILD_CACHE controla se uma cache local da camada de entrada é construída antes do processamento."
+    ],
+    "example": {
+      "INPUT": "entrada.gpkg|layername=drenagem",
+      "BUILD_CACHE": true,
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifydrainageversuswaterbodyattributeerrorsalgorithm": {
+    "description": "Verifica se os atributos de drenagem que indicam a relação com polígonos de massa d'água estão corretamente preenchidos, identificando drenagens fora de corpos d'água com atributo de 'dentro' e vice-versa. Gera flags de linha para cada feição de drenagem com atributo inconsistente.",
+    "constraints": [
+      "A camada de drenagem (INPUT_DRAINAGES) deve ser do tipo linha.",
+      "A camada de corpo d'água (WATER_BODY) deve ser do tipo polígono.",
+      "O valor de fora do polígono (OUTSIDE_POLYGON_ATTRIBUTE_VALUE) deve ser um inteiro válido; caso contrário, lança QgsProcessingException.",
+      "O campo de atributo de relação (INSIDE_POLYGON_ATTRIBUTE) deve pertencer à camada de drenagem."
+    ],
+    "example": {
+      "INPUT_DRAINAGES": "entrada.gpkg|layername=drenagem",
+      "INSIDE_POLYGON_ATTRIBUTE": "situacao_em_poligono",
+      "OUTSIDE_POLYGON_ATTRIBUTE_VALUE": "1",
+      "WATER_BODY": "entrada.gpkg|layername=massa_dagua",
+      "WATER_BODY_WITH_FLOW_EXPRESSION": "\"tipo\" in (1,2,9,10)",
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifyduplicatedfeatures": {
+    "description": "Identifica feições duplicadas em uma camada vetorial, considerando tanto a geometria quanto os atributos. Permite excluir campos específicos da comparação, ignorar campos virtuais e chaves primárias.",
+    "constraints": [
+      "A camada de entrada (INPUT) aceita qualquer tipo de geometria.",
+      "Os campos listados em ATTRIBUTE_BLACK_LIST são excluídos da comparação de atributos.",
+      "IGNORE_VIRTUAL_FIELDS e IGNORE_PK_FIELDS controlam a exclusão de campos virtuais e chaves primárias, respectivamente."
+    ],
+    "example": {
+      "INPUT": "entrada.gpkg|layername=camada",
+      "SELECTED": false,
+      "ATTRIBUTE_BLACK_LIST": [
+        "id",
+        "data_modificacao"
+      ],
+      "IGNORE_VIRTUAL_FIELDS": true,
+      "IGNORE_PK_FIELDS": true,
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifyduplicatedgeometries": {
+    "description": "Identifica feições com geometrias idênticas (duplicadas) dentro de uma mesma camada vetorial, sem comparar atributos. Gera flags com a geometria da feição duplicada e os IDs das feições envolvidas.",
+    "constraints": [
+      "A camada de entrada (INPUT) aceita qualquer tipo de geometria.",
+      "A comparação é feita exclusivamente pela geometria (WKB), sem considerar atributos."
+    ],
+    "example": {
+      "INPUT": "entrada.gpkg|layername=camada",
+      "SELECTED": false,
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifyduplicatedlinesoncoverage": {
+    "description": "Identifica linhas com geometria idêntica entre múltiplas camadas de linha (cobertura), sinalizando feições de diferentes camadas que compartilham exatamente a mesma geometria. Gera flags do tipo linha.",
+    "constraints": [
+      "Todas as camadas em INPUTLAYERS devem ser do tipo linha.",
+      "A lista de camadas não pode estar vazia; caso contrário, lança QgsProcessingException.",
+      "A comparação é feita pelo WKB da geometria, sem consideração de atributos."
+    ],
+    "example": {
+      "INPUTLAYERS": [
+        "entrada.gpkg|layername=camada_a",
+        "entrada.gpkg|layername=camada_b"
+      ],
+      "SELECTED": false,
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifyduplicatedpointsoncoverage": {
+    "description": "Identifica pontos com geometria idêntica entre múltiplas camadas de ponto (cobertura), sinalizando feições de diferentes camadas que compartilham exatamente a mesma localização. Gera flags do tipo ponto.",
+    "constraints": [
+      "Todas as camadas em INPUTLAYERS devem ser do tipo ponto.",
+      "A lista de camadas não pode estar vazia; caso contrário, lança QgsProcessingException.",
+      "A comparação é feita pelo WKB da geometria, sem consideração de atributos."
+    ],
+    "example": {
+      "INPUTLAYERS": [
+        "entrada.gpkg|layername=pontos_a",
+        "entrada.gpkg|layername=pontos_b"
+      ],
+      "SELECTED": false,
+      "FLAGS": "saida_flags.gpkg|layername=flags"
+    }
+  },
+  "dsgtools:identifyduplicatedpolygonsoncoverage": {
+    "description": "Identifica polígonos duplicados entre múltiplas camadas de entrada, comparando as geometrias por WKB. Qualquer feição cuja geometria apareça em mais de uma feição (em qualquer camada) é sinalizada como flag.",
+    "constraints": [
+      "Todas as camadas de entrada devem ser do tipo polígono.",
+      "Requer ao menos uma camada em INPUTLAYERS."
+    ],
+    "example": {
+      "INPUTLAYERS": [
+        "camada_poligono_a",
+        "camada_poligono_b"
+      ],
+      "SELECTED": false,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyduplicatedvertexesalgorithm": {
+    "description": "Identifica vértices duplicados dentro de cada feição de uma camada de linhas ou polígonos. Um vértice é considerado duplicado se aparece mais de uma vez na mesma feição (mesma coordenada WKB).",
+    "constraints": [
+      "A camada de entrada deve ser do tipo linha ou polígono."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyerrorsincontourattributesalgorithm": {
+    "description": "Verifica atributos de altitude em curvas de nível: curvas-mestre devem ter cota divisível por 5 vezes o intervalo da escala; curvas normais não devem ser divisíveis por esse múltiplo. Gera flags de linha para inconsistências encontradas.",
+    "constraints": [
+      "A expressão MASTER_CONTOUR_EXPRESSION não pode ser vazia nem inválida; caso contrário, uma exceção é lançada.",
+      "SCALE deve ser um índice válido: 0=1:25.000, 1=1:50.000, 2=1:100.000, 3=1:250.000.",
+      "O campo CONTOUR_ATTR deve ser numérico.",
+      "A camada de entrada deve ser do tipo linha."
+    ],
+    "example": {
+      "INPUT_CONTOURS": "elemnat_curva_nivel_l",
+      "CONTOUR_ATTR": "cota",
+      "MASTER_CONTOUR_EXPRESSION": "\"indice\" = 1",
+      "SCALE": 0,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifygaps": {
+    "description": "Identifica lacunas (gaps) em uma camada de polígonos. O algoritmo dissolve os polígonos, remove buracos internos e sobrepõe o resultado com a camada original; feições com todos os atributos nulos indicam regiões sem cobertura.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo polígono."
+    ],
+    "example": {
+      "INPUT": "camada_poligono",
+      "SELECTED": false,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifygapsandoverlaps": {
+    "description": "Identifica lacunas e sobreposições entre múltiplas camadas de polígonos que deveriam formar uma cobertura contínua sem superposição. Opcionalmente, utiliza uma camada de moldura como limite externo.",
+    "constraints": [
+      "Todas as camadas em INPUTLAYERS devem ser do tipo polígono.",
+      "FRAMELAYER, se informada, não pode estar presente em INPUTLAYERS; caso contrário, uma exceção é lançada.",
+      "Requer GRASS v.overlay internamente."
+    ],
+    "example": {
+      "INPUTLAYERS": [
+        "camada_a",
+        "camada_b"
+      ],
+      "SELECTED": false,
+      "FRAMELAYER": null,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifygeometrieswithlargevertexdensityalgorithm": {
+    "description": "Identifica vértices com densidade excessiva em feições de linhas ou polígonos. Para cada vértice, verifica se há outros vértices da mesma feição dentro do raio de busca especificado.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo linha ou polígono.",
+      "SEARCH_RADIUS deve ser maior que zero (minValue=0)."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "SEARCH_RADIUS": 1.0,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyintertwinedlines": {
+    "description": "Identifica pares de linhas que se cruzam mais vezes do que o limite de tolerância informado. Retorna os pontos de interseção como flags.",
+    "constraints": [
+      "Ambas as camadas de entrada (INPUT e COMPARE_INPUT) devem ser do tipo linha.",
+      "TOLERANCE é um inteiro sem valor mínimo explícito; valores negativos produzem resultados sem sentido."
+    ],
+    "example": {
+      "INPUT": "camada_linha_1",
+      "COMPARE_INPUT": "camada_linha_2",
+      "TOLERANCE": 2,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyinvaliduuidsalgorithm": {
+    "description": "Verifica se os valores de um atributo UUID são válidos no formato UUID v4 e se são únicos dentro da mesma camada. Opcionalmente, corrige UUIDs inválidos gerando novos valores.",
+    "constraints": [
+      "A validação verifica formato UUID v4 e unicidade.",
+      "Se CORRECT=True, o algoritmo modifica diretamente as feições da camada de entrada."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "camada_ponto",
+        "camada_linha"
+      ],
+      "ATTRIBUTE_NAME": "id",
+      "CORRECT": false,
+      "COMPARE_LAYER": true,
+      "OUTPUT": "memory:"
+    }
+  },
+  "dsgtools:identifymissinglineintersectionsonpoints": {
+    "description": "Identifica pontos de interseção entre duas camadas de linhas que não estão representados em uma camada de pontos de interseção existente. Flags indicam interseções calculadas não cobertas pelos pontos informados.",
+    "constraints": [
+      "Todas as três camadas (INPUT_LINES_1, INPUT_LINES_2 e INPUT_INTERSECTION) devem ser válidas; caso contrário, uma exceção é lançada.",
+      "INPUT_INTERSECTION deve ser do tipo ponto."
+    ],
+    "example": {
+      "INPUT_LINES_1": "camada_linha_1",
+      "EXPRESSION_LINES_1": "",
+      "INPUT_LINES_2": "camada_linha_2",
+      "EXPRESSION_LINES_2": "",
+      "INPUT_INTERSECTION": "camada_pontos_intersecao",
+      "EXPRESSION_INTERSECTION": "",
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifymissinglinesonpolygonlineintersections": {
+    "description": "Identifica porções da interseção entre linhas e bordas de polígonos que não estão representadas em uma camada de linhas de interseção existente. Flags de linha indicam trechos faltantes.",
+    "constraints": [
+      "INPUT_INTERSECTION deve ser do tipo linha."
+    ],
+    "example": {
+      "INPUT_LINES": "camada_linha",
+      "EXPRESSION_LINES": "",
+      "INPUT_POLYGONS": "camada_poligono",
+      "EXPRESSION_POLYGONS": "",
+      "INPUT_INTERSECTION": "camada_intersecao_linhas",
+      "EXPRESSION_INTERSECTION": "",
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifymissingpointsonlineintersections": {
+    "description": "Identifica pontos de interseção entre linhas de duas camadas que não estão cobertos por uma camada de pontos de interseção existente. Similar ao algoritmo de interseções linha-linha, mas voltado para pontos.",
+    "constraints": [
+      "INPUT_INTERSECTION deve ser do tipo ponto.",
+      "Todas as camadas devem ser válidas; caso contrário, uma exceção é lançada."
+    ],
+    "example": {
+      "INPUT_LINES_1": "camada_linha_1",
+      "EXPRESSION_LINES_1": "",
+      "INPUT_LINES_2": "camada_linha_2",
+      "EXPRESSION_LINES_2": "",
+      "INPUT_INTERSECTION": "camada_pontos_intersecao",
+      "EXPRESSION_INTERSECTION": "",
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifymissingpolygonlineintersectionsonlines": {
+    "description": "Identifica porções da camada de interseção de linhas (INPUT_INTERSECTION) que estão fora das interseções calculadas entre linhas e bordas de polígonos. Flags de linha indicam segmentos da camada de interseção não justificados.",
+    "constraints": [
+      "INPUT_INTERSECTION deve ser do tipo linha."
+    ],
+    "example": {
+      "INPUT_LINES": "camada_linha",
+      "EXPRESSION_LINES": "",
+      "INPUT_POLYGONS": "camada_poligono",
+      "EXPRESSION_POLYGONS": "",
+      "INPUT_INTERSECTION": "camada_intersecao_linhas",
+      "EXPRESSION_INTERSECTION": "",
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifymultigeometries": {
+    "description": "Identifica feições com geometrias multiparte em qualquer tipo de camada vetorial (pontos, linhas ou polígonos). Utiliza filtro de expressão com num_geometries($geometry) > 1.",
+    "constraints": [],
+    "example": {
+      "INPUT": "camada_qualquer",
+      "SELECTED": false,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifynetworkconstructionissues": {
+    "description": "Identifica problemas de construção geométrica em redes de linhas, incluindo dangles (extremidades soltas) e linhas não segmentadas nos pontos de cruzamento. Suporta camadas de filtro e limite geográfico.",
+    "constraints": [
+      "INPUT_LINES deve conter ao menos uma camada de linha.",
+      "TOLERANCE tem valor mínimo de 0.",
+      "TOLERANCE padrão é 0,0001."
+    ],
+    "example": {
+      "INPUT_LINES": [
+        "camada_rede"
+      ],
+      "SELECTED": false,
+      "INPUT_IS_BOUDARY_LAYER": false,
+      "TOLERANCE": 0.0001,
+      "LINEFILTERLAYERS": [],
+      "POLYGONFILTERLAYERS": [],
+      "IGNORE_DANGLES_ON_UNSEGMENTED_LINES": false,
+      "GEOGRAPHIC_BOUNDARY": null,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyoutofboundsangles": {
+    "description": "Identifica ângulos fora de limite em feições de linhas ou polígonos. Para cada tripla de vértices consecutivos, gera um flag se o ângulo formado for menor que o valor de tolerância em graus.",
+    "constraints": [
+      "TOLERANCE deve ser maior ou igual a zero (minValue=0).",
+      "A camada de entrada deve ser do tipo linha ou polígono."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "TOLERANCE": 10,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyoutofboundsanglesincoverage": {
+    "description": "Identifica ângulos fora de limite em uma cobertura de camadas de linhas, verificando ângulos entre segmentos adjacentes nos nós da rede. Gera flags de ponto para ângulos menores que a tolerância.",
+    "constraints": [
+      "TOLERANCE deve estar entre 0 e 360 (minValue=0, maxValue=360).",
+      "INPUTLAYERS deve conter ao menos uma camada de linha."
+    ],
+    "example": {
+      "INPUTLAYERS": [
+        "camada_linha_1",
+        "camada_linha_2"
+      ],
+      "SELECTED": false,
+      "TOLERANCE": 10,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyoverlaps": {
+    "description": "Identifica sobreposições entre feições de uma mesma camada de linhas ou polígonos. Realiza auto-junção espacial e extrai as interseções do mesmo tipo geométrico da camada.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo linha ou polígono."
+    ],
+    "example": {
+      "INPUT": "camada_poligono",
+      "SELECTED": false,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifypolygonsliver": {
+    "description": "Identifica polígonos estreitos (slivers) com base na relação área/perímetro. Feições cuja razão área/perímetro seja menor que RATIO_TOL são sinalizadas como flags.",
+    "constraints": [
+      "Requer ao menos uma camada em INPUT_LAYERS.",
+      "Todas as camadas devem ter ao menos uma feição; caso contrário (e SILENT=False), uma exceção é lançada.",
+      "RATIO_TOL deve ser maior ou igual a zero (minValue=0)."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "camada_poligono"
+      ],
+      "SELECTED": false,
+      "SILENT": false,
+      "RATIO_TOL": 10.0,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifypolygonundershoots": {
+    "description": "Identifica undershoots em polígonos de entrada em relação a uma camada de referência. Segmentos da borda de INPUT que estejam dentro de TOLERANCE da borda de REFERENCE mas sem toque efetivo são sinalizados.",
+    "constraints": [
+      "Ambas as camadas de entrada (INPUT e REFERENCE) devem ser do tipo polígono.",
+      "TOLERANCE deve ser maior ou igual a zero (minValue=0), com padrão 0,0001."
+    ],
+    "example": {
+      "INPUT": "camada_poligono_entrada",
+      "REFERENCE": "camada_poligono_referencia",
+      "TOLERANCE": 0.0001,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifysegmenterrorsbetweenlines": {
+    "description": "Identifica erros de segmento entre camadas de linhas, detectando vértices não compartilhados em arestas comuns e porções de INPUT não presentes em REFERENCE_LINE. Flags são do tipo multiponto.",
+    "constraints": [
+      "Ambas as camadas devem ser do tipo linha.",
+      "SEARCH_RADIUS não tem valor mínimo explícito definido no código."
+    ],
+    "example": {
+      "INPUT": "camada_linha_entrada",
+      "REFERENCE_LINE": "camada_linha_referencia",
+      "SEARCH_RADIUS": 0.001,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifysmallfirstorderdangles": {
+    "description": "Identifica dangles de primeira ordem (extremidades soltas) com comprimento menor que MIN_LENGTH em redes de linhas. Utiliza o algoritmo de identificação de dangles internamente com inputIsBoundaryLayer=True.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo linha.",
+      "MIN_LENGTH deve ser maior ou igual a zero (minValue=0).",
+      "SEARCH_RADIUS deve ser maior ou igual a zero (minValue=0)."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "MIN_LENGTH": 0.001,
+      "SEARCH_RADIUS": 0.0001,
+      "LINEFILTERLAYERS": [],
+      "POLYGONFILTERLAYERS": [],
+      "GEOGRAPHIC_BOUNDARY": null,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifysmallholes": {
+    "description": "Identifica buracos (anéis interiores) em polígonos cujas áreas sejam menores que MAX_HOLE_SIZE. Itera sobre todos os anéis além do índice 0 de cada feição.",
+    "constraints": [
+      "Todas as camadas de entrada devem ser do tipo polígono.",
+      "MAX_HOLE_SIZE deve ser maior ou igual a zero (minValue=0)."
+    ],
+    "example": {
+      "INPUT_LAYER_LIST": [
+        "camada_poligono"
+      ],
+      "MAX_HOLE_SIZE": 100.0,
+      "OUTPUT": "memory:"
+    }
+  },
+  "dsgtools:identifysmalllines": {
+    "description": "Identifica linhas com comprimento menor que a tolerância especificada. Verifica geometry.length() < tol para cada feição da camada de entrada.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo linha.",
+      "TOLERANCE deve ser maior ou igual a zero (minValue=0), com padrão 5."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "TOLERANCE": 5.0,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifysmallobjectsonlayersalgorithm": {
+    "description": "Identifica objetos pequenos (linhas curtas ou polígonos com área insuficiente) em múltiplas camadas, com tolerâncias individuais por camada. Despacha para identificação de linhas pequenas ou polígonos pequenos conforme o tipo de geometria.",
+    "constraints": [
+      "SMALL_OBJECTS_PARAMETERS é um widget customizado que define pares (camada, tolerância).",
+      "As saídas LINE_FLAGS e POLYGON_FLAGS são separadas por tipo de geometria."
+    ],
+    "example": {
+      "SMALL_OBJECTS_PARAMETERS": [
+        {
+          "layer": "camada_linha",
+          "tol": 5.0
+        }
+      ],
+      "LINE_FLAGS": "memory:",
+      "POLYGON_FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifysmallpolygons": {
+    "description": "Identifica polígonos com área menor que a tolerância especificada. Verifica geometry.area() < tol para cada feição da camada de entrada.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo polígono.",
+      "TOLERANCE deve ser maior ou igual a zero (minValue=0), com padrão 625."
+    ],
+    "example": {
+      "INPUT": "camada_poligono",
+      "SELECTED": false,
+      "TOLERANCE": 625.0,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyterrainmodelerrorsalgorithm": {
+    "description": "Identifica erros no modelo de terreno verificando consistências entre curvas de nível, pontos cotados e limites geográficos. Gera flags de ponto, linha e polígono para diferentes tipos de inconsistências.",
+    "constraints": [
+      "Se INPUT_SPOT_ELEVATION for informado, ELEVATION_POINT_ATTR deve ser um campo numérico; caso contrário, uma exceção é lançada.",
+      "GEOGRAPHIC_BOUNDS é obrigatório (padrão aux_moldura_a).",
+      "A camada de entrada deve ser do tipo linha."
+    ],
+    "example": {
+      "INPUT": "elemnat_curva_nivel_l",
+      "SELECTED": false,
+      "CONTOUR_ATTR": "cota",
+      "DEPRESSION_EXPRESSION": "\"depressao\" = 1",
+      "INPUT_SPOT_ELEVATION": null,
+      "ELEVATION_POINT_ATTR": null,
+      "CONTOUR_INTERVAL": 10,
+      "GEOGRAPHIC_BOUNDS": "aux_moldura_a",
+      "GROUP_BY_SPATIAL_PARTITION": false,
+      "POINT_FLAGS": "memory:",
+      "LINE_FLAGS": "memory:",
+      "POLYGON_FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyuncoveredstartandendpointsalgorithm": {
+    "description": "Identifica extremidades (pontos inicial e final) de linhas que não estão cobertas por nenhuma das linhas em FILTER_LINE_LIST. Útil para encontrar nós de rede sem conexão.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo linha.",
+      "FILTER_LINE_LIST é opcional; se vazio, nenhuma extremidade é filtrada."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "FILTER_EXPRESSION": "",
+      "SELECTED": false,
+      "FILTER_LINE_LIST": [
+        "camada_filtro_linhas"
+      ],
+      "GEOGRAPHIC_BOUNDARY": null,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyunmergedlineswithsameattributeset": {
+    "description": "Identifica linhas adjacentes com o mesmo conjunto de atributos que deveriam ser fundidas em uma única feição. Utiliza análise de grafos (networkx) para detectar linhas contíguas com atributos idênticos.",
+    "constraints": [
+      "Requer a biblioteca Python networkx instalada; caso contrário, uma exceção é lançada.",
+      "A camada de entrada deve ser do tipo linha."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "ATTRIBUTE_BLACK_LIST": [
+        "id"
+      ],
+      "IGNORE_VIRTUAL_FIELDS": true,
+      "IGNORE_PK_FIELDS": true,
+      "POINT_FILTER_LAYERS": [],
+      "LINE_FILTER_LAYERS": [],
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyunmergedpolygonswithsameattributesetalgorithm": {
+    "description": "Identifica polígonos adjacentes com o mesmo conjunto de atributos que deveriam ser fundidos. Analisa bordas compartilhadas e compara atributos entre polígonos vizinhos.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo polígono.",
+      "AREA_FILTER é um parâmetro avançado opcional com valor mínimo 0."
+    ],
+    "example": {
+      "INPUT": "camada_poligono",
+      "SELECTED": false,
+      "ATTRIBUTE_BLACK_LIST": [
+        "id"
+      ],
+      "IGNORE_VIRTUAL_FIELDS": true,
+      "IGNORE_PK_FIELDS": true,
+      "LINE_FILTER_LAYERS": [],
+      "AREA_FILTER": null,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyunsharedvertexonintersectionsalgorithm": {
+    "description": "Identifica vértices não compartilhados nos pontos de interseção entre camadas de pontos, linhas e/ou polígonos. Sinaliza locais onde feições se cruzam mas não compartilham vértices.",
+    "constraints": [
+      "Pelo menos uma das listas INPUT_POINTS, INPUT_LINES ou INPUT_POLYGONS deve ser não vazia; caso contrário, uma exceção é lançada."
+    ],
+    "example": {
+      "INPUT_POINTS": [],
+      "INPUT_LINES": [
+        "camada_linha"
+      ],
+      "INPUT_POLYGONS": [
+        "camada_poligono"
+      ],
+      "SELECTED": false,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyunsharedvertexonsharededgesalgorithm": {
+    "description": "Identifica vértices não compartilhados em arestas compartilhadas entre camadas de linhas e/ou polígonos. Usa raio de busca para encontrar vértices próximos não coincidentes.",
+    "constraints": [
+      "Pelo menos uma das listas INPUT_LINES ou INPUT_POLYGONS deve ser não vazia; caso contrário, uma exceção é lançada.",
+      "SEARCH_RADIUS tem valor padrão de 1,0."
+    ],
+    "example": {
+      "INPUT_LINES": [
+        "camada_linha"
+      ],
+      "INPUT_POLYGONS": [
+        "camada_poligono"
+      ],
+      "SELECTED": false,
+      "SEARCH_RADIUS": 1.0,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyvertexnearedges": {
+    "description": "Identifica vértices próximos a arestas de uma camada de linhas ou polígonos, dentro de um raio de busca. Sinaliza situações em que um vértice está muito próximo de um segmento mas não está sobre ele.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo linha ou polígono.",
+      "SEARCH_RADIUS tem valor padrão de 1,0."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "SEARCH_RADIUS": 1.0,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifywaterbodyandcontourinconsistencies": {
+    "description": "Verifica inconsistências entre massas d'água e curvas de nível, identificando curvas que cruzam uma massa d'água mais de uma vez. Suporta camada de barragem opcional para exceções.",
+    "constraints": [
+      "INPUT_WATER_BODIES deve ser do tipo polígono.",
+      "INPUT_CONTOURS deve ser do tipo linha.",
+      "CONTOUR_ATTR deve ser um campo numérico na camada de curvas de nível."
+    ],
+    "example": {
+      "INPUT_WATER_BODIES": "cobter_massa_dagua_a",
+      "INPUT_CONTOURS": "elemnat_curva_nivel_l",
+      "CONTOUR_ATTR": "cota",
+      "CONTOUR_INSIDE_WATER_BODY_EXPRESSION": "\"dentro_massa_dagua\" = 1",
+      "DAM_LAYER": null,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifywrongbuildinganglesalgorithm": {
+    "description": "Identifica ângulos incorretos em edificações (polígonos), sinalizando vértices onde o ângulo não é próximo de múltiplos de 90°. Suporta opção para ignorar geometrias circulares com base na relação perímetro²/(4π×área) < 1,1.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo polígono.",
+      "TOLERANCE deve ser maior ou igual a zero (minValue=0), com padrão 0,1."
+    ],
+    "example": {
+      "INPUT": "camada_edificacao",
+      "SELECTED": false,
+      "TOLERANCE": 0.1,
+      "IGNORE_CIRCLES": false,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:identifyzanglesbetweenfeatures": {
+    "description": "Identifica ângulos em Z (configuração de zigue-zague) em sequências de 4 vértices consecutivos de linhas ou polígonos, onde um ângulo é maior que ANGLE e o adjacente menor que (360-ANGLE).",
+    "constraints": [
+      "ANGLE deve estar entre 270 e 360 (minValue=270, maxValue=360), com padrão 300.",
+      "A camada de entrada deve ser do tipo linha ou polígono."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "ANGLE": 300.0,
+      "OUTPUT": "memory:"
+    }
+  },
+  "dsgtools:line2multiline": {
+    "description": "Agrupa linhas que se tocam ou se intersectam em feições MultiLineString usando Union-Find (Disjoint Set Union). A saída contém apenas o campo de comprimento total de cada multigeometria.",
+    "constraints": [
+      "Linhas que se tocam ou se intersectam são agrupadas em uma única feição MultiLineString.",
+      "A camada de saída possui apenas o campo 'length' com o comprimento total da multigeometria.",
+      "O algoritmo usa Union-Find para identificar componentes conectados."
+    ],
+    "example": {
+      "INPUT": "camada_linhas",
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:lineonareaoverlayer": {
+    "description": "Divide polígonos usando linhas de sobreposição, preservando os atributos originais dos polígonos em todos os fragmentos resultantes da divisão.",
+    "constraints": [
+      "O parâmetro OVERLAY_LINES aceita múltiplas camadas de linhas.",
+      "Os atributos em ATTRIBUTE_BLACK_LIST são excluídos da cópia para os fragmentos.",
+      "A divisão é feita apenas onde as linhas efetivamente cruzam os polígonos."
+    ],
+    "example": {
+      "INPUT_POLYGONS": "camada_poligonos",
+      "OVERLAY_LINES": [
+        "camada_linhas_divisao"
+      ],
+      "ATTRIBUTE_BLACK_LIST": [],
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:lineonlineoverlayer": {
+    "description": "Divide linhas de entrada nos pontos de intersecção com linhas de referência, adicionando também os vértices de intersecção às linhas de referência. Garante topologia consistente entre duas camadas de linhas.",
+    "constraints": [
+      "O parâmetro SNAP_TOLERANCE define a distância máxima para snap de vértices.",
+      "O parâmetro REFERENCE_LINES aceita múltiplas camadas de linhas de referência.",
+      "Tanto a camada de entrada quanto as referências são divididas nos pontos de cruzamento."
+    ],
+    "example": {
+      "INPUT": "camada_linhas_entrada",
+      "REFERENCE_LINES": [
+        "camada_linhas_referencia"
+      ],
+      "SNAP_TOLERANCE": 0.001,
+      "OUTPUT_SPLIT_LINES": "TEMPORARY_OUTPUT",
+      "OUTPUT_MODIFIED_REFERENCES": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:loadlayersfrompostgisalgorithm": {
+    "description": "Carrega camadas vetoriais de um banco de dados PostGIS no projeto QGIS, opcionalmente exibindo-as no canvas. Suporta carregamento único (evita duplicatas verificando camadas já carregadas pelo nome da tabela) e aceita uma lista de nomes de tabelas separados por vírgula.",
+    "constraints": [
+      "Com UNIQUE_LOAD ativado, camadas cujos nomes de tabela já estejam carregados no projeto são excluídas da lista antes do carregamento.",
+      "A lista de camadas (LAYER_LIST) deve ser fornecida como string com nomes separados por vírgula.",
+      "Este algoritmo não é thread-safe (FlagNoThreading)."
+    ],
+    "example": {
+      "HOST": "192.168.0.10",
+      "PORT": "5432",
+      "DATABASE": "bdgeo",
+      "USER": "postgres",
+      "PASSWORD": "senha123",
+      "LAYER_LIST": "trecho_drenagem,ilha,elemnat_curva_nivel",
+      "LOAD_TO_CANVAS": true,
+      "UNIQUE_LOAD": true
+    }
+  },
+  "dsgtools:loadrasterlayerfromserveralgorithm": {
+    "description": "Carrega uma camada raster armazenada em um banco de dados PostgreSQL/PostGIS (via provedor postgresraster) diretamente no projeto QGIS. Conecta-se ao servidor informado, localiza a tabela raster na view raster_columns e adiciona a camada ao projeto, opcionalmente exibindo-a no canvas.",
+    "constraints": [
+      "O banco de dados deve ter a view pública raster_columns populada com a tabela informada.",
+      "A camada raster é adicionada ao projeto independente do parâmetro LOAD_TO_CANVAS; esse parâmetro controla apenas a visibilidade no painel de camadas."
+    ],
+    "example": {
+      "SERVER_IP": "192.168.0.10",
+      "PORT": 5432,
+      "DB_NAME": "bdgeo",
+      "TABLE_NAME": "imagem_orto",
+      "USER": "postgres",
+      "PASSWORD": "senha123",
+      "LOAD_TO_CANVAS": true
+    }
+  },
+  "dsgtools:loadshapefilealgorithm": {
+    "description": "Carrega shapefiles de uma pasta (ou suas subpastas diretas) no projeto QGIS, organizando-os automaticamente na árvore de camadas em grupos por subpasta e, dentro de cada subpasta, em subgrupos por tipo de geometria (Ponto, Linha, Área). Subgrupos vazios são removidos ao final.",
+    "constraints": [
+      "Se existirem shapefiles em subpastas de primeiro nível, apenas eles são carregados (glob '*/*.shp'); caso contrário, os da pasta raiz (glob '*.shp').",
+      "Este algoritmo não é thread-safe (FlagNoThreading)."
+    ],
+    "example": {
+      "FOLDER_SHAPEFILES": "/dados/shapefiles_entrega"
+    }
+  },
+  "dsgtools:loadthemes": {
+    "description": "Cria temas de mapa (map themes) no projeto QGIS a partir de uma lista JSON que define quais camadas devem ficar visíveis em cada tema. Para cada tema, as camadas são identificadas pelo par esquema.tabela e a visibilidade das demais é desativada.",
+    "constraints": [
+      "As camadas são identificadas no formato 'schema.camada'; camadas não presentes na lista do tema ficam invisíveis.",
+      "Este algoritmo não é thread-safe (FlagNoThreading).",
+      "O algoritmo sempre retorna uma lista de saída vazia; os temas são criados como efeito colateral no projeto."
+    ],
+    "example": {
+      "FILE": "/caminho/temas.json",
+      "TEXT": "[]"
+    }
+  },
+  "dsgtools:loadtrackeralgorithm": {
+    "description": "Carrega dados de rastreamento GPS (camada de pontos) para uma tabela de banco de dados, remapeando campos (elevação, data/hora, track id, segmento, índice de ponto) e acrescentando metadados do operador, placa do veículo e data de importação.",
+    "constraints": [
+      "A camada de saída deve ser uma camada de pontos vetorial editável (ex.: aux_track_p no PostGIS).",
+      "O nome do operador deve conter apenas letras (incluindo acentuadas) e espaços.",
+      "A placa deve seguir o padrão mercosul ou antigo (ex.: ABC-1234 ou ABC1D23).",
+      "A data deve seguir o formato YYYY-MM-DD HH:MM."
+    ],
+    "example": {
+      "INPUT": "gpx_track_points",
+      "SELECTED": false,
+      "ELEVATION_FIELD": "ele",
+      "CREATION_FIELD": "time",
+      "TRACKID_FIELD": "track_fid",
+      "TRACKSEGID_FIELD": "track_seg_id",
+      "TRACKSEGPOINTID_FIELD": "track_seg_point_id",
+      "DATE": "2026-06-07 08:30",
+      "OPERATOR": "João Silva",
+      "PLATE": "ABC-1234",
+      "OUTPUT_DB": "aux_track_p"
+    }
+  },
+  "dsgtools:lockattributeediting": {
+    "description": "Bloqueia a edição de atributos específicos (por nome) em múltiplas camadas vetoriais, marcando-os como somente leitura no formulário de edição do QGIS. A comparação dos nomes de coluna é feita sem distinção de maiúsculas e minúsculas.",
+    "constraints": [
+      "Colunas não presentes em uma camada são ignoradas silenciosamente.",
+      "Os nomes das colunas informados são convertidos para maiúsculas antes da comparação com os campos da camada.",
+      "Múltiplos nomes de colunas devem ser separados por vírgula."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1"
+      ],
+      "COLUMN_NAMES": "situacao_fisica, data_modificacao"
+    }
+  },
+  "dsgtools:matchandapplyqmlstylestolayersalgorithm": {
+    "description": "Carrega e aplica estilos QML a camadas vetoriais, associando cada camada ao arquivo QML correspondente pelo nome da tabela. Suporta dois modos: leitura de uma pasta contendo arquivos .qml (o nome do arquivo deve coincidir com o nome da camada) ou leitura de um mapa JSON com o conteúdo QML embutido.",
+    "constraints": [
+      "No modo pasta, a correspondência é feita pelo nome do arquivo QML (sem extensão) versus o nome da tabela (uri().table()) ou o nome da camada.",
+      "No modo JSON, a chave 'camada' deve coincidir com o nome da tabela ou da camada, e o campo 'qml' deve ser não vazio.",
+      "Se a pasta informada não existir e o JSON estiver vazio, nenhum estilo é aplicado e uma lista vazia é retornada."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1"
+      ],
+      "QML_FOLDER": "/caminho/para/estilos_qml",
+      "QML_MAP": "[]"
+    }
+  },
+  "dsgtools:medianfilternodataalgorithm": {
+    "description": "Aplica filtro de mediana a um raster tratando corretamente pixels nodata, usando algoritmos vetorizados de alto desempenho baseados em numpy (nanmedian). Permite preservar as regiões nodata originais inalteradas na saída.",
+    "constraints": [
+      "O parâmetro WINDOW_SIZE deve ser um número inteiro ímpar entre 3 e 21.",
+      "Se PRESERVE_NODATA for True, as áreas nodata originais são mantidas na saída sem alteração.",
+      "MIN_VALID_PIXELS define o número mínimo de pixels válidos na janela para que a mediana seja calculada.",
+      "O valor nodata é obtido automaticamente da camada de entrada.",
+      "A saída é escrita como inteiro de 16 bits (int16)."
+    ],
+    "example": {
+      "INPUT": "raster_classificado.tif",
+      "WINDOW_SIZE": 3,
+      "MIN_VALID_PIXELS": 1,
+      "PRESERVE_NODATA": true,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:mergelineswithsameattributeset": {
+    "description": "Funde linhas adjacentes com o mesmo conjunto de atributos, modificando diretamente a camada de entrada. Utiliza análise de grafos (networkx) para identificar e fundir segmentos contíguos com atributos idênticos.",
+    "constraints": [
+      "Requer a biblioteca Python networkx instalada; caso contrário, uma exceção é lançada.",
+      "A camada de entrada deve ser do tipo linha.",
+      "Não gera camada de saída — modifica a camada INPUT diretamente (startEditing)."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "ATTRIBUTE_BLACK_LIST": [
+        "id"
+      ],
+      "IGNORE_VIRTUAL_FIELDS": true,
+      "IGNORE_PK_FIELDS": true,
+      "ALLOW_CLOSED_LINES_ON_OUTPUT": false,
+      "POINT_FILTER_LAYERS": [],
+      "LINE_FILTER_LAYERS": [],
+      "GEOGRAPHIC_BOUNDARY": null
+    }
+  },
+  "dsgtools:mergeshapefilezipfilesinsinglegeopackage": {
+    "description": "Extrai shapefiles de múltiplos arquivos ZIP e consolida todas as camadas de mesmo nome em um único GeoPackage de saída, reprojetando-as para o SRC de destino informado. Camadas com nomes coincidentes (comparação sem distinção de maiúsculas) são mescladas usando o algoritmo nativo de merge do QGIS.",
+    "constraints": [
+      "Os ZIPs devem conter arquivos .shp válidos; ZIPs sem shapefiles geram exceção.",
+      "Campos auxiliares 'layer', 'path', 'ID' e 'id' são removidos das camadas mescladas antes da gravação.",
+      "O GeoPackage de saída é recriado do zero se já existir."
+    ],
+    "example": {
+      "INPUT_ZIPS": [
+        "/dados/carta1.zip",
+        "/dados/carta2.zip"
+      ],
+      "OUTPUT_GPKG": "/saida/consolidado.gpkg",
+      "DESTINATION_CRS": "EPSG:4674"
+    }
+  },
+  "dsgtools:numberpolygons": {
+    "description": "Adiciona um campo de numeração sequencial inteira a polígonos, ordenados pela posição do centróide segundo a direção especificada (N→S/O→L, N→S/L→O, S→N/L→O ou S→N/O→L). Suporta agrupamento por campo.",
+    "constraints": [
+      "O parâmetro DIRECTION é um enum: 0=N→S/O→L, 1=N→S/L→O, 2=S→N/L→O, 3=S→N/O→L.",
+      "O parâmetro GROUP_BY_FIELD é opcional; quando informado, a numeração reinicia por grupo.",
+      "O nome do campo de saída é definido por ATTRIBUTE_NAME."
+    ],
+    "example": {
+      "INPUT_LAYER": "camada_poligonos",
+      "DIRECTION": 0,
+      "GROUP_BY_FIELD": "",
+      "ATTRIBUTE_NAME": "numero",
+      "OUTPUT_LAYER": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:nurbfitsmoothingalgorithm": {
+    "description": "Suaviza geometrias de linhas usando curvas B-Spline (NURBfit via scipy), com controle de grau do polinômio e fator de suavização. Um fator de suavização igual a zero produz interpolação exata pelos vértices originais.",
+    "constraints": [
+      "Requer a biblioteca scipy instalada (splprep/splev).",
+      "O parâmetro DEGREE deve ser pelo menos 2; valores maiores produzem curvas mais suaves.",
+      "SMOOTHING_FACTOR = 0 produz interpolação exata (sem suavização); valores maiores afastam a curva dos vértices originais.",
+      "Se SEGMENT_LENGTH for 0, o número de pontos de saída é automaticamente 10× o número de vértices originais.",
+      "Linhas fechadas são processadas como anéis (per=1 no splprep)."
+    ],
+    "example": {
+      "INPUT": "camada_curvas_nivel",
+      "DEGREE": 3,
+      "SMOOTHING_FACTOR": 1.0,
+      "SEGMENT_LENGTH": 0.0,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:optimal_tile_bboxes": {
+    "description": "Decompõe uma camada de tiles em bounding rectangles ótimos não sobrepostos usando componentes conexos (BFS) e fusão gulosa, otimizando a cobertura dos tiles. A saída contém os campos rect_id, coverage_pct e tile_count.",
+    "constraints": [
+      "O parâmetro COVERAGE_THRESH (0–100) define a porcentagem mínima de cobertura para aceitar um retângulo fusionado.",
+      "O parâmetro MAX_WORKERS controla o número de workers paralelos (1–32).",
+      "Os campos de saída são fixos: rect_id (inteiro), coverage_pct (real) e tile_count (inteiro)."
+    ],
+    "example": {
+      "INPUT_TILES": "camada_tiles",
+      "OUTPUT_BBOXES": "TEMPORARY_OUTPUT",
+      "COVERAGE_THRESH": 85.0,
+      "MAX_WORKERS": 4
+    }
+  },
+  "dsgtools:overlayelementswithareas": {
+    "description": "Realiza a sobreposição de feições de qualquer geometria com uma camada de polígonos, permitindo remover feições externas, internas ou aplicar sobreposição completa. Modifica diretamente a camada de entrada.",
+    "constraints": [
+      "BEHAVIOR deve ser 0 (remover externas), 1 (remover internas) ou 2 (sobrepor e manter).",
+      "A camada OVERLAY deve ser do tipo polígono.",
+      "Não gera camada de saída — modifica a camada INPUT diretamente."
+    ],
+    "example": {
+      "INPUT": "camada_qualquer",
+      "SELECTED": false,
+      "OVERLAY": "camada_poligono_mascara",
+      "SELECTED_OVERLAY": false,
+      "BEHAVIOR": 0
+    }
+  },
+  "dsgtools:overlaylineswithlinesandupdate": {
+    "description": "Divide linhas de entrada nos cruzamentos com camadas de linhas de referência, garantindo que os pontos de interseção sejam adicionados como vértices em ambas as camadas. Modifica as camadas originais diretamente.",
+    "constraints": [
+      "A camada INPUT deve ser do tipo linha.",
+      "REFERENCE_LINES deve conter ao menos uma camada de linha.",
+      "SNAP_TOLERANCE deve ser maior ou igual a 0 (padrão 0,001).",
+      "A funcionalidade com GEOGRAPHIC_BOUNDARY ainda não está implementada (pass)."
+    ],
+    "example": {
+      "INPUT": "camada_linha_entrada",
+      "SELECTED": false,
+      "REFERENCE_LINES": [
+        "camada_referencia_1"
+      ],
+      "SNAP_TOLERANCE": 0.001,
+      "GEOGRAPHIC_BOUNDARY": null
+    }
+  },
+  "dsgtools:peccalculator": {
+    "description": "Calcula o RMS (Root Mean Square) das distâncias e o percentil 90 entre pontos correspondentes de uma camada de entrada e uma camada de referência, para avaliação do Padrão de Exatidão Cartográfica (PEC). Os resultados são exibidos no log de progresso.",
+    "constraints": [
+      "Ambas as camadas devem ser do tipo ponto (TypeVectorPoint).",
+      "A correspondência entre pontos é feita por busca de vizinho mais próximo dentro da tolerância (TOLERANCE).",
+      "Pontos com geometria inválida são ignorados.",
+      "O algoritmo não produz camada de saída; os resultados são reportados apenas no log."
+    ],
+    "example": {
+      "INPUT": "camada_pontos_levantados",
+      "REFERENCE": "camada_pontos_referencia",
+      "TOLERANCE": 2.0
+    }
+  },
+  "dsgtools:polygon_split_by_grid": {
+    "description": "Divide polígonos por uma grade definida pelos espaçamentos X e Y, reclassificando feições menores que MIN_AREA ao vizinho mais próximo em vez de dividi-las. Suporta concorrência configurável e referência a uma camada de polígonos vizinhos para reclassificação.",
+    "constraints": [
+      "Feições com área menor que MIN_AREA não são divididas, apenas reclassificadas ao polígono vizinho mais próximo via CLASS_FIELD.",
+      "O parâmetro MAX_CONCURRENCY limita o número de workers paralelos.",
+      "A camada NEIGHBOUR é usada como referência de classe para reclassificação dos fragmentos pequenos."
+    ],
+    "example": {
+      "INPUT": "camada_poligonos",
+      "X_DISTANCE": 1000.0,
+      "Y_DISTANCE": 1000.0,
+      "MIN_AREA": 500.0,
+      "NEIGHBOUR": "camada_referencia",
+      "CLASS_FIELD": "classe",
+      "MAX_CONCURRENCY": 4,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:polygontiler": {
+    "description": "Divide polígonos em tiles (mosaico) com dois modos: janela deslizante por tamanho fixo ou divisão por grade proporcional. Adiciona campos _tile_row, _tile_col e _tile_id à saída, com suporte a sobreposição configurável entre tiles.",
+    "constraints": [
+      "O parâmetro TILING_MODE define o modo: 0=tamanho fixo (sliding window), 1=divisão por grade (percentual).",
+      "Os parâmetros X_DIMENSION e Y_DIMENSION são expressões avaliadas em unidades do mapa.",
+      "OVERLAP_X e OVERLAP_Y definem a sobreposição entre tiles adjacentes.",
+      "Se INCLUDE_PARTIAL for False, tiles parcialmente fora do polígono são excluídos da saída.",
+      "Os campos _tile_row, _tile_col e _tile_id são adicionados automaticamente à saída."
+    ],
+    "example": {
+      "INPUT": "camada_poligonos",
+      "TILING_MODE": 0,
+      "X_DIMENSION": "1000",
+      "Y_DIMENSION": "1000",
+      "OVERLAP_X": 0.0,
+      "OVERLAP_Y": 0.0,
+      "INCLUDE_PARTIAL": true,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:preparerasterfilesforpackagingforbdgex": {
+    "description": "Prepara arquivos raster para empacotamento BDGEx descompactando arquivos .zip e gerando shapefiles *_SEAMLINES_SHAPE.shp com metadados extraídos dos arquivos DeliveryMetadata.xml, acrescentando campos de sensor, data de aquisição, identificador de catálogo e nome de produto.",
+    "constraints": [
+      "A pasta de entrada deve conter arquivos .zip com estrutura padrão MAXAR/BECA incluindo DeliveryMetadata.xml e *_PRODUCT_SHAPE.shp.",
+      "O shapefile de saída é gerado no mesmo diretório do shapefile de produto original com sufixo _SEAMLINES_SHAPE.",
+      "O campo _filename é composto como: sensorVehicle_bandInfo_data_catalogIdentifier_relativeDirectory.",
+      "Apenas arquivos DeliveryMetadata.xml válidos são processados; erros de XML ou permissão são registrados e ignorados."
+    ],
+    "example": {
+      "INPUT_FOLDER": "C:/dados/zips_entrada",
+      "OUTPUT_FOLDER": "C:/dados/saida_preparacao"
+    }
+  },
+  "dsgtools:raiseflags": {
+    "description": "Transfere feições de uma camada de entrada para uma tabela de flags em um banco PostGIS, reprojetando geometrias conforme o CRS de destino e copiando o texto do campo de flag selecionado para o campo de saída configurado.",
+    "constraints": [
+      "A camada de destino deve ser uma tabela PostGIS válida e editável.",
+      "O schema, nome da tabela, coluna de geometria e campo de texto de flag de saída não podem estar vazios.",
+      "O CRS informado deve ser válido.",
+      "A URI de conexão é derivada da camada de entrada; ambas devem usar o mesmo servidor/banco."
+    ],
+    "example": {
+      "INPUT": "flags_geometria_a",
+      "FLAG_FIELD": "descricao_erro",
+      "TABLE_SCHEMA": "dominio",
+      "TABLE_NAME": "flags",
+      "GEOMETRY_COLUMN": "geom",
+      "OUTPUT_FLAG_TEXT_FIELD": "descricao_flag",
+      "CRS": "EPSG:31982"
+    }
+  },
+  "dsgtools:rasterizepolygonswithbuffer": {
+    "description": "Processa uma lista de camadas de polígonos aplicando merge, dissolução, buffer negativo e rasterização sobre um raster base, gravando o valor nodata sobre as áreas dos polígonos. Útil para mascarar regiões específicas de um raster classificado.",
+    "constraints": [
+      "O parâmetro SEARCH_RADIUS é o raio do buffer negativo em unidades do mapa (padrão: -1e-4, portanto é negativo).",
+      "O valor NODATA_VALUE é gravado sobre o raster nas regiões cobertas pelos polígonos após o buffer.",
+      "A rasterização é feita sobre uma cópia do raster de entrada (INPUT_RASTER não é modificado).",
+      "Pelo menos uma camada de polígonos deve ser fornecida em INPUT_POLYGONS."
+    ],
+    "example": {
+      "INPUT_POLYGONS": [
+        "camada_poligonos_mascara"
+      ],
+      "INPUT_RASTER": "raster_entrada.tif",
+      "SEARCH_RADIUS": -0.0001,
+      "NODATA_VALUE": -9999,
+      "OUTPUT_RASTER": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:rasterremapalgorithm": {
+    "description": "Reclassifica valores de um raster a partir de um arquivo JSON de mapeamento (valor_origem → valor_destino), com estratégia adaptativa de divisão em blocos para rasters grandes. O tipo de dado da saída é determinado automaticamente a partir dos valores do mapeamento.",
+    "constraints": [
+      "O arquivo JSON de mapeamento deve conter os campos 'mapping' (obrigatório) e 'nodata_value' (obrigatório).",
+      "Os valores de origem e destino no JSON devem ser inteiros.",
+      "Se FORCE_CHUNKED for True, o processamento é sempre feito em blocos mesmo para rasters pequenos.",
+      "Em caso de erro de memória, o algoritmo divide automaticamente o processamento em blocos de 2×2, 4×4, ..., até 64×64.",
+      "O espaço em disco necessário é estimado em 1,5× o tamanho do raster de entrada."
+    ],
+    "example": {
+      "INPUT_RASTER": "raster_classificado.tif",
+      "MAPPING_FILE": "C:/mapeamento/regras.json",
+      "OUTPUT_RASTER": "TEMPORARY_OUTPUT",
+      "FORCE_CHUNKED": false
+    }
+  },
+  "dsgtools:reclassifyadjacentpixelstonearestneighboralgorithm": {
+    "description": "Mascara pixels com valores especificados e os reclassifica para o valor do vizinho mais próximo usando KDTree (scipy). Permite eliminar classes indesejadas de um raster classificado sem deixar buracos.",
+    "constraints": [
+      "Requer a biblioteca scipy instalada.",
+      "O parâmetro VALUES aceita uma lista de inteiros separados por vírgula.",
+      "Todos os pixels com valores listados são substituídos pelo vizinho válido mais próximo."
+    ],
+    "example": {
+      "INPUT": "raster_classificado.tif",
+      "VALUES": "0,255",
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:reclassifyadjacentpolygonsalgorithm": {
+    "description": "Reclassifica polígonos pequenos (abaixo de MIN_AREA) atribuindo-lhes a classe do vizinho com o qual compartilha a maior fronteira. Opera em até três camadas simultaneamente (vegetação, água e área edificada) editando-as in-place.",
+    "constraints": [
+      "Requer a biblioteca networkx instalada.",
+      "Polígonos que tocam a camada de moldura (INPUT_FRAME) nunca são reclassificados.",
+      "As regras de reclassificação em GENERALIZATION_RULES são opcionais; se omitidas, usa-se apenas o critério de maior fronteira compartilhada.",
+      "A edição é feita diretamente nas camadas de entrada (in-place); as camadas devem estar editáveis."
+    ],
+    "example": {
+      "INPUT_VEGETATION": "camada_vegetacao",
+      "INPUT_WATER": "camada_agua",
+      "INPUT_BUILT_UP": "camada_edificado",
+      "INPUT_FRAME": "camada_moldura",
+      "LABEL_FIELD": "tipo",
+      "WATER_CLASS_VALUE": 1,
+      "BUILT_UP_CLASS_VALUE": 4,
+      "MIN_AREA": 15625.0,
+      "GENERALIZATION_RULES": ""
+    }
+  },
+  "dsgtools:reclassifygroupsofpixelstonearestneighboralgorithm": {
+    "description": "Reclassifica grupos de pixels de tamanho inferior a MIN_AREA para a classe do vizinho mais próximo usando KDTree (scipy), com suporte a regras de restrição de classe em formato JSON. Pixels na borda do raster não são processados.",
+    "constraints": [
+      "Requer as bibliotecas scipy e networkx instaladas.",
+      "Grupos de pixels menores que MIN_AREA são candidatos à reclassificação.",
+      "Pixels na borda do raster são excluídos do processamento.",
+      "Classes em non_growing_classes só recebem pixels como último recurso.",
+      "As restrições de classe em class_restrictions são bidirecionais.",
+      "O parâmetro GENERALIZATION_RULES é um JSON opcional com os campos class_restrictions, size_thresholds e non_growing_classes."
+    ],
+    "example": {
+      "INPUT": "raster_classificado.tif",
+      "MIN_AREA": 15625,
+      "NODATA_VALUE": -9999,
+      "GENERALIZATION_RULES": "",
+      "OUTPUT": "TEMPORARY_OUTPUT",
+      "RECLASSIFIED_POLYGONS": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:remove_empty_layers": {
+    "description": "Remove do projeto QGIS todas as camadas vetoriais sem feições (featureCount == 0). O algoritmo percorre todas as camadas do projeto, identifica as camadas vetoriais vazias e as remove em lote.",
+    "constraints": [
+      "Apenas camadas do tipo VectorLayer são avaliadas; camadas raster e outras são ignoradas.",
+      "A remoção é permanente no projeto; o algoritmo não possui desfazer."
+    ],
+    "example": {}
+  },
+  "dsgtools:removeduplicatedfeatures": {
+    "description": "Remove feições duplicadas de uma camada vetorial, considerando geometria e atributos. Mantém a primeira ocorrência e deleta as demais feições com geometria e atributos idênticos.",
+    "constraints": [
+      "A camada de entrada pode ser de qualquer tipo de geometria.",
+      "Modifica a camada INPUT diretamente (sem saída)."
+    ],
+    "example": {
+      "INPUT": "camada_qualquer",
+      "SELECTED": false,
+      "ATTRIBUTE_BLACK_LIST": [
+        "id"
+      ],
+      "IGNORE_VIRTUAL_FIELDS": true,
+      "IGNORE_PK_FIELDS": true
+    }
+  },
+  "dsgtools:removeduplicatedgeometries": {
+    "description": "Remove geometrias duplicadas de uma camada vetorial, mantendo a primeira ocorrência e deletando as feições com geometrias idênticas. Utiliza internamente o algoritmo de identificação de geometrias duplicadas.",
+    "constraints": [
+      "A camada de entrada pode ser de qualquer tipo de geometria.",
+      "Modifica a camada INPUT diretamente."
+    ],
+    "example": {
+      "INPUT": "camada_qualquer",
+      "SELECTED": false,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:removeduplicatevertexesalgorithm": {
+    "description": "Remove vértices duplicados de feições de qualquer tipo de geometria, utilizando tolerância de snap para considerar vértices coincidentes. Modifica a camada de entrada diretamente.",
+    "constraints": [
+      "TOLERANCE deve ser maior ou igual a zero (padrão 1e-5).",
+      "A camada de entrada pode ser de qualquer tipo de geometria."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "TOLERANCE": 1e-05
+    }
+  },
+  "dsgtools:removeemptyandupdate": {
+    "description": "Remove feições com geometrias nulas ou vazias de uma camada vetorial, atualizando a camada original diretamente. Também remove feições com geometrias malformadas ('Too few points in geometry component').",
+    "constraints": [
+      "A camada de entrada pode ser de qualquer tipo de geometria.",
+      "Modifica a camada INPUT diretamente (sem saída)."
+    ],
+    "example": {
+      "INPUT": "camada_qualquer",
+      "SELECTED": false
+    }
+  },
+  "dsgtools:removesmalllines": {
+    "description": "Remove linhas com comprimento menor ou igual à tolerância especificada, modificando diretamente a camada de entrada.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo linha.",
+      "TOLERANCE deve ser maior ou igual a zero (padrão 5).",
+      "Modifica a camada INPUT diretamente (sem saída)."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "TOLERANCE": 5.0
+    }
+  },
+  "dsgtools:removesmallpolygons": {
+    "description": "Remove polígonos com área menor ou igual à tolerância especificada, modificando diretamente a camada de entrada.",
+    "constraints": [
+      "TOLERANCE deve ser maior ou igual a zero (padrão 625).",
+      "Modifica a camada INPUT diretamente (sem saída)."
+    ],
+    "example": {
+      "INPUT": "camada_poligono",
+      "SELECTED": false,
+      "TOLERANCE": 625.0
+    }
+  },
+  "dsgtools:rightangletoolparametersalgorithm": {
+    "description": "Define os parâmetros da Ferramenta de Ângulo Reto do DSGTools, configurando a distância mínima de segmento e a precisão decimal dos ângulos. Os valores são persistidos no QSettings para uso posterior pela ferramenta interativa.",
+    "constraints": [
+      "MIN_SEGMENT_DISTANCE deve ser um número real não-negativo.",
+      "RIGHT_ANGLE_DECIMALS deve ser um inteiro não-negativo."
+    ],
+    "example": {
+      "MIN_SEGMENT_DISTANCE": 2.0,
+      "RIGHT_ANGLE_DECIMALS": 3
+    }
+  },
+  "dsgtools:rulestatistics": {
+    "description": "Avalia regras de controle de qualidade de atributos (definidas em arquivo JSON ou texto) sobre um conjunto de camadas, gerando estatísticas de erros por camada e tipo de regra (atributo incomum, a preencher, incorreto). Produz duas camadas de saída sem geometria: flags de atributos incomuns e flags gerais.",
+    "constraints": [
+      "O arquivo de regras deve ser um JSON válido no formato DSGTools de regras de atributo.",
+      "As camadas de entrada devem estar conectadas a uma fonte de dados com schema e tabela identificáveis (ex.: PostGIS).",
+      "Pelo menos um dos parâmetros RULEFILE ou RULEDATA deve ser preenchido."
+    ],
+    "example": {
+      "INPUTLAYERS": [
+        "cb_hid_trecho_drenagem_l",
+        "cb_hid_massa_dagua_a"
+      ],
+      "RULEFILE": "C:/regras/regras_atributos.json",
+      "RULEDATA": "{}",
+      "UNUSUAL_ATTRIBUTES": "TEMPORARY_OUTPUT",
+      "FLAGS": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:runfileinventory": {
+    "description": "Percorre recursivamente uma pasta e gera um inventário de arquivos geoespaciais (shp, tif ou outros formatos configuráveis) como uma camada de polígonos com os bounding boxes georeferenciados. Opcionalmente copia os arquivos encontrados para uma pasta de destino.",
+    "constraints": [
+      "A pasta de entrada deve existir e ser acessível.",
+      "O tipo de busca determina se os formatos listados são incluídos (whitelist) ou excluídos (blacklist).",
+      "A cópia de arquivos só ocorre se COPY_FILES for verdadeiro e COPY_FOLDER for informado."
+    ],
+    "example": {
+      "INPUT_FOLDER": "C:/dados/cartas",
+      "ONLY_GEO": true,
+      "SEARCH_TYPE": 0,
+      "FILE_FORMATS": [
+        "shp",
+        "tif"
+      ],
+      "COPY_FILES": false,
+      "COPY_FOLDER": null,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:runfmesap": {
+    "description": "Dispara a execução de um workspace FME no servidor SAP via API REST, aguarda a conclusão do job e retorna o log de flags gerados. Aceita os parâmetros via arquivo JSON ou texto JSON direto.",
+    "constraints": [
+      "Requer conectividade de rede com o servidor FME Manager informado.",
+      "O arquivo JSON ou texto JSON deve conter as chaves 'server' e 'workspace_id'.",
+      "O algoritmo aguarda indefinidamente (até 150 tentativas com intervalo de 3 s) pela conclusão do job."
+    ],
+    "example": {
+      "FILE": "C:/fme/parametros_workspace.json",
+      "TEXT": "[]",
+      "OUTPUT": "OUTPUT"
+    }
+  },
+  "dsgtools:runremotefme": {
+    "description": "Executa remotamente um workspace FME via FME Manager (v1 ou v2), aguardando a conclusão do job e reportando o número de flags por camada de saída no log do processamento.",
+    "constraints": [
+      "Requer conectividade de rede com o servidor FME Manager.",
+      "O parâmetro FME_MANAGER deve conter ao menos 'server' e 'workspace_id' válidos.",
+      "O algoritmo aguarda em loop (3 s de intervalo) até o status 2 (sucesso) ou 3 (erro) ser retornado."
+    ],
+    "example": {
+      "FME_MANAGER": {
+        "server": "http://fme.exercito.eb.br",
+        "workspace_id": 42,
+        "version": "v2",
+        "parameters": {},
+        "use_ssl": false,
+        "use_proxy": false
+      }
+    }
+  },
+  "dsgtools:selectbyde9im": {
+    "description": "Seleciona feições na camada de entrada que satisfazem uma relação espacial DE-9IM com feições da camada de intersecção, modificando a seleção da camada in-place. Permite quatro modos de seleção (nova, adicionar, dentro, remover).",
+    "constraints": [
+      "O parâmetro DE9IM deve ter 9 caracteres com valores válidos [FfTt012*].",
+      "O parâmetro METHOD controla o modo: 0=nova seleção, 1=adicionar, 2=selecionar dentro, 3=remover da seleção.",
+      "A seleção é modificada in-place na camada INPUT."
+    ],
+    "example": {
+      "INPUT": "camada_poligonos",
+      "INTERSECT": "camada_referencia",
+      "DE9IM": "T*F**FFF*",
+      "METHOD": 0
+    }
+  },
+  "dsgtools:selectfeaturesoncurrentcanvas": {
+    "description": "Seleciona, em cada camada da lista de entrada, todas as feições que estejam visíveis na extensão atual do canvas do QGIS. Retorna a lista de camadas que tiveram feições selecionadas.",
+    "constraints": [
+      "Requer interface gráfica ativa (iface) para obter a extensão do canvas.",
+      "Só seleciona feições que interceptam o bounding box do canvas atual; não aplica filtro por visibilidade de camada."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "edificacao_a",
+        "via_deslocamento_l"
+      ],
+      "OUTPUT": "OUTPUT"
+    }
+  },
+  "dsgtools:setfreehandtoolparametersalgorithm": {
+    "description": "Configura os parâmetros da Ferramenta de Desenho à Mão Livre do DSGTools, incluindo tolerância, iterações de suavização, offset de suavização, número de iterações do algoritmo, pontos por desfazer e tolerância de simplificação final. Os valores são persistidos no QSettings.",
+    "constraints": [
+      "Todos os parâmetros numéricos devem ser não-negativos.",
+      "FREE_HAND_SMOOTH_OFFSET é um valor decimal (ex.: 0.25) que controla a intensidade da suavização."
+    ],
+    "example": {
+      "FREE_HAND_TOLERANCE": 2.0,
+      "FREE_HAND_SMOOTH_ITERATIONS": 3,
+      "FREE_HAND_SMOOTH_OFFSET": 0.25,
+      "ALG_ITERATIONS": 2,
+      "UNDO_POINTS": 50,
+      "FREE_HAND_FINAL_SIMPLIFY_TOLERANCE": 1.0
+    }
+  },
+  "dsgtools:setlineorientation": {
+    "description": "Reorienta linhas de uma camada para sentido horário ou anti-horário usando o sinal do produto vetorial entre os segmentos. Útil para padronizar o sentido de digitalização de linhas de contorno ou limites.",
+    "constraints": [
+      "O parâmetro ORIENTATION é um enum: 0 = horário (Clockwise), 1 = anti-horário (Counterclockwise).",
+      "A orientação é determinada pelo sinal do produto vetorial do primeiro e segundo segmentos da linha."
+    ],
+    "example": {
+      "INPUT": "camada_linhas",
+      "ORIENTATION": 0,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:setremoveduplicatenodepropertyonlayers": {
+    "description": "Ativa a propriedade de remoção automática de nós duplicados nas opções de geometria de todas as camadas vetoriais de entrada. Essa configuração faz com que o QGIS elimine automaticamente vértices coincidentes durante a edição.",
+    "constraints": [],
+    "example": {
+      "INPUT_LAYERS": [
+        "layer_id_1",
+        "layer_id_2"
+      ]
+    }
+  },
+  "dsgtools:smallholeremoveralgorithm": {
+    "description": "Remove buracos (holes) internos de polígonos cuja área seja inferior ao limiar MAX_HOLE_AREA_TO_ELIMINATE, com opção de dissolver o resultado por lista de atributos.",
+    "constraints": [
+      "O parâmetro SELECTED limita o processamento às feições selecionadas.",
+      "Apenas buracos com área estritamente menor que MAX_HOLE_AREA_TO_ELIMINATE são removidos.",
+      "Se DISSOLVE_OUTPUT for True, o resultado é dissolvido pelos atributos em DISSOLVE_ATTRIBUTE_LIST.",
+      "Atenção: o nome do parâmetro de saída tem erro de digitação no código (OUPUT em vez de OUTPUT)."
+    ],
+    "example": {
+      "INPUT": "camada_poligonos",
+      "SELECTED": false,
+      "DISSOLVE_OUTPUT": false,
+      "DISSOLVE_ATTRIBUTE_LIST": [],
+      "MAX_HOLE_AREA_TO_ELIMINATE": 100.0,
+      "OUPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:smoothlinestoolparametersalgorithm": {
+    "description": "Define os parâmetros da Ferramenta de Suavização de Linhas do DSGTools, controlando o número de iterações de suavização e a fração da linha usada para criação de novos vértices. Os valores são persistidos no QSettings.",
+    "constraints": [
+      "NUMBER_SMOOTHING_ITERATIONS deve ser um inteiro não-negativo.",
+      "FRACTION_LINE_CREATE_NEW_VERTICES deve estar no intervalo [0, 1]."
+    ],
+    "example": {
+      "NUMBER_SMOOTHING_ITERATIONS": 2,
+      "FRACTION_LINE_CREATE_NEW_VERTICES": 0.3
+    }
+  },
+  "dsgtools:snapfeaturesinsidelayerwithgroupbyalgorithm": {
+    "description": "Realiza snap de feições dentro de uma mesma camada agrupando por um campo específico. Para cada valor único do campo de agrupamento, executa o snap entre feições do mesmo grupo.",
+    "constraints": [
+      "ATTRIBUTE é obrigatório (não opcional).",
+      "TOLERANCE deve ser maior ou igual a zero (padrão 1e-6).",
+      "A camada de entrada pode ser de qualquer tipo de geometria.",
+      "Modifica a camada INPUT diretamente (sem saída)."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "ATTRIBUTE": "tipo",
+      "TOLERANCE": 1e-06
+    }
+  },
+  "dsgtools:snaplayeronlayer": {
+    "description": "Realiza snap de feições de uma camada de entrada em relação a uma camada de referência, com diferentes comportamentos de snap configuráveis. Modifica a camada de entrada diretamente.",
+    "constraints": [
+      "BEHAVIOR deve ser um índice entre 0 e 7 (8 opções).",
+      "TOLERANCE deve ser maior ou igual a zero (padrão 1,0).",
+      "Modifica a camada INPUT diretamente (sem saída)."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "REFERENCE_LAYER": "camada_referencia",
+      "TOLERANCE": 1.0,
+      "BEHAVIOR": 0,
+      "BUILD_CACHE": false
+    }
+  },
+  "dsgtools:snaptogridandupdate": {
+    "description": "Projeta as coordenadas de feições para uma grade regular com a tolerância especificada, modificando a camada de entrada. Para camadas de linha, remove geometrias malformadas resultantes do snap.",
+    "constraints": [
+      "TOLERANCE deve ser maior ou igual a zero (padrão 1e-10).",
+      "A camada de entrada pode ser de qualquer tipo de geometria.",
+      "Modifica a camada INPUT diretamente (sem saída)."
+    ],
+    "example": {
+      "INPUT": "camada_linha",
+      "SELECTED": false,
+      "TOLERANCE": 1e-10
+    }
+  },
+  "dsgtools:spellchecker": {
+    "description": "Verifica a ortografia de atributos de texto de uma camada vetorial usando um verificador ortográfico em português do Brasil (pt-BR). Armazena os erros encontrados em uma camada auxiliar e gera flags com contagem de erros.",
+    "constraints": [
+      "Requer arquivos de dados externos do verificador ortográfico; caso não estejam disponíveis, uma exceção é lançada indicando necessidade de baixar dados externos.",
+      "ATTRIBUTE_NAME deve ser um campo do tipo string.",
+      "PRIMARY_KEY_FIELD deve existir na camada."
+    ],
+    "example": {
+      "INPUT_LAYER": "camada_toponimia",
+      "ATTRIBUTE_NAME": "nome",
+      "PRIMARY_KEY_FIELD": "id",
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:splitcontoursatmaximumlengthalgorithm": {
+    "description": "Divide curvas de nível em segmentos com comprimento máximo especificado, atualizando diretamente a camada de entrada. Útil para garantir que nenhuma curva exceda um comprimento máximo.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo linha (padrão elemnat_curva_nivel_l).",
+      "MAX_LENGTH deve ser maior ou igual a zero (padrão 0,05).",
+      "Se a camada estiver vazia ou sem feições selecionadas (quando SELECTED=True), o algoritmo encerra sem erro.",
+      "Modifica a camada INPUT diretamente (sem saída)."
+    ],
+    "example": {
+      "INPUT": "elemnat_curva_nivel_l",
+      "SELECTED": false,
+      "MAX_LENGTH": 0.05
+    }
+  },
+  "dsgtools:splitlinesatmaximumlengthalgorithm": {
+    "description": "Divide linhas abertas ou fechadas em segmentos com comprimento máximo definido. Linhas fechadas mais curtas que MAX_LENGTH são divididas no vértice do meio; linhas fechadas mais longas são divididas normalmente.",
+    "constraints": [
+      "Linhas abertas são divididas em segmentos de comprimento máximo MAX_LENGTH.",
+      "Linhas fechadas com comprimento menor que MAX_LENGTH são divididas no vértice do meio (índice count//2).",
+      "Linhas fechadas com comprimento maior que MAX_LENGTH são divididas normalmente como linhas abertas."
+    ],
+    "example": {
+      "INPUT": "camada_linhas",
+      "MAX_LENGTH": 500.0,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:splitpolygons": {
+    "description": "Divide polígonos em subpolígonos de acordo com um fator de divisão espacial (1/1 a 1/25), com buffer de sobreposição opcional entre os tiles resultantes. Atribui um campo de prioridade baseado na ordenação espacial N→S e E→O.",
+    "constraints": [
+      "O parâmetro PARAM é um enum que define o fator de divisão (0=1/1, 1=1/2, ..., até 1/25).",
+      "O parâmetro OVERLAP define o buffer de sobreposição em unidades do mapa entre tiles adjacentes.",
+      "O campo de prioridade é atribuído na ordem N→S, E→O pelo centroide de cada subpolígono."
+    ],
+    "example": {
+      "INPUT": "camada_poligonos",
+      "PARAM": 2,
+      "OVERLAP": 0.0,
+      "OUTPUT": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:streamorder": {
+    "description": "Calcula a ordem de fluxo (stream order) de uma rede hidrográfica vetorial usando análise de grafos direcionados (networkx). Adiciona o campo stream_order a cada arco da rede na camada de saída.",
+    "constraints": [
+      "Requer a biblioteca Python networkx instalada; caso contrário, uma exceção é lançada.",
+      "A camada de entrada deve ser do tipo linha."
+    ],
+    "example": {
+      "INPUT": "camada_drenagem",
+      "OUTPUT": "memory:"
+    }
+  },
+  "dsgtools:stringcsvtofirstlayerwithelementsalgorithm": {
+    "description": "Recebe uma lista de nomes de camadas separados por vírgula e retorna a primeira camada da lista que contenha ao menos uma feição. Caso apenas uma camada seja informada e esteja vazia, ela ainda assim é retornada.",
+    "constraints": [
+      "Retorna null se nenhuma camada da lista for encontrada no contexto ou se todas estiverem vazias (com mais de um nome).",
+      "A busca percorre a lista na ordem informada e para ao encontrar a primeira camada com feições."
+    ],
+    "example": {
+      "INPUTLAYERS": "edificacao_p, posto_combustivel_p, deposito_p",
+      "OUTPUT": "OUTPUT"
+    }
+  },
+  "dsgtools:stringcsvtolayerlistalgorithm": {
+    "description": "Converte uma string CSV de nomes de camadas (separados por vírgula) em uma lista de camadas vetoriais editáveis carregadas no projeto. Suporta curingas (*) e separadores de alternância (|) para correspondência flexível de nomes.",
+    "constraints": [
+      "Apenas camadas vetoriais editáveis (não somente-leitura) são incluídas na saída.",
+      "Camadas não encontradas no contexto são ignoradas silenciosamente.",
+      "O separador | escolhe a primeira camada do grupo que possua feições."
+    ],
+    "example": {
+      "INPUTLAYERS": "edificacao_*, via_deslocamento_l, drenagem_l",
+      "OUTPUT": "OUTPUT"
+    }
+  },
+  "dsgtools:topologicalclean": {
+    "description": "Realiza limpeza topológica em camadas de polígonos usando o algoritmo GRASS v.clean (RMSA, Break, RmDupl, RmDangle), corrigindo problemas de snap e área mínima. Sinaliza sobreposições e lacunas residuais.",
+    "constraints": [
+      "Todas as camadas em INPUTLAYERS devem ser do tipo polígono.",
+      "INPUTLAYERS não pode ser vazio; caso contrário, uma exceção é lançada.",
+      "Todas as camadas devem ter ao menos uma feição; caso contrário, uma exceção é lançada.",
+      "Se GEOGRAPHIC_BOUNDARY for informado para polígonos, uma NotImplementedError é lançada.",
+      "TOLERANCE deve ser maior ou igual a zero.",
+      "MINAREA deve ser maior ou igual a zero."
+    ],
+    "example": {
+      "INPUTLAYERS": [
+        "camada_poligono_a",
+        "camada_poligono_b"
+      ],
+      "SELECTED": false,
+      "TOLERANCE": 1.0,
+      "MINAREA": 1e-08,
+      "GEOGRAPHIC_BOUNDARY": null,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:topologicalcleanlines": {
+    "description": "Realiza limpeza topológica em camadas de linhas usando o algoritmo GRASS v.clean (RMSA, Break, RmDupl, RmDangle), com suporte a limite geográfico. Sinaliza sobreposições e lacunas residuais.",
+    "constraints": [
+      "Todas as camadas em INPUTLAYERS devem ser do tipo linha.",
+      "INPUTLAYERS não pode ser vazio; caso contrário, uma exceção é lançada.",
+      "TOLERANCE deve ser maior ou igual a zero.",
+      "MINAREA deve ser maior ou igual a zero."
+    ],
+    "example": {
+      "INPUTLAYERS": [
+        "camada_linha_a",
+        "camada_linha_b"
+      ],
+      "SELECTED": false,
+      "TOLERANCE": 1.0,
+      "MINAREA": 1e-08,
+      "GEOGRAPHIC_BOUNDARY": null,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:topologicaldouglaspeuckerareasimplification": {
+    "description": "Simplifica polígonos de múltiplas camadas usando o algoritmo Douglas-Peucker com consciência topológica, preservando as fronteiras compartilhadas entre camadas. Sinaliza sobreposições e lacunas resultantes.",
+    "constraints": [
+      "Todas as camadas em INPUTLAYERS devem ser do tipo polígono.",
+      "INPUTLAYERS não pode ser vazio; caso contrário, uma exceção é lançada.",
+      "SNAP e DOUGLASPARAMETER devem ser maiores ou iguais a zero.",
+      "MINAREA deve ser maior ou igual a zero (padrão 0,0001)."
+    ],
+    "example": {
+      "INPUTLAYERS": [
+        "camada_poligono_a",
+        "camada_poligono_b"
+      ],
+      "SELECTED": false,
+      "DOUGLASPARAMETER": 2.0,
+      "SNAP": 1.0,
+      "MINAREA": 0.0001,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:topologicaldouglaspeuckerlinesimplification": {
+    "description": "Simplifica linhas de múltiplas camadas usando o algoritmo Douglas-Peucker com consciência topológica, preservando conectividade entre camadas. Suporta limite geográfico e sinaliza sobreposições residuais.",
+    "constraints": [
+      "Todas as camadas em INPUTLAYERS devem ser do tipo linha.",
+      "INPUTLAYERS não pode ser vazio; caso contrário, uma exceção é lançada.",
+      "SNAP e DOUGLASPARAMETER devem ser maiores ou iguais a zero."
+    ],
+    "example": {
+      "INPUTLAYERS": [
+        "camada_linha_a",
+        "camada_linha_b"
+      ],
+      "SELECTED": false,
+      "DOUGLASPARAMETER": 2.0,
+      "SNAP": 1.0,
+      "GEOGRAPHIC_BOUNDARY": null,
+      "FLAGS": "memory:"
+    }
+  },
+  "dsgtools:topologicallineconnectivityadjustment": {
+    "description": "Ajusta a conectividade topológica de redes de linhas, removendo linhas pequenas, aplicando snap interno e corrigindo dangles remanescentes por snap individual ou ajuste de vértices. Modifica as camadas de entrada diretamente.",
+    "constraints": [
+      "Todas as camadas em INPUT_LAYERS devem ser do tipo linha.",
+      "INPUT_LAYERS não pode ser vazio; caso contrário, uma exceção é lançada.",
+      "TOLERANCE deve ser maior ou igual a zero (padrão 1e-6).",
+      "Modifica as camadas INPUT_LAYERS diretamente (sem saída)."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "camada_rede_linha"
+      ],
+      "SELECTED": false,
+      "TOLERANCE": 1e-06
+    }
+  },
+  "dsgtools:trataraster": {
+    "description": "Algoritmo consolidado de tratamento de raster para classificação de vegetação, substituindo o modelo '02-Trata_Raster'. Executa 10 etapas: sieve inicial, remoção de pixels de massa d'água e área edificada, queima de polígonos de referência, reclassificação nodata por vizinho mais próximo, duas passagens de generalização e sieves intermediários e final.",
+    "constraints": [
+      "Requer a biblioteca scipy instalada (KDTree).",
+      "As camadas AREA_EDIFICADA e MASSA_DAGUA devem ser polígonos vetoriais.",
+      "GENERALIZATION_RULES_PASS1 e GENERALIZATION_RULES_PASS2 são JSONs opcionais com class_restrictions, size_thresholds e non_growing_classes.",
+      "O parâmetro BUFFER_DISTANCE é aplicado como buffer negativo (encolhimento) nas camadas vetoriais antes da queima.",
+      "O raster de entrada deve ser de banda única (inteiro)."
+    ],
+    "example": {
+      "INPUT_RASTER": "raster_vegetacao.tif",
+      "AREA_EDIFICADA": "camada_area_edificada",
+      "MASSA_DAGUA": "camada_massa_dagua",
+      "AREA_EDIFICADA_VALUE": 2,
+      "MASSA_DAGUA_VALUE": 1,
+      "NODATA_VALUE": -9999,
+      "BUFFER_DISTANCE": -5.0,
+      "SIEVE_THRESHOLD": 50,
+      "FIRST_PASS_MIN_AREA": 15625,
+      "SECOND_PASS_MIN_AREA": 62500,
+      "GENERALIZATION_RULES_PASS1": "",
+      "GENERALIZATION_RULES_PASS2": "",
+      "OUTPUT_RASTER": "TEMPORARY_OUTPUT"
+    }
+  },
+  "dsgtools:unbuildpolygonsalgorithm": {
+    "description": "Deconstrói polígonos em seus elementos constituintes: pontos centrais com atributos originais e segmentos de borda únicos. Utiliza análise de grafos (networkx) e processamento paralelo para conjuntos grandes.",
+    "constraints": [
+      "Requer a biblioteca Python networkx instalada; caso contrário, uma exceção é lançada.",
+      "INPUT_POLYGONS não pode ter camadas também presentes em CONSTRAINT_POLYGON_LAYERS; caso contrário, uma exceção é lançada.",
+      "Todas as camadas em INPUT_POLYGONS devem ser do tipo polígono."
+    ],
+    "example": {
+      "INPUT_POLYGONS": [
+        "camada_poligono"
+      ],
+      "SELECTED": false,
+      "CONSTRAINT_LINE_LAYERS": [],
+      "CONSTRAINT_POLYGON_LAYERS": [],
+      "GEOGRAPHIC_BOUNDARY": null,
+      "OUTPUT_CENTER_POINTS": "memory:",
+      "OUTPUT_BOUNDARIES": "memory:"
+    }
+  },
+  "dsgtools:unicodefilter": {
+    "description": "Identifica feições com caracteres Unicode não permitidos nos atributos de texto, com base em uma lista branca (whitelist) de caracteres válidos. Gera flags separados para ponto, linha e polígono.",
+    "constraints": [
+      "Aceita camadas de qualquer tipo de geometria.",
+      "A whitelist é carregada de um arquivo CSV interno ao plugin (data/unicode-whitelist.csv)."
+    ],
+    "example": {
+      "INPUT_LAYER_LIST": [
+        "camada_toponimia",
+        "camada_linha"
+      ],
+      "OUTPUT1": "memory:",
+      "OUTPUT2": "memory:",
+      "OUTPUT3": "memory:"
+    }
+  },
+  "dsgtools:updaterunwayaltitudealgorithm": {
+    "description": "Atualiza um campo de altitude em múltiplas camadas vetoriais amostrando o valor do MDE (raster) no centroide de cada feição. Permite arredondar o valor para um número configurável de casas decimais.",
+    "constraints": [
+      "O campo de altitude informado deve existir nas camadas de entrada.",
+      "O raster de entrada deve cobrir espacialmente as feições para que a amostragem seja bem-sucedida.",
+      "As camadas de entrada são modificadas diretamente via dataProvider (sem transação de edição QGIS)."
+    ],
+    "example": {
+      "INPUT_LAYERS": [
+        "pista_ponto_inicio_p",
+        "pista_ponto_fim_p"
+      ],
+      "ALTITUDE_FIELD": "altitude",
+      "DECIMALS": 1,
+      "INPUT_DEM": "mde_srtm"
+    }
+  },
+  "dsgtools:validatetrackeralgorithm": {
+    "description": "Valida uma camada de pontos de rastreamento GPS verificando: tipos dos campos obrigatórios, diferença máxima (em dias) entre as datas de registro e a data atual, e se o intervalo interno do track ultrapassa 24 horas. Retorna uma mensagem de texto com os erros encontrados.",
+    "constraints": [
+      "A camada de entrada deve ser do tipo ponto.",
+      "Os campos de elevação, data/hora, track_fid, track_seg_id e track_seg_point_id devem existir na camada.",
+      "O campo de data/hora deve ser do tipo QDateTime; o campo de elevação, numérico; os demais, inteiros."
+    ],
+    "example": {
+      "INPUT": "track_gps_p",
+      "TOLERANCE": 1,
+      "ELEVATION_FIELD": "ele",
+      "CREATION_FIELD": "time",
+      "TRACKID_FIELD": "track_fid",
+      "TRACKSEGID_FIELD": "track_seg_id",
+      "TRACKSEGPOINTID_FIELD": "track_seg_point_id"
+    }
+  },
+  "dsgtools:verifyadjacentgeographicboundarydata": {
+    "description": "Verifica a consistência de dados adjacentes na fronteira de uma folha cartográfica, checando conectividade e correspondência de atributos de linhas e polígonos que tocam a moldura. Gera flags de ponto e linha.",
+    "constraints": [
+      "INPUT_LINE_POLYGON deve ser do tipo linha ou polígono.",
+      "INPUT_FRAME deve ser do tipo polígono.",
+      "DISTANCE_SEARCH deve ser maior ou igual a zero (padrão 0,0001)."
+    ],
+    "example": {
+      "INPUT_LINE_POLYGON": "camada_linha_ou_poligono",
+      "INPUT_FRAME": "aux_moldura_a",
+      "ATTRIBUTE_BLACK_LIST": [
+        "id"
+      ],
+      "DISTANCE_SEARCH": 0.0001,
+      "POINT_FLAGS": "memory:",
+      "LINE_FLAGS": "memory:"
+    }
+  },
+  "dsgtools:verifybdgexedgematching": {
+    "description": "Verifica a correspondência de feições na borda (edge matching) entre folhas adjacentes do BDGEx, carregando arquivos ZIP com shapefiles e comparando linhas, pontos e polígonos nas bordas das células da grade sistemática.",
+    "constraints": [
+      "ZIP_FOLDER deve conter arquivos .zip válidos com shapefiles.",
+      "SCALE deve ser 0=1:250.000, 1=1:100.000, 2=1:50.000 ou 3=1:25.000.",
+      "Os shapefiles de mesmo nome entre os ZIPs devem ter schemas de campo idênticos (campos, tipos); diferenças de comprimento de campo são tratadas conforme IGNORE_FIELD_LENGTHS.",
+      "SEARCH_RADIUS deve ser maior ou igual a zero (padrão 0,0001)."
+    ],
+    "example": {
+      "ZIP_FOLDER": "C:/dados/bdgex_folhas",
+      "SCALE": 3,
+      "SEARCH_RADIUS": 0.0001,
+      "ATTRIBUTE_BLACKLIST": "id,fid",
+      "IGNORE_FIELD_LENGTHS": false,
+      "POINT_FLAGS": "memory:",
+      "LINE_FLAGS": "memory:"
+    }
+  }
+}

@@ -70,11 +70,20 @@ class DsgTools(object):
         # Declare instance attributes
         self.actions = []
         self.menu = "&DSGTools"
-        self.toolbar = self.iface.addToolBar(self.tr("DsgTools"))
-        self.toolbar.setObjectName("DsgTools")
-
+        self.provider = None
         self.dsgTools = None
-        self.menuBar = self.iface.mainWindow().menuBar()
+        # When the plugin is loaded in headless mode (e.g. through the
+        # qgis_process command line tool), QGIS instantiates it with iface=None
+        # and never calls initGui(). Building GUI elements here would crash with
+        # "'NoneType' object has no attribute 'addToolBar'", so only do it when
+        # running inside the QGIS desktop.
+        if self.iface is not None:
+            self.toolbar = self.iface.addToolBar(self.tr("DsgTools"))
+            self.toolbar.setObjectName("DsgTools")
+            self.menuBar = self.iface.mainWindow().menuBar()
+        else:
+            self.toolbar = None
+            self.menuBar = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -90,24 +99,31 @@ class DsgTools(object):
 
     def unload(self):
         """
-        Removes the plugin menu item and icon from QGIS GUI
-        """
-        self.guiManager.unload()
-        for action in self.actions:
-            if action is None:
-                continue
-            self.iface.removePluginMenu("&DSGTools", action)
-            self.iface.removeToolBarIcon(action)
-            self.iface.unregisterMainWindowAction(action)
-            del action
+        Removes the plugin menu item and icon from QGIS GUI.
 
-        if self.dsgTools is not None:
-            self.menuBar.removeAction(self.dsgTools.menuAction())
-        if self.toolbar is not None:
-            self.iface.mainWindow().removeToolBar(self.toolbar)
-        QgsApplication.processingRegistry().removeProvider(self.provider)
-        del self.guiManager
-        del self.dsgTools
+        Must also work in headless mode (qgis_process), where there is no GUI
+        and guiManager was never created.
+        """
+        if self.iface is not None and hasattr(self, "guiManager"):
+            self.guiManager.unload()
+            for action in self.actions:
+                if action is None:
+                    continue
+                self.iface.removePluginMenu("&DSGTools", action)
+                self.iface.removeToolBarIcon(action)
+                self.iface.unregisterMainWindowAction(action)
+                del action
+
+            if self.dsgTools is not None:
+                self.menuBar.removeAction(self.dsgTools.menuAction())
+            if self.toolbar is not None:
+                self.iface.mainWindow().removeToolBar(self.toolbar)
+            del self.guiManager
+
+        if self.provider is not None:
+            QgsApplication.processingRegistry().removeProvider(self.provider)
+            self.provider = None
+        self.dsgTools = None
 
     def initGui(self):
         """
@@ -127,8 +143,19 @@ class DsgTools(object):
         )
         self.guiManager.initGui()
         # provider
-        self.initProvider()
+        self.initProcessing()
 
-    def initProvider(self):
-        self.provider = DSGToolsProcessingAlgorithmProvider()
-        QgsApplication.processingRegistry().addProvider(self.provider)
+    def initProcessing(self):
+        """
+        Registers the DSGTools processing provider.
+
+        This is called both by initGui() (when running inside the QGIS desktop)
+        and directly by QGIS when the plugin is loaded in headless mode, e.g.
+        through the qgis_process command line tool, which never calls initGui().
+        For headless support the plugin must declare hasProcessingProvider=yes
+        in metadata.txt and expose this exact method name. It is idempotent so
+        it can safely be called from both paths.
+        """
+        if self.provider is None:
+            self.provider = DSGToolsProcessingAlgorithmProvider()
+            QgsApplication.processingRegistry().addProvider(self.provider)
