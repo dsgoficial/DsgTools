@@ -32,7 +32,6 @@ from qgis.core import (
     QgsProcessingUtils,
     QgsVectorLayer,
     QgsFeedback,
-    QgsProject,
     QgsRasterLayer,
     QgsRectangle,
     QgsCoordinateReferenceSystem,
@@ -42,13 +41,21 @@ from qgis.core import (
 
 def _registerLayer(layer, context):
     """Ensure a QgsMapLayer is findable by ID in the processing context.
-    If the layer is already in the project or context store, returns its ID.
-    Otherwise, clones it into the context store and returns the clone's ID
-    (clone gets a new ID, so we must return that for processing to find it)."""
+    If the layer is already in the context store or in the context's OWN
+    project, returns its ID. Otherwise, clones it into the context store and
+    returns the clone's ID (clone gets a new ID, so we must return that for
+    processing to find it).
+
+    The lookup must use context.project(), not QgsProject.instance(): the ID
+    we return has to be resolvable by the same context handed to
+    processing.run(). A context whose project differs (or is None, e.g. a bare
+    QgsProcessingContext()) cannot resolve a global-project layer by ID, which
+    surfaced as 'Could not load source layer for INPUT' in rulestatistics."""
     if context is not None:
+        project = context.project()
         if (
             context.temporaryLayerStore().mapLayer(layer.id()) is not None
-            or QgsProject.instance().mapLayer(layer.id()) is not None
+            or (project is not None and project.mapLayer(layer.id()) is not None)
         ):
             return layer.id()
         clone = layer.clone()

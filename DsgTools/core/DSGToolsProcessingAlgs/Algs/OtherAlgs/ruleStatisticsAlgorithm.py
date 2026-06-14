@@ -36,6 +36,7 @@ from qgis.core import (
     QgsProcessingParameterFile,
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterString,
+    QgsProject,
     QgsWkbTypes,
 )
 from qgis.PyQt.QtCore import QMetaType
@@ -231,6 +232,10 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
     def check_rules_on_layers(self, attribute, rule, layers):
         failed = {}
         context = QgsProcessingContext()
+        # The input layers live in QgsProject.instance(); the child
+        # extractbyexpression must run with a project-aware context so the
+        # sanitized layer IDs resolve (see _registerLayer in algRunner).
+        context.setProject(QgsProject.instance())
         for lyr in layers:
             if not self.hasAttribute(attribute, lyr):
                 continue
