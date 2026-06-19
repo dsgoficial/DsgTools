@@ -277,10 +277,10 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if layer is None:
             return
         rankField = self.rankFieldComboBox.currentField()
-        if rankField is None:
+        if not rankField:
             return
         visitedField = self.visitedFieldComboBox.currentField()
-        if visitedField is None:
+        if not visitedField:
             return
         request = self.getFeatureRequest(
             rankField, expression=f"{visitedField} = False", ascending=True
@@ -312,10 +312,10 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if layer is None:
             return
         rankField = self.rankFieldComboBox.currentField()
-        if rankField is None:
+        if not rankField:
             return
         visitedField = self.visitedFieldComboBox.currentField()
-        if visitedField is None:
+        if not visitedField:
             return
         request = self.getFeatureRequest(
             rankField, expression=f"{visitedField} = False", ascending=True
@@ -347,7 +347,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if layer is None:
             return
         visitedField = self.visitedFieldComboBox.currentField()
-        if visitedField is None:
+        if not visitedField:
             return
         if (
             not QMessageBox.question(
@@ -362,15 +362,40 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         layer.setReadOnly(False)
         layer.startEditing()
         layer.beginEditCommand(self.tr("DSGTools review tool"))
-        for feat in layer.getFeatures():
-            feat[visitedField] = False
-            layer.updateFeature(feat)
-        layer.endEditCommand()
-        layer.commitChanges()
+        try:
+            for feat in layer.getFeatures():
+                feat[visitedField] = False
+                layer.updateFeature(feat)
+            layer.endEditCommand()
+            success = layer.commitChanges()
+            errors = [] if success else layer.commitErrors()
+        except Exception as e:
+            layer.destroyEditCommand()
+            success = False
+            errors = [str(e)]
+        if not success:
+            if layer.isEditable():
+                layer.rollBack()
+            self.iface.messageBar().pushMessage(
+                title=self.tr("Error!"),
+                text=self.tr("Could not reset the visited tiles: {0}").format(
+                    " ".join(errors)
+                ),
+                level=Qgis.MessageLevel.Critical,
+                duration=5,
+            )
         layer.setReadOnly(True)
 
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self) -> None:
+        if not self.visitedFieldComboBox.currentField():
+            self.iface.messageBar().pushMessage(
+                title=self.tr("Warning!"),
+                text=self.tr("Invalid attribute filter! Select a boolean field."),
+                level=Qgis.MessageLevel.Warning,
+                duration=2,
+            )
+            return
         selectedFeatures = self.getSelectedFeatures()
         featList = (
             selectedFeatures
@@ -430,6 +455,8 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if layer is None:
             return
         visitedField = self.visitedFieldComboBox.currentField()
+        if not visitedField or layer.fields().indexOf(visitedField) == -1:
+            return
         dateTimeFieldList = [
             field.name()
             for field in layer.fields()
@@ -439,15 +466,32 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         layer.setReadOnly(False)
         layer.startEditing()
         layer.beginEditCommand(self.tr("DSGTools review tool"))
-        for feat in featureList:
-            feat[visitedField] = not feat[visitedField]
-            if dateTimeField is not None:
-                e = QgsExpression(" $now ")
-                currentDateTime = e.evaluate()
-                feat[dateTimeField] = currentDateTime
-            layer.updateFeature(feat)
-        layer.endEditCommand()
-        layer.commitChanges()
+        try:
+            for feat in featureList:
+                feat[visitedField] = not feat[visitedField]
+                if dateTimeField is not None:
+                    e = QgsExpression(" $now ")
+                    currentDateTime = e.evaluate()
+                    feat[dateTimeField] = currentDateTime
+                layer.updateFeature(feat)
+            layer.endEditCommand()
+            success = layer.commitChanges()
+            errors = [] if success else layer.commitErrors()
+        except Exception as e:
+            layer.destroyEditCommand()
+            success = False
+            errors = [str(e)]
+        if not success:
+            if layer.isEditable():
+                layer.rollBack()
+            self.iface.messageBar().pushMessage(
+                title=self.tr("Error!"),
+                text=self.tr("Could not mark the tile as done: {0}").format(
+                    " ".join(errors)
+                ),
+                level=Qgis.MessageLevel.Critical,
+                duration=5,
+            )
         layer.setReadOnly(True)
 
     def getNextFeature(self, currentFeature, forward=True) -> QgsFeature:
@@ -455,10 +499,10 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if layer is None:
             return
         rankField = self.rankFieldComboBox.currentField()
-        if rankField is None:
+        if not rankField:
             return
         visitedField = self.visitedFieldComboBox.currentField()
-        if visitedField is None:
+        if not visitedField:
             return
         # we first try to get the next local feature
         if currentFeature is not None:
