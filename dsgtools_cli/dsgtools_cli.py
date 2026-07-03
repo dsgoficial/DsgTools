@@ -116,6 +116,24 @@ def _build_command(qgis_process, args):
     return [qgis_process, *args]
 
 
+def _qgis4_config_path():
+    """Diretorio de configuracao do QGIS 4 (que contem 'profiles'), se existir.
+
+    O qgis_process 4.0 ainda resolve o perfil legado QGIS/QGIS3 por padrao,
+    enquanto o QGIS 4 Desktop usa QGIS/QGIS4 — sem redirecionar via
+    QGIS_CUSTOM_CONFIG_PATH, o plugin instalado no perfil real fica invisivel
+    para o qgis_process (lista vazia / provider nao carregado).
+    """
+    if sys.platform.startswith("win"):
+        base = os.environ.get("APPDATA", "")
+        cand = os.path.join(base, "QGIS", "QGIS4")
+    elif sys.platform == "darwin":
+        cand = os.path.expanduser("~/Library/Application Support/QGIS/QGIS4")
+    else:
+        cand = os.path.expanduser("~/.local/share/QGIS/QGIS4")
+    return cand if os.path.isdir(os.path.join(cand, "profiles")) else None
+
+
 def call_qgis_process(args, stdin_text=None):
     """Executa o qgis_process e retorna (returncode, stdout, stderr)."""
     qgis_process = find_qgis_process()
@@ -131,6 +149,11 @@ def call_qgis_process(args, stdin_text=None):
     env = dict(os.environ)
     # Necessario para rodar sem servidor grafico (headless / servidores).
     env.setdefault("QT_QPA_PLATFORM", "offscreen")
+    # Aponta o qgis_process para o perfil do QGIS 4 (ver _qgis4_config_path).
+    if "QGIS_CUSTOM_CONFIG_PATH" not in env:
+        cfg = _qgis4_config_path()
+        if cfg:
+            env["QGIS_CUSTOM_CONFIG_PATH"] = cfg
 
     proc = subprocess.run(
         _build_command(qgis_process, args),
@@ -217,6 +240,8 @@ def cmd_doctor(args):
     print(f"  annotations.json: {'ok' if ANNOTATIONS_PATH.exists() else 'ausente (opcional)'}")
     print(f"  QT_QPA_PLATFORM (sera definido como) : "
           f"{os.environ.get('QT_QPA_PLATFORM', 'offscreen')}")
+    cfg = os.environ.get("QGIS_CUSTOM_CONFIG_PATH") or _qgis4_config_path()
+    print(f"  QGIS_CUSTOM_CONFIG_PATH (sera definido como) : {cfg or '(padrao do qgis_process)'}")
     if qp is None:
         print("\n  Defina DSGTOOLS_QGIS_PROCESS apontando para o qgis_process.")
         return 1
