@@ -1,0 +1,8 @@
+{
+  "type": "FeatureCollection",
+  "name": "frame_overlap",
+  "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:EPSG::31983"}},
+  "features": [
+    {"type": "Feature", "properties": {"id": 1}, "geometry": {"type": "Polygon", "coordinates": [[[0,0],[4,0],[6,0],[10,0],[10,10],[6,10],[4,10],[0,10],[0,0]]]}}
+  ]
+}
