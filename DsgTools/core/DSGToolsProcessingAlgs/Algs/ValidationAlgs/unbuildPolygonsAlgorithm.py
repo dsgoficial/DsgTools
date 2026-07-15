@@ -529,8 +529,10 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             if len(layerList) > 1
             else layerList[0]
         )
-        if is_child_algorithm == False and isinstance(mergedLayer, str):
-            mergedLayer = [QgsProcessingUtils.mapLayerFromString(mergedLayer, context)]
+        if is_child_algorithm == False:
+            if isinstance(mergedLayer, str):
+                mergedLayer = QgsProcessingUtils.mapLayerFromString(mergedLayer, context)
+            mergedLayer = [mergedLayer]
         multiStepFeedback.pushInfo(self.tr("Layers merged successfully"))
         return mergedLayer
 
