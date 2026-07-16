@@ -19,7 +19,9 @@ from qgis.core import (
     Qgis,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
-    QgsDistanceArea,
+    QgsExpression,
+    QgsExpressionContext,
+    QgsExpressionContextUtils,
     QgsFeature,
     QgsFeatureSink,
     QgsField,
@@ -29,10 +31,13 @@ from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingException,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterExpression,
     QgsProcessingParameterField,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
+    QgsUnitTypes,
     QgsWkbTypes,
 )
 import numpy as np
@@ -41,9 +46,14 @@ import numpy as np
 class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
     INPUT = "INPUT"
     ELEVATION_ATTR = "ELEVATION_ATTR"
-    MIN_CLOSED_LENGTH = "MIN_CLOSED_LENGTH"
+    CONTOUR_INTERVAL = "CONTOUR_INTERVAL"
+    DEPRESSION_EXPRESSION = "DEPRESSION_EXPRESSION"
+    SCALE = "SCALE"
     FRAME = "FRAME"
     OUTPUT = "OUTPUT"
+
+    # a cada 5 curvas sai uma mestra
+    INDEX_CONTOUR_FACTOR = 5
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -65,11 +75,42 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.MIN_CLOSED_LENGTH,
-                self.tr("Minimum length for closed contours (meters)"),
+                self.CONTOUR_INTERVAL,
+                self.tr("Contour interval"),
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0,
-                defaultValue=200,
+                defaultValue=10,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                self.DEPRESSION_EXPRESSION,
+                self.tr("Filter expression for contour that are depressions."),
+                """ "depressao" = 1 """,
+                self.INPUT,
+                optional=True,
+            )
+        )
+
+        self.scales = [
+            "1:25.000",
+            "1:50.000",
+            "1:100.000",
+            "1:250.000",
+        ]
+        # Uma curva fechada menor que 12 mm de perímetro na escala de saída não é
+        # representável, então é descartada. Em metros no terreno.
+        self.minClosedPerimeters = {
+            0: 12e-3 * 25_000,
+            1: 12e-3 * 50_000,
+            2: 12e-3 * 100_000,
+            3: 12e-3 * 250_000,
+        }
+
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.SCALE, self.tr("Scale"), options=self.scales, defaultValue=0
             )
         )
 
@@ -98,15 +139,38 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             )
         inputLayer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         elevAttr = self.parameterAsString(parameters, self.ELEVATION_ATTR, context)
-        minClosedLength = self.parameterAsDouble(
-            parameters, self.MIN_CLOSED_LENGTH, context
+        contourInterval = self.parameterAsDouble(
+            parameters, self.CONTOUR_INTERVAL, context
         )
+        scale = self.parameterAsEnum(parameters, self.SCALE, context)
+        minClosedPerimeter = self.minClosedPerimeters[scale]
+        depressionExpression = self.parameterAsExpression(
+            parameters, self.DEPRESSION_EXPRESSION, context
+        )
+        if depressionExpression == "":
+            depressionExpression = None
         frameLayer = self.parameterAsVectorLayer(parameters, self.FRAME, context)
 
         if inputLayer is None:
             raise QgsProcessingException(self.tr("Invalid input layer"))
         if frameLayer is None:
             raise QgsProcessingException(self.tr("Invalid frame layer"))
+
+        depressionExpr = None
+        depressionExprContext = None
+        if depressionExpression is not None:
+            depressionExpr = QgsExpression(depressionExpression)
+            if depressionExpr.hasParserError():
+                raise QgsProcessingException(
+                    self.tr("Invalid depression expression: {0}").format(
+                        depressionExpr.parserErrorString()
+                    )
+                )
+            depressionExprContext = QgsExpressionContext()
+            depressionExprContext.appendScopes(
+                QgsExpressionContextUtils.globalProjectLayerScopes(inputLayer)
+            )
+            depressionExpr.prepare(depressionExprContext)
 
         sourceCrs = inputLayer.sourceCrs()
         projectedCrs = self._getProjectedCrs(inputLayer)
@@ -176,11 +240,20 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
                 continue
             cotaValue = int(cotaValue)
 
-            # Explode multipart to single parts
+            isDepression = False
+            if depressionExpr is not None:
+                depressionExprContext.setFeature(feat)
+                isDepression = bool(depressionExpr.evaluate(depressionExprContext))
+
+            # Explode multipart to single parts. O agrupamento inclui a depressão
+            # porque o passo seguinte mescla o que estiver no mesmo grupo: juntar
+            # uma curva de depressão com uma normal de mesma cota perderia a
+            # atribuição de uma das duas.
             parts = self._explodeToParts(geom)
-            if cotaValue not in elevGroups:
-                elevGroups[cotaValue] = []
-            elevGroups[cotaValue].extend(parts)
+            groupKey = (cotaValue, isDepression)
+            if groupKey not in elevGroups:
+                elevGroups[groupKey] = []
+            elevGroups[groupKey].extend(parts)
 
             feedback.setProgress(int(current * total * 0.1))
 
@@ -192,13 +265,13 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText(self.tr("Step 2/6: Merging connected lines..."))
         mergedLines = []
         groupCount = len(elevGroups)
-        for i, (cota, parts) in enumerate(elevGroups.items()):
+        for i, ((cota, isDepression), parts) in enumerate(elevGroups.items()):
             if feedback.isCanceled():
                 return {self.OUTPUT: destId}
 
             merged = self._mergeConnectedLines(parts)
             for line in merged:
-                mergedLines.append((cota, line))
+                mergedLines.append((cota, isDepression, line))
 
             feedback.setProgress(10 + int((i / max(groupCount, 1)) * 10))
 
@@ -209,38 +282,43 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
         # Step 3: Remove duplicate vertices
         feedback.setProgressText(self.tr("Step 3/6: Validating geometries..."))
         validLines = []
-        for cota, geom in mergedLines:
+        for cota, isDepression, geom in mergedLines:
             geom.removeDuplicateNodes()
             if not geom.isNull() and not geom.isEmpty():
-                validLines.append((cota, geom))
+                validLines.append((cota, isDepression, geom))
         mergedLines = validLines
 
-        # Step 4: Filter closed curves by minimum length
+        # Step 4: Filter closed curves by minimum perimeter
         feedback.setProgressText(
-            self.tr("Step 4/6: Filtering small closed contours (< %1 m)...").replace(
-                "%1", str(minClosedLength)
+            self.tr("Step 4/6: Filtering closed contours under {0} m of perimeter...").format(
+                minClosedPerimeter
             )
         )
         filteredLines = []
-        da = QgsDistanceArea()
-        da.setSourceCrs(sourceCrs, context.transformContext())
-        da.setEllipsoid(context.ellipsoid())
+        # A geometria é levada ao CRS projetado já aqui, e não só na generalização:
+        # o comprimento tem que sair em metros para ser comparado com o mínimo. Medir
+        # no CRS de origem devolvia graus quando a entrada era geográfica, e como todo
+        # anel mede uma fração de grau, todos eram descartados em silêncio.
+        toMeters = QgsUnitTypes.fromUnitToUnitFactor(
+            projectedCrs.mapUnits(), QgsUnitTypes.DistanceMeters
+        )
 
-        for cota, geom in mergedLines:
+        for cota, isDepression, geom in mergedLines:
             if feedback.isCanceled():
                 return {self.OUTPUT: destId}
+
+            if needsTransform:
+                geom.transform(toProjected)
 
             polyline = self._geometryToPolyline(geom)
             if polyline is None:
                 continue
 
-            isClosed = self._isClosed(polyline)
-            if isClosed:
-                length = da.measureLength(geom)
-                if length < minClosedLength:
+            if self._isClosed(polyline):
+                if geom.length() * toMeters < minClosedPerimeter:
                     continue
 
-            filteredLines.append((cota, geom))
+            filteredLines.append((cota, isDepression, geom))
 
         feedback.setProgress(35)
         if feedback.isCanceled():
@@ -253,14 +331,11 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
         generalizedLines = []
         lineCount = len(filteredLines)
 
-        for i, (cota, geom) in enumerate(filteredLines):
+        for i, (cota, isDepression, geom) in enumerate(filteredLines):
             if feedback.isCanceled():
                 return {self.OUTPUT: destId}
 
-            # Transform to projected CRS for metric Douglas-Peucker
-            if needsTransform:
-                geom.transform(toProjected)
-
+            # a geometria já está no CRS projetado desde o passo 4
             # Douglas-Peucker 2m
             geom = geom.simplify(2.0)
             if geom.isNull() or geom.isEmpty():
@@ -280,7 +355,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             if needsTransform:
                 geom.transform(toOriginal)
 
-            generalizedLines.append((cota, geom))
+            generalizedLines.append((cota, isDepression, geom))
 
             feedback.setProgress(35 + int((i / max(lineCount, 1)) * 45))
 
@@ -292,7 +367,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText(self.tr("Step 6/6: Clipping by frame and writing output..."))
         outputCount = len(generalizedLines)
 
-        for i, (cota, geom) in enumerate(generalizedLines):
+        for i, (cota, isDepression, geom) in enumerate(generalizedLines):
             if feedback.isCanceled():
                 return {self.OUTPUT: destId}
 
@@ -327,15 +402,16 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
 
             outFeat = QgsFeature(outFields)
             outFeat.setGeometry(clipped)
+            isIndexContour = self._isIndexContour(cota, contourInterval)
             outFeat.setAttributes([
-                str(uuid.uuid4()),     # id
-                int(cota),             # cota
-                2,                     # indice
-                2,                     # depressao
-                1,                     # visivel
-                2,                     # dentro_massa_dagua
-                str(int(cota)),        # texto_edicao
-                "",                    # observacao
+                str(uuid.uuid4()),                  # id
+                int(cota),                          # cota
+                1 if isIndexContour else 2,         # indice
+                1 if isDepression else 2,           # depressao
+                1,                                  # visivel
+                2,                                  # dentro_massa_dagua
+                str(int(cota)),                     # texto_edicao
+                "",                                 # observacao
             ])
             sink.addFeature(outFeat, QgsFeatureSink.FastInsert)
 
@@ -343,6 +419,16 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
 
         feedback.setProgress(100)
         return {self.OUTPUT: destId}
+
+    def _isIndexContour(self, cota, contourInterval):
+        """
+        Diz se a cota é de curva mestra: uma a cada cinco, ou seja, múltiplo de
+        cinco vezes a equidistância.
+        """
+        indexInterval = int(self.INDEX_CONTOUR_FACTOR * contourInterval)
+        if indexInterval <= 0:
+            return False
+        return int(cota) % indexInterval == 0
 
     def _getProjectedCrs(self, layer):
         """Return a suitable projected CRS for metric operations.
@@ -497,11 +583,11 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             "Prepares raw contour lines for cartographic production following "
             "the EDGV standard.\n\n"
             "The algorithm performs the following steps:\n"
-            "1. Explodes multipart geometries and merges connected lines at "
-            "the same elevation\n"
+            "1. Explodes multipart geometries and merges connected lines that share "
+            "both elevation and depression attribution\n"
             "2. Removes duplicate vertices\n"
-            "3. Filters out closed contours shorter than the specified minimum "
-            "length\n"
+            "3. Filters out closed contours whose perimeter is under 12 mm at the "
+            "output scale, since they are not representable\n"
             "4. Applies a three-step generalization chain:\n"
             "   a) Douglas-Peucker simplification (2 m tolerance)\n"
             "   b) NURBfit B-spline interpolation (degree 3)\n"
@@ -515,7 +601,13 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             "Parameters:\n"
             "- Input contour lines: Raw contour line layer\n"
             "- Elevation attribute: Field containing the elevation value\n"
-            "- Minimum length for closed contours: Closed contour lines "
-            "shorter than this value (in meters) will be removed\n"
+            "- Contour interval: used to set the index contour attribute, since one "
+            "in every five contours is an index contour (a multiple of five times "
+            "the contour interval)\n"
+            "- Filter expression for contour that are depressions: used to carry the "
+            "depression attribution over to the output\n"
+            "- Scale: output scale, which sets the minimum perimeter for closed "
+            "contours (12 mm at scale: 300 m at 1:25.000, 600 m at 1:50.000, "
+            "1200 m at 1:100.000, 3000 m at 1:250.000)\n"
             "- Frame layer: Polygon layer used to clip the output"
         )
