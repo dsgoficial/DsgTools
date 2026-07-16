@@ -548,10 +548,45 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 context=context,
                 feedback=multiStepFeedback,
             )
+            featList = self.dropContourIntervalMultiples(
+                featList, contourHeightInterval, feedback=multiStepFeedback
+            )
             self.sink.addFeatures(featList, QgsFeatureSink.FastInsert)
         return {
             "OUTPUT": self.sink_id,
         }
+
+    def dropContourIntervalMultiples(self, featList, contourHeightInterval, feedback=None):
+        """
+        Descarta pontos cotados cuja cota seja múltipla da equidistância.
+
+        Um ponto cotado com o mesmo valor de uma curva de nível é erro — o
+        identifyterrainmodelerrorsalgorithm o acusa —, então o gerador não pode
+        produzi-lo. As proteções a montante (mascarar múltiplos no raster e
+        deslocar o pixel para um vizinho não múltiplo) resolvem o caso comum, mas
+        não são garantia: num platô plano em cota redonda não existe vizinho
+        utilizável. Esta é a única escrita no sink, então é aqui que a garantia
+        vale para todos os caminhos de geração.
+        """
+        interval = int(contourHeightInterval)
+        if interval <= 0:
+            return featList
+        keptFeatList, droppedCount = [], 0
+        for feat in featList:
+            cota = feat["cota"]
+            if cota is not None and int(cota) % interval == 0:
+                droppedCount += 1
+                continue
+            keptFeatList.append(feat)
+        if droppedCount > 0 and feedback is not None:
+            feedback.pushWarning(
+                self.tr(
+                    "{0} spot elevation(s) discarded for being a multiple of the contour "
+                    "interval ({1}). This happens where the terrain offers no nearby "
+                    "elevation that is not a contour value, such as a flat plateau."
+                ).format(droppedCount, interval)
+            )
+        return keptFeatList
 
     def computePoints(
         self,

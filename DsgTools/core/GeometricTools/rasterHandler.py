@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 import os
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 from uuid import uuid4
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -101,7 +101,16 @@ def findNearbyNonMultiplePixel(
     npRaster: np.array,
     contourHeightInterval: float,
     maxSearchRadius: int = 5,
-) -> Tuple[int, int]:
+) -> Optional[Tuple[int, int]]:
+    """
+    Desloca um pixel que caiu num múltiplo da equidistância para o vizinho não
+    múltiplo mais próximo.
+
+    Devolve None quando não há vizinho utilizável dentro do raio de busca (um
+    platô plano em cota redonda, por exemplo). Nesse caso não existe ponto cotado
+    válido a gerar ali, e quem chama deve descartar a feição: devolver o pixel
+    múltiplo original produziria exatamente a cota que não se quer gerar.
+    """
     row, col = pixelCoordinates
     interval = int(contourHeightInterval)
     if interval <= 0:
@@ -130,7 +139,7 @@ def findNearbyNonMultiplePixel(
                             bestCoords = (nr, nc)
         if bestCoords is not None:
             return bestCoords
-    return pixelCoordinates
+    return None
 
 
 def createFeatureWithPixelValueFromPixelCoordinates(
@@ -146,6 +155,8 @@ def createFeatureWithPixelValueFromPixelCoordinates(
         pixelCoordinates = findNearbyNonMultiplePixel(
             pixelCoordinates, npRaster, contourHeightInterval
         )
+        if pixelCoordinates is None:
+            return None
     newFeat = QgsFeature(fields)
     terrainCoordinates = transform * pixelCoordinates
     newFeat.setGeometry(QgsGeometry(QgsPoint(*terrainCoordinates)))
@@ -234,6 +245,8 @@ def createFeatureWithPixelValueFromTerrainCoordinates(
         pixelCoordinates = findNearbyNonMultiplePixel(
             pixelCoordinates, npRaster, contourHeightInterval
         )
+        if pixelCoordinates is None:
+            return None
         terrainCoordinates = transform * pixelCoordinates
     try:
         value = npRaster[pixelCoordinates]

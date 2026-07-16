@@ -66,6 +66,10 @@ seguiu, e só voltaram a ser visíveis quando passaram a ser executados de novo:
   ordenação por distância existir — restaurá-los exige rederivar as expectativas com
   conhecimento do domínio de drenagem, não apenas ajustar a chamada. Os outros 5
   testes do módulo passam.
+- `test_rasterHandler.py` — 6 dos 8 testes falham com
+  `Could not open raster: mock_raster.tif`. O mock de `QgsRasterLayer` devolve um
+  nome de arquivo que `readAsNumpy` tenta abrir de verdade no GDAL; ou o mock passa a
+  cobrir a leitura, ou o teste precisa de um raster real pequeno em disco.
 - Os demais módulos ainda usam `unittest.makeSuite` em `run_all()`. Não afeta o
   `run_local.py`, mas quebra em Python 3.13 por outros caminhos.
 
