@@ -27,6 +27,8 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
     QgsVectorLayer,
+    QgsExpression,
+    QgsGeometry,
     QgsProcessingContext,
     QgsProcessingFeedback,
     QgsProcessingMultiStepFeedback,
@@ -194,7 +196,7 @@ class TerrainModel:
             attributeBlackList=[
                 f.name()
                 for f in self.contourCacheLyr.fields()
-                if f.name() not in [self.contourElevationFieldName]
+                if f.name() not in self.getFieldsToPreserveOnMerge()
             ],
             allowClosed=True,
             feedback=multiStepFeedback,
@@ -293,6 +295,30 @@ class TerrainModel:
             is_child_algorithm=True,
         )
 
+    def getFieldsToPreserveOnMerge(self) -> Set[str]:
+        """
+        Returns the fields that must take part on the merge grouping key.
+
+        Merging lines that differ on a field keeps the value of an arbitrary
+        one of them, so every field the validation reads afterwards has to be
+        part of the key. Besides the elevation, that means the fields the
+        depression expression refers to.
+
+        Returns:
+            Set[str]: field names that must not be blacklisted on the merge.
+        """
+        fieldsToPreserve = {self.contourElevationFieldName}
+        if self.depressionExpression is None:
+            return fieldsToPreserve
+        expression = QgsExpression(self.depressionExpression)
+        if expression.hasParserError():
+            return fieldsToPreserve
+        return fieldsToPreserve | {
+            column
+            for column in expression.referencedColumns()
+            if column != QgsFeatureRequest.ALL_ATTRIBUTES
+        }
+
     def buildAuxStructures(
         self,
         context: Optional[QgsProcessingContext] = None,
@@ -334,6 +360,11 @@ class TerrainModel:
                 for f in self.contourCacheLyr.getFeatures(self.depressionExpression)
             )
         )
+        self.contourFeatCache = {
+            f["contourid"]: f for f in self.contourCacheLyr.getFeatures()
+        }
+        self.ringGeomCache = dict()
+        self.terrainGraph = self.nx.Graph()
 
     def tr(self, string: str) -> str:
         """
@@ -913,7 +944,7 @@ class TerrainModel:
                     filter(
                         lambda x: x is not None,
                         (
-                            self.terrainGraph[i].get("heightRange", None)
+                            self.terrainGraph.nodes[i].get("heightRange", None)
                             for i in self.terrainGraph.neighbors(node)
                         ),
                     )
@@ -927,7 +958,7 @@ class TerrainModel:
 
                 elif (
                     nConnectedNodeRanges == 1
-                    and self.terrainGraph[node].get("heightRange", None) is None
+                    and self.terrainGraph.nodes[node].get("heightRange", None) is None
                 ):
                     previousHeightRange = list(connectedNodesRanges)[0]
                     currentHeightRange = (
@@ -982,56 +1013,182 @@ class TerrainModel:
 
         return sortedHilltops
 
+    def getRingGeometry(self, contourid: int) -> Optional[QgsGeometry]:
+        """
+        Returns the polygon enclosed by a closed contour, or None when the
+        contour does not enclose one.
+
+        Args:
+            contourid (int): the contour id.
+
+        Returns:
+            Optional[QgsGeometry]: the enclosed polygon.
+        """
+        if contourid in self.ringGeomCache:
+            return self.ringGeomCache[contourid]
+        contourFeat = self.contourFeatCache.get(contourid)
+        ringGeom = (
+            None
+            if contourFeat is None
+            else QgsGeometry.polygonize([contourFeat.geometry()])
+        )
+        if ringGeom is not None and ringGeom.isEmpty():
+            ringGeom = None
+        self.ringGeomCache[contourid] = ringGeom
+        return ringGeom
+
+    def getInnerBand(self, nodeA: int, nodeB: int, contourid: int) -> Optional[int]:
+        """
+        Returns which of the two bands separated by a closed contour lies inside
+        its ring.
+
+        Telling the two sides apart is what allows the terrain direction to be
+        read: the region outside the outermost closed contour of a hill looks
+        exactly like a cap from the graph alone.
+
+        Args:
+            nodeA (int): polygonid of one of the bands.
+            nodeB (int): polygonid of the other band.
+            contourid (int): id of the closed contour between them.
+
+        Returns:
+            Optional[int]: polygonid of the inner band, or None if undetermined.
+        """
+        ringGeom = self.getRingGeometry(contourid)
+        if ringGeom is None:
+            return None
+        for candidate in (nodeA, nodeB):
+            terrainSlice = self.terrainSlicesDict.get(candidate)
+            if terrainSlice is None:
+                continue
+            bandPoint = terrainSlice.polygonFeat.geometry().pointOnSurface()
+            if ringGeom.contains(bandPoint):
+                return candidate
+        return None
+
+    def getClosedCapContourId(self, bandId: int) -> Optional[int]:
+        """
+        Returns the id of the closed contour that delimits bandId when bandId is
+        the innermost band of a hilltop or of a depression, and None otherwise.
+
+        Args:
+            bandId (int): the polygonid of the band.
+
+        Returns:
+            Optional[int]: contourid of the delimiting contour, or None.
+        """
+        if bandId not in self.terrainGraph or self.terrainGraph.degree(bandId) != 1:
+            return None
+        neighbor = list(self.terrainGraph.neighbors(bandId))[0]
+        edgeData = self.terrainGraph.get_edge_data(bandId, neighbor)
+        if not edgeData.get("is_closed"):
+            return None
+        contourid = edgeData["contourid"]
+        if self.getInnerBand(bandId, neighbor, contourid) != bandId:
+            return None
+        return contourid
+
+    def getContourHeightsAroundBand(self, bandId: int, exclude: int) -> list:
+        """
+        Returns the heights of the contours bounding a band, skipping the one
+        shared with the excluded band.
+
+        Args:
+            bandId (int): the polygonid of the band.
+            exclude (int): polygonid of the neighbour to skip.
+
+        Returns:
+            list: heights of the remaining bounding contours.
+        """
+        return [
+            self.terrainGraph.get_edge_data(bandId, neighbor)["height"]
+            for neighbor in self.terrainGraph.neighbors(bandId)
+            if neighbor != exclude
+        ]
+
+    def isDepressionContour(self, nodeA: int, nodeB: int) -> Optional[bool]:
+        """
+        Tells whether the closed contour between two bands is a depression
+        contour, i.e. whether the terrain descends as one moves inside its ring.
+
+        The reading is taken from the band inside the ring: if every other
+        contour bounding it is lower, the terrain descends inwards and the
+        contour delimits a depression; if every one of them is higher, it
+        ascends and the contour delimits a hilltop. The innermost band has no
+        other contour, so the surrounding band is read instead, the other way
+        around. Anything else (mixed or equal heights) is undetermined.
+
+        Args:
+            nodeA (int): polygonid of one of the bands.
+            nodeB (int): polygonid of the other band.
+
+        Returns:
+            Optional[bool]: True for a depression contour, False for a hilltop
+                            one, None when the terrain direction is undetermined.
+        """
+        edgeData = self.terrainGraph.get_edge_data(nodeA, nodeB)
+        if edgeData is None or not edgeData.get("is_closed"):
+            return None
+        height = edgeData["height"]
+        innerBand = self.getInnerBand(nodeA, nodeB, edgeData["contourid"])
+        if innerBand is None:
+            return None
+        outerBand = nodeB if innerBand == nodeA else nodeA
+        innerHeights = self.getContourHeightsAroundBand(innerBand, exclude=outerBand)
+        if innerHeights:
+            if all(h < height for h in innerHeights):
+                return True
+            if all(h > height for h in innerHeights):
+                return False
+            return None
+        outerHeights = self.getContourHeightsAroundBand(outerBand, exclude=innerBand)
+        if not outerHeights:
+            return None
+        if all(h < height for h in outerHeights):
+            return False
+        if all(h > height for h in outerHeights):
+            return True
+        return None
+
     def validateDepressionAttribution(
         self, feedback: Optional[QgsProcessingFeedback] = None
     ) -> Dict[QByteArray, str]:
+        """
+        Checks the depression attribute of every closed contour whose terrain
+        direction can be determined, which covers the contours nested inside a
+        hilltop or a depression and not only the innermost one.
+
+        Args:
+            feedback (Optional[QgsProcessingFeedback]): Feedback object.
+
+        Returns:
+            Dict[QByteArray, str]: Dictionary of errors, keyed by geometry.
+        """
         flagDict = dict()
-        contourFeatCache = {
-            f["contourid"]: f
-            for f in self.contourCacheLyr.getFeatures()
-        }
-        for hilltopNode in (
-            i
-            for i in self.terrainGraph.nodes
-            if self.terrainGraph.degree(i) == 1
-        ):
+        for nodeA, nodeB in list(self.terrainGraph.edges):
             if feedback is not None and feedback.isCanceled():
                 break
-            neighbor = list(self.terrainGraph.neighbors(hilltopNode))[0]
-            edgeData = self.terrainGraph.get_edge_data(hilltopNode, neighbor)
-            if not edgeData["is_closed"]:
+            isDepression = self.isDepressionContour(nodeA, nodeB)
+            if isDepression is None:
                 continue
-            hilltopHeight = edgeData["height"]
-            hilltopContourId = edgeData["contourid"]
-            isMarkedAsDepression = hilltopContourId in self.depressionIdSet
-            if self.terrainGraph.degree(neighbor) < 2:
+            edgeData = self.terrainGraph.get_edge_data(nodeA, nodeB)
+            contourid = edgeData["contourid"]
+            isMarkedAsDepression = contourid in self.depressionIdSet
+            if isDepression == isMarkedAsDepression:
                 continue
-            neighborEdgeHeights = [
-                self.terrainGraph.get_edge_data(neighbor, n)["height"]
-                for n in self.terrainGraph.neighbors(neighbor)
-                if n != hilltopNode
-            ]
-            if not neighborEdgeHeights:
-                continue
-            allNeighborHeightsLower = all(
-                h < hilltopHeight for h in neighborEdgeHeights
-            )
-            allNeighborHeightsHigher = all(
-                h > hilltopHeight for h in neighborEdgeHeights
-            )
-            flagMessage = None
-            if allNeighborHeightsLower and isMarkedAsDepression:
-                flagMessage = self.tr(
-                    f"Contour with height {hilltopHeight} is marked as depression but terrain model indicates it is a normal hilltop (peak)."
+            height = edgeData["height"]
+            flagMessage = (
+                self.tr(
+                    f"Contour with height {height} is not marked as depression but terrain model indicates it is a depression."
                 )
-            elif allNeighborHeightsHigher and not isMarkedAsDepression:
-                flagMessage = self.tr(
-                    f"Contour with height {hilltopHeight} is not marked as depression but terrain model indicates it is a depression."
+                if isDepression
+                else self.tr(
+                    f"Contour with height {height} is marked as depression but terrain model indicates it is a normal hilltop (peak)."
                 )
-            if flagMessage is not None:
-                contourFeat = contourFeatCache.get(hilltopContourId)
-                if contourFeat is not None:
-                    flagDict[contourFeat.geometry().asWkb()] = flagMessage
+            )
+            contourFeat = self.contourFeatCache.get(contourid)
+            if contourFeat is not None:
+                flagDict[contourFeat.geometry().asWkb()] = flagMessage
         return flagDict
 
     def flag_terrain_band(self, flagDict, node):
@@ -1094,6 +1251,56 @@ class TerrainModel:
         )
         return invalidDict
 
+    def getSpotElevationFlagText(
+        self, bandId: int, pointHeight: float, h_min: float, h_max: float
+    ) -> Optional[str]:
+        """
+        Returns the reason why a spot elevation is inconsistent with the band it
+        falls into, or None when it is acceptable.
+
+        On a regular band the valid range is the one delimited by the bounding
+        contours. On the innermost band of a hilltop or of a depression both
+        bounding heights are the same and the range is open ended, so the
+        direction comes from the depression attribution: a peak runs from the
+        contour up, a depression runs from the contour down.
+
+        Args:
+            bandId (int): the polygonid of the band the point falls into.
+            pointHeight (float): the spot elevation height.
+            h_min (float): lowest contour bounding the band.
+            h_max (float): highest contour bounding the band.
+
+        Returns:
+            Optional[str]: flag message, or None if the spot elevation is valid.
+        """
+        if h_min != h_max:
+            if h_min <= pointHeight <= h_max:
+                return None
+            return self.tr(
+                f"Elevation point with height {pointHeight} out of threshold. This value should be between {h_min} and {h_max}"
+            )
+        capContourId = self.getClosedCapContourId(bandId)
+        if capContourId is None:
+            # Not a cap: the band is bounded by distinct contours that happen to
+            # share a height (a saddle, for instance), which says nothing about
+            # which way the terrain runs. Only the permissive range is checked.
+            if h_max + self.threshold >= pointHeight >= h_min - self.threshold:
+                return None
+            return self.tr(
+                f"Elevation point with height {pointHeight} out of threshold. This value should be between {h_min - self.threshold} and {h_max + self.threshold}"
+            )
+        if capContourId in self.depressionIdSet:
+            if h_min - self.threshold <= pointHeight <= h_min:
+                return None
+            return self.tr(
+                f"Elevation point with height {pointHeight} out of threshold. This value is on a valley/depression and should be between {h_min - self.threshold} and {h_min}"
+            )
+        if h_max <= pointHeight <= h_max + self.threshold:
+            return None
+        return self.tr(
+            f"Elevation point with height {pointHeight} out of threshold. This value is on a hilltop and should be between {h_max} and {h_max + self.threshold}"
+        )
+
     def validateSpotElevation(
         self,
         context: Optional[QgsProcessingContext],
@@ -1148,7 +1355,7 @@ class TerrainModel:
         if interval > 0:
             filterExpr = (
                 f'"{self.spotElevationFieldName}" IS NOT NULL AND '
-                f'to_int("{self.spotElevationFieldName}") % {interval} = 0'
+                f'"{self.spotElevationFieldName}" % {interval} = 0'
             )
             request = QgsFeatureRequest().setFilterExpression(filterExpr)
             for feat in self.spotElevationLyr.getFeatures(request):
@@ -1181,26 +1388,10 @@ class TerrainModel:
             if bandId not in self.terrainSlicesDict:
                 continue
             h_min, h_max = self.terrainSlicesDict[bandId].getMinMaxHeight()
-            if h_min is None or h_max is None:
+            if h_min is None or h_max is None or pointHeight is None:
                 continue
-            if pointHeight == h_min or pointHeight == h_max:
-                continue
-            if h_min == h_max:
-                if pointHeight > h_max + self.threshold:
-                    flagText = self.tr(
-                        f"Elevation point with height {pointHeight} out of threshold. This value is on a hilltop and should be between {h_max} and {h_max+self.threshold}"
-                    )
-                elif pointHeight < h_min - self.threshold:
-                    flagText = self.tr(
-                        f"Elevation point with height {pointHeight} out of threshold. This value is on a valley/depression and should be between {h_min} and {h_min-self.threshold}"
-                    )
-                else:
-                    continue
-            elif pointHeight < h_min or pointHeight > h_max:
-                flagText = self.tr(
-                    f"Elevation point with height {pointHeight} out of threshold. This value should be between {h_min} and {h_max}"
-                )
-            else:
+            flagText = self.getSpotElevationFlagText(bandId, pointHeight, h_min, h_max)
+            if flagText is None:
                 continue
             pointGeom = feat.geometry()
             invalidDict[pointGeom.asWkb()] = flagText
