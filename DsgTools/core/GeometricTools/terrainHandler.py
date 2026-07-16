@@ -175,9 +175,35 @@ class TerrainModel:
             multiStepFeedback.pushInfo(self.tr("Creating contours cache"))
             multiStepFeedback.setCurrentStep(currentStep)
 
+        # A curva de nível chega da preparação com os anéis segmentados em arcos
+        # abertos, então a validação precisa recompô-los: o topo de morro e o fundo
+        # de depressão são reconhecidos por is_closed, e sem o anel fechado não há
+        # topo nenhum a validar. Dissolver pelos atributos que importam e depois
+        # unir as partes reconstrói o anel; o contourid vem em seguida, para
+        # identificar a curva já inteira.
+        mergedContourLyr = self.algRunner.runMergeLines(
+            inputLyr=self.algRunner.runDissolve(
+                inputLyr=self.contourLyr,
+                context=self.context,
+                field=sorted(self.getFieldsToPreserveOnMerge()),
+                separateDisjoint=True,
+                feedback=multiStepFeedback,
+            ),
+            context=self.context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Merging lines"))
+            multiStepFeedback.setCurrentStep(currentStep)
+
         self.contourCacheLyr: QgsVectorLayer = (
             self.algRunner.runCreateFieldWithExpression(
-                inputLyr=self.contourLyr,
+                inputLyr=self.algRunner.runMultipartToSingleParts(
+                    inputLayer=mergedContourLyr,
+                    context=self.context,
+                    feedback=multiStepFeedback,
+                ),
                 expression="$id",
                 fieldName="contourid",
                 fieldType=1,
@@ -185,23 +211,6 @@ class TerrainModel:
                 feedback=multiStepFeedback,
             )
         )
-        currentStep += 1
-        if multiStepFeedback is not None:
-            multiStepFeedback.pushInfo(self.tr("Merging lines"))
-            multiStepFeedback.setCurrentStep(currentStep)
-
-        self.algRunner.runDSGToolsMergeLines(
-            inputLayer=self.contourCacheLyr,
-            context=self.context,
-            attributeBlackList=[
-                f.name()
-                for f in self.contourCacheLyr.fields()
-                if f.name() not in self.getFieldsToPreserveOnMerge()
-            ],
-            allowClosed=True,
-            feedback=multiStepFeedback,
-        )
-        self.contourCacheLyr.commitChanges()
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.pushInfo(

@@ -93,6 +93,23 @@ TERRAIN_CASES = [
         "cota_fundo_acima",
         {"POINT_FLAGS": ["valley/depression"]},
     ),
+    # A preparação (generalizecontourlines) entrega os anéis segmentados em dois
+    # arcos abertos, que é o formato do dado que chega aqui na produção. O topo e o
+    # fundo são reconhecidos por is_closed, então a validação precisa recompor o
+    # anel antes de começar: sem isso não há topo, e um erro real de atribuição
+    # passa como "tudo certo".
+    (
+        "depressao_ok_com_aneis_segmentados",
+        "depressao_ok_segmentada",
+        None,
+        {},
+    ),
+    (
+        "depressao_nao_marcada_com_aneis_segmentados",
+        "depressao_nao_marcada_segmentada",
+        None,
+        {"LINE_FLAGS": ["is not marked as depression"]},
+    ),
 ]
 
 SINKS = ("POINT_FLAGS", "LINE_FLAGS", "POLYGON_FLAGS")

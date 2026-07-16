@@ -211,6 +211,31 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
+    def runMergeLines(
+        self,
+        inputLyr,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        """
+        Une as partes conectadas de cada feição multiparte de linha numa linha só.
+
+        Diferente do runDSGToolsMergeLines, que agrupa por conjunto de atributos e
+        não recompõe anel a partir de dois arcos, este é o native:mergelines e
+        fecha o anel. Para unir por atributo, use antes o runDissolve com o campo.
+        """
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = self._runProcessing(
+            "native:mergelines",
+            {"INPUT": inputLyr, "OUTPUT": outputLyr},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
     def runPoleOfInaccessibility(
         self,
         inputLyr,
