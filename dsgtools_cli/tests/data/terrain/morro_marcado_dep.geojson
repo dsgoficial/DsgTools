@@ -1,0 +1,75 @@
+{
+ "type": "FeatureCollection",
+ "crs": {
+  "type": "name",
+  "properties": {
+   "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+  }
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "cota": 90,
+    "depressao": 0
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -3.0,
+      -3.0
+     ],
+     [
+      3.0,
+      -3.0
+     ],
+     [
+      3.0,
+      3.0
+     ],
+     [
+      -3.0,
+      3.0
+     ],
+     [
+      -3.0,
+      -3.0
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "cota": 100,
+    "depressao": 1
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -1.0,
+      -1.0
+     ],
+     [
+      1.0,
+      -1.0
+     ],
+     [
+      1.0,
+      1.0
+     ],
+     [
+      -1.0,
+      1.0
+     ],
+     [
+      -1.0,
+      -1.0
+     ]
+    ]
+   }
+  }
+ ]
+}

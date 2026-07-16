@@ -948,84 +948,6 @@ class Tester(unittest.TestCase):
                     "FLAGS": "memory:",
                 },
             ],
-            "dsgtools:identifyterrainmodelerrorsalgorithm": [
-                {
-                    "__comment": "test 1",
-                    "INPUT": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["contours_test1"]
-                    )[0],
-                    "SELECTED": False,
-                    "CONTOUR_ATTR": "contour",
-                    "CONTOUR_INTERVAL": 10,
-                    "TOPOLOGY_RADIUS": 2,
-                    "GEOGRAPHIC_BOUNDS": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["geographic_bounds_test1"]
-                    )[0],
-                    "POINT_FLAGS": "memory:",
-                    "LINE_FLAGS": "memory:",
-                },
-                {
-                    "__comment": "test 2",
-                    "INPUT": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["contours_test2"]
-                    )[0],
-                    "SELECTED": False,
-                    "CONTOUR_ATTR": "contour",
-                    "CONTOUR_INTERVAL": 10,
-                    "TOPOLOGY_RADIUS": 2,
-                    "GEOGRAPHIC_BOUNDS": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["geographic_bounds_test2"]
-                    )[0],
-                    "POINT_FLAGS": "memory:",
-                    "LINE_FLAGS": "memory:",
-                },
-                {
-                    "__comment": "test 3",
-                    "INPUT": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["contours_test3"]
-                    )[0],
-                    "SELECTED": False,
-                    "CONTOUR_ATTR": "contour",
-                    "CONTOUR_INTERVAL": 10,
-                    "TOPOLOGY_RADIUS": 2,
-                    "GEOGRAPHIC_BOUNDS": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["geographic_bounds_test3"]
-                    )[0],
-                    "POINT_FLAGS": "memory:",
-                    "LINE_FLAGS": "memory:",
-                },
-                {
-                    "__comment": "test 4",
-                    "INPUT": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["contours_test4"]
-                    )[0],
-                    "SELECTED": False,
-                    "CONTOUR_ATTR": "contour",
-                    "CONTOUR_INTERVAL": 10,
-                    "TOPOLOGY_RADIUS": 2,
-                    "GEOGRAPHIC_BOUNDS": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["geographic_bounds_test4"]
-                    )[0],
-                    "POINT_FLAGS": "memory:",
-                    "LINE_FLAGS": "memory:",
-                },
-                {
-                    "__comment": "test 5",
-                    "INPUT": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["contours_test5"]
-                    )[0],
-                    "SELECTED": False,
-                    "CONTOUR_ATTR": "contour",
-                    "CONTOUR_INTERVAL": 10,
-                    "TOPOLOGY_RADIUS": 2,
-                    "GEOGRAPHIC_BOUNDS": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["geographic_bounds_test5"]
-                    )[0],
-                    "POINT_FLAGS": "memory:",
-                    "LINE_FLAGS": "memory:",
-                },
-            ],
-            # '__comment' : "'Normal' test: checks if it works."
             "dsgtools:enforcespatialrules": [
                 {
                     "__comment": "Tests 1 - tests all topological relation",
@@ -1832,16 +1754,6 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg(
                 "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
-                multipleOutputs=True,
-                addControlKey=True,
-            ),
-            "",
-        )
-
-    def test_identifyterrainmodelerrorsalgorithm(self):
-        self.assertEqual(
-            self.testAlg(
-                "dsgtools:identifyterrainmodelerrorsalgorithm",
                 multipleOutputs=True,
                 addControlKey=True,
             ),
