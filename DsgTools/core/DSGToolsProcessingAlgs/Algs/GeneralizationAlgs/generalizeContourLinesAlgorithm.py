@@ -310,13 +310,9 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             if needsTransform:
                 geom.transform(toProjected)
 
-            polyline = self._geometryToPolyline(geom)
-            if polyline is None:
+            geom = self._dropSmallClosedRings(geom, minClosedPerimeter, toMeters)
+            if geom is None:
                 continue
-
-            if self._isClosed(polyline):
-                if geom.length() * toMeters < minClosedPerimeter:
-                    continue
 
             filteredLines.append((cota, isDepression, geom))
 
@@ -400,20 +396,26 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             if clipped.type() != Qgis.GeometryType.Line:
                 continue
 
-            outFeat = QgsFeature(outFields)
-            outFeat.setGeometry(clipped)
             isIndexContour = self._isIndexContour(cota, contourInterval)
-            outFeat.setAttributes([
-                str(uuid.uuid4()),                  # id
-                int(cota),                          # cota
-                1 if isIndexContour else 2,         # indice
-                1 if isDepression else 2,           # depressao
-                1,                                  # visivel
-                2,                                  # dentro_massa_dagua
-                str(int(cota)),                     # texto_edicao
-                "",                                 # observacao
-            ])
-            sink.addFeature(outFeat, QgsFeatureSink.FastInsert)
+            # Cada arco vira uma feição própria: manter os dois no mesmo multipart
+            # deixaria a feição ainda começando e terminando no mesmo ponto, que é o
+            # que a segmentação existe para desfazer.
+            for part in self._splitClosedParts(clipped):
+                outFeat = QgsFeature(outFields)
+                outFeat.setGeometry(
+                    QgsGeometry.collectGeometry([QgsGeometry.fromPolylineXY(part)])
+                )
+                outFeat.setAttributes([
+                    str(uuid.uuid4()),                  # id
+                    int(cota),                          # cota
+                    1 if isIndexContour else 2,         # indice
+                    1 if isDepression else 2,           # depressao
+                    1,                                  # visivel
+                    2,                                  # dentro_massa_dagua
+                    str(int(cota)),                     # texto_edicao
+                    "",                                 # observacao
+                ])
+                sink.addFeature(outFeat, QgsFeatureSink.FastInsert)
 
             feedback.setProgress(80 + int((i / max(outputCount, 1)) * 20))
 
@@ -479,12 +481,61 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
         else:
             return [merged]
 
-    def _geometryToPolyline(self, geometry):
-        """Extract a polyline (list of QgsPointXY) from a geometry."""
+    def _toPolylineParts(self, geometry):
+        """
+        Devolve as partes de uma geometria de linha como listas de QgsPointXY.
+
+        Sempre uma lista, mesmo para geometria simples, porque decidir o fechamento
+        olhando só a primeira parte e medir o comprimento da geometria inteira
+        compara coisas diferentes.
+        """
+        if geometry is None or geometry.isNull() or geometry.isEmpty():
+            return []
         if geometry.isMultipart():
-            parts = geometry.asMultiPolyline()
-            return parts[0] if parts else None
-        return geometry.asPolyline()
+            return [part for part in geometry.asMultiPolyline() if len(part) >= 2]
+        polyline = geometry.asPolyline()
+        return [polyline] if len(polyline) >= 2 else []
+
+    def _fromPolylineParts(self, parts):
+        """Remonta uma geometria a partir das partes, simples quando só há uma."""
+        if not parts:
+            return None
+        if len(parts) == 1:
+            return QgsGeometry.fromPolylineXY(parts[0])
+        return QgsGeometry.fromMultiPolylineXY(parts)
+
+    def _dropSmallClosedRings(self, geometry, minClosedPerimeter, toMeters):
+        """
+        Descarta os anéis fechados menores que o perímetro mínimo, avaliando cada
+        parte por si. Devolve None quando não sobra parte alguma.
+        """
+        keptParts = []
+        for part in self._toPolylineParts(geometry):
+            if self._isClosed(part):
+                ring = QgsGeometry.fromPolylineXY(part)
+                if ring.length() * toMeters < minClosedPerimeter:
+                    continue
+            keptParts.append(part)
+        return self._fromPolylineParts(keptParts)
+
+    def _splitClosedParts(self, geometry):
+        """
+        Quebra em dois cada parte fechada da geometria.
+
+        Um anel começa e termina no mesmo ponto, o que é uma autointerseção. Ao
+        final da preparação ele é segmentado em dois arcos, de modo que nenhuma
+        parte se toca. Partes abertas passam intactas.
+        """
+        outputParts = []
+        for part in self._toPolylineParts(geometry):
+            # menos de quatro vértices não dá dois arcos com dois vértices cada
+            if self._isClosed(part) and len(part) >= 4:
+                mid = len(part) // 2
+                outputParts.append(part[: mid + 1])
+                outputParts.append(part[mid:])
+            else:
+                outputParts.append(part)
+        return outputParts
 
     def _isClosed(self, polyline, tolerance=1e-8):
         """Check if a polyline is closed (ring)."""
