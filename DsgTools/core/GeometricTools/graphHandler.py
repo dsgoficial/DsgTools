@@ -266,10 +266,25 @@ def buildAuxStructures(
         )
     stepSize = 100 / nodeCount
     auxId = 0
+    skippedCount = 0
     for current, nodeFeat in enumerate(nodesLayer.getFeatures()):
         if multiStepFeedback is not None and multiStepFeedback.isCanceled():
             break
+        # Trechos com geometria nula/vazia geram vertex_pos NULL no
+        # "extract specific vertices"; pulamos para não quebrar o índice da hashDict.
+        featId = nodeFeat[idFieldName]
+        vertexPos = nodeFeat["vertex_pos"]
         geom = nodeFeat.geometry()
+        if (
+            featId is None
+            or vertexPos is None
+            or geom is None
+            or geom.isEmpty()
+        ):
+            skippedCount += 1
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
+            continue
         geomKey = geom.asWkb() if not useWkt else geom.asWkt()
         if geomKey not in nodeDict:
             nodeDict[geomKey] = auxId
@@ -278,9 +293,18 @@ def buildAuxStructures(
         if computeNodeLayerIdDict:
             nodeLayerIdDict[nodeFeat["nfeatid"]] = geomKey
         # ✅ MUDANÇA: Usar idFieldName em vez de hardcoded 'featid'
-        hashDict[nodeFeat[idFieldName]][nodeFeat["vertex_pos"]] = geomKey
+        hashDict[featId][int(vertexPos)] = geomKey
         if multiStepFeedback is not None:
             multiStepFeedback.setProgress(current * stepSize)
+
+    if skippedCount > 0 and multiStepFeedback is not None:
+        multiStepFeedback.pushWarning(
+            QCoreApplication.translate(
+                "graphHandler",
+                "{0} node(s) skipped due to null/empty geometry (vertex_pos NULL). "
+                "Check the input layer for features with null or empty geometry.",
+            ).format(skippedCount)
+        )
 
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(2)
