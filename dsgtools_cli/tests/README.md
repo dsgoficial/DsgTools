@@ -16,6 +16,22 @@ A comparação é robusta: normaliza o GeoJSON para `(inom, mi, tipo, coords arr
 a 3 casas)` e compara como conjunto ordenado — ignora ordem das feições e ruído de
 precisão sub-milimétrico (o CRS dos golden é métrico, EPSG:31982).
 
+Além desses, `test_cli_contract.py` cobre (**sem QGIS**, com o contrato injetado como
+fixture no formato real do `help --json`) as camadas que ficam entre o chamador e o
+`qgis_process`:
+
+- **validação local** dos parâmetros do `run` (nome inexistente, obrigatório ausente,
+  índice de enum fora da faixa, rótulo no lugar do índice) e a mensagem de erro, que
+  precisa carregar o contrato dos parâmetros citados;
+- **cache do contrato** em disco (roundtrip, invalidação pela impressão digital, arquivo
+  corrompido, pasta impossível de escrever, e a asserção central: a 2ª consulta não sobe
+  o QGIS de novo);
+- **`describe` compacto** (uma linha por parâmetro, opções, prosa curada, exemplo pronto
+  para colar) e o **`--dry-run`**.
+
+É de propósito que não precisem de QGIS: a validação existe justamente para poupar a
+chamada cara, então testá-la não pode custar essa chamada (a suíte inteira roda em ~0,1 s).
+
 ## Rodar
 
 ```bash

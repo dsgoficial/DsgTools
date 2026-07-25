@@ -56,11 +56,73 @@ python dsgtools_cli.py doctor
 | Comando | O que faz |
 |---|---|
 | `list [--json]` | Lista os algoritmos do DSGTools (consulta o `qgis_process`). |
-| `describe <id>` | Mostra os parâmetros do algoritmo (resumo do `qgis_process` + anotações). |
-| `run <id> [KEY=VALUE ...]` | Executa o algoritmo. Também aceita `--params arq.json` e `--stdin`. |
-| `doctor` | Diagnostica o ambiente (acha o `qgis_process`, versão). |
+| `describe <id> [--json]` | Mostra os parâmetros do algoritmo, compacto (uma linha por parâmetro) + anotações. |
+| `run <id> [KEY=VALUE ...]` | **Valida** e executa o algoritmo. Também aceita `--params arq.json` e `--stdin`. |
+| `doctor [--fix]` | Diagnostica o ambiente (`qgis_process`, versão, **provider carregado**). |
+| `cache [--clear]` | Mostra ou limpa o cache local do contrato dos algoritmos. |
 
 O id pode ser passado **com ou sem** o prefixo `dsgtools:`.
+
+Códigos de saída: `0` sucesso, `2` reprovado na validação local (nada foi executado),
+qualquer outro é o código do próprio `qgis_process`.
+
+> No `run`, as opções (`--dry-run`, `--no-check`, `--params`, ...) vão **depois** dos
+> tokens `KEY=VALUE`. Limitação do `argparse` com positional de tamanho variável: uma
+> opção no meio faz o resto virar "unrecognized arguments".
+
+---
+
+## Validação antes de executar
+
+O `run` confere os parâmetros contra o contrato do próprio algoritmo **antes** de
+executar, e quando reprova imprime o contrato dos parâmetros citados (não um ponteiro
+para documentação):
+
+- **nome de parâmetro que não existe**: o `qgis_process` *ignora em silêncio* a chave
+  desconhecida, aplica o padrão do parâmetro que você queria setar, e o erro só aparece
+  lá na frente disfarçado de erro de domínio. Este é o modo de falha que mais custa tempo;
+- **parâmetro obrigatório ausente** (inclusive as saídas: o `qgis_process` não inventa
+  destino temporário, ele aborta);
+- **índice de enum fora da faixa**, ou o rótulo passado no lugar do índice
+  (`START_SCALE=250k` responde "o índice de '250k' é 2").
+
+```bash
+# valida e mostra o que seria executado, sem executar
+python dsgtools_cli.py run dsgtools:gridzonegenerator ... --dry-run
+
+# escapes
+python dsgtools_cli.py run <id> ... --no-check        # pula a validação
+python dsgtools_cli.py run <id> ... --refresh-cache   # relê o contrato ao vivo
+```
+
+### Por que existe o cache (e quando limpá-lo)
+
+Cada consulta ao `qgis_process` sobe o QGIS inteiro e custa **segundos**. Validar
+buscando o contrato ao vivo dobraria o custo de todo `run`. Por isso o contrato
+(`help --json`) fica em cache em disco, em `%TEMP%/dsgtools_cli_cache` (ou o que estiver
+em `DSGTOOLS_CLI_CACHE`), invalidado por uma impressão digital barata do ambiente:
+mtime/tamanho do executável do `qgis_process` e da pasta do plugin com o `metadata.txt`.
+
+Medido nesta máquina (QGIS 4.0.0, Windows 11):
+
+| | tempo |
+|---|---|
+| `run` sem validar (`--no-check`) | 3,08 s |
+| `run` validado, cache frio | 5,66 s |
+| `run` validado, cache quente | 2,99 s |
+| `describe` cache frio / cache quente | 2,89 s / 0,12 s |
+
+Ou seja: a validação ingênua custaria **+84%** em cada execução; com o cache o custo
+fica dentro do ruído (**< 1%**).
+
+A impressão digital **não** cobre a edição de um `.py` de algoritmo lá dentro (varrer a
+árvore a cada `run` custaria mais do que economiza). Em desenvolvimento do plugin,
+depois de mexer na assinatura de um algoritmo:
+
+```bash
+python dsgtools_cli.py cache --clear          # limpa tudo
+python dsgtools_cli.py describe <id> --refresh-cache   # atualiza um
+```
 
 ---
 
@@ -135,6 +197,26 @@ python dsgtools_cli.py run dsgtools:createframeswithconstraintalgorithm \
 
 ## Solução de problemas
 
+Na dúvida, comece pelo `doctor`: ele não se limita a achar o `qgis_process`, confere se o
+provider `dsgtools` está **de fato carregado** e imprime o conserto exato.
+
+- **`list` diz "Nenhum algoritmo do DSGTools disponível"** (antes: "0 disponíveis", sem
+  erro nenhum e com stderr vazio) → o `qgis_process` mantém a **própria lista de plugins
+  habilitados**, separada da do QGIS Desktop. Com o plugin ativo no Desktop e inativo
+  aqui, o CLI fica inútil sem reclamar de nada. Conserto:
+
+  ```bash
+  python dsgtools_cli.py doctor --fix      # habilita no mesmo perfil que o CLI usa
+  # equivalente na mão (precisa do MESMO perfil, veja abaixo):
+  qgis_process plugins enable DsgTools
+  qgis_process plugins                     # confere: '*' = provider carregado
+  ```
+
+  **Atenção ao perfil:** o `qgis_process` resolve o perfil legado (`QGIS/QGIS3`) por
+  padrão, enquanto o CLI redireciona para o do QGIS 4 (`QGIS_CUSTOM_CONFIG_PATH`, veja
+  "Como funciona por baixo"). Rodar o `enable` num terminal sem essa variável habilita o
+  plugin **no perfil errado** e o CLI continua sem provider, sem sinal de que nada mudou.
+  O `doctor --fix` usa o perfil certo por construção.
 - **"não encontrei o qgis_process"** → defina `DSGTOOLS_QGIS_PROCESS` (veja Requisitos) e rode `doctor`.
 - **Tracebacks de outro plugin no stderr** (ex.: `latlontools` → `Qt has no attribute Unchecked`):
   é um bug *daquele* plugin, não do DSGTools. O `qgis_process` continua e o JSON do DSGTools sai
