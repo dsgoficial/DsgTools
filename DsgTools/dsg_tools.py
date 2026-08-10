@@ -28,7 +28,8 @@ from qgis.PyQt.QtWidgets import QMenu
 import os.path
 import sys
 
-# Initialize Qt resources from file resources_rc.py
+# Initialize Qt resources from file resources.py
+from . import resources
 
 currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(currentPath))
