@@ -20,23 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os, json
-from os.path import expanduser
+import os
 
-from qgis.core import QgsMessageLog
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
-from qgis.PyQt.QtWidgets import (
-    QListWidgetItem,
-    QMessageBox,
-    QMenu,
-    QApplication,
-    QFileDialog,
-)
-from qgis.PyQt.QtGui import QCursor
-from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "validationProcessWidget.ui")

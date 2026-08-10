@@ -24,8 +24,8 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal
-from qgis.PyQt.QtWidgets import QLabel, QWidget, QSlider, QHBoxLayout
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtWidgets import QWidget
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "switchButton.ui")

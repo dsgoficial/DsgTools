@@ -26,7 +26,6 @@
 # indice espacial antes de operacoes geometricas
 # nao usar $area para ficar tudo no sistema da camada
 # nao deixar tamanho hardcoded
-import os
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsProcessing,

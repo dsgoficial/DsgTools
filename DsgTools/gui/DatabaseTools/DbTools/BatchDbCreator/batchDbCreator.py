@@ -21,13 +21,9 @@
  ***************************************************************************/
 """
 import os
-import json
 
-from qgis.PyQt import QtGui, uic, QtWidgets
+from qgis.PyQt import uic, QtWidgets
 from qgis.PyQt.QtCore import pyqtSignal
-from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QWizard
-from fileinput import filename
-from DsgTools.core.Utils.utils import Utils
 from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.createBatchFromCsv import (
     CreateBatchFromCsv,
 )

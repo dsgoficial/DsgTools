@@ -39,7 +39,6 @@ from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools.affine import Affine
 from qgis.core import (
     QgsProcessingException,
-    QgsProcessingParameterDistance,
     QgsProcessingMultiStepFeedback,
     QgsFeatureRequest,
     QgsProcessingParameterRasterLayer,

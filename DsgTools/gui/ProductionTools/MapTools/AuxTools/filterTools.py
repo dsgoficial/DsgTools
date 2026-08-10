@@ -22,10 +22,8 @@
  ***************************************************************************/
 """
 from qgis import core
-from qgis.core import Qgis
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
-from qgis.PyQt.QtCore import QObject
 
 
 class FilterTools(QgsMapTool):

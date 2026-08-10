@@ -20,7 +20,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-from collections import defaultdict
 import itertools
 import json
 import gc
@@ -39,7 +38,6 @@ from qgis.core import (
     QgsProcessingParameterBoolean,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterDefinition,
-    QgsWkbTypes,
     QgsVectorLayer,
 )
 

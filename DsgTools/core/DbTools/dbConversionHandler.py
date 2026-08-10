@@ -25,7 +25,7 @@ import copy
 import json
 from abc import abstractclassmethod
 from collections import defaultdict
-from typing import Any, Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from qgis.core import (
     NULL,

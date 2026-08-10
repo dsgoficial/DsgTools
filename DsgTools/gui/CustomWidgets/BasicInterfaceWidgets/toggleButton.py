@@ -1,15 +1,4 @@
-from qgis.PyQt.QtCore import (
-    Qt,
-    QSize,
-    QPoint,
-    QRectF,
-    QPointF,
-    pyqtSlot,
-    QEasingCurve,
-    pyqtProperty,
-    QPropertyAnimation,
-    QSequentialAnimationGroup,
-)
+from qgis.PyQt.QtCore import Qt, QSize, QPoint, QRectF, QPointF, pyqtSlot, pyqtProperty
 from qgis.PyQt.QtWidgets import QCheckBox
 from qgis.PyQt.QtGui import QPen, QColor, QBrush, QPainter, QPaintEvent
 

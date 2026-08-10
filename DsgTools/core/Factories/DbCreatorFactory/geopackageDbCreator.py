@@ -22,9 +22,7 @@
 """
 
 import os, sqlite3
-from os.path import expanduser
 
-from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbCreatorFactory.dbCreator import DbCreator
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import (
     ProgressWidget,

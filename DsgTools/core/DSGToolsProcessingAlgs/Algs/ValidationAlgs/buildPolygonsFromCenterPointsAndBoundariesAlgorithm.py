@@ -40,7 +40,6 @@ from qgis.core import (
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
     QgsProcessingUtils,
-    QgsProcessingFeatureSourceDefinition,
     QgsProcessingContext,
 )
 

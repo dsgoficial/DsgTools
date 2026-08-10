@@ -32,7 +32,6 @@ from qgis.core import (
     QgsProcessingParameterString,
     Qgis,
 )
-from qgis.PyQt.QtGui import QRegularExpressionValidator
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler

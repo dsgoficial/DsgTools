@@ -21,9 +21,7 @@
 """
 
 
-from builtins import object
 import os.path
-import sys
 import json
 
 from qgis.PyQt.QtCore import QObject, Qt

@@ -20,20 +20,12 @@ Builds a temp rubberband with a given size and shape.
  *                                                                         *
  ***************************************************************************/
 """
-import os
 import json
-from typing import Any, Dict, List, Optional, Tuple, Union, Set, DefaultDict
-from qgis.PyQt.QtWidgets import (
-    QMessageBox,
-    QSpinBox,
-    QDockWidget,
-    QTableWidgetItem,
-    QMenu,
-)
-from qgis.PyQt.QtGui import QAction, QIcon
+from typing import Any, Dict, List, Optional, Tuple, DefaultDict
+from qgis.PyQt.QtWidgets import QDockWidget, QTableWidgetItem, QMenu
+from qgis.PyQt.QtGui import QAction
 from qgis.PyQt.QtCore import (
     QSettings,
-    pyqtSignal,
     pyqtSlot,
     QObject,
     Qt,
@@ -41,25 +33,19 @@ from qgis.PyQt.QtCore import (
     QPoint,
     QModelIndex,
 )
-from qgis.PyQt import QtGui, uic, QtCore, QtWidgets
+from qgis.PyQt import QtWidgets
 
 from processing.gui.MultipleInputDialog import MultipleInputDialog
 from qgis.core import (
-    QgsMapLayer,
     Qgis,
     QgsVectorLayer,
-    QgsSpatialIndex,
-    QgsProcessingAlgorithm,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
-    QgsFeatureRequest,
-    QgsMapLayerUtils,
-    QgsWkbTypes,
     QgsFeature,
     QgsProject,
     QgsExpressionContextUtils,
 )
-from qgis.gui import QgsMessageBar, QgisInterface
+from qgis.gui import QgisInterface
 
 from DsgTools.gui.ProductionTools.Toolboxes.MultiLayersCentroidsFlagTool.multiLayersCentroidsFlagTool_ui import (
     Ui_MultiLayersCentroidsFlagDockWidget,

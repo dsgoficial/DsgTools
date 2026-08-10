@@ -30,13 +30,11 @@ from qgis.core import (
     QgsFields,
     QgsProcessing,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
 )
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
-from qgis.utils import iface
 
 from .validationAlgorithm import ValidationAlgorithm
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help

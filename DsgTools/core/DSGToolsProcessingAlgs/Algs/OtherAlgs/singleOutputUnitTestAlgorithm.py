@@ -20,7 +20,6 @@
  ***************************************************************************/
 """
 
-import json
 
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (

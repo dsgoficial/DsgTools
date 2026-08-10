@@ -35,8 +35,6 @@ from qgis.core import (
     QgsProcessingOutputMultipleLayers,
     QgsProcessingParameterExpression,
     QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterString,
     QgsProject,
 )
 from qgis.utils import iface

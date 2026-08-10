@@ -20,7 +20,7 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 
 from builtins import range
 from qgis.PyQt import QtCore
-from qgis import core, gui
+from qgis import core
 from qgis.PyQt.QtCore import Qt, QSettings
 from qgis.PyQt.QtGui import QCursor, QPixmap, QColor
 from qgis.gui import (
@@ -28,20 +28,15 @@ from qgis.gui import (
     QgsRubberBand,
     QgsAttributeDialog,
     QgsAttributeEditorContext,
-    QgsSnapIndicator,
 )
-from qgis.utils import iface
 from qgis.core import (
     QgsPointXY,
-    QgsFeature,
     QgsGeometry,
     Qgis,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsEditFormConfig,
-    QgsWkbTypes,
     QgsProject,
-    QgsPointLocator,
 )
 
 from DsgTools.gui.ProductionTools.MapTools.Acquisition.distanceToolTip import (

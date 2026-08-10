@@ -26,7 +26,6 @@ import os
 from qgis.core import (
     Qgis,
     QgsField,
-    QgsWkbTypes,
     QgsMessageLog,
     QgsVectorLayer,
     QgsDataSourceUri,
@@ -34,7 +33,6 @@ from qgis.core import (
 )
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QMetaType, QObject
-from qgis.PyQt.QtXml import QDomDocument
 
 from DsgTools.core.Utils.utils import Utils
 

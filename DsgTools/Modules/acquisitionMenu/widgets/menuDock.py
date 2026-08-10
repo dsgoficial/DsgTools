@@ -1,9 +1,7 @@
-import os, sys, copy
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
-import json
+import os
+from qgis.PyQt import QtCore, uic, QtWidgets
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 from qgis.utils import iface
-from qgis import gui
 
 
 class MenuDock(QtWidgets.QDockWidget):

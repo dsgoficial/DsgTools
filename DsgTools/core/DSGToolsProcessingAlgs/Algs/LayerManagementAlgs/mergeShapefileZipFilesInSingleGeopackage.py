@@ -37,9 +37,6 @@ from qgis.core import (
     QgsVectorLayer,
     QgsVectorFileWriter,
     QgsCoordinateReferenceSystem,
-    QgsProject,
-    QgsProcessingContext,
-    QgsFeedback,
     QgsProcessingMultiStepFeedback,
 )
 from qgis.PyQt.QtCore import QCoreApplication

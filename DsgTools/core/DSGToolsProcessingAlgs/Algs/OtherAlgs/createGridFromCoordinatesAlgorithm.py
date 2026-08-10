@@ -22,16 +22,12 @@
 """
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsFeature,
     QgsFeatureSink,
-    QgsField,
     QgsFields,
-    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterNumber,
     QgsWkbTypes,
     QgsProcessingParameterCrs,

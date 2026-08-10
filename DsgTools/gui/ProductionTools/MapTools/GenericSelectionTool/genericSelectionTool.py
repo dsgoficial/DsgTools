@@ -35,11 +35,9 @@ from qgis.core import (
     QgsFeatureRequest,
     QgsVectorLayer,
     QgsProject,
-    QgsWkbTypes,
-    QgsRasterLayer,
 )
 from qgis.PyQt.QtCore import Qt, QSettings
-from qgis.PyQt.QtGui import QColor, QCursor
+from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QMenu, QApplication
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler

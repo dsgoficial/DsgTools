@@ -21,22 +21,14 @@
  ***************************************************************************/
 """
 
-from collections import defaultdict
-from typing import Dict
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsWkbTypes,
-    QgsGeometry,
     QgsProcessingParameterNumber,
     QgsProcessingMultiStepFeedback,
-    QgsFeedback,
-    QgsVectorLayer,
-    QgsProcessingContext,
 )
 
 from .validationAlgorithm import ValidationAlgorithm

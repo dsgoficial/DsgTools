@@ -33,7 +33,6 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
 )
 
 from ...algRunner import AlgRunner

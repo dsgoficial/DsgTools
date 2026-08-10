@@ -27,7 +27,6 @@ from qgis.gui import QgsMapLayerComboBox, QgsMessageBar
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.utils import iface
 from qgis.PyQt.QtWidgets import QComboBox, QLineEdit, QDoubleSpinBox
-from qgis.PyQt.QtCore import QSize
 from processing.gui.wrappers import (
     WidgetWrapper,
     DIALOG_STANDARD,

@@ -20,16 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-import json
 import os
 from pathlib import Path
 
-from qgis.core import QgsMessageLog
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, QDir
-from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QDir
 from qgis.PyQt.QtWidgets import QFileDialog
 
 

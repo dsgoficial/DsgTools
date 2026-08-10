@@ -24,29 +24,20 @@ from collections import defaultdict
 import os, json
 from time import time
 from functools import partial
-from typing import Dict, List, OrderedDict, Union
+from typing import Dict, List, Union
 
-import processing
 from processing.core.ProcessingConfig import ProcessingConfig
 
 from qgis.PyQt import uic
-from qgis.core import (
-    Qgis,
-    QgsProject,
-    QgsMessageLog,
-    QgsProcessingFeedback,
-    QgsExpressionContextUtils,
-    QgsVectorLayer,
-)
-from qgis.PyQt.QtGui import QBrush, QColor, QAction
-from qgis.PyQt.QtCore import Qt, pyqtSlot, QEvent
+from qgis.core import Qgis, QgsProject, QgsMessageLog, QgsExpressionContextUtils
+from qgis.PyQt.QtGui import QAction
+from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import (
     QLineEdit,
     QFileDialog,
     QDockWidget,
     QMessageBox,
     QProgressBar,
-    QTableWidgetItem,
     QMenu,
 )
 

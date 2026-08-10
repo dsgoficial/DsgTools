@@ -21,22 +21,16 @@
  ***************************************************************************/
 """
 
-import concurrent.futures
 
-from itertools import chain
-import os
-from typing import Dict, List, Optional, Set
+from typing import Set
 from qgis.PyQt.QtCore import QCoreApplication
-from DsgTools.core.GeometricTools import graphHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
     Qgis,
     QgsProcessing,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterEnum,
     QgsProcessingParameterFeatureSource,
-    QgsFeedback,
     QgsFeature,
     QgsVectorLayer,
     QgsProcessingParameterDistance,

@@ -26,10 +26,8 @@ from qgis.core import (
     QgsFeatureRequest,
     QgsWkbTypes,
     QgsGeometry,
-    QgsVectorLayer,
     QgsProcessingException,
     QgsExpression,
-    QgsProperty,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterType,
@@ -38,7 +36,6 @@ from qgis.core import (
 
 from .validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.GeometricTools import geometryHandler
 
 
 class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):

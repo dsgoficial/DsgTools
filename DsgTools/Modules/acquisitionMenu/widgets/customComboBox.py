@@ -1,4 +1,4 @@
-from qgis.PyQt.QtWidgets import QComboBox, QApplication, QCompleter
+from qgis.PyQt.QtWidgets import QComboBox, QCompleter
 from qgis.PyQt.QtCore import Qt, QSortFilterProxyModel
 from qgis.PyQt import QtGui
 

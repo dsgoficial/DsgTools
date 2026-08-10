@@ -20,69 +20,30 @@
  ***************************************************************************/
 """
 
-import fnmatch
-import json
-from typing import Any, Dict, List, Optional
-from qgis.PyQt.QtCore import QVariant, QMetaType, QDateTime
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.abstractConvertDatabaseAlgorithm import (
     AbstractDatabaseAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.conversionParameterTypes import (
     ParameterDbConversion,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
-    ValidationAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.DbTools.dbConversionHandler import (
-    FeatureProcessor,
-    MappingFeatureProcessor,
-    convert_features,
-    write_output_features,
-)
-from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
-    LayerLoaderFactory,
-)
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
+from DsgTools.core.DbTools.dbConversionHandler import write_output_features
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     Qgis,
-    QgsProcessing,
     QgsProcessingException,
-    QgsProviderConnectionException,
-    QgsWkbTypes,
-    QgsWkbTypes,
-    QgsProviderRegistry,
     QgsProject,
     QgsProcessingParameterProviderConnection,
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterGeometry,
-    QgsDataSourceUri,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterType,
-    QgsVectorLayer,
-    QgsProcessingFeedback,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingContext,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterString,
-    QgsProcessingFeatureSource,
-    QgsFields,
-    QgsField,
-    QgsFeature,
     QgsFeatureSink,
     QgsProcessingParameterVectorLayer,
-    QgsCoordinateReferenceSystem,
 )
-from qgis.utils import iface
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.core.dsgEnums import DsgEnums
 
 
 class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):

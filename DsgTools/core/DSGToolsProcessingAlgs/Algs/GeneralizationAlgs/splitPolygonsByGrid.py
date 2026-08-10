@@ -20,8 +20,6 @@
  ***************************************************************************/
 """
 
-import concurrent.futures
-import os
 from DsgTools.core.Utils.threadingTools import concurrently
 
 from qgis.core import (

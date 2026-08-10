@@ -32,7 +32,6 @@ from qgis.core import (
     QgsProcessingParameterDistance,
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
 )
 
 from ...algRunner import AlgRunner

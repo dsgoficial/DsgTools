@@ -29,7 +29,6 @@ from xml.dom.minidom import parseString, Element
 
 from qgis.core import Qgis
 from qgis.PyQt.QtCore import QSettings, QObject
-from qgis.PyQt.QtWidgets import QMessageBox
 
 from DsgTools.core.Utils.utils import MessageRaiser
 

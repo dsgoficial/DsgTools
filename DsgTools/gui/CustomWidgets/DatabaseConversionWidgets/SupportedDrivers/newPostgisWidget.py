@@ -29,8 +29,6 @@ from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.newC
 )
 from DsgTools.core.dsgEnums import DsgEnums
 
-import os
-
 
 class NewPostgisWidget(AbstractSelectionWidget):
     """

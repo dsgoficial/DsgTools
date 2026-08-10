@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 from builtins import object
-import os
 
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtCore import QCoreApplication

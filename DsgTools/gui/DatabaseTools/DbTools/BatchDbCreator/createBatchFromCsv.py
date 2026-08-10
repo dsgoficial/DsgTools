@@ -21,16 +21,13 @@
  ***************************************************************************/
 """
 import os
-import json
 
 from qgis.core import Qgis, QgsMessageLog
 
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt
-from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication
 from qgis.PyQt.QtGui import QCursor
-from fileinput import filename
-from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
 FORM_CLASS, _ = uic.loadUiType(

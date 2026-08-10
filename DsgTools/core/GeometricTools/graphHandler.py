@@ -38,7 +38,6 @@ from qgis.core import (
     QgsVectorLayer,
     QgsFeedback,
     QgsProcessingContext,
-    QgsWkbTypes,
     QgsPointXY,
     QgsFeatureRequest,
 )

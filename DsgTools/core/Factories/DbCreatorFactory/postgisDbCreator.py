@@ -22,7 +22,6 @@
 """
 
 from .dbCreator import DbCreator
-from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 from DsgTools.core.dsgEnums import DsgEnums
 
 

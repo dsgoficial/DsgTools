@@ -261,4 +261,3 @@ class Ui_ReviewToolbar(object):
 
 from qgis import core
 from qgis.gui import QgsFieldComboBox, QgsMapLayerComboBox
-import resources_rc

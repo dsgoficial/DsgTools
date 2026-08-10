@@ -948,8 +948,6 @@ def calculateSegmentationMetrics(
             )
         )
 
-    import numpy as np
-
     with rasterio.open(ground_truth_path) as gt_src:
         ground_truth = gt_src.read(1)
 
@@ -1158,7 +1156,6 @@ def clipRasterByVectorMask(
             )
         )
 
-    import json
     from shapely.wkt import loads as wkt_loads
 
     try:

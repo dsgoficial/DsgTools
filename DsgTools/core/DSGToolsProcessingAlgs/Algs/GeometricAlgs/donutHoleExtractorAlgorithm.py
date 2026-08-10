@@ -24,28 +24,18 @@
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
 )
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 
 from qgis.PyQt.QtCore import QCoreApplication
-import processing
 
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterMultipleLayers,
     QgsWkbTypes,
-    QgsProcessingUtils,
-    QgsProject,
 )
 
 

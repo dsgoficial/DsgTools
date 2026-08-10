@@ -32,7 +32,6 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsProcessingParameterMultipleLayers,
     QgsProcessingMultiStepFeedback,
-    QgsFeatureRequest,
     QgsWkbTypes,
 )
 

@@ -27,7 +27,6 @@ import json
 import concurrent.futures
 from collections import defaultdict
 import numpy as np
-import processing
 
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
@@ -43,13 +42,11 @@ from qgis.core import (
     QgsCoordinateTransform,
     QgsProject,
     QgsVectorLayer,
-    QgsProcessingContext,
     QgsRectangle,
     QgsProcessingMultiStepFeedback,
     QgsFields,
     QgsField,
     QgsFeature,
-    QgsGeometry,
 )
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner

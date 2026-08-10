@@ -31,45 +31,15 @@ from qgis.core import (
     QgsProcessingParameterString,
     QgsEditorWidgetSetup,
 )
-from qgis.PyQt.QtGui import QColor
 from qgis.core import (
     QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
-    QgsProcessingParameterField,
-    QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFile,
-    QgsProcessingParameterExpression,
-    QgsProcessingException,
     QgsProcessingParameterString,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterType,
-    QgsProcessingParameterCrs,
-    QgsCoordinateTransform,
-    QgsProject,
-    QgsCoordinateReferenceSystem,
-    QgsField,
-    QgsFields,
     QgsProcessingOutputMultipleLayers,
     QgsProcessingParameterString,
-    QgsConditionalStyle,
 )
-from operator import itemgetter
-from collections import defaultdict
 import json, os
 
 

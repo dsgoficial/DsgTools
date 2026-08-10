@@ -1,5 +1,5 @@
-import os, sys, copy
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
+import os
+from qgis.PyQt import QtCore, QtWidgets
 from qgis.PyQt.QtWidgets import QMessageBox
 from .tableEditorWidget import TableEditorWidget
 import json

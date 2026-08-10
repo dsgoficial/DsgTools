@@ -22,27 +22,20 @@
 """
 
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterRasterLayer,
     QgsProcessingParameterRasterDestination,
     QgsProcessingParameterNumber,
     QgsProcessingParameterBoolean,
     QgsProcessingException,
-    QgsProcessingContext,
     QgsMessageLog,
     Qgis,
 )
 
 # Import DsgTools rasterHandler functions
-from DsgTools.core.GeometricTools.rasterHandler import (
-    readAsNumpy,
-    getCoordinateTransform,
-    writeOutputRaster,
-)
+from DsgTools.core.GeometricTools.rasterHandler import readAsNumpy, writeOutputRaster
 
 
 def truly_vectorized_median_filter(

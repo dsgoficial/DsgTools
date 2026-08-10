@@ -27,15 +27,7 @@ from qgis.core import Qgis, QgsProject, QgsVectorLayer, QgsMapLayerProxyModel
 from qgis.gui import QgsMessageBar, QgsMapLayerComboBox, QgsFieldExpressionWidget
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QSize
-from qgis.PyQt.QtGui import QIntValidator
-from qgis.PyQt.QtWidgets import (
-    QWidget,
-    QComboBox,
-    QLineEdit,
-    QVBoxLayout,
-    QMessageBox,
-    QSpinBox,
-)
+from qgis.PyQt.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QMessageBox, QSpinBox
 from processing.gui.wrappers import (
     WidgetWrapper,
     DIALOG_STANDARD,

@@ -26,17 +26,8 @@ import os, json
 from qgis.core import Qgis, QgsMessageLog, QgsApplication
 from qgis.gui import QgsMessageBar
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot, QSettings, pyqtSignal
-from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtSql import QSqlQuery
-from qgis.PyQt.QtWidgets import (
-    QDialog,
-    QFileDialog,
-    QMessageBox,
-    QHeaderView,
-    QRadioButton,
-    QAbstractItemView,
-)
+from qgis.PyQt.QtCore import QSize, pyqtSlot
+from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QAbstractItemView
 
 from DsgTools.gui.ProductionTools.Toolboxes.CustomFeatureToolBox.customButtonSetup import (
     CustomButtonSetup,

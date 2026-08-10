@@ -22,7 +22,6 @@
 """
 from qgis.PyQt.QtWidgets import QFontComboBox
 from processing.gui.wrappers import WidgetWrapper
-from qgis.PyQt.QtGui import QFont
 
 
 class FontWidgetWrapper(WidgetWrapper):

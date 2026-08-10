@@ -1,6 +1,6 @@
 #! -*- coding: utf-8 -*-
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
-import os, sys
+from qgis.PyQt import QtCore, uic, QtWidgets
+import os
 
 
 class ReclassifyDialog(QtWidgets.QDialog):

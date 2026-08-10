@@ -25,12 +25,7 @@ from collections import defaultdict
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     Qgis,
-    QgsFeatureRequest,
     QgsWkbTypes,
-    QgsGeometry,
-    QgsVectorLayer,
-    QgsProcessingUtils,
-    QgsProcessingContext,
     QgsProject,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
@@ -40,7 +35,6 @@ from qgis.core import (
 
 from .validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.GeometricTools import geometryHandler
 
 
 class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):

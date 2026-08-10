@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 import os
-import json
 import requests
 from requests.exceptions import ReadTimeout, InvalidSchema, ConnectTimeout
 

@@ -1,5 +1,4 @@
-import os, sys, copy
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt import QtCore, QtWidgets, QtGui
 
 
 class MenuWidget(QtWidgets.QTabWidget):

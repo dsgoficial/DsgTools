@@ -39,7 +39,7 @@ from qgis.core import (
 )
 from qgis.PyQt.QtCore import QCoreApplication
 import os
-import shutil, stat
+import shutil
 
 
 def tr(message):

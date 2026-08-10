@@ -29,9 +29,7 @@ from qgis.gui import (
     QgsMapToolEmitPoint,
     QgsAttributeDialog,
     QgsAttributeEditorContext,
-    QgsMessageBar,
 )
-from qgis import core
 from qgis.core import (
     QgsPointXY,
     QgsRectangle,
@@ -39,18 +37,14 @@ from qgis.core import (
     QgsGeometry,
     QgsEditFormConfig,
     QgsRaster,
-    QgsFeature,
-    QgsWkbTypes,
-    QgsProject,
     QgsVectorLayerUtils,
     Qgis,
 )
 from qgis.PyQt.QtCore import QSettings
-from qgis.PyQt import QtCore, QtGui
-from qgis.PyQt.QtGui import QColor, QCursor
+from qgis.PyQt import QtCore
+from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QMenu, QApplication
 
-from qgis.PyQt.QtCore import Qt
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 

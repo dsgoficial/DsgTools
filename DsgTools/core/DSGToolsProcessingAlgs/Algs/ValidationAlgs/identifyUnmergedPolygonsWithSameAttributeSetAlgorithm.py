@@ -21,22 +21,15 @@
  ***************************************************************************/
 """
 
-import concurrent.futures
 from collections import defaultdict
-import os
 from typing import Dict, Set, List, Tuple
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.GeometricTools import graphHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsFeatureRequest,
     QgsGeometry,
     QgsFeature,
-    QgsFeatureSink,
     QgsProcessing,
-    QgsProject,
-    QgsFields,
     QgsProcessingFeatureSourceDefinition,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
@@ -45,7 +38,6 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
-    QgsProcessingException,
     QgsProcessingParameterNumber,
     QgsProcessingParameterDefinition,
     QgsVectorLayer,

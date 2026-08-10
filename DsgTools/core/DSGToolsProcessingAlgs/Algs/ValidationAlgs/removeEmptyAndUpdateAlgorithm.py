@@ -25,9 +25,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
     QgsProcessing,
-    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterVectorLayer,
     QgsProcessingFeatureSourceDefinition,

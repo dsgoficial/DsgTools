@@ -41,7 +41,6 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsProject,
-    QgsProcessingContext,
     QgsRectangle,
     QgsProcessingMultiStepFeedback,
     QgsFields,

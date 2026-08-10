@@ -24,7 +24,6 @@ from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     Qgis,
-    QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSink,

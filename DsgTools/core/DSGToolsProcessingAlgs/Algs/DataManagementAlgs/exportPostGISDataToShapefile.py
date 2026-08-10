@@ -40,7 +40,6 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     Qgis,
     QgsProcessingException,
-    QgsWkbTypes,
     QgsProcessingParameterProviderConnection,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,

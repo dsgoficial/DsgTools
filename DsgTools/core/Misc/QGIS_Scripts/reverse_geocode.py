@@ -4,9 +4,6 @@
 
 
 import urllib.request, urllib.error, urllib.parse, csv
-from processing.core.GeoAlgorithmExecutionException import (
-    GeoAlgorithmExecutionException,
-)
 
 
 def rev_geocode(long, lat):

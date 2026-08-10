@@ -22,29 +22,16 @@
 """
 
 from builtins import range
-from itertools import combinations, chain
+from itertools import chain
 import math
-from math import pi
 from .geometryHandler import GeometryHandler
 from .layerHandler import LayerHandler
 from qgis.core import (
-    QgsMessageLog,
-    QgsVectorLayer,
     QgsGeometry,
     QgsField,
-    QgsVectorDataProvider,
     QgsFeatureRequest,
-    QgsExpression,
     QgsFeature,
-    QgsSpatialIndex,
-    Qgis,
-    QgsCoordinateTransform,
     QgsWkbTypes,
-    QgsProject,
-    QgsVertexId,
-    Qgis,
-    QgsCoordinateReferenceSystem,
-    QgsDataSourceUri,
     QgsFields,
     QgsProcessingMultiStepFeedback,
 )

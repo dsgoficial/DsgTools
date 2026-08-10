@@ -35,9 +35,6 @@ from qgis.core import (
 )
 
 # Qt imports
-from qgis.PyQt import QtCore, QtGui, uic
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, QObject
-from qgis.utils import iface
 
 from ....core.LayerTools.CustomFormTools.customFormGenerator import CustomFormGenerator
 from ....core.LayerTools.CustomFormTools.customInitCodeGenerator import (

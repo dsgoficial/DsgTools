@@ -27,14 +27,9 @@ from qgis.core import (
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingFeatureSourceDefinition,
 )
 
 from ...algRunner import AlgRunner

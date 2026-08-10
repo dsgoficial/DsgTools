@@ -21,26 +21,14 @@
  ***************************************************************************/
 """
 
-import os
 from functools import partial
 
-from qgis.core import (
-    QgsGeometry,
-    QgsRaster,
-    QgsVectorLayer,
-    QgsRasterLayer,
-    QgsWkbTypes,
-    Qgis,
-)
+from qgis.core import QgsGeometry, QgsRaster, QgsVectorLayer, QgsRasterLayer, Qgis
 
-from qgis.PyQt import QtGui, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QTimer
+from qgis.PyQt.QtCore import pyqtSlot, QTimer
 from qgis.PyQt.QtWidgets import QWidget, QToolTip, QAction
 from qgis.PyQt.QtGui import QIcon
 
-from DsgTools.gui.ProductionTools.Toolbars.DsgRasterInfoTool.bandValueTool import (
-    BandValueTool,
-)
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.gui.ProductionTools.Toolbars.DsgRasterInfoTool.assignBandValueTool import (
     AssignBandValueTool,

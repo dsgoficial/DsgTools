@@ -31,7 +31,6 @@ from qgis.core import (
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
 )
 
 from ...algRunner import AlgRunner

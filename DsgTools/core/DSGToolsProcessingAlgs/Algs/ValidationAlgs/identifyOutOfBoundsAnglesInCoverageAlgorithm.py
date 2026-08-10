@@ -29,7 +29,6 @@ from qgis.core import (
     QgsGeometry,
     QgsGeometryUtilsBase,
     QgsProcessing,
-    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,

@@ -114,4 +114,3 @@ class Ui_MultiLayersCentroidsFlagDockWidget(object):
 
 from qgsmaplayercombobox import QgsMapLayerComboBox
 from qgis import core
-import resources_rc

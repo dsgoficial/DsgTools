@@ -28,18 +28,7 @@
 
 
 import processing
-from processing.core.GeoAlgorithmExecutionException import (
-    GeoAlgorithmExecutionException,
-)
-from qgis.core import (
-    QgsVectorLayer,
-    QgsRasterLayer,
-    QgsSpatialIndex,
-    QgsFeatureRequest,
-    QgsCoordinateTransform,
-    QgsFeature,
-    QgsCoordinateReferenceSystem,
-)
+from qgis.core import QgsRasterLayer, QgsCoordinateReferenceSystem
 from qgis.PyQt.QtCore import QCoreApplication, QSettings
 import os
 

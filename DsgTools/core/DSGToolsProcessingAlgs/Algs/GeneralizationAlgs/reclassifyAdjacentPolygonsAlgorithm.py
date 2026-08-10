@@ -44,7 +44,6 @@ from qgis.core import (
     QgsProcessingParameterString,
     QgsSpatialIndex,
     QgsDistanceArea,
-    QgsCoordinateReferenceSystem,
 )
 
 

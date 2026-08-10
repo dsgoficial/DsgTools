@@ -21,15 +21,8 @@
  ***************************************************************************/
 """
 
-from qgis.core import (
-    Qgis,
-    QgsCoordinateReferenceSystem,
-    QgsCoordinateTransform,
-    QgsCoordinateTransformContext,
-)
+from qgis.core import Qgis, QgsCoordinateTransform, QgsCoordinateTransformContext
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QMessageBox, QApplication
-from qgis.PyQt.QtGui import *
-from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt import uic
 from qgis.utils import iface

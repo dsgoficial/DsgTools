@@ -22,7 +22,7 @@
 """
 
 from qgis.PyQt.QtWidgets import QWidget, QFileDialog
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QDir
+from qgis.PyQt.QtCore import pyqtSignal, QDir
 from qgis.PyQt import uic
 
 # from qgis.utils import iface

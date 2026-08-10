@@ -20,13 +20,7 @@
  ***************************************************************************/
 """
 
-from itertools import product
-import os
-import concurrent.futures
-import string
-import processing
 
-from collections import defaultdict
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
 )
@@ -35,16 +29,13 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterField,
     QgsWkbTypes,
     QgsProcessingParameterExpression,
     QgsFeatureRequest,
 )
-from DsgTools.core.GeometricTools import graphHandler
 
 
 class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):

@@ -25,15 +25,12 @@ from functools import partial
 import os, json
 
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot, QSize
+from qgis.PyQt.QtCore import Qt, QSize
 from qgis.PyQt.QtGui import QIcon, QCursor
 from qgis.utils import iface
-from qgis.core import Qgis, QgsApplication, QgsMessageLog, Qgis
-from qgis.gui import QgsCollapsibleGroupBox, QgsMessageBar
+from qgis.core import Qgis, QgsMessageLog, Qgis
+from qgis.gui import QgsMessageBar
 
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import (
-    GenericDialogLayout,
-)
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.textBrowserDialog import (
     TextBrowserDialog,
 )

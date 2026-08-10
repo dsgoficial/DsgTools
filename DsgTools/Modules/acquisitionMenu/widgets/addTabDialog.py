@@ -1,5 +1,5 @@
-import os, sys, copy
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
+import os
+from qgis.PyQt import QtCore, uic, QtWidgets
 import uuid
 
 

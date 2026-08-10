@@ -22,13 +22,10 @@
 """
 from builtins import range
 import os
-import csv
-import shutil
-from osgeo import gdal, ogr
 
 # Import the PyQt and QGIS libraries
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt, pyqtSlot, QObject
+from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import (
     QMenu,
     QApplication,
@@ -38,9 +35,6 @@ from qgis.PyQt.QtWidgets import (
     QInputDialog,
     QDialog,
 )
-from qgis.PyQt.QtGui import QCursor
-from _csv import writer
-from qgis._core import QgsAction
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "ui_inventoryTools.ui")

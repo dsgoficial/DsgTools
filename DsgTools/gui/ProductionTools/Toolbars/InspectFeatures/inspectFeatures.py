@@ -20,11 +20,9 @@ Builds a temp rubberband with a given size and shape.
  *                                                                         *
  ***************************************************************************/
 """
-import os
 from qgis.PyQt.QtWidgets import QMessageBox, QSpinBox, QAction, QWidget
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot
 
 from qgis.core import (
     QgsMapLayer,
@@ -33,10 +31,8 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsFeatureRequest,
-    QgsWkbTypes,
     QgsProject,
 )
-from qgis.gui import QgsMessageBar
 
 from .inspectFeatures_ui import Ui_Form
 

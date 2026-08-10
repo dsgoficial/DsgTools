@@ -27,7 +27,6 @@ from qgis.core import (
     Qgis,
     QgsProject,
     QgsFeature,
-    QgsWkbTypes,
     QgsFeatureSink,
     QgsProcessingException,
     QgsProcessingParameterType,
@@ -36,15 +35,12 @@ from qgis.core import (
     QgsProcessingParameterCrs,
     QgsProcessingParameterString,
     QgsFields,
-    QgsField,
-    QgsCoordinateReferenceSystem,
     QgsSymbol,
     QgsCategorizedSymbolRenderer,
     QgsRendererCategory,
     QgsVectorLayer,
     QgsProcessingUtils,
 )
-from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtGui import QColor
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (

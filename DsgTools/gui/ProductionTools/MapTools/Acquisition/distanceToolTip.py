@@ -26,7 +26,6 @@ from qgis.core import (
     QgsCoordinateTransformContext,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
-    QgsProject,
     QgsGeometry,
 )
 

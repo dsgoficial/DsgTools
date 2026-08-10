@@ -36,7 +36,6 @@ from qgis.core import (
     QgsProject,
     QgsUnitTypes,
     QgsVectorLayer,
-    QgsWkbTypes,
 )
 from qgis.gui import QgisInterface, QgsMapToolDigitizeFeature
 from qgis.PyQt.QtCore import QEvent, QObject, QRect, Qt

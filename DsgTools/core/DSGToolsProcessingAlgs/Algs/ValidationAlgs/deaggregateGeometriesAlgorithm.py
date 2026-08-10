@@ -21,20 +21,14 @@
  ***************************************************************************/
 """
 
-from collections import Counter, defaultdict
+from collections import Counter
 from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
     QgsProcessingParameterBoolean,
     QgsProcessingFeatureSourceDefinition,
     QgsProcessingMultiStepFeedback,

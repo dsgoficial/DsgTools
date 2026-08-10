@@ -27,7 +27,6 @@ from qgis.core import (
     QgsProcessingParameterBoolean,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterMultipleLayers,
 )
 from qgis.PyQt.QtCore import QCoreApplication

@@ -21,24 +21,15 @@
  ***************************************************************************/
 """
 
-from builtins import range
 import itertools
 import sys
 import os
 from qgis.core import (
     NULL,
-    QgsMessageLog,
-    QgsVectorLayer,
     QgsGeometry,
-    QgsField,
-    QgsVectorDataProvider,
-    QgsFeatureRequest,
-    QgsExpression,
     QgsFeature,
     QgsSpatialIndex,
-    Qgis,
     QgsCoordinateTransform,
-    QgsWkbTypes,
     QgsProcessingMultiStepFeedback,
     QgsVectorLayerUtils,
     QgsCoordinateReferenceSystem,

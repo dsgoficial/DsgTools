@@ -21,14 +21,13 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
+from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.utils import iface
 
 from .abstractDb import AbstractDb
 from .pgDataTypes import GeomDictResult, GeomTableEntry
-from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
     LayerLoaderFactory,
 )

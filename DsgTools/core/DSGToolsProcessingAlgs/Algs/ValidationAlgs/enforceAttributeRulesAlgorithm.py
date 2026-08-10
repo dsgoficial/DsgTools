@@ -38,7 +38,6 @@ from qgis.core import (
     QgsProcessingParameterType,
     QgsProcessingParameterDefinition,
 )
-from qgis.PyQt.QtWidgets import QMessageBox
 
 from .validationAlgorithm import ValidationAlgorithm
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help

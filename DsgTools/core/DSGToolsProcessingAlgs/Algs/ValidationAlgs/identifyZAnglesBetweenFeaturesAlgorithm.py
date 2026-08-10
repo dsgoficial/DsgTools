@@ -21,13 +21,11 @@
 """
 
 import math
-import os
 
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     Qgis,
     QgsFeature,
-    QgsFeatureRequest,
     QgsField,
     QgsFields,
     QgsGeometry,

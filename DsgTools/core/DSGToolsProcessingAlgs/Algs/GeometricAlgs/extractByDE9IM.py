@@ -20,42 +20,20 @@
  ***************************************************************************/
 """
 
-from collections import defaultdict
-import itertools
-import json
-import os
 
-import concurrent.futures
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
-    ValidationAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 from qgis.PyQt.QtCore import QCoreApplication, QRegularExpression
-from qgis.PyQt.QtGui import QRegularExpressionValidator
 
 from qgis.core import (
     QgsProcessing,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterField,
-    QgsProcessingException,
-    QgsProcessingParameterDistance,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingFeatureSourceDefinition,
     QgsGeometry,
     QgsProcessingParameterString,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterExpression,
-    QgsFeatureRequest,
-    QgsProcessingContext,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSource,
-    QgsSpatialIndex,
 )
 
 

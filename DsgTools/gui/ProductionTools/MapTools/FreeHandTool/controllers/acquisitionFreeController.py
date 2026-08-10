@@ -18,20 +18,12 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  ***************************************************************************/
 """
 
-from qgis.PyQt import QtGui, QtCore
+from qgis.PyQt import QtCore
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis import core, gui
 from qgis.utils import iface
-from qgis.core import (
-    QgsPoint,
-    QgsLineString,
-    QgsVectorLayer,
-    QgsWkbTypes,
-    QgsProject,
-    QgsMessageLog,
-    Qgis,
-)
+from qgis.core import QgsPoint, QgsLineString, QgsVectorLayer, QgsMessageLog, Qgis
 
 from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree import (
     AcquisitionFree,

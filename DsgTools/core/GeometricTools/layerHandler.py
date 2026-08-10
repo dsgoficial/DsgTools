@@ -21,13 +21,10 @@
  ***************************************************************************/
 """
 
-from asyncio import as_completed
 from collections import Counter, defaultdict
-import copy
-from functools import partial
 from itertools import combinations
 import os
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Tuple
 from uuid import uuid4
 
 from processing.tools import dataobjects
@@ -37,10 +34,8 @@ import concurrent.futures
 import numpy as np
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
-from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.core import (
-    edit,
     Qgis,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
@@ -50,13 +45,11 @@ from qgis.core import (
     QgsField,
     QgsFields,
     QgsGeometry,
-    QgsMessageLog,
     QgsProcessingContext,
     QgsProcessingMultiStepFeedback,
     QgsProcessingUtils,
     QgsProject,
     QgsSpatialIndex,
-    QgsVectorDataProvider,
     QgsVectorLayer,
     QgsVectorLayerUtils,
     QgsWkbTypes,
@@ -70,7 +63,6 @@ from .featureHandler import FeatureHandler
 from .geometryHandler import (
     GeometryHandler,
     find_nan_or_inf_vertex_neighbor,
-    fix_geom_vertices,
     make_valid,
 )
 

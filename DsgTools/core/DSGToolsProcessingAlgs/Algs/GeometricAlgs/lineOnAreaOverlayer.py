@@ -27,7 +27,6 @@ from qgis.core import (
     QgsProcessingParameterFeatureSource,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
     QgsFeature,
     QgsFields,
     QgsProcessingException,

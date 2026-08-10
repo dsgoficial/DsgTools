@@ -21,11 +21,8 @@
  ***************************************************************************/
 """
 
-import concurrent.futures
 
-from itertools import tee, combinations
 from collections import defaultdict
-import os
 
 from qgis.core import (
     QgsProject,
@@ -36,7 +33,6 @@ from qgis.core import (
     QgsProcessingContext,
     QgsProcessingFeedback,
     QgsProcessingMultiStepFeedback,
-    QgsFeatureRequest,
 )
 from qgis.PyQt.QtCore import QRegularExpression, QCoreApplication, QObject
 from qgis.PyQt.QtGui import QRegularExpressionValidator

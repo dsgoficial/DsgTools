@@ -34,7 +34,6 @@ from qgis.core import (
     Qgis,
     QgsProject,
     QgsVectorLayer,
-    QgsWkbTypes,
     QgsGeometry,
     QgsProcessingContext,
 )

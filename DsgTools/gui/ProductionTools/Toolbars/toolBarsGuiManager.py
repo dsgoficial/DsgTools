@@ -21,10 +21,7 @@
 """
 
 
-from builtins import object
 import json
-import os.path
-import sys
 
 from .CenterPointAndBoundariesToolbar.centerPointAndBoundariesTool import (
     CenterPointAndBoundariesToolbar,

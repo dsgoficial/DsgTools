@@ -21,12 +21,7 @@
  ***************************************************************************/
 """
 from qgis.PyQt import QtCore
-from typing import Set
-from qgis.core import (
-    Qgis,
-    QgsVectorLayer,
-    QgsWkbTypes,
-)
+from qgis.core import Qgis, QgsVectorLayer
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
 

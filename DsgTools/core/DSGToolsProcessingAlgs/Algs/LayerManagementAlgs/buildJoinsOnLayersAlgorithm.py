@@ -21,28 +21,19 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
 
 from qgis.PyQt.QtCore import QCoreApplication
 
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsExpression,
-    QgsExpressionContext,
-    QgsExpressionContextUtils,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingOutputMultipleLayers,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterExpression,
     QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterString,
     QgsProject,
     QgsRelation,
     QgsVectorLayerJoinInfo,
 )
-from qgis.utils import iface
 
 
 class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):

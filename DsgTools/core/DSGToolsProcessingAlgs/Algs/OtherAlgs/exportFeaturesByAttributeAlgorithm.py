@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingException,
@@ -32,10 +32,8 @@ from qgis.core import (
     QgsProcessingParameterFeatureSink,
     QgsExpression,
     QgsFeatureSink,
-    QgsVectorLayer,
     QgsFeatureRequest,
 )
-from qgis import processing
 
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 

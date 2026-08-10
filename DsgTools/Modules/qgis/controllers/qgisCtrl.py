@@ -1,8 +1,7 @@
 from qgis import core, gui
 from qgis.utils import iface
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt import QtCore
 from qgis.PyQt.QtCore import QCoreApplication
-import json
 from DsgTools.Modules.qgis.factories.actionsFactory import ActionsFactory
 from qgis.core import Qgis
 

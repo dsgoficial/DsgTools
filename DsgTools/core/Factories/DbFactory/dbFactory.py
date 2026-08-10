@@ -23,7 +23,6 @@
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtSql import QSqlDatabase
-from qgis.core import QgsMessageLog, Qgis
 
 # DSG Tools imports
 from .postgisDb import PostgisDb
@@ -32,7 +31,6 @@ from .shapefileDb import ShapefileDb
 from DsgTools.core.dsgEnums import DsgEnums
 
 from builtins import object
-import os
 
 
 class DbFactory(object):

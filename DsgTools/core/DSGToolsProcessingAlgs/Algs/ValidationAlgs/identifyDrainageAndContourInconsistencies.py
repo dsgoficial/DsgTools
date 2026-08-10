@@ -39,7 +39,6 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsProcessingParameterField,
     QgsWkbTypes,
-    QgsGeometry,
 )
 from DsgTools.core.GeometricTools import graphHandler
 

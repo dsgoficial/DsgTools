@@ -26,7 +26,6 @@ from itertools import product
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsFeature,
-    QgsFeatureRequest,
     QgsFeatureSink,
     QgsField,
     QgsGeometry,

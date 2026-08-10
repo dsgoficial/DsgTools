@@ -41,7 +41,7 @@ from qgis.gui import QgisInterface, QgsMapMouseEvent
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtGui import QPixmap, QPainter, QPen, QCursor
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QMenu, QApplication
+from qgis.PyQt.QtWidgets import QMenu
 
 
 class TrimExtendTool(AbstractSelectionTool):

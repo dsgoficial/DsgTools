@@ -30,7 +30,6 @@ from qgis.core import (
     QgsFeature,
     QgsProcessingParameterFeatureSource,
     QgsGeometry,
-    QgsLineString,
     QgsProcessingMultiStepFeedback,
     QgsWkbTypes,
     QgsFields,

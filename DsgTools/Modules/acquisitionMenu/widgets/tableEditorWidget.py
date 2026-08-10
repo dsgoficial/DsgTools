@@ -1,4 +1,4 @@
-import os, sys, copy
+import os
 from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 

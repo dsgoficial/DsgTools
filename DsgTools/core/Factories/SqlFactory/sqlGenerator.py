@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 from builtins import object
-from ...dsgEnums import DsgEnums
 
 
 class SqlGenerator(object):

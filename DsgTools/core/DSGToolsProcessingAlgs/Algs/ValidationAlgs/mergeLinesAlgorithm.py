@@ -30,7 +30,6 @@ from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
     QgsProcessingFeatureSourceDefinition,
     QgsProcessing,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterField,
     QgsProcessingParameterVectorLayer,

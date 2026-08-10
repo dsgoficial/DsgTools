@@ -23,18 +23,15 @@
 from builtins import range
 import os
 
-from qgis.core import QgsMessageLog
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
 from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox
-from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.gui.ServerTools.viewServers import ViewServers
 from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(

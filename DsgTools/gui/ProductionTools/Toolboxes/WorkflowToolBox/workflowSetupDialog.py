@@ -22,9 +22,8 @@
 """
 
 from functools import partial
-import os, json
+import os
 from pathlib import Path
-from time import time
 from datetime import datetime
 
 from DsgTools.core.DSGToolsWorkflow.workflowItem import (
@@ -39,8 +38,8 @@ from DsgTools.gui.CustomWidgets.SelectionWidgets.importExportFileWidget import (
 )
 from qgis.PyQt import uic, QtCore, QtWidgets
 from qgis.core import Qgis
-from qgis.gui import QgsMessageBar, QgsCheckableComboBox
-from qgis.PyQt.QtCore import QSize, QCoreApplication, pyqtSlot, Qt
+from qgis.gui import QgsMessageBar
+from qgis.PyQt.QtCore import QSize, QCoreApplication, pyqtSlot
 from qgis.PyQt.QtWidgets import (
     QDialog,
     QComboBox,
@@ -48,17 +47,11 @@ from qgis.PyQt.QtWidgets import (
     QLineEdit,
     QFileDialog,
     QMessageBox,
-    QTableWidgetItem,
 )
 from processing.modeler.ModelerUtils import ModelerUtils
 from processing.modeler.ModelerDialog import ModelerDialog
 
-from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import (
-    SelectFileWidget,
-)
 from DsgTools.core.DSGToolsWorkflow.workflow import (
-    DSGToolsWorkflow,
-    WorkflowMetadata,
     dsgtools_workflow_from_dict,
     dsgtools_workflow_from_json,
 )

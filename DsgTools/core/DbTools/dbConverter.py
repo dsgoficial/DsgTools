@@ -23,7 +23,7 @@
 import os, collections
 import time
 
-from qgis.PyQt.QtCore import QObject, pyqtSignal, QSettings
+from qgis.PyQt.QtCore import pyqtSignal, QSettings
 from qgis.core import (
     QgsFeatureRequest,
     QgsProject,

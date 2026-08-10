@@ -45,10 +45,9 @@ from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 from DsgTools.core.dsgEnums import DsgEnums
 
-from osgeo import ogr
 from uuid import uuid4
 from collections import defaultdict
-import codecs, os, json, binascii, re
+import codecs, os, json, binascii
 import psycopg2
 import time
 

@@ -13,17 +13,12 @@
 """
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsFeature,
-    QgsGeometry,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterFeatureSink,
     QgsProcessingParameterNumber,
     QgsProcessingParameterDistance,
-    QgsWkbTypes,
     QgsProcessingParameterMultipleLayers,
-    QgsFeatureSink,
     QgsProcessingMultiStepFeedback,
 )
 

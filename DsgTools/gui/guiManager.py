@@ -21,10 +21,6 @@
 """
 
 
-from builtins import object
-import os.path
-import sys
-
 from qgis.PyQt.QtCore import QObject, Qt
 from qgis.PyQt.QtGui import QIcon, QAction
 from qgis.PyQt.QtWidgets import QToolButton, QMenu

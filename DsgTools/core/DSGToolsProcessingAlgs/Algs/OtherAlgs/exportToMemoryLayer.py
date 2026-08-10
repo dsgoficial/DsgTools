@@ -22,26 +22,14 @@
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtXml import QDomDocument
 
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingContext,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterString,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFile,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
     QgsVectorLayer,
     QgsProject,
 )
-
-from qgis.utils import iface
 
 
 class ExportToMemoryLayer(QgsProcessingAlgorithm):

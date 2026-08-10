@@ -25,7 +25,6 @@ import os
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot
-from qgis.PyQt.QtWidgets import QMessageBox
 
 # QGIS imports
 from qgis.core import QgsVectorLayer, QgsGeometry, Qgis, QgsProject

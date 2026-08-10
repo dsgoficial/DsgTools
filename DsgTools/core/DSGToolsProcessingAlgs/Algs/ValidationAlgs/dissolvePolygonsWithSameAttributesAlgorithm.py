@@ -26,7 +26,6 @@ from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
     QgsProcessing,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterField,
     QgsProcessingParameterVectorLayer,

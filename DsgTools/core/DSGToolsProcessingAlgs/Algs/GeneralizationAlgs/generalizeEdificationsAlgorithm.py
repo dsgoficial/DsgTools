@@ -30,8 +30,6 @@ from qgis.core import (
     QgsFeature,
     QgsProcessingFeedback,
 )
-from qgis.PyQt.QtCore import QVariant
-import processing
 
 from ...algRunner import AlgRunner
 

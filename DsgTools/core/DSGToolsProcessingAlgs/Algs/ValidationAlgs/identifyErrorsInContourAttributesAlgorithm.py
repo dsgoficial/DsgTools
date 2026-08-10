@@ -21,34 +21,21 @@
  ***************************************************************************/
 """
 
-from collections import defaultdict
-from typing import Any, Dict, Set
 from qgis.PyQt.QtCore import QCoreApplication
 
-import concurrent.futures
-import os
-from itertools import product, chain
 from qgis.core import (
-    QgsGeometry,
     QgsProcessing,
     QgsProcessingException,
-    QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterVectorLayer,
-    QgsFeature,
     QgsProcessingParameterField,
     QgsProcessingParameterExpression,
-    QgsProcessingParameterString,
-    QgsVectorLayer,
-    QgsFeedback,
     QgsProcessingParameterEnum,
     QgsWkbTypes,
     QgsFeatureRequest,
 )
 
-from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
-from DsgTools.core.GeometricTools import graphHandler
 
 
 class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):

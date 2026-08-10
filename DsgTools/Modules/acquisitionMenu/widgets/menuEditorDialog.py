@@ -1,5 +1,5 @@
-import os, sys, copy
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
+import os
+from qgis.PyQt import QtCore, uic, QtWidgets
 import json
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 from qgis.PyQt.QtWidgets import QMessageBox

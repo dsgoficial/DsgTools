@@ -27,9 +27,6 @@ from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
 from qgis.core import QgsMessageLog, Qgis
 
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import (
-    DsgCustomComboBox,
-)
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceInfoTable import (

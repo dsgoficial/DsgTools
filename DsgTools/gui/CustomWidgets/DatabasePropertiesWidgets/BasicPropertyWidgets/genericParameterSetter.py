@@ -24,8 +24,8 @@ import os
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic, QtCore, QtGui
-from qgis.PyQt.QtCore import pyqtSlot, Qt
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtCore import pyqtSlot
 
 
 FORM_CLASS, _ = uic.loadUiType(

@@ -32,9 +32,7 @@ from qgis.core import (
     QgsProcessingParameterDistance,
     QgsProcessingParameterEnum,
     QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
     QgsWkbTypes,
-    QgsVectorLayer,
     QgsProcessingParameterVectorLayer,
 )
 

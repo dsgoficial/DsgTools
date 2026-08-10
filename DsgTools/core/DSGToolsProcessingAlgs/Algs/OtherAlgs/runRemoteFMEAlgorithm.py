@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 
-import os
 import requests
 from time import sleep
 

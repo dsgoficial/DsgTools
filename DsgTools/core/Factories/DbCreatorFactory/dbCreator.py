@@ -25,7 +25,7 @@
 
 from builtins import str
 from builtins import range
-from qgis.PyQt.QtCore import QSettings, pyqtSignal, QObject
+from qgis.PyQt.QtCore import QObject
 
 # DsgTools imports
 from ..DbFactory.dbFactory import DbFactory

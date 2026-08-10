@@ -26,7 +26,6 @@ import concurrent.futures
 from typing import List, Optional, Set, Union
 from qgis.PyQt.QtCore import QCoreApplication
 
-from DsgTools.core.GeometricTools import graphHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
     Qgis,
@@ -46,10 +45,8 @@ from qgis.core import (
     QgsFeature,
     QgsFeatureSink,
     QgsProcessingUtils,
-    QgsProject,
 )
 
-from DsgTools.core.Utils.threadingTools import concurrently
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm

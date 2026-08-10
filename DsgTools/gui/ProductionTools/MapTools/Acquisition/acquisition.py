@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from qgis.PyQt.QtGui import QIcon, QPixmap
-from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.QtCore import QObject
-from qgis.gui import QgsMessageBar
 from qgis.core import Qgis, QgsVectorLayer
-from .circle import Circle
 from .polygon import Polygon
 
 

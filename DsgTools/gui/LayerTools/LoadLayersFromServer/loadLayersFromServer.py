@@ -20,30 +20,18 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import range
 import os
-from os.path import expanduser
 
 from qgis.core import QgsMessageLog, Qgis
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
-from qgis.PyQt.QtWidgets import (
-    QListWidgetItem,
-    QMessageBox,
-    QMenu,
-    QApplication,
-    QFileDialog,
-    QProgressBar,
-)
+from qgis.PyQt.QtCore import pyqtSlot, Qt
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication
 from qgis.PyQt.QtGui import QCursor
-from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
 from ....core.Utils.utils import Utils
-from ....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from ....core.Factories.DbFactory.dbFactory import DbFactory
 from ....core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from ...CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 

@@ -1,5 +1,4 @@
 from DsgTools.Modules.acquisitionMenu.factories.widgetFactory import WidgetFactory
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.Modules.qgis.controllers.qgisCtrl import QgisCtrl
 import json

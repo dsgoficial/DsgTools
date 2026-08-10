@@ -29,38 +29,11 @@ from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
 )
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import runProcessing
 from qgis.core import (
-    QgsCoordinateReferenceSystem,
-    QgsCoordinateTransform,
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsField,
-    QgsFields,
-    QgsGeometry,
-    QgsProcessing,
     QgsProcessingAlgorithm,
-    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingOutputMultipleLayers,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterCrs,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterExpression,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
-    QgsProcessingParameterFile,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterString,
-    QgsProcessingParameterType,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsProject,
-    QgsSpatialIndex,
-    QgsWkbTypes,
 )
 from qgis.utils import iface
 

@@ -26,7 +26,7 @@ import os
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtWidgets import QMessageBox
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtCore import pyqtSignal
 
 from .....core.Utils.utils import Utils
 from .....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory

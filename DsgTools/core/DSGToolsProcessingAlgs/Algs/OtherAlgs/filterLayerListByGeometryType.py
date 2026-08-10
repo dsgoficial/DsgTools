@@ -27,7 +27,6 @@ from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingOutputMultipleLayers,
     QgsProcessingParameterMultipleLayers,
-    QgsWkbTypes,
 )
 
 

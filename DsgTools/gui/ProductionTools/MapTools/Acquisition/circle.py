@@ -2,18 +2,11 @@
 
 
 from builtins import range
-import os
 
-from qgis.PyQt import QtGui, uic
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
+from qgis.PyQt.QtCore import Qt
 import math
-from qgis.PyQt import QtCore, QtGui
-from qgis.PyQt.QtWidgets import QShortcut
-from qgis.PyQt.QtGui import QKeySequence
-from qgis.PyQt.QtCore import QSettings
 from .geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPointXY, Qgis
-from qgis.gui import QgsMapMouseEvent, QgsMapTool
 
 
 class Circle(GeometricaAcquisition):

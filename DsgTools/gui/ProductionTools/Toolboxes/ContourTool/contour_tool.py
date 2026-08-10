@@ -27,7 +27,6 @@ from qgis.core import (
     Qgis,
     QgsProject,
     QgsGeometry,
-    QgsWkbTypes,
     QgsSpatialIndex,
     QgsFeatureRequest,
     QgsCoordinateTransform,

@@ -22,7 +22,6 @@
 """
 
 import concurrent.futures
-from collections import defaultdict
 import os
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
@@ -30,8 +29,6 @@ from DsgTools.core.GeometricTools import graphHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsFeatureRequest,
-    QgsGeometry,
     QgsProcessing,
     QgsProcessingFeatureSourceDefinition,
     QgsProcessingMultiStepFeedback,

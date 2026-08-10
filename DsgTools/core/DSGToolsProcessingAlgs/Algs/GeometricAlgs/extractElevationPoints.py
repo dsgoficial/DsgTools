@@ -22,7 +22,7 @@
 
 from collections import defaultdict
 import math
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Tuple, Union
 from uuid import uuid4
 import numpy as np
 from itertools import islice
@@ -57,11 +57,7 @@ from qgis.core import (
     QgsProcessingParameterExpression,
     QgsProcessingParameterBoolean,
     QgsFeatureRequest,
-    QgsProcessingParameterCrs,
     Qgis,
-    QgsProcessingParameterDefinition,
-    QgsCoordinateTransform,
-    QgsProject,
 )
 
 

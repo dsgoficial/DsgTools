@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 from builtins import object
-import os
 
 from .postgisSqlGenerator import PostGISSqlGenerator
 from .geopackageSqlGenerator import GeopackageSqlGenerator

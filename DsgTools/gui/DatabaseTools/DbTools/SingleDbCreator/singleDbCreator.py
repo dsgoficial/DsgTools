@@ -22,21 +22,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os, sqlite3
-import json
+import os
 
 from qgis.core import QgsMessageLog, Qgis
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
-from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
+from qgis.PyQt.QtCore import pyqtSignal, Qt
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication
 from qgis.PyQt.QtGui import QCursor
-from DsgTools.core.Utils.utils import Utils
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import (
-    ProgressWidget,
-)
-from DsgTools.gui.CustomWidgets.SelectionWidgets.tabDbSelectorWidget import (
-    TabDbSelectorWidget,
-)
 from DsgTools.core.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
 FORM_CLASS, _ = uic.loadUiType(

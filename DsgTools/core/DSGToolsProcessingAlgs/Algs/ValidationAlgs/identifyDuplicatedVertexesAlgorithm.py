@@ -21,29 +21,18 @@
 """
 
 from collections import defaultdict
-from dataclasses import dataclass
 from qgis.PyQt.QtCore import QCoreApplication
 
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
     Qgis,
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterDistance,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
     QgsProcessingFeatureSourceDefinition,
-    QgsFeatureRequest,
 )
 
 from ...algRunner import AlgRunner

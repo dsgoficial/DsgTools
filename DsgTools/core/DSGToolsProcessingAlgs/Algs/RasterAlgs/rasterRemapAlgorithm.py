@@ -24,9 +24,8 @@
 import json
 import numpy as np
 import os
-import shutil
 import traceback
-from osgeo import gdal, osr
+from osgeo import gdal
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
@@ -36,9 +35,6 @@ from qgis.core import (
     QgsProcessingParameterRasterDestination,
     QgsProcessingParameterBoolean,
     QgsProcessingException,
-    QgsRasterLayer,
-    QgsMessageLog,
-    Qgis,
 )
 
 

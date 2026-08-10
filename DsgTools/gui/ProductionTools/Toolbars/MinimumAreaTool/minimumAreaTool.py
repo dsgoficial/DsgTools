@@ -24,7 +24,6 @@ Builds a temp rubberband with a given size and shape.
 
 import os
 
-from qgis.core import Qgis, QgsUnitTypes
 from qgis.gui import QgsMapMouseEvent
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QMessageBox, QAction, QWidget

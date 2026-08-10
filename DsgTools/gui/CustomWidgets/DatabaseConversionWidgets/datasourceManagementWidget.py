@@ -34,7 +34,6 @@ from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.MultiDsSelectorWidgets
 )
 
 import os
-from functools import partial
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "datasourceManagementWidget.ui")

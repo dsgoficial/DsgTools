@@ -31,7 +31,6 @@ from DsgTools.core.NetworkTools.ExternalFilesHandler import (
 
 from qgis.PyQt.QtCore import QObject, QUrl
 from qgis.PyQt.QtGui import QDesktopServices
-from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
 from qgis.core import Qgis
 from .Options.options import Options
 from .aboutdialog import AboutDialog

@@ -21,8 +21,7 @@
  ***************************************************************************/
 """
 
-import copy
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 import gc
 import json
 import os

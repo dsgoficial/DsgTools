@@ -20,9 +20,6 @@
  ***************************************************************************/
 """
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
-    ValidationAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.DbTools.dbConversionHandler import (
     FeatureProcessor,
@@ -33,16 +30,12 @@ from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
     LayerLoaderFactory,
 )
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     Qgis,
-    QgsProcessing,
     QgsProcessingException,
     QgsProviderConnectionException,
-    QgsWkbTypes,
-    QgsWkbTypes,
     QgsProviderRegistry,
     QgsProject,
     QgsProcessingParameterProviderConnection,

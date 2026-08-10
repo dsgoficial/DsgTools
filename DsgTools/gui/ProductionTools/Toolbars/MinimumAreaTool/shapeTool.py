@@ -29,13 +29,11 @@ from qgis.core import (
     Qgis,
     QgsPointXY,
     QgsGeometry,
-    QgsProject,
     QgsDistanceArea,
     QgsCoordinateTransform,
     QgsCoordinateTransformContext,
     QgsCoordinateReferenceSystem,
 )
-from qgis.PyQt import QtGui, QtCore, QtWidgets
 from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.QtGui import QColor, QCursor
 from qgis.PyQt.QtWidgets import QApplication

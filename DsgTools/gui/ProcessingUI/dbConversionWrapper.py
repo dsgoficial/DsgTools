@@ -21,8 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.gui import QgsMapLayerComboBox
-from qgis.PyQt.QtWidgets import QComboBox, QLineEdit, QDoubleSpinBox
+from qgis.PyQt.QtWidgets import QComboBox
 from processing.gui.wrappers import (
     WidgetWrapper,
     DIALOG_STANDARD,
