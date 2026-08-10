@@ -103,9 +103,7 @@ class GeopackageDbCreator(DbCreator):
     def defineSrid(self, destination, srid):
         con = sqlite3.connect(destination)
         cursor = con.cursor()
-        cursor.execute(
-            "UPDATE gpkg_geometry_columns SET srs_id={srid}".format(srid=srid)
-        )
+        cursor.execute("UPDATE gpkg_geometry_columns SET srs_id=?", (int(srid),))
         con.commit()
         cursor.close()
         con.close()

@@ -96,6 +96,13 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                 zip_ref.extractall(output_path)
 
     def extract_metadata(self, xml_content):
+        # Reject DOCTYPE declarations before parsing to avoid XXE / entity
+        # expansion attacks, since xml.etree.ElementTree itself performs no
+        # such sanitization.
+        if re.search(r"<!DOCTYPE", xml_content, re.IGNORECASE):
+            raise QgsProcessingException(
+                self.tr("DOCTYPE declarations are not allowed in metadata XML files.")
+            )
         # Parse XML
         root = ElementTree.fromstring(xml_content)
 
@@ -204,7 +211,9 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                     )
                     if not source_layer.isValid():
                         raise QgsProcessingException(
-                            self.tr("Failed to load source layer: {}").format(product_shape_file)
+                            self.tr("Failed to load source layer: {}").format(
+                                product_shape_file
+                            )
                         )
 
                     # Create new filename
@@ -248,7 +257,9 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                         if multiStepFeedback and multiStepFeedback.isCanceled():
                             del writer
                             if multiStepFeedback is not None:
-                                multiStepFeedback.pushInfo(self.tr("Process canceled by user"))
+                                multiStepFeedback.pushInfo(
+                                    self.tr("Process canceled by user")
+                                )
                             return
 
                         # Update progress message
@@ -288,7 +299,9 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                     # Clean up
                     del writer
                     if multiStepFeedback is not None:
-                        multiStepFeedback.pushInfo(self.tr("Created {0}").format(output_file))
+                        multiStepFeedback.pushInfo(
+                            self.tr("Created {0}").format(output_file)
+                        )
                 except PermissionError:
                     if multiStepFeedback is not None:
                         multiStepFeedback.reportError(
