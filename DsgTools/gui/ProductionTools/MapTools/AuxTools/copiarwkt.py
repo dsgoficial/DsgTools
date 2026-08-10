@@ -41,7 +41,9 @@ class GetCrsDialog(QDialog):
         super(GetCrsDialog, self).__init__()
         uic.loadUi(self.getUiPath(), self)
         self.buttonBox.addButton(self.tr("Yes"), QDialogButtonBox.ButtonRole.AcceptRole)
-        self.buttonBox.addButton(self.tr("Do not change"), QDialogButtonBox.ButtonRole.RejectRole)
+        self.buttonBox.addButton(
+            self.tr("Do not change"), QDialogButtonBox.ButtonRole.RejectRole
+        )
 
     def setCrsValue(self, value):
         self.selectCRS.setCrs(value)
@@ -58,7 +60,9 @@ def copywkt():
     if layer is None:
         iface.messageBar().pushMessage(
             QCoreApplication.translate("CopyWKT", "Warning"),
-            QCoreApplication.translate("CopyWKT", "Select a layer before running the process"),
+            QCoreApplication.translate(
+                "CopyWKT", "Select a layer before running the process"
+            ),
             level=Qgis.MessageLevel.Warning,
             duration=5,
         )
@@ -76,7 +80,7 @@ def copywkt():
         QCoreApplication.translate("CopyWKT", "Done"),
         QCoreApplication.translate(
             "CopyWKT",
-            "The coordinates of the selected features were copied as WKT to the {0} coordinate system"
+            "The coordinates of the selected features were copied as WKT to the {0} coordinate system",
         ).format(destCrs.authid()),
         level=Qgis.MessageLevel.Success,
         duration=5,
@@ -98,7 +102,9 @@ def errorAction():
     reply = QMessageBox.question(
         iface.mainWindow(),
         QCoreApplication.translate("CopyWKT", "Invalid CRS"),
-        QCoreApplication.translate("CopyWKT", "If you want to change the CRS, select a valid CRS"),
+        QCoreApplication.translate(
+            "CopyWKT", "If you want to change the CRS, select a valid CRS"
+        ),
         QMessageBox.StandardButton.Ok,
     )
     return False

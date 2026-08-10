@@ -223,9 +223,7 @@ class ValidateTrackerAlgorithm(QgsProcessingAlgorithm):
                 "{0} features found at least {1}-day difference from today\n"
             ).format(diffDaysBiggerThanTolerance, toleranceDays)
         if diffBiggerThan1Day:
-            errorMessage += self.tr(
-                "Latest date more than 24 hours after earlier date"
-            )
+            errorMessage += self.tr("Latest date more than 24 hours after earlier date")
         if (
             (not dictDiffFieldType)
             and (not diffDaysBiggerThanTolerance)

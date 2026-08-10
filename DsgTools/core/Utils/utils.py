@@ -527,21 +527,32 @@ class ValidateImportedDataMethods:
         :return: (signal) value returned from the clicked button.
         """
         msg = QMessageBox()
-        msg.setWindowTitle(QCoreApplication.translate("ValidateImportedDataMethods", "Invalid Rules Information"))
+        msg.setWindowTitle(
+            QCoreApplication.translate(
+                "ValidateImportedDataMethods", "Invalid Rules Information"
+            )
+        )
 
         if lyrList and msgType == "invalid":
             msg.setIcon(QMessageBox.Icon.Critical)
-            msg.setText(QCoreApplication.translate("ValidateImportedDataMethods", "Some rules have invalid items!"))
+            msg.setText(
+                QCoreApplication.translate(
+                    "ValidateImportedDataMethods", "Some rules have invalid items!"
+                )
+            )
             msg.setInformativeText(
-                QCoreApplication.translate("ValidateImportedDataMethods", "If you ignore, the invalid rules may not be loaded.")
+                QCoreApplication.translate(
+                    "ValidateImportedDataMethods",
+                    "If you ignore, the invalid rules may not be loaded.",
+                )
             )
 
             textLyrList = sorted(set(lyrList))
             formatedLyrList = ["{}" for item in textLyrList]
             msgString = ",".join(formatedLyrList).replace(",", "\n")
-            formatedMsgString = (
-                QCoreApplication.translate("ValidateImportedDataMethods", "The following rules are not valid:\n") + msgString.format(*textLyrList)
-            )
+            formatedMsgString = QCoreApplication.translate(
+                "ValidateImportedDataMethods", "The following rules are not valid:\n"
+            ) + msgString.format(*textLyrList)
 
             msg.setDetailedText(formatedMsgString)
             msg.setStandardButtons(
@@ -550,7 +561,11 @@ class ValidateImportedDataMethods:
             msg.setDefaultButton(QMessageBox.StandardButton.Cancel)
         else:
             msg.setIcon(QMessageBox.Icon.Information)
-            msg.setText(QCoreApplication.translate("ValidateImportedDataMethods", "Successfully loaded rules!"))
+            msg.setText(
+                QCoreApplication.translate(
+                    "ValidateImportedDataMethods", "Successfully loaded rules!"
+                )
+            )
 
         choice = msg.exec()
         return choice

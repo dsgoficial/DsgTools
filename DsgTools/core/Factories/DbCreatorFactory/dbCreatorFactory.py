@@ -37,7 +37,11 @@ class DbCreatorFactory(object):
         # TODO Treat none return
         if not ("QSQLITE" in QSqlDatabase.drivers()):  # Driver wasn't loaded
             QgsMessageLog.logMessage(
-                QCoreApplication.translate("DbCreatorFactory", "QT QSQLITE driver not installed!"), "DSGTools Plugin", Qgis.MessageLevel.Critical
+                QCoreApplication.translate(
+                    "DbCreatorFactory", "QT QSQLITE driver not installed!"
+                ),
+                "DSGTools Plugin",
+                Qgis.MessageLevel.Critical,
             )
             return None
         creators = {

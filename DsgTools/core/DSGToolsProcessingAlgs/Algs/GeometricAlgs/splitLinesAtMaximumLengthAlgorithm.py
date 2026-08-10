@@ -115,7 +115,11 @@ class SplitLinesAtMaximumLengthAlgorithm(QgsProcessingAlgorithm):
         sinkLambda = lambda x: sink.addFeature(x, QgsFeatureSink.FastInsert)
 
         if open_lines.featureCount() > 0:
-            feedback.pushInfo(self.tr("Processing {0} open lines...").format(open_lines.featureCount()))
+            feedback.pushInfo(
+                self.tr("Processing {0} open lines...").format(
+                    open_lines.featureCount()
+                )
+            )
             split_open_lines = algRunner.runSplitLinesByLength(
                 inputLayer=open_lines,
                 length=max_length,
@@ -129,7 +133,9 @@ class SplitLinesAtMaximumLengthAlgorithm(QgsProcessingAlgorithm):
         # Process closed lines
         if closed_lines.featureCount() > 0:
             multiStepFeedback.pushInfo(
-                self.tr("Processing {0} closed lines...").format(closed_lines.featureCount())
+                self.tr("Processing {0} closed lines...").format(
+                    closed_lines.featureCount()
+                )
             )
 
             # Process closed lines one by one to determine length correctly
@@ -194,7 +200,6 @@ class SplitLinesAtMaximumLengthAlgorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("SplitLinesAtMaximumLengthAlgorithm", string)
-
 
     def createInstance(self):
         return SplitLinesAtMaximumLengthAlgorithm()

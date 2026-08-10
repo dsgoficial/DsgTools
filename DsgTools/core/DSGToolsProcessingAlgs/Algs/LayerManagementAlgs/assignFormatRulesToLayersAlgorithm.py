@@ -145,26 +145,30 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
             try:
                 return json.loads(inputText)
             except json.JSONDecodeError as e:
-                raise QgsProcessingException(self.tr("Error decoding JSON from text: %s") % str(e))
-        
+                raise QgsProcessingException(
+                    self.tr("Error decoding JSON from text: %s") % str(e)
+                )
+
         # Se não há texto válido, tenta carregar do arquivo
         inputFile = self.parameterAsFile(parameters, self.FILE, context)
-        
+
         # Verifica se o arquivo foi fornecido
         if not inputFile or inputFile.strip() == "":
             raise QgsProcessingException(self.tr("No JSON text or file was provided."))
-        
+
         # Verifica se o arquivo existe
         if not os.path.exists(inputFile):
             raise QgsProcessingException(self.tr("File not found: %s") % inputFile)
-        
+
         # Carrega o arquivo com encoding adequado
         try:
             with open(inputFile, "r", encoding="utf-8") as f:
                 rulesData = json.load(f)
             return rulesData
         except json.JSONDecodeError as e:
-            raise QgsProcessingException(self.tr("Error decoding JSON from file: %s") % str(e))
+            raise QgsProcessingException(
+                self.tr("Error decoding JSON from file: %s") % str(e)
+            )
         except Exception as e:
             raise QgsProcessingException(self.tr("Error reading file: %s") % str(e))
 
@@ -231,7 +235,9 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
         )
         if not conditionalStyle.isValid():
             raise Exception(
-                self.tr("Invalid conditional style: \n{0}\n{1}").format(data['descricao'], data['regra'])
+                self.tr("Invalid conditional style: \n{0}\n{1}").format(
+                    data["descricao"], data["regra"]
+                )
             )
         return conditionalStyle
 
@@ -254,16 +260,21 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
             )
             if not self.expressionHasParseError(expressionString):
                 raise Exception(
-                    self.tr("Error while trying to apply rule:\n {0}\ncurrent field: {1}\ncurrent layer name: {2}").format(data, fieldName, key)
+                    self.tr(
+                        "Error while trying to apply rule:\n {0}\ncurrent field: {1}\ncurrent layer name: {2}"
+                    ).format(data, fieldName, key)
                 )
         expressionString += """ELSE ''\nEND"""
         if expressionString == "CASE\nELSE ''\nEND":  ## did not apply any rule
             return
         expression = QgsExpression(expressionString)
         if expression.hasParserError():
-            raise Exception(self.tr("Invalid expression: \n{0}").format(expressionString))
+            raise Exception(
+                self.tr("Invalid expression: \n{0}").format(expressionString)
+            )
         lyr.addExpressionField(
-            expressionString, QgsField("attribute_error_description", QMetaType.Type.QString)
+            expressionString,
+            QgsField("attribute_error_description", QMetaType.Type.QString),
         )
 
     def expressionHasParseError(self, expressionString):

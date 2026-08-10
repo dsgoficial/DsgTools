@@ -304,9 +304,9 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
             commandMessage=self.tr("Updating drainages outside polygons"),
         )
         multiStepFeedback.pushInfo(
-            self.tr(
-                "{0} outside polygons changed to {1} = {2}"
-            ).format(len(featIdsToUpdate), polygonRelationshipAttribute, outsidePolygonValue)
+            self.tr("{0} outside polygons changed to {1} = {2}").format(
+                len(featIdsToUpdate), polygonRelationshipAttribute, outsidePolygonValue
+            )
         )
 
         currentStep += 1

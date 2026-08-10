@@ -200,12 +200,12 @@ class AcquisitionFreeController(object):
             except Exception:
                 msg = QCoreApplication.translate(
                     "AcquisitionFreeController",
-                    "Probably too many smoothing iterations, try reducing it (3 usually is enough). Geometry was not smoothed."
+                    "Probably too many smoothing iterations, try reducing it (3 usually is enough). Geometry was not smoothed.",
                 )
                 QMessageBox.warning(
                     self.iface.mainWindow(),
                     QCoreApplication.translate("AcquisitionFreeController", "Error!"),
-                    msg
+                    msg,
                 )
                 QgsMessageLog.logMessage(
                     msg, "DSGTools Plugin", Qgis.MessageLevel.Critical

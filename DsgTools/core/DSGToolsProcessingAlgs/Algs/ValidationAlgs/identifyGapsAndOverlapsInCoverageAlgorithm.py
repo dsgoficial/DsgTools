@@ -142,16 +142,12 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        input_layers = self.parameterAsLayerList(
-            parameters, self.INPUTLAYERS, context
-        )
+        input_layers = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         if not input_layers:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUTLAYERS)
             )
-        frame_layer = self.parameterAsVectorLayer(
-            parameters, self.FRAMELAYER, context
-        )
+        frame_layer = self.parameterAsVectorLayer(parameters, self.FRAMELAYER, context)
         if frame_layer and frame_layer in input_layers:
             raise QgsProcessingException(
                 self.tr("The frame layer cannot also be a coverage layer.")
@@ -292,7 +288,10 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             feature.setId(feature_id)
             feature.setGeometry(
                 QgsGeometry.fromPolylineXY(
-                    [point_from_key(key[0], grid_size), point_from_key(key[1], grid_size)]
+                    [
+                        point_from_key(key[0], grid_size),
+                        point_from_key(key[1], grid_size),
+                    ]
                 )
             )
             features.append(feature)

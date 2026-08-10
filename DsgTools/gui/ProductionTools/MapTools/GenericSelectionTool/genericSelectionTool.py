@@ -62,12 +62,8 @@ class AbstractSelectionTool(QgsMapTool):
         self.canvas = self.iface.mapCanvas()
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
-        self.rubberBand = QgsRubberBand(
-            self.canvas, Qgis.GeometryType.Polygon
-        )
-        self.hoverRubberBand = QgsRubberBand(
-            self.canvas, Qgis.GeometryType.Polygon
-        )
+        self.rubberBand = QgsRubberBand(self.canvas, Qgis.GeometryType.Polygon)
+        self.hoverRubberBand = QgsRubberBand(self.canvas, Qgis.GeometryType.Polygon)
         mFillColor = QColor(254, 178, 76, 63)
         self.rubberBand.setColor(mFillColor)
         self.hoverRubberBand.setColor(QColor(255, 0, 0, 90))

@@ -240,9 +240,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
                 feed, attributes, dictVertInFrame, stepSize, point_flag_sink, fields
             )
 
-        elif (
-            inputLinePolyLyr.geometryType() == Qgis.GeometryType.Polygon
-        ):
+        elif inputLinePolyLyr.geometryType() == Qgis.GeometryType.Polygon:
             multiChildTwo = QgsProcessingMultiStepFeedback(4, multiStepFeedback)
             multiChildTwo.setCurrentStep(0)
 
@@ -604,9 +602,9 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
                     continue
                 geomFeatOne = vertFeatOne.geometry()
                 newFeat.setGeometry(geomFeatOne)
-                newFeat["Flag"] = self.tr(
-                    "Attributes {0} are different."
-                ).format(", ".join(diffAttrs))
+                newFeat["Flag"] = self.tr("Attributes {0} are different.").format(
+                    ", ".join(diffAttrs)
+                )
                 sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
             else:
                 geomVertFlag = dictVertInFrame[wktSpecifVert][0].geometry()

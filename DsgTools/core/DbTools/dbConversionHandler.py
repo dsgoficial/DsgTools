@@ -826,7 +826,11 @@ def write_output_features(
             continue
         get_output_feature_lambda = lambda x: get_output_feature(x, outputLayer)
         outputLayer.startEditing()
-        outputLayer.beginEditCommand(QCoreApplication.translate("dbConversionHandler", "Writing converted features on layer {0}.").format(lyrName))
+        outputLayer.beginEditCommand(
+            QCoreApplication.translate(
+                "dbConversionHandler", "Writing converted features on layer {0}."
+            ).format(lyrName)
+        )
         outputLayer.addFeatures(list(map(get_output_feature_lambda, featDictList)))
         outputLayer.endEditCommand()
     return notConvertedDict

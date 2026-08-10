@@ -292,7 +292,9 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 continue
             sink.addFeatures(list(map(output_data, outputFeatures)))
             if current % 500 == 0:
-                multiStepFeedback.pushInfo(self.tr("Processed {0}/{1}.").format(current, nFeats))
+                multiStepFeedback.pushInfo(
+                    self.tr("Processed {0}/{1}.").format(current, nFeats)
+                )
 
         return {self.OUTPUT: dest_id}
 

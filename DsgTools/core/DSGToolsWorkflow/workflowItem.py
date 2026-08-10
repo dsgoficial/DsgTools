@@ -93,7 +93,11 @@ class FlagSettings:
 
     def __post_init__(self):
         if self.onFlagsRaised not in ("halt", "warn", "ignore"):
-            raise ValueError(QCoreApplication.translate("WorkflowItem", "Invalid on flags raised flag."))
+            raise ValueError(
+                QCoreApplication.translate(
+                    "WorkflowItem", "Invalid on flags raised flag."
+                )
+            )
 
 
 @dataclass
@@ -395,9 +399,9 @@ class DSGToolsWorkflowItem(QObject):
         self.currentTask = None
         self.changeCurrentStatus(
             status=ExecutionStatus.CANCELED,
-            executionMessage=self.tr(
-                "Workflow item {0} canceled by user."
-            ).format(self.displayName),
+            executionMessage=self.tr("Workflow item {0} canceled by user.").format(
+                self.displayName
+            ),
         )
 
     def getTaskRunningFunction(self) -> Callable:
@@ -470,9 +474,9 @@ class DSGToolsWorkflowItem(QObject):
                 )
                 self.changeCurrentStatus(
                     status=status,
-                    executionMessage=self.tr(
-                        "Workflow item {0} {1}"
-                    ).format(self.displayName, statusMsg),
+                    executionMessage=self.tr("Workflow item {0} {1}").format(
+                        self.displayName, statusMsg
+                    ),
                 )
                 self.feedback.setProgress(100)
             else:
@@ -649,9 +653,7 @@ class DSGToolsWorkflowItem(QObject):
 
     def enableFeatureCount(self, lyr):
         root = QgsProject.instance().layerTreeRoot()
-        lyrNode = next(
-            (n for n in root.findLayers() if n.layerId() == lyr.id()), None
-        )
+        lyrNode = next((n for n in root.findLayers() if n.layerId() == lyr.id()), None)
         if lyrNode is not None:
             lyrNode.setCustomProperty("showFeatureCount", True)
 

@@ -245,7 +245,15 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
             wkbSet.add(geom)
             flagText = self.tr(
                 "Feature from layer {0} with {1}={2} has distance smaller than {3} from feature from layer {4} with {5}={6}"
-            ).format(layerApre, idAText, featA[lyrAPkFieldName], distance, layerBpre, idBText, featB[lyrAPkFieldName])
+            ).format(
+                layerApre,
+                idAText,
+                featA[lyrAPkFieldName],
+                distance,
+                layerBpre,
+                idBText,
+                featB[lyrAPkFieldName],
+            )
             self.flagFeature(geom, flagText)
             multiStepFeedback.setProgress(current * stepSize)
 

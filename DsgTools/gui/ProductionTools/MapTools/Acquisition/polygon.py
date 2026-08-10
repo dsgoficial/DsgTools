@@ -33,30 +33,18 @@ class Polygon(GeometricaAcquisition):
 
     def endGeometry(self):
         if len(self.geometry) > 2:
-            if (
-                self.iface.activeLayer().geometryType()
-                == Qgis.GeometryType.Polygon
-            ):
+            if self.iface.activeLayer().geometryType() == Qgis.GeometryType.Polygon:
                 geom = QgsGeometry.fromPolygonXY([self.geometry])
-            elif (
-                self.iface.activeLayer().geometryType()
-                == Qgis.GeometryType.Line
-            ):
+            elif self.iface.activeLayer().geometryType() == Qgis.GeometryType.Line:
                 geom = QgsGeometry.fromPolylineXY(self.geometry)
             self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
             self.createGeometry(geom)
 
     def endGeometryFree(self):
         if len(self.geometry) > 2:
-            if (
-                self.iface.activeLayer().geometryType()
-                == Qgis.GeometryType.Polygon
-            ):
+            if self.iface.activeLayer().geometryType() == Qgis.GeometryType.Polygon:
                 geom = QgsGeometry.fromPolygonXY([self.geometry])
-            elif (
-                self.iface.activeLayer().geometryType()
-                == Qgis.GeometryType.Line
-            ):
+            elif self.iface.activeLayer().geometryType() == Qgis.GeometryType.Line:
                 geom = QgsGeometry.fromPolylineXY(self.geometry + [self.geometry[0]])
             self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
             self.createGeometry(geom)
@@ -74,9 +62,7 @@ class Polygon(GeometricaAcquisition):
     def canvasReleaseEvent(self, event):
         event.snapPoint()  # snap!!!
         if self.snapCursorRubberBand:
-            self.snapCursorRubberBand.reset(
-                geometryType=Qgis.GeometryType.Point
-            )
+            self.snapCursorRubberBand.reset(geometryType=Qgis.GeometryType.Point)
             self.snapCursorRubberBand.hide()
             self.snapCursorRubberBand = None
         pointMap = QgsPointXY(event.mapPoint())
@@ -182,9 +168,7 @@ class Polygon(GeometricaAcquisition):
     def canvasMoveEvent(self, event):
         if self.snapCursorRubberBand:
             self.snapCursorRubberBand.hide()
-            self.snapCursorRubberBand.reset(
-                geometryType=Qgis.GeometryType.Point
-            )
+            self.snapCursorRubberBand.reset(geometryType=Qgis.GeometryType.Point)
             self.snapCursorRubberBand = None
         oldPoint = QgsPointXY(event.mapPoint())
         event.snapPoint()

@@ -131,7 +131,9 @@ class MenuEditorDialog(QtWidgets.QDialog):
 
     @QtCore.pyqtSlot(bool)
     def on_importMenuBtn_clicked(self):
-        filePath = QtWidgets.QFileDialog.getOpenFileName(self, self.tr("Import Menu"), "Desktop", "*.json")
+        filePath = QtWidgets.QFileDialog.getOpenFileName(
+            self, self.tr("Import Menu"), "Desktop", "*.json"
+        )
         if not filePath[0]:
             return
         with open(filePath[0], "r") as f:

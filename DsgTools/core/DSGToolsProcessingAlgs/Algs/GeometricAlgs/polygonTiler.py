@@ -253,12 +253,11 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
             geom = feature.geometry()
 
             # Skip invalid, empty, or non-polygon geometries
-            if (
-                geom.isEmpty()
-                or geom.type() != Qgis.GeometryType.Polygon
-            ):
+            if geom.isEmpty() or geom.type() != Qgis.GeometryType.Polygon:
                 feedback.pushInfo(
-                    self.tr("Skipping feature {0} - not a valid polygon").format(feature.id())
+                    self.tr("Skipping feature {0} - not a valid polygon").format(
+                        feature.id()
+                    )
                 )
                 continue
 
@@ -305,9 +304,9 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
         # Report the number of tiles created
         mode_name = "fixed size" if tiling_mode == 0 else "grid division"
         feedback.pushInfo(
-            self.tr(
-                "Created {0} tiles from {1} input features using {2} mode"
-            ).format(tiles_created, source.featureCount(), mode_name)
+            self.tr("Created {0} tiles from {1} input features using {2} mode").format(
+                tiles_created, source.featureCount(), mode_name
+            )
         )
 
         # Return the output layer
@@ -318,9 +317,9 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
         expression = QgsExpression(expression_string)
         if expression.hasParserError():
             raise QgsProcessingException(
-                self.tr(
-                    "Error in {0} expression: {1}"
-                ).format(parameter_name, expression.parserErrorString())
+                self.tr("Error in {0} expression: {1}").format(
+                    parameter_name, expression.parserErrorString()
+                )
             )
 
         result = expression.evaluate(context)
@@ -414,10 +413,15 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
                 "(tile size: {3}×{4}, overlap: {5}×{6}, "
                 "step: {7}×{8})"
             ).format(
-                feature.id(), rows, cols,
-                f"{tile_width:.1f}", f"{tile_height:.1f}",
-                f"{overlap_x:.1f}", f"{overlap_y:.1f}",
-                f"{step_x:.1f}", f"{step_y:.1f}",
+                feature.id(),
+                rows,
+                cols,
+                f"{tile_width:.1f}",
+                f"{tile_height:.1f}",
+                f"{overlap_x:.1f}",
+                f"{overlap_y:.1f}",
+                f"{step_x:.1f}",
+                f"{step_y:.1f}",
             )
         )
 
@@ -488,7 +492,9 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
         cell_height = base_cell_height * (1.0 + overlap_y_fraction)
 
         feedback.pushInfo(
-            self.tr("Feature {0}: Creating {1}×{2} grid tiles").format(feature.id(), rows, columns)
+            self.tr("Feature {0}: Creating {1}×{2} grid tiles").format(
+                feature.id(), rows, columns
+            )
         )
 
         tiles_count = 0

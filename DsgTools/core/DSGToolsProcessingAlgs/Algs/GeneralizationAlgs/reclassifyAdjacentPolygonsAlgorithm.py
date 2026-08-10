@@ -196,36 +196,26 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                 )
             )
         self.algRunner = AlgRunner()
-        vegLyr = self.parameterAsVectorLayer(
-            parameters, self.INPUT_VEGETATION, context
-        )
-        waterLyr = self.parameterAsVectorLayer(
-            parameters, self.INPUT_WATER, context
-        )
+        vegLyr = self.parameterAsVectorLayer(parameters, self.INPUT_VEGETATION, context)
+        waterLyr = self.parameterAsVectorLayer(parameters, self.INPUT_WATER, context)
         builtUpLyr = self.parameterAsVectorLayer(
             parameters, self.INPUT_BUILT_UP, context
         )
-        frameLyr = self.parameterAsVectorLayer(
-            parameters, self.INPUT_FRAME, context
-        )
-        classFieldName = self.parameterAsStrings(
-            parameters, self.LABEL_FIELD, context
-        )[0]
-        waterValue = self.parameterAsInt(
-            parameters, self.WATER_CLASS_VALUE, context
-        )
+        frameLyr = self.parameterAsVectorLayer(parameters, self.INPUT_FRAME, context)
+        classFieldName = self.parameterAsStrings(parameters, self.LABEL_FIELD, context)[
+            0
+        ]
+        waterValue = self.parameterAsInt(parameters, self.WATER_CLASS_VALUE, context)
         builtUpValue = self.parameterAsInt(
             parameters, self.BUILT_UP_CLASS_VALUE, context
         )
-        defaultMinArea = self.parameterAsDouble(
-            parameters, self.MIN_AREA, context
-        )
+        defaultMinArea = self.parameterAsDouble(parameters, self.MIN_AREA, context)
         rulesJson = self.parameterAsString(
             parameters, self.GENERALIZATION_RULES, context
         )
 
-        nonGrowingClasses, classToGroup, sizeThresholds = (
-            self.parseGeneralizationRules(rulesJson, defaultMinArea, feedback)
+        nonGrowingClasses, classToGroup, sizeThresholds = self.parseGeneralizationRules(
+            rulesJson, defaultMinArea, feedback
         )
         thresholdPhases = self.groupThresholds(sizeThresholds)
         nPhases = len(thresholdPhases)
@@ -240,10 +230,18 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Preparing layers"))
         waterReady = self._ensureClassField(
-            waterLyr, classFieldName, waterValue, context, multiStepFeedback,
+            waterLyr,
+            classFieldName,
+            waterValue,
+            context,
+            multiStepFeedback,
         )
         builtUpReady = self._ensureClassField(
-            builtUpLyr, classFieldName, builtUpValue, context, multiStepFeedback,
+            builtUpLyr,
+            classFieldName,
+            builtUpValue,
+            context,
+            multiStepFeedback,
         )
         # Collect actual non-growing class values from the layers
         waterClasses = {
@@ -278,9 +276,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
 
         # Compute frame boundary for edge detection
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(
-            self.tr("Computing frame boundary")
-        )
+        multiStepFeedback.setProgressText(self.tr("Computing frame boundary"))
         # Dissolve frame first to merge adjacent tiles, then extract
         # outer boundary (avoids marking internal tile edges as frame border)
         dissolvedFrame = self.algRunner.runDissolve(
@@ -299,16 +295,12 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             for feat in frameBoundaryLyr.getFeatures()
             if not feat.geometry().isEmpty()
         ]
-        frameBoundaryGeom = (
-            QgsGeometry.unaryUnion(geomList) if geomList else None
-        )
+        frameBoundaryGeom = QgsGeometry.unaryUnion(geomList) if geomList else None
         currentStep += 1
 
         # Initial dissolve + multipart to singlepart
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(
-            self.tr("Initial dissolve by class field")
-        )
+        multiStepFeedback.setProgressText(self.tr("Initial dissolve by class field"))
         cacheLyr = self.algRunner.runDissolve(
             inputLyr=mergedLyr,
             context=context,
@@ -319,25 +311,21 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(
-            self.tr("Converting multipart to singlepart")
-        )
+        multiStepFeedback.setProgressText(self.tr("Converting multipart to singlepart"))
         cacheLyr = self.algRunner.runMultipartToSingleParts(
-            inputLayer=cacheLyr, context=context, feedback=multiStepFeedback,
+            inputLayer=cacheLyr,
+            context=context,
+            feedback=multiStepFeedback,
         )
         currentStep += 1
 
         # Configure geodetic area calculator (handles geographic CRS like 4674)
         distArea = QgsDistanceArea()
-        distArea.setSourceCrs(
-            cacheLyr.sourceCrs(), context.transformContext()
-        )
+        distArea.setSourceCrs(cacheLyr.sourceCrs(), context.transformContext())
         distArea.setEllipsoid(cacheLyr.sourceCrs().ellipsoidAcronym())
 
         if nPhases > 1:
-            multiStepFeedback.pushInfo(
-                self.tr("Processing in %d phases") % nPhases
-            )
+            multiStepFeedback.pushInfo(self.tr("Processing in %d phases") % nPhases)
 
         # Multi-phase reclassification
         for phaseIdx, (threshold, dnList) in enumerate(thresholdPhases):
@@ -354,28 +342,22 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                     % (phaseIdx + 1, nPhases, threshold, str(dnList))
                 )
 
-            specificDNs = {
-                dn for dn, _ in sizeThresholds.items() if dn != "default"
-            }
+            specificDNs = {dn for dn, _ in sizeThresholds.items() if dn != "default"}
 
             # Build graph
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(
-                self.tr("Building adjacency graph")
-            )
-            G, featDict, idSet, featidToFid, areaCache = (
-                self.buildAuxStructures(
-                    nx=nx,
-                    inputLyr=cacheLyr,
-                    classFieldName=classFieldName,
-                    threshold=threshold,
-                    dnList=dnList,
-                    specificDNs=specificDNs,
-                    frameBoundaryGeom=frameBoundaryGeom,
-                    distArea=distArea,
-                    context=context,
-                    feedback=multiStepFeedback,
-                )
+            multiStepFeedback.setProgressText(self.tr("Building adjacency graph"))
+            G, featDict, idSet, featidToFid, areaCache = self.buildAuxStructures(
+                nx=nx,
+                inputLyr=cacheLyr,
+                classFieldName=classFieldName,
+                threshold=threshold,
+                dnList=dnList,
+                specificDNs=specificDNs,
+                frameBoundaryGeom=frameBoundaryGeom,
+                distArea=distArea,
+                context=context,
+                feedback=multiStepFeedback,
             )
             currentStep += 1
 
@@ -402,13 +384,11 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                 self.tr("Applying updates and dissolving")
             )
             if updateDict:
-                fieldIdx = cacheLyr.dataProvider().fields().indexFromName(
-                    classFieldName
+                fieldIdx = (
+                    cacheLyr.dataProvider().fields().indexFromName(classFieldName)
                 )
                 cacheLyr.startEditing()
-                cacheLyr.beginEditCommand(
-                    "Reclassify phase %d" % (phaseIdx + 1)
-                )
+                cacheLyr.beginEditCommand("Reclassify phase %d" % (phaseIdx + 1))
                 dp = cacheLyr.dataProvider()
                 for featid, classValue in updateDict.items():
                     if multiStepFeedback.isCanceled():
@@ -416,9 +396,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                     providerFid = featidToFid.get(featid)
                     if providerFid is None:
                         continue
-                    dp.changeAttributeValues(
-                        {providerFid: {fieldIdx: classValue}}
-                    )
+                    dp.changeAttributeValues({providerFid: {fieldIdx: classValue}})
                 cacheLyr.endEditCommand()
                 multiStepFeedback.pushInfo(
                     self.tr("  Updated %d features.") % len(updateDict)
@@ -460,7 +438,12 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         return {}
 
     def _ensureClassField(
-        self, layer, classFieldName, defaultValue, context, feedback,
+        self,
+        layer,
+        classFieldName,
+        defaultValue,
+        context,
+        feedback,
     ):
         """If the layer already has classFieldName, return it as-is.
         Otherwise create the field with a fixed default value."""
@@ -484,8 +467,15 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         )
 
     def writeBackToLayers(
-        self, cacheLyr, classFieldName, vegLyr, waterLyr, builtUpLyr,
-        waterClasses, builtUpClasses, feedback,
+        self,
+        cacheLyr,
+        classFieldName,
+        vegLyr,
+        waterLyr,
+        builtUpLyr,
+        waterClasses,
+        builtUpClasses,
+        feedback,
     ):
         """Splits the processed cache layer by class value and writes back
         to each original layer. Preserves original attributes by matching
@@ -519,11 +509,20 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             if feedback.isCanceled():
                 return
             self._writeBackToSingleLayer(
-                lyr, feats, classFieldName, label, feedback,
+                lyr,
+                feats,
+                classFieldName,
+                label,
+                feedback,
             )
 
     def _writeBackToSingleLayer(
-        self, lyr, resultFeats, classFieldName, label, feedback,
+        self,
+        lyr,
+        resultFeats,
+        classFieldName,
+        label,
+        feedback,
     ):
         """Write result features back to a single layer, preserving
         original attributes where possible by matching via centroid."""
@@ -564,9 +563,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             # Find original feature whose centroid is closest
             centroid = srcFeat.geometry().centroid()
             if not centroid.isEmpty():
-                nearest = origIndex.nearestNeighbor(
-                    centroid.asPoint(), 1
-                )
+                nearest = origIndex.nearestNeighbor(centroid.asPoint(), 1)
                 if nearest:
                     origFeat = origDict[nearest[0]]
                     for i in range(lyr.fields().count()):
@@ -611,8 +608,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                     nonGrowingClasses.add(val)
             if nonGrowingClasses:
                 feedback.pushInfo(
-                    self.tr("Non-growing classes: %s")
-                    % str(nonGrowingClasses)
+                    self.tr("Non-growing classes: %s") % str(nonGrowingClasses)
                 )
 
         if "class_groups" in rules:
@@ -624,8 +620,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                         classToGroup[m] = groupName
             if classToGroup:
                 feedback.pushInfo(
-                    self.tr("Loaded %d class-to-group mappings.")
-                    % len(classToGroup)
+                    self.tr("Loaded %d class-to-group mappings.") % len(classToGroup)
                 )
 
         if "size_thresholds" in rules:
@@ -637,9 +632,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                         self.tr("Skipping invalid size threshold: %s -> %s")
                         % (key, value)
                     )
-            feedback.pushInfo(
-                self.tr("Size thresholds: %s") % str(sizeThresholds)
-            )
+            feedback.pushInfo(self.tr("Size thresholds: %s") % str(sizeThresholds))
 
         return nonGrowingClasses, classToGroup, sizeThresholds
 
@@ -650,8 +643,17 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         return sorted(groups.items(), key=lambda x: x[0])
 
     def buildAuxStructures(
-        self, nx, inputLyr, classFieldName, threshold, dnList,
-        specificDNs, frameBoundaryGeom, distArea, context, feedback,
+        self,
+        nx,
+        inputLyr,
+        classFieldName,
+        threshold,
+        dnList,
+        specificDNs,
+        frameBoundaryGeom,
+        distArea,
+        context,
+        feedback,
     ):
         G = nx.Graph()
         featDict = dict()
@@ -661,9 +663,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
 
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(
-            self.tr("Building spatial index")
-        )
+        multiStepFeedback.setProgressText(self.tr("Building spatial index"))
         spatialIdx = QgsSpatialIndex()
         allFeatDict = dict()
         nFeats = inputLyr.featureCount()
@@ -713,8 +713,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.setProgressText(
-            self.tr("Computing shared boundaries (%d candidates)")
-            % nCandidates
+            self.tr("Computing shared boundaries (%d candidates)") % nCandidates
         )
         stepSize = 100 / nCandidates
 
@@ -747,9 +746,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                     boundaryCache[neighborFid] = QgsGeometry(
                         neighborGeom.constGet().boundary()
                     )
-                sharedGeom = candidateBoundary.intersection(
-                    boundaryCache[neighborFid]
-                )
+                sharedGeom = candidateBoundary.intersection(boundaryCache[neighborFid])
                 if sharedGeom.isEmpty() or sharedGeom.isNull():
                     continue
                 sharedLength = sharedGeom.length()
@@ -769,9 +766,16 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         return G, featDict, idSet, featidToFid, areaCache
 
     def reclassifyPolygons(
-        self, G, featDict, anchorIdsSet, candidateIdSet,
-        classFieldName, nonGrowingClasses, classToGroup,
-        areaCache, feedback,
+        self,
+        G,
+        featDict,
+        anchorIdsSet,
+        candidateIdSet,
+        classFieldName,
+        nonGrowingClasses,
+        classToGroup,
+        areaCache,
+        feedback,
     ):
         updateDict = dict()
         nIds = len(candidateIdSet)
@@ -814,9 +818,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             return None
 
         # Phase 1: degree-1 candidates whose only neighbor is an anchor
-        for nodeId in set(
-            n for n in G.nodes if G.degree(n) == 1
-        ) - anchorIdsSet:
+        for nodeId in set(n for n in G.nodes if G.degree(n) == 1) - anchorIdsSet:
             if feedback.isCanceled():
                 return updateDict
             neighborId = next(iter(G.neighbors(nodeId)))
@@ -899,9 +901,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         )
 
     def tr(self, string):
-        return QCoreApplication.translate(
-            "ReclassifyAdjacentPolygonsAlgorithm", string
-        )
+        return QCoreApplication.translate("ReclassifyAdjacentPolygonsAlgorithm", string)
 
     def createInstance(self):
         return ReclassifyAdjacentPolygonsAlgorithm()

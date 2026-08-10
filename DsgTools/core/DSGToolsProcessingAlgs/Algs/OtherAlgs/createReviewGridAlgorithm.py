@@ -91,7 +91,8 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             type=QgsProcessingParameterNumber.Integer,
         )
         paramRelatedTask.setFlags(
-            paramRelatedTask.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
+            paramRelatedTask.flags()
+            | QgsProcessingParameterDefinition.Flag.FlagAdvanced
         )
         self.addParameter(paramRelatedTask)
 

@@ -430,7 +430,9 @@ class LayerHandler(QObject):
             parameterDict = self.getDestinationParameters(lyr)
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(3 * i)
-                multiStepFeedback.pushInfo(self.tr("Building {0} input dict").format(lyr.name()))
+                multiStepFeedback.pushInfo(
+                    self.tr("Building {0} input dict").format(lyr.name())
+                )
             inputDict = self.buildInputDict(
                 lyr, onlySelected=onlySelected, feedback=multiStepFeedback
             )
@@ -456,7 +458,9 @@ class LayerHandler(QObject):
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, lyr)
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(3 * i + 2)
-                multiStepFeedback.pushInfo(self.tr("Updating {0} features").format(lyr.name()))
+                multiStepFeedback.pushInfo(
+                    self.tr("Updating {0} features").format(lyr.name())
+                )
             self.updateOriginalLayerFeatures(
                 lyr,
                 inputDict,
@@ -1222,10 +1226,7 @@ class LayerHandler(QObject):
             geom = feat.geometry()
             if not feat.hasGeometry() or geom.isNull() or geom.isEmpty():
                 return featid
-            if (
-                geom.type() == Qgis.GeometryType.Line
-                and geom.length() < tol
-            ):
+            if geom.type() == Qgis.GeometryType.Line and geom.length() < tol:
                 return featid
             geom.removeDuplicateNodes()
             fixedGeom = geom.makeValid()
@@ -1734,11 +1735,7 @@ class LayerHandler(QObject):
         :param inputLyr: (QgsVectorLayer) layer to run build the aux structure.
         :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
         """
-        nSteps = (
-            3
-            if inputLyr.geometryType() == Qgis.GeometryType.Polygon
-            else 2
-        )
+        nSteps = 3 if inputLyr.geometryType() == Qgis.GeometryType.Polygon else 2
         algRunner = AlgRunner() if algRunner is None else algRunner
         context = (
             dataobjects.createContext(feedback=feedback) if context is None else context

@@ -154,10 +154,14 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         for folderKey, geomDict in self.relatedPolygonsDict.items():
             for inner, (geomWkb, fileNameList) in enumerate(geomDict.items()):
                 multiStepFeedback.pushInfo(
-                    self.tr("Evaluating {0}/{1} seamlines").format(currentSeamline+1, nInputs//2)
+                    self.tr("Evaluating {0}/{1} seamlines").format(
+                        currentSeamline + 1, nInputs // 2
+                    )
                 )
                 multiStepFeedback.setProgressText(
-                    self.tr("Evaluating {0}/{1} seamlines").format(currentSeamline+1, nInputs//2)
+                    self.tr("Evaluating {0}/{1} seamlines").format(
+                        currentSeamline + 1, nInputs // 2
+                    )
                 )
                 multiStepFeedback.setCurrentStep(currentIndex)
                 if multiStepFeedback.isCanceled():

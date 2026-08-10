@@ -117,7 +117,9 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
             in f.geometry().constGet().isValid()[1]
         )
         inputLyr.startEditing()
-        inputLyr.beginEditCommand(self.tr("Deleting null values from {0}").format(inputLyr.name()))
+        inputLyr.beginEditCommand(
+            self.tr("Deleting null values from {0}").format(inputLyr.name())
+        )
         inputLyr.deleteFeatures(list(idsToDeleteSet))
         inputLyr.endEditCommand()
 

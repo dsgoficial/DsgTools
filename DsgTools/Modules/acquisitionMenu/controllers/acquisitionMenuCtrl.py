@@ -86,9 +86,13 @@ class AcquisitionMenuCtrl:
         tabNames = self.getTabNamesMenuEditor()
         layerNames = self.getLoadedVectorLayerNames()
         if not tabNames:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "Add a tab first!"))
+            raise Exception(
+                QCoreApplication.translate("AcquisitionMenuCtrl", "Add a tab first!")
+            )
         if not layerNames:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "Add a layer first!"))
+            raise Exception(
+                QCoreApplication.translate("AcquisitionMenuCtrl", "Add a layer first!")
+            )
         self.addMenuButton = self.widgetFactory.createWidget("AddButtonDialog", self)
         self.addMenuButton.setAttributeTableWidget(self.getAttributeTableWidget())
         self.addMenuButton.setTabComboWidget(self.getFilterComboBoxWidget())
@@ -104,9 +108,13 @@ class AcquisitionMenuCtrl:
         tabNames = self.getTabNamesMenuEditor()
         layerNames = self.getLoadedVectorLayerNames()
         if not tabNames:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "Add a tab first!"))
+            raise Exception(
+                QCoreApplication.translate("AcquisitionMenuCtrl", "Add a tab first!")
+            )
         if not layerNames:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "Add a layer first!"))
+            raise Exception(
+                QCoreApplication.translate("AcquisitionMenuCtrl", "Add a layer first!")
+            )
         self.addMenuButton = self.widgetFactory.createWidget("AddButtonDialog", self)
         self.addMenuButton.setAttributeTableWidget(self.getAttributeTableWidget())
         self.addMenuButton.setTabComboWidget(self.getFilterComboBoxWidget())
@@ -123,9 +131,13 @@ class AcquisitionMenuCtrl:
         tabNames = self.getTabNamesMenuEditor()
         layerNames = self.getLoadedVectorLayerNames()
         if not tabNames:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "Add a tab first!"))
+            raise Exception(
+                QCoreApplication.translate("AcquisitionMenuCtrl", "Add a tab first!")
+            )
         if not layerNames:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "Add a layer first!"))
+            raise Exception(
+                QCoreApplication.translate("AcquisitionMenuCtrl", "Add a layer first!")
+            )
         self.addMenuButton = self.widgetFactory.createWidget("AddButtonDialog", self)
         self.addMenuButton.setAttributeTableWidget(self.getAttributeTableWidget())
         self.addMenuButton.setTabComboWidget(self.getFilterComboBoxWidget())
@@ -207,9 +219,15 @@ class AcquisitionMenuCtrl:
     def validLayersToReclassification(self, buttonConfig):
         layers = self.qgis.getVectorLayersByName(buttonConfig["buttonLayer"])
         if not layers:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "Layer not found!"))
+            raise Exception(
+                QCoreApplication.translate("AcquisitionMenuCtrl", "Layer not found!")
+            )
         if len(layers) > 1:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "There are duplicate layers!"))
+            raise Exception(
+                QCoreApplication.translate(
+                    "AcquisitionMenuCtrl", "There are duplicate layers!"
+                )
+            )
         layer = layers[0]
         layerName = (
             layer.dataProvider().uri().table()
@@ -220,12 +238,21 @@ class AcquisitionMenuCtrl:
             layerName, layer.geometryType()
         )
         if not layersToReclassification:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "There are no layers for reclassification!"))
+            raise Exception(
+                QCoreApplication.translate(
+                    "AcquisitionMenuCtrl", "There are no layers for reclassification!"
+                )
+            )
         noActive = False
         for l in layersToReclassification:
             noActive = l.id() != iface.activeLayer().id()
         if noActive:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "Select only features from the layer currently in use!"))
+            raise Exception(
+                QCoreApplication.translate(
+                    "AcquisitionMenuCtrl",
+                    "Select only features from the layer currently in use!",
+                )
+            )
 
     def reclassify(self, buttonConfig, reclassifyData):
         destinatonLayerName = buttonConfig["buttonLayer"]
@@ -249,12 +276,8 @@ class AcquisitionMenuCtrl:
                 Qgis.GeometryType.Point,
                 Qgis.GeometryType.Polygon,
             ),
-            Qgis.GeometryType.Line: (
-                Qgis.GeometryType.Line,
-            ),
-            Qgis.GeometryType.Polygon: (
-                Qgis.GeometryType.Polygon,
-            ),
+            Qgis.GeometryType.Line: (Qgis.GeometryType.Line,),
+            Qgis.GeometryType.Polygon: (Qgis.GeometryType.Polygon,),
         }
         return [
             l
@@ -267,9 +290,15 @@ class AcquisitionMenuCtrl:
         self.disconnectQgisSignals()
         layers = self.qgis.getVectorLayersByName(buttonConfig["buttonLayer"])
         if not layers:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "Layer not found!"))
+            raise Exception(
+                QCoreApplication.translate("AcquisitionMenuCtrl", "Layer not found!")
+            )
         if len(layers) > 1:
-            raise Exception(QCoreApplication.translate("AcquisitionMenuCtrl", "There are duplicate layers!"))
+            raise Exception(
+                QCoreApplication.translate(
+                    "AcquisitionMenuCtrl", "There are duplicate layers!"
+                )
+            )
         layer = layers[0]
         self.ignoreSignal = True
         self.qgis.setActiveLayer(layer)

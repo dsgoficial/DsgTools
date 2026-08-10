@@ -33,7 +33,9 @@ class HTMLHelpCreator(object):
 
             return html_string.format(image_path)
         except:
-            return QCoreApplication.translate("HTMLHelpCreator", "No help available for this algorithm.")
+            return QCoreApplication.translate(
+                "HTMLHelpCreator", "No help available for this algorithm."
+            )
 
     def helpUrl(self, algorithm_name):
 

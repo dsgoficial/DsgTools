@@ -186,7 +186,9 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
         for current, (featid, vertexSet) in enumerate(vertexDict.items()):
             if multiStepFeedback.isCanceled():
                 return
-            flagText = self.tr("Line with id={0} from input has construction errors with reference layer.").format(featid)
+            flagText = self.tr(
+                "Line with id={0} from input has construction errors with reference layer."
+            ).format(featid)
             baseGeom, *geomList = list(vertexSet)
             if len(geomList) > 0:
                 for g in geomList:

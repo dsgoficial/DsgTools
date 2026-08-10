@@ -113,8 +113,7 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Building search structure..."))
         pointDict = self.buildPointDict(
             vertexLayer,
-            inpuIsPolygon=inputLyr.geometryType()
-            == Qgis.GeometryType.Polygon,
+            inpuIsPolygon=inputLyr.geometryType() == Qgis.GeometryType.Polygon,
             feedback=multiStepFeedback,
         )
         multiStepFeedback.setCurrentStep(3)

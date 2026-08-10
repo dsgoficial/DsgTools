@@ -222,7 +222,9 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
         )
 
         # Step 1: Collect all single-part lines grouped by elevation
-        feedback.setProgressText(self.tr("Step 1/6: Collecting and exploding geometries..."))
+        feedback.setProgressText(
+            self.tr("Step 1/6: Collecting and exploding geometries...")
+        )
         elevGroups = {}
         featureCount = inputLayer.featureCount()
         total = 100.0 / featureCount if featureCount else 0
@@ -290,9 +292,9 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
 
         # Step 4: Filter closed curves by minimum perimeter
         feedback.setProgressText(
-            self.tr("Step 4/6: Filtering closed contours under {0} m of perimeter...").format(
-                minClosedPerimeter
-            )
+            self.tr(
+                "Step 4/6: Filtering closed contours under {0} m of perimeter..."
+            ).format(minClosedPerimeter)
         )
         filteredLines = []
         # A geometria é levada ao CRS projetado já aqui, e não só na generalização:
@@ -360,7 +362,9 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             return {self.OUTPUT: destId}
 
         # Step 6: Clip by frame and create output features
-        feedback.setProgressText(self.tr("Step 6/6: Clipping by frame and writing output..."))
+        feedback.setProgressText(
+            self.tr("Step 6/6: Clipping by frame and writing output...")
+        )
         outputCount = len(generalizedLines)
 
         for i, (cota, isDepression, geom) in enumerate(generalizedLines):
@@ -405,16 +409,18 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
                 outFeat.setGeometry(
                     QgsGeometry.collectGeometry([QgsGeometry.fromPolylineXY(part)])
                 )
-                outFeat.setAttributes([
-                    str(uuid.uuid4()),                  # id
-                    int(cota),                          # cota
-                    1 if isIndexContour else 2,         # indice
-                    1 if isDepression else 2,           # depressao
-                    1,                                  # visivel
-                    2,                                  # dentro_massa_dagua
-                    str(int(cota)),                     # texto_edicao
-                    "",                                 # observacao
-                ])
+                outFeat.setAttributes(
+                    [
+                        str(uuid.uuid4()),  # id
+                        int(cota),  # cota
+                        1 if isIndexContour else 2,  # indice
+                        1 if isDepression else 2,  # depressao
+                        1,  # visivel
+                        2,  # dentro_massa_dagua
+                        str(int(cota)),  # texto_edicao
+                        "",  # observacao
+                    ]
+                )
                 sink.addFeature(outFeat, QgsFeatureSink.FastInsert)
 
             feedback.setProgress(80 + int((i / max(outputCount, 1)) * 20))
@@ -564,6 +570,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
     def _nurbfitLine(self, line, degree=3):
         """Apply B-spline interpolation to a polyline."""
         from scipy.interpolate import splprep, splev
+
         if len(line) <= degree + 1:
             return line
 
@@ -585,9 +592,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
         y_norm = (y - y_min) / scale
 
         try:
-            tck, u = splprep(
-                [x_norm, y_norm], s=0, k=degree, per=1 if closed else 0
-            )
+            tck, u = splprep([x_norm, y_norm], s=0, k=degree, per=1 if closed else 0)
 
             numPoints = len(line) * 10
             u_new = np.linspace(0, 1, numPoints)
@@ -596,10 +601,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             x_new = xn_new * scale + x_min
             y_new = yn_new * scale + y_min
 
-            output = [
-                QgsPointXY(float(xi), float(yi))
-                for xi, yi in zip(x_new, y_new)
-            ]
+            output = [QgsPointXY(float(xi), float(yi)) for xi, yi in zip(x_new, y_new)]
 
             if not closed:
                 output[0] = QgsPointXY(float(x[0]), float(y[0]))

@@ -119,7 +119,9 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
             if geom.isNull() or geom.isEmpty():
                 continue
 
-            smoothed_geom = self._smooth_geometry(geom, degree, smoothing_factor, segment_length, feedback)
+            smoothed_geom = self._smooth_geometry(
+                geom, degree, smoothing_factor, segment_length, feedback
+            )
             if smoothed_geom is not None:
                 out_feature = QgsFeature()
                 out_feature.setGeometry(smoothed_geom)
@@ -136,26 +138,35 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
             return False
         return line[0].distance(line[-1]) < tolerance
 
-    def _smooth_geometry(self, geometry, degree, smoothing_factor, segment_length, feedback=None):
+    def _smooth_geometry(
+        self, geometry, degree, smoothing_factor, segment_length, feedback=None
+    ):
         """Smooth a line geometry using B-spline (NURBfit)"""
         if geometry.isMultipart():
             parts = []
             for part in geometry.asMultiPolyline():
-                smoothed = self._smooth_line(part, degree, smoothing_factor, segment_length, feedback)
+                smoothed = self._smooth_line(
+                    part, degree, smoothing_factor, segment_length, feedback
+                )
                 if smoothed:
                     parts.append(smoothed)
             if parts:
                 return QgsGeometry.fromMultiPolylineXY(parts)
         else:
             line = geometry.asPolyline()
-            smoothed = self._smooth_line(line, degree, smoothing_factor, segment_length, feedback)
+            smoothed = self._smooth_line(
+                line, degree, smoothing_factor, segment_length, feedback
+            )
             if smoothed:
                 return QgsGeometry.fromPolylineXY(smoothed)
         return None
 
-    def _smooth_line(self, line, degree, smoothing_factor, segment_length, feedback=None):
+    def _smooth_line(
+        self, line, degree, smoothing_factor, segment_length, feedback=None
+    ):
         """Apply B-spline smoothing to a line"""
         from scipy.interpolate import splprep, splev
+
         if len(line) <= degree + 1:
             return line
 
@@ -199,8 +210,7 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
             y_new = yn_new * scale + y_min
 
             output_list = [
-                QgsPointXY(float(xi), float(yi))
-                for xi, yi in zip(x_new, y_new)
+                QgsPointXY(float(xi), float(yi)) for xi, yi in zip(x_new, y_new)
             ]
 
             if not is_closed:
@@ -214,7 +224,9 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
         except Exception as e:
             if feedback:
                 feedback.pushWarning(
-                    self.tr("Could not smooth line with {0} vertices: {1}").format(len(line), str(e))
+                    self.tr("Could not smooth line with {0} vertices: {1}").format(
+                        len(line), str(e)
+                    )
                 )
             return line
 

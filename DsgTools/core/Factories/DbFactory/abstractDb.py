@@ -208,7 +208,6 @@ class AbstractDb(QObject):
     def validateWithOutputDatabaseSchema(self, outputAbstractDb):
         return None
 
-
     def makeValidationSummary(self, invalidatedDataDict):
         """
         Makes the database conversion validation summary

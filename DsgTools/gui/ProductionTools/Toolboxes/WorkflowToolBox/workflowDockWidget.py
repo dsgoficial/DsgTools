@@ -526,7 +526,9 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             return
         self.iface.messageBar().pushMessage(
             self.tr("DSGTools Q&A Tool Box"),
-            self.tr("Workflow {0} execution has finished.").format(currentWorkflow.displayName),
+            self.tr("Workflow {0} execution has finished.").format(
+                currentWorkflow.displayName
+            ),
             Qgis.MessageLevel.Info,
             duration=3,
         )
@@ -578,17 +580,17 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
             # signal call
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Workflow Toolbox"),
-                self.tr(
-                    "Model {0} status changed to {1}."
-                ).format(workflowItem.displayName, status),
+                self.tr("Model {0} status changed to {1}.").format(
+                    workflowItem.displayName, status
+                ),
                 self.qgisStatusDict[code],
                 duration=3,
             )
         elif code != ExecutionStatus.INITIAL:
             QgsMessageLog.logMessage(
-                self.tr(
-                    "Model {0} status changed to {1}."
-                ).format(workflowItem.displayName, status),
+                self.tr("Model {0} status changed to {1}.").format(
+                    workflowItem.displayName, status
+                ),
                 "DSGTools Plugin",
                 self.qgisStatusDict[code],
             )
@@ -631,7 +633,9 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
         for row, workflowItem in enumerate(workflow.workflowItemList):
             tooltip = self.tr("Model name: {0}").format(workflowItem.displayName)
             if workflowItem.getDescription() != "":
-                tooltip += "\n\n" + self.tr("Model description: {0}").format(workflowItem.getDescription())
+                tooltip += "\n\n" + self.tr("Model description: {0}").format(
+                    workflowItem.getDescription()
+                )
             if workflowItem.flagsCanHaveFalsePositiveResults():
                 self.prepareIgnoreFlagMenuDictItem(
                     row, workflowItem.displayName, workflow
@@ -808,9 +812,9 @@ class WorkflowDockWidget(QDockWidget, FORM_CLASS):
                     QMessageBox.question(
                         self,
                         self.tr("DSGTools Q&A Tool Box: Confirm action"),
-                        self.tr(
-                            "Would you like to restart workflow '{0}'?"
-                        ).format(workflow.displayName),
+                        self.tr("Would you like to restart workflow '{0}'?").format(
+                            workflow.displayName
+                        ),
                         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                         defaultButton=QMessageBox.StandardButton.No,
                     )

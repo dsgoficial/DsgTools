@@ -269,17 +269,13 @@ class GeometricaAcquisition(QgsMapTool):
             )
             rubberBand.setFillColor(QColor(255, 0, 0, 40))
         elif geomType == Qgis.GeometryType.Line:
-            rubberBand = QgsRubberBand(
-                self.canvas, geometryType=Qgis.GeometryType.Line
-            )
+            rubberBand = QgsRubberBand(self.canvas, geometryType=Qgis.GeometryType.Line)
         rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
         return rubberBand
 
     def getSnapRubberBand(self):
-        rubberBand = QgsRubberBand(
-            self.canvas, geometryType=Qgis.GeometryType.Point
-        )
+        rubberBand = QgsRubberBand(self.canvas, geometryType=Qgis.GeometryType.Point)
         rubberBand.setFillColor(QColor(255, 0, 0, 40))
         rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)

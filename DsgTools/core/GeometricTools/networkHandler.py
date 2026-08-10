@@ -2051,7 +2051,9 @@ class NetworkHandler(QObject):
         cycleCount = 0
         while True:
             if feedback is not None:
-                multiStepFeedback.pushInfo(self.tr("Starting cycle {0}...").format(cycleCount))
+                multiStepFeedback.pushInfo(
+                    self.tr("Starting cycle {0}...").format(cycleCount)
+                )
                 multiStepFeedback.setCurrentStep(stepCount)
                 stepCount += 1
             nodeFlags_, inval_, val_ = self.directNetwork(

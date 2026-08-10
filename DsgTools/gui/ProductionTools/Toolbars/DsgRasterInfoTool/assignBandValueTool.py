@@ -91,12 +91,8 @@ class AssignBandValueTool(QgsMapTool):
         return setting
 
     def setRubberbandParameters(self):
-        self.rubberBand = QgsRubberBand(
-            self.canvas, Qgis.GeometryType.Polygon
-        )
-        self.hoverRubberBand = QgsRubberBand(
-            self.canvas, Qgis.GeometryType.Polygon
-        )
+        self.rubberBand = QgsRubberBand(self.canvas, Qgis.GeometryType.Polygon)
+        self.hoverRubberBand = QgsRubberBand(self.canvas, Qgis.GeometryType.Polygon)
         mFillColor = QColor(254, 178, 76, 63)
         self.rubberBand.setColor(mFillColor)
         self.hoverRubberBand.setColor(QColor(255, 0, 0, 90))

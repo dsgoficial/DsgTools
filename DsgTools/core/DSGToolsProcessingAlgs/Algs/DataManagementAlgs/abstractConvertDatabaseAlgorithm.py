@@ -343,9 +343,9 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
                 multiStepFeedback.pushInfo(
-                    self.tr(
-                        "Converting Features: step {0}/{1}"
-                    ).format(currentConversionStep, len(conversionMapList))
+                    self.tr("Converting Features: step {0}/{1}").format(
+                        currentConversionStep, len(conversionMapList)
+                    )
                 )
             featureProcessor = MappingFeatureProcessor(
                 mappingDictPath=conversionData["conversionJson"],

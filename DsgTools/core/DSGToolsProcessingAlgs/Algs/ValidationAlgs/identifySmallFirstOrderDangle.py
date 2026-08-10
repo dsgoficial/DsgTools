@@ -203,9 +203,9 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Raising flags..."))
         flagLambda = lambda x: self.flagFeature(
             x.geometry(),
-            flagText=self.tr(
-                "First order dangle on {0} smaller than {1}"
-            ).format(inputLyr.name(), minLength),
+            flagText=self.tr("First order dangle on {0} smaller than {1}").format(
+                inputLyr.name(), minLength
+            ),
         )
         list(
             map(

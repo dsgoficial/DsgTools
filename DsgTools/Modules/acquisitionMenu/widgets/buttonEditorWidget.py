@@ -21,7 +21,9 @@ class ButtonEditorWidget(TableEditorWidget):
         editBtn.clicked.connect(lambda *args, index=index: self.handleEditBtn(index))
         layout.addWidget(editBtn)
 
-        deleteBtn = self.createTableToolButton(self.tr("Delete"), self.getDeleteIconPath())
+        deleteBtn = self.createTableToolButton(
+            self.tr("Delete"), self.getDeleteIconPath()
+        )
         deleteBtn.clicked.connect(
             lambda *args, index=index: self.handleDeleteBtn(index)
         )

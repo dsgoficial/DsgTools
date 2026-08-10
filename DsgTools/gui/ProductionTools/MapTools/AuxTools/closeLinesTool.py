@@ -42,15 +42,15 @@ class CloseLinesTool(QgsMapTool):
         super(CloseLinesTool, self).__init__(self.canvas)
 
     def addTool(
-            self, 
-            manager, 
-            callback, 
-            parentMenu, 
-            iconBasePath,
-            parentButton=None,
-            defaultButton=False,
-        ):
-        self.parentButton=parentButton
+        self,
+        manager,
+        callback,
+        parentMenu,
+        iconBasePath,
+        parentButton=None,
+        defaultButton=False,
+    ):
+        self.parentButton = parentButton
         icon_path = iconBasePath + "/closedLines.png"
         toolTip = self.tr("DSGTools: Close Selected Lines")
         action = manager.add_action(
@@ -117,13 +117,19 @@ class CloseLinesTool(QgsMapTool):
         layer = iface.activeLayer()
         if not layer:
             iface.messageBar().pushMessage(
-                self.tr("Error"), self.tr("Select a valid layer"), level=Qgis.MessageLevel.Critical, duration=5
+                self.tr("Error"),
+                self.tr("Select a valid layer"),
+                level=Qgis.MessageLevel.Critical,
+                duration=5,
             )
             return
         selectedFeatures = layer.selectedFeatureCount()
         if selectedFeatures == 0:
             iface.messageBar().pushMessage(
-                self.tr("Error"), self.tr("No features selected"), level=Qgis.MessageLevel.Critical, duration=5
+                self.tr("Error"),
+                self.tr("No features selected"),
+                level=Qgis.MessageLevel.Critical,
+                duration=5,
             )
             return
         confirmation = self.confirmAction(selectedFeatures)
@@ -163,7 +169,9 @@ class CloseLinesTool(QgsMapTool):
         reply = QMessageBox.question(
             iface.mainWindow(),
             self.tr("Continue?"),
-            self.tr("Selected lines with close start and end vertices will be closed ({0} feature(s) selected). Do you want to continue?").format(selectedFeatures),
+            self.tr(
+                "Selected lines with close start and end vertices will be closed ({0} feature(s) selected). Do you want to continue?"
+            ).format(selectedFeatures),
             QMessageBox.StandardButton.Yes,
             QMessageBox.StandardButton.No,
         )

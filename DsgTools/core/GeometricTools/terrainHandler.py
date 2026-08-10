@@ -97,7 +97,10 @@ class TerrainSlice:
                 {
                     geomWkb: self.tr(
                         "Contour band with missing contour value between {0} and {1}"
-                    ).format(self.minHeighFeatOnSlice[self.contourElevationFieldName], self.maxHeightFeatOnSlice[self.contourElevationFieldName])
+                    ).format(
+                        self.minHeighFeatOnSlice[self.contourElevationFieldName],
+                        self.maxHeightFeatOnSlice[self.contourElevationFieldName],
+                    )
                 }
             )
         return flagDict
@@ -160,7 +163,9 @@ class TerrainModel:
             import networkx as nx
         except ImportError:
             raise ImportError(
-                self.tr("This algorithm requires the Python networkx library. Please install this library and try again.")
+                self.tr(
+                    "This algorithm requires the Python networkx library. Please install this library and try again."
+                )
             )
         self.nx = nx
         self.context = QgsProcessingContext()

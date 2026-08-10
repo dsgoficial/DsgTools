@@ -164,9 +164,7 @@ def _decompose_component(
             bbox_area = (xmax - xmin) * (ymax - ymin)
 
             tile_area = sum(
-                sub_area(rr, cc)
-                for rr in range(row, row_end)
-                for cc in range(c_s, c_e)
+                sub_area(rr, cc) for rr in range(row, row_end) for cc in range(c_s, c_e)
             )
             tile_count = sum(
                 sub_count(rr, cc)
@@ -269,12 +267,8 @@ class OptimalTileBBoxAlgorithm(QgsProcessingAlgorithm):
 
         feedback.pushInfo(self.tr("[ 2/3 ] Building coordinate grid..."))
         PREC = 8
-        xs = sorted(
-            {round(v, PREC) for t in tiles for v in (t["xmin"], t["xmax"])}
-        )
-        ys = sorted(
-            {round(v, PREC) for t in tiles for v in (t["ymin"], t["ymax"])}
-        )
+        xs = sorted({round(v, PREC) for t in tiles for v in (t["xmin"], t["xmax"])})
+        ys = sorted({round(v, PREC) for t in tiles for v in (t["ymin"], t["ymax"])})
         nx, ny = len(xs) - 1, len(ys) - 1
         xi = {v: i for i, v in enumerate(xs)}
         yi = {v: i for i, v in enumerate(ys)}

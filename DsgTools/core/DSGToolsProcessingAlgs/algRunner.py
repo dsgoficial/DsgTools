@@ -53,9 +53,8 @@ def _registerLayer(layer, context):
     surfaced as 'Could not load source layer for INPUT' in rulestatistics."""
     if context is not None:
         project = context.project()
-        if (
-            context.temporaryLayerStore().mapLayer(layer.id()) is not None
-            or (project is not None and project.mapLayer(layer.id()) is not None)
+        if context.temporaryLayerStore().mapLayer(layer.id()) is not None or (
+            project is not None and project.mapLayer(layer.id()) is not None
         ):
             return layer.id()
         clone = layer.clone()

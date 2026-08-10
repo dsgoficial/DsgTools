@@ -157,17 +157,11 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
             for value in unique_values:
                 # Create symbol based on geometry type
                 if layer.geometryType() == Qgis.GeometryType.Point:
-                    symbol = QgsSymbol.defaultSymbol(
-                        Qgis.GeometryType.Point
-                    )
+                    symbol = QgsSymbol.defaultSymbol(Qgis.GeometryType.Point)
                 elif layer.geometryType() == Qgis.GeometryType.Line:
-                    symbol = QgsSymbol.defaultSymbol(
-                        Qgis.GeometryType.Line
-                    )
+                    symbol = QgsSymbol.defaultSymbol(Qgis.GeometryType.Line)
                 else:  # Polygon
-                    symbol = QgsSymbol.defaultSymbol(
-                        Qgis.GeometryType.Polygon
-                    )
+                    symbol = QgsSymbol.defaultSymbol(Qgis.GeometryType.Polygon)
 
                 # Set random color
                 color = self.generateRandomColor()
@@ -223,7 +217,9 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
 
             feedback.setProgress(int((i / len(layersConfig)) * 70))
             feedback.setProgressText(
-                self.tr("Processing layer {0} of {1}...").format(i+1, len(layersConfig))
+                self.tr("Processing layer {0} of {1}...").format(
+                    i + 1, len(layersConfig)
+                )
             )
 
             currentLayer = layer
@@ -243,14 +239,16 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
                     )
                 except Exception as e:
                     feedback.pushWarning(
-                        self.tr(
-                            "Failed to apply filter to layer {0}: {1}"
-                        ).format(layer.name(), str(e))
+                        self.tr("Failed to apply filter to layer {0}: {1}").format(
+                            layer.name(), str(e)
+                        )
                     )
                     continue
 
             # Add class index field
-            feedback.setProgressText(self.tr("Adding field '{0}' to layer...").format(fieldName))
+            feedback.setProgressText(
+                self.tr("Adding field '{0}' to layer...").format(fieldName)
+            )
             try:
                 layerWithField = algRunner.runCreateFieldWithExpression(
                     inputLyr=currentLayer,
@@ -265,9 +263,9 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
                 )
             except Exception as e:
                 feedback.pushWarning(
-                    self.tr(
-                        "Failed to add field {0} to layer {1}: {2}"
-                    ).format(fieldName, layer.name(), str(e))
+                    self.tr("Failed to add field {0} to layer {1}: {2}").format(
+                        fieldName, layer.name(), str(e)
+                    )
                 )
                 continue
 
@@ -288,9 +286,9 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
                 processedLayers.append(finalLayer)
             except Exception as e:
                 feedback.pushWarning(
-                    self.tr(
-                        "Failed to add class_name field to layer {0}: {1}"
-                    ).format(layer.name(), str(e))
+                    self.tr("Failed to add class_name field to layer {0}: {1}").format(
+                        layer.name(), str(e)
+                    )
                 )
                 continue
 
@@ -311,7 +309,9 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
                 feedback=feedback,
             )
         except Exception as e:
-            raise QgsProcessingException(self.tr("Failed to merge layers: {0}").format(str(e)))
+            raise QgsProcessingException(
+                self.tr("Failed to merge layers: {0}").format(str(e))
+            )
 
         feedback.setProgress(85)
         feedback.setProgressText(self.tr("Writing output..."))

@@ -199,10 +199,7 @@ class MultiLayersCentroidsFlagDockWidget(
         for lyrid, featList in lyrsPointsInsideFlagPolygonDict.items():
             if featList == []:
                 continue
-            lyrFields = [
-                field.name()
-                for field in self.pointLayerDict[lyrid].fields()
-            ]
+            lyrFields = [field.name() for field in self.pointLayerDict[lyrid].fields()]
             for field in lyrFields:
                 if field in self.columns:
                     continue
@@ -228,10 +225,7 @@ class MultiLayersCentroidsFlagDockWidget(
         self.attributeTable.setRowCount(nRows)
         row = 0
         for lyrid in lyrsPointsInsideFlagPolygonDict:
-            lyrFields = [
-                field.name()
-                for field in self.pointLayerDict[lyrid].fields()
-            ]
+            lyrFields = [field.name() for field in self.pointLayerDict[lyrid].fields()]
             for feat in lyrsPointsInsideFlagPolygonDict[lyrid]:
                 self.lyrsNRowPointDict[row] = (lyrid, feat)
 

@@ -386,10 +386,7 @@ class InspectFeatures(QWidget, Ui_Form):
             self.zoomToLayer(layer=lyr, zoom=float(zoom))
             lyr.selectByIds(selectIdList)
 
-        if (
-            self.getIterateLayer().geometryType()
-            == Qgis.GeometryType.Point
-        ):
+        if self.getIterateLayer().geometryType() == Qgis.GeometryType.Point:
             self.iface.mapCanvas().zoomScale(float(zoom))
 
     @pyqtSlot(bool, name="on_inspectPushButton_toggled")

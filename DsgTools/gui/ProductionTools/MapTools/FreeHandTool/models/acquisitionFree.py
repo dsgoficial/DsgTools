@@ -275,9 +275,7 @@ class AcquisitionFree(gui.QgsMapTool):
         # Parâmetro de entrada: event (Evento)
         snapRubberBand = self.getSnapRubberBand()
         if snapRubberBand:
-            snapRubberBand.reset(
-                geometryType=core.Qgis.GeometryType.Point
-            )
+            snapRubberBand.reset(geometryType=core.Qgis.GeometryType.Point)
             snapRubberBand.hide()
             self.setSnapRubberBand(None)
         layer = self.getCanvas().currentLayer()
@@ -318,9 +316,7 @@ class AcquisitionFree(gui.QgsMapTool):
             snapRubberBand = self.getSnapRubberBand()
             if snapRubberBand:
                 snapRubberBand.hide()
-                snapRubberBand.reset(
-                    geometryType=core.Qgis.GeometryType.Point
-                )
+                snapRubberBand.reset(geometryType=core.Qgis.GeometryType.Point)
                 self.setSnapRubberBand(None)
             oldPoint = event.mapPoint()
             event.snapPoint()
@@ -356,7 +352,9 @@ class AcquisitionFree(gui.QgsMapTool):
                     measure_dist, QgsUnitTypes.DistanceMeters
                 )
                 # Tr
-                txt = "<b>" + self.tr("Length: {0} m").format(f"{dist:.3f}") + "</b><br/>"
+                txt = (
+                    "<b>" + self.tr("Length: {0} m").format(f"{dist:.3f}") + "</b><br/>"
+                )
                 self.tooltip.showText(
                     self.canvas.mapToGlobal(self.canvas.mouseLastXY()),
                     txt,
@@ -374,7 +372,9 @@ class AcquisitionFree(gui.QgsMapTool):
                     measure_dist, QgsUnitTypes.AreaSquareMeters
                 )
                 # Tr
-                txt = "<b>" + self.tr("Area: {0} m²").format(f"{dist:.3f}") + "</b><br/>"
+                txt = (
+                    "<b>" + self.tr("Area: {0} m²").format(f"{dist:.3f}") + "</b><br/>"
+                )
                 self.tooltip.showText(
                     self.canvas.mapToGlobal(self.canvas.mouseLastXY()),
                     txt,
@@ -395,9 +395,7 @@ class AcquisitionFree(gui.QgsMapTool):
                 else rubberBand.asGeometry().asPolyline()
             )
             if self.isPolygon() and self.getRubberBand():
-                rubberBand.reset(
-                    geometryType=core.Qgis.GeometryType.Polygon
-                )
+                rubberBand.reset(geometryType=core.Qgis.GeometryType.Polygon)
                 firstPoint = self.getRubberBand().asGeometry().asPolygon()[0][0]
                 secondPoint = self.getRubberBand().asGeometry().asPolygon()[0][-2]
                 rubberBand.addPoint(secondPoint)

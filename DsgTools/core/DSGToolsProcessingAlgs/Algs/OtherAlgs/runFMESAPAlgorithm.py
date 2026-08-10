@@ -146,7 +146,9 @@ class RunFMESAPAlgorithm(QgsProcessingAlgorithm):
             if responseData["status"] in [2, 3, "erro"]:
                 break
 
-        output = self.tr("<p>[routine name] : {0}</p>").format(inputJSONData["workspace_name"])
+        output = self.tr("<p>[routine name] : {0}</p>").format(
+            inputJSONData["workspace_name"]
+        )
         for flags in responseData["log"].split("|"):
             output += self.tr("<p>[routine flags] : {0}</p>").format(flags)
         return {self.OUTPUT: output}

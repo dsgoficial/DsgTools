@@ -39,7 +39,11 @@ class DbFactory(object):
     def createDbFactory(self, driver):
         # TODO Treat none return
         if not ("QSQLITE" in QSqlDatabase.drivers()):  # Driver wasn't loaded
-            raise Exception(QCoreApplication.translate("DbFactory", "QT QSQLITE driver not installed!"))
+            raise Exception(
+                QCoreApplication.translate(
+                    "DbFactory", "QT QSQLITE driver not installed!"
+                )
+            )
         dbs = {
             DsgEnums.DriverPostGIS: lambda: PostgisDb(),
             DsgEnums.DriverGeopackage: lambda: GeopackageDb(),

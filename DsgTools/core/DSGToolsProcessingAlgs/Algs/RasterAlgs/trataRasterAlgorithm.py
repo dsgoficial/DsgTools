@@ -288,9 +288,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         areaEdificada = self.parameterAsVectorLayer(
             parameters, self.AREA_EDIFICADA, context
         )
-        massaDagua = self.parameterAsVectorLayer(
-            parameters, self.MASSA_DAGUA, context
-        )
+        massaDagua = self.parameterAsVectorLayer(parameters, self.MASSA_DAGUA, context)
         areaEdificadaValue = self.parameterAsInt(
             parameters, self.AREA_EDIFICADA_VALUE, context
         )
@@ -329,12 +327,8 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
         try:
             multiStepFeedback.setCurrentStep(step)
-            multiStepFeedback.pushInfo(
-                self.tr("Step 1/10: Reading input raster...")
-            )
-            npRaster, geotransform, projection = self._readRaster(
-                inputRaster.source()
-            )
+            multiStepFeedback.pushInfo(self.tr("Step 1/10: Reading input raster..."))
+            npRaster, geotransform, projection = self._readRaster(inputRaster.source())
             multiStepFeedback.pushInfo(
                 self.tr("  Dimensions: %d x %d, dtype: %s")
                 % (npRaster.shape[0], npRaster.shape[1], npRaster.dtype)
@@ -342,7 +336,9 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             rasterCrs = inputRaster.crs()
             multiStepFeedback.pushInfo(
-                self.tr("Preparing polygons (reprojection, dissolve, buffer)... Raster CRS: %s")
+                self.tr(
+                    "Preparing polygons (reprojection, dissolve, buffer)... Raster CRS: %s"
+                )
                 % rasterCrs.authid()
             )
             massaDaguaBuffered = self._prepareSinglePolygonLayer(
@@ -358,8 +354,13 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Step 2/10: Initial sieve (threshold=%d)...") % sieveThreshold
             )
             npRaster = self._runSieve(
-                npRaster, geotransform, projection, sieveThreshold,
-                nodata, context, multiStepFeedback,
+                npRaster,
+                geotransform,
+                projection,
+                sieveThreshold,
+                nodata,
+                context,
+                multiStepFeedback,
             )
             step += 1
             if multiStepFeedback.isCanceled():
@@ -367,16 +368,21 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr(
-                    "Step 3/10: Removing water body "
-                    "and built-up area pixels..."
-                )
+                self.tr("Step 3/10: Removing water body " "and built-up area pixels...")
             )
             maskMassa = npRaster == massaDaguaValue
             maskEdif = npRaster == areaEdificadaValue
             multiStepFeedback.pushInfo(
-                self.tr("  %d water body pixels (DN=%d), %d built-up area pixels (DN=%d) converted to nodata (%d).")
-                % (int(np.sum(maskMassa)), massaDaguaValue, int(np.sum(maskEdif)), areaEdificadaValue, nodata)
+                self.tr(
+                    "  %d water body pixels (DN=%d), %d built-up area pixels (DN=%d) converted to nodata (%d)."
+                )
+                % (
+                    int(np.sum(maskMassa)),
+                    massaDaguaValue,
+                    int(np.sum(maskEdif)),
+                    areaEdificadaValue,
+                    nodata,
+                )
             )
             npRaster[maskMassa] = nodata
             npRaster[maskEdif] = nodata
@@ -390,10 +396,16 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Step 4/10: Burning polygons with correct values...")
             )
             npRaster = self._burnMultipleValues(
-                npRaster, geotransform, projection,
-                [(massaDaguaBuffered, massaDaguaValue),
-                 (areaEdificadaBuffered, areaEdificadaValue)],
-                nodata, context, multiStepFeedback,
+                npRaster,
+                geotransform,
+                projection,
+                [
+                    (massaDaguaBuffered, massaDaguaValue),
+                    (areaEdificadaBuffered, areaEdificadaValue),
+                ],
+                nodata,
+                context,
+                multiStepFeedback,
             )
             step += 1
             if multiStepFeedback.isCanceled():
@@ -402,7 +414,10 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(step)
             nNodataPixels = int(np.sum(npRaster == nodata))
             multiStepFeedback.pushInfo(
-                self.tr("Step 5/10: Reclassifying %d nodata pixels to nearest neighbor...") % nNodataPixels
+                self.tr(
+                    "Step 5/10: Reclassifying %d nodata pixels to nearest neighbor..."
+                )
+                % nNodataPixels
             )
             if nNodataPixels > 0:
                 self._reclassifyValuesToNearestInPlace(
@@ -414,11 +429,18 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr("Step 6/10: Generalization pass 1 (min_area=%d m2)...") % firstPassMinArea
+                self.tr("Step 6/10: Generalization pass 1 (min_area=%d m2)...")
+                % firstPassMinArea
             )
             npRaster = self._runGeneralization(
-                npRaster, geotransform, projection, nodata,
-                firstPassMinArea, rulesPass1, context, multiStepFeedback,
+                npRaster,
+                geotransform,
+                projection,
+                nodata,
+                firstPassMinArea,
+                rulesPass1,
+                context,
+                multiStepFeedback,
             )
             gc.collect()
             step += 1
@@ -427,11 +449,17 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr("Step 7/10: Post-generalization sieve (threshold=%d)...") % sieveThreshold
+                self.tr("Step 7/10: Post-generalization sieve (threshold=%d)...")
+                % sieveThreshold
             )
             npRaster = self._runSieve(
-                npRaster, geotransform, projection, sieveThreshold,
-                nodata, context, multiStepFeedback,
+                npRaster,
+                geotransform,
+                projection,
+                sieveThreshold,
+                nodata,
+                context,
+                multiStepFeedback,
             )
             step += 1
             if multiStepFeedback.isCanceled():
@@ -439,11 +467,18 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             multiStepFeedback.setCurrentStep(step)
             multiStepFeedback.pushInfo(
-                self.tr("Step 8/10: Generalization pass 2 (min_area=%d m2)...") % secondPassMinArea
+                self.tr("Step 8/10: Generalization pass 2 (min_area=%d m2)...")
+                % secondPassMinArea
             )
             npRaster = self._runGeneralization(
-                npRaster, geotransform, projection, nodata,
-                secondPassMinArea, rulesPass2, context, multiStepFeedback,
+                npRaster,
+                geotransform,
+                projection,
+                nodata,
+                secondPassMinArea,
+                rulesPass2,
+                context,
+                multiStepFeedback,
             )
             gc.collect()
             step += 1
@@ -455,22 +490,21 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Step 9/10: Final sieve (threshold=%d)...") % sieveThreshold
             )
             npRaster = self._runSieve(
-                npRaster, geotransform, projection, sieveThreshold,
-                nodata, context, multiStepFeedback,
+                npRaster,
+                geotransform,
+                projection,
+                sieveThreshold,
+                nodata,
+                context,
+                multiStepFeedback,
             )
             step += 1
 
             multiStepFeedback.setCurrentStep(step)
-            multiStepFeedback.pushInfo(
-                self.tr("Step 10/10: Writing output raster...")
-            )
-            self._writeRaster(
-                npRaster, geotransform, projection, outputRaster, nodata
-            )
+            multiStepFeedback.pushInfo(self.tr("Step 10/10: Writing output raster..."))
+            self._writeRaster(npRaster, geotransform, projection, outputRaster, nodata)
 
-            multiStepFeedback.pushInfo(
-                self.tr("Processing completed successfully!")
-            )
+            multiStepFeedback.pushInfo(self.tr("Processing completed successfully!"))
             return {self.OUTPUT_RASTER: outputRaster}
 
         finally:
@@ -478,16 +512,20 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
                 shutil.rmtree(self._tmpDir, ignore_errors=True)
 
     def _runSieve(
-        self, npRaster, geotransform, projection, threshold,
-        nodata, context, feedback,
+        self,
+        npRaster,
+        geotransform,
+        projection,
+        threshold,
+        nodata,
+        context,
+        feedback,
     ):
         tmpInput = self._uniqueTmpPath("sieve_in")
         tmpOutput = self._uniqueTmpPath("sieve_out")
 
         try:
-            self._writeRaster(
-                npRaster, geotransform, projection, tmpInput, nodata
-            )
+            self._writeRaster(npRaster, geotransform, projection, tmpInput, nodata)
 
             outputPath = self.algRunner.runSieve(
                 inputRaster=tmpInput,
@@ -499,9 +537,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
 
             if not os.path.exists(outputPath):
                 feedback.pushWarning(
-                    self.tr(
-                        "Sieve did not produce output. Returning without changes."
-                    )
+                    self.tr("Sieve did not produce output. Returning without changes.")
                 )
                 return npRaster
 
@@ -581,9 +617,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
     def _readRaster(self, rasterPath):
         ds = gdal.Open(rasterPath)
         if ds is None:
-            raise QgsProcessingException(
-                self.tr("Could not open: %s") % rasterPath
-            )
+            raise QgsProcessingException(self.tr("Could not open: %s") % rasterPath)
         npRaster = ds.GetRasterBand(1).ReadAsArray().astype(np.int16)
         geotransform = ds.GetGeoTransform()
         projection = ds.GetProjection()
@@ -591,8 +625,14 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         return npRaster, geotransform, projection
 
     def _burnMultipleValues(
-        self, npRaster, geotransform, projection,
-        layerValuePairs, nodata, context, feedback,
+        self,
+        npRaster,
+        geotransform,
+        projection,
+        layerValuePairs,
+        nodata,
+        context,
+        feedback,
     ):
         """Queima multiplos valores sobre o raster em um unico round-trip de I/O."""
         tmpPath = self._uniqueTmpPath("burn")
@@ -601,15 +641,11 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             self._writeRaster(npRaster, geotransform, projection, tmpPath, nodata)
 
             for vectorLayer, burnValue in layerValuePairs:
-                feedback.pushInfo(
-                    self.tr("  Burning DN=%d...") % burnValue
-                )
+                feedback.pushInfo(self.tr("  Burning DN=%d...") % burnValue)
                 rasterLayer = QgsRasterLayer(tmpPath, "temp_burn")
                 if not rasterLayer.isValid():
                     raise QgsProcessingException(
-                        self.tr(
-                            "Error loading temporary raster for rasterization."
-                        )
+                        self.tr("Error loading temporary raster for rasterization.")
                     )
 
                 self.algRunner.runGdalRasterizeOverFixedValue(
@@ -631,16 +667,21 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             self._safeRemove(tmpPath)
 
     def _runGeneralization(
-        self, npRaster, geotransform, projection, nodata,
-        minArea, rulesJson, context, feedback,
+        self,
+        npRaster,
+        geotransform,
+        projection,
+        nodata,
+        minArea,
+        rulesJson,
+        context,
+        feedback,
     ):
         tmpInput = self._uniqueTmpPath("gen_in")
         tmpOutput = self._uniqueTmpPath("gen_out")
 
         try:
-            self._writeRaster(
-                npRaster, geotransform, projection, tmpInput, nodata
-            )
+            self._writeRaster(npRaster, geotransform, projection, tmpInput, nodata)
 
             processing.run(
                 "dsgtools:reclassifygroupsofpixelstonearestneighboralgorithm",
@@ -689,7 +730,11 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
         rows, cols = npRaster.shape
         driver = gdal.GetDriverByName("GTiff")
         ds = driver.Create(
-            outputPath, cols, rows, 1, gdal.GDT_Int16,
+            outputPath,
+            cols,
+            rows,
+            1,
+            gdal.GDT_Int16,
             options=["COMPRESS=LZW", "TILED=YES"],
         )
         ds.SetGeoTransform(geotransform)

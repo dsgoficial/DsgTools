@@ -47,6 +47,7 @@ import os
 def tr(message):
     return QCoreApplication.translate("VirtualRasterInLoco", message)
 
+
 # script methods
 def createVrt(inventario, vrt):
     # Camada de inventario

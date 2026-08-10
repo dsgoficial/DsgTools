@@ -91,8 +91,7 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
         except BaseException as e:
             raise QgsProcessingException(
                 self.tr(
-                    "Unable to get the routine's output from "
-                    "FME Manager: '{0}'"
+                    "Unable to get the routine's output from " "FME Manager: '{0}'"
                 ).format(e)
             )
         return resp.json()
@@ -140,8 +139,7 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
         except BaseException as e:
             raise QgsProcessingException(
                 self.tr(
-                    "Unable to send processing request to "
-                    "FME Manager: '{0}'"
+                    "Unable to send processing request to " "FME Manager: '{0}'"
                 ).format(e)
             )
         return resp.json()

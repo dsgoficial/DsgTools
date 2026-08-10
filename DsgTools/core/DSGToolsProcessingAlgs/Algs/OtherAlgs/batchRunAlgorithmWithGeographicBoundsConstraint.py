@@ -178,9 +178,9 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
             layerName = layer.name()
             multiStepFeedback.setCurrentStep(idx)
             multiStepFeedback.pushInfo(
-                self.tr(
-                    "Step {0}/{1}: Running algorithm {2} on {3}"
-                ).format(idx+1, nSteps, algName, layerName)
+                self.tr("Step {0}/{1}: Running algorithm {2} on {3}").format(
+                    idx + 1, nSteps, algName, layerName
+                )
             )
             if layer is None:
                 multiStepFeedback.pushInfo(

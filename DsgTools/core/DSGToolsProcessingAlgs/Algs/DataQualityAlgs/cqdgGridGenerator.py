@@ -288,9 +288,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             self.tr("Original reference system: {0}").format(original_crs.authid())
         )
         feedback.pushInfo(self.tr("Scale: 1:{0}").format(escala))
-        feedback.pushInfo(
-            self.tr("Tile size: {0} meters").format(grid_size)
-        )
+        feedback.pushInfo(self.tr("Tile size: {0} meters").format(grid_size))
         feedback.pushInfo(self.tr("AQL: {0}%").format(lqa))
 
         # Criar campos de saída
@@ -337,9 +335,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
                 if moldura_feat.fields().lookupField("mi") >= 0
                 else f"MI_{current+1}"
             )
-            feedback.pushInfo(
-                self.tr("\nProcessing {0}...").format(mi_nome)
-            )
+            feedback.pushInfo(self.tr("\nProcessing {0}...").format(mi_nome))
 
             # Obter geometria da moldura (cópia para não modificar o original)
             moldura_geom_original = moldura_feat.geometry()
@@ -420,12 +416,8 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
 
             # Calcular tamanho da amostra
             n_total = len(quadriculas_utm)
-            feedback.pushInfo(
-                self.tr("Grid cells: {0}").format(total_celulas)
-            )
-            feedback.pushInfo(
-                self.tr("Complete tiles: {0}").format(n_total)
-            )
+            feedback.pushInfo(self.tr("Grid cells: {0}").format(total_celulas))
+            feedback.pushInfo(self.tr("Complete tiles: {0}").format(n_total))
             feedback.pushInfo(
                 self.tr("Discarded tiles (partial): {0}").format(
                     quadriculas_descartadas
@@ -444,12 +436,8 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             else:  # Isolado
                 n_amostra, ac = self._calcular_amostra_isolado(n_total, lqa)
 
-            feedback.pushInfo(
-                self.tr("Sample size: {0}").format(n_amostra)
-            )
-            feedback.pushInfo(
-                self.tr("Acceptance number: {0}").format(ac)
-            )
+            feedback.pushInfo(self.tr("Sample size: {0}").format(n_amostra))
+            feedback.pushInfo(self.tr("Acceptance number: {0}").format(ac))
 
             # Selecionar aleatoriamente os índices
             indices_amostra = set(
@@ -498,9 +486,9 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
 
         if not letra:
             raise QgsProcessingException(
-                self.tr(
-                    "Could not determine code letter for lot of size {0}"
-                ).format(tamanho_lote)
+                self.tr("Could not determine code letter for lot of size {0}").format(
+                    tamanho_lote
+                )
             )
 
         # Buscar na tabela 45
@@ -508,9 +496,9 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             return self.TABELA_45[letra][lqa]
 
         raise QgsProcessingException(
-            self.tr(
-                "Combination letter={0}, AQL={1} not found in table"
-            ).format(letra, lqa)
+            self.tr("Combination letter={0}, AQL={1} not found in table").format(
+                letra, lqa
+            )
         )
 
     def _calcular_amostra_isolado(self, tamanho_lote, lqa):

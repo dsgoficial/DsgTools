@@ -98,7 +98,9 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             idRemoveSet.add(feat.id())
             feedback.setProgress(current * stepSize)
         inputLyr.startEditing()
-        inputLyr.beginEditCommand(self.tr("Deleting features on layer {0}.").format(inputLyr.name()))
+        inputLyr.beginEditCommand(
+            self.tr("Deleting features on layer {0}.").format(inputLyr.name())
+        )
         inputLyr.deleteFeatures(list(idRemoveSet))
         inputLyr.endEditCommand()
         return {}

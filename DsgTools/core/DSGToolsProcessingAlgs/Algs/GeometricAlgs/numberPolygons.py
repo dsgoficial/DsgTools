@@ -98,7 +98,9 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         if group_by_field:
             field_index = layer.fields().indexFromName(group_by_field)
             if field_index == -1:
-                raise QgsProcessingException(self.tr("Field '{0}' not found").format(group_by_field))
+                raise QgsProcessingException(
+                    self.tr("Field '{0}' not found").format(group_by_field)
+                )
             feedback.pushInfo(self.tr("Ordering by field: {0}").format(group_by_field))
 
         fields = layer.fields()
@@ -119,7 +121,9 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
         sorted_features = self._sort_features(features, direction, group_by_field)
 
         total = 100.0 / len(sorted_features) if sorted_features else 0
-        feedback.setProgressText(self.tr("Numbering polygons according to given direction...\n"))
+        feedback.setProgressText(
+            self.tr("Numbering polygons according to given direction...\n")
+        )
 
         for i, feature in enumerate(sorted_features, start=1):
             new_feature = QgsFeature(fields)

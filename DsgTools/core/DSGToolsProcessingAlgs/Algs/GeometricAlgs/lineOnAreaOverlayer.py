@@ -164,7 +164,9 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
 
         # Step 3: Split all lines with each other
         multiStepFeedback.setCurrentStep(current_step)
-        multiStepFeedback.pushInfo(self.tr("Step 3/{}:Splitting lines...").format(total_steps))
+        multiStepFeedback.pushInfo(
+            self.tr("Step 3/{}:Splitting lines...").format(total_steps)
+        )
 
         # First, merge polygon lines and overlay lines
         all_line_layers = [polygon_lines_layer]
@@ -268,7 +270,9 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
         # Final step: Spatial join back to the filtered polygons
         multiStepFeedback.setCurrentStep(current_step)
         multiStepFeedback.pushInfo(
-            self.tr("Step {}/{}:Final spatial join...").format(current_step + 1, total_steps)
+            self.tr("Step {}/{}:Final spatial join...").format(
+                current_step + 1, total_steps
+            )
         )
 
         # Create spatial indexes for better performance

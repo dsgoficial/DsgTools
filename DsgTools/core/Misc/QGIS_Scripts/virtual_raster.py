@@ -45,6 +45,7 @@ import shutil, stat
 def tr(message):
     return QCoreApplication.translate("VirtualRaster", message)
 
+
 # script methods
 def createReprojectedLayer(layer, crs):
     """

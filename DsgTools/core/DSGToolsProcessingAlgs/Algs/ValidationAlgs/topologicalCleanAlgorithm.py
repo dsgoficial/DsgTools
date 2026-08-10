@@ -128,10 +128,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         geographicBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
-        if (
-            geomType == Qgis.GeometryType.Polygon
-            and geographicBoundsLyr is not None
-        ):
+        if geomType == Qgis.GeometryType.Polygon and geographicBoundsLyr is not None:
             raise NotImplementedError(
                 self.tr("Spatial restriction not implemented yet for polygon layers")
             )

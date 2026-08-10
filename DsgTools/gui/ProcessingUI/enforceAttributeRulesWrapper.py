@@ -262,41 +262,31 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                                 invalidRules.append(
                                     self.tr(
                                         "Rule number {0} : {1} - is not a valid color."
-                                    ).format(
-                                        attrRulesMapKey, attrRulesMapValue["4"]
-                                    )
+                                    ).format(attrRulesMapKey, attrRulesMapValue["4"])
                                 )
                         else:
                             invalidRules.append(
                                 self.tr(
                                     "Rule number {0} : {1} - is not a valid string."
-                                ).format(
-                                    attrRulesMapKey, attrRulesMapValue["3"]
-                                )
+                                ).format(attrRulesMapKey, attrRulesMapValue["3"])
                             )
                     else:
                         invalidRules.append(
                             self.tr(
                                 "Rule number {0} : {1} - is not a valid expression."
-                            ).format(
-                                attrRulesMapKey, attrRulesMapValue["2"]
-                            )
+                            ).format(attrRulesMapKey, attrRulesMapValue["2"])
                         )
                 else:
                     invalidRules.append(
                         self.tr(
                             "Rule number {0} : {1} - is not a valid length = 2 list."
-                        ).format(
-                            attrRulesMapKey, attrRulesMapValue["1"]
-                        )
+                        ).format(attrRulesMapKey, attrRulesMapValue["1"])
                     )
             else:
                 invalidRules.append(
                     self.tr(
                         "Rule number {0} : {1} - is not a valid string description."
-                    ).format(
-                        attrRulesMapKey, attrRulesMapValue["0"]
-                    )
+                    ).format(attrRulesMapKey, attrRulesMapValue["0"])
                 )
 
         return newDict, invalidRules

@@ -368,7 +368,10 @@ def dsgtools_workflow_from_dict(data: Dict[str, Any]) -> DSGToolsWorkflow:
         metadata.lastModified,
     ):
         raise ValueError(
-            QCoreApplication.translate("Workflow", "Display name, author, version, and last modified are required fields.")
+            QCoreApplication.translate(
+                "Workflow",
+                "Display name, author, version, and last modified are required fields.",
+            )
         )
 
     workflow_item_list = [
@@ -376,7 +379,11 @@ def dsgtools_workflow_from_dict(data: Dict[str, Any]) -> DSGToolsWorkflow:
     ]
 
     if not workflow_item_list:
-        raise ValueError(QCoreApplication.translate("Workflow", "Workflow item list cannot be empty."))
+        raise ValueError(
+            QCoreApplication.translate(
+                "Workflow", "Workflow item list cannot be empty."
+            )
+        )
 
     # Create and return DSGToolsWorkflow object
     return DSGToolsWorkflow(

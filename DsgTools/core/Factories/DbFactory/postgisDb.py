@@ -1742,9 +1742,7 @@ class PostgisDb(AbstractDb):
                 sql = self.gen.getElementCountFromLayer(layer)
                 row = self._fetch_one(sql)
                 if row is None:
-                    raise Exception(
-                        self.tr("Problem counting elements: ") + layer
-                    )
+                    raise Exception(self.tr("Problem counting elements: ") + layer)
                 listaQuantidades.append([layer, row[0]])
         return listaQuantidades
 
@@ -1760,9 +1758,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getImplementationVersion()
         row = self._fetch_one(sql)
         if row is None:
-            raise Exception(
-                self.tr("Problem getting implementation version.")
-            )
+            raise Exception(self.tr("Problem getting implementation version."))
         return row[0]
 
     @ensure_connected
@@ -1798,9 +1794,7 @@ class PostgisDb(AbstractDb):
             sql = self.gen.getQmlRecords([inputLayer])
         rows = self._fetch_all(sql)
         if not rows:
-            raise Exception(
-                self.tr("Problem getting qmlRecordDict.")
-            )
+            raise Exception(self.tr("Problem getting qmlRecordDict."))
         qmlDict = dict()
         for row in rows:
             if isinstance(inputLayer, list):

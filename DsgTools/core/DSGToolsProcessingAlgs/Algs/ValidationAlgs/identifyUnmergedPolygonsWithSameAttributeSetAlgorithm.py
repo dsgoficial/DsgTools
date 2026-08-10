@@ -329,8 +329,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
                 break
             bbox = geomFlag.boundingBox()
             if lineFilterLyr is not None and any(
-                geomFlag.intersection(f.geometry()).type()
-                == Qgis.GeometryType.Line
+                geomFlag.intersection(f.geometry()).type() == Qgis.GeometryType.Line
                 and geomFlag.intersection(f.geometry()).length() > 0
                 for f in lineFilterLyr.getFeatures(bbox)
             ):

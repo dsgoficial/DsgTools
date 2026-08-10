@@ -119,7 +119,9 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
             # Show progress for large datasets
             if total_cached % 10000 == 0:
                 feedback.pushInfo(
-                    self.tr("Cached {0}/{1} features...").format(total_cached, feature_count)
+                    self.tr("Cached {0}/{1} features...").format(
+                        total_cached, feature_count
+                    )
                 )
 
             # Check for cancellation
@@ -527,7 +529,9 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
         # Process pairs using concurrently
         feedback.pushInfo(
-            self.tr("Processing {0} potential feature pairs").format(len(potential_pairs))
+            self.tr("Processing {0} potential feature pairs").format(
+                len(potential_pairs)
+            )
         )
         for result in concurrently(
             process_line_pair, potential_pairs, feedback=feedback

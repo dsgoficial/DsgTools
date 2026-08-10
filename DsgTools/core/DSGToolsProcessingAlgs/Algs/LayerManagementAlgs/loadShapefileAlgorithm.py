@@ -83,15 +83,9 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
             rootNode = QgsProject.instance().layerTreeRoot().addGroup(rootNodeName)
             rootNodeList.append(rootNode)
             groupDict[rootNodeName] = {
-                Qgis.GeometryType.Point: self.createGroup(
-                    "Ponto", rootNode
-                ),
-                Qgis.GeometryType.Line: self.createGroup(
-                    "Linha", rootNode
-                ),
-                Qgis.GeometryType.Polygon: self.createGroup(
-                    "Area", rootNode
-                ),
+                Qgis.GeometryType.Point: self.createGroup("Ponto", rootNode),
+                Qgis.GeometryType.Line: self.createGroup("Linha", rootNode),
+                Qgis.GeometryType.Polygon: self.createGroup("Area", rootNode),
             }
         for step, data in enumerate(shapefileData):
             if feedback.isCanceled():

@@ -122,7 +122,9 @@ class QgisCtrl:
     def getAcquisitionToolNames(self):
         return {
             QCoreApplication.translate("QgisCtrl", "Default"): None,
-            QCoreApplication.translate("QgisCtrl", "Right Angle"): "RightDegreeAngleDigitizing",
+            QCoreApplication.translate(
+                "QgisCtrl", "Right Angle"
+            ): "RightDegreeAngleDigitizing",
             QCoreApplication.translate("QgisCtrl", "Free Hand"): "FreeHand",
         }
 
@@ -218,7 +220,13 @@ class QgisCtrl:
                     feature.setAttribute(indx, valueMap[attributeValue])
             elif attributeValue and attributeValue in ["NULL"]:
                 feature.setAttribute(indx, None)
-            elif attributeValue and not (attributeValue in ["NULL", QCoreApplication.translate("AttributeTableWidget", "IGNORE")]):
+            elif attributeValue and not (
+                attributeValue
+                in [
+                    "NULL",
+                    QCoreApplication.translate("AttributeTableWidget", "IGNORE"),
+                ]
+            ):
                 """if re.match('^\@value\(".+"\)$', value):
                 variable = value.split('"')[-2]
                 value = ProjectQgis(self.iface).getVariableProject(variable)"""
@@ -256,7 +264,13 @@ class QgisCtrl:
                     feature.setAttribute(indx, valueMap[attributeValue])
             elif attributeValue and attributeValue in ["NULL"]:
                 feature.setAttribute(indx, None)
-            elif attributeValue and not (attributeValue in ["NULL", QCoreApplication.translate("AttributeTableWidget", "IGNORE")]):
+            elif attributeValue and not (
+                attributeValue
+                in [
+                    "NULL",
+                    QCoreApplication.translate("AttributeTableWidget", "IGNORE"),
+                ]
+            ):
                 """if re.match('^\@value\(".+"\)$', value):
                 variable = value.split('"')[-2]
                 value = ProjectQgis(self.iface).getVariableProject(variable)"""
@@ -264,12 +278,8 @@ class QgisCtrl:
 
     def cutAndPasteSelectedFeatures(self, layer, destinatonLayer, attributes):
         geometryFilterDict = {
-            Qgis.GeometryType.Point: (
-                Qgis.GeometryType.Point,
-            ),
-            Qgis.GeometryType.Line: (
-                Qgis.GeometryType.Line,
-            ),
+            Qgis.GeometryType.Point: (Qgis.GeometryType.Point,),
+            Qgis.GeometryType.Line: (Qgis.GeometryType.Line,),
             Qgis.GeometryType.Polygon: (
                 Qgis.GeometryType.Point,
                 Qgis.GeometryType.Polygon,
@@ -289,10 +299,8 @@ class QgisCtrl:
             newFeat.setFields(destinatonLayer.fields())
             newGeom = (
                 feature.geometry().pointOnSurface()
-                if destinatonLayer.geometryType()
-                == core.Qgis.GeometryType.Point
-                and layer.geometryType()
-                == core.Qgis.GeometryType.Polygon
+                if destinatonLayer.geometryType() == core.Qgis.GeometryType.Point
+                and layer.geometryType() == core.Qgis.GeometryType.Polygon
                 else feature.geometry()
             )
             newFeat.setGeometry(newGeom)

@@ -112,10 +112,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
                 pass
         # connecting signals to new layer
         if isinstance(self.currentLayer, QgsVectorLayer):
-            if (
-                self.currentLayer.geometryType()
-                == Qgis.GeometryType.Point
-            ):
+            if self.currentLayer.geometryType() == Qgis.GeometryType.Point:
                 self.currentLayer.editingStarted.connect(self.activateAlias)
                 self.currentLayer.editingStopped.connect(self.deactivateAlias)
 

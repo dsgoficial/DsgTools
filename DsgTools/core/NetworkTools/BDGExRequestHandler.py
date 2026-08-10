@@ -113,7 +113,9 @@ class BDGExRequestHandler(QObject):
         Returns QGIS url service string.
         """
         if service not in self.availableServicesDict:
-            raise Exception(self.tr("Service {service} not available").format(service=service))
+            raise Exception(
+                self.tr("Service {service} not available").format(service=service)
+            )
         if serviceType not in self.availableServicesDict[service]["services"]:
             raise Exception(
                 self.tr("Invalid request {service_type} for service {service}").format(

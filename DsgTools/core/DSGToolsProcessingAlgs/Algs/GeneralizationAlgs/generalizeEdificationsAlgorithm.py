@@ -136,9 +136,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Filtering complete..."))
 
-        multiStepFeedback.setProgressText(
-            self.tr("Creating buffers from points...")
-        )
+        multiStepFeedback.setProgressText(self.tr("Creating buffers from points..."))
         non_filtered_buffers = algRunner.runBuffer(
             non_filtered_points, tolerancia, context
         )  # alta prioridade

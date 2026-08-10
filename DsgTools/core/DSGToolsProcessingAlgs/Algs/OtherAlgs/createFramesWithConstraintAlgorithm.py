@@ -96,7 +96,9 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             type=QgsProcessingParameterNumber.Integer,
             optional=True,
         )
-        param.setFlags(param.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced)
+        param.setFlags(
+            param.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
+        )
 
         self.addParameter(param)
 
@@ -107,7 +109,9 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             type=QgsProcessingParameterNumber.Integer,
             optional=True,
         )
-        param.setFlags(param.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced)
+        param.setFlags(
+            param.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
+        )
         self.addParameter(param)
 
         self.addParameter(

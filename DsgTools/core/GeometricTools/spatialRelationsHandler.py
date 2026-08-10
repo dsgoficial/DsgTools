@@ -141,7 +141,6 @@ class SpatialRelationsHandler(QObject):
         # invalidDict.update(pointErrorDict)
         # return invalidDict
 
-
     def buildContourAreaDict(
         self,
         inputLyr,
@@ -456,8 +455,6 @@ class SpatialRelationsHandler(QObject):
             if feedback is not None:
                 feedback.setProgress(current * size)
 
-
-
     def findElevationPointsOutOfThreshold(
         self,
         elevationPoints,
@@ -620,16 +617,6 @@ class SpatialRelationsHandler(QObject):
         self.addFeatureToSpatialIndexAndNodeDict(
             current, feat, spatialIdx, idDict, nodeDict, size, feedback
         )
-
-
-
-
-
-
-
-
-
-
 
     def validateSpatialRelations(
         self, ruleList, createSpatialIndex=True, feedback=None

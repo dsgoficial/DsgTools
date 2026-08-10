@@ -254,9 +254,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
             tiles_source.sourceCrs(),
         )
         if sink is None:
-            raise QgsProcessingException(
-                self.tr("Error creating output layer.")
-            )
+            raise QgsProcessingException(self.tr("Error creating output layer."))
 
         # 5. Estruturas para consolidação
         all_experiments_tile_metrics = []
@@ -402,7 +400,9 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 # --- OTIMIZAÇÃO: PROCESSAMENTO EM LOTE POR MI ---
                 multiStepFeedback.setCurrentStep(current_step_index)
                 multiStepFeedback.pushInfo(
-                    self.tr("Processing MI: {0} (Preparing geometries in batch...)").format(mi)
+                    self.tr(
+                        "Processing MI: {0} (Preparing geometries in batch...)"
+                    ).format(mi)
                 )
 
                 mi_gt_folder = os.path.join(ground_truth_folder, mi)
@@ -718,9 +718,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
 
         multiStepFeedback.pushInfo("\n" + "=" * 80)
         multiStepFeedback.pushInfo(
-            self.tr("SUMMARY {0} ({1} tiles)").format(
-                experiment_name, processed_count
-            )
+            self.tr("SUMMARY {0} ({1} tiles)").format(experiment_name, processed_count)
         )
         multiStepFeedback.pushInfo("-" * 80)
         multiStepFeedback.pushInfo(

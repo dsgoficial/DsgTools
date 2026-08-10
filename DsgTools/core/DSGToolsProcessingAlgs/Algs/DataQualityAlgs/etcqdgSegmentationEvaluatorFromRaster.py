@@ -61,7 +61,9 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
     OUTPUT_LAYER = "OUTPUT_LAYER"
 
     def tr(self, string):
-        return QCoreApplication.translate("ETCQDGSegmentationEvaluatorFromRaster", string)
+        return QCoreApplication.translate(
+            "ETCQDGSegmentationEvaluatorFromRaster", string
+        )
 
     def createInstance(self):
         return ETCQDGSegmentationEvaluatorFromRaster()
@@ -592,9 +594,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
 
         multiStepFeedback.pushInfo("\n" + "=" * 80)
         multiStepFeedback.pushInfo(
-            self.tr("SUMMARY {0} ({1} tiles)").format(
-                experiment_name, processed_count
-            )
+            self.tr("SUMMARY {0} ({1} tiles)").format(experiment_name, processed_count)
         )
         multiStepFeedback.pushInfo("-" * 80)
         multiStepFeedback.pushInfo(

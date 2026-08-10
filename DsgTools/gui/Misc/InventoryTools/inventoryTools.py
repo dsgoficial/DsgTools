@@ -172,7 +172,9 @@ class InventoryTools(QDialog, FORM_CLASS):
             )
         else:
             fileName, __ = QFileDialog.getSaveFileName(
-                parent=self, caption=self.tr("Save Output File"), filter=self.tr("CSV (*.csv)")
+                parent=self,
+                caption=self.tr("Save Output File"),
+                filter=self.tr("CSV (*.csv)"),
             )
         self.outputFileEdit.setText(fileName)
 

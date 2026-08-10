@@ -109,7 +109,9 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Selecting features with area smaller than the established minimum...")
+            self.tr(
+                "Selecting features with area smaller than the established minimum..."
+            )
         )
 
         selected_features = algRunner.runFilterExpression(
@@ -151,7 +153,9 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
 
         polygonLayer.startEditing()
         polygonLayer.beginEditCommand(
-            self.tr("Delete polygons with area smaller than the limit from the input polygon layer")
+            self.tr(
+                "Delete polygons with area smaller than the limit from the input polygon layer"
+            )
         )
         polygonLayer.deleteFeatures(idsToDelete)
         polygonLayer.endEditCommand()

@@ -124,7 +124,9 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
 
         if fieldName not in layer.fields().names():
             feedback.pushInfo(
-                self.tr("Attribute '{0}' was not found in the layer. No export performed.").format(fieldName)
+                self.tr(
+                    "Attribute '{0}' was not found in the layer. No export performed."
+                ).format(fieldName)
             )
             return {self.OUTPUT: dest_id}
 

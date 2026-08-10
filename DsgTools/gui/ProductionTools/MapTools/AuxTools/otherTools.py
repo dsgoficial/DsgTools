@@ -111,7 +111,10 @@ class OtherTools(QgsMapTool):
         layer = iface.activeLayer()
         if not layer:
             iface.messageBar().pushMessage(
-                self.tr("Error"), self.tr("Select a valid layer"), level=Qgis.MessageLevel.Critical, duration=5
+                self.tr("Error"),
+                self.tr("Select a valid layer"),
+                level=Qgis.MessageLevel.Critical,
+                duration=5,
             )
             return
         context = QgsProcessingContext()
@@ -133,7 +136,9 @@ class OtherTools(QgsMapTool):
         reply = QMessageBox.question(
             iface.mainWindow(),
             self.tr("Continue?"),
-            self.tr("A new layer will be created with the selected features. Do you want to continue?"),
+            self.tr(
+                "A new layer will be created with the selected features. Do you want to continue?"
+            ),
             QMessageBox.StandardButton.Yes,
             QMessageBox.StandardButton.No,
         )
