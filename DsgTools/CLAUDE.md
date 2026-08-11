@@ -82,7 +82,17 @@ Formato `X.Y.Z`. `Y` (segundo dígito) diz se é dev ou lançada; `Z` (terceiro 
 
 O parser de metadata do `qgis-plugin-ci` é ingênuo: só lê o texto que está na própria linha de cada chave (`chave=valor`), não entende continuação multi-linha do formato QGIS (que o `metadata.txt` usa e o QGIS Desktop entende normalmente). Chaves obrigatórias pra ele: `name`, `about`, `description`, `qgisMinimumVersion`, `tracker`, `repository`. Se qualquer uma virar multi-linha (só `about` corre esse risco hoje, é a única longa), ele aborta com `Mandatory key is missing in metadata: <chave>` — **sempre deixar a primeira frase na própria linha da chave** (o resto pode continuar multi-linha normalmente, o QGIS renderiza certo).
 
-`DsgTools/resources_rc.py` não deve existir versionado — é artefato de build (`pyrcc5` a partir de `resources.qrc`) que o `qgis-plugin-ci package` gera sozinho a cada empacotamento e recusa sobrescrever se já existir arquivo versionado com esse nome exato. Fica no `.gitignore`, junto com `*.zip` da raiz (saída do `package`).
+`DsgTools/resources_rc.py` não deve existir versionado — é artefato de build (`pyrcc5` a partir de um `.qrc`) que o `qgis-plugin-ci package` gera sozinho a cada empacotamento e recusa sobrescrever se já existir arquivo versionado com esse nome exato. Fica no `.gitignore`, junto com `*.zip` da raiz (saída do `package`).
+
+**`.qrc` NÃO fica com esse nome dentro de `DsgTools/`.** O código-fonte da fonte de recursos vive em `DsgTools/resources.qrc.src` (não `resources.qrc`) de propósito: o `qgis-plugin-ci` compila **qualquer** `*.qrc` encontrado direto em `plugin_path` via `pyqt5ac`/`pyrcc5`, e o resultado sempre importa `from PyQt5 import QtCore` — incompatível com QGIS4/Qt6 (bug aberto e sem fix: https://github.com/qgis/qgis-plugin-ci/issues/421). Isso derrubou uma release inteira no scanner de Qt6-compat do OSGeo (723 "issues", quase todos dentro desse único arquivo gerado de ~90 mil linhas). Como `resources_rc.py` nunca é importado por nada do plugin (só `resources.py`, mantido à mão, é usado em runtime), a correção foi tirar o `.qrc` do caminho que o glob do `qgis-plugin-ci` varre (`*.qrc` em `plugin_path`), renomeando a extensão — assim ele simplesmente não compila nada, e o resource morto nem entra no zip.
+
+**Se `resources.qrc.src` mudar** (ícone novo/removido), recompile `resources.py` manualmente e comite o resultado — `pyrcc5` aceita qualquer extensão de entrada, só a saída precisa ser `.py`:
+
+```bash
+pyrcc5 -o DsgTools/resources.py DsgTools/resources.qrc.src
+```
+
+`DsgTools/translation.pro` (`RESOURCES += ...`) também referencia `resources.qrc.src` — atualizar junto se o arquivo for renomeado de novo.
 
 ## Migração QGIS 4.0 (Branch `qgis4`)
 
