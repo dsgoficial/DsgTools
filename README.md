@@ -54,6 +54,7 @@ A versão atual do complemento possui as seguintes funcionalidades:
 - Ferramentas de aquisição com ângulos retos e à mão livre
 - Ferramenta para inverter sentido de linhas (flip)
 - Ferramentas para indicar tamanho da feição durante aquisição
+- Ferramentas de Trim/Extend e de suavização de linhas (Smooth Lines)
 
 ### Validação e Controle de Qualidade
 - Ferramentas de validação geométrica (identificação e correção)
@@ -61,6 +62,7 @@ A versão atual do complemento possui as seguintes funcionalidades:
 - Controle de Qualidade e Workflow Toolbox com ferramentas de validação específicas
 - Identificação de feições fechadas, não unidas, entrelaçadas e próximas
 - Validação de atributos e verificação de atributos Unicode
+- Barra de Revisão para navegação sistemática entre feições pendentes de revisão
 
 ### Integração de Dados
 - Acesso a serviços WM(T)S do BDGEx
@@ -77,6 +79,7 @@ A versão atual do complemento possui as seguintes funcionalidades:
 - Direcionamento de fluxo de drenagens e identificação de inconsistências
 - Ferramentas para extração de pontos cotados e validação do terreno
 - Ferramentas para numeração de polígonos e generalização
+- Processamento de raster: remapeamento de valores, filtro de mediana, rasterização de polígonos com buffer e preparo de imagens para o BDGEx
 
 ### Outros
 - Visualizador de valores de códigos da EDGV para auxiliar em consultas por atributos
@@ -85,10 +88,9 @@ A versão atual do complemento possui as seguintes funcionalidades:
 
 O plugin foi todo desenvolvido em Python e está disponível para download pelo próprio QGIS ou pelo endereço http://plugins.qgis.org/plugins/DsgTools/.
 
-Para acessar o histórico completo de mudanças, visite: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
+Para acessar o histórico completo de mudanças, visite: [CHANGELOG.md](CHANGELOG.md)
 
 Para maiores informações, acesse https://github.com/dsgoficial/DsgTools/wiki ou https://bdgex.eb.mil.br/portal/index.php?option=com_content&view=article&id=96&Itemid=380&lang=pt
-```
 
 ------------------------------------
 # DSGTools Plugin
@@ -103,9 +105,19 @@ This project fulfills the mission established in the Brazilian Army Strategic Pl
 * Initiative 6.3.1.1 - Expand the capability of using digital geoinformation for the Land Force
 * Initiative 6.3.2.1 - Obtain geoinformation production systems using Artificial Intelligence
 
+## Command Line Execution
+
+DSGTools' Processing algorithms can be run **headless, from the command line**
+(without opening QGIS), allowing you to automate workflows and run processings
+in scripts or servers. The list of available algorithms, each one's parameters
+and usage instructions are in the **[`dsgtools_cli/`](dsgtools_cli/)** folder:
+
+- [`dsgtools_cli/README.md`](dsgtools_cli/README.md) — usage guide
+- `python dsgtools_cli/dsgtools_cli.py list` — lists algorithms; `describe <id>` shows its parameters
+
 ## Main Features
 
-The plugin is in version 4.17.27 and has the following features:
+The plugin has the following features:
 
 ### Database Management
 - Database creation using PostGIS according to EDGV 2.1.3, EDGV 3.0, EDGV 3.0 Pro, EDGV 3.0 Orto, and EDGV 3.0 Topo models
@@ -123,6 +135,7 @@ The plugin is in version 4.17.27 and has the following features:
 - Right-angle and freehand acquisition tools
 - Line direction flip tool
 - Tools to indicate feature size during acquisition
+- Trim/Extend and Smooth Lines tools
 
 ### Validation and Quality Control
 - Geometric validation tools (identification and correction)
@@ -130,6 +143,7 @@ The plugin is in version 4.17.27 and has the following features:
 - Quality Control and Workflow Toolbox with specific validation tools
 - Identification of closed, unmerged, intertwined, and nearby features
 - Attribute validation and Unicode attribute verification
+- Review Toolbar for systematic navigation between features pending review
 
 ### Data Integration
 - Access to BDGEx WM(T)S services
@@ -146,6 +160,7 @@ The plugin is in version 4.17.27 and has the following features:
 - Drainage flow direction and inconsistency identification
 - Tools for spot elevation extraction and terrain validation
 - Tools for polygon numbering and generalization
+- Raster processing: value remapping, no-data median filter, rasterize polygons with buffer, and image preparation for BDGEx
 
 
 ### Others
@@ -155,6 +170,6 @@ The plugin is in version 4.17.27 and has the following features:
 
 The plugin was fully developed in Python and is available for download through QGIS or from http://plugins.qgis.org/plugins/DsgTools/.
 
-For the complete changelog, visit: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
+For the complete changelog, visit: [CHANGELOG.md](CHANGELOG.md)
 
 For further information, go to https://github.com/dsgoficial/DsgTools/wiki or https://bdgex.eb.mil.br/portal/index.php?option=com_content&view=article&id=96&Itemid=380&lang=pt
