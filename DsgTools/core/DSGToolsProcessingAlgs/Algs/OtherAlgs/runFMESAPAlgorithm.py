@@ -95,7 +95,7 @@ class RunFMESAPAlgorithm(QgsProcessingAlgorithm):
             return {self.OUTPUT: self.tr("<p>Error starting routine.</p>")}
 
         url_to_status = "{server}/jobs/{uuid}".format(
-            server=fmeDict["server"], uuid=response.json()["data"]["job_uuid"]
+            server=inputJSONData["server"], uuid=response.json()["data"]["job_uuid"]
         )
 
         for _ in range(150):

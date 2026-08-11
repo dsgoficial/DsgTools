@@ -33,6 +33,8 @@ from qgis.core import (
     QgsExpression,
     QgsFeatureSink,
     QgsFeatureRequest,
+    QgsFields,
+    QgsWkbTypes,
 )
 
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help

@@ -166,7 +166,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
                 is_child_algorithm=True,
             )
             outputLyr = self.algRunner.runMultipartToSingleParts(
-                inputLayer=outputDiffLyr, context=context
+                inputLayer=outputLyr, context=context
             )
             if behavior == OverlayElementsWithAreasAlgorithm.RemoveOutside:
                 return outputLyr

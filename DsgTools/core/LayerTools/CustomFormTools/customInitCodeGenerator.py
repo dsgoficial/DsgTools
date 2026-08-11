@@ -57,7 +57,7 @@ class CustomInitCodeGenerator(object):
     def formatOptionFilter(self, tableFilter):
         optFilter = {}
         for line in tableFilter:
-            optFilter[unicode(line[2])] = (line[0] - (line[0] % 100)) / 100
+            optFilter[str(line[2])] = (line[0] - (line[0] % 100)) / 100
         return optFilter
 
     def getTemplateInitCodeNotFilter(self):

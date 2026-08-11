@@ -201,8 +201,6 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
             [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle],
             context,
             returnError=True,
-            snap=snap,
-            minArea=minArea,
             feedback=multiStepFeedback,
         )
         # remove duplicated features
@@ -217,7 +215,7 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
             context=context,
             onlySelected=False,
             attributeBlackList=attributeBlackList,
-            excludePrimaryKeys=excludePrimaryKeys,
+            excludePrimaryKeys=ignorePK,
             ignorePK=ignorePK,
             ignoreVirtual=ignoreVirtual,
         )
@@ -235,7 +233,7 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
             [inputLyr], coverage, feedback=multiStepFeedback, onlySelected=onlySelected
         )
 
-        return {self.INPUTLAYERS: inputLyrList}
+        return {self.OUTPUT: inputLyr.id()}
 
     def name(self):
         """
@@ -245,14 +243,14 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "topologicallineconnectivityadjustment"
+        return "fixnetwork"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Topological adjustment of the connectivity of lines")
+        return self.tr("Fix Network")
 
     def group(self):
         """
@@ -272,9 +270,7 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
         return "DSGTools - QA Tools: Network Processes"
 
     def tr(self, string):
-        return QCoreApplication.translate(
-            "TopologicalLineConnectivityAdjustment", string
-        )
+        return QCoreApplication.translate("FixNetworkAlgorithm", string)
 
     def createInstance(self):
-        return TopologicalLineConnectivityAdjustment()
+        return FixNetworkAlgorithm()

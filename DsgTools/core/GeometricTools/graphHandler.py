@@ -894,7 +894,7 @@ def find_mergeable_edges_on_graph(
                     if (
                         n0 in outputGraphDict[candidateSet]
                         and n1 in outputGraphDict[candidateSet][n0]
-                        and p in outputGraphDict[candidateSet][n0][n1]
+                        and "featid" in outputGraphDict[candidateSet][n0][n1]
                         and outputGraphDict[candidateSet][n0][n1]["featid"] == featid
                     ):
                         continue
@@ -902,9 +902,7 @@ def find_mergeable_edges_on_graph(
                         n0,
                         n1,
                         featid=featid,
-                        length=G[n0][n1][p]["length"]
-                        if "length" in G[n0][n1][p]
-                        else 1,
+                        length=G[n0][n1]["length"] if "length" in G[n0][n1] else 1,
                     )
                     continue
                 for p in G[n0][n1].keys():

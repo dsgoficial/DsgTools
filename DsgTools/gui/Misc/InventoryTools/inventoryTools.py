@@ -34,6 +34,7 @@ from qgis.PyQt.QtWidgets import (
     QTreeWidgetItem,
     QInputDialog,
     QDialog,
+    QLineEdit,
 )
 
 FORM_CLASS, _ = uic.loadUiType(

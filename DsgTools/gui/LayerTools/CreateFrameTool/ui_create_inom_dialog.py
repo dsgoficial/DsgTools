@@ -27,6 +27,7 @@ from builtins import range
 from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
+    QgsGeometry,
     QgsProcessingContext,
     QgsProject,
     QgsFeature,

@@ -31,11 +31,11 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
+    QgsProcessingException,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
     QgsProcessingParameterBoolean,
-    QgsWkbTypes,
 )
 
 
@@ -107,7 +107,7 @@ class DonutHoleExtractorAlgorithm(ValidationAlgorithm):
             inputType,
             inputLyr.sourceCrs(),
         )
-        if outershell_sink is None:
+        if donuthole_sink is None:
             raise QgsProcessingException(
                 self.invalidSinkError(parameters, self.DONUTHOLE)
             )
