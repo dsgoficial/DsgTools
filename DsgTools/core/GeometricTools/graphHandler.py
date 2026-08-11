@@ -25,19 +25,19 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from enum import Enum
 from itertools import tee
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
-from qgis.PyQt.QtCore import QByteArray
+from qgis.PyQt.QtCore import QByteArray, QCoreApplication
 from itertools import chain
 from itertools import product
 from itertools import combinations
 
 from qgis.core import (
+    Qgis,
     QgsGeometry,
     QgsFeature,
     QgsProcessingMultiStepFeedback,
     QgsVectorLayer,
     QgsFeedback,
     QgsProcessingContext,
-    QgsWkbTypes,
     QgsPointXY,
     QgsFeatureRequest,
 )
@@ -265,10 +265,20 @@ def buildAuxStructures(
         )
     stepSize = 100 / nodeCount
     auxId = 0
+    skippedCount = 0
     for current, nodeFeat in enumerate(nodesLayer.getFeatures()):
         if multiStepFeedback is not None and multiStepFeedback.isCanceled():
             break
+        # Trechos com geometria nula/vazia geram vertex_pos NULL no
+        # "extract specific vertices"; pulamos para não quebrar o índice da hashDict.
+        featId = nodeFeat[idFieldName]
+        vertexPos = nodeFeat["vertex_pos"]
         geom = nodeFeat.geometry()
+        if featId is None or vertexPos is None or geom is None or geom.isEmpty():
+            skippedCount += 1
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
+            continue
         geomKey = geom.asWkb() if not useWkt else geom.asWkt()
         if geomKey not in nodeDict:
             nodeDict[geomKey] = auxId
@@ -277,9 +287,18 @@ def buildAuxStructures(
         if computeNodeLayerIdDict:
             nodeLayerIdDict[nodeFeat["nfeatid"]] = geomKey
         # ✅ MUDANÇA: Usar idFieldName em vez de hardcoded 'featid'
-        hashDict[nodeFeat[idFieldName]][nodeFeat["vertex_pos"]] = geomKey
+        hashDict[featId][int(vertexPos)] = geomKey
         if multiStepFeedback is not None:
             multiStepFeedback.setProgress(current * stepSize)
+
+    if skippedCount > 0 and multiStepFeedback is not None:
+        multiStepFeedback.pushWarning(
+            QCoreApplication.translate(
+                "graphHandler",
+                "{0} node(s) skipped due to null/empty geometry (vertex_pos NULL). "
+                "Check the input layer for features with null or empty geometry.",
+            ).format(skippedCount)
+        )
 
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(2)
@@ -1566,13 +1585,12 @@ def find_constraint_points(
             context=context,
             is_child_algorithm=True,
         )
-        if constraintLayer.geometryType() != QgsWkbTypes.GeometryType.PointGeometry
-        and useBuffer
+        if constraintLayer.geometryType() != Qgis.GeometryType.Point and useBuffer
         else constraintLayer
     )
     predicate = (
         AlgRunner.Intersects
-        if constraintLayer.geometryType() != QgsWkbTypes.GeometryType.PointGeometry
+        if constraintLayer.geometryType() != Qgis.GeometryType.Point
         else AlgRunner.Equals
     )
     selectedNodesFromOcean = algRunner.runExtractByLocation(
@@ -1871,7 +1889,11 @@ def consolidate_network_nodes(
     # Step 0: Preparar layer
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo("Preparing edge layer with feature IDs...")
+        multiStepFeedback.pushInfo(
+            QCoreApplication.translate(
+                "GraphHandler", "Preparing edge layer with feature IDs..."
+            )
+        )
 
     # ✅ MUDANÇA: Passar idFieldName
     edgesWithFeatId, nodesLayer = buildAuxLayersPriorGraphBuilding(
@@ -1883,7 +1905,9 @@ def consolidate_network_nodes(
 
     # ✅ Criar mapeamento featid→originalFid UMA VEZ
     if multiStepFeedback is not None:
-        multiStepFeedback.pushInfo("Creating feature ID mapping...")
+        multiStepFeedback.pushInfo(
+            QCoreApplication.translate("GraphHandler", "Creating feature ID mapping...")
+        )
 
     featid_to_original_fid = {}
     for feat in edgesLayer.getFeatures():
@@ -1892,7 +1916,9 @@ def consolidate_network_nodes(
     # Step 1: Construir estruturas do grafo
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo("Building graph structures...")
+        multiStepFeedback.pushInfo(
+            QCoreApplication.translate("GraphHandler", "Building graph structures...")
+        )
 
     # ✅ MUDANÇA: Passar idFieldName
     (nodeDict, nodeIdDict, edgeDict, hashDict, G,) = buildAuxStructures(
@@ -1910,7 +1936,11 @@ def consolidate_network_nodes(
     # Step 2: Extrair coordenadas dos nós (PARALELIZADO)
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo("Extracting node coordinates (parallel)...")
+        multiStepFeedback.pushInfo(
+            QCoreApplication.translate(
+                "GraphHandler", "Extracting node coordinates (parallel)..."
+            )
+        )
 
     n_nodes = len(nodeIdDict)
     if n_nodes == 0:
@@ -1954,7 +1984,11 @@ def consolidate_network_nodes(
     # Step 3: Construir índice espacial
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo("Finding nearby nodes to consolidate...")
+        multiStepFeedback.pushInfo(
+            QCoreApplication.translate(
+                "GraphHandler", "Finding nearby nodes to consolidate..."
+            )
+        )
 
     tree = cKDTree(coordsArray)
     pairs = tree.query_pairs(tolerance)
@@ -1983,7 +2017,11 @@ def consolidate_network_nodes(
     # Step 4: Calcular centroides (PARALELIZADO)
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(4)
-        multiStepFeedback.pushInfo("Computing consolidated coordinates (parallel)...")
+        multiStepFeedback.pushInfo(
+            QCoreApplication.translate(
+                "GraphHandler", "Computing consolidated coordinates (parallel)..."
+            )
+        )
 
     nodeConsolidationDict = {}
     edgeFeatIdToNodeDict = defaultdict(dict)
@@ -2021,14 +2059,22 @@ def consolidate_network_nodes(
 
     # Converter tuplas para QgsPointXY na main thread
     if multiStepFeedback is not None:
-        multiStepFeedback.pushInfo("Converting to QgsPointXY objects...")
+        multiStepFeedback.pushInfo(
+            QCoreApplication.translate(
+                "GraphHandler", "Converting to QgsPointXY objects..."
+            )
+        )
 
     for wkb, (x, y) in temp_consolidation_dict.items():
         nodeConsolidationDict[wkb] = QgsPointXY(x, y)
 
     # 🚀 PARALELIZAÇÃO 3: Mapear nós consolidados para edges
     if multiStepFeedback is not None:
-        multiStepFeedback.pushInfo("Mapping consolidated nodes to edges (parallel)...")
+        multiStepFeedback.pushInfo(
+            QCoreApplication.translate(
+                "GraphHandler", "Mapping consolidated nodes to edges (parallel)..."
+            )
+        )
 
     hash_items = list(hashDict.items())
     chunk_size = max(100, len(hash_items) // (max_workers or 4))

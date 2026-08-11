@@ -205,7 +205,7 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
             return outputList
 
         cacheLyr.startEditing()
-        cacheLyr.beginEditCommand("Updating holes")
+        cacheLyr.beginEditCommand(self.tr("Updating holes"))
         for current, feat in enumerate(donutHole.getFeatures()):
             if multiStepFeedback.isCanceled():
                 break

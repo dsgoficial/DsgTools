@@ -20,7 +20,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-import json
 from functools import partial
 
 from qgis.core import QgsProject, QgsVectorLayer
@@ -101,9 +100,9 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         :return: (QComboBox) configured error selection widget.
         """
         errorTypeList = [
-            "Atributo de valor incomum",
-            "Atributo com valor incorreto",
-            "Preencher atributo",
+            self.tr("Uncommon attribute value"),
+            self.tr("Incorrect attribute value"),
+            self.tr("Fill attribute"),
         ]
 
         cb = QComboBox()
@@ -261,42 +260,32 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                             else:
                                 invalidRules.append(
                                     self.tr(
-                                        "Rule number {} : {} - is not a valid color.".format(
-                                            attrRulesMapKey, attrRulesMapValue["4"]
-                                        )
-                                    )
+                                        "Rule number {0} : {1} - is not a valid color."
+                                    ).format(attrRulesMapKey, attrRulesMapValue["4"])
                                 )
                         else:
                             invalidRules.append(
                                 self.tr(
-                                    "Rule number {} : {} - is not a valid string.".format(
-                                        attrRulesMapKey, attrRulesMapValue["3"]
-                                    )
-                                )
+                                    "Rule number {0} : {1} - is not a valid string."
+                                ).format(attrRulesMapKey, attrRulesMapValue["3"])
                             )
                     else:
                         invalidRules.append(
                             self.tr(
-                                "Rule number {} : {} - is not a valid expression.".format(
-                                    attrRulesMapKey, attrRulesMapValue["2"]
-                                )
-                            )
+                                "Rule number {0} : {1} - is not a valid expression."
+                            ).format(attrRulesMapKey, attrRulesMapValue["2"])
                         )
                 else:
                     invalidRules.append(
                         self.tr(
-                            "Rule number {} : {} - is not a valid length = 2 list.".format(
-                                attrRulesMapKey, attrRulesMapValue["1"]
-                            )
-                        )
+                            "Rule number {0} : {1} - is not a valid length = 2 list."
+                        ).format(attrRulesMapKey, attrRulesMapValue["1"])
                     )
             else:
                 invalidRules.append(
                     self.tr(
-                        "Rule number {} : {} - is not a valid string description.".format(
-                            attrRulesMapKey, attrRulesMapValue["0"]
-                        )
-                    )
+                        "Rule number {0} : {1} - is not a valid string description."
+                    ).format(attrRulesMapKey, attrRulesMapValue["0"])
                 )
 
         return newDict, invalidRules

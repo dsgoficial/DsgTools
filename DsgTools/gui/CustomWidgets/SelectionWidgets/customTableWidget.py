@@ -23,13 +23,10 @@
 from builtins import range
 import os
 
-from qgis.core import QgsMessageLog
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
-from qgis.PyQt.QtSql import QSqlQuery
-from qgis.PyQt.QtWidgets import QFileDialog
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 
 FORM_CLASS, _ = uic.loadUiType(

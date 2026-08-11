@@ -44,7 +44,7 @@ class AbstractDb(QObject):
         Constructor
         """
         super(AbstractDb, self).__init__()
-        self.conversionTypeDict = dict({"QPSQL": "postgis", "QSQLITE": "spatialite"})
+        self.conversionTypeDict = dict({"QPSQL": "postgis"})
         self.utils = Utils()
         self.signals = DbSignals()
         self.slotConnected = False
@@ -106,27 +106,15 @@ class AbstractDb(QObject):
             if layer.split("_")[-1].lower() in ["p", "l", "a"] or schema == "complexos":
                 sql = self.gen.getElementCountFromLayer(layer)
                 query = QSqlQuery(sql, self.db)
-                query.next()
-                number = query.value(0)
-                if not query.exec(sql):
+                if not query.isActive():
                     raise Exception(
                         self.tr("Problem counting elements: ")
                         + query.lastError().text()
                     )
+                query.next()
+                number = query.value(0)
                 listaQuantidades.append([layer, number])
         return listaQuantidades
-
-    def getLayersWithElements(self, layerList):
-        self.checkAndOpenDb()
-        lyrWithElemList = []
-        for lyr in layerList:
-            # schema=self.getTableSchemaFromDb(lyr)
-            sql = self.gen.getElementCountFromLayer(lyr)
-            query = QSqlQuery(sql, self.db)
-            query.next()
-            if query.value(0) is not None and query.value(0) > 1:
-                lyrWithElemList.append(lyr)
-        return lyrWithElemList
 
     def getLayersWithElementsV2(self, layerList, useInheritance=False):
         self.checkAndOpenDb()
@@ -201,24 +189,6 @@ class AbstractDb(QObject):
         classList.sort()
         return self.listWithElementsFromDatabase(classList)
 
-    def getAggregationAttributes(self):
-        """
-        Gets complex link columns
-        """
-        self.checkAndOpenDb()
-        columns = []
-        sql = self.gen.getAggregationColumn()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem getting aggregation attributes: ")
-                + query.lastError().text()
-            )
-        while query.next():
-            value = query.value(0)
-            columns.append(value)
-        return columns
-
     def getOgrDatabase(self):
         """
         Builds a OGR database
@@ -236,17 +206,6 @@ class AbstractDb(QObject):
         return fieldMap
 
     def validateWithOutputDatabaseSchema(self, outputAbstractDb):
-        return None
-
-    def convertDatabase(self, outputAbstractDb, type):
-        """
-        Converts database
-        """
-        self.signals.clearLog.emit()
-        if outputAbstractDb.db.driverName() == "QPSQL":
-            return self.convertToPostgis(outputAbstractDb, type)
-        if outputAbstractDb.db.driverName() == "QSQLITE":
-            return self.convertToSpatialite(outputAbstractDb, type)
         return None
 
     def makeValidationSummary(self, invalidatedDataDict):
@@ -850,21 +809,14 @@ class AbstractDb(QObject):
         Gets the QML directory
         """
         currentPath = os.path.dirname(__file__)
-        if Qgis.QGIS_VERSION_INT >= 30000:
-            # treat old implementations (bug fixes on domain values)
-            implVersion = self.implementationVersion()
-            if implVersion == "" or float(implVersion) < 3:
-                qmlVersionPath = os.path.join(
-                    currentPath, "..", "..", "Qmls", "qgis_37_impl_2"
-                )
-            else:
-                qmlVersionPath = os.path.join(
-                    currentPath, "..", "..", "Qmls", "qgis_37"
-                )
-        elif Qgis.QGIS_VERSION_INT >= 20600:
-            qmlVersionPath = os.path.join(currentPath, "..", "..", "Qmls", "qgis_26")
+        # treat old implementations (bug fixes on domain values)
+        implVersion = self.implementationVersion()
+        if implVersion == "" or float(implVersion) < 3:
+            qmlVersionPath = os.path.join(
+                currentPath, "..", "..", "Qmls", "qgis_37_impl_2"
+            )
         else:
-            qmlVersionPath = os.path.join(currentPath, "..", "..", "Qmls", "qgis_22")
+            qmlVersionPath = os.path.join(currentPath, "..", "..", "Qmls", "qgis_37")
 
         version = self.getDatabaseVersion()
         if version == "3.0":
@@ -942,21 +894,6 @@ class AbstractDb(QObject):
         except:
             pass
         return styleDict
-
-    def makeValueRelationDict(self, table, codes):
-        """
-        Makes the value relation dictionary (multi valued attributes)
-        """
-        self.checkAndOpenDb()
-        ret = dict()
-        in_clause = "(%s)" % ",".join(map(str, codes))
-        sql = self.gen.makeRelationDict(table, in_clause)
-        query = QSqlQuery(sql, self.db)
-        while query.next():
-            code = str(query.value(0))
-            code_name = query.value(1)
-            ret[code_name] = code
-        return ret
 
     def createFrameFromInom(self, inom):
         frame = self.utmGrid.getQgsPolygonFrame(inom)
@@ -1053,19 +990,11 @@ class AbstractDb(QObject):
         query = QSqlQuery(self.gen.implementationVersion(), self.db)
         if not query.isActive():
             return ""
+        version = ""
         while query.next():
             version = query.value(0)
             break
-        return version if version is not None else -1
-
-    def getVersionString(self):
-        version = self.getDatabaseVersion()
-        if version == "Non_EDGV":
-            return self.tr("Unknown DB model")
-        if version in ["2.1.3", "3.0"]:
-            version = f"EDGV {version}"
-        implementation = self.implementationVersion()
-        return f"{version} impl. {implementation}"
+        return version if version is not None else ""
 
     def getImplementationVersion(self):
         """

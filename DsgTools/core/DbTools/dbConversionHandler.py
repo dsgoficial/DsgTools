@@ -25,7 +25,7 @@ import copy
 import json
 from abc import abstractclassmethod
 from collections import defaultdict
-from typing import Any, Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from qgis.core import (
     NULL,
@@ -37,6 +37,7 @@ from qgis.core import (
     QgsVectorLayerUtils,
     QgsWkbTypes,
 )
+from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
@@ -825,7 +826,11 @@ def write_output_features(
             continue
         get_output_feature_lambda = lambda x: get_output_feature(x, outputLayer)
         outputLayer.startEditing()
-        outputLayer.beginEditCommand(f"Writing converted features on layer {lyrName}.")
+        outputLayer.beginEditCommand(
+            QCoreApplication.translate(
+                "dbConversionHandler", "Writing converted features on layer {0}."
+            ).format(lyrName)
+        )
         outputLayer.addFeatures(list(map(get_output_feature_lambda, featDictList)))
         outputLayer.endEditCommand()
     return notConvertedDict

@@ -22,27 +22,20 @@
 """
 
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterRasterLayer,
     QgsProcessingParameterRasterDestination,
     QgsProcessingParameterNumber,
     QgsProcessingParameterBoolean,
     QgsProcessingException,
-    QgsProcessingContext,
     QgsMessageLog,
     Qgis,
 )
 
 # Import DsgTools rasterHandler functions
-from DsgTools.core.GeometricTools.rasterHandler import (
-    readAsNumpy,
-    getCoordinateTransform,
-    writeOutputRaster,
-)
+from DsgTools.core.GeometricTools.rasterHandler import readAsNumpy, writeOutputRaster
 
 
 def truly_vectorized_median_filter(
@@ -59,27 +52,48 @@ def truly_vectorized_median_filter(
 
     # Check for cancellation before starting
     if feedback and feedback.isCanceled():
-        raise QgsProcessingException("Processing was cancelled by user")
+        raise QgsProcessingException(
+            QCoreApplication.translate(
+                "MedianFilterNoDataAlgorithm", "Processing was cancelled by user"
+            )
+        )
 
     rows, cols = data.shape
     pad = window_size // 2
 
     # Pad the array
-    feedback and feedback.pushInfo("Creating padded array for sliding windows...")
+    feedback and feedback.pushInfo(
+        QCoreApplication.translate(
+            "MedianFilterNoDataAlgorithm",
+            "Creating padded array for sliding windows...",
+        )
+    )
     padded = np.pad(data, pad, mode="constant", constant_values=np.nan)
 
     # Check for cancellation
     if feedback and feedback.isCanceled():
-        raise QgsProcessingException("Processing was cancelled by user")
+        raise QgsProcessingException(
+            QCoreApplication.translate(
+                "MedianFilterNoDataAlgorithm", "Processing was cancelled by user"
+            )
+        )
 
     # Create sliding windows - this is the key to true vectorization
     # Result shape: (rows, cols, window_size, window_size)
-    feedback and feedback.pushInfo("Creating sliding windows view...")
+    feedback and feedback.pushInfo(
+        QCoreApplication.translate(
+            "MedianFilterNoDataAlgorithm", "Creating sliding windows view..."
+        )
+    )
     windows = sliding_window_view(padded, (window_size, window_size))
 
     # Check for cancellation
     if feedback and feedback.isCanceled():
-        raise QgsProcessingException("Processing was cancelled by user")
+        raise QgsProcessingException(
+            QCoreApplication.translate(
+                "MedianFilterNoDataAlgorithm", "Processing was cancelled by user"
+            )
+        )
 
     # Reshape to (rows * cols, window_size * window_size) for vectorized processing
     windows_flat = windows.reshape(rows * cols, window_size * window_size)
@@ -96,7 +110,12 @@ def truly_vectorized_median_filter(
         for start_idx in range(0, total_pixels, chunk_size):
             # Check for cancellation
             if feedback and feedback.isCanceled():
-                raise QgsProcessingException("Processing was cancelled by user")
+                raise QgsProcessingException(
+                    QCoreApplication.translate(
+                        "MedianFilterNoDataAlgorithm",
+                        "Processing was cancelled by user",
+                    )
+                )
 
             end_idx = min(start_idx + chunk_size, total_pixels)
             chunk = windows_array[start_idx:end_idx]
@@ -118,12 +137,20 @@ def truly_vectorized_median_filter(
         return result
 
     # Apply to all windows
-    feedback and feedback.pushInfo("Computing medians for all windows...")
+    feedback and feedback.pushInfo(
+        QCoreApplication.translate(
+            "MedianFilterNoDataAlgorithm", "Computing medians for all windows..."
+        )
+    )
     medians = vectorized_median_with_nancheck(windows_flat)
 
     # Check for cancellation
     if feedback and feedback.isCanceled():
-        raise QgsProcessingException("Processing was cancelled by user")
+        raise QgsProcessingException(
+            QCoreApplication.translate(
+                "MedianFilterNoDataAlgorithm", "Processing was cancelled by user"
+            )
+        )
 
     # Reshape back to original dimensions
     return medians.reshape(rows, cols)
@@ -144,31 +171,55 @@ def ultra_fast_vectorized_median(data, window_size, min_valid_pixels=1, feedback
 
     # Check for cancellation before starting
     if feedback and feedback.isCanceled():
-        raise QgsProcessingException("Processing was cancelled by user")
+        raise QgsProcessingException(
+            QCoreApplication.translate(
+                "MedianFilterNoDataAlgorithm", "Processing was cancelled by user"
+            )
+        )
 
     rows, cols = data.shape
     pad = window_size // 2
 
     # Pad array
-    feedback and feedback.pushInfo("Creating padded array...")
+    feedback and feedback.pushInfo(
+        QCoreApplication.translate(
+            "MedianFilterNoDataAlgorithm", "Creating padded array..."
+        )
+    )
     padded = np.pad(data, pad, mode="constant", constant_values=np.nan)
 
     # Check for cancellation
     if feedback and feedback.isCanceled():
-        raise QgsProcessingException("Processing was cancelled by user")
+        raise QgsProcessingException(
+            QCoreApplication.translate(
+                "MedianFilterNoDataAlgorithm", "Processing was cancelled by user"
+            )
+        )
 
     # Create sliding windows - this creates a view, not a copy
-    feedback and feedback.pushInfo("Creating sliding windows view...")
+    feedback and feedback.pushInfo(
+        QCoreApplication.translate(
+            "MedianFilterNoDataAlgorithm", "Creating sliding windows view..."
+        )
+    )
     windows = sliding_window_view(padded, (window_size, window_size))
 
     # Check for cancellation
     if feedback and feedback.isCanceled():
-        raise QgsProcessingException("Processing was cancelled by user")
+        raise QgsProcessingException(
+            QCoreApplication.translate(
+                "MedianFilterNoDataAlgorithm", "Processing was cancelled by user"
+            )
+        )
 
     # Reshape to process all windows at once: (total_pixels, window_elements)
     windows_flat = windows.reshape(-1, window_size * window_size)
 
-    feedback and feedback.pushInfo("Computing vectorized medians...")
+    feedback and feedback.pushInfo(
+        QCoreApplication.translate(
+            "MedianFilterNoDataAlgorithm", "Computing vectorized medians..."
+        )
+    )
     feedback and feedback.setProgress(50)
 
     # Vectorized processing - this is the key optimization
@@ -177,7 +228,11 @@ def ultra_fast_vectorized_median(data, window_size, min_valid_pixels=1, feedback
 
     # Check for cancellation
     if feedback and feedback.isCanceled():
-        raise QgsProcessingException("Processing was cancelled by user")
+        raise QgsProcessingException(
+            QCoreApplication.translate(
+                "MedianFilterNoDataAlgorithm", "Processing was cancelled by user"
+            )
+        )
 
     # Initialize result array
     result = np.full(windows_flat.shape[0], np.nan)
@@ -191,7 +246,11 @@ def ultra_fast_vectorized_median(data, window_size, min_valid_pixels=1, feedback
 
         # Check for cancellation before expensive operation
         if feedback and feedback.isCanceled():
-            raise QgsProcessingException("Processing was cancelled by user")
+            raise QgsProcessingException(
+                QCoreApplication.translate(
+                    "MedianFilterNoDataAlgorithm", "Processing was cancelled by user"
+                )
+            )
 
         medians = np.nanmedian(valid_windows, axis=1)
 
@@ -202,7 +261,11 @@ def ultra_fast_vectorized_median(data, window_size, min_valid_pixels=1, feedback
 
     # Check for cancellation
     if feedback and feedback.isCanceled():
-        raise QgsProcessingException("Processing was cancelled by user")
+        raise QgsProcessingException(
+            QCoreApplication.translate(
+                "MedianFilterNoDataAlgorithm", "Processing was cancelled by user"
+            )
+        )
 
     # Reshape back to original dimensions
     return result.reshape(rows, cols)
@@ -287,13 +350,23 @@ def threaded_vectorized_median_filter(
                 # Cancel remaining futures
                 for f in future_to_chunk:
                     f.cancel()
-                raise QgsProcessingException("Processing was cancelled by user")
+                raise QgsProcessingException(
+                    QCoreApplication.translate(
+                        "MedianFilterNoDataAlgorithm",
+                        "Processing was cancelled by user",
+                    )
+                )
 
             chunk_result, start_row, end_row = future.result()
 
             # Check if chunk was cancelled
             if chunk_result is None:
-                raise QgsProcessingException("Processing was cancelled by user")
+                raise QgsProcessingException(
+                    QCoreApplication.translate(
+                        "MedianFilterNoDataAlgorithm",
+                        "Processing was cancelled by user",
+                    )
+                )
 
             # Assemble result
             output[start_row:end_row, :] = chunk_result
@@ -391,24 +464,28 @@ class MedianFilterNoDataAlgorithm(QgsProcessingAlgorithm):
 
         # Validate window size
         if window_size % 2 == 0:
-            raise QgsProcessingException("Window size must be odd")
+            raise QgsProcessingException(self.tr("Window size must be odd"))
 
-        feedback.pushInfo(f"Processing raster: {input_layer.name()}")
-        feedback.pushInfo(f"Window size: {window_size}x{window_size}")
-        feedback.pushInfo(f"Minimum valid pixels: {min_valid_pixels}")
+        feedback.pushInfo(self.tr("Processing raster: %s") % input_layer.name())
+        feedback.pushInfo(self.tr("Window size: %sx%s") % (window_size, window_size))
+        feedback.pushInfo(self.tr("Minimum valid pixels: %s") % min_valid_pixels)
 
         import multiprocessing as mp
 
-        feedback.pushInfo(f"CPU cores available: {mp.cpu_count()}")
+        feedback.pushInfo(self.tr("CPU cores available: %s") % mp.cpu_count())
 
         try:
             # Read raster using DsgTools rasterHandler
-            feedback.pushInfo("Reading raster data using DsgTools rasterHandler...")
+            feedback.pushInfo(
+                self.tr("Reading raster data using DsgTools rasterHandler...")
+            )
             feedback.setProgress(10)
 
             # Check for cancellation
             if feedback.isCanceled():
-                raise QgsProcessingException("Processing was cancelled by user")
+                raise QgsProcessingException(
+                    self.tr("Processing was cancelled by user")
+                )
 
             # Get NoData value from the raster layer
             provider = input_layer.dataProvider()
@@ -421,43 +498,58 @@ class MedianFilterNoDataAlgorithm(QgsProcessingAlgorithm):
 
             # Check for cancellation after reading
             if feedback.isCanceled():
-                raise QgsProcessingException("Processing was cancelled by user")
+                raise QgsProcessingException(
+                    self.tr("Processing was cancelled by user")
+                )
 
             # Fix transpose issue - ensure correct orientation
             # rasterHandler already handles the transpose, so npRaster should be in correct orientation
-            feedback.pushInfo(f"Raster shape: {npRaster.shape} (rows, cols)")
-            feedback.pushInfo(f"NoData value: {nodata_value}")
-            feedback.pushInfo(f"Valid pixels: {np.sum(~np.isnan(npRaster))}")
-            feedback.pushInfo(f"Memory usage: {npRaster.nbytes / 1024 / 1024:.1f} MB")
+            feedback.pushInfo(
+                self.tr("Raster shape: %s (rows, cols)") % str(npRaster.shape)
+            )
+            feedback.pushInfo(self.tr("NoData value: %s") % nodata_value)
+            feedback.pushInfo(self.tr("Valid pixels: %s") % np.sum(~np.isnan(npRaster)))
+            feedback.pushInfo(
+                self.tr("Memory usage: %s MB")
+                % ("%.1f" % (npRaster.nbytes / 1024 / 1024))
+            )
 
             # Store original NoData mask if preserving
             if preserve_nodata:
                 original_nodata_mask = np.isnan(npRaster)
 
             # Apply optimized median filter
-            feedback.pushInfo("Applying optimized vectorized median filter...")
+            feedback.pushInfo(self.tr("Applying optimized vectorized median filter..."))
             feedback.setProgress(25)
 
             # Check for cancellation before filtering
             if feedback.isCanceled():
-                raise QgsProcessingException("Processing was cancelled by user")
+                raise QgsProcessingException(
+                    self.tr("Processing was cancelled by user")
+                )
 
             import time
 
             start_time = time.time()
 
-            feedback.pushInfo("Using ultra-fast vectorized method (small raster)")
+            feedback.pushInfo(
+                self.tr("Using ultra-fast vectorized method (small raster)")
+            )
             filtered_data = ultra_fast_vectorized_median(
                 npRaster, window_size, min_valid_pixels, feedback
             )
 
             # Check for cancellation after filtering
             if feedback.isCanceled():
-                raise QgsProcessingException("Processing was cancelled by user")
+                raise QgsProcessingException(
+                    self.tr("Processing was cancelled by user")
+                )
 
             elapsed_time = time.time() - start_time
 
-            feedback.pushInfo(f"Filtering completed in {elapsed_time:.2f} seconds")
+            feedback.pushInfo(
+                self.tr("Filtering completed in %s seconds") % ("%.2f" % elapsed_time)
+            )
 
             # Preserve original NoData areas if requested
             if preserve_nodata:
@@ -467,10 +559,14 @@ class MedianFilterNoDataAlgorithm(QgsProcessingAlgorithm):
 
             # Check for cancellation before writing
             if feedback.isCanceled():
-                raise QgsProcessingException("Processing was cancelled by user")
+                raise QgsProcessingException(
+                    self.tr("Processing was cancelled by user")
+                )
 
             # Write output raster using DsgTools rasterHandler
-            feedback.pushInfo("Writing output raster using DsgTools rasterHandler...")
+            feedback.pushInfo(
+                self.tr("Writing output raster using DsgTools rasterHandler...")
+            )
 
             # Convert NaN back to original NoData value for output
             if nodata_value is not None:
@@ -488,19 +584,21 @@ class MedianFilterNoDataAlgorithm(QgsProcessingAlgorithm):
             # Final cancellation check
             if feedback.isCanceled():
                 feedback.pushInfo(
-                    "Note: Processing completed but was cancelled during finalization"
+                    self.tr(
+                        "Processing completed but was cancelled during finalization"
+                    )
                 )
 
             feedback.setProgress(100)
-            feedback.pushInfo("Processing completed successfully!")
+            feedback.pushInfo(self.tr("Processing completed successfully!"))
 
         except Exception as e:
             QgsMessageLog.logMessage(
-                f"Error in median filter: {str(e)}",
+                self.tr("Error in median filter: %s") % str(e),
                 "DsgTools",
                 Qgis.MessageLevel.Critical,
             )
-            raise QgsProcessingException(f"Processing failed: {str(e)}")
+            raise QgsProcessingException(self.tr("Processing failed: %s") % str(e))
 
         return {self.OUTPUT: output_path}
 

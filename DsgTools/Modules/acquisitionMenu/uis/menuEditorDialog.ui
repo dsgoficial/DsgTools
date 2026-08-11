@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Editor de Menu</string>
+   <string>Menu Editor</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="1">
@@ -40,7 +40,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Menu Nome:</string>
+        <string>Menu Name:</string>
        </property>
       </widget>
      </item>
@@ -77,28 +77,28 @@
      <item>
       <widget class="QPushButton" name="deleteMenuBtn">
        <property name="text">
-        <string>Excluir Menu</string>
+        <string>Delete Menu</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="importMenuBtn">
        <property name="text">
-        <string>Importar Menu</string>
+        <string>Import Menu</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="exportMenuBtn">
        <property name="text">
-        <string>Exportar Menu</string>
+        <string>Export Menu</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="createMenuBtn">
        <property name="text">
-        <string>Criar Menu</string>
+        <string>Create Menu</string>
        </property>
       </widget>
      </item>
@@ -138,7 +138,7 @@
        </rect>
       </property>
       <attribute name="label">
-       <string>Abas</string>
+       <string>Tabs</string>
       </attribute>
       <layout class="QVBoxLayout" name="tabLayout"/>
      </widget>
@@ -152,7 +152,7 @@
        </rect>
       </property>
       <attribute name="label">
-       <string>Botões</string>
+       <string>Buttons</string>
       </attribute>
       <layout class="QVBoxLayout" name="buttonLayout"/>
      </widget>
@@ -161,7 +161,7 @@
    <item row="1" column="1">
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>&lt;span style=&quot;color:red&quot;&gt;&lt;b&gt;Ordene abas e botões arrastando!&lt;/b&gt;&lt;/span&gt;</string>
+      <string>&lt;span style=&quot;color:red&quot;&gt;&lt;b&gt;Reorder tabs and buttons by dragging!&lt;/b&gt;&lt;/span&gt;</string>
      </property>
     </widget>
    </item>

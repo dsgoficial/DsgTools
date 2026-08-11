@@ -23,18 +23,15 @@
 from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterVectorLayer,
     QgsProcessingParameterEnum,
     QgsProcessingParameterNumber,
     QgsProcessingParameterFeatureSink,
     QgsFeature,
     QgsGeometry,
-    QgsVectorLayer,
     QgsField,
     QgsFields,
     QgsWkbTypes,
     QgsFeatureSink,
-    QgsProject,
     QgsPointXY,
     QgsProcessingParameterFeatureSource,
 )

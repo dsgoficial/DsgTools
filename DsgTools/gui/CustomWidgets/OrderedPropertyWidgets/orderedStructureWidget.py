@@ -21,13 +21,12 @@
  ***************************************************************************/
 """
 from builtins import range
-import os, importlib
-from collections import OrderedDict
+import os
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from qgis.PyQt.QtWidgets import QTableWidgetItem, QTableWidgetSelectionRange
+from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtWidgets import QTableWidgetSelectionRange
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "orderedStructureWidget.ui")
@@ -147,7 +146,7 @@ class OrderedStructureWidget(QtWidgets.QWidget, FORM_CLASS):
         for i in range(self.tableWidget.rowCount()):
             if not self.tableWidget.cellWidget(i, 0).validate():
                 msg += (
-                    self.tr("Error for rule #{0}:\n".format(i + 1))
+                    self.tr("Error for rule #{0}:\n").format(i + 1)
                     + self.tableWidget.cellWidget(i, 0).invalidatedReason()
                 )
         return msg

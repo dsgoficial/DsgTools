@@ -20,13 +20,7 @@
  ***************************************************************************/
 """
 
-from itertools import product
-import os
-import concurrent.futures
-import string
-import processing
 
-from collections import defaultdict
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
 )
@@ -35,16 +29,13 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterField,
     QgsWkbTypes,
     QgsProcessingParameterExpression,
     QgsFeatureRequest,
 )
-from DsgTools.core.GeometricTools import graphHandler
 
 
 class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
@@ -268,5 +259,5 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "O algoritmo confronta massas d'água com as curvas de nível, verificando se uma curva intersecta mais de uma vez uma curva de nível."
+            "The algorithm compares water bodies against contour lines, checking whether a contour intersects a water body more than once."
         )

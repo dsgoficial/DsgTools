@@ -31,7 +31,7 @@ from qgis.PyQt.QtCore import pyqtSlot, QObject
 
 from qgis.core import QgsMessageLog
 
-import os, codecs
+import os
 
 from .genericThread import GenericThread
 

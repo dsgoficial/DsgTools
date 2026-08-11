@@ -26,7 +26,6 @@ from itertools import product
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
     QgsFeature,
-    QgsFeatureRequest,
     QgsFeatureSink,
     QgsField,
     QgsGeometry,
@@ -52,14 +51,16 @@ class SplitPolygons(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT, "Input polygon layer", [QgsProcessing.TypeVectorPolygon]
+                self.INPUT,
+                self.tr("Input polygon layer"),
+                [QgsProcessing.TypeVectorPolygon],
             )
         )
 
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PARAM,
-                "Splitting factor",
+                self.tr("Splitting factor"),
                 options=self.SPLIT_FACTORS,
                 defaultValue=0,
             )
@@ -68,14 +69,16 @@ class SplitPolygons(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.OVERLAP,
-                "Overlap value",
+                self.tr("Overlap value"),
                 QgsProcessingParameterNumber.Double,
                 defaultValue=0.002,
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(self.OUTPUT, "Output split polygons")
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT, self.tr("Output split polygons")
+            )
         )
 
     def splitPol(
@@ -271,7 +274,7 @@ class SplitPolygons(QgsProcessingAlgorithm):
         return "splitpolygons"
 
     def displayName(self):
-        return "Split Polygons"
+        return self.tr("Split Polygons")
 
     def group(self):
         """

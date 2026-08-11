@@ -154,16 +154,6 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
                 "tableSchema": "public",
                 "tableType": "BASE TABLE",
             }
-        elif loader.provider == "spatialite":
-            layerMeta = {
-                "cat": "aux",
-                "geom": "GEOMETRY",
-                "geomType": "MULTIPOLYGON",
-                "lyrName": "moldura_a",
-                "tableName": "aux_moldura_a",
-                "tableSchema": "public",
-                "tableType": "BASE TABLE",
-            }
         else:
             layerMeta = None
         layerDict = loader.load([layerMeta], uniqueLoad=True)

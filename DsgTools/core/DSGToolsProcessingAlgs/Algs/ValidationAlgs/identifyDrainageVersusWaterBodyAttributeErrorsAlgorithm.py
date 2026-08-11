@@ -21,32 +21,23 @@
  ***************************************************************************/
 """
 
-from collections import defaultdict
-from typing import Any, Dict, Set
 from qgis.PyQt.QtCore import QCoreApplication
 
-import concurrent.futures
-import os
-from itertools import product, chain
 from qgis.core import (
-    QgsGeometry,
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterVectorLayer,
-    QgsFeature,
     QgsProcessingParameterField,
     QgsProcessingParameterExpression,
     QgsProcessingParameterString,
     QgsVectorLayer,
-    QgsFeedback,
     QgsWkbTypes,
 )
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
-from DsgTools.core.GeometricTools import graphHandler
 
 
 class IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(ValidationAlgorithm):
@@ -214,8 +205,8 @@ class IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(ValidationAlgorith
             flagGeom=x.geometry(),
             featid=x["featid"],
             flagText=self.tr(
-                f"Features outside water body with attribute inside water body ({polygonRelationshipAttribute} != {outsidePolygonValue})."
-            ),
+                "Features outside water body with attribute inside water body ({0} != {1})."
+            ).format(polygonRelationshipAttribute, outsidePolygonValue),
         )
         list(map(flagLambda, drainagesOutsideWithWrongAttributes.getFeatures()))
         currentStep += 1
@@ -243,8 +234,8 @@ class IdentifyDrainageVersusWaterBodyAttributeErrorsAlgorithm(ValidationAlgorith
             flagGeom=x.geometry(),
             featid=x["featid"],
             flagText=self.tr(
-                f"Features inside water body with attribute inside water body ({polygonRelationshipAttribute} = {outsidePolygonValue})."
-            ),
+                "Features inside water body with attribute inside water body ({0} = {1})."
+            ).format(polygonRelationshipAttribute, outsidePolygonValue),
         )
         list(map(flagLambda, drainagesInsideWithWrongAttributes.getFeatures()))
 

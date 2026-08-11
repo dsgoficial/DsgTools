@@ -23,7 +23,6 @@
 
 from qgis.gui import QgsMessageBar, QgsMessageBarItem
 from qgis.core import Qgis
-from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QProgressBar, QSizePolicy
 import time
 

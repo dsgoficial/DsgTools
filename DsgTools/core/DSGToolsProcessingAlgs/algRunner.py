@@ -32,7 +32,6 @@ from qgis.core import (
     QgsProcessingUtils,
     QgsVectorLayer,
     QgsFeedback,
-    QgsProject,
     QgsRasterLayer,
     QgsRectangle,
     QgsCoordinateReferenceSystem,
@@ -42,13 +41,20 @@ from qgis.core import (
 
 def _registerLayer(layer, context):
     """Ensure a QgsMapLayer is findable by ID in the processing context.
-    If the layer is already in the project or context store, returns its ID.
-    Otherwise, clones it into the context store and returns the clone's ID
-    (clone gets a new ID, so we must return that for processing to find it)."""
+    If the layer is already in the context store or in the context's OWN
+    project, returns its ID. Otherwise, clones it into the context store and
+    returns the clone's ID (clone gets a new ID, so we must return that for
+    processing to find it).
+
+    The lookup must use context.project(), not QgsProject.instance(): the ID
+    we return has to be resolvable by the same context handed to
+    processing.run(). A context whose project differs (or is None, e.g. a bare
+    QgsProcessingContext()) cannot resolve a global-project layer by ID, which
+    surfaced as 'Could not load source layer for INPUT' in rulestatistics."""
     if context is not None:
-        if (
-            context.temporaryLayerStore().mapLayer(layer.id()) is not None
-            or QgsProject.instance().mapLayer(layer.id()) is not None
+        project = context.project()
+        if context.temporaryLayerStore().mapLayer(layer.id()) is not None or (
+            project is not None and project.mapLayer(layer.id()) is not None
         ):
             return layer.id()
         clone = layer.clone()
@@ -198,6 +204,31 @@ class AlgRunner:
         output = self._runProcessing(
             "native:dissolve",
             parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runMergeLines(
+        self,
+        inputLyr,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        """
+        Une as partes conectadas de cada feição multiparte de linha numa linha só.
+
+        Diferente do runDSGToolsMergeLines, que agrupa por conjunto de atributos e
+        não recompõe anel a partir de dois arcos, este é o native:mergelines e
+        fecha o anel. Para unir por atributo, use antes o runDissolve com o campo.
+        """
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = self._runProcessing(
+            "native:mergelines",
+            {"INPUT": inputLyr, "OUTPUT": outputLyr},
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,

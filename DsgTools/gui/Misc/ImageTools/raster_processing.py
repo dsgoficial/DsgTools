@@ -33,7 +33,6 @@ from osgeo import gdal, osr
 import sys
 import colorsys
 import numpy
-import struct
 
 
 class RasterProcess(object):

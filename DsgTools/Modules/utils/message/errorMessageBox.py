@@ -1,5 +1,4 @@
-import os
-from qgis.PyQt import QtWidgets, uic
+from qgis.PyQt import QtWidgets
 
 
 class ErrorMessageBox:

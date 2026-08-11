@@ -68,8 +68,6 @@ class AbstractSelectionWidget(QObject):
             DsgEnums.NoDriver: self.tr("Select a datasource driver"),
             DsgEnums.PostGIS: "PostGIS",
             DsgEnums.NewPostGIS: self.tr("PostGIS (create new database)"),
-            DsgEnums.SpatiaLite: "SpatiaLite",
-            DsgEnums.NewSpatiaLite: self.tr("SpatiaLite (create new database)"),
             DsgEnums.Shapefile: "Shapefile",
             DsgEnums.NewShapefile: self.tr("Shapefile (create new database)"),
             # DsgEnums.Geopackage : 'Geopackage',

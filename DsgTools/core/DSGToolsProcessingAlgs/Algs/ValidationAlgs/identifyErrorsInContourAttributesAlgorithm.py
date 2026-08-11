@@ -21,34 +21,21 @@
  ***************************************************************************/
 """
 
-from collections import defaultdict
-from typing import Any, Dict, Set
 from qgis.PyQt.QtCore import QCoreApplication
 
-import concurrent.futures
-import os
-from itertools import product, chain
 from qgis.core import (
-    QgsGeometry,
     QgsProcessing,
     QgsProcessingException,
-    QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterVectorLayer,
-    QgsFeature,
     QgsProcessingParameterField,
     QgsProcessingParameterExpression,
-    QgsProcessingParameterString,
-    QgsVectorLayer,
-    QgsFeedback,
     QgsProcessingParameterEnum,
     QgsWkbTypes,
     QgsFeatureRequest,
 )
 
-from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
-from DsgTools.core.GeometricTools import graphHandler
 
 
 class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):
@@ -127,7 +114,7 @@ class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):
             masterContourExpression if masterContourExpression != "" else None
         )
         if masterContourExpression is None:
-            raise QgsProcessingException("invalid expression")
+            raise QgsProcessingException(self.tr("invalid expression"))
         self.prepareFlagSink(
             parameters, inputLyr, QgsWkbTypes.LineString, context, addFeatId=True
         )
@@ -164,8 +151,8 @@ class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):
             self.flagFeature(
                 flagGeom=feat.geometry(),
                 flagText=self.tr(
-                    f"Contour with height {feat[heightFieldName]} has invalid index (attributes: {attrDict})"
-                ),
+                    "Contour with height {0} has invalid index (attributes: {1})"
+                ).format(feat[heightFieldName], attrDict),
                 featid=feat.id(),
             )
         return {self.FLAGS: self.flag_id}

@@ -23,27 +23,16 @@
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.PyQt.QtCore import QCoreApplication
 import os
-import processing
 import concurrent.futures
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsProject,
-    QgsWkbTypes,
     QgsProcessingFeatureSourceDefinition,
 )
 

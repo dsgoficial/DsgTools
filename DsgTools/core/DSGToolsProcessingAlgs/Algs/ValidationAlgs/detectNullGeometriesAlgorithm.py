@@ -100,8 +100,8 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
             if hasNullOrEmpty:
                 multiStepFeedback.pushWarning(
                     self.tr(
-                        f"\n\n\nCheck layer {lyrName} for empty or null values.\n\n\n"
-                    )
+                        "\n\n\nCheck layer {0} for empty or null values.\n\n\n"
+                    ).format(lyrName)
                 )
             multiStepFeedback.setProgress(current * stepSize)
         return {}
@@ -116,7 +116,7 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
         Returns a QgsConditionalStyle
         """
         conditionalStyle = QgsConditionalStyle()
-        conditionalStyle.setName("Geometria nula")
+        conditionalStyle.setName(self.tr("Null geometry"))
         conditionalStyle.setRule("is_empty_or_null($geometry)")
         conditionalStyle.setBackgroundColor(QColor(255, 0, 0))
         conditionalStyle.setTextColor(QColor(255, 255, 255))
@@ -132,7 +132,9 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
 
         expression = QgsExpression(expressionString)
         if expression.hasParserError():
-            raise Exception(f"Invalid expression: \n{expressionString}")
+            raise Exception(
+                self.tr("Invalid expression: \n{0}").format(expressionString)
+            )
         lyr.addExpressionField(
             expressionString, QgsField("geometry_error", QMetaType.Type.QString)
         )

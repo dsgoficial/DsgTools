@@ -1,9 +1,7 @@
-import os, sys, copy
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
-import json
+import os
+from qgis.PyQt import QtCore, uic, QtWidgets
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 from qgis.utils import iface
-from qgis import gui
 
 
 class MenuDock(QtWidgets.QDockWidget):
@@ -73,7 +71,7 @@ class MenuDock(QtWidgets.QDockWidget):
                 buttonConfig, self.callbackReclassify
             )
         except Exception as e:
-            self.showError("Erro", str(e))
+            self.showError(self.tr("Error"), str(e))
 
     def setLastLayer(self, layer):
         self.lastLayer = layer

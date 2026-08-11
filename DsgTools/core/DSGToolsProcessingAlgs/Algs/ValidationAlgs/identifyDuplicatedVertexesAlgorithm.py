@@ -21,28 +21,18 @@
 """
 
 from collections import defaultdict
-from dataclasses import dataclass
 from qgis.PyQt.QtCore import QCoreApplication
 
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
+    Qgis,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterDistance,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
     QgsProcessingFeatureSourceDefinition,
-    QgsFeatureRequest,
 )
 
 from ...algRunner import AlgRunner
@@ -112,8 +102,7 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Building search structure..."))
         pointDict = self.buildPointDict(
             vertexLayer,
-            inpuIsPolygon=inputLyr.geometryType()
-            == QgsWkbTypes.GeometryType.PolygonGeometry,
+            inpuIsPolygon=inputLyr.geometryType() == Qgis.GeometryType.Polygon,
             feedback=multiStepFeedback,
         )
         multiStepFeedback.setCurrentStep(3)
@@ -162,7 +151,7 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
             self.flagFeature(
                 flagGeom=flagGeom,
                 fromWkb=True,
-                flagText=f"Duplicated vertex.",
+                flagText=self.tr("Duplicated vertex."),
             )
             if feedback is not None:
                 feedback.setProgress(current * size)

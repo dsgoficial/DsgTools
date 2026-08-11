@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 from builtins import range
-from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLabel
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import (

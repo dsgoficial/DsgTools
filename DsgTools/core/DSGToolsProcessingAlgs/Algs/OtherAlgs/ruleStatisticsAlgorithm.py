@@ -36,6 +36,7 @@ from qgis.core import (
     QgsProcessingParameterFile,
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterString,
+    QgsProject,
     QgsWkbTypes,
 )
 from qgis.PyQt.QtCore import QMetaType
@@ -60,27 +61,27 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUTLAYERS, "Camadas de entrada :"
+                self.INPUTLAYERS, self.tr("Input layers:")
             )
         )
         self.addParameter(
             QgsProcessingParameterFile(
                 self.RULEFILE,
-                description='Arquivo ".json" com regras :',
+                description=self.tr('".json" file with rules:'),
                 defaultValue=".json",
             )
         )
         self.addParameter(
             QgsProcessingParameterString(
                 self.RULEDATA,
-                description='Regras no formato "json" :',
+                description=self.tr('Rules in "json" format:'),
                 multiLine=True,
                 defaultValue="{}",
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.UNUSUAL_ATTRIBUTES, self.tr("Atributos incomuns")
+                self.UNUSUAL_ATTRIBUTES, self.tr("Unusual attributes")
             )
         )
         self.addParameter(
@@ -143,7 +144,7 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
             result[row["type"]].append(failed)
         if not input_data:
             self.print_log(
-                "Carregue um arquivos com as Regras ou insira as Regras!", feedback
+                self.tr("Load a file with the Rules or enter the Rules!"), feedback
             )
             return {
                 self.OUTPUT: "",
@@ -202,11 +203,15 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
 
     def print_log(self, number, text, feedback):
         feedback.pushInfo(
-            "{0}{1}LOG START - {2}{1}{0}\n\n".format("*" * 10, " " * 3, number + 1)
+            self.tr("{0}{1}LOG START - {2}{1}{0}\n\n").format(
+                "*" * 10, " " * 3, number + 1
+            )
         )
         feedback.pushInfo(text)
         feedback.pushInfo(
-            "{0}{1}LOG END - {2}{1}{0}\n\n".format("*" * 10, " " * 3, number + 1)
+            self.tr("{0}{1}LOG END - {2}{1}{0}\n\n").format(
+                "*" * 10, " " * 3, number + 1
+            )
         )
 
     def load_rules_from_parameters(self, parameters):
@@ -231,6 +236,10 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
     def check_rules_on_layers(self, attribute, rule, layers):
         failed = {}
         context = QgsProcessingContext()
+        # The input layers live in QgsProject.instance(); the child
+        # extractbyexpression must run with a project-aware context so the
+        # sanitized layer IDs resolve (see _registerLayer in algRunner).
+        context.setProject(QgsProject.instance())
         for lyr in layers:
             if not self.hasAttribute(attribute, lyr):
                 continue
@@ -246,7 +255,7 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
     def format_output_result(self, result):
         html = ""
         for ruleName in sorted(result.keys()):
-            row = "[REGRAS] : {0}\n\n".format(ruleName)
+            row = self.tr("[RULES] : {0}\n\n").format(ruleName)
             html += row
             failedLayers = []
             for layers in result[ruleName]:
@@ -262,7 +271,7 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
                 for layerName in sorted(failedLayers):
                     rows += "{0}\n\n".format(layerName)
             else:
-                rows = "As camadas passaram em todas as regras.\n\n"
+                rows = self.tr("All layers passed all rules.\n\n")
             html += rows
         return html
 

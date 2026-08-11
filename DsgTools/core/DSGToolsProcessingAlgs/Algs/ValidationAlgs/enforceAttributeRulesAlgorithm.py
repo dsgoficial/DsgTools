@@ -24,6 +24,7 @@
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QColor, QFont
 from qgis.core import (
+    Qgis,
     QgsFeature,
     QgsFeatureRequest,
     QgsProject,
@@ -37,7 +38,6 @@ from qgis.core import (
     QgsProcessingParameterType,
     QgsProcessingParameterDefinition,
 )
-from qgis.PyQt.QtWidgets import QMessageBox
 
 from .validationAlgorithm import ValidationAlgorithm
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
@@ -224,9 +224,9 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         :return: (tuple-of-QgsVectorLayer) filled flag layers.
         """
         layerMap = {
-            QgsWkbTypes.GeometryType.PointGeometry: ptLayer,
-            QgsWkbTypes.GeometryType.LineGeometry: lLayer,
-            QgsWkbTypes.GeometryType.PolygonGeometry: polLayer,
+            Qgis.GeometryType.Point: ptLayer,
+            Qgis.GeometryType.Line: lLayer,
+            Qgis.GeometryType.Polygon: polLayer,
         }
 
         for ruleParam in attrRulesMap.values():

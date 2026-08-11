@@ -25,15 +25,10 @@ from collections import defaultdict
 from typing import Any, Dict, Set
 from qgis.PyQt.QtCore import QCoreApplication
 
-import concurrent.futures
-import os
-from itertools import product, chain
 from qgis.core import (
-    QgsGeometry,
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterFeatureSink,
     QgsProcessingParameterVectorLayer,
     QgsFeature,
     QgsProcessingParameterField,
@@ -301,11 +296,11 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
             polygonRelationshipAttributeIdx,
             outsidePolygonValue,
             featIdsToUpdate,
-            commandMessage="Updating drainages outside polygons",
+            commandMessage=self.tr("Updating drainages outside polygons"),
         )
         multiStepFeedback.pushInfo(
-            self.tr(
-                f"{len(featIdsToUpdate)} outside polygons changed to {polygonRelationshipAttribute} = {outsidePolygonValue}"
+            self.tr("{0} outside polygons changed to {1} = {2}").format(
+                len(featIdsToUpdate), polygonRelationshipAttribute, outsidePolygonValue
             )
         )
 
@@ -343,8 +338,8 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
                 insideValue,
                 featIdSet,
                 commandMessage=self.tr(
-                    f"Updating drainage lines inside water bodies with value {insideValue}"
-                ),
+                    "Updating drainage lines inside water bodies with value {0}"
+                ).format(insideValue),
             )
 
         return {}
@@ -378,9 +373,9 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
                 if attr == outsidePolygonValue:
                     continue
                 neighborAttributeDict[attr] += 1
-            if len(neighborAttributeDict) > 1:
+            if len(neighborAttributeDict) != 1:
                 continue
-            attrValue = [i for i in neighborAttributeDict.keys()][0]
+            attrValue = next(iter(neighborAttributeDict))
             insideValueFeatsMap[attrValue].add(featid)
         return insideValueFeatsMap
 

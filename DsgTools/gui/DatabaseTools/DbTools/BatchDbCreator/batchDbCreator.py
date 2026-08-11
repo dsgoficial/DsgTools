@@ -21,13 +21,9 @@
  ***************************************************************************/
 """
 import os
-import json
 
-from qgis.PyQt import QtGui, uic, QtWidgets
+from qgis.PyQt import uic, QtWidgets
 from qgis.PyQt.QtCore import pyqtSignal
-from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QWizard
-from fileinput import filename
-from DsgTools.core.Utils.utils import Utils
 from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.createBatchFromCsv import (
     CreateBatchFromCsv,
 )
@@ -88,9 +84,7 @@ class BatchDbCreator(QtWidgets.QWizard, FORM_CLASS):
         """
         callback = lambda: self.manager.createDatabase(isBatchCreation=True)
         self.manager.addTool(
-            text=self.tr(
-                "Create batches of PostGIS, SpatiaLite or Geopackage Databases"
-            ),
+            text=self.tr("Create batches of PostGIS Databases"),
             callback=callback,
             parentMenu=self.parentMenu,
             icon="batchDatabase.png",

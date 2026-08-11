@@ -94,7 +94,7 @@ class ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             ds = gdal.Open(str(inputRaster.source()))
         except Exception:
             raise QgsProcessingException(
-                self.tr(f"Could not open raster: {inputRaster.source()}")
+                self.tr("Could not open raster: {0}").format(inputRaster.source())
             )
         # Read the array without specifying dtype to preserve original data type
         npRaster = ds.GetRasterBand(1).ReadAsArray()

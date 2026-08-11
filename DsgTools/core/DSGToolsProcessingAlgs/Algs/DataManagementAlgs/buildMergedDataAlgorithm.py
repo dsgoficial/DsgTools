@@ -24,9 +24,9 @@
 import random
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsProject,
     QgsFeature,
-    QgsWkbTypes,
     QgsFeatureSink,
     QgsProcessingException,
     QgsProcessingParameterType,
@@ -35,15 +35,12 @@ from qgis.core import (
     QgsProcessingParameterCrs,
     QgsProcessingParameterString,
     QgsFields,
-    QgsField,
-    QgsCoordinateReferenceSystem,
     QgsSymbol,
     QgsCategorizedSymbolRenderer,
     QgsRendererCategory,
     QgsVectorLayer,
     QgsProcessingUtils,
 )
-from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtGui import QColor
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
@@ -155,18 +152,12 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
             categories = []
             for value in unique_values:
                 # Create symbol based on geometry type
-                if layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
-                    symbol = QgsSymbol.defaultSymbol(
-                        QgsWkbTypes.GeometryType.PointGeometry
-                    )
-                elif layer.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
-                    symbol = QgsSymbol.defaultSymbol(
-                        QgsWkbTypes.GeometryType.LineGeometry
-                    )
+                if layer.geometryType() == Qgis.GeometryType.Point:
+                    symbol = QgsSymbol.defaultSymbol(Qgis.GeometryType.Point)
+                elif layer.geometryType() == Qgis.GeometryType.Line:
+                    symbol = QgsSymbol.defaultSymbol(Qgis.GeometryType.Line)
                 else:  # Polygon
-                    symbol = QgsSymbol.defaultSymbol(
-                        QgsWkbTypes.GeometryType.PolygonGeometry
-                    )
+                    symbol = QgsSymbol.defaultSymbol(Qgis.GeometryType.Polygon)
 
                 # Set random color
                 color = self.generateRandomColor()
@@ -222,7 +213,9 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
 
             feedback.setProgress(int((i / len(layersConfig)) * 70))
             feedback.setProgressText(
-                self.tr(f"Processing layer {i+1} of {len(layersConfig)}...")
+                self.tr("Processing layer {0} of {1}...").format(
+                    i + 1, len(layersConfig)
+                )
             )
 
             currentLayer = layer
@@ -230,7 +223,7 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
             # Apply filter if expression is provided
             if expression:
                 feedback.setProgressText(
-                    self.tr(f"Applying filter to layer {layer.name()}...")
+                    self.tr("Applying filter to layer {0}...").format(layer.name())
                 )
                 try:
                     currentLayer = algRunner.runFilterExpression(
@@ -242,14 +235,16 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
                     )
                 except Exception as e:
                     feedback.pushWarning(
-                        self.tr(
-                            f"Failed to apply filter to layer {layer.name()}: {str(e)}"
+                        self.tr("Failed to apply filter to layer {0}: {1}").format(
+                            layer.name(), str(e)
                         )
                     )
                     continue
 
             # Add class index field
-            feedback.setProgressText(self.tr(f"Adding field '{fieldName}' to layer..."))
+            feedback.setProgressText(
+                self.tr("Adding field '{0}' to layer...").format(fieldName)
+            )
             try:
                 layerWithField = algRunner.runCreateFieldWithExpression(
                     inputLyr=currentLayer,
@@ -264,8 +259,8 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
                 )
             except Exception as e:
                 feedback.pushWarning(
-                    self.tr(
-                        f"Failed to add field {fieldName} to layer {layer.name()}: {str(e)}"
+                    self.tr("Failed to add field {0} to layer {1}: {2}").format(
+                        fieldName, layer.name(), str(e)
                     )
                 )
                 continue
@@ -287,8 +282,8 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
                 processedLayers.append(finalLayer)
             except Exception as e:
                 feedback.pushWarning(
-                    self.tr(
-                        f"Failed to add class_name field to layer {layer.name()}: {str(e)}"
+                    self.tr("Failed to add class_name field to layer {0}: {1}").format(
+                        layer.name(), str(e)
                     )
                 )
                 continue
@@ -310,7 +305,9 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
                 feedback=feedback,
             )
         except Exception as e:
-            raise QgsProcessingException(self.tr(f"Failed to merge layers: {str(e)}"))
+            raise QgsProcessingException(
+                self.tr("Failed to merge layers: {0}").format(str(e))
+            )
 
         feedback.setProgress(85)
         feedback.setProgressText(self.tr("Writing output..."))
@@ -349,7 +346,7 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
             if outputLayer:
                 self.applyCategorizedStyle(outputLayer, "class_name")
         except Exception as e:
-            feedback.pushWarning(self.tr(f"Failed to apply style: {str(e)}"))
+            feedback.pushWarning(self.tr("Failed to apply style: {0}").format(str(e)))
 
         feedback.setProgress(100)
         feedback.setProgressText(self.tr("Process completed successfully"))

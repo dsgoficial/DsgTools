@@ -41,7 +41,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Menu Atual: </string>
+             <string>Current Menu: </string>
             </property>
            </widget>
           </item>
@@ -53,14 +53,14 @@
         <item>
          <widget class="QCheckBox" name="reclassifyCkb">
           <property name="text">
-           <string>reclassificar</string>
+           <string>reclassify</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLineEdit" name="searchButtonLe">
           <property name="placeholderText">
-           <string>Pesquisar Botão</string>
+           <string>Search Button</string>
           </property>
          </widget>
         </item>

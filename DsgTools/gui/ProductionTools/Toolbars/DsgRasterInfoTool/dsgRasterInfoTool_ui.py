@@ -31,7 +31,6 @@ except AttributeError:
 
 from qgis.gui import QgsMapLayerComboBox
 from qgis.core import QgsMapLayerProxyModel
-import resources_rc
 
 
 class Ui_DsgRasterInfoTool(object):

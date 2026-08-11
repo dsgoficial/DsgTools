@@ -103,7 +103,7 @@ class LoadByClass(QtWidgets.QDialog, FORM_CLASS):
         for i in range(tam + 1, 1, -1):
             item = self.classesListWidget.takeItem(i - 2)
 
-        self.selectAllCheck.setCheckState(0)
+        self.selectAllCheck.setCheckState(Qt.CheckState.Unchecked)
 
     def listClassesFromDatabase(self):
         """
@@ -130,7 +130,7 @@ class LoadByClass(QtWidgets.QDialog, FORM_CLASS):
                 ":".join(e.args), "DSGTools Plugin", Qgis.MessageLevel.Critical
             )
 
-        if self.onlyParentsCheckBox.isChecked() and not self.widget.isSpatialite:
+        if self.onlyParentsCheckBox.isChecked():
             self.classesListWidget.addItems(self.parentClassList)
         else:
             self.classesListWidget.addItems(self.classes)

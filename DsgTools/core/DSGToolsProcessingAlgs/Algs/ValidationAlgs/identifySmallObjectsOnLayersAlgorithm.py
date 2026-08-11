@@ -24,12 +24,8 @@
 from collections import defaultdict
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsFeatureRequest,
+    Qgis,
     QgsWkbTypes,
-    QgsGeometry,
-    QgsVectorLayer,
-    QgsProcessingUtils,
-    QgsProcessingContext,
     QgsProject,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
@@ -39,7 +35,6 @@ from qgis.core import (
 
 from .validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.GeometricTools import geometryHandler
 
 
 class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
@@ -116,13 +111,13 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
             self.POLYGON_FLAGS,
         )
         func_dict = {
-            QgsWkbTypes.GeometryType.LineGeometry: lambda x: algRunner.runIdentifySmallLines(
+            Qgis.GeometryType.Line: lambda x: algRunner.runIdentifySmallLines(
                 inputLyr=x[0],
                 tol=x[1],
                 context=context,
                 feedback=x[2],
             ),
-            QgsWkbTypes.GeometryType.PolygonGeometry: lambda x: algRunner.runIdentifySmallPolygons(
+            Qgis.GeometryType.Polygon: lambda x: algRunner.runIdentifySmallPolygons(
                 inputLyr=x[0],
                 tol=x[1],
                 context=context,
@@ -141,12 +136,8 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
             outputDict[layer.geometryType()].append(outputLyr)
 
         flagLambdaDict = {
-            QgsWkbTypes.GeometryType.LineGeometry: lambda x: self.lineFlagSink.addFeature(
-                x
-            ),
-            QgsWkbTypes.GeometryType.PolygonGeometry: lambda x: self.polygonFlagSink.addFeature(
-                x
-            ),
+            Qgis.GeometryType.Line: lambda x: self.lineFlagSink.addFeature(x),
+            Qgis.GeometryType.Polygon: lambda x: self.polygonFlagSink.addFeature(x),
         }
         for currentStep, (wkbType, featList) in enumerate(
             outputDict.items(), start=currentStep + 1

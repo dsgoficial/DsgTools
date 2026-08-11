@@ -29,13 +29,13 @@ from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree i
     AcquisitionFree,
 )
 from qgis.core import (
+    Qgis,
     QgsCoordinateTransformContext,
     QgsDistanceArea,
     QgsGeometry,
     QgsProject,
     QgsUnitTypes,
     QgsVectorLayer,
-    QgsWkbTypes,
 )
 from qgis.gui import QgisInterface, QgsMapToolDigitizeFeature
 from qgis.PyQt.QtCore import QEvent, QObject, QRect, Qt
@@ -97,7 +97,7 @@ class MeasureTool(QObject):
         layer = self.iface.activeLayer()
         if (
             not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+            or layer.geometryType() == Qgis.GeometryType.Point
             or not layer.isEditable()
         ):
             enabled = False
@@ -235,7 +235,7 @@ class EventFilter(QObject):
         area = None
         if (
             self.iface.mapCanvas().currentLayer().geometryType()
-            == QgsWkbTypes.GeometryType.LineGeometry
+            == Qgis.GeometryType.Line
         ):
             if len(self.pointList) > 1:
                 line_dist = QgsGeometry.fromPolylineXY(self.pointList[:2])
@@ -251,7 +251,12 @@ class EventFilter(QObject):
                 dist = self.dist_area.convertLengthMeasurement(
                     measure_dist, QgsUnitTypes.DistanceMeters
                 )
-                txt = f"<b>Parcial: {dist:.3f} m</b><br/><b>Total: {distAcum:.3f} m</b></p>"
+                txt = "<b>{partial} {dist:.3f} m</b><br/><b>{total} {distAcum:.3f} m</b></p>".format(
+                    partial=self.tr("Partial:"),
+                    total=self.tr("Total:"),
+                    dist=dist,
+                    distAcum=distAcum,
+                )
                 tooltip.showText(
                     self.mapCanvas.mapToGlobal(self.mapCanvas.mouseLastXY()),
                     txt,
@@ -263,7 +268,7 @@ class EventFilter(QObject):
                 tooltip.hideText()
         elif (
             self.iface.mapCanvas().currentLayer().geometryType()
-            == QgsWkbTypes.GeometryType.PolygonGeometry
+            == Qgis.GeometryType.Polygon
         ):
             tempPointList = []
             if len(self.pointList) > 2:

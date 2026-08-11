@@ -1,5 +1,5 @@
-import os, sys, copy
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
+import os
+from qgis.PyQt import QtCore, uic, QtWidgets
 import json
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 from qgis.PyQt.QtWidgets import QMessageBox
@@ -131,7 +131,9 @@ class MenuEditorDialog(QtWidgets.QDialog):
 
     @QtCore.pyqtSlot(bool)
     def on_importMenuBtn_clicked(self):
-        filePath = QtWidgets.QFileDialog.getOpenFileName(self, "", "Desktop", "*.json")
+        filePath = QtWidgets.QFileDialog.getOpenFileName(
+            self, self.tr("Import Menu"), "Desktop", "*.json"
+        )
         if not filePath[0]:
             return
         with open(filePath[0], "r") as f:
@@ -157,10 +159,10 @@ class MenuEditorDialog(QtWidgets.QDialog):
     def on_exportMenuBtn_clicked(self):
         menuName = self.menuNameLe.text()
         if not menuName:
-            self.showError("Erro", "Informe o nome do menu!")
+            self.showError(self.tr("Error"), self.tr("Enter the menu name!"))
             return
         filePath = QtWidgets.QFileDialog.getSaveFileName(
-            self, "", "{0}.json".format(menuName), "*.json"
+            self, self.tr("Export Menu"), "{0}.json".format(menuName), "*.json"
         )
         if not filePath[0]:
             return
@@ -172,7 +174,7 @@ class MenuEditorDialog(QtWidgets.QDialog):
     def on_createMenuBtn_clicked(self):
         menuName = self.menuNameLe.text()
         if not menuName:
-            self.showError("Erro", "Informe o nome do menu!")
+            self.showError(self.tr("Error"), self.tr("Enter the menu name!"))
             return
         self.menuWidget.setMenuName(menuName)
         self.getController().createMenuDock([self.menuWidget.dump()])

@@ -21,10 +21,8 @@
  ***************************************************************************/
 """
 
-import os
-from qgis.core import QgsRasterLayer, QgsRaster, QgsGeometry, QgsPoint
+from qgis.core import QgsRaster, QgsGeometry
 from qgis.gui import QgsMapTool, QgsMapToolEmitPoint
-from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtCore import QTimer
 from qgis.PyQt.QtWidgets import QToolTip
 

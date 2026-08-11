@@ -62,9 +62,9 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
     def flags(self):
         return (
             super().flags()
-            | QgsProcessingAlgorithm.FlagNotAvailableInStandaloneTool
-            | QgsProcessingAlgorithm.FlagRequiresProject
-            | QgsProcessingAlgorithm.FlagNoThreading
+            | QgsProcessingAlgorithm.Flag.FlagNotAvailableInStandaloneTool
+            | QgsProcessingAlgorithm.Flag.FlagRequiresProject
+            | QgsProcessingAlgorithm.Flag.FlagNoThreading
         )
 
     def parameterAsConversionMapList(self, parameters, name, context):
@@ -313,7 +313,7 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(
-                self.tr(f"Converting Features: step 1/{nStepsOnText}")
+                self.tr("Converting Features: step 1/{0}").format(nStepsOnText)
             )
         firstConversionData = (
             conversionMapList[0] if len(conversionMapList) > 0 else None
@@ -343,8 +343,8 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
                 multiStepFeedback.pushInfo(
-                    self.tr(
-                        f"Converting Features: step {currentConversionStep}/{len(conversionMapList)}"
+                    self.tr("Converting Features: step {0}/{1}").format(
+                        currentConversionStep, len(conversionMapList)
                     )
                 )
             featureProcessor = MappingFeatureProcessor(

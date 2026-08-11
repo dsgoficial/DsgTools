@@ -341,5 +341,5 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "O algoritmo identifica se existe alguma mudança de atributos entre linhas nos campos escolhidos e dentro da tolerância para continuidade"
+            "The algorithm identifies whether there are any attribute changes between lines in the selected fields and within the continuity tolerance"
         )

@@ -21,16 +21,8 @@
  ***************************************************************************/
 """
 
-from qgis.gui import QgsMapTool, QgsMessageBar
-from qgis.core import (
-    QgsMapLayer,
-    QgsVectorLayer,
-    QgsMessageLog,
-    QgsFeatureRequest,
-    QgsWkbTypes,
-    Qgis,
-)
-from qgis.PyQt import QtCore, QtGui
+from qgis.gui import QgsMapTool
+from qgis.core import QgsVectorLayer, QgsMessageLog, Qgis
 
 from .....core.GeometricTools.geometryHandler import GeometryHandler
 
@@ -77,7 +69,7 @@ class FlipLine(QgsMapTool):
         if (
             not layer
             or not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() != QgsWkbTypes.GeometryType.LineGeometry
+            or layer.geometryType() != Qgis.GeometryType.Line
             or not layer.isEditable()
         ):
             enabled = False

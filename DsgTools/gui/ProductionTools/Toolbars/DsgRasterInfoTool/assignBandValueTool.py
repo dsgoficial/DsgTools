@@ -29,9 +29,7 @@ from qgis.gui import (
     QgsMapToolEmitPoint,
     QgsAttributeDialog,
     QgsAttributeEditorContext,
-    QgsMessageBar,
 )
-from qgis import core
 from qgis.core import (
     QgsPointXY,
     QgsRectangle,
@@ -39,18 +37,14 @@ from qgis.core import (
     QgsGeometry,
     QgsEditFormConfig,
     QgsRaster,
-    QgsFeature,
-    QgsWkbTypes,
-    QgsProject,
     QgsVectorLayerUtils,
     Qgis,
 )
 from qgis.PyQt.QtCore import QSettings
-from qgis.PyQt import QtCore, QtGui
-from qgis.PyQt.QtGui import QColor, QCursor
+from qgis.PyQt import QtCore
+from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QMenu, QApplication
 
-from qgis.PyQt.QtCore import Qt
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 
@@ -91,12 +85,8 @@ class AssignBandValueTool(QgsMapTool):
         return setting
 
     def setRubberbandParameters(self):
-        self.rubberBand = QgsRubberBand(
-            self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry
-        )
-        self.hoverRubberBand = QgsRubberBand(
-            self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry
-        )
+        self.rubberBand = QgsRubberBand(self.canvas, Qgis.GeometryType.Polygon)
+        self.hoverRubberBand = QgsRubberBand(self.canvas, Qgis.GeometryType.Polygon)
         mFillColor = QColor(254, 178, 76, 63)
         self.rubberBand.setColor(mFillColor)
         self.hoverRubberBand.setColor(QColor(255, 0, 0, 90))
@@ -108,7 +98,7 @@ class AssignBandValueTool(QgsMapTool):
         """
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
-        self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+        self.rubberBand.reset(Qgis.GeometryType.Polygon)
 
     def canvasPressEvent(self, e):
         """
@@ -140,7 +130,7 @@ class AssignBandValueTool(QgsMapTool):
         """
         Builds rubberband rect.
         """
-        self.rubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+        self.rubberBand.reset(Qgis.GeometryType.Polygon)
         if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
             return
         point1 = QgsPointXY(startPoint.x(), startPoint.y())
@@ -279,7 +269,7 @@ class AssignBandValueTool(QgsMapTool):
         Deactivate tool.
         """
         QApplication.restoreOverrideCursor()
-        self.hoverRubberBand.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+        self.hoverRubberBand.reset(Qgis.GeometryType.Polygon)
         try:
             if self.toolAction:
                 self.toolAction.setChecked(False)

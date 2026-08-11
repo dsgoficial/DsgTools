@@ -22,7 +22,6 @@
  ***************************************************************************/
 """
 from DsgTools.core.Factories.ThreadFactory.threadFactory import ThreadFactory
-import os
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsFeatureSink,
@@ -39,7 +38,6 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsFields,
     QgsAction,
-    QgsVectorLayer,
 )
 
 

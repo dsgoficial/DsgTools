@@ -25,17 +25,12 @@ from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterDistance,
     QgsProcessingParameterFeatureSink,
     QgsFeature,
     QgsGeometry,
-    QgsWkbTypes,
     QgsFeatureSink,
     QgsProcessingException,
-    QgsDistanceArea,
-    QgsPoint,
-    QgsPointXY,
     QgsProcessingMultiStepFeedback,
     QgsProcessingContext,
 )
@@ -116,7 +111,9 @@ class SplitLinesAtMaximumLengthAlgorithm(QgsProcessingAlgorithm):
 
         if open_lines.featureCount() > 0:
             feedback.pushInfo(
-                self.tr(f"Processing {open_lines.featureCount()} open lines...")
+                self.tr("Processing {0} open lines...").format(
+                    open_lines.featureCount()
+                )
             )
             split_open_lines = algRunner.runSplitLinesByLength(
                 inputLayer=open_lines,
@@ -131,7 +128,9 @@ class SplitLinesAtMaximumLengthAlgorithm(QgsProcessingAlgorithm):
         # Process closed lines
         if closed_lines.featureCount() > 0:
             multiStepFeedback.pushInfo(
-                f"Processing {closed_lines.featureCount()} closed lines..."
+                self.tr("Processing {0} closed lines...").format(
+                    closed_lines.featureCount()
+                )
             )
 
             # Process closed lines one by one to determine length correctly

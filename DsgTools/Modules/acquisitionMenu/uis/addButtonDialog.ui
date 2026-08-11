@@ -11,13 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Botão</string>
+   <string>Button</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Botão ( preview ):</string>
+      <string>Button ( preview ):</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -47,7 +47,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Nome: </string>
+        <string>Name: </string>
        </property>
       </widget>
      </item>
@@ -77,7 +77,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Aba: </string>
+        <string>Tab: </string>
        </property>
       </widget>
      </item>
@@ -121,7 +121,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Ferramenta de Aquisição: </string>
+        <string>Acquisition Tool: </string>
        </property>
       </widget>
      </item>
@@ -165,7 +165,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Cor do Texto: </string>
+        <string>Text Color: </string>
        </property>
       </widget>
      </item>
@@ -208,7 +208,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Cor de Fundo: </string>
+        <string>Background Color: </string>
        </property>
       </widget>
      </item>
@@ -251,7 +251,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Camada: </string>
+        <string>Layer: </string>
        </property>
       </widget>
      </item>
@@ -295,7 +295,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Palavras Chaves (;): </string>
+        <string>Keywords (;): </string>
        </property>
       </widget>
      </item>
@@ -361,7 +361,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Suprimir Formulário:</string>
+        <string>Suppress Form:</string>
        </property>
       </widget>
      </item>
@@ -410,7 +410,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Suprimir Formulário de Relassificação:</string>
+        <string>Suppress Reclassification Form:</string>
        </property>
       </widget>
      </item>
@@ -439,7 +439,7 @@
    <item row="11" column="0">
     <widget class="QLabel" name="label_6">
      <property name="text">
-      <string>Atributos:</string>
+      <string>Attributes:</string>
      </property>
     </widget>
    </item>
@@ -482,14 +482,14 @@
      <item>
       <widget class="QPushButton" name="cancelBtn">
        <property name="text">
-        <string>Cancelar</string>
+        <string>Cancel</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="saveBtn">
        <property name="text">
-        <string>Salvar</string>
+        <string>Save</string>
        </property>
       </widget>
      </item>

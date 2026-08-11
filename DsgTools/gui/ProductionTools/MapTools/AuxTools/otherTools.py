@@ -22,17 +22,9 @@
  ***************************************************************************/
 """
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from qgis.core import (
-    QgsProject,
-    Qgis,
-    QgsVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingUtils,
-    QgsProcessingContext,
-)
+from qgis.core import QgsProject, Qgis, QgsProcessingContext
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
-from qgis.PyQt.QtCore import QObject
 from qgis.PyQt.QtWidgets import QMessageBox
 from .copiarwkt import copywkt
 
@@ -102,8 +94,8 @@ class OtherTools(QgsMapTool):
         confirmation = self.confirmAction()
         if not confirmation:
             iface.messageBar().pushMessage(
-                "Cancelado",
-                "ação cancelada pelo usuário",
+                self.tr("Canceled"),
+                self.tr("Action canceled by user"),
                 level=Qgis.MessageLevel.Warning,
                 duration=5,
             )
@@ -111,8 +103,8 @@ class OtherTools(QgsMapTool):
         layer = iface.activeLayer()
         if not layer:
             iface.messageBar().pushMessage(
-                "Erro",
-                "Selecione uma camada válida",
+                self.tr("Error"),
+                self.tr("Select a valid layer"),
                 level=Qgis.MessageLevel.Critical,
                 duration=5,
             )
@@ -126,8 +118,8 @@ class OtherTools(QgsMapTool):
         outputLyr.setName(f"{layer.name()}_temp")
         QgsProject.instance().addMapLayer(outputLyr, addToLegend=True)
         iface.messageBar().pushMessage(
-            "Executado",
-            f"Camada temporária criada: {layer.name()}_temp",
+            self.tr("Done"),
+            self.tr("Temporary layer created: {0}_temp").format(layer.name()),
             level=Qgis.MessageLevel.Success,
             duration=5,
         )
@@ -135,8 +127,10 @@ class OtherTools(QgsMapTool):
     def confirmAction(self):
         reply = QMessageBox.question(
             iface.mainWindow(),
-            "Continuar?",
-            "Será criado uma nova camada com as feições selecionadas. Deseja continuar?",
+            self.tr("Continue?"),
+            self.tr(
+                "A new layer will be created with the selected features. Do you want to continue?"
+            ),
             QMessageBox.StandardButton.Yes,
             QMessageBox.StandardButton.No,
         )

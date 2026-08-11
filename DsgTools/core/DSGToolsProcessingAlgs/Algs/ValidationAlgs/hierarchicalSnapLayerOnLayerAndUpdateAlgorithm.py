@@ -20,7 +20,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-from collections import defaultdict
 import itertools
 import json
 import gc
@@ -28,6 +27,7 @@ import gc
 from qgis.PyQt.QtCore import QCoreApplication
 
 from qgis.core import (
+    Qgis,
     QgsProject,
     QgsProcessing,
     QgsProcessingException,
@@ -38,7 +38,6 @@ from qgis.core import (
     QgsProcessingParameterBoolean,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterDefinition,
-    QgsWkbTypes,
     QgsVectorLayer,
 )
 
@@ -145,7 +144,9 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 multiStepFeedback.setCurrentStep(currentStep)
                 referenceLayerName = item["referenceLayer"]
                 multiStepFeedback.pushInfo(
-                    self.tr(f"Snapping {referenceLayerName} to geographic boundary.")
+                    self.tr("Snapping {0} to geographic boundary.").format(
+                        referenceLayerName
+                    )
                 )
                 if referenceLayerName not in snapStructure:
                     continue
@@ -157,7 +158,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                     tol=item["snap"],
                     behavior=self.algRunner.MoveEndPointsOnlyPreferClosestPoint
                     if snapStructure[referenceLayerName]["originalLayer"].geometryType()
-                    == QgsWkbTypes.GeometryType.LineGeometry
+                    == Qgis.GeometryType.Line
                     else item["snap"],
                     context=context,
                     feedback=multiStepFeedback,
@@ -170,7 +171,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 currentStep += 2
                 continue
             multiStepFeedback.pushInfo(
-                self.tr(f"Performing snap internally on {referenceLayerName}.")
+                self.tr("Performing snap internally on {0}.").format(referenceLayerName)
             )
             snapStructure[referenceLayerName][
                 "tempLayer"
@@ -188,7 +189,9 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             if lyrList == []:
                 continue
             multiStepFeedback.pushInfo(
-                self.tr(f"Starting snapping with reference layer {referenceLayerName}.")
+                self.tr("Starting snapping with reference layer {0}.").format(
+                    referenceLayerName
+                )
             )
             self.snapLayersToReference(
                 refLyrName=referenceLayerName,
@@ -351,9 +354,9 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
             return snappedLyr
         primitiveDict = {
-            QgsWkbTypes.GeometryType.PointGeometry: [],
-            QgsWkbTypes.GeometryType.LineGeometry: [],
-            QgsWkbTypes.GeometryType.PolygonGeometry: [],
+            Qgis.GeometryType.Point: [],
+            Qgis.GeometryType.Line: [],
+            Qgis.GeometryType.Polygon: [],
         }
         for lyrName in [snappedLyr, referenceLayer]:
             lyr = (
@@ -363,8 +366,8 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 lyr = QgsProcessingUtils.mapLayerFromString(lyrName, context)
             primitiveDict[lyr.geometryType()].append(lyr)
         self.algRunner.runAddUnsharedVertexOnSharedEdges(
-            inputLinesList=primitiveDict[QgsWkbTypes.GeometryType.LineGeometry],
-            inputPolygonsList=primitiveDict[QgsWkbTypes.GeometryType.PolygonGeometry],
+            inputLinesList=primitiveDict[Qgis.GeometryType.Line],
+            inputPolygonsList=primitiveDict[Qgis.GeometryType.Polygon],
             searchRadius=tol,
             context=context,
             feedback=multiStepFeedback,
@@ -385,7 +388,9 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(len(snapStructure), feedback)
         for current, (lyrName, auxDict) in enumerate(snapStructure.items()):
             multiStepFeedback.setCurrentStep(current)
-            multiStepFeedback.pushInfo(self.tr(f"Updating changes on {lyrName}"))
+            multiStepFeedback.pushInfo(
+                self.tr("Updating changes on {0}").format(lyrName)
+            )
             tempLyr = QgsProcessingUtils.mapLayerFromString(
                 auxDict["tempLayer"], context
             )

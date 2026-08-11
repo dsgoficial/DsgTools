@@ -1,5 +1,5 @@
-import os, sys, copy
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
+import os
+from qgis.PyQt import QtCore, uic, QtWidgets
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 
 
@@ -98,7 +98,7 @@ class AttributeTableWidget(QtWidgets.QWidget):
         return wd
 
     def createComboBox(self, values):
-        data = {"IGNORAR": None}
+        data = {self.tr("IGNORE"): None}
         data.update(values)
         wd = QtWidgets.QWidget()
         layout = QtWidgets.QHBoxLayout(wd)

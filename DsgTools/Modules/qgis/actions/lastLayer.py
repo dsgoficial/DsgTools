@@ -1,6 +1,5 @@
-from qgis import gui, core
+from qgis import core
 from qgis.utils import iface
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 
 
 class LastLayer:

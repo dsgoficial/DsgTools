@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingException,
@@ -32,10 +32,8 @@ from qgis.core import (
     QgsProcessingParameterFeatureSink,
     QgsExpression,
     QgsFeatureSink,
-    QgsVectorLayer,
     QgsFeatureRequest,
 )
-from qgis import processing
 
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
@@ -120,11 +118,13 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
             raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
 
         if layer is None:
-            raise QgsProcessingException("Camada inválida ou não encontrada.")
+            raise QgsProcessingException(self.tr("Invalid or not found layer."))
 
         if fieldName not in layer.fields().names():
             feedback.pushInfo(
-                f"O atributo '{fieldName}' não foi encontrado na camada. Nenhuma exportação realizada."
+                self.tr(
+                    "Attribute '{0}' was not found in the layer. No export performed."
+                ).format(fieldName)
             )
             return {self.OUTPUT: dest_id}
 
@@ -146,7 +146,7 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
         expression = QgsExpression(expression_string)
         if expression.hasParserError():
             raise QgsProcessingException(
-                f"Erro na expressão: {expression.parserErrorString()}"
+                self.tr("Expression error: {0}").format(expression.parserErrorString())
             )
 
         features = layer.getFeatures(QgsFeatureRequest(expression))
@@ -154,7 +154,7 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
 
         nFeatures = len(matched_features)
         if nFeatures == 0:
-            feedback.pushInfo("Nenhum recurso encontrado com o valor especificado.")
+            feedback.pushInfo(self.tr("No features found with the specified value."))
             return {self.OUTPUT: dest_id}
 
         stepSize = 100 / nFeatures
@@ -165,7 +165,7 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
             sink.addFeature(feature, QgsFeatureSink.FastInsert)
             feedback.setProgress(int((current / nFeatures) * 100))
 
-        feedback.pushInfo("Exportação concluída com sucesso.")
+        feedback.pushInfo(self.tr("Export completed successfully."))
         return {self.OUTPUT: dest_id}
 
     def name(self):

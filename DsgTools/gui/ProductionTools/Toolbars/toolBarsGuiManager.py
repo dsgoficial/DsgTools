@@ -21,10 +21,7 @@
 """
 
 
-from builtins import object
 import json
-import os.path
-import sys
 
 from .CenterPointAndBoundariesToolbar.centerPointAndBoundariesTool import (
     CenterPointAndBoundariesToolbar,
@@ -34,7 +31,6 @@ from .ReviewTools.reviewToolbar import ReviewToolbar
 
 from .MinimumAreaTool.minimumAreaTool import MinimumAreaTool
 from .InspectFeatures.inspectFeatures import InspectFeatures
-from .StyleManagerTool.styleManagerTool import StyleManagerTool
 from .DsgRasterInfoTool.dsgRasterInfoTool import DsgRasterInfoTool
 from .DataValidationTool.dataValidationTool import DataValidationTool
 from qgis.PyQt.QtCore import QObject
@@ -77,12 +73,6 @@ class ToolbarsGuiManager(QObject):
         self.createToolbarAndAddWidget(
             name="DSGTools_CenterPointAndBoundaries_Toolbar",
             widget=self.centerPointAndBoundariesTool,
-        )
-
-        # adding style tools
-        self.styleManagerTool = StyleManagerTool(self.iface, parent=self.parentMenu)
-        self.createToolbarAndAddWidget(
-            name="DSGTools_Style_Manager", widget=self.styleManagerTool
         )
         # adding raster info tool
         self.rasterInfoTool = DsgRasterInfoTool(self.iface, parent=self.parentMenu)

@@ -44,7 +44,7 @@ from qgis.core import (
     Qgis,
     QgsVectorFileWriter,
 )
-from qgis.PyQt.QtCore import pyqtSignal, QObject
+from qgis.PyQt.QtCore import QCoreApplication, pyqtSignal, QObject
 from qgis.utils import iface
 from processing.tools import dataobjects
 import processing
@@ -93,7 +93,11 @@ class FlagSettings:
 
     def __post_init__(self):
         if self.onFlagsRaised not in ("halt", "warn", "ignore"):
-            raise ValueError("Invalid on flags raised flag.")
+            raise ValueError(
+                QCoreApplication.translate(
+                    "WorkflowItem", "Invalid on flags raised flag."
+                )
+            )
 
 
 @dataclass
@@ -338,8 +342,8 @@ class DSGToolsWorkflowItem(QObject):
         """Pause the workflow item before running."""
         self.executionOutput = ModelExecutionOutput(
             executionMessage=self.tr(
-                f"Workflow item {self.displayName} execution paused by previous step."
-            ),
+                "Workflow item {0} execution paused by previous step."
+            ).format(self.displayName),
             status=ExecutionStatus.PAUSED_BEFORE_RUNNING,
         )
 
@@ -351,15 +355,15 @@ class DSGToolsWorkflowItem(QObject):
             self.changeCurrentStatus(
                 status=ExecutionStatus.FINISHED_WITH_FLAGS,
                 executionMessage=self.tr(
-                    f"Workflow item {self.displayName} status changed from ignore flags to finished with flags."
-                ),
+                    "Workflow item {0} status changed from ignore flags to finished with flags."
+                ).format(self.displayName),
             )
             return
         self.changeCurrentStatus(
             status=ExecutionStatus.IGNORE_FLAGS,
             executionMessage=self.tr(
-                f"Workflow item {self.displayName} flags were ignored by the user."
-            ),
+                "Workflow item {0} flags were ignored by the user."
+            ).format(self.displayName),
         )
         # não emite sinal pois esse passo é feito fora da execução.
 
@@ -395,8 +399,8 @@ class DSGToolsWorkflowItem(QObject):
         self.currentTask = None
         self.changeCurrentStatus(
             status=ExecutionStatus.CANCELED,
-            executionMessage=self.tr(
-                f"Workflow item {self.displayName} canceled by user."
+            executionMessage=self.tr("Workflow item {0} canceled by user.").format(
+                self.displayName
             ),
         )
 
@@ -445,8 +449,8 @@ class DSGToolsWorkflowItem(QObject):
                 )
                 self.executionOutput = ModelExecutionOutput(
                     executionMessage=self.tr(
-                        f"Workflow item {self.displayName} execution has failed:\n {str(exception)}"
-                    ),
+                        "Workflow item {0} execution has failed:\n {1}"
+                    ).format(self.displayName, str(exception)),
                     status=ExecutionStatus.FAILED,
                 )
                 self.workflowItemExecutionFinished.emit(self)
@@ -470,16 +474,16 @@ class DSGToolsWorkflowItem(QObject):
                 )
                 self.changeCurrentStatus(
                     status=status,
-                    executionMessage=self.tr(
-                        f"Workflow item {self.displayName} {statusMsg}"
+                    executionMessage=self.tr("Workflow item {0} {1}").format(
+                        self.displayName, statusMsg
                     ),
                 )
                 self.feedback.setProgress(100)
             else:
                 self.executionOutput = ModelExecutionOutput(
                     executionMessage=self.tr(
-                        f"Workflow item {self.displayName} execution was canceled by the user."
-                    ),
+                        "Workflow item {0} execution was canceled by the user."
+                    ).format(self.displayName),
                     status=ExecutionStatus.CANCELED,
                 )
             self.currentTask = None
@@ -649,8 +653,9 @@ class DSGToolsWorkflowItem(QObject):
 
     def enableFeatureCount(self, lyr):
         root = QgsProject.instance().layerTreeRoot()
-        lyrNode = root.findLayer(lyr.id())
-        lyrNode.setCustomProperty("showFeatureCount", True)
+        lyrNode = next((n for n in root.findLayers() if n.layerId() == lyr.id()), None)
+        if lyrNode is not None:
+            lyrNode.setCustomProperty("showFeatureCount", True)
 
 
 def load_from_json(input_dict: dict) -> DSGToolsWorkflowItem:

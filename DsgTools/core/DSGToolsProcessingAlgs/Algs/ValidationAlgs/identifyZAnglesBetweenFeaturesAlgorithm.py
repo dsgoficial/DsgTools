@@ -21,12 +21,11 @@
 """
 
 import math
-import os
 
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
+    Qgis,
     QgsFeature,
-    QgsFeatureRequest,
     QgsField,
     QgsFields,
     QgsGeometry,
@@ -118,7 +117,9 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
             # Show progress for large datasets
             if total_cached % 10000 == 0:
                 feedback.pushInfo(
-                    self.tr(f"Cached {total_cached}/{feature_count} features...")
+                    self.tr("Cached {0}/{1} features...").format(
+                        total_cached, feature_count
+                    )
                 )
 
             # Check for cancellation
@@ -139,14 +140,14 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
         geometry_type = QgsWkbTypes.geometryType(inputSource.wkbType())
 
         # Set up multistep feedback
-        nSteps = 2 if geometry_type == QgsWkbTypes.GeometryType.LineGeometry else 1
+        nSteps = 2 if geometry_type == Qgis.GeometryType.Line else 1
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback) if nSteps > 1 else feedback
         )
         currentStep = 0
 
         # Process based on geometry type
-        if geometry_type == QgsWkbTypes.GeometryType.LineGeometry:
+        if geometry_type == Qgis.GeometryType.Line:
             # First process Z angles within each line
             multiStepFeedback.setProgressText(
                 self.tr("Evaluating Z angles within lines")
@@ -526,7 +527,9 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
         # Process pairs using concurrently
         feedback.pushInfo(
-            self.tr(f"Processing {len(potential_pairs)} potential feature pairs")
+            self.tr("Processing {0} potential feature pairs").format(
+                len(potential_pairs)
+            )
         )
         for result in concurrently(
             process_line_pair, potential_pairs, feedback=feedback

@@ -25,7 +25,7 @@ import re
 from qgis.PyQt import QtCore, uic
 from qgis.PyQt.QtCore import QSize
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QWidget, QLineEdit
+from qgis.PyQt.QtWidgets import QWidget
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "colorSelectorWidget.ui")

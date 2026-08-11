@@ -197,7 +197,7 @@ class GeometryHandler(QObject):
                 nodes = nodes[::-1]
                 flippedFeatureGeom = QgsGeometry.fromPolygonXY(nodes)
         # setting feature geometry to the flipped one
-        layer.beginEditCommand("Flipping feature")
+        layer.beginEditCommand(self.tr("Flipping feature"))
         feature.setGeometry(flippedFeatureGeom)
         layer.updateFeature(feature)
         layer.endEditCommand()
@@ -354,7 +354,7 @@ class GeometryHandler(QObject):
         outOfBoundsList = []
         geom = feat.geometry()
         for part in geom.asGeometryCollection():
-            if part.type() == QgsWkbTypes.GeometryType.PolygonGeometry:
+            if part.type() == Qgis.GeometryType.Polygon:
                 self.getOutOfBoundsAngleInPolygon(
                     feat,
                     part,
@@ -364,7 +364,7 @@ class GeometryHandler(QObject):
                     angTol=angTol,
                     invalidRange=invalidRange,
                 )
-            if part.type() == QgsWkbTypes.GeometryType.LineGeometry:
+            if part.type() == Qgis.GeometryType.Line:
                 self.getOutOfBoundsAngleInLine(
                     feat, part, angle, outOfBoundsList, invalidRange=invalidRange
                 )

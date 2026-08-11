@@ -33,7 +33,7 @@ from qgis.PyQt import uic, QtWidgets
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog
 from qgis.PyQt.QtCore import pyqtSlot
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog
+from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsProjectionSelectionTreeWidget
 
 FORM_CLASS, _ = uic.loadUiType(

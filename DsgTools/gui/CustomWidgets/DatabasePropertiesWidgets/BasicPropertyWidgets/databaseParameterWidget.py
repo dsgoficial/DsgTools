@@ -24,13 +24,11 @@ import os
 
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 
-from qgis.core import QgsMessageLog
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
-from qgis.PyQt.QtSql import QSqlQuery
-from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QRadioButton
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtWidgets import QMessageBox, QRadioButton
 
 
 FORM_CLASS, _ = uic.loadUiType(

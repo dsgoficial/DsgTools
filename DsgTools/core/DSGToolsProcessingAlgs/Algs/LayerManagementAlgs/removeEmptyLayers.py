@@ -23,14 +23,7 @@
  ***************************************************************************/
 """
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import (
-    QgsProcessing,
-    QgsProcessingAlgorithm,
-    QgsProject,
-    QgsMapLayer,
-    Qgis,
-)
-from qgis import processing
+from qgis.core import QgsProcessingAlgorithm, QgsProject, QgsMapLayer, Qgis
 from qgis.utils import iface
 
 

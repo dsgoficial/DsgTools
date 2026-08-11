@@ -25,6 +25,7 @@ from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from processing.gui.wrappers import WidgetWrapper
 from qgis.core import (
+    Qgis,
     QgsFeature,
     QgsFeatureSink,
     QgsProcessingParameterDefinition,
@@ -121,7 +122,7 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
 
         if not groupOriginal or not groupReviewed:
             raise QgsProcessingException(
-                "Must have a input group original and input review"
+                self.tr("Must have a input group original and input review")
             )
 
         project = context.project()
@@ -132,7 +133,7 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
 
         if not groupO or not groupR:
             raise QgsProcessingException(
-                "Input group original and input review group not found"
+                self.tr("Input group original and input review group not found")
             )
 
         dictLyrsOriginals, crs = self.dictNameLyrCrs(groupO)
@@ -166,7 +167,7 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
 
             if nameLyrOriginal not in dictLyrsReviewed:
                 raise QgsProcessingException(
-                    "There is no correspondence of layers between the groups"
+                    self.tr("There is no correspondence of layers between the groups")
                 )
 
             lyrOriginal = dictLyrsOriginals[nameLyrOriginal]
@@ -349,9 +350,9 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
         return listWhiteAttributes
 
     def typeOfLayer(self, addedLyr):
-        lyrPoint = addedLyr.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
-        lyrLine = addedLyr.geometryType() == QgsWkbTypes.GeometryType.LineGeometry
-        lyrPolygon = addedLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
+        lyrPoint = addedLyr.geometryType() == Qgis.GeometryType.Point
+        lyrLine = addedLyr.geometryType() == Qgis.GeometryType.Line
+        lyrPolygon = addedLyr.geometryType() == Qgis.GeometryType.Polygon
         return lyrPoint, lyrLine, lyrPolygon
 
     def dictNameLyrCrs(self, group):

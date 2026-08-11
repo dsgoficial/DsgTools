@@ -28,20 +28,14 @@
 
 
 import processing
-from processing.core.GeoAlgorithmExecutionException import (
-    GeoAlgorithmExecutionException,
-)
-from qgis.core import (
-    QgsVectorLayer,
-    QgsRasterLayer,
-    QgsSpatialIndex,
-    QgsFeatureRequest,
-    QgsCoordinateTransform,
-    QgsFeature,
-    QgsCoordinateReferenceSystem,
-)
-from qgis.PyQt.QtCore import QSettings
+from qgis.core import QgsRasterLayer, QgsCoordinateReferenceSystem
+from qgis.PyQt.QtCore import QCoreApplication, QSettings
 import os
+
+
+def tr(message):
+    return QCoreApplication.translate("VirtualRasterInLoco", message)
+
 
 # script methods
 def createVrt(inventario, vrt):
@@ -67,7 +61,7 @@ def createVrt(inventario, vrt):
         rasterList.append(raster)
         ovr = filename + ".ovr"
         if not os.path.isfile(ovr):
-            progress.setText("Fazendo Pirâmides...")
+            progress.setText(tr("Building pyramids..."))
             # ('gdalogr:overviews', input, levels=8, clean=False, resampling_method=0(nearest), format=1(Gtiff .ovr))
             processing.runalg("gdalogr:overviews", raster, "4 8 32 128", True, 0, 1)
 
@@ -75,7 +69,7 @@ def createVrt(inventario, vrt):
             p = int(float(count) / size * 100)
             progress.setPercentage(p)
         count += 1
-    progress.setText("Fazendo raster virtual...")
+    progress.setText(tr("Building virtual raster..."))
     processing.runalg("gdalogr:buildvirtualraster", rasterList, 0, False, False, VRT)
 
 

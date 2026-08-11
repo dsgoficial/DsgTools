@@ -21,46 +21,14 @@
  ***************************************************************************/
 """
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.QtGui import QColor
 from qgis.core import (
-    QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
-    QgsProcessingParameterField,
-    QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFile,
-    QgsProcessingParameterExpression,
-    QgsProcessingException,
     QgsProcessingParameterString,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterType,
-    QgsProcessingParameterCrs,
-    QgsCoordinateTransform,
-    QgsProject,
-    QgsCoordinateReferenceSystem,
-    QgsField,
-    QgsFields,
     QgsProcessingOutputMultipleLayers,
     QgsProcessingParameterString,
-    QgsConditionalStyle,
 )
-from operator import itemgetter
-from collections import defaultdict
-import processing, os, requests, json
+import os, requests, json
 from time import sleep
 
 
@@ -124,7 +92,7 @@ class RunFMESAPAlgorithm(QgsProcessingAlgorithm):
         )
 
         if not response:
-            return {self.OUTPUT: "<p>Erro ao iniciar rotina.</p>"}
+            return {self.OUTPUT: self.tr("<p>Error starting routine.</p>")}
 
         url_to_status = "{server}/jobs/{uuid}".format(
             server=fmeDict["server"], uuid=response.json()["data"]["job_uuid"]
@@ -142,13 +110,15 @@ class RunFMESAPAlgorithm(QgsProcessingAlgorithm):
                 session.close()
                 responseData = response.json()["data"]
             except:
-                responseData = {"status": "erro", "log": "Erro no plugin!"}
+                responseData = {"status": "erro", "log": self.tr("Plugin error!")}
             if responseData["status"] in [2, 3, "erro"]:
                 break
 
-        output = "<p>[rotina nome] : {0}</p>".format(inputJSONData["workspace_name"])
+        output = self.tr("<p>[routine name] : {0}</p>").format(
+            inputJSONData["workspace_name"]
+        )
         for flags in responseData["log"].split("|"):
-            output += """<p>[rotina flags] : {0}</p>""".format(flags)
+            output += self.tr("<p>[routine flags] : {0}</p>").format(flags)
         return {self.OUTPUT: output}
 
     def name(self):

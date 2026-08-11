@@ -24,8 +24,6 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QObject
 
 # QGIS imports
 from qgis.core import (
@@ -36,7 +34,6 @@ from qgis.core import (
     QgsMessageLog,
     Qgis,
     QgsProject,
-    QgsEditorWidgetSetup,
 )
 
 # DsgTools imports

@@ -37,9 +37,6 @@ from qgis.core import (
     QgsVectorLayer,
     QgsVectorFileWriter,
     QgsCoordinateReferenceSystem,
-    QgsProject,
-    QgsProcessingContext,
-    QgsFeedback,
     QgsProcessingMultiStepFeedback,
 )
 from qgis.PyQt.QtCore import QCoreApplication
@@ -157,8 +154,8 @@ class MergeShapefileZipFilesInSingleGeopackage(QgsProcessingAlgorithm):
 
             multiStepFeedback.setProgress(int((i / total_files) * 100))
             multiStepFeedback.setProgressText(
-                self.tr(
-                    f"Processing ZIP file {i+1}/{total_files}: {os.path.basename(zip_file)}"
+                self.tr("Processing ZIP file {0}/{1}: {2}").format(
+                    i + 1, total_files, os.path.basename(zip_file)
                 )
             )
 
@@ -168,7 +165,7 @@ class MergeShapefileZipFilesInSingleGeopackage(QgsProcessingAlgorithm):
                     zip_ref.extractall(temp_dir)
             except Exception as e:
                 multiStepFeedback.reportError(
-                    self.tr(f"Error extracting {zip_file}: {str(e)}")
+                    self.tr("Error extracting {0}: {1}").format(zip_file, str(e))
                 )
                 continue
 
@@ -188,7 +185,7 @@ class MergeShapefileZipFilesInSingleGeopackage(QgsProcessingAlgorithm):
             )
 
         multiStepFeedback.setProgressText(
-            self.tr(f"Found {len(shapefiles)} shapefiles")
+            self.tr("Found {0} shapefiles").format(len(shapefiles))
         )
 
         # Step 3: Load shapefiles and group by name
@@ -203,7 +200,7 @@ class MergeShapefileZipFilesInSingleGeopackage(QgsProcessingAlgorithm):
 
             layer_name = Path(shp_path).stem
             multiStepFeedback.setProgressText(
-                self.tr(f"Loading shapefile: {layer_name}")
+                self.tr("Loading shapefile: {0}").format(layer_name)
             )
 
             # Group by layer name (case-insensitive)
@@ -239,8 +236,8 @@ class MergeShapefileZipFilesInSingleGeopackage(QgsProcessingAlgorithm):
             # Use the original name from the first layer in the group
             output_layer_name = layer_group[0]["original_name"]
             multiStepFeedback.setProgressText(
-                self.tr(
-                    f"Merging layer group: {output_layer_name} ({len(layer_group)} layers)"
+                self.tr("Merging layer group: {0} ({1} layers)").format(
+                    output_layer_name, len(layer_group)
                 )
             )
 
@@ -251,8 +248,8 @@ class MergeShapefileZipFilesInSingleGeopackage(QgsProcessingAlgorithm):
             # If no destination CRS specified, use the first layer's CRS
             # Multiple layers - merge them
             multiStepFeedback.setProgressText(
-                self.tr(
-                    f"Merging {len(layers_to_merge)} layers for {output_layer_name}"
+                self.tr("Merging {0} layers for {1}").format(
+                    len(layers_to_merge), output_layer_name
                 )
             )
             merged_layer = self.algRunner.runMergeVectorLayers(
@@ -294,21 +291,23 @@ class MergeShapefileZipFilesInSingleGeopackage(QgsProcessingAlgorithm):
 
             if error != QgsVectorFileWriter.NoError:
                 raise QgsProcessingException(
-                    self.tr(
-                        f"Error writing layer {output_layer_name} to GeoPackage: {error_message}"
+                    self.tr("Error writing layer {0} to GeoPackage: {1}").format(
+                        output_layer_name, error_message
                     )
                 )
 
             consolidated_count += 1
             multiStepFeedback.pushInfo(
-                self.tr(f"Merged {len(layer_group)} layers into: {output_layer_name}")
+                self.tr("Merged {0} layers into: {1}").format(
+                    len(layer_group), output_layer_name
+                )
             )
 
         multiStepFeedback.pushInfo(
             self.tr(
-                f"Successfully created GeoPackage with {consolidated_count} consolidated layers"
-            )
+                "Successfully created GeoPackage with {0} consolidated layers"
+            ).format(consolidated_count)
         )
-        multiStepFeedback.pushInfo(self.tr(f"Output: {output_gpkg}"))
+        multiStepFeedback.pushInfo(self.tr("Output: {0}").format(output_gpkg))
 
         return {self.OUTPUT_GPKG: output_gpkg}

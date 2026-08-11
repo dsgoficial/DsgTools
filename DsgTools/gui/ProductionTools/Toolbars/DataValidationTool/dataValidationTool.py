@@ -303,7 +303,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
             modelPath = self.modelPath()
         else:
             modelPath = os.path.join(self.defaultModelPath(), modelName)
-        msg = self.tr("Remove model '{modelName}'?".format(modelName=modelName))
+        msg = self.tr("Remove model '{modelName}'?").format(modelName=modelName)
         if self.confirmAction(msg) and self.modelExists(modelName):
             try:
                 os.remove(modelPath)
@@ -354,7 +354,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         try:
             out = processing.run(alg, param)
             self.iface.messageBar().pushMessage(
-                self.tr("Sucess"),
+                self.tr("Success"),
                 self.tr("model {model} finished.").format(model=modelName),
                 level=Qgis.MessageLevel.Info,
                 duration=5,
@@ -375,7 +375,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                         "{model} {layername}".format(model=modelName, layername=var)
                     )
                     self.addLayerToGroup(
-                        value, "DSGTools Validation Toolbar Output", modelName
+                        value, self.tr("DSGTools Validation Toolbar Output"), modelName
                     )
         except Exception as e:
             msg = self.tr(

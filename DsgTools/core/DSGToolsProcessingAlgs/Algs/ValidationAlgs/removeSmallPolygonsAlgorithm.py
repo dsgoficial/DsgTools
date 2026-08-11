@@ -25,14 +25,11 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsProcessingException,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
 )
 
-from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
@@ -98,7 +95,9 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             idRemoveSet.add(feat.id())
             feedback.setProgress(current * stepSize)
         inputLyr.startEditing()
-        inputLyr.beginEditCommand(f"Deleting features on layer {inputLyr.name()}.")
+        inputLyr.beginEditCommand(
+            self.tr("Deleting features on layer {0}.").format(inputLyr.name())
+        )
         inputLyr.deleteFeatures(list(idRemoveSet))
         inputLyr.endEditCommand()
         return {}

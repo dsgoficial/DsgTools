@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from qgis.PyQt.QtGui import QIcon, QPixmap
-from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.QtCore import QObject
-from qgis.gui import QgsMessageBar
-from qgis.core import Qgis, Qgis, QgsWkbTypes, QgsVectorLayer
-from .circle import Circle
+from qgis.core import Qgis, QgsVectorLayer
 from .polygon import Polygon
 
 
@@ -46,7 +42,7 @@ class Acquisition(QObject):
         layer = self.iface.activeLayer()
         if (
             not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+            or layer.geometryType() == Qgis.GeometryType.Point
             or not layer.isEditable()
         ):
             enabled = False
@@ -62,8 +58,8 @@ class Acquisition(QObject):
         layer = self.canvas.currentLayer()
         if layer in self.iface.editableLayers():
             if layer.geometryType() in [
-                QgsWkbTypes.GeometryType.LineGeometry,
-                QgsWkbTypes.GeometryType.PolygonGeometry,
+                Qgis.GeometryType.Line,
+                Qgis.GeometryType.Polygon,
             ]:
                 if self.tool:
                     self.tool.deactivate()

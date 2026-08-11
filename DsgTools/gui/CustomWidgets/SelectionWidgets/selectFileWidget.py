@@ -22,12 +22,10 @@
 """
 import os
 
-from qgis.core import QgsMessageLog
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, QDir
-from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QDir
 from qgis.PyQt.QtWidgets import QFileDialog
 
 
@@ -69,7 +67,7 @@ class SelectFileWidget(QtWidgets.QWidget, FORM_CLASS):
             selectedFiles = fd.getExistingDirectory(
                 directory=os.path.expanduser("~"),
                 caption=self.caption,
-                options=QFileDialog.ShowDirsOnly,
+                options=QFileDialog.Option.ShowDirsOnly,
             )
             if selectedFiles != "":
                 self.fileNameList = [selectedFiles]

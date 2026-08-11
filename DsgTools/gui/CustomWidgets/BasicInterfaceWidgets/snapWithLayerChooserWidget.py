@@ -20,24 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-import json
 import os
-from os.path import expanduser
 
-from qgis.gui import QgsMapLayerComboBox
-from qgis.core import QgsMessageLog, QgsProject, QgsMapLayerProxyModel
+from qgis.core import QgsProject, QgsMapLayerProxyModel
 
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import QSettings, Qt, pyqtSlot
-from qgis.PyQt.QtGui import QCursor
-from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
-from qgis.PyQt.QtWidgets import (
-    QApplication,
-    QFileDialog,
-    QListWidgetItem,
-    QMenu,
-    QMessageBox,
-)
+from qgis.PyQt.QtCore import Qt
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "snapWithLayerChooserWidget.ui")

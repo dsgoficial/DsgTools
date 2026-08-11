@@ -21,9 +21,7 @@
 """
 
 
-from builtins import object
 import os.path
-import sys
 import json
 
 from qgis.PyQt.QtCore import QObject, Qt
@@ -34,7 +32,6 @@ from DsgTools.Modules.acquisitionMenu.controllers.acquisitionMenuCtrl import (
     AcquisitionMenuCtrl,
 )
 from .ContourTool.calc_contour import CalcContour
-from .ComplexTools.complexWindow import ComplexWindow
 from .WorkflowToolBox.workflowDockWidget import (
     WorkflowDockWidget,
 )
@@ -117,11 +114,6 @@ class ToolBoxesGuiManager(QObject):
             "codelist.png",
             self.tr("View Code List Codes and Values"),
         )
-        self.complexWindow = None
-        self.addTool(
-            self.showComplexDock, "complex.png", self.tr("Build Complex Structures")
-        )
-
         # Load state for current project
         self.loadStateFromProject()
 
@@ -225,18 +217,6 @@ class ToolBoxesGuiManager(QObject):
             self.calcContour = CalcContour(self.iface)
         self.iface.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, self.calcContour
-        )
-
-    def showComplexDock(self):
-        """
-        Shows the Manage Complex features Dock
-        """
-        if self.complexWindow:
-            self.iface.removeDockWidget(self.complexWindow)
-        else:
-            self.complexWindow = ComplexWindow(self.iface)
-        self.iface.addDockWidget(
-            Qt.DockWidgetArea.LeftDockWidgetArea, self.complexWindow
         )
 
     def saveStateOnProject(self):

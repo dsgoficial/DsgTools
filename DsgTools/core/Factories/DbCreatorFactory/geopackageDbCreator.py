@@ -22,9 +22,7 @@
 """
 
 import os, sqlite3
-from os.path import expanduser
 
-from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbCreatorFactory.dbCreator import DbCreator
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import (
     ProgressWidget,
@@ -72,7 +70,7 @@ class GeopackageDbCreator(DbCreator):
     def createDb(self, dbName, srid, paramDict=dict(), parentWidget=None):
         destination = os.path.join(self.outputDir, dbName + ".gpkg")
         if "version" not in list(paramDict.keys()):
-            raise Exception("Undefined database version")
+            raise Exception(self.tr("Undefined database version"))
         edgvPath = self.getTemplateLocation(paramDict["version"])
         f = open(edgvPath, "rb")
         g = open(destination, "wb")
@@ -103,9 +101,7 @@ class GeopackageDbCreator(DbCreator):
     def defineSrid(self, destination, srid):
         con = sqlite3.connect(destination)
         cursor = con.cursor()
-        cursor.execute(
-            "UPDATE gpkg_geometry_columns SET srs_id={srid}".format(srid=srid)
-        )
+        cursor.execute("UPDATE gpkg_geometry_columns SET srs_id=?", (int(srid),))
         con.commit()
         cursor.close()
         con.close()

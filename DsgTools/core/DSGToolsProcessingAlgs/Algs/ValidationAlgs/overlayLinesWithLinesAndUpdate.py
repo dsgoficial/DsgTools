@@ -27,21 +27,14 @@ from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterFeatureSink,
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterNumber,
-    QgsFeature,
-    QgsFields,
-    QgsProcessingException,
-    QgsFeatureSink,
-    QgsProcessingParameterField,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
     QgsWkbTypes,
     QgsVectorLayer,
     QgsProcessingContext,
     QgsFeedback,
-    QgsProcessingParameterDistance,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 

@@ -25,23 +25,12 @@ from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
     QgsProcessing,
-    QgsProcessingAlgorithm,
-    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingUtils,
 )
 
 from ...algRunner import AlgRunner

@@ -33,23 +33,20 @@ class DsgEnums(object):
     (
         PermissionProperty,
         FieldToolboxProperty,
-        EarthCoverageProperty,
         AttributeRuleProperty,
         SpatialRuleProperty,
         ValidationWorkflowProperty,
-    ) = list(range(6))
+    ) = list(range(5))
     # datasource selection widgets enum
     (
         NoDriver,
         PostGIS,
         NewPostGIS,
-        SpatiaLite,
-        NewSpatiaLite,
         Shapefile,
         NewShapefile,
         Geopackage,
         NewGeopackage,
-    ) = list(range(9))
+    ) = list(range(7))
     # node types enum
     (
         Flag,
@@ -68,10 +65,9 @@ class DsgEnums(object):
     # available drivers enum
     (
         DriverPostGIS,
-        DriverSpatiaLite,
         DriverGeopackage,
         DriverShapefile,
         DriverOthers,
-    ) = list(range(5))
+    ) = list(range(4))
     # conversion modes available in Conversion Dataset Tool
     FlexibleConversion, StrictConversion = 1, 2

@@ -278,7 +278,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
 
     def addFeatureAsPoint(self, inputLyr, outputLyr, feedback=None, targetCrs=None):
         features = inputLyr.getFeatures()
-        outputLyr.beginEditCommand("Add features")
+        outputLyr.beginEditCommand(self.tr("Add features"))
         total = 100.0 / inputLyr.featureCount() if inputLyr.featureCount() else 0
         inputCrs = inputLyr.crs()
         if targetCrs is not None:
@@ -357,14 +357,14 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
             onlySelected=onlySelected,
         )
         multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo("Updating database.")
+        multiStepFeedback.pushInfo(self.tr("Updating database."))
 
         outputLyr.startEditing()
         self.addFeatureAsPoint(
             tempLyr, outputLyr, feedback=multiStepFeedback, targetCrs=outputLyr.crs()
         )
         multiStepFeedback.setCurrentStep(4)
-        multiStepFeedback.pushInfo("Loading complete.")
+        multiStepFeedback.pushInfo(self.tr("Loading complete."))
 
         return {self.OUTPUT_DB: outputLyr}
 

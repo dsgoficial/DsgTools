@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt import QtCore, QtGui, QtWidgets
+from qgis.PyQt import QtCore, QtGui
 from qgsmaplayercombobox import QgsMapLayerComboBox
 
 

@@ -1,5 +1,3 @@
-from qgis import gui, core
-from qgis.utils import iface
 from DsgTools.Modules.qgis.actions.selectRaster import SelectRaster
 from DsgTools.Modules.qgis.actions.addPointFeature import AddPointFeature
 from DsgTools.Modules.qgis.actions.selectFeature import SelectFeature

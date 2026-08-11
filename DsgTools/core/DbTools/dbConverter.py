@@ -23,7 +23,7 @@
 import os, collections
 import time
 
-from qgis.PyQt.QtCore import QObject, pyqtSignal, QSettings
+from qgis.PyQt.QtCore import pyqtSignal, QSettings
 from qgis.core import (
     QgsFeatureRequest,
     QgsProject,
@@ -152,10 +152,6 @@ class DbConverter(QgsTask):
                 "QPSQL",
                 self.getDefaultPgDb(parameters["host"]),
             ),
-            DsgEnums.DriverSpatiaLite: lambda: (
-                "QSQLITE",
-                os.path.dirname(parameters["path"]),
-            ),
             DsgEnums.DriverGeopackage: lambda: (
                 "GPKG",
                 os.path.dirname(parameters["path"]),
@@ -202,7 +198,7 @@ class DbConverter(QgsTask):
             if abstractDb is not None:
                 abstractDb.closeDatabase()
                 abstractDb = None
-            msg = "{0} dataset creation has failed: '{1}'".format(
+            msg = self.tr("{0} dataset creation has failed: '{1}'").format(
                 output, "; ".join(map(str, e.args))
             )
         return abstractDb, msg
@@ -226,7 +222,6 @@ class DbConverter(QgsTask):
         """
         drivers = {
             "pg": DsgEnums.DriverPostGIS,
-            "sqlite": DsgEnums.DriverSpatiaLite,
             "shp": DsgEnums.DriverShapefile,
             "gpkg": DsgEnums.DriverGeopackage,
         }
@@ -280,18 +275,6 @@ class DbConverter(QgsTask):
             else None
         )
 
-    def connectToSpatialite(self, parameters):
-        """
-        Stablishes connection to a SpatiaLite database.
-        :param parameters: (dict) a dict containing all connection parameters.
-        :return: (AbstractDb) returns the DSGTools database object.
-        """
-        abstractDb = None
-        if os.path.exists(parameters["path"]):
-            abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverSpatiaLite)
-            abstractDb.connectDatabase(conn=parameters["path"])
-        return abstractDb
-
     def connectToGeopackage(self, parameters):
         """
         Stablishes connection to a Geopackage database.
@@ -322,9 +305,6 @@ class DbConverter(QgsTask):
         """
         drivers = {
             DsgEnums.DriverPostGIS: lambda: self.connectToPostgis(
-                parameters=parameters
-            ),
-            DsgEnums.DriverSpatiaLite: lambda: self.connectToSpatialite(
                 parameters=parameters
             ),
             DsgEnums.DriverGeopackage: lambda: self.connectToGeopackage(

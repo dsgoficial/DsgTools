@@ -110,7 +110,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
     }
 
     def tr(self, string):
-        return QCoreApplication.translate("Processing", string)
+        return QCoreApplication.translate("ETCQDGGridGenerator", string)
 
     def createInstance(self):
         return ETCQDGGridGenerator()
@@ -119,7 +119,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         return "cqdggridgenerator"
 
     def displayName(self):
-        return self.tr("Gerador de Quadrículas ET-CQDG")
+        return self.tr("ET-CQDG Tile Grid Generator")
 
     def group(self):
         """
@@ -197,22 +197,22 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
     def shortHelpString(self):
         return self.tr(
             """
-        Gera quadrículas de avaliação conforme ET-CQDG (DSG/EB).
+        Generates evaluation tiles according to ET-CQDG (DSG/EB).
 
-        IMPORTANTE: Apenas quadrículas COMPLETAMENTE dentro da moldura são
-        consideradas (quadrículas cortadas pela borda são descartadas).
+        IMPORTANT: Only tiles COMPLETELY inside the frame are
+        considered (tiles cut by the border are discarded).
 
-        Cada moldura é processada individualmente com seu fuso UTM específico.
+        Each frame is processed individually with its specific UTM zone.
 
-        Parâmetros:
-        - Camada de Moldura: Camada vetorial com as molduras (MI)
-        - Escala: Escala de trabalho (1:25.000, 1:50.000, 1:100.000, 1:250.000)
-        - LQA (%): Limite de Qualidade Aceitável (1%, 4% ou 10%)
-        - Tipo de Lote: Lote a lote (10+ produtos) ou Isolado (1-9 produtos)
+        Parameters:
+        - Frame Layer: Vector layer with the frames (MI)
+        - Scale: Working scale (1:25,000, 1:50,000, 1:100,000, 1:250,000)
+        - AQL (%): Acceptable Quality Limit (1%, 4% or 10%)
+        - Lot Type: Lot-by-lot (10+ products) or Isolated (1-9 products)
 
-        Saídas:
-        - Grid completo: Todas as quadrículas inteiras dentro da moldura
-        - Amostra: Quadrículas selecionadas aleatoriamente para avaliação
+        Outputs:
+        - Full grid: All complete tiles inside the frame
+        - Sample: Tiles randomly selected for evaluation
         """
         )
 
@@ -220,7 +220,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT_MOLDURA,
-                self.tr("Camada de Moldura (MI)"),
+                self.tr("Frame Layer (MI)"),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -228,7 +228,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.ESCALA,
-                self.tr("Escala"),
+                self.tr("Scale"),
                 options=["1:25.000", "1:50.000", "1:100.000", "1:250.000"],
                 defaultValue=0,
             )
@@ -237,7 +237,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.LQA,
-                self.tr("LQA - Limite de Qualidade Aceitável (%)"),
+                self.tr("AQL - Acceptable Quality Limit (%)"),
                 options=["1%", "4%", "10%"],
                 defaultValue=1,
             )
@@ -246,7 +246,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.TIPO_LOTE,
-                self.tr("Tipo de Lote"),
+                self.tr("Lot Type"),
                 options=["Lote a Lote (10+ produtos)", "Isolado (1-9 produtos)"],
                 defaultValue=1,
             )
@@ -254,13 +254,13 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT_GRID, self.tr("Grid Completo de Quadrículas")
+                self.OUTPUT_GRID, self.tr("Full Tile Grid")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT_AMOSTRA, self.tr("Quadrículas Amostradas")
+                self.OUTPUT_AMOSTRA, self.tr("Sampled Tiles")
             )
         )
 
@@ -284,10 +284,12 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
         # Obter CRS original
         original_crs = moldura_layer.sourceCrs()
 
-        feedback.pushInfo(f"Sistema de referência original: {original_crs.authid()}")
-        feedback.pushInfo(f"Escala: 1:{escala}")
-        feedback.pushInfo(f"Tamanho da quadrícula: {grid_size} metros")
-        feedback.pushInfo(f"LQA: {lqa}%")
+        feedback.pushInfo(
+            self.tr("Original reference system: {0}").format(original_crs.authid())
+        )
+        feedback.pushInfo(self.tr("Scale: 1:{0}").format(escala))
+        feedback.pushInfo(self.tr("Tile size: {0} meters").format(grid_size))
+        feedback.pushInfo(self.tr("AQL: {0}%").format(lqa))
 
         # Criar campos de saída
         fields = QgsFields()
@@ -333,7 +335,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
                 if moldura_feat.fields().lookupField("mi") >= 0
                 else f"MI_{current+1}"
             )
-            feedback.pushInfo(f"\nProcessando {mi_nome}...")
+            feedback.pushInfo(self.tr("\nProcessing {0}...").format(mi_nome))
 
             # Obter geometria da moldura (cópia para não modificar o original)
             moldura_geom_original = moldura_feat.geometry()
@@ -343,11 +345,15 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
 
             if utm_crs is None or not utm_crs.isValid():
                 feedback.pushWarning(
-                    f"Não foi possível determinar o sistema UTM para {mi_nome}. Ignorando..."
+                    self.tr(
+                        "Could not determine the UTM system for {0}. Skipping..."
+                    ).format(mi_nome)
                 )
                 continue
 
-            feedback.pushInfo(f"Fuso UTM para esta moldura: {utm_crs.authid()}")
+            feedback.pushInfo(
+                self.tr("UTM zone for this frame: {0}").format(utm_crs.authid())
+            )
 
             # Criar transformadores específicos para esta moldura
             transform_to_utm = QgsCoordinateTransform(
@@ -410,14 +416,18 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
 
             # Calcular tamanho da amostra
             n_total = len(quadriculas_utm)
-            feedback.pushInfo(f"Células do grid: {total_celulas}")
-            feedback.pushInfo(f"Quadrículas completas: {n_total}")
+            feedback.pushInfo(self.tr("Grid cells: {0}").format(total_celulas))
+            feedback.pushInfo(self.tr("Complete tiles: {0}").format(n_total))
             feedback.pushInfo(
-                f"Quadrículas descartadas (parciais): {quadriculas_descartadas}"
+                self.tr("Discarded tiles (partial): {0}").format(
+                    quadriculas_descartadas
+                )
             )
 
             if n_total == 0:
-                feedback.pushWarning(f"Nenhuma quadrícula gerada para {mi_nome}")
+                feedback.pushWarning(
+                    self.tr("No tiles generated for {0}").format(mi_nome)
+                )
                 continue
 
             # Determinar tamanho da amostra
@@ -426,8 +436,8 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             else:  # Isolado
                 n_amostra, ac = self._calcular_amostra_isolado(n_total, lqa)
 
-            feedback.pushInfo(f"Tamanho da amostra: {n_amostra}")
-            feedback.pushInfo(f"Número de aceitação: {ac}")
+            feedback.pushInfo(self.tr("Sample size: {0}").format(n_amostra))
+            feedback.pushInfo(self.tr("Acceptance number: {0}").format(ac))
 
             # Selecionar aleatoriamente os índices
             indices_amostra = set(
@@ -461,7 +471,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
                 if selecionada:
                     sink_amostra.addFeature(feat)
 
-        feedback.pushInfo("\nProcessamento concluído!")
+        feedback.pushInfo(self.tr("\nProcessing completed!"))
 
         return {self.OUTPUT_GRID: dest_id_grid, self.OUTPUT_AMOSTRA: dest_id_amostra}
 
@@ -476,7 +486,9 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
 
         if not letra:
             raise QgsProcessingException(
-                f"Não foi possível determinar letra código para lote de tamanho {tamanho_lote}"
+                self.tr("Could not determine code letter for lot of size {0}").format(
+                    tamanho_lote
+                )
             )
 
         # Buscar na tabela 45
@@ -484,7 +496,9 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             return self.TABELA_45[letra][lqa]
 
         raise QgsProcessingException(
-            f"Combinação letra={letra}, LQA={lqa} não encontrada na tabela"
+            self.tr("Combination letter={0}, AQL={1} not found in table").format(
+                letra, lqa
+            )
         )
 
     def _calcular_amostra_isolado(self, tamanho_lote, lqa):

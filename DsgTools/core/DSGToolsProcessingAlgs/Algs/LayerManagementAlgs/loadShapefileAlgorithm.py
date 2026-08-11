@@ -20,12 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
 
 from pathlib import Path
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsProcessingAlgorithm,
     QgsProcessingOutputMultipleLayers,
     QgsProcessingParameterFile,
@@ -48,7 +48,7 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDER_SHAPEFILES,
-                self.tr("Pasta com Shapefiles"),
+                self.tr("Folder with Shapefiles"),
                 behavior=QgsProcessingParameterFile.Folder,
             )
         )
@@ -82,15 +82,9 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
             rootNode = QgsProject.instance().layerTreeRoot().addGroup(rootNodeName)
             rootNodeList.append(rootNode)
             groupDict[rootNodeName] = {
-                QgsWkbTypes.GeometryType.PointGeometry: self.createGroup(
-                    "Ponto", rootNode
-                ),
-                QgsWkbTypes.GeometryType.LineGeometry: self.createGroup(
-                    "Linha", rootNode
-                ),
-                QgsWkbTypes.GeometryType.PolygonGeometry: self.createGroup(
-                    "Area", rootNode
-                ),
+                Qgis.GeometryType.Point: self.createGroup("Ponto", rootNode),
+                Qgis.GeometryType.Line: self.createGroup("Linha", rootNode),
+                Qgis.GeometryType.Polygon: self.createGroup("Area", rootNode),
             }
         for step, data in enumerate(shapefileData):
             if feedback.isCanceled():
@@ -170,7 +164,7 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
         This process is not thread safe due to the fact that removeChildNode
         method from QgsLayerTreeGroup is not thread safe.
         """
-        return super().flags() | QgsProcessingAlgorithm.FlagNoThreading
+        return super().flags() | QgsProcessingAlgorithm.Flag.FlagNoThreading
 
     def shortHelpString(self):
         return self.tr(

@@ -30,8 +30,7 @@ from DsgTools.core.NetworkTools.ExternalFilesHandler import (
 )
 
 from qgis.PyQt.QtCore import QObject, QUrl
-from qgis.PyQt.QtGui import QDesktopServices
-from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
+from qgis.PyQt.QtGui import QAction, QDesktopServices
 from qgis.core import Qgis
 from .Options.options import Options
 from .aboutdialog import AboutDialog
@@ -66,6 +65,10 @@ class AboutAndFurtherInfoGuiManager(QObject):
             add_to_toolbar=False,
             withShortcut=False,
         )
+        # On macOS, Qt auto-detects "Options"/"Preferences"-like action text
+        # and moves the action out of our menu into the app menu. Force it
+        # to stay put so it doesn't silently disappear from the DSGTools menu.
+        action.setMenuRole(QAction.MenuRole.NoRole)
         action = self.manager.add_action(
             self.iconBasePath + "import.png",
             text=self.tr("Download external data"),
@@ -110,6 +113,10 @@ class AboutAndFurtherInfoGuiManager(QObject):
             add_to_toolbar=False,
             withShortcut=False,
         )
+        # Same as above: on macOS, Qt auto-detects "About ..." action text
+        # and moves it to the application menu, so it never shows up in the
+        # DSGTools menu itself. Force it to stay in our own menu.
+        action.setMenuRole(QAction.MenuRole.NoRole)
 
     def unload(self):
         pass
@@ -135,7 +142,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
         )
         if output:
             message = (
-                self.tr("Everyting up to date")
+                self.tr("Everything up to date")
                 if output == 1
                 else self.tr("External files updated")
             )

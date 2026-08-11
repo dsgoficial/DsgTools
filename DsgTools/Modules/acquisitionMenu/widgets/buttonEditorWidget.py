@@ -1,5 +1,5 @@
-import os, sys, copy
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
+import os
+from qgis.PyQt import QtCore, QtWidgets
 from qgis.PyQt.QtWidgets import QMessageBox
 from .tableEditorWidget import TableEditorWidget
 import json
@@ -17,17 +17,19 @@ class ButtonEditorWidget(TableEditorWidget):
         layout = QtWidgets.QHBoxLayout(wd)
         index = QtCore.QPersistentModelIndex(self.tableWidget.model().index(row, col))
 
-        editBtn = self.createTableToolButton("Editar", self.getEditIconPath())
+        editBtn = self.createTableToolButton(self.tr("Edit"), self.getEditIconPath())
         editBtn.clicked.connect(lambda *args, index=index: self.handleEditBtn(index))
         layout.addWidget(editBtn)
 
-        deleteBtn = self.createTableToolButton("Excluir", self.getDeleteIconPath())
+        deleteBtn = self.createTableToolButton(
+            self.tr("Delete"), self.getDeleteIconPath()
+        )
         deleteBtn.clicked.connect(
             lambda *args, index=index: self.handleDeleteBtn(index)
         )
         layout.addWidget(deleteBtn)
 
-        cloneBtn = self.createTableToolButton("Clonar", self.getCloneIconPath())
+        cloneBtn = self.createTableToolButton(self.tr("Clone"), self.getCloneIconPath())
         cloneBtn.clicked.connect(lambda *args, index=index: self.handleCloneBtn(index))
         layout.addWidget(cloneBtn)
 
@@ -59,7 +61,7 @@ class ButtonEditorWidget(TableEditorWidget):
             self.getController().deleteButtonMenuEditor(deletedButtonData)
             self.tableWidget.removeRow(index.row())
         except Exception as e:
-            self.showError("Erro", str(e))
+            self.showError(self.tr("Error"), str(e))
 
     def handleCloneBtn(self, index):
         self.getController().openCloneButtonDialog(
@@ -75,7 +77,7 @@ class ButtonEditorWidget(TableEditorWidget):
                 ),
             )
         except Exception as e:
-            self.showError("Erro", str(e))
+            self.showError(self.tr("Error"), str(e))
 
     def addRow(self, buttonId, buttonTab, buttonName, buttonConfig):
         idx = self.getRowIndex(buttonId)
@@ -125,7 +127,7 @@ class ButtonEditorWidget(TableEditorWidget):
         try:
             self.getController().openAddButtonDialog(self.addButton)
         except Exception as e:
-            self.showError("Erro", str(e))
+            self.showError(self.tr("Error"), str(e))
 
     def addButton(self, data):
         if not data:

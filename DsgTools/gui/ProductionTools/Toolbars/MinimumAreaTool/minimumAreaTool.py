@@ -24,7 +24,6 @@ Builds a temp rubberband with a given size and shape.
 
 import os
 
-from qgis.core import Qgis, QgsUnitTypes
 from qgis.gui import QgsMapMouseEvent
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QMessageBox, QAction, QWidget
@@ -240,11 +239,11 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
     def populateSizesComboBox(self):
         self.sizesComboBox.clear()
         self.sizesComboBox.addItem(self.tr("SIZES"))
-        self.sizesComboBox.addItem("25mm²")
-        self.sizesComboBox.addItem("4mm²")
-        self.sizesComboBox.addItem("0.8x0.8mm²")
-        self.sizesComboBox.addItem("1x1mm²")
-        self.sizesComboBox.addItem("0.8mm")
+        self.sizesComboBox.addItem(self.tr("25mm²"))
+        self.sizesComboBox.addItem(self.tr("4mm²"))
+        self.sizesComboBox.addItem(self.tr("0.8x0.8mm²"))
+        self.sizesComboBox.addItem(self.tr("1x1mm²"))
+        self.sizesComboBox.addItem(self.tr("0.8mm"))
         customSizesDict = self.getCustomSizesDict()
         self.createDict(customDict=customSizesDict)
         self.populateComboWithCustomSizes(customSizesDict)

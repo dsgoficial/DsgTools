@@ -29,7 +29,6 @@ from qgis.core import (
     QgsGeometry,
     QgsGeometryUtilsBase,
     QgsProcessing,
-    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,
@@ -197,7 +196,9 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setProgressText(
             self.tr("Building node angle dict: building dict")
         )
-        multiStepFeedback.pushInfo(self.tr(f"Iterating over {nFeats} segments..."))
+        multiStepFeedback.pushInfo(
+            self.tr("Iterating over {0} segments...").format(nFeats)
+        )
         for current, feat in enumerate(splitSegments.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 break

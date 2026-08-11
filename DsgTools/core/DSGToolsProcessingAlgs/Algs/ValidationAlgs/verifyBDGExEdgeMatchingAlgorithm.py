@@ -28,6 +28,7 @@ from pathlib import Path
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import runProcessing
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
+    Qgis,
     QgsFeature,
     QgsFeatureRequest,
     QgsFeatureSink,
@@ -215,7 +216,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Finding adjacent cell pairs..."))
         adjacentPairs = self._findAdjacentPairs(cellFeatDict, cellSpatialIdx)
         multiStepFeedback.pushInfo(
-            self.tr(f"Found {len(adjacentPairs)} adjacent cell pair(s).")
+            self.tr("Found {0} adjacent cell pair(s).").format(len(adjacentPairs))
         )
 
         # Step 5: Edge matching
@@ -268,7 +269,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         for i, zipPath in enumerate(zipFiles):
             if feedback.isCanceled():
                 break
-            feedback.pushInfo(self.tr(f"  Extracting {zipPath.name}..."))
+            feedback.pushInfo(self.tr("  Extracting {0}...").format(zipPath.name))
 
             tempDir = tempfile.mkdtemp()
             try:
@@ -276,7 +277,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     zf.extractall(tempDir)
             except Exception as e:
                 raise QgsProcessingException(
-                    self.tr(f"Failed to extract '{zipPath.name}': {e}")
+                    self.tr("Failed to extract '{0}': {1}").format(zipPath.name, e)
                 )
 
             layersByType = {"points": {}, "lines": {}, "polygons": {}}
@@ -285,16 +286,18 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                 lyr = QgsVectorLayer(str(shpPath), layerName, "ogr")
                 if not lyr.isValid():
                     feedback.pushWarning(
-                        self.tr(f"  Could not load '{shpPath.name}'. Skipping.")
+                        self.tr("  Could not load '{0}'. Skipping.").format(
+                            shpPath.name
+                        )
                     )
                     continue
 
                 geomType = lyr.geometryType()
-                if geomType == QgsWkbTypes.GeometryType.PointGeometry:
+                if geomType == Qgis.GeometryType.Point:
                     layersByType["points"][layerName] = lyr
-                elif geomType == QgsWkbTypes.GeometryType.LineGeometry:
+                elif geomType == Qgis.GeometryType.Line:
                     layersByType["lines"][layerName] = lyr
-                elif geomType == QgsWkbTypes.GeometryType.PolygonGeometry:
+                elif geomType == Qgis.GeometryType.Polygon:
                     layersByType["polygons"][layerName] = lyr
 
             zipData[str(zipPath)] = layersByType
@@ -355,37 +358,49 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     # Hard errors: structural mismatches
                     hardDiffs = []
                     if added:
-                        hardDiffs.append(f"Added fields: {added}")
+                        hardDiffs.append(self.tr("Added fields: {0}").format(added))
                     if removed:
-                        hardDiffs.append(f"Removed fields: {removed}")
+                        hardDiffs.append(self.tr("Removed fields: {0}").format(removed))
                     if typeChanged:
-                        hardDiffs.append(f"Changed field types: {typeChanged}")
+                        hardDiffs.append(
+                            self.tr("Changed field types: {0}").format(typeChanged)
+                        )
 
                     if hardDiffs:
                         raise QgsProcessingException(
                             self.tr(
-                                f"Schema mismatch for layer '{layerName}':\n"
-                                f"  Reference file  : '{Path(schemaSource[layerName]).name}'\n"
-                                f"  Conflicting file: '{Path(zipPath).name}'\n"
-                                f"  Differences     : {'; '.join(hardDiffs)}\n"
-                                f"All shapefiles with the same name must have identical "
-                                f"field schemas before edge matching can proceed."
+                                "Schema mismatch for layer '{0}':\n"
+                                "  Reference file  : '{1}'\n"
+                                "  Conflicting file: '{2}'\n"
+                                "  Differences     : {3}\n"
+                                "All shapefiles with the same name must have identical "
+                                "field schemas before edge matching can proceed."
+                            ).format(
+                                layerName,
+                                Path(schemaSource[layerName]).name,
+                                Path(zipPath).name,
+                                "; ".join(hardDiffs),
                             )
                         )
 
                     # Soft warnings: length-only mismatches
                     if lengthOnly:
                         lengthDetails = ", ".join(
-                            f"{f} "
-                            f"(ref={refSchema[f][1]}, "
-                            f"current={currentSchema[f][1]})"
+                            self.tr("{0} (ref={1}, current={2})").format(
+                                f, refSchema[f][1], currentSchema[f][1]
+                            )
                             for f in lengthOnly
                         )
                         msg = self.tr(
-                            f"Field length mismatch for layer '{layerName}':\n"
-                            f"  Reference file  : '{Path(schemaSource[layerName]).name}'\n"
-                            f"  Conflicting file: '{Path(zipPath).name}'\n"
-                            f"  Fields with different lengths: {lengthDetails}"
+                            "Field length mismatch for layer '{0}':\n"
+                            "  Reference file  : '{1}'\n"
+                            "  Conflicting file: '{2}'\n"
+                            "  Fields with different lengths: {3}"
+                        ).format(
+                            layerName,
+                            Path(schemaSource[layerName]).name,
+                            Path(zipPath).name,
+                            lengthDetails,
                         )
                         if ignoreFieldLengths:
                             if feedback is not None:
@@ -503,7 +518,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                 cellFeatDict[cell.id()] = cell
                 cellSpatialIdx.addFeature(cell)
 
-        feedback.pushInfo(self.tr(f"  {len(cellFeatDict)} grid cell(s) contain data."))
+        feedback.pushInfo(
+            self.tr("  {0} grid cell(s) contain data.").format(len(cellFeatDict))
+        )
         return cellFeatDict, cellSpatialIdx
 
     def _cellHasData(
@@ -563,7 +580,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
 
             if zipExtent.isEmpty():
                 feedback.pushWarning(
-                    self.tr(f"  No extent found for '{Path(zipPath).name}'. Skipping.")
+                    self.tr("  No extent found for '{0}'. Skipping.").format(
+                        Path(zipPath).name
+                    )
                 )
                 continue
 
@@ -576,9 +595,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     if candidateId in cellToZipData:
                         feedback.pushWarning(
                             self.tr(
-                                f"  Cell {candidateId} already has an associated zip. "
-                                f"'{Path(zipPath).name}' will overwrite it."
-                            )
+                                "  Cell {0} already has an associated zip. "
+                                "'{1}' will overwrite it."
+                            ).format(candidateId, Path(zipPath).name)
                         )
                     cellToZipData[candidateId] = layersByType
                     foundCell = True
@@ -587,9 +606,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
             if not foundCell:
                 feedback.pushWarning(
                     self.tr(
-                        f"  Could not find a grid cell for '{Path(zipPath).name}'. "
-                        f"This zip will be skipped."
-                    )
+                        "  Could not find a grid cell for '{0}'. "
+                        "This zip will be skipped."
+                    ).format(Path(zipPath).name)
                 )
 
         return cellToZipData
@@ -755,7 +774,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
             extBufA = cellExternalBorders.get(cellIdA, QgsGeometry())
             extBufB = cellExternalBorders.get(cellIdB, QgsGeometry())
 
-            feedback.pushInfo(self.tr(f"  Matching cells {cellIdA} ↔ {cellIdB}..."))
+            feedback.pushInfo(
+                self.tr("  Matching cells {0} and {1}...").format(cellIdA, cellIdB)
+            )
 
             for geomTypeKey in ("lines", "points", "polygons"):
                 layersA = dataA.get(geomTypeKey, {})
@@ -930,8 +951,8 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                 self._addFlag(
                     ptA,
                     self.tr(
-                        f"[{layerName}] Line endpoint without connection at boundary."
-                    ),
+                        "[{0}] Line endpoint without connection at boundary."
+                    ).format(layerName),
                     fields,
                     sink,
                 )
@@ -952,8 +973,8 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                 self._addFlag(
                     ptA,
                     self.tr(
-                        f"[{layerName}] Line endpoint without connection at boundary."
-                    ),
+                        "[{0}] Line endpoint without connection at boundary."
+                    ).format(layerName),
                     fields,
                     sink,
                 )
@@ -967,9 +988,8 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                 self._addFlag(
                     ptA,
                     self.tr(
-                        f"[{layerName}] Line continuity error. "
-                        f"Differing attributes: {', '.join(diffAttrs)}."
-                    ),
+                        "[{0}] Line continuity error. " "Differing attributes: {1}."
+                    ).format(layerName, ", ".join(diffAttrs)),
                     fields,
                     sink,
                 )
@@ -1035,7 +1055,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     continue
                 self._addFlag(
                     ptA,
-                    self.tr(f"[{layerName}] Point without neighbor at boundary."),
+                    self.tr("[{0}] Point without neighbor at boundary.").format(
+                        layerName
+                    ),
                     fields,
                     sink,
                 )
@@ -1054,7 +1076,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     continue
                 self._addFlag(
                     ptA,
-                    self.tr(f"[{layerName}] Point without neighbor at boundary."),
+                    self.tr("[{0}] Point without neighbor at boundary.").format(
+                        layerName
+                    ),
                     fields,
                     sink,
                 )
@@ -1068,9 +1092,8 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                 self._addFlag(
                     ptA,
                     self.tr(
-                        f"[{layerName}] Point continuity error. "
-                        f"Differing attributes: {', '.join(diffAttrs)}."
-                    ),
+                        "[{0}] Point continuity error. " "Differing attributes: {1}."
+                    ).format(layerName, ", ".join(diffAttrs)),
                     fields,
                     sink,
                 )
@@ -1165,8 +1188,8 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     self._addFlag(
                         segA,
                         self.tr(
-                            f"[{layerName}] Missing polygon continuation at boundary."
-                        ),
+                            "[{0}] Missing polygon continuation at boundary."
+                        ).format(layerName),
                         fields,
                         lineSink,
                     )
@@ -1181,9 +1204,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                             self._addFlag(
                                 segA,
                                 self.tr(
-                                    f"[{layerName}] Polygon continuity error. "
-                                    f"Differing attributes: {', '.join(diffAttrs)}."
-                                ),
+                                    "[{0}] Polygon continuity error. "
+                                    "Differing attributes: {1}."
+                                ).format(layerName, ", ".join(diffAttrs)),
                                 fields,
                                 lineSink,
                             )
@@ -1209,9 +1232,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
                     self._addFlag(
                         pt,
                         self.tr(
-                            f"[{layerName}] Polygon vertex without boundary "
-                            f"connection at boundary."
-                        ),
+                            "[{0}] Polygon vertex without boundary "
+                            "connection at boundary."
+                        ).format(layerName),
                         fields,
                         pointSink,
                     )

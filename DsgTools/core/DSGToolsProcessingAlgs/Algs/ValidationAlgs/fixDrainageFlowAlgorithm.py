@@ -216,7 +216,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             oceanFilterExpression = None
         if waterBodyLayer is not None and oceanFilterExpression is None:
             raise QgsProcessingException(
-                "There must be a oceanFilterExpression if a water body layer is selected."
+                self.tr(
+                    "There must be a oceanFilterExpression if a water body layer is selected."
+                )
             )
         waterBodyWithFlowFilterExpression = self.parameterAsExpression(
             parameters, self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION, context
@@ -233,7 +235,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             or waterBodyWithoutFlowFilterExpression is None
         ):
             raise QgsProcessingException(
-                "There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected."
+                self.tr(
+                    "There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected."
+                )
             )
         sinkAndSpillwayLayer = self.parameterAsLayer(
             parameters, self.SINK_AND_SPILLWAY_LAYER, context
@@ -252,7 +256,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             sinkFilterExpression is None or spillwayFilterExpression is None
         ):
             raise QgsProcessingException(
-                "There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected."
+                self.tr(
+                    "There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected."
+                )
             )
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
@@ -572,22 +578,26 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             )
             list(map(pointFlagLambda, pointFlagLyr.getFeatures()))
             multiStepFeedback.setProgressText(
-                self.tr(f"Found {pointFlagLyr.featureCount()} points of flow issues.")
+                self.tr("Found {0} points of flow issues.").format(
+                    pointFlagLyr.featureCount()
+                )
             )
             lineFlagLambda = lambda x: self.flagFeature(
                 x.geometry(), flagText=x["reason"], sink=self.line_flags_sink
             )
             list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
             multiStepFeedback.setProgressText(
-                self.tr(f"Found {lineFlagLyr.featureCount()} lines of flow issues.")
+                self.tr("Found {0} lines of flow issues.").format(
+                    lineFlagLyr.featureCount()
+                )
             )
             polygonFlagLambda = lambda x: self.flagFeature(
                 x.geometry(), flagText=x["reason"], sink=self.polygon_flags_sink
             )
             list(map(polygonFlagLambda, polygonFlagLyr.getFeatures()))
             multiStepFeedback.setProgressText(
-                self.tr(
-                    f"Found {polygonFlagLyr.featureCount()} polygon of flow issues."
+                self.tr("Found {0} polygon of flow issues.").format(
+                    polygonFlagLyr.featureCount()
                 )
             )
 
@@ -607,7 +617,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
 
             multiStepFeedback.pushInfo(
-                self.tr(f"Found {lineFlagLyr.featureCount()} loop issues.")
+                self.tr("Found {0} loop issues.").format(lineFlagLyr.featureCount())
             )
         return {
             self.POINT_FLAGS: self.point_flags_sink_id,
@@ -733,7 +743,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             return
         stepSize = 100 / nEdges
         networkLayer.startEditing()
-        networkLayer.beginEditCommand("Fixing drainage flow")
+        networkLayer.beginEditCommand(self.tr("Fixing drainage flow"))
         for current, (p0, pn) in enumerate(DiG.edges):
             if feedback.isCanceled():
                 break

@@ -27,7 +27,6 @@ from qgis.core import (
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterField,
     QgsProcessingParameterVectorLayer,
@@ -133,7 +132,7 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
                 deleteList += [feat.id() for feat in featList[1::]]
             feedback.setProgress(size * current)
         inputLyr.startEditing()
-        inputLyr.beginEditCommand("Deleting features")
+        inputLyr.beginEditCommand(self.tr("Deleting features"))
         inputLyr.deleteFeatures(deleteList)
         inputLyr.endEditCommand()
 

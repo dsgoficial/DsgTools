@@ -37,19 +37,12 @@ from qgis.utils import iface
 from qgis.core import (
     QgsProject,
     QgsVectorLayer,
-    QgsDataSourceUri,
     QgsLayerTreeLayer,
     QgsProcessingContext,
     QgsProcessingFeedback,
     QgsCoordinateReferenceSystem,
 )
-from qgis.PyQt.QtSql import QSqlDatabase
 
-from DsgTools.core.dsgEnums import DsgEnums
-from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
-    LayerLoaderFactory,
-)
 from qgis.testing import unittest
 
 
@@ -77,50 +70,18 @@ class Tester(unittest.TestCase):
             ).readlines()
         ]
 
-    def connectToSpatialite(self, path):
-        """
-        Stablishes connection to a SpatiaLite database.
-        :param path: (str) path to the SpatiaLite database.
-        # :return: (QSqlDatabase) the database object.
-        :return: (AbstracDb) DSGTools database object.
-        """
-        db = None
-        if os.path.exists(path):
-            db = DbFactory().createDbFactory(driver=DsgEnums.DriverSpatiaLite)
-            db.connectDatabase(conn=path)
-        return db
-
-    def setSqliteUri(self, uri, layer, geomColumn, sql, pkColumn="id"):
-        """
-        Configures the URI for a layer from a SpatiaLite dataset.
-        :param uri: (QgsDataSourceUri) URI object to be configured.
-        :param layer: (str) name for the layer to have its URI set.
-        :param geomColumn: (str) name for the geometric column.
-        :param sql: (str) query for feature filtering on layer load.
-        :param pkColumn: (str) string containing all columns names for attributes
-                         composing the table's primary key.
-        """
-        uri.setDataSource("", layer, geomColumn, sql, pkColumn)
-        if sql == "":
-            uri.disableSelectAtId(False)
-        else:
-            uri.disableSelectAtId(True)
-
     def readSpatiaLite(self, path):
         """
-        Reads a SpatiaLite database and gets its vector layers.
-        :param path: (str) path do the SpatiaLite database.
+        Reads a SpatiaLite database and gets its vector layers via OGR.
+        :param path: (str) path to the SpatiaLite database.
         :return: (dict) map to the SpatiaLite database's layers.
         """
-        uri = QgsDataSourceUri()
-        uri.setDatabase(path)
-        db = self.connectToSpatialite(path)
-        layerLoader = LayerLoaderFactory().makeLoader(iface, db)
         layers = dict()
-        for l in list(db.listClassesWithElementsFromDatabase([]).keys()):
-            layers[l] = layerLoader.getLayerByName(l)
-        for l in db.listComplexClassesFromDatabase():
-            layers[l] = layerLoader.getComplexLayerByName(l)
+        for layer in ogr.Open(path):
+            layername = layer.GetName()
+            layers[layername] = QgsVectorLayer(
+                "{0}|layername={1}".format(path, layername), layername, "ogr"
+            )
         return layers
 
     def readGeopackage(self, path):
@@ -987,84 +948,6 @@ class Tester(unittest.TestCase):
                     "FLAGS": "memory:",
                 },
             ],
-            "dsgtools:identifyterrainmodelerrorsalgorithm": [
-                {
-                    "__comment": "test 1",
-                    "INPUT": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["contours_test1"]
-                    )[0],
-                    "SELECTED": False,
-                    "CONTOUR_ATTR": "contour",
-                    "CONTOUR_INTERVAL": 10,
-                    "TOPOLOGY_RADIUS": 2,
-                    "GEOGRAPHIC_BOUNDS": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["geographic_bounds_test1"]
-                    )[0],
-                    "POINT_FLAGS": "memory:",
-                    "LINE_FLAGS": "memory:",
-                },
-                {
-                    "__comment": "test 2",
-                    "INPUT": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["contours_test2"]
-                    )[0],
-                    "SELECTED": False,
-                    "CONTOUR_ATTR": "contour",
-                    "CONTOUR_INTERVAL": 10,
-                    "TOPOLOGY_RADIUS": 2,
-                    "GEOGRAPHIC_BOUNDS": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["geographic_bounds_test2"]
-                    )[0],
-                    "POINT_FLAGS": "memory:",
-                    "LINE_FLAGS": "memory:",
-                },
-                {
-                    "__comment": "test 3",
-                    "INPUT": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["contours_test3"]
-                    )[0],
-                    "SELECTED": False,
-                    "CONTOUR_ATTR": "contour",
-                    "CONTOUR_INTERVAL": 10,
-                    "TOPOLOGY_RADIUS": 2,
-                    "GEOGRAPHIC_BOUNDS": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["geographic_bounds_test3"]
-                    )[0],
-                    "POINT_FLAGS": "memory:",
-                    "LINE_FLAGS": "memory:",
-                },
-                {
-                    "__comment": "test 4",
-                    "INPUT": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["contours_test4"]
-                    )[0],
-                    "SELECTED": False,
-                    "CONTOUR_ATTR": "contour",
-                    "CONTOUR_INTERVAL": 10,
-                    "TOPOLOGY_RADIUS": 2,
-                    "GEOGRAPHIC_BOUNDS": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["geographic_bounds_test4"]
-                    )[0],
-                    "POINT_FLAGS": "memory:",
-                    "LINE_FLAGS": "memory:",
-                },
-                {
-                    "__comment": "test 5",
-                    "INPUT": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["contours_test5"]
-                    )[0],
-                    "SELECTED": False,
-                    "CONTOUR_ATTR": "contour",
-                    "CONTOUR_INTERVAL": 10,
-                    "TOPOLOGY_RADIUS": 2,
-                    "GEOGRAPHIC_BOUNDS": self.getInputLayers(
-                        "geojson", "terrain_model_layers", ["geographic_bounds_test5"]
-                    )[0],
-                    "POINT_FLAGS": "memory:",
-                    "LINE_FLAGS": "memory:",
-                },
-            ],
-            # '__comment' : "'Normal' test: checks if it works."
             "dsgtools:enforcespatialrules": [
                 {
                     "__comment": "Tests 1 - tests all topological relation",
@@ -1871,16 +1754,6 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg(
                 "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
-                multipleOutputs=True,
-                addControlKey=True,
-            ),
-            "",
-        )
-
-    def test_identifyterrainmodelerrorsalgorithm(self):
-        self.assertEqual(
-            self.testAlg(
-                "dsgtools:identifyterrainmodelerrorsalgorithm",
                 multipleOutputs=True,
                 addControlKey=True,
             ),

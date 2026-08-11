@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtCore import QObject
 from qgis.PyQt.QtWidgets import QFileDialog
 
 from .abstractMultiDsSelectorWidget import AbstractMultiDsSelectorWidget

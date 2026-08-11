@@ -27,7 +27,6 @@ import json
 import concurrent.futures
 from collections import defaultdict
 import numpy as np
-import processing
 
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
@@ -43,13 +42,11 @@ from qgis.core import (
     QgsCoordinateTransform,
     QgsProject,
     QgsVectorLayer,
-    QgsProcessingContext,
     QgsRectangle,
     QgsProcessingMultiStepFeedback,
     QgsFields,
     QgsField,
     QgsFeature,
-    QgsGeometry,
 )
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
@@ -65,7 +62,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
     OUTPUT_LAYER = "OUTPUT_LAYER"
 
     def tr(self, string):
-        return QCoreApplication.translate("Processing", string)
+        return QCoreApplication.translate("ETCQDGSegmentationEvaluator", string)
 
     def createInstance(self):
         return ETCQDGSegmentationEvaluator()
@@ -74,7 +71,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
         return "etcqdgsegmentationevaluator"
 
     def displayName(self):
-        return self.tr("Avaliador de Segmentação segundo a ET-CQDG")
+        return self.tr("ET-CQDG Segmentation Evaluator")
 
     def group(self):
         return self.tr("Data Quality")
@@ -85,45 +82,45 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
     def shortHelpString(self):
         return self.tr(
             """
-        Gera máscaras de segmentação e avalia métricas comparando com inferências de múltiplos experimentos.
+        Generates segmentation masks and evaluates metrics by comparing them with inferences from multiple experiments.
 
-        A máscara inferida é considerada o resultado de uma rede neural.
-        As máscaras geradas são a verdade de campo (ground truth).
+        The inferred mask is considered the result of a neural network.
+        The generated masks are the ground truth.
 
-        IMPORTANTE:
-        - nodata = 255 (pixels ignorados)
-        - classe 0 = Background (incluída nas métricas)
+        IMPORTANT:
+        - nodata = 255 (ignored pixels)
+        - class 0 = Background (included in the metrics)
 
-        Estrutura de saída:
-        Para cada experimento (raster inferido):
-        - {experimento}/ground_truth/{MI}/{MI}_{quadricula}.tif: Máscaras geradas
-        - {experimento}/predicted_tiles/{MI}/{MI}_{quadricula}.tif: Inferência clipada
-        - {experimento}/metrics/: CSVs com métricas de avaliação
+        Output structure:
+        For each experiment (inferred raster):
+        - {experiment}/ground_truth/{MI}/{MI}_{tile}.tif: Generated masks
+        - {experiment}/predicted_tiles/{MI}/{MI}_{tile}.tif: Clipped inference
+        - {experiment}/metrics/: Evaluation metrics CSVs
 
-        Consolidado (raiz da pasta de destino):
-        - consolidated_all_metrics.csv: Métricas gerais de todos experimentos
-        - per_class_metrics.csv: Métricas por classe de todos experimentos
-        - consolidated_tile_metrics.csv: Métricas de todos tiles de todos experimentos
+        Consolidated (destination folder root):
+        - consolidated_all_metrics.csv: Overall metrics for all experiments
+        - per_class_metrics.csv: Per-class metrics for all experiments
+        - consolidated_tile_metrics.csv: Metrics for all tiles across all experiments
 
-        Para cada MI:
-        1. Calcula extent combinado e clipa máscara inferida
-        2. Reprojeta para o fuso UTM correspondente
-        3. Usa o tamanho do pixel do raster reprojetado
+        For each MI:
+        1. Computes combined extent and clips the inferred mask
+        2. Reprojects to the corresponding UTM zone
+        3. Uses the pixel size from the reprojected raster
 
-        Para cada tile:
-        1. Extrai polígonos que intersectam
-        2. Gera ground truth (rasterização)
-        3. Clipa tile da máscara inferida
-        4. Calcula métricas: Accuracy, IoU, Precision, Recall, F1
-        5. Calcula métricas por classe (incluindo Background)
+        For each tile:
+        1. Extracts intersecting polygons
+        2. Generates ground truth (rasterization)
+        3. Clips tile from the inferred mask
+        4. Computes metrics: Accuracy, IoU, Precision, Recall, F1
+        5. Computes per-class metrics (including Background)
 
-        Parâmetros:
-        - Quadrículas: ET-CQDG (campos: mi, quadricula, fuso_utm)
-        - Camada de Máscaras: Polígonos com classes (ground truth)
-        - Campo de Classe: Campo inteiro com valores de classe (0 = Background)
-        - Campo com Nome da Classe: Campo com nomes descritivos (padrão: class_name)
-        - Máscaras Inferidas: Resultados de segmentação de múltiplos experimentos
-        - Pasta de Destino: Onde salvar tudo
+        Parameters:
+        - Tiles: ET-CQDG (fields: mi, quadricula, fuso_utm)
+        - Mask Layer: Polygons with classes (ground truth)
+        - Class Field: Integer field with class values (0 = Background)
+        - Class Name Field: Field with descriptive names (default: class_name)
+        - Inferred Masks: Segmentation results from multiple experiments
+        - Destination Folder: Where to save everything
         """
         )
 
@@ -131,7 +128,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT_TILES,
-                self.tr("Camada de Quadrículas ET-CQDG"),
+                self.tr("ET-CQDG Tiles Layer"),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -139,7 +136,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT_MASK_LAYER,
-                self.tr("Camada de Polígonos para Máscaras"),
+                self.tr("Polygon Layer for Masks"),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -147,7 +144,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.CLASS_FIELD,
-                self.tr("Campo de Classe (valores inteiros)"),
+                self.tr("Class Field (integer values)"),
                 parentLayerParameterName=self.INPUT_MASK_LAYER,
                 type=QgsProcessingParameterField.Numeric,
             )
@@ -156,7 +153,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.CLASS_NAME_FIELD,
-                self.tr("Campo com Nome da Classe"),
+                self.tr("Class Name Field"),
                 parentLayerParameterName=self.INPUT_MASK_LAYER,
                 type=QgsProcessingParameterField.String,
                 defaultValue="class_name",
@@ -167,21 +164,21 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.SEGMENTATION_RASTER,
-                self.tr("Máscaras Inferidas (Resultados de Experimentos)"),
+                self.tr("Inferred Masks (Experiment Results)"),
                 QgsProcessing.TypeRaster,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFolderDestination(
-                self.OUTPUT_FOLDER, self.tr("Pasta de Destino")
+                self.OUTPUT_FOLDER, self.tr("Destination Folder")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterVectorDestination(
                 self.OUTPUT_LAYER,
-                self.tr("Camada de Saída (Tiles com Métricas)"),
+                self.tr("Output Layer (Tiles with Metrics)"),
             )
         )
 
@@ -254,7 +251,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
             tiles_source.sourceCrs(),
         )
         if sink is None:
-            raise QgsProcessingException("Erro ao criar camada de saída.")
+            raise QgsProcessingException(self.tr("Error creating output layer."))
 
         # 5. Estruturas para consolidação
         all_experiments_tile_metrics = []
@@ -277,14 +274,18 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 os.path.basename(segmentation_raster.source())
             )[0]
 
-            feedback.pushInfo(f"\n{'='*80}")
+            feedback.pushInfo("\n" + "=" * 80)
             multiStepFeedback.setProgressText(
-                f"Processando experimento {exp_idx+1}/{num_experiments}: {experiment_name}"
+                self.tr("Processing experiment {0}/{1}: {2}").format(
+                    exp_idx + 1, num_experiments, experiment_name
+                )
             )
             feedback.pushInfo(
-                f"Processando experimento {exp_idx+1}/{num_experiments}: {experiment_name}"
+                self.tr("Processing experiment {0}/{1}: {2}").format(
+                    exp_idx + 1, num_experiments, experiment_name
+                )
             )
-            feedback.pushInfo(f"{'='*80}\n")
+            feedback.pushInfo("=" * 80 + "\n")
 
             # Criar pasta do experimento
             experiment_folder = os.path.join(output_folder, experiment_name)
@@ -396,7 +397,9 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 # --- OTIMIZAÇÃO: PROCESSAMENTO EM LOTE POR MI ---
                 multiStepFeedback.setCurrentStep(current_step_index)
                 multiStepFeedback.pushInfo(
-                    f"Processando MI: {mi} (Preparando geometrias em lote...)"
+                    self.tr(
+                        "Processing MI: {0} (Preparing geometries in batch...)"
+                    ).format(mi)
                 )
 
                 mi_gt_folder = os.path.join(ground_truth_folder, mi)
@@ -408,7 +411,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 utm_crs = QgsCoordinateReferenceSystem(fuso_utm)
                 if not utm_crs.isValid():
                     multiStepFeedback.reportError(
-                        f"Fuso UTM inválido. Pulando MI {mi}."
+                        self.tr("Invalid UTM zone. Skipping MI {0}.").format(mi)
                     )
                     current_step_index += 1 + len(tile_features)
                     continue
@@ -559,7 +562,9 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 current_step_index += 1
 
                 # --- LOOP DE SUBMISSÃO ---
-                multiStepFeedback.pushInfo(f"Enviando tiles do MI {mi} para threads...")
+                multiStepFeedback.pushInfo(
+                    self.tr("Submitting tiles from MI {0} to threads...").format(mi)
+                )
 
                 for tile_feat_utm in reprojected_tiles_layer.getFeatures():
                     if multiStepFeedback.isCanceled():
@@ -591,7 +596,9 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                         futures_map[future] = tile_id
 
                     except Exception as e:
-                        multiStepFeedback.reportError(f"Erro tile {quadricula}: {e}")
+                        multiStepFeedback.reportError(
+                            self.tr("Tile error {0}: {1}").format(quadricula, e)
+                        )
 
                     current_step_index += 1
 
@@ -603,7 +610,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 intersected_layer = None
 
             # --- Collect Results ---
-            multiStepFeedback.pushInfo(f"\nColetando resultados...")
+            multiStepFeedback.pushInfo("\n" + self.tr("Collecting results..."))
 
             for future in concurrent.futures.as_completed(futures_map):
                 tile_id = futures_map[future]
@@ -683,11 +690,15 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
 
                     else:
                         multiStepFeedback.reportError(
-                            f"Erro no worker {tile_id}: {result.get('error')}"
+                            self.tr("Worker error {0}: {1}").format(
+                                tile_id, result.get("error")
+                            )
                         )
 
                 except Exception as exc:
-                    multiStepFeedback.reportError(f"Exceção {tile_id}: {exc}")
+                    multiStepFeedback.reportError(
+                        self.tr("Exception {0}: {1}").format(tile_id, exc)
+                    )
 
         finally:
             executor.shutdown(wait=False)
@@ -704,17 +715,23 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
 
         multiStepFeedback.pushInfo("\n" + "=" * 80)
         multiStepFeedback.pushInfo(
-            f"RESUMO {experiment_name} ({processed_count} tiles)"
+            self.tr("SUMMARY {0} ({1} tiles)").format(experiment_name, processed_count)
         )
         multiStepFeedback.pushInfo("-" * 80)
         multiStepFeedback.pushInfo(
-            f"Acurácia Global:   {global_metrics.get('accuracy', 0):.2%}"
+            self.tr("Global Accuracy:   {0:.2%}").format(
+                global_metrics.get("accuracy", 0)
+            )
         )
         multiStepFeedback.pushInfo(
-            f"Mean IoU:          {global_metrics.get('mean_iou', 0):.4f}"
+            self.tr("Mean IoU:          {0:.4f}").format(
+                global_metrics.get("mean_iou", 0)
+            )
         )
         multiStepFeedback.pushInfo(
-            f"Mean F1-Score:     {global_metrics.get('f1_score', 0):.4f}"
+            self.tr("Mean F1-Score:     {0:.4f}").format(
+                global_metrics.get("f1_score", 0)
+            )
         )
         multiStepFeedback.pushInfo("=" * 80 + "\n")
 

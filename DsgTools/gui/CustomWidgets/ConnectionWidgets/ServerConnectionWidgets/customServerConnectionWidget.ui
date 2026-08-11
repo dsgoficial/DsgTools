@@ -78,44 +78,11 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Spatialite</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="2" column="0">
-        <widget class="CustomSelector" name="spatialiteCustomSelector" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="SelectFileWidget" name="spatialiteCustomFileSelector" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>SelectFileWidget</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>ExploreServerWidget</class>
    <extends>QWidget</extends>

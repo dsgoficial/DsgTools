@@ -37,8 +37,14 @@ from qgis.core import (
     QgsCoordinateTransform,
     QgsFeature,
 )
+from qgis.PyQt.QtCore import QCoreApplication
 import os
-import shutil, stat
+import shutil
+
+
+def tr(message):
+    return QCoreApplication.translate("VirtualRaster", message)
+
 
 # script methods
 def createReprojectedLayer(layer, crs):
@@ -51,7 +57,7 @@ def createReprojectedLayer(layer, crs):
         "%s?crs=%s" % ("Multipolygon", crs.authid()), "temp", "memory"
     )
     if not layer.isValid():
-        raise GeoAlgorithmExecutionException("Problema ao criar camada reprojetada!")
+        raise GeoAlgorithmExecutionException(tr("Problem creating reprojected layer!"))
         return None
 
     provider = temp.dataProvider()
@@ -139,7 +145,7 @@ def createVrt(vrt):
             rasterList.append(raster)
             ovr = newfilename + ".ovr"
             if not os.path.isfile(ovr):
-                progress.setText("Fazendo Pirâmides...")
+                progress.setText(tr("Building pyramids..."))
                 # ('gdalogr:overviews', input, levels=8, clean=False, resampling_method=0(nearest), format=1(Gtiff .ovr))
                 processing.runalg("gdalogr:overviews", raster, "4 8 32 128", True, 0, 1)
 
@@ -148,7 +154,7 @@ def createVrt(vrt):
             progress.setPercentage(p)
         count += 1
 
-        progress.setText("Fazendo raster virtual...")
+        progress.setText(tr("Building virtual raster..."))
         processing.runalg(
             "gdalogr:buildvirtualraster", rasterList, 0, False, False, vrtfilename
         )
@@ -163,7 +169,7 @@ def copyFileSet(parent, folder, filename):
     """
     path = os.path.dirname(filename)
     basename = os.path.basename(filename)
-    texto = "Copiando %s e arquivos relacionados..." % basename
+    texto = tr("Copying {0} and related files...").format(basename)
     progress.setText(texto)
 
     destination = os.path.join(parent, folder)
@@ -181,7 +187,7 @@ def copyFileSet(parent, folder, filename):
                     newf = os.path.join(parent, folder, "imagens", file)
                     shutil.copy2(f, newf)
                 except:
-                    raise GeoAlgorithmExecutionException("Problema ao copiar arquivos!")
+                    raise GeoAlgorithmExecutionException(tr("Problem copying files!"))
     return os.path.join(parent, folder, "imagens", basename)
 
 
@@ -204,7 +210,7 @@ populateIndex(frameidx, frame)
 destCrs = frame.crs()
 srcCrs = inventario.crs()
 if srcCrs.authid() != destCrs.authid():
-    progress.setText("CRS diferentes, reprojetando...")
+    progress.setText(tr("Different CRS, reprojecting..."))
     camada = createReprojectedLayer(inventario, frame.crs())
 else:
     camada = inventario

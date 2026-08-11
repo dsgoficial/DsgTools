@@ -28,6 +28,7 @@ import concurrent.futures
 import os
 from itertools import product, chain
 from qgis.core import (
+    Qgis,
     QgsGeometry,
     QgsProcessing,
     QgsProcessingException,
@@ -184,7 +185,9 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             oceanFilterExpression = None
         if waterBodyLayer is not None and oceanFilterExpression is None:
             raise QgsProcessingException(
-                "There must be a oceanFilterExpression if a water body layer is selected."
+                self.tr(
+                    "There must be a oceanFilterExpression if a water body layer is selected."
+                )
             )
         waterBodyWithFlowFilterExpression = self.parameterAsExpression(
             parameters, self.WATER_BODY_WITH_FLOW_FILTER_EXPRESSION, context
@@ -201,7 +204,9 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             or waterBodyWithoutFlowFilterExpression is None
         ):
             raise QgsProcessingException(
-                "There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected."
+                self.tr(
+                    "There must be a waterBodyWithFlowExpression and a waterBodyWithoutFlowExpression if a water body layer is selected."
+                )
             )
         sinkAndSpillwayLayer = self.parameterAsLayer(
             parameters, self.SINK_AND_SPILLWAY_LAYER, context
@@ -220,7 +225,9 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             sinkFilterExpression is None or spillwayFilterExpression is None
         ):
             raise QgsProcessingException(
-                "There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected."
+                self.tr(
+                    "There must be a sinkFilterExpression and a spillwayFilterExpression if a sinkAndSpillwayLayer is selected."
+                )
             )
         geographicBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
@@ -627,8 +634,8 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                     lyrA=pointLyr,
                     lyrB=polygonLyr,
                     flagText=self.tr(
-                        f"Invalid intersection between {pointStr} feature and {polygonStr} feature."
-                    ),
+                        "Invalid intersection between {0} feature and {1} feature."
+                    ).format(pointStr, polygonStr),
                     context=context,
                     feedback=multiStepFeedback,
                 )
@@ -708,17 +715,19 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             return
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setProgressText(
-            self.tr(f"Validating drainages with {waterBodyName}")
+            self.tr("Validating drainages with {0}").format(waterBodyName)
         )
         multiStepFeedback.setCurrentStep(0)
         flagLineLambda = lambda geom: self.flagFeature(
             geom,
-            flagText=self.tr(f"Invalid intersection of drainage and {waterBodyName}."),
+            flagText=self.tr("Invalid intersection of drainage and {0}.").format(
+                waterBodyName
+            ),
             sink=self.lineFlagSink,
         )
         flagPolygonLambda = lambda geom: self.flagFeature(
             geom,
-            flagText=self.tr(f"Invalid flow on polygon of {waterBodyName}"),
+            flagText=self.tr("Invalid flow on polygon of {0}").format(waterBodyName),
             sink=self.polygonFlagSink,
         )
         flowCheckLambda = (
@@ -747,7 +756,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 intersection = geomEngine.intersection(drainageGeom.constGet())
                 if (
                     QgsWkbTypes.geometryType(intersection.wkbType())
-                    == QgsWkbTypes.GeometryType.PointGeometry
+                    == Qgis.GeometryType.Point
                 ):
                     outCount += (
                         0
@@ -809,7 +818,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             return
         flagPointLambda = lambda geom: self.flagFeature(
             QgsGeometry.fromWkt(geom),
-            flagText=self.tr(f"Confluence with more than 3 rivers"),
+            flagText=self.tr("Confluence with more than 3 rivers"),
             sink=self.pointFlagSink,
         )
         list(
@@ -824,11 +833,11 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         if nFeats == 0:
             return
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setProgressText(self.tr(f"Validating drainages end points."))
+        multiStepFeedback.setProgressText(self.tr("Validating drainages end points."))
         multiStepFeedback.setCurrentStep(0)
         flagPointLambda = lambda geom: self.flagFeature(
             geom,
-            flagText=self.tr(f"Invalid intersection of drainage end point."),
+            flagText=self.tr("Invalid intersection of drainage end point."),
             sink=self.pointFlagSink,
         )
 
@@ -846,7 +855,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 candidateGeom = candidateFeat.geometry()
                 if QgsWkbTypes.geometryType(
                     candidateGeom.wkbType()
-                ) == QgsWkbTypes.GeometryType.PointGeometry and geomEngine.intersects(
+                ) == Qgis.GeometryType.Point and geomEngine.intersects(
                     candidateGeom.constGet()
                 ):
                     return None

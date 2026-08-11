@@ -13,17 +13,12 @@
 """
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsFeature,
-    QgsGeometry,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterFeatureSink,
     QgsProcessingParameterNumber,
     QgsProcessingParameterDistance,
-    QgsWkbTypes,
     QgsProcessingParameterMultipleLayers,
-    QgsFeatureSink,
     QgsProcessingMultiStepFeedback,
 )
 
@@ -47,19 +42,19 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.NETWORK_LAYER,
-                self.tr("Camada de rodovias"),
+                self.tr("Highway layer"),
                 [QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.ESCALA, self.tr("Escala"), type=QgsProcessingParameterNumber.Double
+                self.ESCALA, self.tr("Scale"), type=QgsProcessingParameterNumber.Double
             )
         )
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.AREA_MINIMA,
-                self.tr("Área mínima para rotatórias na carta"),
+                self.tr("Minimum area for roundabouts on chart"),
                 parentParameterName=self.NETWORK_LAYER,
             )
         )
@@ -98,7 +93,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.MIN_LENGTH,
-                self.tr("Comprimento mínimo das estradas com pontas soltas"),
+                self.tr("Minimum length for dead-end roads"),
                 minValue=0,
                 defaultValue=0.001,
                 parentParameterName=self.NETWORK_LAYER,
@@ -132,11 +127,11 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
         )
-        multiStepFeedback.setProgressText(self.tr("Calculando tamanhos"))
+        multiStepFeedback.setProgressText(self.tr("Calculating sizes"))
         areaminima = minArea * (escala**2)
         compMinimo = minLength * escala
 
-        multiStepFeedback.setProgressText(self.tr("Generalizando"))
+        multiStepFeedback.setProgressText(self.tr("Generalizing"))
         algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(
             inputLayer=lineLayer,
             context=context,
@@ -167,7 +162,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Retornando"))
+        multiStepFeedback.setProgressText(self.tr("Returning"))
 
         return {}
 
@@ -175,7 +170,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
         return "generalizehighwaysalgorithm"
 
     def displayName(self):
-        return self.tr("Generalizar Rodovias")
+        return self.tr("Generalize Highways")
 
     def group(self):
         return self.tr("Generalization Algorithms")

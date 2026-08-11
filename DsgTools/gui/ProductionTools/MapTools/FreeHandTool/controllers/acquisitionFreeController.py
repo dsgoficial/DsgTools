@@ -18,19 +18,12 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  ***************************************************************************/
 """
 
-from qgis.PyQt import QtGui, QtCore
+from qgis.PyQt import QtCore
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis import core, gui
 from qgis.utils import iface
-from qgis.core import (
-    QgsPoint,
-    QgsLineString,
-    QgsVectorLayer,
-    QgsWkbTypes,
-    QgsProject,
-    QgsMessageLog,
-    Qgis,
-)
+from qgis.core import QgsPoint, QgsLineString, QgsVectorLayer, QgsMessageLog, Qgis
 
 from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree import (
     AcquisitionFree,
@@ -38,6 +31,9 @@ from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree i
 
 
 class AcquisitionFreeController(object):
+    def tr(self, string):
+        return QCoreApplication.translate("AcquisitionFreeController", string)
+
     def __init__(self, acquisitionFree, iface):
         """
         Class constructor.
@@ -194,11 +190,14 @@ class AcquisitionFreeController(object):
                     float(parameters["freeHandSmoothOffset"]),
                 )
             except Exception:
-                msg = QMessageBox().tr(
-                    "Probably too many smoothing iteration, try reducing it (3 usually is enough). Geometry was not smoothened."
+                msg = QCoreApplication.translate(
+                    "AcquisitionFreeController",
+                    "Probably too many smoothing iterations, try reducing it (3 usually is enough). Geometry was not smoothed.",
                 )
                 QMessageBox.warning(
-                    self.iface.mainWindow(), QMessageBox().tr("Error!"), msg
+                    self.iface.mainWindow(),
+                    QCoreApplication.translate("AcquisitionFreeController", "Error!"),
+                    msg,
                 )
                 QgsMessageLog.logMessage(
                     msg, "DSGTools Plugin", Qgis.MessageLevel.Critical
@@ -340,7 +339,7 @@ class AcquisitionFreeController(object):
     def addFeatureWithForm(self, layer, feature):
         # Método para adicionar a feição com formulário
         # Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
-        layer.beginEditCommand("dsgtools freehand feature added")
+        layer.beginEditCommand(self.tr("DSGTools freehand feature added"))
         self.loadDefaultFields(layer, feature)
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
         attrDialog.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose)
@@ -355,7 +354,7 @@ class AcquisitionFreeController(object):
     def addFeatureWithoutForm(self, layer, feature):
         # Método para adicionar a feição sem formulário
         # Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
-        layer.beginEditCommand("dsgtools freehand feature added")
+        layer.beginEditCommand(self.tr("DSGTools freehand feature added"))
         self.loadDefaultFields(layer, feature)
         layer.addFeatures([feature])
         layer.removeSelection()

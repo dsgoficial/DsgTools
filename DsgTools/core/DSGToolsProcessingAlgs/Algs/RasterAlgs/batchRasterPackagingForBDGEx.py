@@ -22,22 +22,16 @@
 """
 
 from collections import defaultdict
-import glob
 import itertools
 import math
 import re
 import shutil
 from uuid import uuid4
 import zipfile
-import json
-import xml.dom.minidom
-import datetime
 from pathlib import Path
 from typing import Dict, List, Union
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-import processing
-from osgeo import gdal
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
@@ -72,7 +66,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.INPUT_FOLDER,
-                self.tr("Pasta com os arquivos no formato tif"),
+                self.tr("Folder with tif files"),
                 behavior=QgsProcessingParameterFile.Folder,
             )
         )
@@ -85,8 +79,8 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             )
         )
         self.image_sensors = [
-            self.tr("Imagens BECA"),
-            self.tr("Imagens MAXAR"),
+            self.tr("BECA Images"),
+            self.tr("MAXAR Images"),
         ]
 
         self.addParameter(
@@ -99,7 +93,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFolderDestination(
-                self.OUTPUT_FOLDER, self.tr("Pasta para salvar os arquivos exportados")
+                self.OUTPUT_FOLDER, self.tr("Folder to save exported files")
             )
         )
 
@@ -127,7 +121,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         nInputs = len(inputFiles)
         if nInputs == 0:
             raise QgsProcessingException(
-                "Não foram encontrados arquivos .tif na pasta de entrada."
+                self.tr("No .tif files found in the input folder.")
             )
 
         self.tempFolder = Path(QgsProcessingUtils.tempFolder()) / uuid4().hex
@@ -154,10 +148,14 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         for folderKey, geomDict in self.relatedPolygonsDict.items():
             for inner, (geomWkb, fileNameList) in enumerate(geomDict.items()):
                 multiStepFeedback.pushInfo(
-                    self.tr(f"Evaluating {currentSeamline+1}/{nInputs//2} seamlines")
+                    self.tr("Evaluating {0}/{1} seamlines").format(
+                        currentSeamline + 1, nInputs // 2
+                    )
                 )
                 multiStepFeedback.setProgressText(
-                    self.tr(f"Evaluating {currentSeamline+1}/{nInputs//2} seamlines")
+                    self.tr("Evaluating {0}/{1} seamlines").format(
+                        currentSeamline + 1, nInputs // 2
+                    )
                 )
                 multiStepFeedback.setCurrentStep(currentIndex)
                 if multiStepFeedback.isCanceled():
@@ -168,7 +166,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     "path", None
                 )
                 if input_path is None:
-                    raise QgsProcessingException("Invalid Path")
+                    raise QgsProcessingException(self.tr("Invalid Path"))
                 relative_path = Path(input_path).relative_to(input_folder_path).parent
                 output_dir = output_base_path / relative_path
                 output_dir.mkdir(parents=True, exist_ok=True)

@@ -52,9 +52,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.smoothLines
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.appendFeaturesToLayerAlgorithm import (
     AppendFeaturesToLayerAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.buildingGeneralizationAlgorithm import (
-    BuildingGeneralizationAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.findSmallClosedLinesAlgorithm import (
     FindSmallClosedLinesAlgorithm,
 )
@@ -67,22 +64,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeWate
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import (
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2 import (
-    ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3 import (
-    ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3,
-)
-
-# from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsNextToTerrainLinesAlgorithm import ReclassifyPixelsNextToTerrainLinesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4 import (
-    ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsToNearestNeighborAlgorithm import (
     ReclassifyAdjacentPixelsToNearestNeighborAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.runReclassifyPixelsWithSlidingWindow import (
-    ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractMiddleVertexOnLineAlgorithm import (
     ExtractMiddleVertexOnLineAlgorithm,
@@ -92,6 +75,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.lineOnAreaOverlayer
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.nurbfitSmoothingAlgorithm import (
     NURBFitSmoothingAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.optimalTileBBoxAlgorithm import (
+    OptimalTileBBoxAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.polygonTiler import (
     PolygonTilerAlgorithm,
@@ -137,6 +123,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.rasterRemapAlgorithm i
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.rasterizePolygonsWithBuffer import (
     RasterizePolygonsWithBufferAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.trataRasterAlgorithm import (
+    TrataRasterAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.anchoredSnapperAlgorithm import (
     AnchoredSnapperAlgorithm,
@@ -203,16 +192,16 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeEdif
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeLandingStrip import (
     GeneralizeLandingStripAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeRoundaboutsAlgorithm import (
-    GeneralizeRoundaboutsAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeHighwaysAlgorithm import (
     GeneralizeHighwaysAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeContourLinesAlgorithm import (
+    GeneralizeContourLinesAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.line2Multiline import (
     Line2Multiline,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyAdjecentPolygonsAlgorithm import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyAdjacentPolygonsAlgorithm import (
     ReclassifyAdjacentPolygonsAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.selectByDE9IM import (
@@ -810,7 +799,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyUncoveredStartAndEndPointsAlgorithm(),
             ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(),
-            ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(),
             FindSmallClosedLinesAlgorithm(),
             SetLineOrientation(),
             IdentifyMissingLineIntersectionsOnPoints(),
@@ -824,6 +812,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             GeneralizeLandingStripAlgorithm(),
             # GeneralizeRoundaboutsAlgorithm(),
             GeneralizeHighwaysAlgorithm(),
+            GeneralizeContourLinesAlgorithm(),
             ConvertDatabasesAlgorithm(),
             ExportPostGISDataToShapefile(),
             ExtractMiddleVertexOnLineAlgorithm(),
@@ -837,11 +826,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             CreateGridAlongLineAlgorithm(),
             SplitLinesAtMaximumLengthAlgorithm(),
             SplitContoursAtMaximumLengthAlgorithm(),
-            ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV2(),
-            ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV3(),
             LineOnAreaOverlayerAlgorithm(),
             PolygonTilerAlgorithm(),
-            BuildingGeneralizationAlgorithm(),
+            OptimalTileBBoxAlgorithm(),
             AnchoredSnapperAlgorithm(),
             OverlayLinesWithLinesAndUpdate(),
             RasterRemapAlgorithm(),
@@ -851,10 +838,10 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             BuildMergedDataWithFieldRefactorAlgorithm(),
             # ReclassifyPixelsNextToTerrainLinesAlgorithm(),
             NURBFitSmoothingAlgorithm(),
-            ReclassifyGroupsOfPixelsToNearestNeighborAlgorithmV4(),
             ETCQDGGridGenerator(),
             ETCQDGSegmentationEvaluator(),
             ETCQDGSegmentationEvaluatorFromRaster(),
+            TrataRasterAlgorithm(),
         ]
         return algList
 
@@ -895,20 +882,31 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     def unload(self):
         """
         Removes setting when the plugin is unloaded.
+
+        During application shutdown (for instance when the qgis_process command
+        line tool exits) the QgsApplication singleton and its processing
+        registry may already be gone, so guard against a missing instance to
+        avoid an AttributeError on teardown.
         """
         ProcessingConfig.removeSetting("ACTIVATE_DSGTools")
-        QgsApplication.instance().processingRegistry().removeParameterType(
-            self.parameterTypeSnapHierarchy
-        )
-        QgsApplication.instance().processingRegistry().removeParameterType(
-            self.parameterTypeFMEManager
-        )
-        QgsApplication.instance().processingRegistry().removeParameterType(
-            self.parameterSpatialRulesSetType
-        )
-        QgsApplication.instance().processingRegistry().removeParameterType(
-            self.parameterDistanceBetweenLayersType
-        )
+        app = QgsApplication.instance()
+        if app is None:
+            return
+        registry = app.processingRegistry()
+        if registry is None:
+            return
+        for attr in (
+            "parameterTypeSnapHierarchy",
+            "parameterTypeFMEManager",
+            "parameterSpatialRulesSetType",
+            "parameterDistanceBetweenLayersType",
+            "parameterDbConversionType",
+            "parameterLayersConfigType",
+        ):
+            # getattr defensivo: se load() falhou no meio, algum atributo pode nao existir.
+            parameterType = getattr(self, attr, None)
+            if parameterType is not None:
+                registry.removeParameterType(parameterType)
 
     def isActive(self):
         """

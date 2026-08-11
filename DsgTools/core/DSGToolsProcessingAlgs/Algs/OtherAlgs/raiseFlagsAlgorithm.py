@@ -23,41 +23,17 @@
 """
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.core.Factories.ThreadFactory.threadFactory import ThreadFactory
-from ...algRunner import AlgRunner
-import processing, os, requests
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsFeature,
     QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
     QgsProcessingParameterField,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterFolderDestination,
-    QgsProcessingParameterExpression,
     QgsProcessingException,
     QgsProcessingParameterString,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterType,
-    QgsProcessingParameterMatrix,
-    QgsProcessingParameterFile,
     QgsCoordinateReferenceSystem,
     QgsProject,
-    QgsFields,
     QgsProcessingParameterCrs,
     QgsCoordinateTransform,
     QgsVectorLayer,
@@ -157,7 +133,7 @@ class RaiseFlagsAlgorithm(QgsProcessingAlgorithm):
         )
         parameterDict = layerHandler.getDestinationParameters(outputLyr)
         outputLyr.startEditing()
-        outputLyr.beginEditCommand("Adding flag features")
+        outputLyr.beginEditCommand(self.tr("Adding flag features"))
         count = inputLyr.featureCount()
         progress_count = 100 / count if count else 0
         for current, feat in enumerate(inputLyr.getFeatures()):

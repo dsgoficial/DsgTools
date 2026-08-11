@@ -20,9 +20,6 @@
  ***************************************************************************/
 """
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
-    ValidationAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.DbTools.dbConversionHandler import (
     FeatureProcessor,
@@ -33,15 +30,12 @@ from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
     LayerLoaderFactory,
 )
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessing,
+    Qgis,
     QgsProcessingException,
     QgsProviderConnectionException,
-    QgsWkbTypes,
-    QgsWkbTypes,
     QgsProviderRegistry,
     QgsProject,
     QgsProcessingParameterProviderConnection,
@@ -67,9 +61,9 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
     def flags(self):
         return (
             super().flags()
-            | QgsProcessingAlgorithm.FlagNotAvailableInStandaloneTool
-            | QgsProcessingAlgorithm.FlagRequiresProject
-            | QgsProcessingAlgorithm.FlagNoThreading
+            | QgsProcessingAlgorithm.Flag.FlagNotAvailableInStandaloneTool
+            | QgsProcessingAlgorithm.Flag.FlagRequiresProject
+            | QgsProcessingAlgorithm.Flag.FlagNoThreading
         )
 
     def initAlgorithm(self, config):
@@ -93,7 +87,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterGeometry(
                 self.WKT_POLYGON,
                 self.tr("WKT Geographic Bounds"),
-                geometryTypes=[QgsWkbTypes.GeometryType.PolygonGeometry],
+                geometryTypes=[Qgis.GeometryType.Polygon],
                 allowMultipart=True,
                 optional=True,
             )
@@ -208,7 +202,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         for current, (lyrName, lyr) in enumerate(outputLayerDict.items()):
             if multiStepFeedback is not None:
                 multiStepFeedback.pushInfo(
-                    self.tr(f"Commiting changes for layer {lyrName}")
+                    self.tr("Committing changes for layer {0}").format(lyrName)
                 )
             lyr.commitChanges()
             if multiStepFeedback is not None:

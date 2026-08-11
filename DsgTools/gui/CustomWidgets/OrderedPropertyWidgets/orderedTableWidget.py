@@ -596,7 +596,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             QMessageBox.warning(
                 iface.mainWindow(),
                 self.tr("Unable to import {0}").format(filepath),
-                "Check file {0}:\n{1}".format(filepath, "\n".join(e.args)),
+                self.tr("Check file {0}:\n{1}").format(filepath, "\n".join(e.args)),
             )
             self.setHeaders(self.headers)
 
@@ -613,7 +613,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             QMessageBox.warning(
                 iface.mainWindow(),
                 self.tr("Unable to export {0}").format(filepath),
-                "Check file {0}:\n{1}".format(filepath, "\n".join(e.args)),
+                self.tr("Check file {0}:\n{1}").format(filepath, "\n".join(e.args)),
             )
 
     @pyqtSlot()

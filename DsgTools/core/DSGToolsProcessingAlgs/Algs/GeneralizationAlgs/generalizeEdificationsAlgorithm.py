@@ -30,8 +30,6 @@ from qgis.core import (
     QgsFeature,
     QgsProcessingFeedback,
 )
-from qgis.PyQt.QtCore import QVariant
-import processing
 
 from ...algRunner import AlgRunner
 
@@ -49,7 +47,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT_POINT,
-                self.tr("Camada de Entrada de Pontos"),
+                self.tr("Point Input Layer"),
                 [QgsProcessing.TypeVectorPoint],
             )
         )
@@ -58,7 +56,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterExpression(
                 name=self.FILTER_EXPRESSION,
                 description=self.tr(
-                    "Expressão de filtro correspondente às edificações de baixa prioridade"
+                    "Filter expression matching low priority buildings"
                 ),
                 defaultValue=None,
                 parentLayerParameterName=self.INPUT_POINT,
@@ -68,14 +66,14 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterDistance(
-                self.TOL, self.tr("Tolerancia"), parentParameterName=self.INPUT_POINT
+                self.TOL, self.tr("Tolerance"), parentParameterName=self.INPUT_POINT
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
-                self.tr("Edificações não eliminadas (alta prioridade próximas)"),
+                self.tr("Non-eliminated buildings (nearby high priority)"),
                 QgsProcessing.TypeVectorPoint,
             )
         )
@@ -110,22 +108,22 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
 
         multiStepFeedback.setProgressText(
-            self.tr("Passando de multipart para singlepart...")
+            self.tr("Converting multipart to singlepart...")
         )
         singlepart = algRunner.runMultipartToSingleParts(pointLayerWithIDs, context)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Multipart para Singlepart completo...")
+            self.tr("Multipart to singlepart complete...")
         )
 
-        multiStepFeedback.setProgressText(self.tr("Clusterizando..."))
+        multiStepFeedback.setProgressText(self.tr("Clustering..."))
         clusterizado = algRunner.runDBScanClustering(singlepart, 2, tolerancia, context)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Clusterização completa..."))
+        multiStepFeedback.setProgressText(self.tr("Clustering complete..."))
 
-        multiStepFeedback.setProgressText(self.tr("Filtrando pontos..."))
+        multiStepFeedback.setProgressText(self.tr("Filtering points..."))
         (
             filtered_points,
             non_filtered_points,
@@ -134,11 +132,9 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Filtragem completa..."))
+        multiStepFeedback.setProgressText(self.tr("Filtering complete..."))
 
-        multiStepFeedback.setProgressText(
-            self.tr("Criando buffers a partir dos pontos...")
-        )
+        multiStepFeedback.setProgressText(self.tr("Creating buffers from points..."))
         non_filtered_buffers = algRunner.runBuffer(
             non_filtered_points, tolerancia, context
         )  # alta prioridade
@@ -147,7 +143,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
         )  # baixa prioridade
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Criação de buffers concluída..."))
+        multiStepFeedback.setProgressText(self.tr("Buffer creation complete..."))
 
         dictCluster = self.makeDictCluster(
             clusterizado,
@@ -169,7 +165,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
             multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
-                self.tr("Preparando para rodar em paralelo...")
+                self.tr("Preparing for parallel processing...")
             )
             idsToFlagCompute = set()
             IDsToDeleteCompute = set()
@@ -204,11 +200,11 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
-                self.tr("Análise 'alta prioridade - alta prioridade' completa...")
+                self.tr("High priority - high priority analysis complete...")
             )
 
             multiStepFeedback.setProgressText(
-                self.tr("Iniciando criação de dicionários...")
+                self.tr("Starting dictionary creation...")
             )
             intersections_dict = {}
             for point in filtered_points:
@@ -248,7 +244,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
-                self.tr("Criação de dicionários completa...")
+                self.tr("Dictionary creation complete...")
             )
             # 3: baixa prioridade - baixa prioridade
             maxIntersections = 1
@@ -278,15 +274,15 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(
-            self.tr("Chamando a função 'compute' para rodar em paralelo...")
+            self.tr("Calling the 'compute' function for parallel processing...")
         )
         for cluster in dictCluster.values():
             futures.add(pool.submit(compute, cluster))
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Processo em paralelo completo..."))
+        multiStepFeedback.setProgressText(self.tr("Parallel processing complete..."))
 
-        multiStepFeedback.setProgressText(self.tr("Adicionando feições ao sink..."))
+        multiStepFeedback.setProgressText(self.tr("Adding features to sink..."))
         fields = pointLayer.fields()
         (sink, dest_id) = self.parameterAsSink(
             parameters,
@@ -315,19 +311,19 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
                 newFeat.setGeometry(feat.geometry())
                 sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
         multiStepFeedback.setProgressText(
-            self.tr("Adição de feições ao Sink completa...")
+            self.tr("Feature addition to sink complete...")
         )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Deletando feições selecionadas..."))
+        multiStepFeedback.setProgressText(self.tr("Deleting selected features..."))
         pointLayer.startEditing()
         pointLayer.beginEditCommand(self.tr("Deleting features"))
         pointLayer.deleteFeatures(list(idsToDelete))
         pointLayer.endEditCommand()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Feições deletadas..."))
+        multiStepFeedback.setProgressText(self.tr("Features deleted..."))
         return {self.OUTPUT: dest_id}
 
     def makeDictCluster(
@@ -384,7 +380,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
         return "generalizeedificationsalgorithm"
 
     def displayName(self):
-        return self.tr("Generalizar Edificações")
+        return self.tr("Generalize Buildings")
 
     def group(self):
         return self.tr("Generalization Algorithms")
@@ -397,7 +393,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "Dentre outros inputs, este algoritmo recebe uma expressão, que será utilizada para distinguir as feições de baixa prioridade (as que satisfazem à expressão). A partindo daí, o processing executa os seguintes passos: \n1.Eliminar genéricas próximas de edificações específicas;\n2. Eliminar edificações próximas de mesmo tipo;"
+            "Among other inputs, this algorithm receives an expression used to distinguish low priority features (those that satisfy the expression). From there, the processing executes the following steps: \n1. Eliminate generic buildings near specific buildings;\n2. Eliminate nearby buildings of the same type;"
         )
 
     def createInstance(self):

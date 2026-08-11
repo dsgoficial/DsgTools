@@ -21,11 +21,7 @@
 """
 
 
-from builtins import object
-import os.path
-import sys
-
-from qgis.PyQt.QtCore import QObject, Qt
+from qgis.PyQt.QtCore import QObject
 from .LoadLayersFromServer.loadLayersFromServer import LoadLayersFromServer
 from .CreateFrameTool.ui_create_inom_dialog import CreateInomDialog
 

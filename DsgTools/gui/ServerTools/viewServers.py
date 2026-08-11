@@ -33,7 +33,6 @@ from qgis.PyQt.QtWidgets import (
     QRadioButton,
 )
 from qgis.PyQt.QtGui import QCursor
-from qgis.PyQt.QtSql import QSqlDatabase
 from .serverConfigurator import ServerConfigurator
 
 from qgis.core import QgsMessageLog, Qgis

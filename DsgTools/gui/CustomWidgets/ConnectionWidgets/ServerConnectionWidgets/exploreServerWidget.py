@@ -127,10 +127,9 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
                 )
                 if not postgisDb.db.open():
                     qgis.utils.iface.messageBar().pushMessage(
-                        "DB :"
-                        + database
-                        + "| msg: "
-                        + postgisDb.db.lastError().databaseText(),
+                        self.tr("DB: {0} | msg: {1}").format(
+                            database, postgisDb.db.lastError().databaseText()
+                        ),
                         level=Qgis.MessageLevel.Critical,
                     )
 
@@ -169,7 +168,9 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
             QMessageBox.critical(
                 self.iface.mainWindow(),
                 self.tr("Critical"),
-                self.tr("Problem executing query: ") + query.lastError().text(),
+                self.tr("Problem executing query: {0}").format(
+                    query.lastError().text()
+                ),
             )
 
         dbList = []

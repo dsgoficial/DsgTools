@@ -91,7 +91,7 @@ class DatabaseGuiManager(QObject):
         """
         callback = lambda: self.createDatabase(isBatchCreation=False)
         self.addTool(
-            text=self.tr("Create a PostGIS or SpatiaLite Database"),
+            text=self.tr("Create a PostGIS Database"),
             callback=callback,
             parentMenu=self.menu,
             icon="database.png",
@@ -100,7 +100,7 @@ class DatabaseGuiManager(QObject):
         )
         callback = lambda: self.createDatabase(isBatchCreation=True)
         self.addTool(
-            text=self.tr("Create batches of PostGIS or SpatiaLite Databases"),
+            text=self.tr("Create batches of PostGIS Databases"),
             callback=callback,
             parentMenu=self.menu,
             icon="batchDatabase.png",
@@ -131,21 +131,25 @@ class DatabaseGuiManager(QObject):
         """
         try:
             self.stackButton.setDefaultAction(self.sender())
-        except:
+        except Exception:
             pass
+
+        # Lazy initialization of dialogs
         if not isBatchCreation:
             if self.singleDbCreator is None:
                 self.singleDbCreator = CreateSingleDatabase(
-                    manager=self, parentButton=self.stackButton, parentMenu=self.menu
+                    manager=self,
+                    parentButton=getattr(self, "stackButton", None),
+                    parentMenu=self.menu,
                 )
             dlg = self.singleDbCreator
         else:
             if self.batchCreator is None:
                 self.batchCreator = BatchDbCreator(
-                    manager=self, parentButton=self.stackButton, parentMenu=self.menu
+                    manager=self,
+                    parentButton=getattr(self, "stackButton", None),
+                    parentMenu=self.menu,
                 )
             dlg = self.batchCreator
-        if dlg:
-            result = dlg.exec()
-            if result:
-                pass
+
+        dlg.exec()

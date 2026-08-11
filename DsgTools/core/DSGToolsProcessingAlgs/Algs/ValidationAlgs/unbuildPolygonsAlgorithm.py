@@ -26,9 +26,9 @@ import concurrent.futures
 from typing import List, Optional, Set, Union
 from qgis.PyQt.QtCore import QCoreApplication
 
-from DsgTools.core.GeometricTools import graphHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
@@ -45,10 +45,8 @@ from qgis.core import (
     QgsFeature,
     QgsFeatureSink,
     QgsProcessingUtils,
-    QgsProject,
 )
 
-from DsgTools.core.Utils.threadingTools import concurrently
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
@@ -268,7 +266,9 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             )
         )
         multiStepFeedback.pushInfo(
-            self.tr(f"Found {len(uniqueBoundariesIdSet)} unique boundary segments")
+            self.tr("Found {0} unique boundary segments").format(
+                len(uniqueBoundariesIdSet)
+            )
         )
 
         currentStep += 1
@@ -297,7 +297,9 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             outputBoundariesLambda = lambda x: output_boundaries_sink.addFeature(x)
             list(map(outputBoundariesLambda, uniqueBoundaries.getFeatures()))
             multiStepFeedback.pushInfo(
-                self.tr(f"Added {uniqueBoundaries.featureCount()} boundaries to output")
+                self.tr("Added {0} boundaries to output").format(
+                    uniqueBoundaries.featureCount()
+                )
             )
         else:
             multiStepFeedback.pushInfo(self.tr("No unique boundaries found to process"))
@@ -346,8 +348,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         multiStepFeedback.pushInfo(
-            self.tr(
-                f"Created {polygonizeOutput.featureCount()} polygons from line network"
+            self.tr("Created {0} polygons from line network").format(
+                polygonizeOutput.featureCount()
             )
         )
 
@@ -397,8 +399,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         multiStepFeedback.pushInfo(
-            self.tr(
-                f"Extracted {centerPointsInsideInput.featureCount()} center points inside polygons"
+            self.tr("Extracted {0} center points inside polygons").format(
+                centerPointsInsideInput.featureCount()
             )
         )
 
@@ -416,8 +418,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
                 feedback=multiStepFeedback,
             )
             multiStepFeedback.pushInfo(
-                self.tr(
-                    f"Filtered to {centerPointsInsideInput.featureCount()} center points within boundary"
+                self.tr("Filtered to {0} center points within boundary").format(
+                    centerPointsInsideInput.featureCount()
                 )
             )
 
@@ -448,8 +450,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         multiStepFeedback.pushInfo(
-            self.tr(
-                f"Successfully joined attributes to {final_result_lyr.featureCount()} center points"
+            self.tr("Successfully joined attributes to {0} center points").format(
+                final_result_lyr.featureCount()
             )
         )
 
@@ -469,7 +471,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             count += 1
 
         multiStepFeedback.pushInfo(
-            self.tr(f"Added {count} center points to output sink")
+            self.tr("Added {0} center points to output sink").format(count)
         )
         multiStepFeedback.pushInfo(self.tr("Processing complete!"))
 
@@ -502,7 +504,9 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 break
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr(f"Preparing layer: {lyr.name()}"))
+            multiStepFeedback.pushInfo(
+                self.tr("Preparing layer: {0}").format(lyr.name())
+            )
             outputLyr = self.prepareLayer(
                 lyr,
                 onlySelected=onlySelected,
@@ -512,7 +516,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             )
             layerList.append(outputLyr)
             multiStepFeedback.pushInfo(
-                self.tr(f"Layer {lyr.name()} prepared successfully")
+                self.tr("Layer {0} prepared successfully").format(lyr.name())
             )
         if not mergeOutputs:
             return layerList
@@ -528,8 +532,12 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             if len(layerList) > 1
             else layerList[0]
         )
-        if is_child_algorithm == False and isinstance(mergedLayer, str):
-            mergedLayer = [QgsProcessingUtils.mapLayerFromString(mergedLayer, context)]
+        if is_child_algorithm == False:
+            if isinstance(mergedLayer, str):
+                mergedLayer = QgsProcessingUtils.mapLayerFromString(
+                    mergedLayer, context
+                )
+            mergedLayer = [mergedLayer]
         multiStepFeedback.pushInfo(self.tr("Layers merged successfully"))
         return mergedLayer
 
@@ -570,7 +578,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            if inputLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
+            if inputLyr.geometryType() == Qgis.GeometryType.Polygon:
                 multiStepFeedback.pushInfo(self.tr("Converting polygons to lines"))
         linesLyr = (
             self.algRunner.runPolygonsToLines(
@@ -579,12 +587,12 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
                 feedback=multiStepFeedback,
                 is_child_algorithm=True,
             )
-            if inputLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
+            if inputLyr.geometryType() == Qgis.GeometryType.Polygon
             else layerWithId
         )
         if (
             multiStepFeedback is not None
-            and inputLyr.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
+            and inputLyr.geometryType() == Qgis.GeometryType.Polygon
         ):
             multiStepFeedback.pushInfo(
                 self.tr("Polygons converted to lines successfully")
@@ -652,7 +660,9 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             G[startPoint][endPoint]["layerIdSet"].add(feat["layer_id"])
             if feedback is not None and i % 1000 == 0:
                 feedback.setProgress(int(i * stepSize))
-                feedback.pushInfo(self.tr(f"Processed {i} of {nFeats} line segments"))
+                feedback.pushInfo(
+                    self.tr("Processed {0} of {1} line segments").format(i, nFeats)
+                )
 
         if feedback is not None:
             feedback.pushInfo(
@@ -667,7 +677,9 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         )
 
         if feedback is not None:
-            feedback.pushInfo(self.tr(f"Found {len(result)} unique boundary segments"))
+            feedback.pushInfo(
+                self.tr("Found {0} unique boundary segments").format(len(result))
+            )
 
         return result
 
@@ -712,8 +724,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             includePartial=True,
         )
         multiStepFeedback.pushInfo(
-            self.tr(
-                f"Created grid with {referencePolygonLayer.featureCount()} cells for parallel processing"
+            self.tr("Created grid with {0} cells for parallel processing").format(
+                referencePolygonLayer.featureCount()
             )
         )
 
@@ -764,7 +776,9 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 break
             multiStepFeedback.pushInfo(
-                self.tr(f"Submitting grid cell {current+1}/{nFeats} for processing")
+                self.tr("Submitting grid cell {0}/{1} for processing").format(
+                    current + 1, nFeats
+                )
             )
             tileLayer = self.layerHandler.createMemoryLayerWithFeature(
                 layer=referencePolygonLayer, feat=polygonTile, context=context
@@ -792,14 +806,14 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             if processedCount % 5 == 0 or processedCount == totalFutures:
                 multiStepFeedback.pushInfo(
                     self.tr(
-                        f"Processed {processedCount}/{totalFutures} grid cells, found {len(outputSet)} unique boundaries so far"
-                    )
+                        "Processed {0}/{1} grid cells, found {2} unique boundaries so far"
+                    ).format(processedCount, totalFutures, len(outputSet))
                 )
 
         multiStepFeedback.pushInfo(
             self.tr(
-                f"Parallel processing complete. Total unique boundaries: {len(outputSet)}"
-            )
+                "Parallel processing complete. Total unique boundaries: {0}"
+            ).format(len(outputSet))
         )
         return outputSet
 
@@ -833,7 +847,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         if num_batches <= 1:
             # If small enough, process normally
             feedback.pushInfo(
-                self.tr(f"Processing {total_ids} boundaries in a single batch")
+                self.tr("Processing {0} boundaries in a single batch").format(total_ids)
             )
             return self.algRunner.runFilterExpression(
                 inputLyr=intersectedLines,
@@ -844,7 +858,9 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
 
         # Process in batches
         feedback.pushInfo(
-            self.tr(f"Processing {total_ids} boundaries in {num_batches} batches")
+            self.tr("Processing {0} boundaries in {1} batches").format(
+                total_ids, num_batches
+            )
         )
 
         # Create a temporary layer for accumulating results
@@ -865,8 +881,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             # Update progress and info
             subFeedback.setCurrentStep(batch_idx)
             subFeedback.pushInfo(
-                self.tr(
-                    f"Processing batch {batch_idx + 1}/{num_batches} with {len(batch_ids)} boundaries"
+                self.tr("Processing batch {0}/{1} with {2} boundaries").format(
+                    batch_idx + 1, num_batches, len(batch_ids)
                 )
             )
 
@@ -895,8 +911,8 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
 
         # Return the combined layer
         feedback.pushInfo(
-            self.tr(
-                f"Successfully processed all {total_ids} boundaries in {num_batches} batches"
+            self.tr("Successfully processed all {0} boundaries in {1} batches").format(
+                total_ids, num_batches
             )
         )
         return result_layer

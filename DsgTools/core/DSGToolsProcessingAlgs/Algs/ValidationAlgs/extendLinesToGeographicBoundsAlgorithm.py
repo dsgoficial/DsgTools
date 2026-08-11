@@ -27,7 +27,6 @@ from qgis.core import (
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
     QgsProcessingParameterVectorLayer,
@@ -256,9 +255,9 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         }
         inputLyr.startEditing()
         editText = (
-            "Extending lines from start points."
+            self.tr("Extending lines from start points.")
             if startPoint
-            else "Extending lines from end points."
+            else self.tr("Extending lines from end points.")
         )
         inputLyr.beginEditCommand(editText)
         for current, feat in enumerate(extendedLines.getFeatures()):

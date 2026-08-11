@@ -24,9 +24,9 @@
 from builtins import range
 from builtins import object
 from qgis.core import (
+    Qgis,
     QgsProject,
     QgsGeometry,
-    QgsWkbTypes,
     QgsSpatialIndex,
     QgsFeatureRequest,
     QgsCoordinateTransform,
@@ -101,7 +101,7 @@ class ContourTool(object):
 
         for intersected in features:
             intersection = geom.intersection(intersected.geometry())
-            if intersection.type() == QgsWkbTypes.GeometryType.PointGeometry:
+            if intersection.type() == Qgis.GeometryType.Point:
                 distance = intersection.distance(pointGeom)
                 distances.append((distance, intersected))
 

@@ -1,5 +1,4 @@
 from ..datasets.ptBR import PtBR
-from ..structures.ternarySearchTree import Trie
 
 
 class DatasetFactory:

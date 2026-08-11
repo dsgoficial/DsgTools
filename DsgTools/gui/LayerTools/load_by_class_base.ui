@@ -249,6 +249,5 @@
  <connections/>
  <slots>
   <signal>signal1()</signal>
-  <slot>carregaSpatialite()</slot>
  </slots>
 </ui>

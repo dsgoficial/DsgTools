@@ -23,34 +23,15 @@
 from collections import defaultdict
 from qgis.PyQt.QtCore import QCoreApplication
 
-import math
-import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsGeometry,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
     QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
     QgsWkbTypes,
     QgsProcessingException,
-    QgsGeometry,
-    QgsPoint,
-    QgsPointXY,
     QgsWkbTypes,
     QgsFeedback,
     QgsVectorLayer,
@@ -230,8 +211,8 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
             tol=tol,
         )
         multiStepFeedback.pushInfo(
-            self.tr(
-                f"{dangleSnappedToItself.featureCount()} remaining. Final fix remaining dangles..."
+            self.tr("{0} remaining. Final fix remaining dangles...").format(
+                dangleSnappedToItself.featureCount()
             )
         )
         self.fixRemainingDangles(

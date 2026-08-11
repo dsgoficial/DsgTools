@@ -34,7 +34,6 @@ from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.MultiDsSelectorWidgets
 )
 
 import os
-from functools import partial
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "datasourceManagementWidget.ui")
@@ -69,8 +68,6 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             self.tr("Select a datasource driver"): DsgEnums.NoDriver,
             "PostGIS": DsgEnums.PostGIS,
             self.tr("PostGIS (create new database)"): DsgEnums.NewPostGIS,
-            "SpatiaLite": DsgEnums.SpatiaLite,
-            self.tr("SpatiaLite (create new database)"): DsgEnums.NewSpatiaLite,
             # 'Shapefile' : DsgEnums.Shapefile,
             # self.tr('Shapefile (create new database)') : DsgEnums.NewShapefile,
             # 'Geopackage' : DsgEnums.Geopackage,
@@ -250,7 +247,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         for containers in self.activeDrivers.values():
             for container in containers:
                 if not container.isValid():
-                    return "{0} {1}: {2}".format(
+                    return self.tr("{0} {1}: {2}").format(
                         pageError, container.groupBox.title(), container.validate()
                     )
         # validate selection widget

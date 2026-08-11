@@ -20,31 +20,16 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from .validationAlgorithm import ValidationAlgorithm
-import processing
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
-    QgsFeatureSink,
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingException,
 )
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
@@ -126,7 +111,7 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
                 break
             self.flagFeature(
                 flagGeom=outDict["geom"],
-                flagText=f"""Reason: {outDict["reason"]}""",
+                flagText=self.tr("Reason: {0}").format(outDict["reason"]),
                 featid=outDict["featid"],
             )
             multiStepFeedback.setProgress(current * progressSize)

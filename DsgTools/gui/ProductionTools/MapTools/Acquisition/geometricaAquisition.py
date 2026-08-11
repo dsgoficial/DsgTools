@@ -20,7 +20,7 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 
 from builtins import range
 from qgis.PyQt import QtCore
-from qgis import core, gui
+from qgis import core
 from qgis.PyQt.QtCore import Qt, QSettings
 from qgis.PyQt.QtGui import QCursor, QPixmap, QColor
 from qgis.gui import (
@@ -28,20 +28,15 @@ from qgis.gui import (
     QgsRubberBand,
     QgsAttributeDialog,
     QgsAttributeEditorContext,
-    QgsSnapIndicator,
 )
-from qgis.utils import iface
 from qgis.core import (
     QgsPointXY,
-    QgsFeature,
     QgsGeometry,
     Qgis,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsEditFormConfig,
-    QgsWkbTypes,
     QgsProject,
-    QgsPointLocator,
 )
 
 from DsgTools.gui.ProductionTools.MapTools.Acquisition.distanceToolTip import (
@@ -150,7 +145,7 @@ class GeometricaAcquisition(QgsMapTool):
         self.qntPoint = 0
         self.geometry = []
         # if self.snapCursorRubberBand:
-        #     self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.GeometryType.PointGeometry)
+        #     self.snapCursorRubberBand.reset(geometryType=Qgis.GeometryType.Point)
         #     self.snapCursorRubberBand.hide()
         #     self.snapCursorRubberBand = None
 
@@ -263,23 +258,19 @@ class GeometricaAcquisition(QgsMapTool):
 
     def getRubberBand(self):
         geomType = self.iface.activeLayer().geometryType()
-        if geomType == QgsWkbTypes.GeometryType.PolygonGeometry:
+        if geomType == Qgis.GeometryType.Polygon:
             rubberBand = QgsRubberBand(
-                self.canvas, geometryType=QgsWkbTypes.GeometryType.PolygonGeometry
+                self.canvas, geometryType=Qgis.GeometryType.Polygon
             )
             rubberBand.setFillColor(QColor(255, 0, 0, 40))
-        elif geomType == QgsWkbTypes.GeometryType.LineGeometry:
-            rubberBand = QgsRubberBand(
-                self.canvas, geometryType=QgsWkbTypes.GeometryType.LineGeometry
-            )
+        elif geomType == Qgis.GeometryType.Line:
+            rubberBand = QgsRubberBand(self.canvas, geometryType=Qgis.GeometryType.Line)
         rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
         return rubberBand
 
     def getSnapRubberBand(self):
-        rubberBand = QgsRubberBand(
-            self.canvas, geometryType=QgsWkbTypes.GeometryType.PointGeometry
-        )
+        rubberBand = QgsRubberBand(self.canvas, geometryType=Qgis.GeometryType.Point)
         rubberBand.setFillColor(QColor(255, 0, 0, 40))
         rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
@@ -382,20 +373,20 @@ class GeometricaAcquisition(QgsMapTool):
         )
         lyrType = self.iface.activeLayer().geometryType()
         # Transforming the points
-        if lyrType == QgsWkbTypes.GeometryType.LineGeometry:
+        if lyrType == Qgis.GeometryType.Line:
             geomList = geom.asPolyline()
-        elif lyrType == QgsWkbTypes.GeometryType.PolygonGeometry:
+        elif lyrType == Qgis.GeometryType.Polygon:
             geomList = geom.asPolygon()
         newGeom = []
         for idx, geomIdx in enumerate(geomList):
-            if lyrType == QgsWkbTypes.GeometryType.LineGeometry:
+            if lyrType == Qgis.GeometryType.Line:
                 newGeom.append(coordinateTransformer.transform(geomIdx))
-            elif lyrType == QgsWkbTypes.GeometryType.PolygonGeometry:
+            elif lyrType == Qgis.GeometryType.Polygon:
                 line = geomIdx
                 for i in range(len(line)):
                     point = line[i]
                     newGeom.append(coordinateTransformer.transform(point))
-        if lyrType == QgsWkbTypes.GeometryType.LineGeometry:
+        if lyrType == Qgis.GeometryType.Line:
             return QgsGeometry.fromPolylineXY(newGeom + [newGeom[0]])
-        elif lyrType == QgsWkbTypes.GeometryType.PolygonGeometry:
+        elif lyrType == Qgis.GeometryType.Polygon:
             return QgsGeometry.fromPolygonXY([newGeom])

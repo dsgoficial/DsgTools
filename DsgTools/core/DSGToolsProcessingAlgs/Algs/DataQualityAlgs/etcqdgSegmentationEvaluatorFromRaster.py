@@ -41,7 +41,6 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsProject,
-    QgsProcessingContext,
     QgsRectangle,
     QgsProcessingMultiStepFeedback,
     QgsFields,
@@ -61,7 +60,9 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
     OUTPUT_LAYER = "OUTPUT_LAYER"
 
     def tr(self, string):
-        return QCoreApplication.translate("Processing", string)
+        return QCoreApplication.translate(
+            "ETCQDGSegmentationEvaluatorFromRaster", string
+        )
 
     def createInstance(self):
         return ETCQDGSegmentationEvaluatorFromRaster()
@@ -70,7 +71,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
         return "etcqdgsegmentationevaluatorfromraster"
 
     def displayName(self):
-        return self.tr("Avaliador de Segmentação a partir de Raster GT (ET-CQDG)")
+        return self.tr("ET-CQDG Segmentation Evaluator from GT Raster")
 
     def group(self):
         return self.tr("Data Quality")
@@ -81,43 +82,43 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
     def shortHelpString(self):
         return self.tr(
             """
-        Avalia segmentação comparando raster Ground Truth com inferências de múltiplos experimentos.
+        Evaluates segmentation by comparing a Ground Truth raster with inferences from multiple experiments.
 
-        Diferente da versão vetorial, esta versão trabalha diretamente com raster de GT.
+        Unlike the vector version, this version works directly with a GT raster.
 
-        IMPORTANTE:
-        - nodata = 255 (pixels ignorados)
-        - classe 0 = Background (incluída nas métricas)
-        - GT é a referência para resolução espacial e alinhamento
-        - Rasters de comparação são reamostrados (vizinho mais próximo) se necessário
+        IMPORTANT:
+        - nodata = 255 (ignored pixels)
+        - class 0 = Background (included in metrics)
+        - GT is the reference for spatial resolution and alignment
+        - Comparison rasters are resampled (nearest neighbor) if necessary
 
-        Processamento por MI:
-        1. Agrupa tiles por MI
-        2. Calcula extent combinado no CRS do MI (UTM)
-        3. Clipa e reprojeta GT para o extent do MI
-        4. Para cada tile:
-           - Clipa GT para o tile
-           - Clipa e alinha predicted para o tile (usando GT como referência)
-           - Calcula métricas: Accuracy, IoU, Precision, Recall, F1
+        Processing per MI:
+        1. Groups tiles by MI
+        2. Calculates combined extent in the MI CRS (UTM)
+        3. Clips and reprojects GT to the MI extent
+        4. For each tile:
+           - Clips GT for the tile
+           - Clips and aligns predicted to the tile (using GT as reference)
+           - Calculates metrics: Accuracy, IoU, Precision, Recall, F1
 
-        Estrutura de saída:
-        Para cada experimento:
-        - {experimento}/ground_truth/{MI}/{MI}_{quadricula}.tif: GT clipado
-        - {experimento}/predicted_tiles/{MI}/{MI}_{quadricula}.tif: Inferência clipada e alinhada
-        - {experimento}/metrics/: CSVs com métricas
+        Output structure:
+        Per experiment:
+        - {experiment}/ground_truth/{MI}/{MI}_{tile}.tif: clipped GT
+        - {experiment}/predicted_tiles/{MI}/{MI}_{tile}.tif: clipped and aligned inference
+        - {experiment}/metrics/: CSVs with metrics
 
-        Consolidado (raiz):
+        Consolidated (root):
         - consolidated_all_metrics.csv
         - per_class_metrics.csv
         - consolidated_tile_metrics.csv
         - consolidated_mi_metrics.csv
 
-        Parâmetros:
-        - Quadrículas: ET-CQDG (campos: mi, quadricula, fuso_utm)
-        - Raster Ground Truth: Raster com classes (valores inteiros)
-        - Máscaras Inferidas: Resultados de segmentação de múltiplos experimentos
-        - Mapeamento de Classes (opcional): JSON com {classe_id: "nome"} ex: {"0": "Background", "1": "Edificacao"}
-        - Pasta de Destino: Onde salvar resultados
+        Parameters:
+        - Tiles: ET-CQDG (fields: mi, quadricula, fuso_utm)
+        - Ground Truth Raster: Raster with classes (integer values)
+        - Inferred Masks: Segmentation results from multiple experiments
+        - Class Mapping (optional): JSON with {class_id: "name"} e.g.: {"0": "Background", "1": "Building"}
+        - Output Folder: Where to save results
         """
         )
 
@@ -125,7 +126,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT_TILES,
-                self.tr("Camada de Quadrículas ET-CQDG"),
+                self.tr("ET-CQDG Tiles Layer"),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -133,14 +134,14 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterRasterLayer(
                 self.INPUT_GT_RASTER,
-                self.tr("Raster Ground Truth (Verdade de Campo)"),
+                self.tr("Ground Truth Raster"),
             )
         )
 
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.SEGMENTATION_RASTER,
-                self.tr("Máscaras Inferidas (Resultados de Experimentos)"),
+                self.tr("Inferred Masks (Experiment Results)"),
                 QgsProcessing.TypeRaster,
             )
         )
@@ -149,7 +150,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             QgsProcessingParameterString(
                 self.CLASS_NAMES_JSON,
                 self.tr(
-                    'Mapeamento de Classes (JSON opcional, ex: {"0": "Background", "1": "Edificacao"})'
+                    'Class Mapping (optional JSON, e.g.: {"0": "Background", "1": "Building"})'
                 ),
                 optional=True,
                 defaultValue="",
@@ -158,14 +159,14 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterFolderDestination(
-                self.OUTPUT_FOLDER, self.tr("Pasta de Destino")
+                self.OUTPUT_FOLDER, self.tr("Output Folder")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterVectorDestination(
                 self.OUTPUT_LAYER,
-                self.tr("Camada de Saída (Tiles com Métricas)"),
+                self.tr("Output Layer (Tiles with Metrics)"),
             )
         )
 
@@ -203,7 +204,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             tiles_source.sourceCrs(),
         )
         if sink is None:
-            raise QgsProcessingException("Erro ao criar camada de saída.")
+            raise QgsProcessingException(self.tr("Failed to create output layer."))
 
         # 4. Estruturas para consolidação
         all_experiments_tile_metrics = []
@@ -222,14 +223,18 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                 os.path.basename(segmentation_raster.source())
             )[0]
 
-            feedback.pushInfo(f"\n{'=' * 80}")
+            feedback.pushInfo("\n" + "=" * 80)
             multiStepFeedback.setProgressText(
-                f"Processando experimento {exp_idx + 1}/{num_experiments}: {experiment_name}"
+                self.tr("Processing experiment {0}/{1}: {2}").format(
+                    exp_idx + 1, num_experiments, experiment_name
+                )
             )
             feedback.pushInfo(
-                f"Processando experimento {exp_idx + 1}/{num_experiments}: {experiment_name}"
+                self.tr("Processing experiment {0}/{1}: {2}").format(
+                    exp_idx + 1, num_experiments, experiment_name
+                )
             )
-            feedback.pushInfo(f"{'=' * 80}\n")
+            feedback.pushInfo("=" * 80 + "\n")
 
             # Criar pasta do experimento
             experiment_folder = os.path.join(output_folder, experiment_name)
@@ -283,7 +288,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
         """Descobre classes únicas do GT e monta dicionário de nomes"""
         import json
 
-        feedback.pushInfo("Descobrindo classes do raster GT...")
+        feedback.pushInfo(self.tr("Discovering classes from GT raster..."))
 
         # Ler amostra do raster para descobrir classes
         try:
@@ -298,7 +303,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                 unique_values = np.unique(sample[sample != 255])
 
         except Exception as e:
-            feedback.reportError(f"Erro ao ler raster GT: {e}")
+            feedback.reportError(self.tr("Error reading GT raster: {0}").format(e))
             # Fallback: assumir classes 0-10
             unique_values = np.arange(11)
 
@@ -310,7 +315,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                 # Converter chaves para int
                 user_class_names = {int(k): v for k, v in user_class_names.items()}
             except Exception as e:
-                feedback.reportError(f"Erro ao parsear JSON de classes: {e}")
+                feedback.reportError(self.tr("Error parsing class JSON: {0}").format(e))
 
         # Montar dicionário final
         class_names = {}
@@ -324,7 +329,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
         if 0 not in class_names:
             class_names[0] = "Background"
 
-        feedback.pushInfo(f"Classes descobertas: {class_names}")
+        feedback.pushInfo(self.tr("Discovered classes: {0}").format(class_names))
         return class_names
 
     def _createOutputFields(self, source_fields, class_names):
@@ -417,7 +422,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
 
                 tile_features = list(tile_feature_dict.values())
                 multiStepFeedback.setCurrentStep(current_step_index)
-                multiStepFeedback.pushInfo(f"Processando MI: {mi}")
+                multiStepFeedback.pushInfo(self.tr("Processing MI: {0}").format(mi))
 
                 mi_gt_folder = os.path.join(ground_truth_folder, mi)
                 mi_pred_folder = os.path.join(predicted_folder, mi)
@@ -429,7 +434,9 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                 utm_crs = QgsCoordinateReferenceSystem(fuso_utm)
                 if not utm_crs.isValid():
                     multiStepFeedback.reportError(
-                        f"Fuso UTM inválido: {fuso_utm}. Pulando MI {mi}."
+                        self.tr("Invalid UTM zone: {0}. Skipping MI {1}.").format(
+                            fuso_utm, mi
+                        )
                     )
                     current_step_index += 1 + len(tile_features)
                     continue
@@ -503,7 +510,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
                     current_step_index += 1
 
             # Coletar resultados
-            multiStepFeedback.pushInfo(f"\nColetando resultados...")
+            multiStepFeedback.pushInfo("\n" + self.tr("Collecting results..."))
 
             for future in concurrent.futures.as_completed(futures_map):
                 tile_id = futures_map[future]
@@ -561,11 +568,15 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
 
                     else:
                         multiStepFeedback.reportError(
-                            f"Erro no worker {tile_id}: {result.get('error')}"
+                            self.tr("Worker error {0}: {1}").format(
+                                tile_id, result.get("error")
+                            )
                         )
 
                 except Exception as exc:
-                    multiStepFeedback.reportError(f"Exceção {tile_id}: {exc}")
+                    multiStepFeedback.reportError(
+                        self.tr("Exception {0}: {1}").format(tile_id, exc)
+                    )
 
         finally:
             executor.shutdown(wait=False)
@@ -582,17 +593,23 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
 
         multiStepFeedback.pushInfo("\n" + "=" * 80)
         multiStepFeedback.pushInfo(
-            f"RESUMO {experiment_name} ({processed_count} tiles)"
+            self.tr("SUMMARY {0} ({1} tiles)").format(experiment_name, processed_count)
         )
         multiStepFeedback.pushInfo("-" * 80)
         multiStepFeedback.pushInfo(
-            f"Acurácia Global:   {global_metrics.get('accuracy', 0):.2%}"
+            self.tr("Global Accuracy:   {0:.2%}").format(
+                global_metrics.get("accuracy", 0)
+            )
         )
         multiStepFeedback.pushInfo(
-            f"Mean IoU:          {global_metrics.get('mean_iou', 0):.4f}"
+            self.tr("Mean IoU:          {0:.4f}").format(
+                global_metrics.get("mean_iou", 0)
+            )
         )
         multiStepFeedback.pushInfo(
-            f"Mean F1-Score:     {global_metrics.get('f1_score', 0):.4f}"
+            self.tr("Mean F1-Score:     {0:.4f}").format(
+                global_metrics.get("f1_score", 0)
+            )
         )
         multiStepFeedback.pushInfo("=" * 80 + "\n")
 
@@ -760,7 +777,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
 
         except ImportError:
             feedback.reportError(
-                "rasterio não disponível, alinhamento pode não ser perfeito"
+                self.tr("rasterio not available, alignment may not be perfect")
             )
             # Fallback sem alinhamento garantido
             reprojected_pred = algRunner.runGdalWarp(

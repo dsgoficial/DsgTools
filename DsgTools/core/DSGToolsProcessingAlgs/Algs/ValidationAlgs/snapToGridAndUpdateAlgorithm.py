@@ -24,13 +24,13 @@ from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
 )
 
 from ...algRunner import AlgRunner
@@ -101,7 +101,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         snappedLayer = algRunner.runSnapToGrid(
             auxLyr, tol, context, feedback=multiStepFeedback
         )
-        if inputLyr.geometryType() == QgsWkbTypes.GeometryType.LineGeometry:
+        if inputLyr.geometryType() == Qgis.GeometryType.Line:
             missconstructedFeaturesIds = [
                 f.id()
                 for f in snappedLayer.getFeatures()
@@ -111,7 +111,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
             ]
             if missconstructedFeaturesIds != []:
                 snappedLayer.startEditing()
-                snappedLayer.beginEditCommand("Removing missconstructed")
+                snappedLayer.beginEditCommand(self.tr("Removing malformed geometries"))
                 snappedLayer.deleteFeatures(missconstructedFeaturesIds)
                 snappedLayer.endEditCommand()
         multiStepFeedback.setCurrentStep(2)

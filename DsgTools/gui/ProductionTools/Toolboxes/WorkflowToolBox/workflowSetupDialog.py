@@ -22,9 +22,8 @@
 """
 
 from functools import partial
-import os, json
+import os
 from pathlib import Path
-from time import time
 from datetime import datetime
 
 from DsgTools.core.DSGToolsWorkflow.workflowItem import (
@@ -39,8 +38,8 @@ from DsgTools.gui.CustomWidgets.SelectionWidgets.importExportFileWidget import (
 )
 from qgis.PyQt import uic, QtCore, QtWidgets
 from qgis.core import Qgis
-from qgis.gui import QgsMessageBar, QgsCheckableComboBox
-from qgis.PyQt.QtCore import QSize, QCoreApplication, pyqtSlot, Qt
+from qgis.gui import QgsMessageBar
+from qgis.PyQt.QtCore import QSize, QCoreApplication, pyqtSlot
 from qgis.PyQt.QtWidgets import (
     QDialog,
     QComboBox,
@@ -48,17 +47,11 @@ from qgis.PyQt.QtWidgets import (
     QLineEdit,
     QFileDialog,
     QMessageBox,
-    QTableWidgetItem,
 )
 from processing.modeler.ModelerUtils import ModelerUtils
 from processing.modeler.ModelerDialog import ModelerDialog
 
-from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import (
-    SelectFileWidget,
-)
 from DsgTools.core.DSGToolsWorkflow.workflow import (
-    DSGToolsWorkflow,
-    WorkflowMetadata,
     dsgtools_workflow_from_dict,
     dsgtools_workflow_from_json,
 )
@@ -342,7 +335,9 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         widget.setFilter(self.tr("Select a QGIS Processing model (*.model3 *.model)"))
         # defining setter and getter methods for composed widgets into OTW
         widget.fileExported.connect(
-            lambda x: self.pushMessage(self.tr(f"Model source exported to file {x}"))
+            lambda x: self.pushMessage(
+                self.tr("Model source exported to file {0}").format(x)
+            )
         )
         widget.fileExported.connect(self.openExportedModel)
         return widget
@@ -597,7 +592,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         for row in range(self.modelCount()):
             msg = self.validateRowContents(self.readRow(row))
             if msg:
-                return "Row {row}: '{error}'".format(row=row + 1, error=msg)
+                return self.tr("Row {row}: '{error}'").format(row=row + 1, error=msg)
         if len(self.workflowItems()) != self.modelCount():
             return self.tr("Check if no model name is repeated.")
         return ""

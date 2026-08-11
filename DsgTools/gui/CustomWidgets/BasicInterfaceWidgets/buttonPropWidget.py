@@ -28,7 +28,7 @@ from qgis.core import Qgis, QgsVectorLayer, QgsMapLayerProxyModel
 from qgis.utils import iface
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QIcon, QColor, QKeySequence
-from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot, QSettings, pyqtSignal
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (
     QWidget,
     QSpinBox,
@@ -44,7 +44,6 @@ from qgis.PyQt.QtWidgets import (
 from DsgTools.core.Utils.utils import Utils, MessageRaiser
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.gui.ProductionTools.Toolboxes.CustomFeatureToolBox.customButtonSetup import (
-    CustomButtonSetup,
     CustomFeatureButton,
 )
 

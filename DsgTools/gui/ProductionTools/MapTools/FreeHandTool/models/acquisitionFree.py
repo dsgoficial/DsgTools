@@ -169,7 +169,7 @@ class AcquisitionFree(gui.QgsMapTool):
     def isPolygon(self):
         # Método para testar se a camada atual é polígono
         # Parâmetro de retorno: isPolygon (Boleano)
-        isPolygon = self.getGeometryType() != core.QgsWkbTypes.GeometryType.LineGeometry
+        isPolygon = self.getGeometryType() != core.Qgis.GeometryType.Line
         return isPolygon
 
     def keyPressEvent(self, event):
@@ -215,7 +215,7 @@ class AcquisitionFree(gui.QgsMapTool):
             if not self.isPolygon():
                 lastPoint = rubberBand.asGeometry().asPolyline()[-1]
                 new_rubberBand = gui.QgsRubberBand(
-                    self.getCanvas(), core.QgsWkbTypes.GeometryType.LineGeometry
+                    self.getCanvas(), core.Qgis.GeometryType.Line
                 )
                 new_rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
             else:
@@ -223,7 +223,7 @@ class AcquisitionFree(gui.QgsMapTool):
                     firstPoint = rubberBand.asGeometry().asPolygon()[0][0]
                     lastPoint = rubberBand.asGeometry().asPolygon()[0][-2]
                 new_rubberBand = gui.QgsRubberBand(
-                    self.getCanvas(), core.QgsWkbTypes.GeometryType.PolygonGeometry
+                    self.getCanvas(), core.Qgis.GeometryType.Polygon
                 )
                 new_rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
             new_rubberBand.setWidth(1)
@@ -248,7 +248,7 @@ class AcquisitionFree(gui.QgsMapTool):
         else:
             rubberBand = gui.QgsRubberBand(
                 self.getCanvas(),
-                geometryType=core.QgsWkbTypes.GeometryType.PointGeometry,
+                geometryType=core.Qgis.GeometryType.Point,
             )
         rubberBand.setColor(QtGui.QColor(255, 0, 0, 200))
         rubberBand.setFillColor(QtGui.QColor(255, 0, 0, 40))
@@ -275,9 +275,7 @@ class AcquisitionFree(gui.QgsMapTool):
         # Parâmetro de entrada: event (Evento)
         snapRubberBand = self.getSnapRubberBand()
         if snapRubberBand:
-            snapRubberBand.reset(
-                geometryType=core.QgsWkbTypes.GeometryType.PointGeometry
-            )
+            snapRubberBand.reset(geometryType=core.Qgis.GeometryType.Point)
             snapRubberBand.hide()
             self.setSnapRubberBand(None)
         layer = self.getCanvas().currentLayer()
@@ -292,13 +290,13 @@ class AcquisitionFree(gui.QgsMapTool):
         self.setGeometryType(layer.geometryType())
         if self.isPolygon():
             rubberBand = gui.QgsRubberBand(
-                self.getCanvas(), core.QgsWkbTypes.GeometryType.PolygonGeometry
+                self.getCanvas(), core.Qgis.GeometryType.Polygon
             )
             rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
             rubberBand.setWidth(2)
         else:
             rubberBand = gui.QgsRubberBand(
-                self.getCanvas(), core.QgsWkbTypes.GeometryType.LineGeometry
+                self.getCanvas(), core.Qgis.GeometryType.Line
             )
             rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
             rubberBand.setWidth(1)
@@ -318,9 +316,7 @@ class AcquisitionFree(gui.QgsMapTool):
             snapRubberBand = self.getSnapRubberBand()
             if snapRubberBand:
                 snapRubberBand.hide()
-                snapRubberBand.reset(
-                    geometryType=core.QgsWkbTypes.GeometryType.PointGeometry
-                )
+                snapRubberBand.reset(geometryType=core.Qgis.GeometryType.Point)
                 self.setSnapRubberBand(None)
             oldPoint = event.mapPoint()
             event.snapPoint()
@@ -348,7 +344,7 @@ class AcquisitionFree(gui.QgsMapTool):
             return
         geom = rubberBand.asGeometry()
         self.tooltip = QtWidgets.QToolTip
-        if geom.type() == core.QgsWkbTypes.GeometryType.LineGeometry:
+        if geom.type() == core.Qgis.GeometryType.Line:
             length = geom.length()
             if length != None or length == 0:
                 measure_dist = self.dist_area.measureLength(geom)
@@ -356,7 +352,9 @@ class AcquisitionFree(gui.QgsMapTool):
                     measure_dist, QgsUnitTypes.DistanceMeters
                 )
                 # Tr
-                txt = f"<b>Length: {dist:.3f} m</b><br/>"
+                txt = (
+                    "<b>" + self.tr("Length: {0} m").format(f"{dist:.3f}") + "</b><br/>"
+                )
                 self.tooltip.showText(
                     self.canvas.mapToGlobal(self.canvas.mouseLastXY()),
                     txt,
@@ -366,7 +364,7 @@ class AcquisitionFree(gui.QgsMapTool):
                 )
             else:
                 self.tooltip.hideText()
-        elif geom.type() == core.QgsWkbTypes.GeometryType.PolygonGeometry:
+        elif geom.type() == core.Qgis.GeometryType.Polygon:
             area = geom.area()
             if area != None or area == 0:
                 measure_dist = self.dist_area.measureArea(geom)
@@ -374,7 +372,9 @@ class AcquisitionFree(gui.QgsMapTool):
                     measure_dist, QgsUnitTypes.AreaSquareMeters
                 )
                 # Tr
-                txt = f"<b>Area: {dist:.3f} m²</b><br/>"
+                txt = (
+                    "<b>" + self.tr("Area: {0} m²").format(f"{dist:.3f}") + "</b><br/>"
+                )
                 self.tooltip.showText(
                     self.canvas.mapToGlobal(self.canvas.mouseLastXY()),
                     txt,
@@ -395,9 +395,7 @@ class AcquisitionFree(gui.QgsMapTool):
                 else rubberBand.asGeometry().asPolyline()
             )
             if self.isPolygon() and self.getRubberBand():
-                rubberBand.reset(
-                    geometryType=core.QgsWkbTypes.GeometryType.PolygonGeometry
-                )
+                rubberBand.reset(geometryType=core.Qgis.GeometryType.Polygon)
                 firstPoint = self.getRubberBand().asGeometry().asPolygon()[0][0]
                 secondPoint = self.getRubberBand().asGeometry().asPolygon()[0][-2]
                 rubberBand.addPoint(secondPoint)
@@ -424,9 +422,9 @@ class AcquisitionFree(gui.QgsMapTool):
 
     def doReshape(self, geom):
         line = ""
-        if geom.type() == core.QgsWkbTypes.GeometryType.LineGeometry:
+        if geom.type() == core.Qgis.GeometryType.Line:
             line = geom.asPolyline()
-        elif geom.type() == core.QgsWkbTypes.GeometryType.PolygonGeometry:
+        elif geom.type() == core.Qgis.GeometryType.Polygon:
             if geom.isMultipart():
                 line = geom.asMultiPolygon()[0][0]
             else:
@@ -441,7 +439,7 @@ class AcquisitionFree(gui.QgsMapTool):
             if not toolbar.objectName().lower() == "dsgtools":
                 continue
             for action in toolbar.actions():
-                if not action.text() == "DSGTools: Measure while digitizing":
+                if not action.text() == self.tr("DSGTools: Measure while digitizing"):
                     continue
                 self.measureAction = action
 

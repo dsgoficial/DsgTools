@@ -21,9 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtWidgets import QFileDialog
-from qgis.PyQt.QtCore import pyqtSlot
 
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import (
     AbstractSelectionWidget,
@@ -32,8 +30,6 @@ from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.newD
     NewDatabaseLineEdit,
 )
 from DsgTools.core.dsgEnums import DsgEnums
-
-import os
 
 
 class NewShapefileWidget(AbstractSelectionWidget):

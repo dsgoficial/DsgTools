@@ -25,6 +25,7 @@ from typing import List
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingParameterFeatureSink,
     QgsWkbTypes,
@@ -147,9 +148,9 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         stepSize = 100 / len(layerList)
         for current, layer in enumerate(layerList):
             layerPre = layer
-            if layer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry:
+            if layer.geometryType() == Qgis.GeometryType.Polygon:
                 layerPre = self.algRunner.runPolygonsToLines(layer, context)
-            if layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
+            if layer.geometryType() == Qgis.GeometryType.Point:
                 continue
             toMergeList.append(layerPre)
             multiStepFeedback.setProgress(current * stepSize)
@@ -258,7 +259,7 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "Verifica linhas que se cruzam (descartado primeiro e último vértice da camada de entrada). Para camadas do tipo polígono, apenas as bordas dos polígonos são utilizadas para a comparação."
+            "Checks for crossing lines (discarding the first and last vertex of the input layer). For polygon-type layers, only the polygon boundaries are used for comparison."
         )
 
     def tr(self, string):

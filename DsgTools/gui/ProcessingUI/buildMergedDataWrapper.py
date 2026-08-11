@@ -27,15 +27,7 @@ from qgis.core import Qgis, QgsProject, QgsVectorLayer, QgsMapLayerProxyModel
 from qgis.gui import QgsMessageBar, QgsMapLayerComboBox, QgsFieldExpressionWidget
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QSize
-from qgis.PyQt.QtGui import QIntValidator
-from qgis.PyQt.QtWidgets import (
-    QWidget,
-    QComboBox,
-    QLineEdit,
-    QVBoxLayout,
-    QMessageBox,
-    QSpinBox,
-)
+from qgis.PyQt.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QMessageBox, QSpinBox
 from processing.gui.wrappers import (
     WidgetWrapper,
     DIALOG_STANDARD,
@@ -326,7 +318,7 @@ class BuildMergedDataWrapper(WidgetWrapper):
                                 }
                             self.panel.otw.restore(old_format_data)
                         else:
-                            raise ValueError("Unsupported file format")
+                            raise ValueError(self.tr("Unsupported file format"))
 
                 self.messageBar.pushMessage(
                     self.tr("Success"),
@@ -338,7 +330,7 @@ class BuildMergedDataWrapper(WidgetWrapper):
                 QMessageBox.warning(
                     iface.mainWindow(),
                     self.tr("Unable to import {0}").format(filepath),
-                    "Check file {0}:\n{1}".format(filepath, str(e)),
+                    self.tr("Check file {0}:\n{1}").format(filepath, str(e)),
                 )
                 self.panel.otw.setHeaders(self.panel.otw.headers)
 
@@ -379,7 +371,7 @@ class BuildMergedDataWrapper(WidgetWrapper):
                 QMessageBox.warning(
                     iface.mainWindow(),
                     self.tr("Unable to export {0}").format(filepath),
-                    "Check file {0}:\n{1}".format(filepath, str(e)),
+                    self.tr("Check file {0}:\n{1}").format(filepath, str(e)),
                 )
 
         # Apply our custom methods

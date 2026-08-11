@@ -22,26 +22,14 @@
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtXml import QDomDocument
 
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingContext,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterString,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFile,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
     QgsVectorLayer,
     QgsProject,
 )
-
-from qgis.utils import iface
 
 
 class ExportToMemoryLayer(QgsProcessingAlgorithm):
@@ -54,12 +42,12 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         Parameter setting.
         """
         self.addParameter(
-            QgsProcessingParameterVectorLayer(self.INPUT, self.tr("Camada de entrada"))
+            QgsProcessingParameterVectorLayer(self.INPUT, self.tr("Input layer"))
         )
         self.addParameter(
             QgsProcessingParameterString(
                 self.OUTPUT_NAME,
-                self.tr("Nome da camada de saída"),
+                self.tr("Output layer name"),
                 optional=True,
                 defaultValue="resultado",
             )
@@ -67,7 +55,7 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterString(
                 self.OUTPUT_QML_STYLE,
-                self.tr("Estilo da camada de saída"),
+                self.tr("Output layer style"),
                 multiLine=True,
                 optional=True,
             )

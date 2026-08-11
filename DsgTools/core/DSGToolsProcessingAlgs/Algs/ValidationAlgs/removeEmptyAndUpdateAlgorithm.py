@@ -25,9 +25,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
     QgsProcessing,
-    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterVectorLayer,
     QgsProcessingFeatureSourceDefinition,
@@ -117,7 +115,9 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
             in f.geometry().constGet().isValid()[1]
         )
         inputLyr.startEditing()
-        inputLyr.beginEditCommand(f"Deleting null values from {inputLyr.name()}")
+        inputLyr.beginEditCommand(
+            self.tr("Deleting null values from {0}").format(inputLyr.name())
+        )
         inputLyr.deleteFeatures(list(idsToDeleteSet))
         inputLyr.endEditCommand()
 

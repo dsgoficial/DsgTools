@@ -25,22 +25,12 @@ import os
 from qgis.PyQt.QtCore import QCoreApplication
 
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsExpression,
-    QgsExpressionContext,
-    QgsExpressionContextUtils,
-    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingOutputMultipleLayers,
-    QgsProcessingParameterExpression,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterString,
-    QgsProject,
     QgsProcessingParameterFile,
 )
-from qgis.utils import iface
-from qgis import gui, core
+from qgis import core
 import json
 
 
@@ -167,4 +157,4 @@ class LoadThemesAlgorithm(QgsProcessingAlgorithm):
         This process is not thread safe due to the fact that removeChildNode
         method from QgsLayerTreeGroup is not thread safe.
         """
-        return super().flags() | QgsProcessingAlgorithm.FlagNoThreading
+        return super().flags() | QgsProcessingAlgorithm.Flag.FlagNoThreading

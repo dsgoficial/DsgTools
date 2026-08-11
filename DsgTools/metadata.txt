@@ -10,14 +10,14 @@
 name=DSG Tools
 qgisMinimumVersion=4.0
 supportsQt6=True
+hasProcessingProvider=yes
 description=Brazilian Army Cartographic Production Tools
-version=5.0.1
+version=5.2.0
 author=Brazilian Army Geographic Service
 email=dsgtools@dsg.eb.mil.br
-about=
-	DSGTools with the following features:
+about=DSGTools with the following features:
 	-Creation, Storage and Deletion of PostGIS servers configurations
-	-Database creation using Spatialite and PostGIS according to EDGV version 2.1.3 and 3.0 (cadaster)
+	-Database creation using PostGIS according to EDGV version 2.1.3 and 3.0 (cadaster)
 	-Layer loading by category and class as defined by EDGV version 2.1.3 and EDGV version 3.0 (cadaster)
 	-Manipulation of complex features (Creation, Editing, Deletion, Zoom, Association, Disassociation) and
 	-Access to some WM(T)S services provided by BDGEx.
@@ -27,7 +27,7 @@ about=
 	-Database user profile management (e.g. Grant/Revoke predifined roles to/from user ).
 	-Create/Remove PostgreSQL users.
 	-Alter PostgreSQL user Password.
-	-Conversion tools between postgis and spatialite EDGV databases.
+	-Conversion tools between PostGIS EDGV databases.
 	-Tool to assign elevation values to contour lines in a simple way.
 	-EDGV code list viewer to aid attributes queries using our EDGV databases.
 	-Drop EDGV databases
@@ -45,6 +45,26 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+	5.2.0
+		Novas Funcionalidades:
+			- Novo algoritmo de bounding boxes ótimos por tiles (Optimal Tile Bounding Boxes): decompõe uma camada de tiles em bounding boxes otimizados minimizando NoData, usando compressão de coordenadas, detecção de componentes conexas por BFS, decomposição por faixas horizontais e fusão greedy com threshold de cobertura configurável. Processamento paralelo via ThreadPoolExecutor;
+			- Nova CLI (dsgtools_cli) para executar algoritmos de processamento do DSGTools via linha de comando, integrada ao qgis_process: validação local de parâmetros antes de rodar (nome inexistente com sugestão por proximidade, obrigatório ausente, índice de enum fora da faixa), describe compacto, modo --dry-run, cache de contrato em disco e doctor que diagnostica o provider (plugin ausente, desabilitado ou carregado sem nenhum algoritmo) e aponta o conserto;
+			- Novo algoritmo de identificação de gaps e overlaps em cobertura por XOR de bordas (edge XOR);
+		Melhorias:
+			- Refatoração do AbstractDb e remoção da dependência da QtQSql (que implicava em instalação de biblioteca adicional no linux);
+			- Melhoria na gestão de conexões do PostgisDb;
+			- Remoção de funcionalidades não utilizadas e de diversos códigos mortos (removida gestão de bancos no servidor, dsgtools_admindb, gestão e carregamento de estilo, etc);
+		Correções de bug:
+			- Corrige estatística de regras (Rule Statistics) no fluxo do SAP Operador: contexto de processamento passa a usar o projeto ativo para resolver as camadas de entrada;
+			- Corrige barra de revisão: campos de ranking/visitado tratados como vazios além de nulos, e trata falha ao salvar ao marcar feições como não visitadas;
+			- Corrige erro ao mesclar mais de uma camada no processo de desconstruir polígonos (Unbuild Polygons);
+			- Corrige erro ao montar estruturas auxiliares do grafo quando há trechos com geometria nula;
+			- Corrige validação de depressão e de ponto cotado na verificação de terreno (leitura do atributo de depressão, sentido do filtro de cota e mesclagem de curvas com atribuição divergente);
+			- Corrige geração de ponto cotado com valor múltiplo da equidistância no processo de extração de pontos cotados;
+			- Corrige generalização de curvas de nível: segmenta curvas fechadas antes de medir e filtrar (o filtro de tamanho mínimo media só a primeira parte da geometria), corrige a medição do perímetro em CRS geográfico e a atributação de índice e depressão, que saíam com valor fixo;
+			- Corrige validação do terreno recompondo curvas fechadas segmentadas em dois arcos antes de validar;
+			- Corrige vulnerabilidade de XXE na leitura de metadados XML do preparo de pacotes raster para o BDGEx e injeção de SQL na definição do SRID de bancos Geopackage;
+			- Corrige ícones do plugin não carregando (faltava registrar o módulo de recursos Qt) e menu "About DSGTools" desaparecendo no macOS;
 	5.0.1
 		Correções de bug:
 			- Corrige imports da shapely em ambientes que não tem ela instalada.
@@ -496,7 +516,7 @@ changelog=
 			- Corrigido bug na SQL de filtragem do carregamento de camadas com elementos quando se utiliza o postgres mais novo;
 
 # Tags are comma separated with spaces allowed
-tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
+tags=EDGV,PostGIS,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
 
 homepage=https://github.com/dsgoficial/DsgTools/wiki
 tracker=https://github.com/dsgoficial/DsgTools/issues

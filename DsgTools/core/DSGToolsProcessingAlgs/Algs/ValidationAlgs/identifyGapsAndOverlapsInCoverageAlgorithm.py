@@ -5,10 +5,8 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2018-08-13
-        git sha              : $Format:%H$
-        copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba.philipe@eb.mil.br
+        copyright            : (C) Brazilian Army Geographic Service
+        email                : dsgtools@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -19,47 +17,77 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
+Identify coverage gaps, overlaps and inconsistent edge vertexing.
+
+The implementation uses an edge histogram instead of a polygon self-overlay.
+An edge shared by exactly two polygon rings cancels.  The frame boundary is
+inserted in the same histogram, so a correctly covered outer boundary also
+cancels.  Remaining edges are polygonized and classified against the input
+coverage.
 """
 
 from collections import defaultdict
-from qgis.PyQt.QtCore import QCoreApplication
 
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import runProcessing
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsDataSourceUri,
     QgsFeature,
-    QgsFeatureSink,
+    QgsFeatureRequest,
+    QgsGeometry,
+    QgsPointXY,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsProject,
-    QgsWkbTypes,
     QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsSpatialIndex,
+    QgsVectorLayer,
+    QgsWkbTypes,
 )
 
+from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
+def canonical_point_key(point, grid_size):
+    """Return a stable, hashable 2-D point key."""
+    if grid_size > 0:
+        return (
+            int(round(point.x() / grid_size)),
+            int(round(point.y() / grid_size)),
+        )
+    return (point.x(), point.y())
+
+
+def canonical_segment_key(point_a, point_b, grid_size):
+    """Return an orientation-independent segment key, preserving vertexing."""
+    a = canonical_point_key(point_a, grid_size)
+    b = canonical_point_key(point_b, grid_size)
+    return (a, b) if a < b else (b, a)
+
+
+def point_from_key(key, grid_size):
+    """Build a point in the normalized coordinate space used by polygonize."""
+    if grid_size > 0:
+        return QgsPointXY(key[0] * grid_size, key[1] * grid_size)
+    return QgsPointXY(key[0], key[1])
+
+
 class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
     FLAGS = "FLAGS"
+    NODE_FLAGS = "NODE_FLAGS"
     INPUTLAYERS = "INPUTLAYERS"
     FRAMELAYER = "FRAMELAYER"
     SELECTED = "SELECTED"
+    GRID_SIZE = "GRID_SIZE"
+    MIN_AREA = "MIN_AREA"
 
-    def initAlgorithm(self, config):
-        """
-        Parameter setting.
-        """
+    def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
@@ -67,13 +95,13 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
                 QgsProcessing.TypeVectorPolygon,
             )
         )
-
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED, self.tr("Process only selected features")
+                self.SELECTED,
+                self.tr("Process only selected features"),
+                defaultValue=False,
             )
         )
-
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.FRAMELAYER,
@@ -82,214 +110,297 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
                 optional=True,
             )
         )
-
+        self.addParameter(
+            QgsProcessingParameterDistance(
+                self.GRID_SIZE,
+                self.tr("Coordinate comparison tolerance"),
+                defaultValue=0.00000001,
+                minValue=0.0,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.MIN_AREA,
+                self.tr("Minimum error area"),
+                type=QgsProcessingParameterNumber.Double,
+                defaultValue=0.0,
+                minValue=0.0,
+            )
+        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
+                self.FLAGS, self.tr("Coverage Error Flags")
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.NODE_FLAGS,
+                self.tr("Edge Node Error Flags"),
+                optional=True,
+                createByDefault=True,
             )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        """
-        Here is where the processing itself takes place.
-        """
-        geometryHandler = GeometryHandler()
-        layerHandler = LayerHandler()
-        inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
-        if inputLyrList == []:
+        input_layers = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
+        if not input_layers:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUTLAYERS)
             )
-        frameLyr = self.parameterAsVectorLayer(parameters, self.FRAMELAYER, context)
-        if frameLyr and frameLyr in inputLyrList:
+        frame_layer = self.parameterAsVectorLayer(parameters, self.FRAMELAYER, context)
+        if frame_layer and frame_layer in input_layers:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.FRAMELAYER)
+                self.tr("The frame layer cannot also be a coverage layer.")
             )
-        isMulti = True
-        for inputLyr in inputLyrList:
-            isMulti &= QgsWkbTypes.isMultiType(inputLyr.wkbType())
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Polygon, context)
-        # Compute the number of steps to display within the progress bar and
-        # get features from source
-        nSteps = 4 if not frameLyr else 5
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
-        currentStep = 0
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Creating unified layer"))
-        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
-            inputLyrList,
-            QgsWkbTypes.Polygon,
-            onlySelected=onlySelected,
-            feedback=multiStepFeedback,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Overlaying coverage"))
-        lyr = self.overlayCoverage(coverage, context, feedback=multiStepFeedback)
-        currentStep += 1
-        if frameLyr:
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(
-                self.tr("Getting gaps with geographic bounds")
-            )
-            self.getGapsOfCoverageWithFrame(lyr, frameLyr, context)
-            currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        featureList, total = self.getIteratorAndFeatureCount(
-            lyr
-        )  # only selected is not applied because we are using an inner layer, not the original ones
-        multiStepFeedback.setProgressText(self.tr("Raising flags"))
-        geomDict = self.getGeomDict(featureList, isMulti, multiStepFeedback, total)
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.raiseFlags(geomDict, multiStepFeedback)
-        QgsProject.instance().removeMapLayer(lyr)
-        return {self.FLAGS: self.flag_id}
 
-    def overlayCoverage(self, coverage, context, feedback):
-        output = QgsProcessingUtils.generateTempFilename("output.shp")
-        parameters = {
-            "ainput": coverage,
-            "atype": 0,
-            "binput": coverage,
-            "btype": 0,
-            "operator": 0,
-            "snap": 0,
-            "-t": False,
-            "output": output,
-            "GRASS_REGION_PARAMETER": None,
-            "GRASS_SNAP_TOLERANCE_PARAMETER": -1,
-            "GRASS_MIN_AREA_PARAMETER": 0.0001,
-            "GRASS_OUTPUT_TYPE_PARAMETER": 0,
-            "GRASS_VECTOR_DSCO": "",
-            "GRASS_VECTOR_LCO": "",
-        }
-        x = runProcessing(
-            "grass7:v.overlay", parameters, context=context, feedback=feedback
-        )
-        lyr = QgsProcessingUtils.mapLayerFromString(x["output"], context)
-        lyr.setCrs(coverage.crs())
-        return lyr
-
-    def getGapsOfCoverageWithFrame(
-        self, coverage, frameLyr, context, feedback=None, onFinish=None
-    ):
-        """
-        Identifies all gaps inside coverage layer and between coverage and frame layer.
-        :param coverage: (QgsVectorLayer) unified coverage layer.
-        :param frameLyr: (QgsVectorLayer) frame layer.
-        :param context: (QgsProcessingContext)
-        :param feedback: (QgsProcessingFeedback) QGIS' object for progress tracking and controlling.
-        :param onFinish: (list-of-str) list of alg names to be executed after difference alg.
-        """
-        # identify all holes in coverage layer first
-        coverageHolesParam = {"INPUT": coverage, "FLAGS": "memory:", "SELECTED": False}
-        coverageHoles = runProcessing(
-            "dsgtools:identifygaps",
-            coverageHolesParam,
-            context=context,
-            feedback=feedback,
-        )["FLAGS"]
-        geometryHandler = GeometryHandler()
-        gapSet = set()
-        for feat in coverageHoles.getFeatures():
-            for geom in geometryHandler.deaggregateGeometry(feat.geometry()):
-                self.flagFeature(geom, self.tr("Gap in coverage layer"))
-                gapSet.add(geom)
-        # missing possible holes between coverage and frame, but gaps in coverage may cause invalid geometries
-        # while executing difference alg. Since its already identified, "add" them to the coverage
-        layerHandler = LayerHandler()
-        filledCoverage = layerHandler.createAndPopulateUnifiedVectorLayer(
-            [coverage, coverageHoles], QgsWkbTypes.Polygon
-        )
-        # dissolveParameters = {
-        #     'INPUT' : filledCoverage,
-        #     'FIELD':[],
-        #     'OUTPUT':'memory:'
-        # }
-        # dissolveOutput = processing.run('native:dissolve', dissolveParameters, context = context)['OUTPUT']
-        dissolveOutput = LayerHandler().runGrassDissolve(filledCoverage, context)
-        differenceParameters = {
-            "INPUT": frameLyr,
-            "OVERLAY": dissolveOutput,
-            "OUTPUT": "memory:",
-        }
-        differenceOutput = runProcessing(
-            "native:difference",
-            differenceParameters,
-            context=context,
-            feedback=feedback,
-            onFinish=onFinish,
-        )
-        for feat in differenceOutput["OUTPUT"].getFeatures():
-            for geom in geometryHandler.deaggregateGeometry(feat.geometry()):
-                if geom not in gapSet:
-                    self.flagFeature(geom, self.tr("Gap in coverage with frame"))
-
-    def getGeomDict(self, featureList, isMulti, feedback, total):
-        geomDict = defaultdict(list)
-        for current, feat in enumerate(featureList):
-            # Stop the algorithm if cancel button has been clicked
-            if feedback.isCanceled():
-                break
-            geom = feat.geometry()
-            if isMulti and not geom.isMultipart():
-                geom.convertToMultiType()
-            geomKey = geom.asWkb()
-            geomDict[geomKey].append(feat)
-            # # Update the progress bar
-            attrList = feat.attributes()
-            if attrList == len(attrList) * [None]:
-                self.flagFeature(geom, self.tr("Gap in coverage layer."))
-            feedback.setProgress(int(current * total))
-        return geomDict
-
-    def raiseFlags(self, geomDict, feedback):
-        for k, v in geomDict.items():
-            if feedback.isCanceled():
-                break
-            if len(v) > 1:
-                textList = []
-                for feat in v:
-                    textList += ["({0},{1})".format(feat["a_featid"], feat["a_layer"])]
-                flagText = self.tr("Overlapping features (id,layer): {0}").format(
-                    ", ".join(set(textList))
+        crs = input_layers[0].crs()
+        for layer in input_layers + ([frame_layer] if frame_layer else []):
+            if layer.crs() != crs:
+                raise QgsProcessingException(
+                    self.tr("All coverage and frame layers must use the same CRS.")
                 )
-                self.flagFeature(v[0].geometry(), flagText)
+
+        selected_only = self.parameterAsBool(parameters, self.SELECTED, context)
+        grid_size = self.parameterAsDouble(parameters, self.GRID_SIZE, context)
+        min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
+
+        self.prepareFlagSink(parameters, input_layers[0], QgsWkbTypes.Polygon, context)
+        self.nodeFlagSink, self.node_flag_id = self.parameterAsSink(
+            parameters,
+            self.NODE_FLAGS,
+            context,
+            self.getFlagFields(),
+            QgsWkbTypes.Point,
+            crs,
+        )
+
+        multi_feedback = QgsProcessingMultiStepFeedback(5, feedback)
+        multi_feedback.setCurrentStep(0)
+        multi_feedback.setProgressText(self.tr("Counting coverage edges"))
+        edge_count, coverage_indexes = self.buildEdgeHistogram(
+            input_layers,
+            frame_layer,
+            selected_only,
+            grid_size,
+            multi_feedback,
+        )
+        if feedback.isCanceled():
+            return {self.FLAGS: self.flag_id, self.NODE_FLAGS: self.node_flag_id}
+
+        abnormal_keys = {key for key, count in edge_count.items() if count != 2}
+
+        multi_feedback.setCurrentStep(1)
+        multi_feedback.setProgressText(self.tr("Finding inconsistent edge nodes"))
+        self.flagIntermediateNodes(abnormal_keys, grid_size, crs, multi_feedback)
+
+        multi_feedback.setCurrentStep(2)
+        multi_feedback.setProgressText(self.tr("Building unmatched edge layer"))
+        edge_layer = self.buildEdgeLayer(abnormal_keys, grid_size, crs)
+        if edge_layer.featureCount() == 0 or feedback.isCanceled():
+            return {self.FLAGS: self.flag_id, self.NODE_FLAGS: self.node_flag_id}
+
+        multi_feedback.setCurrentStep(3)
+        multi_feedback.setProgressText(self.tr("Polygonizing unmatched edges"))
+        polygons = AlgRunner().runPolygonize(
+            edge_layer,
+            context,
+            keepFields=False,
+            feedback=multi_feedback,
+            outputLyr="memory:",
+        )
+
+        multi_feedback.setCurrentStep(4)
+        multi_feedback.setProgressText(self.tr("Classifying coverage errors"))
+        self.classifyAndFlag(
+            polygons,
+            coverage_indexes,
+            frame_layer,
+            min_area,
+            multi_feedback,
+        )
+        return {self.FLAGS: self.flag_id, self.NODE_FLAGS: self.node_flag_id}
+
+    def iterFeatures(self, layer, selected_only=False):
+        request = QgsFeatureRequest().setSubsetOfAttributes([])
+        if selected_only:
+            return layer.getSelectedFeatures(request)
+        return layer.getFeatures(request)
+
+    def iterSegments(self, geometry):
+        """Yield consecutive ring segments without joining distinct rings."""
+        if geometry is None or geometry.isNull() or geometry.isEmpty():
+            return
+        abstract_geometry = geometry.constGet()
+        if QgsWkbTypes.isCurvedType(geometry.wkbType()):
+            abstract_geometry = abstract_geometry.segmentize()
+        for polygon in abstract_geometry.coordinateSequence():
+            for ring in polygon:
+                if len(ring) < 2:
+                    continue
+                for index in range(len(ring) - 1):
+                    yield ring[index], ring[index + 1]
+                if ring[0] != ring[-1]:
+                    yield ring[-1], ring[0]
+
+    def buildEdgeHistogram(
+        self, input_layers, frame_layer, selected_only, grid_size, feedback
+    ):
+        edge_count = defaultdict(int)
+        coverage_indexes = []
+        layers = [(layer, False) for layer in input_layers]
+        if frame_layer:
+            layers.append((frame_layer, True))
+        total = sum(
+            layer.selectedFeatureCount()
+            if selected_only and not is_frame
+            else layer.featureCount()
+            for layer, is_frame in layers
+        )
+        step = 100.0 / total if total else 0.0
+        current = 0
+        for layer, is_frame in layers:
+            spatial_index = QgsSpatialIndex() if not is_frame else None
+            for feature in self.iterFeatures(layer, selected_only and not is_frame):
+                if feedback.isCanceled():
+                    return edge_count, coverage_indexes
+                geometry = feature.geometry()
+                if not is_frame:
+                    spatial_index.addFeature(feature)
+                for point_a, point_b in self.iterSegments(geometry):
+                    key = canonical_segment_key(point_a, point_b, grid_size)
+                    if key[0] == key[1]:
+                        continue
+                    edge_count[key] += 1
+                current += 1
+                feedback.setProgress(current * step)
+            if spatial_index is not None:
+                coverage_indexes.append((layer, spatial_index))
+        return edge_count, coverage_indexes
+
+    def buildEdgeLayer(self, edge_keys, grid_size, crs):
+        layer = QgsVectorLayer(
+            "LineString?crs={}".format(crs.authid()), "coverage_edge_xor", "memory"
+        )
+        provider = layer.dataProvider()
+        features = []
+        for feature_id, key in enumerate(edge_keys):
+            feature = QgsFeature()
+            feature.setId(feature_id)
+            feature.setGeometry(
+                QgsGeometry.fromPolylineXY(
+                    [
+                        point_from_key(key[0], grid_size),
+                        point_from_key(key[1], grid_size),
+                    ]
+                )
+            )
+            features.append(feature)
+        provider.addFeatures(features)
+        layer.updateExtents()
+        return layer
+
+    def flagIntermediateNodes(self, edge_keys, grid_size, crs, feedback):
+        if self.nodeFlagSink is None:
+            return
+        edge_keys = list(edge_keys)
+        edge_layer = self.buildEdgeLayer(edge_keys, grid_size, crs)
+        edge_index = QgsSpatialIndex()
+        edge_dict = {}
+        edge_key_dict = {}
+        for feature, key in zip(edge_layer.getFeatures(), edge_keys):
+            edge_index.addFeature(feature)
+            edge_dict[feature.id()] = feature.geometry()
+            edge_key_dict[feature.id()] = key
+
+        tolerance = grid_size if grid_size > 0 else 1e-12
+        tolerance_squared = tolerance * tolerance
+        seen = set()
+        size = 100.0 / len(edge_dict) if edge_dict else 0.0
+        for current, (feature_id, geometry) in enumerate(edge_dict.items()):
+            if feedback.isCanceled():
+                return
+            key = edge_key_dict[feature_id]
+            for endpoint_key in key:
+                point = point_from_key(endpoint_key, grid_size)
+                bbox = QgsGeometry.fromPointXY(point).buffer(tolerance, 2).boundingBox()
+                for candidate_id in edge_index.intersects(bbox):
+                    if candidate_id == feature_id:
+                        continue
+                    candidate_key = edge_key_dict[candidate_id]
+                    if endpoint_key in candidate_key:
+                        continue
+                    distance_squared, _, _, _ = edge_dict[
+                        candidate_id
+                    ].closestSegmentWithContext(point)
+                    if distance_squared < 0 or distance_squared > tolerance_squared:
+                        continue
+                    if endpoint_key in seen:
+                        continue
+                    seen.add(endpoint_key)
+                    self.flagFeature(
+                        QgsGeometry.fromPointXY(point),
+                        self.tr(
+                            "EDGE_NODE_MISMATCH: vertex exists on only one side "
+                            "of a shared edge."
+                        ),
+                        sink=self.nodeFlagSink,
+                    )
+            feedback.setProgress(current * size)
+
+    def classifyAndFlag(
+        self, polygons, coverage_indexes, frame_layer, min_area, feedback
+    ):
+        frame_geometries = (
+            [QgsGeometry(feature.geometry()) for feature in frame_layer.getFeatures()]
+            if frame_layer
+            else []
+        )
+        total = polygons.featureCount()
+        step = 100.0 / total if total else 0.0
+        for current, feature in enumerate(polygons.getFeatures()):
+            if feedback.isCanceled():
+                return
+            geometry = feature.geometry()
+            if geometry.isNull() or geometry.isEmpty() or geometry.area() < min_area:
+                continue
+            point = geometry.pointOnSurface()
+            if frame_geometries and not any(
+                frame.intersects(point) for frame in frame_geometries
+            ):
+                continue
+            covering = []
+            for layer, spatial_index in coverage_indexes:
+                for candidate_id in spatial_index.intersects(point.boundingBox()):
+                    candidate = layer.getFeature(candidate_id)
+                    if candidate.isValid() and candidate.geometry().intersects(point):
+                        covering.append((layer.name(), candidate_id))
+            if not covering:
+                reason = self.tr(
+                    "COVERFAIL_GAP: area is not covered by any input polygon."
+                )
+            elif len(covering) > 1:
+                sources = ", ".join(
+                    "{}:{}".format(layer_name, feature_id)
+                    for layer_name, feature_id in covering
+                )
+                reason = self.tr(
+                    "COVERFAIL_OVERLAP: area is covered by {count} polygons ({sources})."
+                ).format(count=len(covering), sources=sources)
+            else:
+                continue
+            self.flagFeature(geometry, reason)
+            feedback.setProgress(current * step)
 
     def name(self):
-        """
-        Returns the algorithm name, used for identifying the algorithm. This
-        string should be fixed for the algorithm, and must not be localised.
-        The name should be unique within each provider. Names should contain
-        lowercase alphanumeric characters only and no spaces or other
-        formatting characters.
-        """
         return "identifygapsandoverlaps"
 
     def displayName(self):
-        """
-        Returns the translated algorithm name, which should be used for any
-        user-visible display of the algorithm name.
-        """
         return self.tr("Identify Gaps and Overlaps in Coverage Layers")
 
     def group(self):
-        """
-        Returns the name of the group this algorithm belongs to. This string
-        should be localised.
-        """
         return self.tr("QA Tools: Polygon Handling")
 
     def groupId(self):
-        """
-        Returns the unique ID of the group this algorithm belongs to. This
-        string should be fixed for the algorithm, and must not be localised.
-        The group id should be unique within each provider. Group id should
-        contain lowercase alphanumeric characters only and no spaces or other
-        formatting characters.
-        """
         return "DSGTools - QA Tools: Polygon Handling"
 
     def tr(self, string):

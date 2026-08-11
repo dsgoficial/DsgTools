@@ -20,8 +20,6 @@
  ***************************************************************************/
 """
 
-import concurrent.futures
-import os
 from DsgTools.core.Utils.threadingTools import concurrently
 
 from qgis.core import (
@@ -255,13 +253,13 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 if outputFeatures is None or outputFeatures == set():
                     if current % 500 == 0:
                         multiStepFeedback.pushInfo(
-                            self.tr(f"Processed {current}/{nFeats}.")
+                            self.tr("Processed {0}/{1}.").format(current, nFeats)
                         )
                     continue
                 sink.addFeatures(list(map(output_data, outputFeatures)))
                 if current % 500 == 0:
                     multiStepFeedback.pushInfo(
-                        self.tr(f"Processed {current}/{nFeats}.")
+                        self.tr("Processed {0}/{1}.").format(current, nFeats)
                     )
             return {self.OUTPUT: dest_id}
 
@@ -292,7 +290,9 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 continue
             sink.addFeatures(list(map(output_data, outputFeatures)))
             if current % 500 == 0:
-                multiStepFeedback.pushInfo(self.tr(f"Processed {current}/{nFeats}."))
+                multiStepFeedback.pushInfo(
+                    self.tr("Processed {0}/{1}.").format(current, nFeats)
+                )
 
         return {self.OUTPUT: dest_id}
 
@@ -401,7 +401,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         nFeats = clippedPolygons.featureCount()
         if nFeats == 0:
             return None
-        clippedPolygons.beginEditCommand("Updating features")
+        clippedPolygons.beginEditCommand(self.tr("Updating features"))
         clippedPolygonsDataProvider = clippedPolygons.dataProvider()
         if not any(i.name() == classFieldName for i in clippedPolygons.fields()):
             clippedPolygonsDataProvider.addAttributes(

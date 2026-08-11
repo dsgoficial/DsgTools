@@ -22,7 +22,6 @@ Builds a temp rubberband with a given size and shape.
  ***************************************************************************/
 """
 import os
-from qgis import core
 
 
 class CustomFormGenerator(object):
@@ -42,7 +41,7 @@ class CustomFormGenerator(object):
             <item row="0" column="0">
                 <widget class="QLabel" name="label">
                 <property name="text">
-                <string>Relatório de erros :</string>
+                <string>Error report:</string>
                 </property>
                 </widget>
             </item>

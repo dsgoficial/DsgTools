@@ -21,28 +21,19 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
 
 from qgis.PyQt.QtCore import QCoreApplication
 
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsExpression,
-    QgsExpressionContext,
-    QgsExpressionContextUtils,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingOutputMultipleLayers,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterExpression,
     QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterString,
     QgsProject,
     QgsRelation,
     QgsVectorLayerJoinInfo,
 )
-from qgis.utils import iface
 
 
 class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):
@@ -188,4 +179,4 @@ class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):
         This process is not thread safe due to the fact that removeChildNode
         method from QgsLayerTreeGroup is not thread safe.
         """
-        return super().flags() | QgsProcessingAlgorithm.FlagNoThreading
+        return super().flags() | QgsProcessingAlgorithm.Flag.FlagNoThreading

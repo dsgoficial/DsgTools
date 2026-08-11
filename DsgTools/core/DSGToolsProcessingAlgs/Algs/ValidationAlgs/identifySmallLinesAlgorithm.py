@@ -19,23 +19,15 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import str
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
 )
 
 from .validationAlgorithm import ValidationAlgorithm

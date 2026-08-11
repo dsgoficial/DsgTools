@@ -26,10 +26,8 @@ from qgis.core import (
     QgsFeatureRequest,
     QgsWkbTypes,
     QgsGeometry,
-    QgsVectorLayer,
     QgsProcessingException,
     QgsExpression,
-    QgsProperty,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterType,
@@ -38,7 +36,6 @@ from qgis.core import (
 
 from .validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.GeometricTools import geometryHandler
 
 
 class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
@@ -190,24 +187,24 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
         """
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         layerBuffredString, layerApre, layerBpre, distance = layers
-        feedbackTxt = f"Verifying {layerApre} x {layerBpre}"
+        feedbackTxt = self.tr("Verifying {0} x {1}").format(layerApre, layerBpre)
         multiStepFeedback.setProgressText(feedbackTxt)
         layerAbuffered = tempLayersDict[layerBuffredString]
         layerA = tempLayersDict[layerApre]
         lyrAPkFieldNames = self.getLayerPrimaryKeyAttributeNames(layerApre)
         lyrAPkFieldName = "feat_id" if lyrAPkFieldNames is None else lyrAPkFieldNames[0]
         idAText = (
-            self.tr(f"with feature id")
+            self.tr("with feature id")
             if lyrAPkFieldName == "feat_id"
-            else self.tr(f"with {lyrAPkFieldName}")
+            else self.tr("with {0}").format(lyrAPkFieldName)
         )
         layerB = tempLayersDict[layerBpre]
         lyrBPkFieldNames = self.getLayerPrimaryKeyAttributeNames(layerBpre)
         lyrBPkFieldName = "feat_id" if lyrBPkFieldNames is None else lyrBPkFieldNames[0]
         idBText = (
-            self.tr(f"with feature id")
+            self.tr("with feature id")
             if lyrBPkFieldName == "feat_id"
-            else self.tr(f"with {lyrBPkFieldName}")
+            else self.tr("with {0}").format(lyrBPkFieldName)
         )
         multiStepFeedback.setCurrentStep(0)
         joinedLayer = self.algRunner.runJoinAttributesByLocation(
@@ -244,7 +241,15 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
                 continue
             wkbSet.add(geom)
             flagText = self.tr(
-                f"Feature from layer {layerApre} with {idAText}={featA[lyrAPkFieldName]} has distance smaller than {distance} from feature from layer {layerBpre} with {idBText}={featB[lyrAPkFieldName]}"
+                "Feature from layer {0} with {1}={2} has distance smaller than {3} from feature from layer {4} with {5}={6}"
+            ).format(
+                layerApre,
+                idAText,
+                featA[lyrAPkFieldName],
+                distance,
+                layerBpre,
+                idBText,
+                featB[lyrAPkFieldName],
             )
             self.flagFeature(geom, flagText)
             multiStepFeedback.setProgress(current * stepSize)

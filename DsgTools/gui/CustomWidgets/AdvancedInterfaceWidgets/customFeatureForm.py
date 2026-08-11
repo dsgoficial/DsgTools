@@ -20,12 +20,11 @@
  ***************************************************************************/
 """
 
-import os, sys
+import os
 
 from qgis.core import Qgis
 from qgis.gui import QgsMessageBar
-from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot
-from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtCore import QSize, pyqtSlot
 from qgis.PyQt.QtWidgets import (
     QLabel,
     QDialog,
@@ -38,7 +37,7 @@ from qgis.PyQt.QtWidgets import (
     QSizePolicy,
     QDoubleSpinBox,
 )
-from qgis.PyQt import uic, QtWidgets, QtGui
+from qgis.PyQt import uic
 
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler

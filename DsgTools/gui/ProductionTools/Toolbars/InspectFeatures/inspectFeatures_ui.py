@@ -332,4 +332,3 @@ from qgis.gui import (
     QgsFieldComboBox,
 )
 from qgis import core
-import resources_rc

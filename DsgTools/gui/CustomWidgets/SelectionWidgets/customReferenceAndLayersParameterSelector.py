@@ -25,7 +25,7 @@ from collections import OrderedDict
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtCore import pyqtSlot
 
 
 FORM_CLASS, _ = uic.loadUiType(

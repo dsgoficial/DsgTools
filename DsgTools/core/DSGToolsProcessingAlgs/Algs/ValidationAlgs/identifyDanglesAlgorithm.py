@@ -23,7 +23,7 @@
 import concurrent.futures
 import os
 from collections import defaultdict
-from typing import DefaultDict, Dict, Tuple, Union
+from typing import Dict, Tuple, Union
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner, runProcessing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler

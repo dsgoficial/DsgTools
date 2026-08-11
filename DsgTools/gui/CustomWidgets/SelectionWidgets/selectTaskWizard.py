@@ -19,13 +19,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os, json
+import os
 
 # PyQt imports
-from qgis.PyQt import QtWidgets, QtCore, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt
-from qgis.PyQt.QtWidgets import QApplication, QMessageBox
-from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtWidgets import QMessageBox
 
 # DsgTools imports
 FORM_CLASS, _ = uic.loadUiType(

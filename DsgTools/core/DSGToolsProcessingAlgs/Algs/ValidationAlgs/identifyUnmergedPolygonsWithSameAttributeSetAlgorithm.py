@@ -21,22 +21,15 @@
  ***************************************************************************/
 """
 
-import concurrent.futures
 from collections import defaultdict
-import os
 from typing import Dict, Set, List, Tuple
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.GeometricTools import graphHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsFeatureRequest,
     QgsGeometry,
     QgsFeature,
-    QgsFeatureSink,
     QgsProcessing,
-    QgsProject,
-    QgsFields,
     QgsProcessingFeatureSourceDefinition,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
@@ -45,7 +38,6 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
-    QgsProcessingException,
     QgsProcessingParameterNumber,
     QgsProcessingParameterDefinition,
     QgsVectorLayer,
@@ -126,7 +118,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
             minValue=0.0,
         )
         areaFilter.setFlags(
-            areaFilter.flags() | QgsProcessingParameterDefinition.FlagAdvanced
+            areaFilter.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
         )
         self.addParameter(areaFilter)
         self.addParameter(
@@ -329,8 +321,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
                 break
             bbox = geomFlag.boundingBox()
             if lineFilterLyr is not None and any(
-                geomFlag.intersection(f.geometry()).type()
-                == QgsWkbTypes.GeometryType.LineGeometry
+                geomFlag.intersection(f.geometry()).type() == Qgis.GeometryType.Line
                 and geomFlag.intersection(f.geometry()).length() > 0
                 for f in lineFilterLyr.getFeatures(bbox)
             ):
@@ -428,7 +419,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
             if (
                 flagGeomIntersection.isNull()
                 or flagGeomIntersection.isEmpty()
-                or flagGeomIntersection.type() != QgsWkbTypes.GeometryType.LineGeometry
+                or flagGeomIntersection.type() != Qgis.GeometryType.Line
             ):
                 continue
             flagLinesGeomSet.add(flagGeomIntersection)

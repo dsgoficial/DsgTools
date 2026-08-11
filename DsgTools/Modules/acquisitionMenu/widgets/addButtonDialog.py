@@ -1,4 +1,4 @@
-import os, sys, copy
+import os
 from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 import uuid
@@ -145,7 +145,7 @@ class AddButtonDialog(QtWidgets.QDialog):
 
     def getData(self):
         if not self.validData():
-            raise Exception("Dados inválidos!")
+            raise Exception(self.tr("Invalid data!"))
         return {
             "buttonId": self.getUUID(),
             "buttonName": self.nameLe.text(),
@@ -237,7 +237,7 @@ class AddButtonDialog(QtWidgets.QDialog):
     @QtCore.pyqtSlot(bool)
     def on_saveBtn_clicked(self):
         if not self.validData():
-            self.showError("Aviso", "Dados inválidos")
+            self.showError(self.tr("Warning"), self.tr("Invalid data"))
             return
         self.accept()
         self.getCallback()(self.getData())

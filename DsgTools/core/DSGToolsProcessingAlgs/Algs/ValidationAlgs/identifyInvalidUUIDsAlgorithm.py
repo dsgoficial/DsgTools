@@ -23,6 +23,7 @@
 import uuid
 
 from qgis.core import (
+    Qgis,
     QgsField,
     QgsFields,
     QgsProcessing,
@@ -91,7 +92,7 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
     def getFlagGeometry(self, feature):
         if (
             QgsWkbTypes.geometryType(feature.geometry().wkbType())
-            == QgsWkbTypes.GeometryType.LineGeometry
+            == Qgis.GeometryType.Line
         ):
             multiPoints = feature.geometry().convertToType(0, True)
             pointList = multiPoints.asMultiPoint()
@@ -163,8 +164,8 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
                         }
                     )
                     for descr, hasError in [
-                        ("uuid inválido", not isValidUuid),
-                        ("uuid duplicado", hasDuplicateValues),
+                        (self.tr("invalid uuid"), not isValidUuid),
+                        (self.tr("duplicate uuid"), hasDuplicateValues),
                     ]
                     if hasError
                 ]

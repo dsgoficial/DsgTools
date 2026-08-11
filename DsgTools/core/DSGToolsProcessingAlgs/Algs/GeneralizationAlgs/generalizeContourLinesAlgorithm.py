@@ -1,0 +1,666 @@
+# -*- coding: utf-8 -*-
+"""
+/***************************************************************************
+ DsgTools
+                                 A QGIS plugin
+ Brazilian Army Cartographic Production Tools
+                              -------------------
+        begin                : 2026-04-10
+        git sha              : $Format:%H$
+        copyright            : (C) 2026 by Brazilian Army
+        email                : ...
+ ***************************************************************************/
+"""
+
+import uuid
+
+from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.core import (
+    Qgis,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsExpression,
+    QgsExpressionContext,
+    QgsExpressionContextUtils,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsField,
+    QgsFields,
+    QgsGeometry,
+    QgsPointXY,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterExpression,
+    QgsProcessingParameterField,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsUnitTypes,
+    QgsWkbTypes,
+)
+import numpy as np
+
+
+class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
+    INPUT = "INPUT"
+    ELEVATION_ATTR = "ELEVATION_ATTR"
+    CONTOUR_INTERVAL = "CONTOUR_INTERVAL"
+    DEPRESSION_EXPRESSION = "DEPRESSION_EXPRESSION"
+    SCALE = "SCALE"
+    FRAME = "FRAME"
+    OUTPUT = "OUTPUT"
+
+    # a cada 5 curvas sai uma mestra
+    INDEX_CONTOUR_FACTOR = 5
+
+    def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.INPUT,
+                self.tr("Input contour lines"),
+                [QgsProcessing.TypeVectorLine],
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.ELEVATION_ATTR,
+                self.tr("Elevation attribute"),
+                parentLayerParameterName=self.INPUT,
+                type=QgsProcessingParameterField.Numeric,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.CONTOUR_INTERVAL,
+                self.tr("Contour interval"),
+                type=QgsProcessingParameterNumber.Double,
+                minValue=0,
+                defaultValue=10,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                self.DEPRESSION_EXPRESSION,
+                self.tr("Filter expression for contour that are depressions."),
+                """ "depressao" = 1 """,
+                self.INPUT,
+                optional=True,
+            )
+        )
+
+        self.scales = [
+            "1:25.000",
+            "1:50.000",
+            "1:100.000",
+            "1:250.000",
+        ]
+        # Uma curva fechada menor que 12 mm de perímetro na escala de saída não é
+        # representável, então é descartada. Em metros no terreno.
+        self.minClosedPerimeters = {
+            0: 12e-3 * 25_000,
+            1: 12e-3 * 50_000,
+            2: 12e-3 * 100_000,
+            3: 12e-3 * 250_000,
+        }
+
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.SCALE, self.tr("Scale"), options=self.scales, defaultValue=0
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.FRAME,
+                self.tr("Frame layer (clip boundary)"),
+                [QgsProcessing.TypeVectorPolygon],
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT, self.tr("Prepared contour lines")
+            )
+        )
+
+    def processAlgorithm(self, parameters, context, feedback):
+        try:
+            from scipy.interpolate import splprep, splev
+        except ImportError:
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires the Python scipy library. Please install this library and try again."
+                )
+            )
+        inputLayer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        elevAttr = self.parameterAsString(parameters, self.ELEVATION_ATTR, context)
+        contourInterval = self.parameterAsDouble(
+            parameters, self.CONTOUR_INTERVAL, context
+        )
+        scale = self.parameterAsEnum(parameters, self.SCALE, context)
+        minClosedPerimeter = self.minClosedPerimeters[scale]
+        depressionExpression = self.parameterAsExpression(
+            parameters, self.DEPRESSION_EXPRESSION, context
+        )
+        if depressionExpression == "":
+            depressionExpression = None
+        frameLayer = self.parameterAsVectorLayer(parameters, self.FRAME, context)
+
+        if inputLayer is None:
+            raise QgsProcessingException(self.tr("Invalid input layer"))
+        if frameLayer is None:
+            raise QgsProcessingException(self.tr("Invalid frame layer"))
+
+        depressionExpr = None
+        depressionExprContext = None
+        if depressionExpression is not None:
+            depressionExpr = QgsExpression(depressionExpression)
+            if depressionExpr.hasParserError():
+                raise QgsProcessingException(
+                    self.tr("Invalid depression expression: {0}").format(
+                        depressionExpr.parserErrorString()
+                    )
+                )
+            depressionExprContext = QgsExpressionContext()
+            depressionExprContext.appendScopes(
+                QgsExpressionContextUtils.globalProjectLayerScopes(inputLayer)
+            )
+            depressionExpr.prepare(depressionExprContext)
+
+        sourceCrs = inputLayer.sourceCrs()
+        projectedCrs = self._getProjectedCrs(inputLayer)
+        toProjected = QgsCoordinateTransform(
+            sourceCrs, projectedCrs, context.transformContext()
+        )
+        toOriginal = QgsCoordinateTransform(
+            projectedCrs, sourceCrs, context.transformContext()
+        )
+        needsTransform = sourceCrs != projectedCrs
+
+        # Build frame geometry (dissolve all frame features)
+        frameGeom = QgsGeometry()
+        for frameFeat in frameLayer.getFeatures():
+            g = frameFeat.geometry()
+            if g.isNull() or g.isEmpty():
+                continue
+            frameGeom = g if frameGeom.isNull() else frameGeom.combine(g)
+
+        if frameGeom.isNull() or frameGeom.isEmpty():
+            raise QgsProcessingException(self.tr("Frame layer has no valid geometries"))
+
+        # Transform frame to input CRS if needed
+        frameCrs = frameLayer.sourceCrs()
+        if frameCrs != sourceCrs:
+            frameToInput = QgsCoordinateTransform(
+                frameCrs, sourceCrs, context.transformContext()
+            )
+            frameGeom.transform(frameToInput)
+
+        # Output fields (EDGV schema)
+        outFields = QgsFields()
+        outFields.append(QgsField("id", QVariant.String, "varchar", 254))
+        outFields.append(QgsField("cota", QVariant.Int, "int4"))
+        outFields.append(QgsField("indice", QVariant.Int, "int2"))
+        outFields.append(QgsField("depressao", QVariant.Int, "int2"))
+        outFields.append(QgsField("visivel", QVariant.Int, "int2"))
+        outFields.append(QgsField("dentro_massa_dagua", QVariant.Int, "int2"))
+        outFields.append(QgsField("texto_edicao", QVariant.String, "varchar", 255))
+        outFields.append(QgsField("observacao", QVariant.String, "varchar", 255))
+
+        (sink, destId) = self.parameterAsSink(
+            parameters,
+            self.OUTPUT,
+            context,
+            outFields,
+            QgsWkbTypes.MultiLineString,
+            sourceCrs,
+        )
+
+        # Step 1: Collect all single-part lines grouped by elevation
+        feedback.setProgressText(
+            self.tr("Step 1/6: Collecting and exploding geometries...")
+        )
+        elevGroups = {}
+        featureCount = inputLayer.featureCount()
+        total = 100.0 / featureCount if featureCount else 0
+
+        for current, feat in enumerate(inputLayer.getFeatures()):
+            if feedback.isCanceled():
+                return {self.OUTPUT: destId}
+
+            geom = feat.geometry()
+            if geom.isNull() or geom.isEmpty():
+                continue
+
+            cotaValue = feat[elevAttr]
+            if cotaValue is None or cotaValue == QVariant():
+                continue
+            cotaValue = int(cotaValue)
+
+            isDepression = False
+            if depressionExpr is not None:
+                depressionExprContext.setFeature(feat)
+                isDepression = bool(depressionExpr.evaluate(depressionExprContext))
+
+            # Explode multipart to single parts. O agrupamento inclui a depressão
+            # porque o passo seguinte mescla o que estiver no mesmo grupo: juntar
+            # uma curva de depressão com uma normal de mesma cota perderia a
+            # atribuição de uma das duas.
+            parts = self._explodeToParts(geom)
+            groupKey = (cotaValue, isDepression)
+            if groupKey not in elevGroups:
+                elevGroups[groupKey] = []
+            elevGroups[groupKey].extend(parts)
+
+            feedback.setProgress(int(current * total * 0.1))
+
+        feedback.setProgress(10)
+        if feedback.isCanceled():
+            return {self.OUTPUT: destId}
+
+        # Step 2: Merge connected lines per elevation group
+        feedback.setProgressText(self.tr("Step 2/6: Merging connected lines..."))
+        mergedLines = []
+        groupCount = len(elevGroups)
+        for i, ((cota, isDepression), parts) in enumerate(elevGroups.items()):
+            if feedback.isCanceled():
+                return {self.OUTPUT: destId}
+
+            merged = self._mergeConnectedLines(parts)
+            for line in merged:
+                mergedLines.append((cota, isDepression, line))
+
+            feedback.setProgress(10 + int((i / max(groupCount, 1)) * 10))
+
+        feedback.setProgress(20)
+        if feedback.isCanceled():
+            return {self.OUTPUT: destId}
+
+        # Step 3: Remove duplicate vertices
+        feedback.setProgressText(self.tr("Step 3/6: Validating geometries..."))
+        validLines = []
+        for cota, isDepression, geom in mergedLines:
+            geom.removeDuplicateNodes()
+            if not geom.isNull() and not geom.isEmpty():
+                validLines.append((cota, isDepression, geom))
+        mergedLines = validLines
+
+        # Step 4: Filter closed curves by minimum perimeter
+        feedback.setProgressText(
+            self.tr(
+                "Step 4/6: Filtering closed contours under {0} m of perimeter..."
+            ).format(minClosedPerimeter)
+        )
+        filteredLines = []
+        # A geometria é levada ao CRS projetado já aqui, e não só na generalização:
+        # o comprimento tem que sair em metros para ser comparado com o mínimo. Medir
+        # no CRS de origem devolvia graus quando a entrada era geográfica, e como todo
+        # anel mede uma fração de grau, todos eram descartados em silêncio.
+        toMeters = QgsUnitTypes.fromUnitToUnitFactor(
+            projectedCrs.mapUnits(), QgsUnitTypes.DistanceMeters
+        )
+
+        for cota, isDepression, geom in mergedLines:
+            if feedback.isCanceled():
+                return {self.OUTPUT: destId}
+
+            if needsTransform:
+                geom.transform(toProjected)
+
+            geom = self._dropSmallClosedRings(geom, minClosedPerimeter, toMeters)
+            if geom is None:
+                continue
+
+            filteredLines.append((cota, isDepression, geom))
+
+        feedback.setProgress(35)
+        if feedback.isCanceled():
+            return {self.OUTPUT: destId}
+
+        # Step 5: Generalization chain: Douglas(2m) → NURBfit(degree=3) → Douglas(3m)
+        feedback.setProgressText(
+            self.tr("Step 5/6: Generalizing (Douglas → NURBfit → Douglas)...")
+        )
+        generalizedLines = []
+        lineCount = len(filteredLines)
+
+        for i, (cota, isDepression, geom) in enumerate(filteredLines):
+            if feedback.isCanceled():
+                return {self.OUTPUT: destId}
+
+            # a geometria já está no CRS projetado desde o passo 4
+            # Douglas-Peucker 2m
+            geom = geom.simplify(2.0)
+            if geom.isNull() or geom.isEmpty():
+                continue
+
+            # NURBfit (degree=3, s=0 interpolation)
+            geom = self._nurbfitSmooth(geom)
+            if geom.isNull() or geom.isEmpty():
+                continue
+
+            # Douglas-Peucker 3m
+            geom = geom.simplify(3.0)
+            if geom.isNull() or geom.isEmpty():
+                continue
+
+            # Transform back to original CRS
+            if needsTransform:
+                geom.transform(toOriginal)
+
+            generalizedLines.append((cota, isDepression, geom))
+
+            feedback.setProgress(35 + int((i / max(lineCount, 1)) * 45))
+
+        feedback.setProgress(80)
+        if feedback.isCanceled():
+            return {self.OUTPUT: destId}
+
+        # Step 6: Clip by frame and create output features
+        feedback.setProgressText(
+            self.tr("Step 6/6: Clipping by frame and writing output...")
+        )
+        outputCount = len(generalizedLines)
+
+        for i, (cota, isDepression, geom) in enumerate(generalizedLines):
+            if feedback.isCanceled():
+                return {self.OUTPUT: destId}
+
+            clipped = geom.intersection(frameGeom)
+            if clipped.isNull() or clipped.isEmpty():
+                continue
+
+            # Ensure MultiLineString output
+            if clipped.wkbType() in (
+                QgsWkbTypes.LineString,
+                QgsWkbTypes.LineStringZ,
+                QgsWkbTypes.LineStringM,
+                QgsWkbTypes.LineStringZM,
+            ):
+                clipped = QgsGeometry.collectGeometry([clipped])
+            elif clipped.wkbType() in (
+                QgsWkbTypes.GeometryCollection,
+                QgsWkbTypes.GeometryCollectionZ,
+            ):
+                # Extract only line parts from geometry collection
+                lineParts = []
+                for part in clipped.asGeometryCollection():
+                    if part.type() == Qgis.GeometryType.Line:
+                        lineParts.append(part)
+                if not lineParts:
+                    continue
+                clipped = QgsGeometry.collectGeometry(lineParts)
+
+            # Skip non-line results (point intersections, etc.)
+            if clipped.type() != Qgis.GeometryType.Line:
+                continue
+
+            isIndexContour = self._isIndexContour(cota, contourInterval)
+            # Cada arco vira uma feição própria: manter os dois no mesmo multipart
+            # deixaria a feição ainda começando e terminando no mesmo ponto, que é o
+            # que a segmentação existe para desfazer.
+            for part in self._splitClosedParts(clipped):
+                outFeat = QgsFeature(outFields)
+                outFeat.setGeometry(
+                    QgsGeometry.collectGeometry([QgsGeometry.fromPolylineXY(part)])
+                )
+                outFeat.setAttributes(
+                    [
+                        str(uuid.uuid4()),  # id
+                        int(cota),  # cota
+                        1 if isIndexContour else 2,  # indice
+                        1 if isDepression else 2,  # depressao
+                        1,  # visivel
+                        2,  # dentro_massa_dagua
+                        str(int(cota)),  # texto_edicao
+                        "",  # observacao
+                    ]
+                )
+                sink.addFeature(outFeat, QgsFeatureSink.FastInsert)
+
+            feedback.setProgress(80 + int((i / max(outputCount, 1)) * 20))
+
+        feedback.setProgress(100)
+        return {self.OUTPUT: destId}
+
+    def _isIndexContour(self, cota, contourInterval):
+        """
+        Diz se a cota é de curva mestra: uma a cada cinco, ou seja, múltiplo de
+        cinco vezes a equidistância.
+        """
+        indexInterval = int(self.INDEX_CONTOUR_FACTOR * contourInterval)
+        if indexInterval <= 0:
+            return False
+        return int(cota) % indexInterval == 0
+
+    def _getProjectedCrs(self, layer):
+        """Return a suitable projected CRS for metric operations.
+        If the layer CRS is already projected (metric), return it as-is.
+        Otherwise compute the UTM zone from the layer extent centroid.
+        """
+        crs = layer.sourceCrs()
+        if not crs.isGeographic():
+            return crs
+        extent = layer.extent()
+        lon = extent.center().x()
+        lat = extent.center().y()
+        zone = int((lon + 180) / 6) + 1
+        epsg = 32600 + zone if lat >= 0 else 32700 + zone
+        return QgsCoordinateReferenceSystem(f"EPSG:{epsg}")
+
+    def _explodeToParts(self, geometry):
+        """Explode a (possibly multi-part) geometry into single LineString geometries."""
+        parts = []
+        if geometry.isMultipart():
+            for part in geometry.asMultiPolyline():
+                if len(part) >= 2:
+                    parts.append(QgsGeometry.fromPolylineXY(part))
+        else:
+            polyline = geometry.asPolyline()
+            if len(polyline) >= 2:
+                parts.append(QgsGeometry.fromPolylineXY(polyline))
+        return parts
+
+    def _mergeConnectedLines(self, geometries):
+        """Merge a list of single-part line geometries that share endpoints.
+        Equivalent to FME LineCombiner.
+        """
+        if not geometries:
+            return []
+        # Collect all into a single multi-line and use mergeLines
+        multi = QgsGeometry.collectGeometry(geometries)
+        merged = multi.mergeLines()
+        if merged.isNull() or merged.isEmpty():
+            return geometries
+        # The result may be multi-part (disjoint groups)
+        if merged.isMultipart():
+            result = []
+            for part in merged.asMultiPolyline():
+                if len(part) >= 2:
+                    result.append(QgsGeometry.fromPolylineXY(part))
+            return result
+        else:
+            return [merged]
+
+    def _toPolylineParts(self, geometry):
+        """
+        Devolve as partes de uma geometria de linha como listas de QgsPointXY.
+
+        Sempre uma lista, mesmo para geometria simples, porque decidir o fechamento
+        olhando só a primeira parte e medir o comprimento da geometria inteira
+        compara coisas diferentes.
+        """
+        if geometry is None or geometry.isNull() or geometry.isEmpty():
+            return []
+        if geometry.isMultipart():
+            return [part for part in geometry.asMultiPolyline() if len(part) >= 2]
+        polyline = geometry.asPolyline()
+        return [polyline] if len(polyline) >= 2 else []
+
+    def _fromPolylineParts(self, parts):
+        """Remonta uma geometria a partir das partes, simples quando só há uma."""
+        if not parts:
+            return None
+        if len(parts) == 1:
+            return QgsGeometry.fromPolylineXY(parts[0])
+        return QgsGeometry.fromMultiPolylineXY(parts)
+
+    def _dropSmallClosedRings(self, geometry, minClosedPerimeter, toMeters):
+        """
+        Descarta os anéis fechados menores que o perímetro mínimo, avaliando cada
+        parte por si. Devolve None quando não sobra parte alguma.
+        """
+        keptParts = []
+        for part in self._toPolylineParts(geometry):
+            if self._isClosed(part):
+                ring = QgsGeometry.fromPolylineXY(part)
+                if ring.length() * toMeters < minClosedPerimeter:
+                    continue
+            keptParts.append(part)
+        return self._fromPolylineParts(keptParts)
+
+    def _splitClosedParts(self, geometry):
+        """
+        Quebra em dois cada parte fechada da geometria.
+
+        Um anel começa e termina no mesmo ponto, o que é uma autointerseção. Ao
+        final da preparação ele é segmentado em dois arcos, de modo que nenhuma
+        parte se toca. Partes abertas passam intactas.
+        """
+        outputParts = []
+        for part in self._toPolylineParts(geometry):
+            # menos de quatro vértices não dá dois arcos com dois vértices cada
+            if self._isClosed(part) and len(part) >= 4:
+                mid = len(part) // 2
+                outputParts.append(part[: mid + 1])
+                outputParts.append(part[mid:])
+            else:
+                outputParts.append(part)
+        return outputParts
+
+    def _isClosed(self, polyline, tolerance=1e-8):
+        """Check if a polyline is closed (ring)."""
+        if len(polyline) < 3:
+            return False
+        return polyline[0].distance(polyline[-1]) < tolerance
+
+    def _nurbfitSmooth(self, geometry, degree=3):
+        """Apply NURBfit B-spline interpolation (s=0) to a line geometry."""
+        if geometry.isMultipart():
+            parts = []
+            for part in geometry.asMultiPolyline():
+                smoothed = self._nurbfitLine(part, degree)
+                if smoothed:
+                    parts.append(smoothed)
+            if parts:
+                return QgsGeometry.fromMultiPolylineXY(parts)
+            return geometry
+        else:
+            polyline = geometry.asPolyline()
+            smoothed = self._nurbfitLine(polyline, degree)
+            if smoothed:
+                return QgsGeometry.fromPolylineXY(smoothed)
+            return geometry
+
+    def _nurbfitLine(self, line, degree=3):
+        """Apply B-spline interpolation to a polyline."""
+        from scipy.interpolate import splprep, splev
+
+        if len(line) <= degree + 1:
+            return line
+
+        x = np.array([p.x() for p in line])
+        y = np.array([p.y() for p in line])
+
+        closed = self._isClosed(line)
+        if closed:
+            x[-1] = x[0]
+            y[-1] = y[0]
+
+        x_min, x_max = x.min(), x.max()
+        y_min, y_max = y.min(), y.max()
+        scale = max(x_max - x_min, y_max - y_min)
+        if scale < 1e-12:
+            return line
+
+        x_norm = (x - x_min) / scale
+        y_norm = (y - y_min) / scale
+
+        try:
+            tck, u = splprep([x_norm, y_norm], s=0, k=degree, per=1 if closed else 0)
+
+            numPoints = len(line) * 10
+            u_new = np.linspace(0, 1, numPoints)
+            xn_new, yn_new = splev(u_new, tck)
+
+            x_new = xn_new * scale + x_min
+            y_new = yn_new * scale + y_min
+
+            output = [QgsPointXY(float(xi), float(yi)) for xi, yi in zip(x_new, y_new)]
+
+            if not closed:
+                output[0] = QgsPointXY(float(x[0]), float(y[0]))
+                output[-1] = QgsPointXY(float(x[-1]), float(y[-1]))
+            else:
+                output[-1] = output[0]
+
+            return output
+        except Exception:
+            return line
+
+    def name(self):
+        return "generalizecontourlines"
+
+    def displayName(self):
+        return self.tr("Generalize Contour Lines")
+
+    def group(self):
+        return self.tr("Generalization Algorithms")
+
+    def groupId(self):
+        return "DSGTools - Generalization Algorithms"
+
+    def tr(self, string):
+        return QCoreApplication.translate("GeneralizeContourLinesAlgorithm", string)
+
+    def createInstance(self):
+        return GeneralizeContourLinesAlgorithm()
+
+    def shortHelpString(self):
+        return self.tr(
+            "Prepares raw contour lines for cartographic production following "
+            "the EDGV standard.\n\n"
+            "The algorithm performs the following steps:\n"
+            "1. Explodes multipart geometries and merges connected lines that share "
+            "both elevation and depression attribution\n"
+            "2. Removes duplicate vertices\n"
+            "3. Filters out closed contours whose perimeter is under 12 mm at the "
+            "output scale, since they are not representable\n"
+            "4. Applies a three-step generalization chain:\n"
+            "   a) Douglas-Peucker simplification (2 m tolerance)\n"
+            "   b) NURBfit B-spline interpolation (degree 3)\n"
+            "   c) Douglas-Peucker simplification (3 m tolerance)\n"
+            "5. Clips the result to the frame boundary\n"
+            "6. Creates output features with EDGV attributes (id, cota, "
+            "indice, depressao, visivel, dentro_massa_dagua, texto_edicao)\n\n"
+            "The algorithm handles non-metric coordinate systems by "
+            "automatically projecting to an appropriate UTM zone for metric "
+            "operations.\n\n"
+            "Parameters:\n"
+            "- Input contour lines: Raw contour line layer\n"
+            "- Elevation attribute: Field containing the elevation value\n"
+            "- Contour interval: used to set the index contour attribute, since one "
+            "in every five contours is an index contour (a multiple of five times "
+            "the contour interval)\n"
+            "- Filter expression for contour that are depressions: used to carry the "
+            "depression attribution over to the output\n"
+            "- Scale: output scale, which sets the minimum perimeter for closed "
+            "contours (12 mm at scale: 300 m at 1:25.000, 600 m at 1:50.000, "
+            "1200 m at 1:100.000, 3000 m at 1:250.000)\n"
+            "- Frame layer: Polygon layer used to clip the output"
+        )

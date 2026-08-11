@@ -10,11 +10,11 @@
    <body>
 
       <div>
-         <p > Help versão 1.0 </p>
+         <p > Help versão 2.0 </p>
          <hr/>
          <h2>Descrição:</h2>
          <h4 style="text-align: center; padding: 6px;">
-            Identifica feições do tipo polígono que possuem buracos ou sobreposições entre elas. Neste processo, uma lista de camadas que compõem a cobertura terrestre (CT) é unificada, de modo a se comportarem como uma única camada (a camada de cobertura terrestre).
+            Identifica buracos, sobreposições e vértices não compartilhados nas arestas de uma cobertura poligonal. As arestas são comparadas por uma chave canônica independente de orientação, sem remover os nós intermediários existentes.
          </h4>
          <hr />
       </div>
@@ -29,8 +29,12 @@
             <span style="margin-bottom: 10px;">
                  &#8226; Camadas de Referência &rarr;  Camada de limite da região a ser analisada.
              </span>
-
-            <span style="color:#ff0000; font-weight: bold;"><u>Atenção:</u>Só funciona com <u>GRASS GIS provider e GRASS 7</u> ativado, localizado em complementos.</span>
+            <span style="margin-bottom: 10px;">
+                 &#8226; Tolerância de comparação &rarr;  Grade usada somente para comparar coordenadas próximas; não elimina nós intermediários.
+             </span>
+            <span style="margin-bottom: 10px;">
+                 &#8226; Flags de nós &rarr;  Pontos onde um lado da aresta possui um vértice que não existe no outro lado.
+             </span>
          </p>  Camadas de Referência
          <hr />
 

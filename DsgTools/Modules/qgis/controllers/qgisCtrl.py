@@ -1,9 +1,9 @@
 from qgis import core, gui
 from qgis.utils import iface
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
-import json
+from qgis.PyQt import QtCore
+from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.Modules.qgis.factories.actionsFactory import ActionsFactory
-from qgis.core import QgsWkbTypes
+from qgis.core import Qgis
 
 
 class QgisCtrl:
@@ -120,9 +120,11 @@ class QgisCtrl:
 
     def getAcquisitionToolNames(self):
         return {
-            "Padrão": None,
-            "Ângulo Reto": "RightDegreeAngleDigitizing",
-            "Mão Livre": "FreeHand",
+            QCoreApplication.translate("QgisCtrl", "Default"): None,
+            QCoreApplication.translate(
+                "QgisCtrl", "Right Angle"
+            ): "RightDegreeAngleDigitizing",
+            QCoreApplication.translate("QgisCtrl", "Free Hand"): "FreeHand",
         }
 
     def addDockWidget(
@@ -217,7 +219,13 @@ class QgisCtrl:
                     feature.setAttribute(indx, valueMap[attributeValue])
             elif attributeValue and attributeValue in ["NULL"]:
                 feature.setAttribute(indx, None)
-            elif attributeValue and not (attributeValue in ["NULL", "IGNORAR"]):
+            elif attributeValue and not (
+                attributeValue
+                in [
+                    "NULL",
+                    QCoreApplication.translate("AttributeTableWidget", "IGNORE"),
+                ]
+            ):
                 """if re.match('^\@value\(".+"\)$', value):
                 variable = value.split('"')[-2]
                 value = ProjectQgis(self.iface).getVariableProject(variable)"""
@@ -255,7 +263,13 @@ class QgisCtrl:
                     feature.setAttribute(indx, valueMap[attributeValue])
             elif attributeValue and attributeValue in ["NULL"]:
                 feature.setAttribute(indx, None)
-            elif attributeValue and not (attributeValue in ["NULL", "IGNORAR"]):
+            elif attributeValue and not (
+                attributeValue
+                in [
+                    "NULL",
+                    QCoreApplication.translate("AttributeTableWidget", "IGNORE"),
+                ]
+            ):
                 """if re.match('^\@value\(".+"\)$', value):
                 variable = value.split('"')[-2]
                 value = ProjectQgis(self.iface).getVariableProject(variable)"""
@@ -263,15 +277,11 @@ class QgisCtrl:
 
     def cutAndPasteSelectedFeatures(self, layer, destinatonLayer, attributes):
         geometryFilterDict = {
-            QgsWkbTypes.GeometryType.PointGeometry: (
-                QgsWkbTypes.GeometryType.PointGeometry,
-            ),
-            QgsWkbTypes.GeometryType.LineGeometry: (
-                QgsWkbTypes.GeometryType.LineGeometry,
-            ),
-            QgsWkbTypes.GeometryType.PolygonGeometry: (
-                QgsWkbTypes.GeometryType.PointGeometry,
-                QgsWkbTypes.GeometryType.PolygonGeometry,
+            Qgis.GeometryType.Point: (Qgis.GeometryType.Point,),
+            Qgis.GeometryType.Line: (Qgis.GeometryType.Line,),
+            Qgis.GeometryType.Polygon: (
+                Qgis.GeometryType.Point,
+                Qgis.GeometryType.Polygon,
             ),
         }
         if (
@@ -288,10 +298,8 @@ class QgisCtrl:
             newFeat.setFields(destinatonLayer.fields())
             newGeom = (
                 feature.geometry().pointOnSurface()
-                if destinatonLayer.geometryType()
-                == core.QgsWkbTypes.GeometryType.PointGeometry
-                and layer.geometryType()
-                == core.QgsWkbTypes.GeometryType.PolygonGeometry
+                if destinatonLayer.geometryType() == core.Qgis.GeometryType.Point
+                and layer.geometryType() == core.Qgis.GeometryType.Polygon
                 else feature.geometry()
             )
             newFeat.setGeometry(newGeom)

@@ -2,6 +2,7 @@
 from collections import defaultdict
 from qgis.PyQt.QtCore import QCoreApplication, QMetaType
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
@@ -32,28 +33,28 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 "INPUT_LAYER_LIST",
-                self.tr("Selecionar camadas"),
+                self.tr("Select layers"),
                 QgsProcessing.TypeVectorAnyGeometry,
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT1, self.tr("Flag - unicode não permitido (ponto)")
+                self.OUTPUT1, self.tr("Flag - disallowed unicode (point)")
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT2, self.tr("Flag - unicode não permitido (linha)")
+                self.OUTPUT2, self.tr("Flag - disallowed unicode (line)")
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT3, self.tr("Flag - unicode não permitido (área)")
+                self.OUTPUT3, self.tr("Flag - disallowed unicode (polygon)")
             )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        feedback.setProgressText("Verificando unicodes...")
+        feedback.setProgressText(self.tr("Checking unicodes..."))
         layerList = self.parameterAsLayerList(parameters, "INPUT_LAYER_LIST", context)
         whitelist = self.getWhitelist(self.getCsvFilePath())
         flags = defaultdict(list)
@@ -128,19 +129,19 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
             parameters, context, self.OUTPUT1, QgsWkbTypes.MultiPoint, fields
         )
         returnDict[self.OUTPUT1] = point_sink_id
-        sinkDict[QgsWkbTypes.GeometryType.PointGeometry] = point_sink
+        sinkDict[Qgis.GeometryType.Point] = point_sink
 
         line_sink, line_sink_id = self.createOutput(
             parameters, context, self.OUTPUT2, QgsWkbTypes.MultiLineString, fields
         )
         returnDict[self.OUTPUT2] = line_sink_id
-        sinkDict[QgsWkbTypes.GeometryType.LineGeometry] = line_sink
+        sinkDict[Qgis.GeometryType.Line] = line_sink
 
         polygon_sink, polygon_sink_id = self.createOutput(
             parameters, context, self.OUTPUT3, QgsWkbTypes.MultiPolygon, fields
         )
         returnDict[self.OUTPUT3] = polygon_sink_id
-        sinkDict[QgsWkbTypes.GeometryType.PolygonGeometry] = polygon_sink
+        sinkDict[Qgis.GeometryType.Polygon] = polygon_sink
 
         return returnDict, sinkDict
 
@@ -199,5 +200,5 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "O algoritmo identifica se existe algum atributo com um unicode que não está na whitelist"
+            "The algorithm identifies whether any attribute contains a unicode character that is not in the whitelist"
         )

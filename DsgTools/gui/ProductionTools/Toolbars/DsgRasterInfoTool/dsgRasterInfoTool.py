@@ -21,26 +21,14 @@
  ***************************************************************************/
 """
 
-import os
 from functools import partial
 
-from qgis.core import (
-    QgsGeometry,
-    QgsRaster,
-    QgsVectorLayer,
-    QgsRasterLayer,
-    QgsWkbTypes,
-    Qgis,
-)
+from qgis.core import QgsGeometry, QgsRaster, QgsVectorLayer, QgsRasterLayer, Qgis
 
-from qgis.PyQt import QtGui, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QTimer
+from qgis.PyQt.QtCore import pyqtSlot, QTimer
 from qgis.PyQt.QtWidgets import QWidget, QToolTip, QAction
 from qgis.PyQt.QtGui import QIcon
 
-from DsgTools.gui.ProductionTools.Toolbars.DsgRasterInfoTool.bandValueTool import (
-    BandValueTool,
-)
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.gui.ProductionTools.Toolbars.DsgRasterInfoTool.assignBandValueTool import (
     AssignBandValueTool,
@@ -112,10 +100,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
                 pass
         # connecting signals to new layer
         if isinstance(self.currentLayer, QgsVectorLayer):
-            if (
-                self.currentLayer.geometryType()
-                == QgsWkbTypes.GeometryType.PointGeometry
-            ):
+            if self.currentLayer.geometryType() == Qgis.GeometryType.Point:
                 self.currentLayer.editingStarted.connect(self.activateAlias)
                 self.currentLayer.editingStopped.connect(self.deactivateAlias)
 
@@ -219,7 +204,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         layer = self.iface.mapCanvas().currentLayer()
         if layer and isinstance(layer, QgsVectorLayer):
             if (
-                layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+                layer.geometryType() == Qgis.GeometryType.Point
                 and layer.isEditable()
                 and not self.rasterComboBox.currentLayer() is None
             ):

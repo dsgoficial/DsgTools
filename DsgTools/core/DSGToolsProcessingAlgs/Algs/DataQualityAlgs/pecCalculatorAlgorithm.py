@@ -24,32 +24,12 @@
 """
 import math
 import functools
-from ...algRunner import AlgRunner
-import processing
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
     QgsProcessingParameterNumber,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
-    QgsProcessingParameterField,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterFile,
-    QgsProcessingParameterExpression,
-    QgsProcessingException,
     QgsFeatureRequest,
     QgsRectangle,
 )
@@ -134,9 +114,9 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
         percFunc = functools.partial(self.percentile, frequency=0.9)
         perc = percFunc(distanceList)
         mean = sum(distanceList) / n
-        feedback.pushInfo("MEAN: {mean}".format(mean=mean))
-        feedback.pushInfo("RMS: {rms}".format(rms=rms))
-        feedback.pushInfo("PERC: {perc}".format(perc=perc))
+        feedback.pushInfo(self.tr("MEAN: {mean}").format(mean=mean))
+        feedback.pushInfo(self.tr("RMS: {rms}").format(rms=rms))
+        feedback.pushInfo(self.tr("PERC: {perc}").format(perc=perc))
 
         return {}
 

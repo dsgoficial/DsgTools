@@ -24,6 +24,7 @@ import concurrent.futures
 import os
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    Qgis,
     QgsGeometry,
     QgsProcessing,
     QgsProcessingException,
@@ -209,9 +210,9 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         )
 
         sinkDict = {
-            QgsWkbTypes.GeometryType.PointGeometry: point_flagSink,
-            QgsWkbTypes.GeometryType.LineGeometry: line_flagSink,
-            QgsWkbTypes.GeometryType.PolygonGeometry: polygon_flagSink,
+            Qgis.GeometryType.Point: point_flagSink,
+            Qgis.GeometryType.Line: line_flagSink,
+            Qgis.GeometryType.Polygon: polygon_flagSink,
         }
 
         invalidDict = (
@@ -423,7 +424,9 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             # localFlagDict = compute(localGeographicBoundsLyr)
             localFlagDict = future.result()
             multiStepFeedback.pushInfo(
-                self.tr(f"Identification of region {current+1}/{nRegions} is done.")
+                self.tr("Identification of region {0}/{1} is done.").format(
+                    current + 1, nRegions
+                )
             )
             multiStepFeedback.setProgress(current * stepSize)
             flagDict.update(localFlagDict)

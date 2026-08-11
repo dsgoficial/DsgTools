@@ -20,30 +20,18 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import range
 import os
-from os.path import expanduser
 
 from qgis.core import QgsMessageLog, Qgis
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
-from qgis.PyQt.QtWidgets import (
-    QListWidgetItem,
-    QMessageBox,
-    QMenu,
-    QApplication,
-    QFileDialog,
-    QProgressBar,
-)
+from qgis.PyQt.QtCore import pyqtSlot, Qt
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication
 from qgis.PyQt.QtGui import QCursor
-from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
 from ....core.Utils.utils import Utils
-from ....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from ....core.Factories.DbFactory.dbFactory import DbFactory
 from ....core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from ...CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
@@ -63,16 +51,12 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         self.customServerConnectionWidget.postgisCustomSelector.setTitle(
             self.tr("Select Databases")
         )
-        self.customServerConnectionWidget.spatialiteCustomSelector.setTitle(
-            self.tr("Selected Spatialites")
-        )
         # self.customServerConnectionWidget.gpkgCustomSelector.setTitle(self.tr('Selected Geopackages'))
         self.layersCustomSelector.setTitle(self.tr("Select layers to be loaded"))
         self.customServerConnectionWidget.dbDictChanged.connect(
             self.updateLayersFromDbs
         )
         self.customServerConnectionWidget.resetAll.connect(self.resetInterface)
-        self.customServerConnectionWidget.styleChanged.connect(self.populateStyleCombo)
         self.headerList = [
             self.tr("Category"),
             self.tr("Layer Name"),
@@ -92,9 +76,8 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         Sets the initial state again
         """
         self.layersCustomSelector.clearAll()
-        self.styleComboBox.clear()
         # TODO: refresh optional parameters
-        self.checkBoxOnlyWithElements.setCheckState(0)
+        self.checkBoxOnlyWithElements.setCheckState(Qt.CheckState.Unchecked)
 
     @pyqtSlot()
     def on_buttonBox_rejected(self):
@@ -188,13 +171,6 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
             return
         # 2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
-        selectedStyle = (
-            None
-            if self.styleComboBox.currentIndex() == 0
-            else self.customServerConnectionWidget.stylesDict[
-                self.styleComboBox.currentText()
-            ]
-        )
         uniqueLoad = self.uniqueLoadCheckBox.isChecked()
         # 3- Build factory dict
         dbList = list(self.customServerConnectionWidget.selectedDbsDict.keys())
@@ -225,7 +201,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                     selectedClasses,
                     uniqueLoad=uniqueLoad,
                     onlyWithElements=withElements,
-                    stylePath=selectedStyle,
+                    stylePath=None,
                     useInheritance=False,
                     customForm=False,
                     parent=self,
@@ -267,15 +243,3 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                 Qgis.MessageLevel.Critical,
             )
         return msg
-
-    def populateStyleCombo(self, styleDict):
-        """
-        Loads styles saved in the database
-        """
-        self.styleComboBox.clear()
-        if len(styleDict.keys()) == 0:
-            self.styleComboBox.addItem(self.tr("No available styles"))
-            return
-        self.styleComboBox.addItem(self.tr("Select Style"))
-        for i, style in enumerate(styleDict.keys()):
-            self.styleComboBox.addItem(style)

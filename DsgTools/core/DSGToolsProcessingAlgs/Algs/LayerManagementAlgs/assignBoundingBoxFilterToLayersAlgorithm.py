@@ -24,36 +24,10 @@ from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from qgis.core import (
     QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsFeature,
     QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingParameterBoolean,
     QgsProcessingParameterEnum,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
-    QgsProcessingParameterField,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterFile,
-    QgsProcessingParameterExpression,
-    QgsProcessingException,
-    QgsProcessingParameterString,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterType,
-    QgsProcessingParameterCrs,
-    QgsCoordinateTransform,
-    QgsProject,
-    QgsCoordinateReferenceSystem,
-    QgsField,
-    QgsFields,
     QgsProcessingOutputMultipleLayers,
     QgsProcessingParameterExtent,
 )
@@ -117,7 +91,7 @@ class AssignBoundingBoxFilterToLayersAlgorithm(QgsProcessingAlgorithm):
                 feedback.pushInfo(
                     self.tr(
                         "Operation only defined for postgres provider. Layer {layer} will be skipped."
-                    )
+                    ).format(layer=lyr.name())
                 )
                 continue
             bboxClause = self.buildSpatialClause(lyr, boundingBoxGeometry)

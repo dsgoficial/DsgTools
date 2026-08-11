@@ -24,7 +24,6 @@
 from qgis import core
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
-from qgis.PyQt.QtCore import QObject
 
 
 class FilterTools(QgsMapTool):
@@ -106,8 +105,8 @@ class FilterTools(QgsMapTool):
         iface.mapCanvas().refresh()
         if showMessage:
             iface.messageBar().pushMessage(
-                "Attention",
-                "Enabled layers for edition have not been unfiltered.",
+                self.tr("Attention"),
+                self.tr("Enabled layers for edition have not been unfiltered."),
                 level=core.Qgis.MessageLevel.Info,
                 duration=3,
             )
@@ -120,7 +119,7 @@ class FilterTools(QgsMapTool):
         selectedFeatures = layer.selectedFeatures()
         if not selectedFeatures:
             return
-        if not (layer.geometryType() == core.QgsWkbTypes.GeometryType.PolygonGeometry):
+        if not (layer.geometryType() == core.Qgis.GeometryType.Polygon):
             return
         multiPolygon = core.QgsMultiPolygon()
         for feature in selectedFeatures:

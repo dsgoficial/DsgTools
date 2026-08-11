@@ -101,7 +101,7 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
 
         if len(smallRings) == 0:
             feedback.pushInfo(
-                self.tr(f"Holes smaller than {str(maxSize)} were not found")
+                self.tr("Holes smaller than {0} were not found").format(str(maxSize))
             )
             return {self.OUTPUT: self.sink_id}
         self.outputLayer(smallRings, newField)

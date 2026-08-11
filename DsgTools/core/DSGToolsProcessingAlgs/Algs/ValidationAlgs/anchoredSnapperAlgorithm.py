@@ -24,6 +24,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
+    Qgis,
     QgsProcessing,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
@@ -31,9 +32,7 @@ from qgis.core import (
     QgsProcessingParameterDistance,
     QgsProcessingParameterEnum,
     QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
     QgsWkbTypes,
-    QgsVectorLayer,
     QgsProcessingParameterVectorLayer,
 )
 
@@ -145,9 +144,9 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
         Returns a dictionary with geometry types as keys and lists of layers as values.
         """
         grouped = {
-            QgsWkbTypes.GeometryType.PointGeometry: [],
-            QgsWkbTypes.GeometryType.LineGeometry: [],
-            QgsWkbTypes.GeometryType.PolygonGeometry: [],
+            Qgis.GeometryType.Point: [],
+            Qgis.GeometryType.Line: [],
+            Qgis.GeometryType.Polygon: [],
         }
 
         for layer in layers:
@@ -265,8 +264,8 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
         geomType = inputLayers[0].wkbType()
 
         feedback.pushInfo(
-            self.tr(
-                f"Processing {len(inputLayers)} layer(s) of type {QgsWkbTypes.displayString(geomType)}..."
+            self.tr("Processing {0} layer(s) of type {1}...").format(
+                len(inputLayers), QgsWkbTypes.displayString(geomType)
             )
         )
 
@@ -427,7 +426,7 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             geomTypeName = QgsWkbTypes.displayString(geomType)
             multiStepFeedback.setProgressText(
-                self.tr(f"Processing {geomTypeName} layers...")
+                self.tr("Processing {0} layers...").format(geomTypeName)
             )
 
             self.processGeometryGroup(

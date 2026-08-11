@@ -20,20 +20,12 @@ Builds a temp rubberband with a given size and shape.
  *                                                                         *
  ***************************************************************************/
 """
-import os
 import json
-from typing import Any, Dict, List, Optional, Tuple, Union, Set, DefaultDict
-from qgis.PyQt.QtWidgets import (
-    QMessageBox,
-    QSpinBox,
-    QDockWidget,
-    QTableWidgetItem,
-    QMenu,
-)
-from qgis.PyQt.QtGui import QAction, QIcon
+from typing import Any, Dict, List, Optional, Tuple, DefaultDict
+from qgis.PyQt.QtWidgets import QDockWidget, QTableWidgetItem, QMenu
+from qgis.PyQt.QtGui import QAction
 from qgis.PyQt.QtCore import (
     QSettings,
-    pyqtSignal,
     pyqtSlot,
     QObject,
     Qt,
@@ -41,25 +33,19 @@ from qgis.PyQt.QtCore import (
     QPoint,
     QModelIndex,
 )
-from qgis.PyQt import QtGui, uic, QtCore, QtWidgets
+from qgis.PyQt import QtWidgets
 
 from processing.gui.MultipleInputDialog import MultipleInputDialog
 from qgis.core import (
-    QgsMapLayer,
     Qgis,
     QgsVectorLayer,
-    QgsSpatialIndex,
-    QgsProcessingAlgorithm,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
-    QgsFeatureRequest,
-    QgsMapLayerUtils,
-    QgsWkbTypes,
     QgsFeature,
     QgsProject,
     QgsExpressionContextUtils,
 )
-from qgis.gui import QgsMessageBar, QgisInterface
+from qgis.gui import QgisInterface
 
 from DsgTools.gui.ProductionTools.Toolboxes.MultiLayersCentroidsFlagTool.multiLayersCentroidsFlagTool_ui import (
     Ui_MultiLayersCentroidsFlagDockWidget,
@@ -199,10 +185,7 @@ class MultiLayersCentroidsFlagDockWidget(
         for lyrid, featList in lyrsPointsInsideFlagPolygonDict.items():
             if featList == []:
                 continue
-            lyrFields = [
-                self.tr(f"{field.name()}")
-                for field in self.pointLayerDict[lyrid].fields()
-            ]
+            lyrFields = [field.name() for field in self.pointLayerDict[lyrid].fields()]
             for field in lyrFields:
                 if field in self.columns:
                     continue
@@ -228,10 +211,7 @@ class MultiLayersCentroidsFlagDockWidget(
         self.attributeTable.setRowCount(nRows)
         row = 0
         for lyrid in lyrsPointsInsideFlagPolygonDict:
-            lyrFields = [
-                self.tr(f"{field.name()}")
-                for field in self.pointLayerDict[lyrid].fields()
-            ]
+            lyrFields = [field.name() for field in self.pointLayerDict[lyrid].fields()]
             for feat in lyrsPointsInsideFlagPolygonDict[lyrid]:
                 self.lyrsNRowPointDict[row] = (lyrid, feat)
 
@@ -328,7 +308,7 @@ class MultiLayersCentroidsFlagDockWidget(
         if lyrsPointsInsideFlagPolygonDict is None:
             self.setHeader([])
             return
-        self.setHeader([self.tr("Camada")] + self.columns)
+        self.setHeader([self.tr("Layer")] + self.columns)
         self.valuesInTable(lyrsPointsInsideFlagPolygonDict)
 
     def tableContextMenu(self) -> None:
@@ -369,12 +349,12 @@ class MultiLayersCentroidsFlagDockWidget(
 
         if not isHidden:
             # Add action to hide this column
-            hideAction = QAction(self.tr(f"Hide column '{columnName}'"), self)
+            hideAction = QAction(self.tr("Hide column '{0}'").format(columnName), self)
             hideAction.triggered.connect(lambda: self.hideColumn(logicalIndex))
             contextMenu.addAction(hideAction)
         else:
             # Add action to show this column
-            showAction = QAction(self.tr(f"Show column '{columnName}'"), self)
+            showAction = QAction(self.tr("Show column '{0}'").format(columnName), self)
             showAction.triggered.connect(lambda: self.showColumn(logicalIndex))
             contextMenu.addAction(showAction)
 
@@ -543,7 +523,7 @@ class MultiLayersCentroidsFlagDockWidget(
             if row == index.row():
                 continue
             lyrPointsReference.startEditing()
-            lyrPointsReference.beginEditCommand("Updating flags")
+            lyrPointsReference.beginEditCommand(self.tr("Updating flags"))
             if lyrid == lyridReference:
                 self.setLayerFeatures(
                     feat, referenceDict, lyrid, lyrPointsReference, row
@@ -566,7 +546,7 @@ class MultiLayersCentroidsFlagDockWidget(
                 lyrPointsReference.addFeature(newFeat)
                 lyrPoint = self.pointLayerDict[lyrid]
                 lyrPoint.startEditing()
-                lyrPoint.beginEditCommand("Updating flags")
+                lyrPoint.beginEditCommand(self.tr("Updating flags"))
                 lyrPoint.deleteFeature(feat.id())
                 lyrPoint.endEditCommand()
                 self.lyrsNRowPointDict[row] = (lyridReference, newFeat)
@@ -609,7 +589,7 @@ class MultiLayersCentroidsFlagDockWidget(
                 i
                 for i in QgsProject.instance().mapLayers().values()
                 if isinstance(i, QgsVectorLayer)
-                and i.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+                and i.geometryType() == Qgis.GeometryType.Point
             ],
             key=lambda x: x.id(),
         )
@@ -710,7 +690,7 @@ class MultiLayersCentroidsFlagDockWidget(
                 if (
                     layer
                     and isinstance(layer, QgsVectorLayer)
-                    and layer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+                    and layer.geometryType() == Qgis.GeometryType.Point
                 ):
                     self.pointLayerDict[layer_id] = layer
 

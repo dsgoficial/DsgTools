@@ -1,6 +1,5 @@
-from qgis import gui, core
+from qgis import gui
 from qgis.utils import iface
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
 
 
 class TrimExtendFeature:

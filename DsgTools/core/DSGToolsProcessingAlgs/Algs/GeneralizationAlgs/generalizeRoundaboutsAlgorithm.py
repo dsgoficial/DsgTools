@@ -13,17 +13,11 @@
 """
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
-    QgsFeature,
-    QgsGeometry,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterFeatureSink,
     QgsProcessingParameterNumber,
     QgsProcessingParameterDistance,
-    QgsWkbTypes,
-    QgsProcessingParameterMultipleLayers,
-    QgsFeatureSink,
     QgsProcessingMultiStepFeedback,
 )
 
@@ -43,19 +37,19 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LAYER,
-                self.tr("Camada de rodovias"),
+                self.tr("Highway layer"),
                 [QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.ESCALA, self.tr("Escala"), type=QgsProcessingParameterNumber.Double
+                self.ESCALA, self.tr("Scale"), type=QgsProcessingParameterNumber.Double
             )
         )
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.AREA_MINIMA,
-                self.tr("Área mínima para rotatórias na carta"),
+                self.tr("Minimum area for roundabouts on chart"),
                 parentParameterName=self.NETWORK_LAYER,
             )
         )
@@ -87,11 +81,11 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
         )
-        multiStepFeedback.setProgressText(self.tr("Calculando tamanhos"))
+        multiStepFeedback.setProgressText(self.tr("Calculating sizes"))
         areaminima = minArea * (escala**2)
         compMinimo = minLength * escala
 
-        multiStepFeedback.setProgressText(self.tr("Generalizando"))
+        multiStepFeedback.setProgressText(self.tr("Generalizing"))
         algRunner.runGeneralizeNetworkEdgesFromLengthAlgorithm(
             inputLayer=lineLayer,
             context=context,
@@ -122,7 +116,7 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Retornando"))
+        multiStepFeedback.setProgressText(self.tr("Returning"))
 
         return {}
 
@@ -130,7 +124,7 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
         return "generalizeroundaboutsalgorithm"
 
     def displayName(self):
-        return self.tr("Generalizar Rotatórias")
+        return self.tr("Generalize Roundabouts")
 
     def group(self):
         return self.tr("Generalization Algorithms")

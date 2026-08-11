@@ -21,20 +21,14 @@
  ***************************************************************************/
 """
 
-from collections import Counter, defaultdict
+from collections import Counter
 from qgis.PyQt.QtCore import QCoreApplication
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
     QgsProcessingParameterBoolean,
     QgsProcessingFeatureSourceDefinition,
     QgsProcessingMultiStepFeedback,
@@ -117,7 +111,7 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         inputLyr.startEditing()
-        inputLyr.beginEditCommand(f"Updating layer {inputLyr.name()}")
+        inputLyr.beginEditCommand(self.tr("Updating layer {0}").format(inputLyr.name()))
         stepSize = 100 / nCandidates
         featuresToAdd = []
         for current, feature in enumerate(inputLyr.getFeatures(candidateIdList)):

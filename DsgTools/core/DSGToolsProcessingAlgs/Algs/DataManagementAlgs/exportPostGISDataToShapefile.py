@@ -40,7 +40,6 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     Qgis,
     QgsProcessingException,
-    QgsWkbTypes,
     QgsProcessingParameterProviderConnection,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
@@ -267,8 +266,8 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
                 multiStepFeedback.setProgressText(
-                    self.tr(
-                        f"Processing MI {geographicBoundsFeat[miField]} ({i}/{nGeographicBoundsFeats})"
+                    self.tr("Processing MI {0} ({1}/{2})").format(
+                        geographicBoundsFeat[miField], i, nGeographicBoundsFeats
                     )
                 )
             clippedLayerDict = self.prepareInputData(

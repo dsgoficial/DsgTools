@@ -22,21 +22,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os, sqlite3
-import json
+import os
 
 from qgis.core import QgsMessageLog, Qgis
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
-from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
+from qgis.PyQt.QtCore import pyqtSignal, Qt
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication
 from qgis.PyQt.QtGui import QCursor
-from DsgTools.core.Utils.utils import Utils
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import (
-    ProgressWidget,
-)
-from DsgTools.gui.CustomWidgets.SelectionWidgets.tabDbSelectorWidget import (
-    TabDbSelectorWidget,
-)
 from DsgTools.core.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
 FORM_CLASS, _ = uic.loadUiType(
@@ -68,9 +60,6 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
         self.databaseParameterWidget.comboBoxPostgis.parent = self
         self.databaseParameterWidget.useFrame = False
         self.databaseParameterWidget.setDbNameVisible(True)
-        self.tabDbSelectorWidget.outputDirSelector.label.setText(
-            self.tr("Select Database Path")
-        )
         self.okPushButton.clicked.connect(self.validateParameters)
         self.cancelPushButton.clicked.connect(self.close_)
 
@@ -152,7 +141,9 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
             logMsg += self.tr("Check log for more details.")
         msg = [i for i in (creationMsg, errorMsg, logMsg) if i != ""]
         QMessageBox.warning(
-            self, self.tr("Info!"), self.tr("Process finished.") + "\n" + "\n".join(msg)
+            self,
+            self.tr("Info!"),
+            self.tr("Process finished.\n{0}").format("\n".join(msg)),
         )
         self.close()
         return True
@@ -184,7 +175,7 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
         """
         callback = lambda: self.manager.createDatabase(isBatchCreation=False)
         self.manager.addTool(
-            text=self.tr("Create a PostGIS, SpatiaLite or Geopackage Database"),
+            text=self.tr("Create a PostGIS Database"),
             callback=callback,
             parentMenu=self.parentMenu,
             icon="database.png",

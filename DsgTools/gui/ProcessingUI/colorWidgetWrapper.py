@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 from qgis.gui import QgsColorButton
-from qgis.PyQt.QtGui import QColor
 from processing.gui.wrappers import WidgetWrapper
 
 

@@ -23,13 +23,7 @@
 
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
-from qgis.gui import QgsFieldExpressionWidget, QgsCollapsibleGroupBox
-from qgis.utils import iface
-from qgis.core import QgsProject
 
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import (
-    GenericDialogLayout,
-)
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.filterDialog import (
     FilterDialog,
 )
@@ -154,7 +148,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.connectionWidget.getDatasource(),
         )
         self.filterDlg.setWindowTitle(
-            "{0}: {2} ({1})".format(
+            self.tr("{0}: {2} ({1})").format(
                 self.groupBox.title(),
                 self.connectionWidget.getDatasourcePath(),
                 self.connectionWidget.getDatasourceConnectionName(),

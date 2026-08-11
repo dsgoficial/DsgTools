@@ -25,7 +25,6 @@ from qgis.PyQt.QtWidgets import QDialog, QMessageBox
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot
 
-from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 

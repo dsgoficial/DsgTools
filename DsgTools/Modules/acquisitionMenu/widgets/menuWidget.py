@@ -1,5 +1,4 @@
-import os, sys, copy
-from qgis.PyQt import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt import QtCore, QtWidgets, QtGui
 
 
 class MenuWidget(QtWidgets.QTabWidget):
@@ -130,7 +129,7 @@ class MenuWidget(QtWidgets.QTabWidget):
                 widget.deleteLater()
             del item
             return
-        raise Exception("Botão não encontrado!")
+        raise Exception(self.tr("Button not found!"))
 
     def getTabButtons(self, tabIndex):
         tabLayout = self.getTabLayout(self.widget(tabIndex).id)
@@ -203,5 +202,5 @@ class MenuWidget(QtWidgets.QTabWidget):
             self.deleteTabContainer(tabSearchId)
             return
         self.deleteTabContainer(tabSearchId)
-        self.addTabContainer(tabSearchId, "***Pesquisa***", 0)
+        self.addTabContainer(tabSearchId, self.tr("***Search***"), 0)
         [self.addButton(buttonData, self.buttonCallback) for buttonData in found]

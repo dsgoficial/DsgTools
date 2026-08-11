@@ -21,12 +21,7 @@
  ***************************************************************************/
 """
 from qgis.PyQt import QtCore
-from typing import Set
-from qgis.core import (
-    Qgis,
-    QgsVectorLayer,
-    QgsWkbTypes,
-)
+from qgis.core import Qgis, QgsVectorLayer
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
 
@@ -90,7 +85,7 @@ class SmoothLinesTool(QgsMapTool):
         if (
             not layer
             or not isinstance(layer, QgsVectorLayer)
-            or layer.geometryType() != QgsWkbTypes.GeometryType.LineGeometry
+            or layer.geometryType() != Qgis.GeometryType.Line
             or not layer.isEditable()
         ):
             enabled = False

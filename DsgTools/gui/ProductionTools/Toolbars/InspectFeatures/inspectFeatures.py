@@ -20,11 +20,9 @@ Builds a temp rubberband with a given size and shape.
  *                                                                         *
  ***************************************************************************/
 """
-import os
 from qgis.PyQt.QtWidgets import QMessageBox, QSpinBox, QAction, QWidget
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot
 
 from qgis.core import (
     QgsMapLayer,
@@ -33,10 +31,8 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsFeatureRequest,
-    QgsWkbTypes,
     QgsProject,
 )
-from qgis.gui import QgsMessageBar
 
 from .inspectFeatures_ui import Ui_Form
 
@@ -145,7 +141,7 @@ class InspectFeatures(QWidget, Ui_Form):
             return
         if currentLayer.type() != QgsMapLayer.LayerType.VectorLayer:
             return
-        if currentLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
+        if currentLayer.geometryType() == Qgis.GeometryType.Point:
             self.mScaleWidget.setEnabled(True)
             self.mScaleWidget.show()
             self.zoomPercentageSpinBox.setEnabled(False)
@@ -210,7 +206,7 @@ class InspectFeatures(QWidget, Ui_Form):
                 oldIndex = 0
             zoom = (
                 self.mScaleWidget.scale()
-                if currentLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+                if currentLayer.geometryType() == Qgis.GeometryType.Point
                 else self.zoomPercentageSpinBox.value()
             )
             if oldIndex == newId:
@@ -272,7 +268,7 @@ class InspectFeatures(QWidget, Ui_Form):
 
         zoom = (
             self.mScaleWidget.scale()
-            if currentLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+            if currentLayer.geometryType() == Qgis.GeometryType.Point
             else self.zoomPercentageSpinBox.value()
         )
 
@@ -386,10 +382,7 @@ class InspectFeatures(QWidget, Ui_Form):
             self.zoomToLayer(layer=lyr, zoom=float(zoom))
             lyr.selectByIds(selectIdList)
 
-        if (
-            self.getIterateLayer().geometryType()
-            == QgsWkbTypes.GeometryType.PointGeometry
-        ):
+        if self.getIterateLayer().geometryType() == Qgis.GeometryType.Point:
             self.iface.mapCanvas().zoomScale(float(zoom))
 
     @pyqtSlot(bool, name="on_inspectPushButton_toggled")
@@ -511,7 +504,7 @@ class InspectFeatures(QWidget, Ui_Form):
             "current_layer": currentLayer.id(),
             "current_feature_state_dict": self.allLayers,
             "current_zoom": self.mScaleWidget.scale()
-            if currentLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry
+            if currentLayer.geometryType() == Qgis.GeometryType.Point
             else self.zoomPercentageSpinBox.value(),
             "use_pan": self.usePanCkb.isChecked(),
             "current_filter_expression": self.mFieldExpressionWidget.currentText(),
@@ -539,7 +532,7 @@ class InspectFeatures(QWidget, Ui_Form):
             return False
         self.allLayers.update(currentStateDict)
         currentZoom = stateDict.get("current_zoom", None)
-        if currentLayer.geometryType() == QgsWkbTypes.GeometryType.PointGeometry:
+        if currentLayer.geometryType() == Qgis.GeometryType.Point:
             self.mScaleWidget.setScale(currentZoom)
         else:
             self.zoomPercentageSpinBox.setValue(currentZoom)
