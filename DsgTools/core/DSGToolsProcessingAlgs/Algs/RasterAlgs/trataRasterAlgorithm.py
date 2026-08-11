@@ -160,7 +160,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.AREA_EDIFICADA,
                 self.tr("Built-up Area (Polygons)"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=False,
             )
         )
@@ -169,7 +169,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.MASSA_DAGUA,
                 self.tr("Water Body (Polygons)"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=False,
             )
         )
@@ -178,7 +178,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.AREA_EDIFICADA_VALUE,
                 self.tr("DN Value for Built-up Area Class"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=2,
             )
         )
@@ -187,7 +187,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.MASSA_DAGUA_VALUE,
                 self.tr("DN Value for Water Body Class"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=1,
             )
         )
@@ -196,7 +196,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.NODATA_VALUE,
                 self.tr("NoData Value"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=-9999,
             )
         )
@@ -205,7 +205,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.BUFFER_DISTANCE,
                 self.tr("Negative Buffer Distance (raster CRS units)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=-5,
             )
         )
@@ -214,7 +214,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.SIEVE_THRESHOLD,
                 self.tr("Sieve Threshold (pixels)"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=50,
             )
         )
@@ -223,7 +223,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.FIRST_PASS_MIN_AREA,
                 self.tr("Minimum Area - Pass 1 (m2)"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=15625,
             )
         )
@@ -232,7 +232,7 @@ class TrataRasterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.SECOND_PASS_MIN_AREA,
                 self.tr("Minimum Area - Pass 2 (m2)"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=62500,
             )
         )

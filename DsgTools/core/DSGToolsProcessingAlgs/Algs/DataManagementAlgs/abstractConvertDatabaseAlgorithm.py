@@ -271,7 +271,7 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
             self.NOT_CONVERTED_POINT,
             context,
             self.fields,
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             outputCrs,
         )
         self.line_flag_sink, self.line_flag_id = self.parameterAsSink(
@@ -279,7 +279,7 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
             self.NOT_CONVERTED_LINE,
             context,
             self.fields,
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             outputCrs,
         )
         self.poly_flag_sink, self.poly_flag_id = self.parameterAsSink(
@@ -287,16 +287,16 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
             self.NOT_CONVERTED_POLYGON,
             context,
             self.fields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             outputCrs,
         )
         self.flagSinkDict = {
-            QgsWkbTypes.Point: self.point_flag_sink,
-            QgsWkbTypes.MultiPoint: self.point_flag_sink,
-            QgsWkbTypes.LineString: self.line_flag_sink,
-            QgsWkbTypes.MultiLineString: self.line_flag_sink,
-            QgsWkbTypes.Polygon: self.poly_flag_sink,
-            QgsWkbTypes.MultiPolygon: self.poly_flag_sink,
+            QgsWkbTypes.Type.Point: self.point_flag_sink,
+            QgsWkbTypes.Type.MultiPoint: self.point_flag_sink,
+            QgsWkbTypes.Type.LineString: self.line_flag_sink,
+            QgsWkbTypes.Type.MultiLineString: self.line_flag_sink,
+            QgsWkbTypes.Type.Polygon: self.poly_flag_sink,
+            QgsWkbTypes.Type.MultiPolygon: self.poly_flag_sink,
         }
 
     def convertFeaturesWithConversionMaps(

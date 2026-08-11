@@ -53,7 +53,9 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Input layer"),
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
@@ -76,7 +78,7 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
                 self.tr("Fields to ignore"),
                 None,
                 "INPUT",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
                 allowMultiple=True,
                 optional=True,
             )
@@ -135,7 +137,7 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
             multiStepFeedback.pushInfo(self.tr("Building auxiliar layer..."))
             coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
                 [inputLyr],
-                geomType=QgsWkbTypes.MultiPolygon,
+                geomType=QgsWkbTypes.Type.MultiPolygon,
                 onlySelected=onlySelected,
                 feedback=multiStepFeedback,
             )

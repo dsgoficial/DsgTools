@@ -409,7 +409,7 @@ class MedianFilterNoDataAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.WINDOW_SIZE,
                 self.tr("Window size"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=3,
                 minValue=3,
                 maxValue=21,
@@ -421,7 +421,7 @@ class MedianFilterNoDataAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.MIN_VALID_PIXELS,
                 self.tr("Minimum valid pixels required"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=1,
                 minValue=1,
             )

@@ -74,7 +74,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_CENTER_POINTS,
                 self.tr("Center Point Layer"),
-                [QgsProcessing.TypeVectorPoint],
+                [QgsProcessing.SourceType.TypeVectorPoint],
             )
         )
         self.addParameter(
@@ -83,7 +83,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 self.tr("Fields to ignore"),
                 None,
                 "INPUT_CENTER_POINTS",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
                 allowMultiple=True,
                 optional=True,
             )
@@ -92,7 +92,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.BOUNDARY_LINE_LAYER,
                 self.tr("Line Boundary"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 optional=True,
             )
         )
@@ -100,7 +100,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.CONSTRAINT_LINE_LAYERS,
                 self.tr("Line Constraint Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -108,7 +108,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.CONSTRAINT_POLYGON_LAYERS,
                 self.tr("Polygon Constraint Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
                 optional=True,
             )
         )
@@ -116,7 +116,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic Boundary"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -225,7 +225,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.OUTPUT_POLYGONS,
             context,
             fields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             inputCenterPointLyr.sourceCrs(),
         )
         suppressPolygonWithoutCenterPointFlag = self.parameterAsBool(
@@ -242,7 +242,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
 
         self.prepareFlagSink(
-            parameters, inputCenterPointLyr, QgsWkbTypes.Polygon, context
+            parameters, inputCenterPointLyr, QgsWkbTypes.Type.Polygon, context
         )
         (
             unused_boundary_flag_sink,
@@ -252,7 +252,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.UNUSED_BOUNDARY_LINES,
             context,
             boundaryLineLyr.fields() if boundaryLineLyr is not None else QgsFields(),
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             boundaryLineLyr.sourceCrs()
             if boundaryLineLyr is not None
             else inputCenterPointLyr.sourceCrs(),
@@ -300,10 +300,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             "memory:",
             context,
             fields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             inputCenterPointLyr.sourceCrs(),
         )
-        sink.addFeatures(polygonFeatList, QgsFeatureSink.FastInsert)
+        sink.addFeatures(polygonFeatList, QgsFeatureSink.Flag.FastInsert)
 
         if mergeOutput:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -508,7 +508,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             mergedSegments, context, feedback=multiStepFeedback
         )
         unused_boundary_flag_sink.addFeatures(
-            flagLyr.getFeatures(), QgsFeatureSink.FastInsert
+            flagLyr.getFeatures(), QgsFeatureSink.Flag.FastInsert
         )
 
     def checkInvalidOnOutput(
@@ -565,7 +565,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.INVALID_POLYGON_LOCATION,
             context,
             self.getFlagFields(),
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             inputCenterPointLyr.sourceCrs(),
         )
 
@@ -575,7 +575,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         self, output_polygon_sink, multiStepFeedback, polygonFeatList, flagDict
     ):
         multiStepFeedback.setProgressText(self.tr("Writing output..."))
-        output_polygon_sink.addFeatures(polygonFeatList, QgsFeatureSink.FastInsert)
+        output_polygon_sink.addFeatures(polygonFeatList, QgsFeatureSink.Flag.FastInsert)
         nItems = len(flagDict)
         for current, (flagGeom, flagText) in enumerate(flagDict.items()):
             if multiStepFeedback.isCanceled():
@@ -974,7 +974,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             if localFlagLyr is None or localFlagLyr.featureCount() == 0:
                 continue
             unused_boundary_flag_sink.addFeatures(
-                localFlagLyr.getFeatures(), QgsFeatureSink.FastInsert
+                localFlagLyr.getFeatures(), QgsFeatureSink.Flag.FastInsert
             )
 
     @staticmethod

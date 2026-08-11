@@ -52,7 +52,7 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 "INPUT_LAYER_LIST",
                 self.tr("Input layer(s)"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
             )
         )
 
@@ -60,7 +60,7 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 "MAX_HOLE_SIZE",
                 self.tr("Tolerance"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
             )
         )
@@ -83,7 +83,12 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
         newField = QgsFields()
         newField.append(QgsField("area", QMetaType.Type.Double))
         (self.sink, self.sink_id) = self.parameterAsSink(
-            parameters, self.OUTPUT, context, newField, QgsWkbTypes.MultiPolygon, crs
+            parameters,
+            self.OUTPUT,
+            context,
+            newField,
+            QgsWkbTypes.Type.MultiPolygon,
+            crs,
         )
         for step, layer in enumerate(layerList):
             if feedback.isCanceled():
@@ -114,7 +119,7 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
             newFeat.setGeometry(feature)
             newFeat.setFields(newField)
             newFeat["area"] = feature.area()
-            self.sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            self.sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
     def name(self):
         """

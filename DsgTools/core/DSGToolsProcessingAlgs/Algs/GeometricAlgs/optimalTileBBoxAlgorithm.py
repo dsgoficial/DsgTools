@@ -209,7 +209,7 @@ class OptimalTileBBoxAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_TILES,
                 self.tr("Tile layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
         self.addParameter(
@@ -222,7 +222,7 @@ class OptimalTileBBoxAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.COVERAGE_THRESH,
                 self.tr("Minimum coverage for rectangle merging (%)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=85.0,
                 minValue=0.0,
                 maxValue=100.0,
@@ -232,7 +232,7 @@ class OptimalTileBBoxAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.MAX_WORKERS,
                 self.tr("Parallel workers"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=4,
                 minValue=1,
                 maxValue=32,
@@ -365,7 +365,7 @@ class OptimalTileBBoxAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT_BBOXES,
             context,
             fields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             layer.crs(),
         )
 
@@ -384,7 +384,7 @@ class OptimalTileBBoxAlgorithm(QgsProcessingAlgorithm):
             feat["rect_id"] = i
             feat["coverage_pct"] = round(rect["coverage_pct"], 2)
             feat["tile_count"] = rect["tile_count"]
-            sink.addFeature(feat, QgsFeatureSink.FastInsert)
+            sink.addFeature(feat, QgsFeatureSink.Flag.FastInsert)
 
         feedback.setProgress(100)
         return {self.OUTPUT_BBOXES: dest_id}

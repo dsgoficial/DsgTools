@@ -56,7 +56,7 @@ class IdentifyPolygonUndershootsAlgorithm(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input"),
                 [
-                    QgsProcessing.TypeVectorPolygon,
+                    QgsProcessing.SourceType.TypeVectorPolygon,
                 ],
             )
         )
@@ -65,7 +65,7 @@ class IdentifyPolygonUndershootsAlgorithm(ValidationAlgorithm):
                 self.REFERENCE,
                 self.tr("Reference polygons"),
                 [
-                    QgsProcessing.TypeVectorPolygon,
+                    QgsProcessing.SourceType.TypeVectorPolygon,
                 ],
             )
         )
@@ -74,7 +74,7 @@ class IdentifyPolygonUndershootsAlgorithm(ValidationAlgorithm):
                 self.TOLERANCE,
                 self.tr("Search radius"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=0.0001,
             )
         )
@@ -91,7 +91,9 @@ class IdentifyPolygonUndershootsAlgorithm(ValidationAlgorithm):
         self.layerHandler = LayerHandler()
         algRunner = AlgRunner()
         inputSource = self.parameterAsSource(parameters, self.INPUT, context)
-        self.prepareFlagSink(parameters, inputSource, QgsWkbTypes.LineString, context)
+        self.prepareFlagSink(
+            parameters, inputSource, QgsWkbTypes.Type.LineString, context
+        )
         if inputSource is None:
             return {"FLAGS": self.flag_id}
         searchRadius = self.parameterAsDouble(parameters, self.TOLERANCE, context)

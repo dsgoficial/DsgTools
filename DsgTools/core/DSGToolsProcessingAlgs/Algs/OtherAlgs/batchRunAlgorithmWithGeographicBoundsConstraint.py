@@ -86,7 +86,7 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic Boundary"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -162,7 +162,7 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
                 self.OUTPUT,
                 context,
                 self.flagFields,
-                QgsWkbTypes.Point,
+                QgsWkbTypes.Type.Point,
                 QgsProject.instance().crs(),
             )
             gc.enable()
@@ -239,7 +239,7 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
                 self.OUTPUT,
                 context,
                 self.flagFields,
-                QgsWkbTypes.Point,
+                QgsWkbTypes.Type.Point,
                 QgsProject.instance().crs(),
             )
         gc.enable()
@@ -312,7 +312,7 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
             newFeat["alg_name"] = algName
             newFeat["layer_name"] = inputLyrName
             newFeat.setGeometry(feat.geometry())
-            self.flagSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            self.flagSink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
     def prepareFlagSink(self, parameters, flagSource, context):
         for field in flagSource.fields():

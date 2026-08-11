@@ -102,7 +102,9 @@ class MergeShapefileZipFilesInSingleGeopackage(QgsProcessingAlgorithm):
         # Input: Multiple zip files
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUT_ZIPS, self.tr("Input ZIP files"), QgsProcessing.TypeFile
+                self.INPUT_ZIPS,
+                self.tr("Input ZIP files"),
+                QgsProcessing.SourceType.TypeFile,
             )
         )
 
@@ -271,9 +273,9 @@ class MergeShapefileZipFilesInSingleGeopackage(QgsProcessingAlgorithm):
             save_options.driverName = "GPKG"
             save_options.layerName = output_layer_name
             save_options.actionOnExistingFile = (
-                QgsVectorFileWriter.CreateOrOverwriteFile
+                QgsVectorFileWriter.ActionOnExistingFile.CreateOrOverwriteFile
                 if consolidated_count == 0
-                else QgsVectorFileWriter.CreateOrOverwriteLayer
+                else QgsVectorFileWriter.ActionOnExistingFile.CreateOrOverwriteLayer
             )
 
             # Write to GeoPackage
@@ -289,7 +291,7 @@ class MergeShapefileZipFilesInSingleGeopackage(QgsProcessingAlgorithm):
                 source_layer, output_gpkg, save_options
             )
 
-            if error != QgsVectorFileWriter.NoError:
+            if error != QgsVectorFileWriter.WriterError.NoError:
                 raise QgsProcessingException(
                     self.tr("Error writing layer {0} to GeoPackage: {1}").format(
                         output_layer_name, error_message

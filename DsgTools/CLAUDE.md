@@ -201,7 +201,6 @@ A migração principal é Qt5 → Qt6. O QGIS 4.0 não quebra APIs além do Qt6.
 
 ### ATENTAR: NÃO migrar estes
 
-- `QgsWkbTypes.Point`, `QgsWkbTypes.LineString`, `QgsWkbTypes.Polygon` etc. — são constantes WKB, NÃO enums Qt. Deixar como estão.
 - `QgsProject.instance()` — remoção prevista apenas para QGIS 5.0.
 - `QVariant.Type` — deprecado em 3.38 mas mínimo suportado é 3.22, manter por enquanto.
 
@@ -218,6 +217,37 @@ except ImportError:
 ```
 
 Para enums, preferir a forma fully qualified do Qt6 que já funciona no QGIS 3.40+.
+
+### Enums da própria API do QGIS (não são só os do Qt/PyQt)
+
+**Correção a uma entrada antiga deste arquivo**: chegou a estar documentado aqui que `QgsWkbTypes.Point`, `QgsWkbTypes.LineString` etc. eram "constantes WKB, não enum Qt" e por isso não precisavam ser tocadas. **Isso estava errado** — confirmado por um scanner de compatibilidade Qt6 real (o do repositório de plugins do OSGeo, que reprovou a release 5.2.0 com 718 ocorrências) e testado funcionando em servidor remoto pelo usuário. Além dos enums do Qt/PyQt (tabelas acima), várias classes da própria API do QGIS também passaram a exigir o enum aninhado qualificado no Qt6 — o padrão de acesso direto `Classe.Valor` (que funcionava até QGIS 3.x) agora precisa virar `Classe.EnumAninhado.Valor`. Não são só `QgsWkbTypes` — a lista real (764 ocorrências corrigidas nesta migração, 15+ classes):
+
+| Classe.Valor (Qt5, direto) | Classe.EnumAninhado.Valor (Qt6) |
+|---|---|
+| `QgsWkbTypes.Point`, `.LineString`, `.Polygon`, `.MultiPoint`, etc. | `QgsWkbTypes.Type.*` |
+| `QgsFeatureSink.FastInsert` | `QgsFeatureSink.Flag.FastInsert` |
+| `QgsProcessingParameterNumber.Double` / `.Integer` | `QgsProcessingParameterNumber.Type.*` |
+| `QgsProcessingParameterDefinition.Any` / `.Numeric` / `.String` / `.DateTime` | `QgsProcessingParameterDefinition.DataType.*` |
+| `QgsProcessing.TypeVectorLine` / `.TypeVectorPolygon` / `.TypeVectorAnyGeometry` / `.TypeRaster` / `.TypeFile` / `.TypeVector` / `.TypeVectorPoint` | `QgsProcessing.SourceType.*` |
+| `QgsProcessingParameterFile.Folder` / `.File` | `QgsProcessingParameterFile.Behavior.*` |
+| `QgsCoordinateReferenceSystem.EpsgCrsId` | `QgsCoordinateReferenceSystem.CrsType.EpsgCrsId` |
+| `QgsVectorFileWriter.NoError` | `QgsVectorFileWriter.WriterError.NoError` |
+| `QgsVectorFileWriter.CreateOrOverwriteFile` / `.CreateOrOverwriteLayer` | `QgsVectorFileWriter.ActionOnExistingFile.*` |
+| `QgsDataSourceUri.SslDisable` | `QgsDataSourceUri.SslMode.SslDisable` |
+| `Qgis.DistanceUnit...Meters` | `Qgis.DistanceUnit.*` (idem `Qgis.AreaUnit.*`) |
+| `Qt.ItemDataRole`-like em widgets custom (`LabelRole`, `FieldRole`) | `<Classe>.ItemRole.*` |
+| `Qgis.RelationshipStrength...Association` | `Qgis.RelationshipStrength.*` (mensagem cita `RelationStrength`) |
+| `ProcessManager`-like `.GenericPython` | `.ActionType.GenericPython` |
+| `QFile.WriteOnly` (via `qgis.PyQt.QtCore`) | `QFile.OpenModeFlag.WriteOnly` |
+| ícone customizado tipo `.ICON_X` | `.IconType.ICON_X` |
+
+Essa lista **não é exaustiva por definição** — cada classe da API do QGIS pode ter seu próprio enum aninhado, e o nome do enum (`Type`, `Flag`, `SourceType`, `DataType`, `Behavior`, `CrsType`, `WriterError`, `ActionOnExistingFile`, `SslMode`, `DistanceUnit`, `AreaUnit`, `ItemRole`, `RelationshipStrength`, `ActionType`, `OpenModeFlag`, `IconType`, ...) não segue um padrão previsível — não dá pra adivinhar, só descobrir rodando o scanner de verdade.
+
+**Como corrigir em massa quando aparecer de novo**: o scanner de Qt6-compat do OSGeo (roda quando você tenta publicar uma release) devolve uma tabela `File / Line / Col / Message` no formato `Enum error, add 'X' before 'Y'`, onde `Col` é a coluna 0-indexed do **início da expressão base** (ex.: início de `QgsWkbTypes` em `QgsWkbTypes.LineString`) — não da própria coluna do valor. A correção é mecânica: achar `.{Y}` a partir de `Col` naquela linha e inserir `.{X}` logo antes. Pedir pro usuário salvar o log completo num arquivo (não cola no chat, corta) e escrever um fixer baseado nisso, com verificação de `compile()` por arquivo antes de gravar — foi assim que as 718 ocorrências da 5.2.0 foram corrigidas de uma vez.
+
+Outras duas categorias que apareceram no mesmo scanner, fora do padrão de enum:
+- `"This function should be renamed to 'exec'"` — um método **definido** como `def exec_(self):` (não uma chamada `.exec_()`, essa já é coberta pelo grep de `\.exec_()` acima) precisa virar `def exec(self):`. Conferir antes se algum lugar chama `.exec_()` nessa classe especificamente (senão quebra o caller).
+- `"Invalid conversion of QVariant(QVariant.Null). Use from qgis.core import NULL instead"` — trocar comparação `valor == QVariant()` por `from qgis.core import NULL` + `valor == NULL`.
 
 ## Comandos Úteis
 

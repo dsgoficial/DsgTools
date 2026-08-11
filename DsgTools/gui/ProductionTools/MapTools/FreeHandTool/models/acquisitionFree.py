@@ -349,7 +349,7 @@ class AcquisitionFree(gui.QgsMapTool):
             if length != None or length == 0:
                 measure_dist = self.dist_area.measureLength(geom)
                 dist = self.dist_area.convertLengthMeasurement(
-                    measure_dist, QgsUnitTypes.DistanceMeters
+                    measure_dist, QgsUnitTypes.DistanceUnit.DistanceMeters
                 )
                 # Tr
                 txt = (
@@ -369,7 +369,7 @@ class AcquisitionFree(gui.QgsMapTool):
             if area != None or area == 0:
                 measure_dist = self.dist_area.measureArea(geom)
                 dist = self.dist_area.convertAreaMeasurement(
-                    measure_dist, QgsUnitTypes.AreaSquareMeters
+                    measure_dist, QgsUnitTypes.AreaUnit.AreaSquareMeters
                 )
                 # Tr
                 txt = (

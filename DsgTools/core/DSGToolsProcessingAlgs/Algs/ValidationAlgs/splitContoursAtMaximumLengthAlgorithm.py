@@ -50,7 +50,7 @@ class SplitContoursAtMaximumLengthAlgorithm(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input contour layer"),
                 defaultValue="elemnat_curva_nivel_l",
-                types=[QgsProcessing.TypeVectorLine],
+                types=[QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(

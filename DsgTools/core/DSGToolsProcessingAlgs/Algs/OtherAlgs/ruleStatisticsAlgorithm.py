@@ -111,14 +111,14 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
             self.FLAGS,
             context,
             fields,
-            geometryType=QgsWkbTypes.NoGeometry,
+            geometryType=QgsWkbTypes.Type.NoGeometry,
         )
         (unusualSink, unusual_output_id) = self.parameterAsSink(
             parameters,
             self.UNUSUAL_ATTRIBUTES,
             context,
             fields,
-            geometryType=QgsWkbTypes.NoGeometry,
+            geometryType=QgsWkbTypes.Type.NoGeometry,
         )
         flagOutputDict = {
             "Atributo incomum": unusualSink,

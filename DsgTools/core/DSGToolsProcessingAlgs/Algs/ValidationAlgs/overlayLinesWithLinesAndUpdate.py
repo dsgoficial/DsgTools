@@ -61,7 +61,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input line layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -76,7 +76,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.REFERENCE_LINES,
                 self.tr("Reference line layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
             )
         )
 
@@ -84,7 +84,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
         param = QgsProcessingParameterNumber(
             self.SNAP_TOLERANCE,
             self.tr("Snap tolerance for vertex insertion"),
-            QgsProcessingParameterNumber.Double,
+            QgsProcessingParameterNumber.Type.Double,
             defaultValue=0.001,
             minValue=0.0,
             optional=True,
@@ -96,7 +96,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic Bounds Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -173,7 +173,7 @@ class OverlayLinesWithLinesAndUpdate(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         auxReferenceLyr = self.layerHandler.createAndPopulateUnifiedVectorLayer(
             referenceLyrList,
-            geomType=QgsWkbTypes.MultiLineString,
+            geomType=QgsWkbTypes.Type.MultiLineString,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
         )

@@ -49,7 +49,7 @@ class IdentifyDuplicatedPolygonsBetweenLayersAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
                 self.tr("Coverage Polygon Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
             )
         )
 
@@ -76,7 +76,9 @@ class IdentifyDuplicatedPolygonsBetweenLayersAlgorithm(ValidationAlgorithm):
                 self.invalidSourceError(parameters, self.INPUTLAYERS)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Polygon, context)
+        self.prepareFlagSink(
+            parameters, inputLyrList[0], QgsWkbTypes.Type.Polygon, context
+        )
         # Compute the number of steps to display within the progress bar and
         # get features from source
         geomDict = dict()

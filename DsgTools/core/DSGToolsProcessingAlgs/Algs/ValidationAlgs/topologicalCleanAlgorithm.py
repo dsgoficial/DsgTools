@@ -55,7 +55,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
                 self.tr("Polygon Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
             )
         )
 
@@ -70,7 +70,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
             self.tr("Snap radius"),
             minValue=0,
             defaultValue=1,
-            type=QgsProcessingParameterNumber.Double,
+            type=QgsProcessingParameterNumber.Type.Double,
         )
         snapParam.setMetadata({"widget_wrapper": {"decimals": 16}})
         self.addParameter(snapParam)
@@ -80,7 +80,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
             self.tr("Minimum area"),
             minValue=0,
             defaultValue=1e-8,
-            type=QgsProcessingParameterNumber.Double,
+            type=QgsProcessingParameterNumber.Type.Double,
         )
         areaParam.setMetadata({"widget_wrapper": {"decimals": 16}})
         self.addParameter(areaParam)
@@ -89,7 +89,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic Bounds Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )

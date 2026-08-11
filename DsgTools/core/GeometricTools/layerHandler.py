@@ -2397,7 +2397,7 @@ class LayerHandler(QObject):
             centroidLyr, inputLyr, context, feedback=multiStepFeedback
         )
         for feat in centroidsWithAttributes.getFeatures():
-            outputCenterPointSink.addFeature(feat, QgsFeatureSink.FastInsert)
+            outputCenterPointSink.addFeature(feat, QgsFeatureSink.Flag.FastInsert)
 
     def filterEdges(
         self,
@@ -2453,7 +2453,7 @@ class LayerHandler(QObject):
             for feat in outputSet:
                 if feat in notBoundarySet:
                     continue
-                outputBoundarySink.addFeature(feat, QgsFeatureSink.FastInsert)
+                outputBoundarySink.addFeature(feat, QgsFeatureSink.Flag.FastInsert)
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
 

@@ -52,7 +52,7 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_POINTS,
                 self.tr("Point Layers"),
-                QgsProcessing.TypeVectorPoint,
+                QgsProcessing.SourceType.TypeVectorPoint,
                 optional=True,
             )
         )
@@ -60,7 +60,7 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LINES,
                 self.tr("Linestring Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -68,7 +68,7 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_POLYGONS,
                 self.tr("Polygon Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
                 optional=True,
             )
         )
@@ -105,7 +105,7 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(
             parameters,
             (inputPointLyrList + inputLineLyrList + inputPolygonLyrList)[0],
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             context,
         )
         # Compute the number of steps to display within the progress bar and

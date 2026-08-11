@@ -53,7 +53,7 @@ class DonutHoleExtractorAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input Polygon Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -126,9 +126,9 @@ class DonutHoleExtractorAlgorithm(ValidationAlgorithm):
                 donutHoleFeatList,
             ) = featureHandler.getFeatureOuterShellAndHoles(feat, isMulti)
             for feat in outerShellFeatList:
-                outershell_sink.addFeature(feat, QgsFeatureSink.FastInsert)
+                outershell_sink.addFeature(feat, QgsFeatureSink.Flag.FastInsert)
             for feat in donutHoleFeatList:
-                donuthole_sink.addFeature(feat, QgsFeatureSink.FastInsert)
+                donuthole_sink.addFeature(feat, QgsFeatureSink.Flag.FastInsert)
             # # Update the progress bar
             feedback.setProgress(int(current * total))
         return {self.DONUTHOLE: donuthole_dest_id, self.OUTERSHELL: outershell_dest_id}

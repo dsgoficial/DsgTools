@@ -48,7 +48,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_POLYGON,
                 self.tr("Polygon Input Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -63,7 +63,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.AREAMINIMA,
                 self.tr("Minimum Map Area (on chart)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
 
@@ -78,7 +78,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
         smooth_voronoi = QgsProcessingParameterNumber(
             self.SVORONOI,
             self.tr("Voronoi smoothing value"),
-            type=QgsProcessingParameterNumber.Double,
+            type=QgsProcessingParameterNumber.Type.Double,
             defaultValue=0.1,
         )
         smooth_voronoi.setFlags(
@@ -89,7 +89,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
         smooth_simplify = QgsProcessingParameterNumber(
             self.SSIMPLIFY,
             self.tr("Simplify smoothing value"),
-            type=QgsProcessingParameterNumber.Double,
+            type=QgsProcessingParameterNumber.Type.Double,
             defaultValue=0.0001,
         )
         smooth_simplify.setFlags(
@@ -128,7 +128,12 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
         fields = polygonLayer.fields()
 
         (LineSink, LineSinkId) = self.parameterAsSink(
-            parameters, self.OUTPUTLINE, context, fields, QgsWkbTypes.LineString, crs
+            parameters,
+            self.OUTPUTLINE,
+            context,
+            fields,
+            QgsWkbTypes.Type.LineString,
+            crs,
         )
 
         fields = polygonLayer.fields()
@@ -225,7 +230,7 @@ class GeneralizeLandingStripAlgorithm(QgsProcessingAlgorithm):
                 if fieldName not in fieldsFeat:
                     continue
                 newFeat[fieldName] = feat[fieldName]
-            LineSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            LineSink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
         polygonLayer.startEditing()
         polygonLayer.beginEditCommand(self.tr("Delete polygons"))
         polygonLayer.deleteFeatures(ids_to_delete)

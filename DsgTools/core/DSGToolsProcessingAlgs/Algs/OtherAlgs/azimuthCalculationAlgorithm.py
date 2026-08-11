@@ -44,7 +44,10 @@ class AzimuthCalculationAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LAYER,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorLine, QgsProcessing.TypeVectorPolygon],
+                [
+                    QgsProcessing.SourceType.TypeVectorLine,
+                    QgsProcessing.SourceType.TypeVectorPolygon,
+                ],
             )
         )
 

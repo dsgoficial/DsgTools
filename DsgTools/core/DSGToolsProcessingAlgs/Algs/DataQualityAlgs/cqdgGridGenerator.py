@@ -221,7 +221,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT_MOLDURA,
                 self.tr("Frame Layer (MI)"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -307,7 +307,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             self.OUTPUT_GRID,
             context,
             fields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             original_crs,
         )
 
@@ -316,7 +316,7 @@ class ETCQDGGridGenerator(QgsProcessingAlgorithm):
             self.OUTPUT_AMOSTRA,
             context,
             fields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             original_crs,
         )
 

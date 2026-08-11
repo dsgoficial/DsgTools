@@ -41,7 +41,7 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LAYER,
                 self.tr("Input polygon layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
         self.addParameter(
@@ -129,7 +129,7 @@ class NumberPolygonsAlgorithm(QgsProcessingAlgorithm):
             new_feature = QgsFeature(fields)
             new_feature.setGeometry(feature.geometry())
             new_feature.setAttributes(feature.attributes() + [i])
-            sink.addFeature(new_feature, QgsFeatureSink.FastInsert)
+            sink.addFeature(new_feature, QgsFeatureSink.Flag.FastInsert)
             feedback.setProgress(int(i * total))
 
         return {self.OUTPUT_LAYER: dest_id}

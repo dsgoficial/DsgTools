@@ -73,7 +73,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterFile(
                 self.ZIP_FOLDER,
                 self.tr("Folder with BDGEx zip files"),
-                behavior=QgsProcessingParameterFile.Folder,
+                behavior=QgsProcessingParameterFile.Behavior.Folder,
             )
         )
 
@@ -91,7 +91,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.SEARCH_RADIUS,
                 self.tr("Search radius"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0.0,
                 defaultValue=0.0001,
             )
@@ -169,7 +169,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
             self.POINT_FLAGS,
             context,
             fields,
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             refCrs,
         )
         if pointFlagSink is None:
@@ -182,7 +182,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
             self.LINE_FLAGS,
             context,
             fields,
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             refCrs,
         )
         if lineFlagSink is None:
@@ -640,9 +640,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         """
         flatType = QgsWkbTypes.flatType(geom.wkbType())
         rings = []
-        if flatType == QgsWkbTypes.Polygon:
+        if flatType == QgsWkbTypes.Type.Polygon:
             rings = geom.asPolygon()
-        elif flatType == QgsWkbTypes.MultiPolygon:
+        elif flatType == QgsWkbTypes.Type.MultiPolygon:
             for poly in geom.asMultiPolygon():
                 rings.extend(poly)
         parts = [QgsGeometry.fromPolylineXY(ring) for ring in rings if ring]
@@ -1253,9 +1253,9 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         """
         flatType = QgsWkbTypes.flatType(geom.wkbType())
         rings = []
-        if flatType == QgsWkbTypes.Polygon:
+        if flatType == QgsWkbTypes.Type.Polygon:
             rings = geom.asPolygon()
-        elif flatType == QgsWkbTypes.MultiPolygon:
+        elif flatType == QgsWkbTypes.Type.MultiPolygon:
             for poly in geom.asMultiPolygon():
                 rings.extend(poly)
 
@@ -1277,7 +1277,7 @@ class VerifyBDGExEdgeMatchingAlgorithm(ValidationAlgorithm):
         newFeat = QgsFeature(fields)
         newFeat.setGeometry(geom)
         newFeat["reason"] = reason
-        sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+        sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
     # -------------------------------------------------------------------------
     # Standard QgsProcessingAlgorithm overrides

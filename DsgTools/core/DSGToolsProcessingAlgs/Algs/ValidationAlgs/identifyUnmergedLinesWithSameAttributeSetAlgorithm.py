@@ -64,7 +64,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input layer"),
                 [
-                    QgsProcessing.TypeVectorLine,
+                    QgsProcessing.SourceType.TypeVectorLine,
                 ],
             )
         )
@@ -79,7 +79,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
                 self.tr("Fields to ignore"),
                 None,
                 "INPUT",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
                 allowMultiple=True,
                 optional=True,
             )
@@ -102,7 +102,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POINT_FILTER_LAYERS,
                 self.tr("Point Filter Layers"),
-                QgsProcessing.TypeVectorPoint,
+                QgsProcessing.SourceType.TypeVectorPoint,
                 optional=True,
             )
         )
@@ -110,7 +110,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.LINE_FILTER_LAYERS,
                 self.tr("Line Filter Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -142,7 +142,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
         lineFilterLyrList = self.parameterAsLayerList(
             parameters, self.LINE_FILTER_LAYERS, context
         )
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Type.Point, context)
         if inputLyr is None or inputLyr.featureCount() == 0:
             return {"FLAGS": self.flag_id}
         attributeBlackList = self.parameterAsStrings(

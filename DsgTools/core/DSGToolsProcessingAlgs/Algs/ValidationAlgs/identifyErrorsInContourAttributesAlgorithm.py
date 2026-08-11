@@ -53,7 +53,7 @@ class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_CONTOURS,
                 self.tr("Input Contours layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 defaultValue="elemnat_curva_nivel_l",
             )
         )
@@ -63,7 +63,7 @@ class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):
                 self.tr("Contour value field"),
                 "cota",
                 "INPUT_CONTOURS",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
             )
         )
         self.addParameter(
@@ -116,7 +116,7 @@ class IdentifyErrorsInContourAttributesAlgorithm(ValidationAlgorithm):
         if masterContourExpression is None:
             raise QgsProcessingException(self.tr("invalid expression"))
         self.prepareFlagSink(
-            parameters, inputLyr, QgsWkbTypes.LineString, context, addFeatId=True
+            parameters, inputLyr, QgsWkbTypes.Type.LineString, context, addFeatId=True
         )
         request = QgsFeatureRequest()
         request.setFilterExpression(

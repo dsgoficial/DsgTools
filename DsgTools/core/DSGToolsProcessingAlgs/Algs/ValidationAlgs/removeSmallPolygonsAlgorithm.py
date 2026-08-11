@@ -47,7 +47,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
 
@@ -61,7 +61,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
                 self.tr("Area tolerance"),
-                QgsProcessingParameterNumber.Double,
+                QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
                 defaultValue=625,
             )

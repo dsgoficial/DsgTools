@@ -60,7 +60,7 @@ class DbConverter(QgsTask):
     """
 
     def __init__(
-        self, iface, conversionMap=None, description="", flags=QgsTask.CanCancel
+        self, iface, conversionMap=None, description="", flags=QgsTask.Flag.CanCancel
     ):
         """
         Class constructor.

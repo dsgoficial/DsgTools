@@ -45,7 +45,7 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input"),
                 [
-                    QgsProcessing.TypeVectorLine,
+                    QgsProcessing.SourceType.TypeVectorLine,
                 ],
             )
         )
@@ -57,7 +57,7 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         lines = self.parameterAsVectorLayer(parameters, "INPUT", context)
-        self.prepareFlagSink(parameters, lines, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(parameters, lines, QgsWkbTypes.Type.Point, context)
 
         # Dictionary that indicates how many lines enter and how many lines exit a given point:
         pointInAndOutDictionary = {}

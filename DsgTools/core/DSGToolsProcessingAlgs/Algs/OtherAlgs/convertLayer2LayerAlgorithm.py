@@ -50,7 +50,7 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
@@ -65,7 +65,7 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.FILTER_LAYER,
                 self.tr("Filter layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -107,7 +107,7 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.OUTPUT,
                 self.tr("Output layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
 

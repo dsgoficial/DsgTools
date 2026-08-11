@@ -67,14 +67,14 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             QgsProcessingParameterFile(
                 self.INPUT_FOLDER,
                 self.tr("Folder with tif files"),
-                behavior=QgsProcessingParameterFile.Folder,
+                behavior=QgsProcessingParameterFile.Behavior.Folder,
             )
         )
         self.addParameter(
             QgsProcessingParameterFile(
                 self.XML_TEMPLATE_FILE,
                 self.tr("XML template"),
-                behavior=QgsProcessingParameterFile.File,
+                behavior=QgsProcessingParameterFile.Behavior.File,
                 fileFilter="XML (*.xml)",
             )
         )

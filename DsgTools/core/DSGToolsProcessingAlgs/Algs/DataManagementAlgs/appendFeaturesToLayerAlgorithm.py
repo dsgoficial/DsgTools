@@ -49,7 +49,7 @@ class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.LAYER_WITH_FEATURES_TO_APPEND,
                 self.tr("Layer with features to append to original layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
 
@@ -57,7 +57,7 @@ class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.DESTINATION_LAYER,
                 self.tr("Destination Layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
 

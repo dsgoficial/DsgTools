@@ -187,7 +187,7 @@ class ShapefileLayerLoader(EDGVLayerLoader):
         vlayer = QgsVectorLayer(self.uri.uri(), tableName, self.provider)
         QgsProject.instance().addMapLayer(vlayer, addToLegend=False)
         crs = QgsCoordinateReferenceSystem(
-            int(srid), QgsCoordinateReferenceSystem.EpsgCrsId
+            int(srid), QgsCoordinateReferenceSystem.CrsType.EpsgCrsId
         )
         vlayer.setCrs(crs)
         vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)

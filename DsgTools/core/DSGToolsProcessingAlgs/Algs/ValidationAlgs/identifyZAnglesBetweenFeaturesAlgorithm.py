@@ -59,8 +59,8 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input"),
                 [
-                    QgsProcessing.TypeVectorLine,
-                    QgsProcessing.TypeVectorPolygon,
+                    QgsProcessing.SourceType.TypeVectorLine,
+                    QgsProcessing.SourceType.TypeVectorPolygon,
                 ],
             )
         )
@@ -68,7 +68,7 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.ANGLE,
                 self.tr("Minimum angle"),
-                QgsProcessingParameterNumber.Double,
+                QgsProcessingParameterNumber.Type.Double,
                 defaultValue=300,
                 minValue=270,
                 maxValue=360,
@@ -88,7 +88,12 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
         self.fields.append(QgsField("source", QMetaType.Type.QString))
 
         sink, dest_id = self.parameterAsSink(
-            parameters, self.OUTPUT, context, self.fields, QgsWkbTypes.LineString, crs
+            parameters,
+            self.OUTPUT,
+            context,
+            self.fields,
+            QgsWkbTypes.Type.LineString,
+            crs,
         )
 
         # Initialize caches
@@ -354,7 +359,7 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
             # Check if intersection forms a valid Z angle
             intersection = gfeat1.intersection(gfeat2)
-            if intersection.wkbType() == QgsWkbTypes.Point:
+            if intersection.wkbType() == QgsWkbTypes.Type.Point:
                 # Get closest vertices to intersection
                 intersection_point = intersection.asPoint()
 
@@ -551,8 +556,8 @@ class IdentifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
         # Verify intersections are valid points
         if (
-            inter12.wkbType() != QgsWkbTypes.Point
-            or inter23.wkbType() != QgsWkbTypes.Point
+            inter12.wkbType() != QgsWkbTypes.Type.Point
+            or inter23.wkbType() != QgsWkbTypes.Type.Point
         ):
             return []
 

@@ -54,7 +54,9 @@ class SplitLinesAtMaximumLengthAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT, self.tr("Input line layer"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Input line layer"),
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         param = QgsProcessingParameterDistance(
@@ -107,7 +109,7 @@ class SplitLinesAtMaximumLengthAlgorithm(QgsProcessingAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        sinkLambda = lambda x: sink.addFeature(x, QgsFeatureSink.FastInsert)
+        sinkLambda = lambda x: sink.addFeature(x, QgsFeatureSink.Flag.FastInsert)
 
         if open_lines.featureCount() > 0:
             feedback.pushInfo(
@@ -168,7 +170,7 @@ class SplitLinesAtMaximumLengthAlgorithm(QgsProcessingAlgorithm):
                         else geom.asPolyline()
                     )
                     if len(vertices) < 4:
-                        sink.addFeature(feature, QgsFeatureSink.FastInsert)
+                        sink.addFeature(feature, QgsFeatureSink.Flag.FastInsert)
                         continue
 
                     # Split at approximately midway point
@@ -184,12 +186,12 @@ class SplitLinesAtMaximumLengthAlgorithm(QgsProcessingAlgorithm):
                     feat1 = QgsFeature(feature.fields())
                     feat1.setAttributes(feature.attributes())
                     feat1.setGeometry(QgsGeometry.fromPolylineXY(part1))
-                    sink.addFeature(feat1, QgsFeatureSink.FastInsert)
+                    sink.addFeature(feat1, QgsFeatureSink.Flag.FastInsert)
 
                     feat2 = QgsFeature(feature.fields())
                     feat2.setAttributes(feature.attributes())
                     feat2.setGeometry(QgsGeometry.fromPolylineXY(part2))
-                    sink.addFeature(feat2, QgsFeatureSink.FastInsert)
+                    sink.addFeature(feat2, QgsFeatureSink.Flag.FastInsert)
 
         return {self.OUTPUT: dest_id}
 

@@ -67,7 +67,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
                 self.INPUT,
                 self.tr("Input layer"),
                 [
-                    QgsProcessing.TypeVectorPolygon,
+                    QgsProcessing.SourceType.TypeVectorPolygon,
                 ],
             )
         )
@@ -82,7 +82,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
                 self.tr("Fields to ignore"),
                 None,
                 "INPUT",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
                 allowMultiple=True,
                 optional=True,
             )
@@ -105,14 +105,14 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
             QgsProcessingParameterMultipleLayers(
                 self.LINE_FILTER_LAYERS,
                 self.tr("Line Filter Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
         areaFilter = QgsProcessingParameterNumber(
             self.AREA_FILTER,
             self.tr("Minimum area polygon filter"),
-            QgsProcessingParameterNumber.Double,
+            QgsProcessingParameterNumber.Type.Double,
             defaultValue=None,
             optional=True,
             minValue=0.0,
@@ -139,7 +139,7 @@ class IdentifyUnmergedPolygonsWithSameAttributeSetAlgorithm(ValidationAlgorithm)
         lineFilterLyrList = self.parameterAsLayerList(
             parameters, self.LINE_FILTER_LAYERS, context
         )
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.LineString, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Type.LineString, context)
         if inputLyr is None or inputLyr.featureCount() == 0:
             return {"FLAGS": self.flag_id}
         attributeBlackList = self.parameterAsStrings(

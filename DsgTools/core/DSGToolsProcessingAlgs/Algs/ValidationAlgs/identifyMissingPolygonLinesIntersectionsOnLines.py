@@ -56,7 +56,7 @@ class IdentifyMissingPolygonLineIntersectionsOnLines(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LINES,
                 self.tr("Line Layers"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -73,7 +73,7 @@ class IdentifyMissingPolygonLineIntersectionsOnLines(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_POLYGONS,
                 self.tr("Polygon Layers"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -90,7 +90,7 @@ class IdentifyMissingPolygonLineIntersectionsOnLines(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_INTERSECTION,
                 self.tr("Intersection Lines Layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -143,7 +143,7 @@ class IdentifyMissingPolygonLineIntersectionsOnLines(ValidationAlgorithm):
         self.prepareFlagSink(
             parameters,
             inputLineLyr,
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             context,
         )
         if feedback is not None:

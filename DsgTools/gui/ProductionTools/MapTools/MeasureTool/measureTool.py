@@ -243,13 +243,13 @@ class EventFilter(QObject):
             line_acum = QgsGeometry.fromPolylineXY(self.pointList)
             measure_distAcum = self.dist_area.measureLength(line_acum)
             distAcum = self.dist_area.convertLengthMeasurement(
-                measure_distAcum, QgsUnitTypes.DistanceMeters
+                measure_distAcum, QgsUnitTypes.DistanceUnit.DistanceMeters
             )
             tooltip = QToolTip
             if length != None or length == 0:
                 measure_dist = self.dist_area.measureLength(line_dist)
                 dist = self.dist_area.convertLengthMeasurement(
-                    measure_dist, QgsUnitTypes.DistanceMeters
+                    measure_dist, QgsUnitTypes.DistanceUnit.DistanceMeters
                 )
                 txt = "<b>{partial} {dist:.3f} m</b><br/><b>{total} {distAcum:.3f} m</b></p>".format(
                     partial=self.tr("Partial:"),
@@ -279,7 +279,7 @@ class EventFilter(QObject):
             if area != None:
                 measure_area = self.dist_area.measureArea(polygon)
                 area = self.dist_area.convertAreaMeasurement(
-                    measure_area, QgsUnitTypes.AreaSquareMeters
+                    measure_area, QgsUnitTypes.AreaUnit.AreaSquareMeters
                 )
                 txt = f"<b>Area: {area:.3f}m²</b></p>"
                 QToolTip.showText(

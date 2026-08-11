@@ -49,7 +49,7 @@ class IdentifyDuplicatedLinesBetweenLayersAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
                 self.tr("Coverage Linestring Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
             )
         )
 
@@ -77,7 +77,7 @@ class IdentifyDuplicatedLinesBetweenLayersAlgorithm(ValidationAlgorithm):
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         self.prepareFlagSink(
-            parameters, inputLyrList[0], QgsWkbTypes.LineString, context
+            parameters, inputLyrList[0], QgsWkbTypes.Type.LineString, context
         )
         # Compute the number of steps to display within the progress bar and
         # get features from source

@@ -57,7 +57,7 @@ class ProcessingTools(QtWidgets.QDialog, FORM_CLASS):
 
         self.epsg = 4326
         srs = QgsCoordinateReferenceSystem(
-            self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId
+            self.epsg, QgsCoordinateReferenceSystem.CrsType.EpsgCrsId
         )
         self.srLineEdit.setText(srs.description())
 
@@ -124,7 +124,7 @@ class ProcessingTools(QtWidgets.QDialog, FORM_CLASS):
         else:
             self.epsg = int(projSelector.selectedAuthId().split(":")[-1])
         srs = QgsCoordinateReferenceSystem(
-            self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId
+            self.epsg, QgsCoordinateReferenceSystem.CrsType.EpsgCrsId
         )
         self.srLineEdit.setText(srs.description())
 

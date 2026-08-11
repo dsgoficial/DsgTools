@@ -47,7 +47,9 @@ class IdentifyDuplicatedPointsBetweenLayersAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUTLAYERS, self.tr("Point Layers"), QgsProcessing.TypeVectorPoint
+                self.INPUTLAYERS,
+                self.tr("Point Layers"),
+                QgsProcessing.SourceType.TypeVectorPoint,
             )
         )
 
@@ -74,7 +76,9 @@ class IdentifyDuplicatedPointsBetweenLayersAlgorithm(ValidationAlgorithm):
                 self.invalidSourceError(parameters, self.INPUTLAYERS)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Point, context)
+        self.prepareFlagSink(
+            parameters, inputLyrList[0], QgsWkbTypes.Type.Point, context
+        )
         # Compute the number of steps to display within the progress bar and
         # get features from source
         geomDict = dict()

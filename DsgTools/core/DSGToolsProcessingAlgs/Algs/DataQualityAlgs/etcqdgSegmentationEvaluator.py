@@ -129,7 +129,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT_TILES,
                 self.tr("ET-CQDG Tiles Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -137,7 +137,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT_MASK_LAYER,
                 self.tr("Polygon Layer for Masks"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -146,7 +146,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 self.CLASS_FIELD,
                 self.tr("Class Field (integer values)"),
                 parentLayerParameterName=self.INPUT_MASK_LAYER,
-                type=QgsProcessingParameterField.Numeric,
+                type=QgsProcessingParameterField.DataType.Numeric,
             )
         )
 
@@ -155,7 +155,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
                 self.CLASS_NAME_FIELD,
                 self.tr("Class Name Field"),
                 parentLayerParameterName=self.INPUT_MASK_LAYER,
-                type=QgsProcessingParameterField.String,
+                type=QgsProcessingParameterField.DataType.String,
                 defaultValue="class_name",
                 optional=True,
             )
@@ -165,7 +165,7 @@ class ETCQDGSegmentationEvaluator(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.SEGMENTATION_RASTER,
                 self.tr("Inferred Masks (Experiment Results)"),
-                QgsProcessing.TypeRaster,
+                QgsProcessing.SourceType.TypeRaster,
             )
         )
 

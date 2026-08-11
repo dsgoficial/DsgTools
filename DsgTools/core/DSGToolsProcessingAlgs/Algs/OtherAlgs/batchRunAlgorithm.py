@@ -121,7 +121,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                 self.OUTPUT,
                 context,
                 self.flagFields,
-                QgsWkbTypes.Point,
+                QgsWkbTypes.Type.Point,
                 QgsProject.instance().crs(),
             )
             gc.enable()
@@ -186,7 +186,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                 self.OUTPUT,
                 context,
                 self.flagFields,
-                QgsWkbTypes.Point,
+                QgsWkbTypes.Type.Point,
                 QgsProject.instance().crs(),
             )
         gc.enable()
@@ -237,7 +237,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             newFeat["alg_name"] = algName
             newFeat["layer_name"] = inputLyrName
             newFeat.setGeometry(feat.geometry())
-            self.flagSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            self.flagSink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
     def prepareFlagSink(self, parameters, flagSource, context):
         for field in flagSource.fields():

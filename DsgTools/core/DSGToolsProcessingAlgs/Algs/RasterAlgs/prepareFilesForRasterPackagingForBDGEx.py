@@ -54,7 +54,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
             QgsProcessingParameterFile(
                 self.INPUT_FOLDER,
                 self.tr("Folder with zip files"),
-                behavior=QgsProcessingParameterFile.Folder,
+                behavior=QgsProcessingParameterFile.Behavior.Folder,
             )
         )
         self.addParameter(
@@ -243,7 +243,7 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                         "ESRI Shapefile",
                     )
 
-                    if writer.hasError() != QgsVectorFileWriter.NoError:
+                    if writer.hasError() != QgsVectorFileWriter.WriterError.NoError:
                         raise QgsProcessingException(
                             self.tr("Error creating writer for {}").format(output_file)
                         )

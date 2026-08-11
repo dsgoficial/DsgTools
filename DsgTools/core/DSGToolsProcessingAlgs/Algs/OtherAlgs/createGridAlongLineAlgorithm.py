@@ -61,7 +61,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT_LAYER,
                 self.tr("Insert the line layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -87,7 +87,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.OVERLAP,
                 self.tr("Overlap (%)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
                 maxValue=100,
                 defaultValue=10,
@@ -98,7 +98,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.START,
                 self.tr("Start from begin (m)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=50,
             )
         )
@@ -106,7 +106,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.MARGINS_TOP,
                 self.tr("Top Margin (mm)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
                 defaultValue=10,
             )
@@ -116,7 +116,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.MARGINS_BOTTOM,
                 self.tr("Bottom Margin (mm)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
                 defaultValue=10,
             )
@@ -126,7 +126,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.MARGINS_LEFT,
                 self.tr("Left Margin (mm)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
                 defaultValue=10,
             )
@@ -136,7 +136,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.MARGINS_RIGHT,
                 self.tr("Right Margin (mm)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
                 defaultValue=10,
             )
@@ -144,7 +144,9 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT, self.tr("Grid Layer"), QgsProcessing.TypeVectorPolygon
+                self.OUTPUT,
+                self.tr("Grid Layer"),
+                QgsProcessing.SourceType.TypeVectorPolygon,
             )
         )
 
@@ -192,7 +194,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             fields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             source.sourceCrs(),
         )
 
@@ -234,7 +236,7 @@ class CreateGridAlongLineAlgorithm(QgsProcessingAlgorithm):
                 )
                 curs = curs + stepnudge
                 new_feat = self.createFeature(r, line_id, geom)
-                sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
+                sink.addFeature(new_feat, QgsFeatureSink.Flag.FastInsert)
                 r += 1
 
             feedback.setProgress(current * stepSize)

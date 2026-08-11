@@ -34,7 +34,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LAYER,
                 self.tr("Layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
 
@@ -42,7 +42,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterField(
                 self.ATTRIBUTE_NAME,
                 self.tr("Attribute name"),
-                type=QgsProcessingParameterField.String,
+                type=QgsProcessingParameterField.DataType.String,
                 parentLayerParameterName=self.INPUT_LAYER,
                 allowMultiple=False,
                 defaultValue="nome",
@@ -53,7 +53,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterField(
                 self.PRIMARY_KEY_FIELD,
                 self.tr("Primary key field"),
-                type=QgsProcessingParameterField.Any,
+                type=QgsProcessingParameterField.DataType.Any,
                 parentLayerParameterName=self.INPUT_LAYER,
                 allowMultiple=False,
                 defaultValue="id",
@@ -83,7 +83,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             self.FLAGS,
             context,
             fields,
-            geometryType=QgsWkbTypes.NoGeometry,
+            geometryType=QgsWkbTypes.Type.NoGeometry,
         )
         try:
             spellchecker = SpellCheckerCtrl("pt-BR")
@@ -160,7 +160,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         return -1
 
     def getFlagWkbType(self):
-        return QgsWkbTypes.Point
+        return QgsWkbTypes.Type.Point
 
     def getFlagFields(self):
         sinkFields = QgsFields()

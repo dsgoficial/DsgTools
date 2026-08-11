@@ -47,7 +47,9 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Input layer"),
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(

@@ -34,7 +34,7 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 "INPUT_LAYER_LIST",
                 self.tr("Select layers"),
-                QgsProcessing.TypeVectorAnyGeometry,
+                QgsProcessing.SourceType.TypeVectorAnyGeometry,
             )
         )
         self.addParameter(
@@ -118,7 +118,9 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
                 newFeat = QgsFeature(fields)
                 newFeat.setGeometry(feat.geometry())
                 newFeat["id"] = idx
-                sinkDict[geometryType].addFeature(newFeat, QgsFeatureSink.FastInsert)
+                sinkDict[geometryType].addFeature(
+                    newFeat, QgsFeatureSink.Flag.FastInsert
+                )
 
         return returnDict
 
@@ -126,19 +128,19 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
         returnDict = dict()
         sinkDict = dict()
         point_sink, point_sink_id = self.createOutput(
-            parameters, context, self.OUTPUT1, QgsWkbTypes.MultiPoint, fields
+            parameters, context, self.OUTPUT1, QgsWkbTypes.Type.MultiPoint, fields
         )
         returnDict[self.OUTPUT1] = point_sink_id
         sinkDict[Qgis.GeometryType.Point] = point_sink
 
         line_sink, line_sink_id = self.createOutput(
-            parameters, context, self.OUTPUT2, QgsWkbTypes.MultiLineString, fields
+            parameters, context, self.OUTPUT2, QgsWkbTypes.Type.MultiLineString, fields
         )
         returnDict[self.OUTPUT2] = line_sink_id
         sinkDict[Qgis.GeometryType.Line] = line_sink
 
         polygon_sink, polygon_sink_id = self.createOutput(
-            parameters, context, self.OUTPUT3, QgsWkbTypes.MultiPolygon, fields
+            parameters, context, self.OUTPUT3, QgsWkbTypes.Type.MultiPolygon, fields
         )
         returnDict[self.OUTPUT3] = polygon_sink_id
         sinkDict[Qgis.GeometryType.Polygon] = polygon_sink

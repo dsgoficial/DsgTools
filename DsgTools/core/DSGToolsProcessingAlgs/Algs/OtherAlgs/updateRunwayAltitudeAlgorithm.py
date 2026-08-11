@@ -29,7 +29,7 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
                 self.tr("Input Layers"),
-                QgsProcessing.TypeVectorAnyGeometry,
+                QgsProcessing.SourceType.TypeVectorAnyGeometry,
             )
         )
 
@@ -44,7 +44,7 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.DECIMALS,
                 self.tr("Round to how many decimal places (-1 to not round)"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=-1,
             )
         )

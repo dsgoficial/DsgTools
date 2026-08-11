@@ -56,7 +56,7 @@ class IdentifyUncoveredStartAndEndPointsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -80,7 +80,7 @@ class IdentifyUncoveredStartAndEndPointsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.FILTER_LINE_LIST,
                 self.tr("Linestring Filter Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
             )
         )
 
@@ -88,7 +88,7 @@ class IdentifyUncoveredStartAndEndPointsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic Boundary"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -106,7 +106,7 @@ class IdentifyUncoveredStartAndEndPointsAlgorithm(ValidationAlgorithm):
         """
         self.algRunner = AlgRunner()
         inputLyr = self.parameterAsLayer(parameters, self.INPUT, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Type.Point, context)
         if inputLyr is None:
             return {self.FLAGS: self.flag_id}
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)

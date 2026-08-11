@@ -55,7 +55,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
                 self.tr("Linestring Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
             )
         )
         self.addParameter(
@@ -92,7 +92,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
             inputLyrList,
-            geomType=QgsWkbTypes.MultiLineString,
+            geomType=QgsWkbTypes.Type.MultiLineString,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
         )

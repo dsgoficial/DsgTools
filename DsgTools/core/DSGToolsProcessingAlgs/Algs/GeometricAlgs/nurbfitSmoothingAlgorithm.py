@@ -40,7 +40,7 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -48,7 +48,7 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.DEGREE,
                 self.tr("Degree of basis polynomial"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 minValue=2,
                 defaultValue=3,
             )
@@ -58,7 +58,7 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.SMOOTHING_FACTOR,
                 self.tr("Smoothing factor (0 = interpolation only)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
                 defaultValue=1.0,
             )
@@ -68,7 +68,7 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.SEGMENT_LENGTH,
                 self.tr("Segment length (0 = automatic)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
                 defaultValue=0,
             )
@@ -126,7 +126,7 @@ class NURBFitSmoothingAlgorithm(QgsProcessingAlgorithm):
                 out_feature = QgsFeature()
                 out_feature.setGeometry(smoothed_geom)
                 out_feature.setAttributes(feature.attributes())
-                sink.addFeature(out_feature, QgsFeatureSink.FastInsert)
+                sink.addFeature(out_feature, QgsFeatureSink.Flag.FastInsert)
 
             feedback.setProgress(int(current * total))
 

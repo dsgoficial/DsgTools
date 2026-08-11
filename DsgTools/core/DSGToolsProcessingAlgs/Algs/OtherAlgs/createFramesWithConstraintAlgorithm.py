@@ -92,7 +92,7 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             self.XSUBDIVISIONS,
             self.tr("Number of subdivisions on x-axis"),
             minValue=1,
-            type=QgsProcessingParameterNumber.Integer,
+            type=QgsProcessingParameterNumber.Type.Integer,
             optional=True,
         )
         param.setFlags(
@@ -105,7 +105,7 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             self.YSUBDIVISIONS,
             self.tr("Number of subdivisions on y-axis"),
             minValue=1,
-            type=QgsProcessingParameterNumber.Integer,
+            type=QgsProcessingParameterNumber.Type.Integer,
             optional=True,
         )
         param.setFlags(
@@ -193,7 +193,7 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             ySubdivisions = default_y
 
         (output_sink, output_sink_id) = self.parameterAsSink(
-            parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, crs
+            parameters, self.OUTPUT, context, fields, QgsWkbTypes.Type.Polygon, crs
         )
         featureList = []
         coordinateTransformer = QgsCoordinateTransform(
@@ -240,14 +240,14 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         if needsFiltering:
             list(
                 map(
-                    lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
+                    lambda x: output_sink.addFeature(x, QgsFeatureSink.Flag.FastInsert),
                     filter(filterFunc, featureList),
                 )
             )
         else:
             list(
                 map(
-                    lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
+                    lambda x: output_sink.addFeature(x, QgsFeatureSink.Flag.FastInsert),
                     featureList,
                 )
             )

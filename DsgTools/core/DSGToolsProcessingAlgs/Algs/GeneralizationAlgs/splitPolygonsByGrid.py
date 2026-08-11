@@ -93,7 +93,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
                 self.tr("Input Polygon Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
         self.addParameter(
@@ -129,7 +129,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.NEIGHBOUR,
                 self.tr("Neighbour Polygon Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
         self.addParameter(
@@ -137,14 +137,14 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 self.CLASS_FIELD,
                 self.tr("Class attribute field"),
                 parentLayerParameterName=self.NEIGHBOUR,
-                type=QgsProcessingParameterField.Any,
+                type=QgsProcessingParameterField.DataType.Any,
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MAX_CONCURRENCY,
                 self.tr("Max Concurrency"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=1,
                 minValue=1,
             )

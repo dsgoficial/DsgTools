@@ -57,7 +57,7 @@ class AuxLayerSelector(QWidget):
         """
         returnDict = dict()
         for i in range(self.layout.rowCount()):
-            key = self.layout.itemAt(i, QFormLayout.LabelRole).text()
-            value = self.layout.itemAt(i, QFormLayout.FieldRole).currentText()
+            key = self.layout.itemAt(i, QFormLayout.ItemRole.LabelRole).text()
+            value = self.layout.itemAt(i, QFormLayout.ItemRole.FieldRole).currentText()
             returnDict[key] = value
         return returnDict

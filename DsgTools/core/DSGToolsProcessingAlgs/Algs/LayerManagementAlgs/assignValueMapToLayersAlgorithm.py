@@ -45,7 +45,7 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
                 self.tr("Input Layers"),
-                QgsProcessing.TypeVectorAnyGeometry,
+                QgsProcessing.SourceType.TypeVectorAnyGeometry,
             )
         )
         self.addParameter(

@@ -162,7 +162,7 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             self.getFields(),
-            QgsWkbTypes.NoGeometry,
+            QgsWkbTypes.Type.NoGeometry,
             QgsCoordinateReferenceSystem("EPSG:4326"),
         )
         tester = Tester()
@@ -200,7 +200,7 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
                 )
             )
             feedback.setProgress(currentStep * totalProgress)
-        algsOutput.addFeatures(feats, QgsFeatureSink.FastInsert)
+        algsOutput.addFeatures(feats, QgsFeatureSink.Flag.FastInsert)
         if failCount:
             feedback.reportError(
                 self.tr("{0} algorithms failed their unit tests.").format(failCount)

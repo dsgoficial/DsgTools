@@ -625,7 +625,9 @@ class GenericSelectionTool(AbstractSelectionTool):
                     continue
                 # builds bbRect and select from layer, adding selection
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, r)
-                layer.selectByRect(bbRect, behavior=QgsVectorLayer.AddToSelection)
+                layer.selectByRect(
+                    bbRect, behavior=QgsVectorLayer.SelectBehavior.AddToSelection
+                )
             self.rubberBand.hide()
 
     def setSelectionFeature(

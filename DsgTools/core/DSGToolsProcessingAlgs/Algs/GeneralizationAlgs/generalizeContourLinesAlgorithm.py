@@ -28,6 +28,7 @@ from qgis.core import (
     QgsFields,
     QgsGeometry,
     QgsPointXY,
+    NULL,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingException,
@@ -60,7 +61,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input contour lines"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -69,7 +70,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
                 self.ELEVATION_ATTR,
                 self.tr("Elevation attribute"),
                 parentLayerParameterName=self.INPUT,
-                type=QgsProcessingParameterField.Numeric,
+                type=QgsProcessingParameterField.DataType.Numeric,
             )
         )
 
@@ -77,7 +78,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.CONTOUR_INTERVAL,
                 self.tr("Contour interval"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
                 defaultValue=10,
             )
@@ -118,7 +119,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.FRAME,
                 self.tr("Frame layer (clip boundary)"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -217,7 +218,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             outFields,
-            QgsWkbTypes.MultiLineString,
+            QgsWkbTypes.Type.MultiLineString,
             sourceCrs,
         )
 
@@ -238,7 +239,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
                 continue
 
             cotaValue = feat[elevAttr]
-            if cotaValue is None or cotaValue == QVariant():
+            if cotaValue is None or cotaValue == NULL:
                 continue
             cotaValue = int(cotaValue)
 
@@ -302,7 +303,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
         # no CRS de origem devolvia graus quando a entrada era geográfica, e como todo
         # anel mede uma fração de grau, todos eram descartados em silêncio.
         toMeters = QgsUnitTypes.fromUnitToUnitFactor(
-            projectedCrs.mapUnits(), QgsUnitTypes.DistanceMeters
+            projectedCrs.mapUnits(), QgsUnitTypes.DistanceUnit.DistanceMeters
         )
 
         for cota, isDepression, geom in mergedLines:
@@ -377,15 +378,15 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
 
             # Ensure MultiLineString output
             if clipped.wkbType() in (
-                QgsWkbTypes.LineString,
-                QgsWkbTypes.LineStringZ,
-                QgsWkbTypes.LineStringM,
-                QgsWkbTypes.LineStringZM,
+                QgsWkbTypes.Type.LineString,
+                QgsWkbTypes.Type.LineStringZ,
+                QgsWkbTypes.Type.LineStringM,
+                QgsWkbTypes.Type.LineStringZM,
             ):
                 clipped = QgsGeometry.collectGeometry([clipped])
             elif clipped.wkbType() in (
-                QgsWkbTypes.GeometryCollection,
-                QgsWkbTypes.GeometryCollectionZ,
+                QgsWkbTypes.Type.GeometryCollection,
+                QgsWkbTypes.Type.GeometryCollectionZ,
             ):
                 # Extract only line parts from geometry collection
                 lineParts = []
@@ -421,7 +422,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
                         "",  # observacao
                     ]
                 )
-                sink.addFeature(outFeat, QgsFeatureSink.FastInsert)
+                sink.addFeature(outFeat, QgsFeatureSink.Flag.FastInsert)
 
             feedback.setProgress(80 + int((i / max(outputCount, 1)) * 20))
 

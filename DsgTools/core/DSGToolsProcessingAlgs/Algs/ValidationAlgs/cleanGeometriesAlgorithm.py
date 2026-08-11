@@ -57,7 +57,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input Layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
@@ -79,7 +79,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             self.tr("Minimum area"),
             minValue=0,
             defaultValue=1e-8,
-            type=QgsProcessingParameterNumber.Double,
+            type=QgsProcessingParameterNumber.Type.Double,
         )
         areaParam.setMetadata({"widget_wrapper": {"decimals": 16}})
         self.addParameter(areaParam)
@@ -88,7 +88,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic Bounds Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )

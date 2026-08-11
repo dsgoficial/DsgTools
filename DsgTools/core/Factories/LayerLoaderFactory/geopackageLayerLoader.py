@@ -262,7 +262,7 @@ class GeopackageLayerLoader(EDGVLayerLoader):
             )
         QgsProject.instance().addMapLayer(vlayer, addToLegend=False)
         crs = QgsCoordinateReferenceSystem(
-            int(srid), QgsCoordinateReferenceSystem.EpsgCrsId
+            int(srid), QgsCoordinateReferenceSystem.CrsType.EpsgCrsId
         )
         vlayer.setCrs(crs)
         vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)

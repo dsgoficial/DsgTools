@@ -99,14 +99,14 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
         (self.lineFlagSink, self.line_flag_id) = self.prepareAndReturnFlagSink(
             parameters,
             None,
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             context,
             self.LINE_FLAGS,
         )
         (self.polygonFlagSink, self.polygon_flag_id) = self.prepareAndReturnFlagSink(
             parameters,
             None,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             context,
             self.POLYGON_FLAGS,
         )

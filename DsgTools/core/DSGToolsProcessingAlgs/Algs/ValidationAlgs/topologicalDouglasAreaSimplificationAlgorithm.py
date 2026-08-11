@@ -59,7 +59,7 @@ class TopologicalDouglasPeuckerAreaSimplificationAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
                 self.tr("Polygon Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
             )
         )
         self.addParameter(
@@ -73,7 +73,7 @@ class TopologicalDouglasPeuckerAreaSimplificationAlgorithm(ValidationAlgorithm):
                 self.tr("Douglas Deucker threshold"),
                 minValue=0,
                 defaultValue=2,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
         self.addParameter(
@@ -82,7 +82,7 @@ class TopologicalDouglasPeuckerAreaSimplificationAlgorithm(ValidationAlgorithm):
                 self.tr("Snap radius"),
                 minValue=0,
                 defaultValue=1,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
         self.addParameter(
@@ -91,7 +91,7 @@ class TopologicalDouglasPeuckerAreaSimplificationAlgorithm(ValidationAlgorithm):
                 self.tr("Minimum area"),
                 minValue=0,
                 defaultValue=0.0001,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
         self.addParameter(
@@ -117,7 +117,7 @@ class TopologicalDouglasPeuckerAreaSimplificationAlgorithm(ValidationAlgorithm):
         threshold = self.parameterAsDouble(parameters, self.DOUGLASPARAMETER, context)
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
         self.prepareFlagSink(
-            parameters, inputLyrList[0], QgsWkbTypes.MultiPolygon, context
+            parameters, inputLyrList[0], QgsWkbTypes.Type.MultiPolygon, context
         )
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
@@ -125,7 +125,7 @@ class TopologicalDouglasPeuckerAreaSimplificationAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
             inputLyrList,
-            geomType=QgsWkbTypes.MultiPolygon,
+            geomType=QgsWkbTypes.Type.MultiPolygon,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
         )

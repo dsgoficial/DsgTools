@@ -59,7 +59,9 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUT_LAYERS, self.tr("Input Layers"), QgsProcessing.TypeVector
+                self.INPUT_LAYERS,
+                self.tr("Input Layers"),
+                QgsProcessing.SourceType.TypeVector,
             )
         )
         self.addParameter(

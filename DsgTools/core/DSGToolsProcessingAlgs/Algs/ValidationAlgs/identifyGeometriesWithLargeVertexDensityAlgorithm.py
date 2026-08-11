@@ -58,7 +58,10 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorLine, QgsProcessing.TypeVectorPolygon],
+                [
+                    QgsProcessing.SourceType.TypeVectorLine,
+                    QgsProcessing.SourceType.TypeVectorPolygon,
+                ],
             )
         )
 
@@ -94,7 +97,7 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         # output flag type is a polygon because the flag will be a circle with
         # radius tol and center as the vertex
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Type.Point, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)

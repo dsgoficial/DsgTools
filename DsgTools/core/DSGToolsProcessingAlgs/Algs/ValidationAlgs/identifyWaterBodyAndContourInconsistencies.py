@@ -52,7 +52,7 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT_WATER_BODIES,
                 self.tr("Input water bodies"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=False,
                 defaultValue="cobter_massa_dagua_a",
             )
@@ -62,7 +62,7 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT_CONTOURS,
                 self.tr("Input contours"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 optional=False,
                 defaultValue="elemnat_curva_nivel_l",
             )
@@ -74,7 +74,7 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
                 self.tr("Contour value field"),
                 "cota",
                 self.INPUT_CONTOURS,
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
             )
         )
 
@@ -91,7 +91,7 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.DAM_LAYER,
                 self.tr("Dam Layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 optional=True,
                 defaultValue="infra_barragem_l",
             )
@@ -116,7 +116,9 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
             parameters, self.INPUT_WATER_BODIES, context
         )
         damLyr = self.parameterAsVectorLayer(parameters, self.DAM_LAYER, context)
-        self.prepareFlagSink(parameters, inputContours, QgsWkbTypes.LineString, context)
+        self.prepareFlagSink(
+            parameters, inputContours, QgsWkbTypes.Type.LineString, context
+        )
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         if (

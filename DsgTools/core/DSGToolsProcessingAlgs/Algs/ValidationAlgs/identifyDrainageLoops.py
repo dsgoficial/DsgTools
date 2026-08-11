@@ -54,7 +54,7 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input"),
                 [
-                    QgsProcessing.TypeVectorLine,
+                    QgsProcessing.SourceType.TypeVectorLine,
                 ],
             )
         )
@@ -84,7 +84,7 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
         if inputLyr.featureCount() == 0:
             return {self.FLAGS: self.flag_id}
         buildCache = self.parameterAsBool(parameters, self.BUILD_CACHE, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.LineString, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Type.LineString, context)
 
         # Iterate over lines setting the dictionary counters:
         nSteps = 6 if buildCache else 4

@@ -52,7 +52,7 @@ class SnapFeaturesInsideLayerWithGroupByAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
@@ -67,7 +67,7 @@ class SnapFeaturesInsideLayerWithGroupByAlgorithm(ValidationAlgorithm):
                 self.tr("Field to group by"),
                 None,
                 "INPUT",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
                 allowMultiple=False,
                 optional=False,
             )

@@ -86,7 +86,7 @@ class Line2Multiline(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
                 self.tr("Select line layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
@@ -106,7 +106,7 @@ class Line2Multiline(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             fields,
-            QgsWkbTypes.MultiLineString,
+            QgsWkbTypes.Type.MultiLineString,
             source.sourceCrs(),
         )
 
@@ -189,7 +189,7 @@ class Line2Multiline(QgsProcessingAlgorithm):
             new_feat = QgsFeature(fields)
             new_feat.setGeometry(out_geom)
             new_feat["length"] = out_geom.length()
-            sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
+            sink.addFeature(new_feat, QgsFeatureSink.Flag.FastInsert)
 
             multi_feedback.setProgress(current * step_size)
 

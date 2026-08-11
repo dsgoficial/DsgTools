@@ -51,14 +51,16 @@ class IdentifyIntertwinedLinesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input lines"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Input lines"),
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.COMPARE_INPUT,
                 self.tr("Compare lines"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -66,7 +68,7 @@ class IdentifyIntertwinedLinesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
                 self.tr("Tolerance"),
-                QgsProcessingParameterNumber.Integer,
+                QgsProcessingParameterNumber.Type.Integer,
             )
         )
 
@@ -86,7 +88,9 @@ class IdentifyIntertwinedLinesAlgorithm(ValidationAlgorithm):
             parameters, self.COMPARE_INPUT, context
         )
         tolerance = self.parameterAsInt(parameters, self.TOLERANCE, context)
-        self.prepareFlagSink(parameters, inputSource, QgsWkbTypes.MultiPoint, context)
+        self.prepareFlagSink(
+            parameters, inputSource, QgsWkbTypes.Type.MultiPoint, context
+        )
         nFeats = inputSource.featureCount()
         nCompareFeats = compareInputSource.featureCount()
         if (
@@ -193,16 +197,16 @@ class IdentifyIntertwinedLinesAlgorithm(ValidationAlgorithm):
             intersections.convertToMultiType()
             if intersections.isEmpty():
                 continue
-            if intersections.wkbType() == QgsWkbTypes.GeometryCollection:
+            if intersections.wkbType() == QgsWkbTypes.Type.GeometryCollection:
                 points = []
                 for intersection in intersections.asGeometryCollection():
-                    if intersection.wkbType() == QgsWkbTypes.LineString:
+                    if intersection.wkbType() == QgsWkbTypes.Type.LineString:
                         points.extend(intersection.asPolyline())
-                    if intersection.wkbType() == QgsWkbTypes.Point:
+                    if intersection.wkbType() == QgsWkbTypes.Type.Point:
                         points.extend([intersection.asPoint()])
                 geom = QgsGeometry()
                 intersections = geom.fromMultiPointXY(points)
-            if intersections.wkbType() == QgsWkbTypes.MultiLineString:
+            if intersections.wkbType() == QgsWkbTypes.Type.MultiLineString:
                 points = []
                 for line in intersections.asMultiPolyline():
                     points.extend(line)

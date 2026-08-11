@@ -334,7 +334,7 @@ class BuildMergedDataWithFieldRefactorAlgorithm(ValidationAlgorithm):
             newFeature.setGeometry(feature.geometry())
             for field in fields:
                 newFeature.setAttribute(field.name(), feature[field.name()])
-            sink.addFeature(newFeature, QgsFeatureSink.FastInsert)
+            sink.addFeature(newFeature, QgsFeatureSink.Flag.FastInsert)
             feedback.setProgress(85 + int((current / total) * 10))
 
         feedback.setProgress(95)

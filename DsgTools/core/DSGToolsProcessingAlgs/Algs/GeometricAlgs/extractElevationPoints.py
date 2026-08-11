@@ -93,7 +93,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.CONTOUR_LINES,
                 self.tr("Contour Lines"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 defaultValue="elemnat_curva_nivel_l",
             )
         )
@@ -104,7 +104,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.tr("Contour value field"),
                 "cota",
                 self.CONTOUR_LINES,
-                QgsProcessingParameterField.Numeric,
+                QgsProcessingParameterField.DataType.Numeric,
             )
         )
 
@@ -131,7 +131,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic bounds layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=False,
                 defaultValue="aux_moldura_a",
             )
@@ -187,7 +187,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.WATER_BODIES,
                 self.tr("Water Bodies"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 defaultValue="cobter_massa_dagua_a",
             )
         )
@@ -196,7 +196,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.AREA_WITHOUT_INFORMATION_POLYGONS,
                 self.tr("Area without information layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -205,7 +205,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.DRAINAGE_LINES,
                 self.tr("Drainage lines"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 defaultValue="elemnat_trecho_drenagem_l",
             )
         )
@@ -216,7 +216,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.tr("Drainage name field"),
                 "nome",
                 self.DRAINAGE_LINES,
-                QgsProcessingParameterField.String,
+                QgsProcessingParameterField.DataType.String,
             )
         )
 
@@ -232,7 +232,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.ROADS,
                 self.tr("Roads"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 defaultValue="infra_via_deslocamento_l",
             )
         )
@@ -358,7 +358,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             fields,
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             self.outputCrs,
         )
         layerHandler = LayerHandler()
@@ -545,7 +545,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             featList = self.dropContourIntervalMultiples(
                 featList, contourHeightInterval, feedback=multiStepFeedback
             )
-            self.sink.addFeatures(featList, QgsFeatureSink.FastInsert)
+            self.sink.addFeatures(featList, QgsFeatureSink.Flag.FastInsert)
         return {
             "OUTPUT": self.sink_id,
         }
@@ -767,7 +767,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             featList=minMaxFeats,
             fields=fields,
             crs=clippedRasterLyr.crs(),
-            wkbType=QgsWkbTypes.Point,
+            wkbType=QgsWkbTypes.Type.Point,
             context=context,
         )
         # compute number of points
@@ -1811,7 +1811,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 featList=maxFeatList,
                 fields=fields,
                 crs=crs,
-                wkbType=QgsWkbTypes.Point,
+                wkbType=QgsWkbTypes.Type.Point,
                 context=QgsProcessingContext(),
             )
             filteredFeatureList = self.filterFeaturesByDistanceAndExclusionLayer(
@@ -1850,7 +1850,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             featList=list(featSet),
             fields=fields,
             crs=crs,
-            wkbType=QgsWkbTypes.Point,
+            wkbType=QgsWkbTypes.Type.Point,
             context=context,
         )
         filteredPoints = self.filterFeaturesByDistanceAndExclusionLayer(
@@ -1903,7 +1903,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 featList=minFeatList,
                 fields=fields,
                 crs=crs,
-                wkbType=QgsWkbTypes.Point,
+                wkbType=QgsWkbTypes.Type.Point,
                 context=QgsProcessingContext(),
             )
             filteredFeatureList = self.filterFeaturesByDistanceAndExclusionLayer(
@@ -1939,7 +1939,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             featList=minFeatList,
             fields=fields,
             crs=crs,
-            wkbType=QgsWkbTypes.Point,
+            wkbType=QgsWkbTypes.Type.Point,
             context=context,
         )
         filteredPoints = self.filterFeaturesByDistanceAndExclusionLayer(
@@ -1979,7 +1979,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             featList=inputPointList,
             fields=fields,
             crs=referenceLyr.crs(),
-            wkbType=QgsWkbTypes.Point,
+            wkbType=QgsWkbTypes.Type.Point,
             context=context,
         )
         pointList = self.filterFeaturesByDistanceAndExclusionLayer(
@@ -2009,7 +2009,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             featList=pointList,
             fields=fields,
             crs=referenceLyr.crs(),
-            wkbType=QgsWkbTypes.Point,
+            wkbType=QgsWkbTypes.Type.Point,
             context=context,
         )
         return self.filterPointsAgainstGrid(
@@ -2748,7 +2748,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 featList=newFeatList,
                 fields=fields,
                 crs=rasterLyr.crs(),
-                wkbType=QgsWkbTypes.Point,
+                wkbType=QgsWkbTypes.Type.Point,
                 context=context,
             )
 

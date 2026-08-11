@@ -51,7 +51,10 @@ class IdentifyOutOfBoundsAnglesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorLine, QgsProcessing.TypeVectorPolygon],
+                [
+                    QgsProcessing.SourceType.TypeVectorLine,
+                    QgsProcessing.SourceType.TypeVectorPolygon,
+                ],
             )
         )
 
@@ -85,7 +88,7 @@ class IdentifyOutOfBoundsAnglesAlgorithm(ValidationAlgorithm):
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Type.Point, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
         featureList, total = self.getIteratorAndFeatureCount(

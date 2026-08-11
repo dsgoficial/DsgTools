@@ -56,7 +56,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT_DRAINAGES,
                 self.tr("Input drainages"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 optional=False,
             )
         )
@@ -65,7 +65,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT_CONTOURS,
                 self.tr("Input contours"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 optional=False,
             )
         )
@@ -76,7 +76,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                 self.tr("Contour value field"),
                 None,
                 self.INPUT_CONTOURS,
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
             )
         )
 
@@ -84,7 +84,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.CONTOUR_INTERVAL,
                 self.tr("Contour interval"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
                 defaultValue=10,
             )
@@ -129,7 +129,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             feat["d_featid"]: feat for feat in inputDrainagesLyr.getFeatures()
         }
         self.prepareFlagSink(
-            parameters, inputDrainagesLyr, QgsWkbTypes.MultiPoint, context
+            parameters, inputDrainagesLyr, QgsWkbTypes.Type.MultiPoint, context
         )
         if len(drainageDict) == 0:
             return {self.FLAGS: self.flag_id}

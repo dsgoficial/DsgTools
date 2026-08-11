@@ -239,7 +239,7 @@ class ConvertDatabasesAlgorithm(AbstractDatabaseAlgorithm):
                 list(
                     map(
                         lambda x: self.flagSinkDict[geomType].addFeature(
-                            self.buildFlagFeat(x), QgsFeatureSink.FastInsert
+                            self.buildFlagFeat(x), QgsFeatureSink.Flag.FastInsert
                         ),
                         featDictList,
                     )

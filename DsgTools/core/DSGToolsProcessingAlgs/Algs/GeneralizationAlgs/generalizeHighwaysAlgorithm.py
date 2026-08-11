@@ -43,12 +43,14 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.NETWORK_LAYER,
                 self.tr("Highway layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.ESCALA, self.tr("Scale"), type=QgsProcessingParameterNumber.Double
+                self.ESCALA,
+                self.tr("Scale"),
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
         self.addParameter(
@@ -62,7 +64,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POINT_CONSTRAINT_LAYER_LIST,
                 self.tr("Point constraint Layers"),
-                QgsProcessing.TypeVectorPoint,
+                QgsProcessing.SourceType.TypeVectorPoint,
                 optional=True,
             )
         )
@@ -70,7 +72,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.LINE_CONSTRAINT_LAYER_LIST,
                 self.tr("Line constraint Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -78,7 +80,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POLYGON_CONSTRAINT_LAYER_LIST,
                 self.tr("Polygon constraint Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
                 optional=True,
             )
         )
@@ -86,7 +88,7 @@ class GeneralizeHighwaysAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS_LAYER,
                 self.tr("Reference layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
