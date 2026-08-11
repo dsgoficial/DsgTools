@@ -282,7 +282,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
                     context=context,
                     feedback=multiStepFeedback,
                 )
-                if clippedLyr is not None
+                if clipLayer is not None
                 else lyr
             )
             if multiStepFeedback is not None:

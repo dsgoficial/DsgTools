@@ -26,6 +26,7 @@ import os
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
+from qgis.PyQt.QtGui import QColor
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "attributeRuleTypeWidget.ui")

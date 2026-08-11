@@ -30,7 +30,6 @@ about=DSGTools with the following features:
 	-Inventory Tool for all geospatial data supported by GDAL/OGR.
 	-Hierarchical Snap and polygon construction from lines and centroids.
 	-Drainage network and terrain processing tools, spot elevation extraction and terrain validation.
-	-Tool to install Models and Scripts (geoalgorithms) in the Processing Toolbox (HSV fusion script available).
 	-EDGV code list viewer to aid attributes queries using our EDGV databases.
 	-Tool to reclassify features (move them to another layer) with predefined attributes.
 	-Tool for preparing files for packaging in BDGEx.

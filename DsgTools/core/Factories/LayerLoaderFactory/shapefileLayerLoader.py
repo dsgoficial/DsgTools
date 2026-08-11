@@ -31,7 +31,6 @@ from qgis.core import (
     QgsDataSourceUri,
     QgsMessageLog,
     QgsCoordinateReferenceSystem,
-    QgsMessageLog,
     Qgis,
     QgsProject,
 )
@@ -216,7 +215,7 @@ class ShapefileLayerLoader(EDGVLayerLoader):
         uri.setDatabase(self.abstractDb.db.databaseName())
         uri.setDataSource("", "dominios_" + domainTableName, None)
         # TODO Load domain layer into a group
-        domLayer = iface.addVectorLayer(uri.uri(), domainTableName, self.provider)
+        domLayer = self.iface.addVectorLayer(uri.uri(), domainTableName, self.provider)
         self.iface.legendInterface().moveLayer(domLayer, domainGroup)
         return domLayer
 

@@ -28,6 +28,8 @@ from qgis.core import (
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterExpression,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterVectorLayer,
 )
@@ -48,7 +50,7 @@ class IdentifyInvalidSpatialRelationshipAlgorithm(ValidationAlgorithm):
     GROUPBY_B = "GROUPBY_B"
     MIN_CASES = "MIN_CASES"
     MAX_CASES = "MAX_CASES"
-    FEATID_ON_GROUPBY = FEATID_ON_GROUPBY
+    FEATID_ON_GROUPBY = "FEATID_ON_GROUPBY"
 
     def initAlgorithm(self, config):
         """

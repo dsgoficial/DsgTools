@@ -36,6 +36,7 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
 )
 from qgis.PyQt.QtCore import QMetaType, QObject
+from qgis.PyQt.QtWidgets import QMessageBox
 
 
 class NetworkHandler(QObject):

@@ -195,7 +195,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
     def getInputLineLayers(
         self, context, algRunner, lineLyrList, onlySelected, feedback
     ):
-        nSteps = 2 if not onlySelected else 2 + len(lyrList)
+        nSteps = 2 if not onlySelected else 2 + len(lineLyrList)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
 
         def getLineLayer(currentStep, lineLyr):

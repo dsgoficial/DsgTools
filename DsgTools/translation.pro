@@ -321,15 +321,6 @@
                      core/LayerTools/CustomFormTools/customFormGenerator.py \
                      core/LayerTools/CustomFormTools/customInitCodeGenerator.py \
                      core/LayerTools/CustomFormTools/formsCustom/__init__.py \
-                     core/Misc/QGIS_Scripts/HSV_fusion.py \
-                     core/Misc/QGIS_Scripts/__init__.py \
-                     core/Misc/QGIS_Scripts/edgv_checker.py \
-                     core/Misc/QGIS_Scripts/reverse_geocode.py \
-                     core/Misc/QGIS_Scripts/virtual_raster.py \
-                     core/Misc/QGIS_Scripts/virtual_raster_inloco.py \
-                     core/Misc/QmlTools/__init__.py \
-                     core/Misc/QmlTools/qmlParser.py \
-                     core/Misc/QmlTools/qml_creator.py \
                      core/Misc/__init__.py \
                      core/NetworkTools/BDGExRequestHandler.py \
                      core/NetworkTools/ExternalFilesHandler.py \
@@ -425,9 +416,7 @@
                      gui/CustomWidgets/SelectionWidgets/customCheckableComboBox.py \
                      gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.py \
                      gui/CustomWidgets/SelectionWidgets/customSelector.py \
-                     gui/CustomWidgets/SelectionWidgets/customSnaperParameterSelector.py \
                      gui/CustomWidgets/SelectionWidgets/customTableSelector.py \
-                     gui/CustomWidgets/SelectionWidgets/customTableWidget.py \
                      gui/CustomWidgets/SelectionWidgets/importExportFileWidget.py \
                      gui/CustomWidgets/SelectionWidgets/listSelector.py \
                      gui/CustomWidgets/SelectionWidgets/multipleMapLayerSelection.py \
@@ -464,8 +453,6 @@
                      gui/Misc/InventoryTools/inventoryTools.py \
                      gui/Misc/ProcessingTools/__init__.py \
                      gui/Misc/ProcessingTools/processManager.py \
-                     gui/Misc/ToolboxTools/__init__.py \
-                     gui/Misc/ToolboxTools/models_and_scripts_installer.py \
                      gui/Misc/__init__.py \
                      gui/ProcessingUI/__init__.py \
                      gui/ProcessingUI/attributeRulesWrapper.py \
@@ -617,9 +604,7 @@
                      gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui \
                      gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.ui \
                      gui/CustomWidgets/SelectionWidgets/customSelector.ui \
-                     gui/CustomWidgets/SelectionWidgets/customSnaperParameterSelector.ui \
                      gui/CustomWidgets/SelectionWidgets/customTableSelector.ui \
-                     gui/CustomWidgets/SelectionWidgets/customTableWidget.ui \
                      gui/CustomWidgets/SelectionWidgets/datasourceSelectionWidget.ui \
                      gui/CustomWidgets/SelectionWidgets/importExportFileWidget.ui \
                      gui/CustomWidgets/SelectionWidgets/listSelector.ui \
@@ -639,7 +624,6 @@
                      gui/LayerTools/load_by_class_base.ui \
                      gui/Misc/ImageTools/ui_processingTools.ui \
                      gui/Misc/InventoryTools/ui_inventoryTools.ui \
-                     gui/Misc/ToolboxTools/models_and_scripts_installer.ui \
                      gui/ProductionTools/MapTools/AuxTools/changeCRS.ui \
                      gui/ProductionTools/Toolbars/CenterPointAndBoundariesToolbar/centerPointAndBoundaries.ui \
                      gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.ui \

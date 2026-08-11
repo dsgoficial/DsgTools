@@ -446,10 +446,11 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 return True
         return False
 
-    def checkNotNull(self, lyrName, notNullDict):
+    def checkNotNull(self, lyrName, attrName, notNullDict):
         """
         Checks not null attributes
         :param lyrName:
+        :param attrName:
         :param notNullDict:
         :return:
         """

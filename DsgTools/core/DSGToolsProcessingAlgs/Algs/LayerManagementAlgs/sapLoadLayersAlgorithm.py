@@ -89,6 +89,7 @@ class SapLoadLayersAlgorithm(QgsProcessingAlgorithm):
         password = self.parameterAsString(parameters, self.PASSWORD, context)
         layerStringList = self.parameterAsString(parameters, self.LAYER_LIST, context)
         inputParamList = layerStringList.split(",")
+        abstractDb = self.getAbstractDb(host, port, database, user, password)
         layerLoader = LayerLoaderFactory().makeLoader(iface, abstractDb)
         iface.mapCanvas().freeze(True)
         outputLayers = layerLoader.loadLayersInsideProcessing(

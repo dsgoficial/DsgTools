@@ -21,8 +21,8 @@
  ***************************************************************************/
 """
 from builtins import str
-from qgis.PyQt.QtCore import Qt, QUrl, pyqtSlot, QObject
-from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.PyQt.QtCore import Qt, QUrl, pyqtSlot, QObject, QThreadPool
+from qgis.PyQt.QtWidgets import QProgressBar, QMessageBox
 from qgis._core import QgsAction
 
 import sip

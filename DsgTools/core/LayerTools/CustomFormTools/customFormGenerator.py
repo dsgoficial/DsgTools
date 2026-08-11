@@ -199,6 +199,6 @@ class CustomFormGenerator(object):
                     self.lenColumnDict[vlayer.geometryType()],
                     rowAttr + 1,
                 )
-            form = form.format(items=unicode(all_items), row_btn=rowAttr + 1)
+            form = form.format(items=str(all_items), row_btn=rowAttr + 1)
             formFile.write(form)
         return form_path

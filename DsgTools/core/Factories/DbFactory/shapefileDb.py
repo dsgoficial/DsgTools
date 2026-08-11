@@ -264,12 +264,6 @@ class ShapefileDb(AbstractDb):
                 edgvVersion = config["edgv"]
         return edgvDict[edgvVersion] if edgvVersion in edgvDict else "Non EDGV"
 
-        # if not query.isActive():
-        #     raise Exception(self.tr("Problem getting database version: ")+query.lastError().text())
-        while query.next():
-            version = query.value(0)
-        return version
-
     def obtainLinkColumn(self, complexClass, aggregatedClass):
         """
         Obtains the link column between complex and aggregated class
@@ -618,10 +612,11 @@ class ShapefileDb(AbstractDb):
         List of all methods not yet translated or thought for .SHP drivers.
         """
         methods = [
-            obtainLinkColumn,
-            loadAssociatedFeaturesisComplexClass,
-            disassociateComplexFromComplex,
-            createFrame,
-            insertFrame,
-            getResolvedGeomType,
+            "obtainLinkColumn",
+            "loadAssociatedFeaturesisComplexClass",
+            "disassociateComplexFromComplex",
+            "createFrame",
+            "insertFrame",
+            "getResolvedGeomType",
         ]
+        return methods

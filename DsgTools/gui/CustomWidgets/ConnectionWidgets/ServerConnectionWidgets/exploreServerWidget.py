@@ -22,6 +22,7 @@
 """
 import os
 
+import qgis.utils
 from qgis.core import QgsMessageLog, Qgis
 
 # Qt imports
@@ -155,10 +156,12 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         postgisDb.connectDatabaseWithParameters(host, port, database, user, password)
         if not postgisDb.db.open():
             QgsMessageLog.logMessage(
-                db.lastError().text(), "DSGTools Plugin", Qgis.MessageLevel.Critical
+                postgisDb.db.lastError().text(),
+                "DSGTools Plugin",
+                Qgis.MessageLevel.Critical,
             )
             QMessageBox.critical(
-                self.iface.mainWindow(),
+                qgis.utils.iface.mainWindow(),
                 self.tr("Critical"),
                 self.tr("A problem occurred! Check log for details."),
             )
@@ -166,7 +169,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         query = QSqlQuery(gen.getDatabasesFromServer(), postgisDb.db)
         if not query.isActive():
             QMessageBox.critical(
-                self.iface.mainWindow(),
+                qgis.utils.iface.mainWindow(),
                 self.tr("Critical"),
                 self.tr("Problem executing query: {0}").format(
                     query.lastError().text()
@@ -211,7 +214,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.abstractDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             if not self.abstractDb:
                 QMessageBox.critical(
-                    self.iface.mainWindow(),
+                    qgis.utils.iface.mainWindow(),
                     self.tr("Critical"),
                     self.tr("A problem occurred! Check log for details."),
                 )
