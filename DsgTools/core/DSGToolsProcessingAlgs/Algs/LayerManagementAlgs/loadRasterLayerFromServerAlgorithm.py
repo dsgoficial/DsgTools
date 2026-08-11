@@ -44,7 +44,7 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
     DB_NAME = "DB_NAME"
     TABLE_NAME = "TABLE_NAME"
     USER = "USER"
-    PASSWORD = "PASSWORD"
+    PASSWORD = "PASSWORD"  # nosec B105
     OUTPUT = "OUTPUT"
     LOAD_TO_CANVAS = "LOAD_TO_CANVAS"
 
