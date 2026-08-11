@@ -55,7 +55,7 @@ class MultiGeopackageSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         return os.path.basename(datasourcePath).split(".")[0]
 
-    def exec_(self):
+    def exec(self):
         """
         Starts dialog.
         """

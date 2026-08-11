@@ -66,7 +66,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input Track Layer"),
-                [QgsProcessing.TypeVectorPoint],
+                [QgsProcessing.SourceType.TypeVectorPoint],
             )
         )
 
@@ -80,7 +80,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterField(
                 self.ELEVATION_FIELD,
                 self.tr("Elevation field"),
-                type=QgsProcessingParameterField.Numeric,
+                type=QgsProcessingParameterField.DataType.Numeric,
                 defaultValue="ele",
                 parentLayerParameterName=self.INPUT,
                 allowMultiple=False,
@@ -91,7 +91,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterField(
                 self.CREATION_FIELD,
                 self.tr("Date and time field"),
-                type=QgsProcessingParameterField.DateTime,
+                type=QgsProcessingParameterField.DataType.DateTime,
                 defaultValue="time",
                 parentLayerParameterName=self.INPUT,
                 allowMultiple=False,
@@ -102,7 +102,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterField(
                 self.TRACKID_FIELD,
                 self.tr("Track id field"),
-                type=QgsProcessingParameterField.Numeric,
+                type=QgsProcessingParameterField.DataType.Numeric,
                 defaultValue="track_fid",
                 parentLayerParameterName=self.INPUT,
                 allowMultiple=False,
@@ -113,7 +113,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterField(
                 self.TRACKSEGID_FIELD,
                 self.tr("Track seg id field"),
-                type=QgsProcessingParameterField.Numeric,
+                type=QgsProcessingParameterField.DataType.Numeric,
                 defaultValue="track_seg_id",
                 parentLayerParameterName=self.INPUT,
                 allowMultiple=False,
@@ -124,7 +124,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterField(
                 self.TRACKSEGPOINTID_FIELD,
                 self.tr("Point seg id field"),
-                type=QgsProcessingParameterField.Numeric,
+                type=QgsProcessingParameterField.DataType.Numeric,
                 defaultValue="track_seg_point_id",
                 parentLayerParameterName=self.INPUT,
                 allowMultiple=False,
@@ -148,7 +148,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.OUTPUT_DB,
                 self.tr("Output database Layer"),
-                [QgsProcessing.TypeVectorPoint],
+                [QgsProcessing.SourceType.TypeVectorPoint],
                 defaultValue="aux_track_p",
             )
         )

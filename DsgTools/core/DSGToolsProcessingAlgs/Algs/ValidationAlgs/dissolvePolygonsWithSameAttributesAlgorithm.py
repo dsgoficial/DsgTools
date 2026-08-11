@@ -51,7 +51,9 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorPolygon]
+                self.INPUT,
+                self.tr("Input layer"),
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
         self.addParameter(
@@ -74,7 +76,7 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
                 self.tr("Fields to ignore"),
                 None,
                 "INPUT",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
                 allowMultiple=True,
                 optional=True,
             )
@@ -119,7 +121,7 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Populating temp layer...\n"))
         unifiedLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
             [inputLyr],
-            geomType=QgsWkbTypes.MultiPolygon,
+            geomType=QgsWkbTypes.Type.MultiPolygon,
             attributeBlackList=attributeBlackList,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,

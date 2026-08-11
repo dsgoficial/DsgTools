@@ -58,7 +58,7 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input Polygon Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -80,7 +80,7 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
                 self.tr("Fields to consider on dissolve"),
                 None,
                 "INPUT",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
                 allowMultiple=True,
                 optional=True,
             )
@@ -91,7 +91,7 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
                 self.tr("Max hole area to eliminate"),
                 defaultValue=15625,
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
 

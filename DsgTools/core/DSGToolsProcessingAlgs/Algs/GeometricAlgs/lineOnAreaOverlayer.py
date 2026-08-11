@@ -52,7 +52,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT_POLYGONS,
                 self.tr("Input polygon layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -61,7 +61,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.OVERLAY_LINES,
                 self.tr("Overlay line layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
             )
         )
 
@@ -72,7 +72,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Fields to ignore"),
                 None,
                 "INPUT_POLYGONS",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
                 allowMultiple=True,
                 optional=True,
             )
@@ -299,7 +299,7 @@ class LineOnAreaOverlayerAlgorithm(QgsProcessingAlgorithm):
             for field in outputFields:
                 newFeat[field.name()] = feat[field.name()]
             newFeat.setGeometry(feat.geometry())
-            output_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            output_sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
         list(map(outputFeature, final_result_lyr.getFeatures()))
         return {self.OUTPUT: output_dest_id}

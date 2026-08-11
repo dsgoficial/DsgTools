@@ -59,14 +59,14 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
                 self.tr("Input Layers"),
-                QgsProcessing.TypeVectorAnyGeometry,
+                QgsProcessing.SourceType.TypeVectorAnyGeometry,
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic Boundary"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
         self.addParameter(
@@ -181,7 +181,7 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
             list(
                 map(
                     lambda x: self.flagSinkDict[geomType].addFeature(
-                        x, QgsFeatureSink.FastInsert
+                        x, QgsFeatureSink.Flag.FastInsert
                     ),
                     merged.getFeatures(),
                 )
@@ -205,7 +205,7 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
             self.POINT_OUTPUT,
             context,
             self.fields,
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             outputCrs,
         )
         self.line_flag_sink, self.line_flag_id = self.parameterAsSink(
@@ -213,7 +213,7 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
             self.LINE_OUTPUT,
             context,
             self.fields,
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             outputCrs,
         )
         self.poly_flag_sink, self.poly_flag_id = self.parameterAsSink(
@@ -221,7 +221,7 @@ class FilterLayerListByGeographicBoundary(QgsProcessingAlgorithm):
             self.POLYGON_OUTPUT,
             context,
             self.fields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             outputCrs,
         )
         self.flagSinkDict = {

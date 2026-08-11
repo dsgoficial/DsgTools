@@ -67,7 +67,7 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.NETWORK_LAYER,
                 self.tr("Network layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
@@ -75,7 +75,7 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
                 self.MIN_LENGTH,
                 self.tr("Minimum size"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=0.001,
             )
         )
@@ -83,7 +83,7 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POINT_CONSTRAINT_LAYER_LIST,
                 self.tr("Point constraint Layers"),
-                QgsProcessing.TypeVectorPoint,
+                QgsProcessing.SourceType.TypeVectorPoint,
                 optional=True,
             )
         )
@@ -91,7 +91,7 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.LINE_CONSTRAINT_LAYER_LIST,
                 self.tr("Line constraint Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -99,7 +99,7 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POLYGON_CONSTRAINT_LAYER_LIST,
                 self.tr("Polygon constraint Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
                 optional=True,
             )
         )
@@ -107,7 +107,7 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS_LAYER,
                 self.tr("Reference layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )

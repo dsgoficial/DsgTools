@@ -92,7 +92,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
                 self.tr("Coverage Polygon Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
             )
         )
         self.addParameter(
@@ -106,7 +106,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.FRAMELAYER,
                 self.tr("Frame Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -122,7 +122,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.MIN_AREA,
                 self.tr("Minimum error area"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=0.0,
                 minValue=0.0,
             )
@@ -164,13 +164,15 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         grid_size = self.parameterAsDouble(parameters, self.GRID_SIZE, context)
         min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
 
-        self.prepareFlagSink(parameters, input_layers[0], QgsWkbTypes.Polygon, context)
+        self.prepareFlagSink(
+            parameters, input_layers[0], QgsWkbTypes.Type.Polygon, context
+        )
         self.nodeFlagSink, self.node_flag_id = self.parameterAsSink(
             parameters,
             self.NODE_FLAGS,
             context,
             self.getFlagFields(),
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             crs,
         )
 

@@ -52,7 +52,9 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Input layer"),
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
@@ -65,7 +67,7 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
                 self.MIN_LENGTH,
                 self.tr("Minimum size"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=0.001,
             )
         )
@@ -74,7 +76,7 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
                 self.SEARCH_RADIUS,
                 self.tr("Search radius"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=0.0001,
             )
         )
@@ -82,7 +84,7 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.LINEFILTERLAYERS,
                 self.tr("Linestring Filter Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -90,7 +92,7 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POLYGONFILTERLAYERS,
                 self.tr("Polygon Filter Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
                 optional=True,
             )
         )
@@ -100,7 +102,7 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
                 self.tr(
                     "Geographic Boundary (this layer only filters the output dangles)"
                 ),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -127,7 +129,7 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
         geographicBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.LineString, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Type.LineString, context)
         if inputLyr is None:
             return {self.FLAGS: self.flag_id}
         # Compute the number of steps to display within the progress bar and

@@ -54,21 +54,23 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT, self.tr("Input lines"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Input lines"),
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.REFERENCE_LINE,
                 self.tr("Reference lines"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.SEARCH_RADIUS,
                 self.tr("Search Radius"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
         self.addParameter(
@@ -88,7 +90,9 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
             parameters, self.REFERENCE_LINE, context
         )
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
-        self.prepareFlagSink(parameters, inputSource, QgsWkbTypes.MultiPoint, context)
+        self.prepareFlagSink(
+            parameters, inputSource, QgsWkbTypes.Type.MultiPoint, context
+        )
         nFeats = inputSource.featureCount()
         nReferenceFeats = referenceSource.featureCount()
         if inputSource is None or nFeats == 0 or nReferenceFeats == 0:

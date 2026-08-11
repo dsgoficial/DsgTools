@@ -49,7 +49,7 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
 
@@ -65,7 +65,7 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
                 self.tr("Fields to ignore"),
                 None,
                 "INPUT",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
                 allowMultiple=True,
                 optional=True,
             )

@@ -44,14 +44,14 @@ from qgis.core import (
 from qgis.PyQt.QtCore import QObject
 
 geometry_creation_dict = {
-    QgsWkbTypes.Point: lambda x: QgsGeometry.fromPointXY(x),
-    QgsWkbTypes.MultiPoint: lambda x: QgsGeometry.fromMultiPointXY(x),
-    QgsWkbTypes.LineString: lambda x: QgsGeometry.fromPolylineXY(x),
-    QgsWkbTypes.MultiLineString: lambda x: QgsGeometry.fromMultiPolylineXY(
+    QgsWkbTypes.Type.Point: lambda x: QgsGeometry.fromPointXY(x),
+    QgsWkbTypes.Type.MultiPoint: lambda x: QgsGeometry.fromMultiPointXY(x),
+    QgsWkbTypes.Type.LineString: lambda x: QgsGeometry.fromPolylineXY(x),
+    QgsWkbTypes.Type.MultiLineString: lambda x: QgsGeometry.fromMultiPolylineXY(
         [QgsPointXY(*i) for i in x]
     ),
-    QgsWkbTypes.Polygon: lambda x: QgsGeometry.fromPolygonXY([x]),
-    QgsWkbTypes.MultiPolygon: lambda x: QgsGeometry.fromMultiPolygonXY([x]),
+    QgsWkbTypes.Type.Polygon: lambda x: QgsGeometry.fromPolygonXY([x]),
+    QgsWkbTypes.Type.MultiPolygon: lambda x: QgsGeometry.fromMultiPolygonXY([x]),
 }
 
 

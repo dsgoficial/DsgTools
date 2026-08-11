@@ -51,7 +51,9 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorPolygon]
+                self.INPUT,
+                self.tr("Input layer"),
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -66,7 +68,7 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
                 self.tr("Angular tolerance in decimal degrees"),
                 minValue=0,
                 defaultValue=0.1,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
         self.addParameter(
@@ -96,7 +98,7 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         ignoreCircles = self.parameterAsBool(parameters, self.IGNORE_CIRCLES, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Type.Point, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
         featureList, total = self.getIteratorAndFeatureCount(

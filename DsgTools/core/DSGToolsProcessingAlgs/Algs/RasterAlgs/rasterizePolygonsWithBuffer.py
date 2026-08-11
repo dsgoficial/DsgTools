@@ -102,7 +102,7 @@ class RasterizePolygonsWithBufferAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_POLYGONS,
                 self.tr("Polygon Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
                 optional=False,
             )
         )
@@ -119,7 +119,7 @@ class RasterizePolygonsWithBufferAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.SEARCH_RADIUS,
                 self.tr("Search Radius (Buffer)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=-1e-4,
                 optional=False,
             )
@@ -130,7 +130,7 @@ class RasterizePolygonsWithBufferAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.NODATA_VALUE,
                 self.tr("NoData Value"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=-9999,
                 optional=False,
             )

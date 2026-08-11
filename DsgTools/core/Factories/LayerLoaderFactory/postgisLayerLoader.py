@@ -278,7 +278,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         vlayer = QgsVectorLayer(self.uri.uri(), tableName, self.provider)
         QgsProject.instance().addMapLayer(vlayer, addToLegend=False)
         crs = QgsCoordinateReferenceSystem(
-            int(srid), QgsCoordinateReferenceSystem.EpsgCrsId
+            int(srid), QgsCoordinateReferenceSystem.CrsType.EpsgCrsId
         )
         if vlayer is None:
             return vlayer

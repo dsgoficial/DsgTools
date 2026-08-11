@@ -64,7 +64,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LINES,
                 self.tr("Input lines"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=False,
             )
         )
@@ -87,7 +87,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
                 self.TOLERANCE,
                 self.tr("Search radius"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=0.0001,
             )
         )
@@ -95,7 +95,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.LINEFILTERLAYERS,
                 self.tr("Linestring Filter Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -103,7 +103,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POLYGONFILTERLAYERS,
                 self.tr("Polygon Filter Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
                 optional=True,
             )
         )
@@ -119,7 +119,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
                 self.tr(
                     "Geographic Boundary (this layer only filters the output dangles)"
                 ),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -154,7 +154,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         refLyr = lineLyrList[0] if len(lineLyrList) > 0 else None
-        self.prepareFlagSink(parameters, refLyr, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(parameters, refLyr, QgsWkbTypes.Type.Point, context)
         if refLyr is None:
             return {"FLAGS": self.flag_id}
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
@@ -178,7 +178,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(2)
         if outputLyr.featureCount() > 0:
             self.flagSink.addFeatures(
-                outputLyr.getFeatures(), QgsFeatureSink.FastInsert
+                outputLyr.getFeatures(), QgsFeatureSink.Flag.FastInsert
             )
         multiStepFeedback.setCurrentStep(3)
         self.getUnsegmentedErrors(

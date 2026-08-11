@@ -56,7 +56,7 @@ class IdentifyMissingPointsOnLineIntersections(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LINES_1,
                 self.tr("First Line Layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -73,7 +73,7 @@ class IdentifyMissingPointsOnLineIntersections(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LINES_2,
                 self.tr("Second Line Layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -90,7 +90,7 @@ class IdentifyMissingPointsOnLineIntersections(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_INTERSECTION,
                 self.tr("Intersection Point Layer"),
-                [QgsProcessing.TypeVectorPoint],
+                [QgsProcessing.SourceType.TypeVectorPoint],
             )
         )
 
@@ -143,7 +143,7 @@ class IdentifyMissingPointsOnLineIntersections(ValidationAlgorithm):
         self.prepareFlagSink(
             parameters,
             inputFirstLineLyr,
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             context,
         )
         if feedback is not None:

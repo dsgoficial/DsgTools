@@ -106,7 +106,9 @@ class RasterRemapAlgorithm(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterRasterLayer(
-                self.INPUT_RASTER, self.tr("Input Raster"), [QgsProcessing.TypeRaster]
+                self.INPUT_RASTER,
+                self.tr("Input Raster"),
+                [QgsProcessing.SourceType.TypeRaster],
             )
         )
 

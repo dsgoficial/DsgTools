@@ -56,7 +56,9 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input Layer"), [QgsProcessing.TypeVectorPolygon]
+                self.INPUT,
+                self.tr("Input Layer"),
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -66,7 +68,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
                 self.tr("INOM Field"),
                 None,
                 "INPUT",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
             )
         )
 
@@ -76,7 +78,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
                 self.tr("ID Field"),
                 None,
                 "INPUT",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
             )
         )
 
@@ -85,7 +87,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
                 self.ID_VALUE,
                 self.tr("ID Field Value"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=1,
             )
         )
@@ -95,7 +97,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
                 self.CROSSES_X,
                 self.tr("Number of horizontal crosses"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=4,
             )
         )
@@ -105,7 +107,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
                 self.CROSSES_Y,
                 self.tr("Number of vertical crosses"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=4,
             )
         )
@@ -115,7 +117,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
                 self.SPACING,
                 self.tr("UTM Grid Spacing"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=4000,
             )
         )
@@ -125,7 +127,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
                 self.MAP_SCALE,
                 self.tr("Map scale (in thousands)"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=25,
             )
         )
@@ -153,7 +155,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
                 self.FONT_SIZE,
                 self.tr("Font Size"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=1.5,
             )
         )

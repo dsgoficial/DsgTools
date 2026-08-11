@@ -53,7 +53,10 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorLine, QgsProcessing.TypeVectorPolygon],
+                [
+                    QgsProcessing.SourceType.TypeVectorLine,
+                    QgsProcessing.SourceType.TypeVectorPolygon,
+                ],
             )
         )
 
@@ -80,7 +83,7 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
                 self.invalidSourceError(parameters, self.INPUT)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Type.Point, context)
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)

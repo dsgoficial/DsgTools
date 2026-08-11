@@ -59,14 +59,14 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LAYER,
                 self.tr("Input Layer"),
-                types=[QgsProcessing.TypeVectorLine],
+                types=[QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterField(
                 self.INPUT_FIELDS,
                 self.tr("Fields to consider"),
-                type=QgsProcessingParameterField.Any,
+                type=QgsProcessingParameterField.DataType.Any,
                 parentLayerParameterName="INPUT_LAYER",
                 allowMultiple=True,
             )
@@ -76,7 +76,7 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.INPUT_ANGLE,
                 self.tr("Maximum angle between lines"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
             )
         )
@@ -85,7 +85,7 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.INPUT_MAX_SIZE,
                 self.tr("Maximum size"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 optional=True,
                 minValue=0,
             )
@@ -103,7 +103,7 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
         angle = self.parameterAsDouble(parameters, self.INPUT_ANGLE, context)
         maxLength = self.parameterAsDouble(parameters, self.INPUT_MAX_SIZE, context)
         algRunner = AlgRunner()
-        self.prepareFlagSink(parameters, layer, QgsWkbTypes.MultiPoint, context)
+        self.prepareFlagSink(parameters, layer, QgsWkbTypes.Type.MultiPoint, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)

@@ -66,7 +66,9 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
         """Initializes algorithm parameters."""
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVector]
+                self.INPUT,
+                self.tr("Input layer"),
+                [QgsProcessing.SourceType.TypeVector],
             )
         )
 
@@ -110,7 +112,7 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             fields,
-            layer.wkbType() if layer else QgsWkbTypes.NoGeometry,
+            layer.wkbType() if layer else QgsWkbTypes.Type.NoGeometry,
             layer.sourceCrs() if layer else None,
         )
 
@@ -162,7 +164,7 @@ class ExportFeaturesByAttributeAlgorithm(QgsProcessingAlgorithm):
         for current, feature in enumerate(matched_features):
             if feedback.isCanceled():
                 break
-            sink.addFeature(feature, QgsFeatureSink.FastInsert)
+            sink.addFeature(feature, QgsFeatureSink.Flag.FastInsert)
             feedback.setProgress(int((current / nFeatures) * 100))
 
         feedback.pushInfo(self.tr("Export completed successfully."))

@@ -47,14 +47,16 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorPoint]
+                self.INPUT,
+                self.tr("Input layer"),
+                [QgsProcessing.SourceType.TypeVectorPoint],
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.REFERENCE,
                 self.tr("Reference layer"),
-                [QgsProcessing.TypeVectorPoint],
+                [QgsProcessing.SourceType.TypeVectorPoint],
             )
         )
         self.addParameter(
@@ -62,7 +64,7 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
                 self.TOLERANCE,
                 self.tr("Max distance"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=2,
             )
         )

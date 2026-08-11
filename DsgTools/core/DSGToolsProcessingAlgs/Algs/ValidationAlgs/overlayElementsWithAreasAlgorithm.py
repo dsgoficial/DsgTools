@@ -52,7 +52,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input Layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
@@ -64,7 +64,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.OVERLAY,
                 self.tr("Polygon overlay Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
         self.addParameter(

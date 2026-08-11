@@ -60,7 +60,9 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Input layer"),
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
@@ -74,7 +76,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
                 self.tr("Fields to ignore"),
                 None,
                 "INPUT",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
                 allowMultiple=True,
                 optional=True,
             )
@@ -104,7 +106,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POINT_FILTER_LAYERS,
                 self.tr("Point Filter Layers"),
-                QgsProcessing.TypeVectorPoint,
+                QgsProcessing.SourceType.TypeVectorPoint,
                 optional=True,
             )
         )
@@ -112,7 +114,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.LINE_FILTER_LAYERS,
                 self.tr("Line Filter Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -120,7 +122,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic Boundary"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )

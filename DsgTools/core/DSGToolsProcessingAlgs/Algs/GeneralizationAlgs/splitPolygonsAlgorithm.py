@@ -53,7 +53,7 @@ class SplitPolygons(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
                 self.tr("Input polygon layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -70,7 +70,7 @@ class SplitPolygons(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.OVERLAP,
                 self.tr("Overlap value"),
-                QgsProcessingParameterNumber.Double,
+                QgsProcessingParameterNumber.Type.Double,
                 defaultValue=0.002,
             )
         )
@@ -266,7 +266,7 @@ class SplitPolygons(QgsProcessingAlgorithm):
                     priority += 1
 
         for polygon in final_features.values():
-            sink.addFeature(polygon, QgsFeatureSink.FastInsert)
+            sink.addFeature(polygon, QgsFeatureSink.Flag.FastInsert)
 
         return {self.OUTPUT: dest_id}
 

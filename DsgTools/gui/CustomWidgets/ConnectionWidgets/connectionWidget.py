@@ -177,7 +177,7 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 )
             else:
                 self.crs = QgsCoordinateReferenceSystem(
-                    self.epsg, QgsCoordinateReferenceSystem.EpsgCrsId
+                    self.epsg, QgsCoordinateReferenceSystem.CrsType.EpsgCrsId
                 )
                 self.postGISCrsEdit.setText(self.crs.description())
                 self.postGISCrsEdit.setReadOnly(True)

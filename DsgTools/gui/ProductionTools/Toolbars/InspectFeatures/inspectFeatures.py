@@ -236,7 +236,7 @@ class InspectFeatures(QWidget, Ui_Form):
             )
             return []
         request = QgsFeatureRequest()
-        request.setFlags(QgsFeatureRequest.NoGeometry)
+        request.setFlags(QgsFeatureRequest.Flag.NoGeometry)
         if self.mFieldExpressionWidget.currentText() != "":
             request.setFilterExpression(self.mFieldExpressionWidget.asExpression())
         clauseList = []

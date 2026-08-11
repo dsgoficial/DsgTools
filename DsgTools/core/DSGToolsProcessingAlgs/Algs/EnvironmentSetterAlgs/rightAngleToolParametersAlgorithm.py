@@ -46,7 +46,7 @@ class RightAngleToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
                 self.MIN_SEGMENT_DISTANCE,
                 self.tr("Minimum Segment Distance"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=2,
             )
         )
@@ -55,7 +55,7 @@ class RightAngleToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
                 self.RIGHT_ANGLE_DECIMALS,
                 self.tr("Number of decimal points"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=3,
             )
         )

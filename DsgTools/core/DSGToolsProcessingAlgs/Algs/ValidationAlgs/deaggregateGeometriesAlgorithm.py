@@ -50,7 +50,7 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
 
@@ -130,7 +130,7 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
                 featuresToAdd += newFeatList
             feedback.setProgress(int(current * stepSize))
         if featuresToAdd:
-            inputLyr.addFeatures(featuresToAdd, QgsFeatureSink.FastInsert)
+            inputLyr.addFeatures(featuresToAdd, QgsFeatureSink.Flag.FastInsert)
         inputLyr.endEditCommand()
         return {}
 

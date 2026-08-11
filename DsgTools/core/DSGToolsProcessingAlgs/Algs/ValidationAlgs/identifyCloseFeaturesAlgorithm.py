@@ -91,7 +91,9 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
         minimumDistances = self.parameterAsMinimumDistanceBetweenLayers(
             parameters, self.DISTANCE_BETWEEN_LAYERS, context
         )
-        self.prepareFlagSink(parameters, None, QgsWkbTypes.MultiLineString, context)
+        self.prepareFlagSink(
+            parameters, None, QgsWkbTypes.Type.MultiLineString, context
+        )
         if not minimumDistances:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.DISTANCE_BETWEEN_LAYERS)

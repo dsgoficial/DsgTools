@@ -45,21 +45,23 @@ class FixSegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT, self.tr("Input lines"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Input lines"),
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.REFERENCE_LINE,
                 self.tr("Reference lines"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.SEARCH_RADIUS,
                 self.tr("Search Radius"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
 

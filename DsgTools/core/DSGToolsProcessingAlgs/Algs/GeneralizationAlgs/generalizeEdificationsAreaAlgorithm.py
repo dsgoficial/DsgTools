@@ -44,7 +44,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_POLYGON,
                 self.tr("Polygon Input Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -52,7 +52,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_POINT,
                 self.tr("Point Input Layer"),
-                [QgsProcessing.TypeVectorPoint],
+                [QgsProcessing.SourceType.TypeVectorPoint],
             )
         )
 
@@ -60,7 +60,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.ESCALA,
                 self.tr("Scale"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
             )
         )
 
@@ -68,7 +68,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.AREAMINIMA,
                 self.tr("Minimum Map Area (degrees squared on chart)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=1,
             )
         )
@@ -104,7 +104,12 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         crs = ids.sourceCrs()
 
         (polygonSink, polygonSinkId) = self.parameterAsSink(
-            parameters, self.OUTPUTPOLYGON, context, fields, QgsWkbTypes.Polygon, crs
+            parameters,
+            self.OUTPUTPOLYGON,
+            context,
+            fields,
+            QgsWkbTypes.Type.Polygon,
+            crs,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -123,7 +128,7 @@ class GeneralizeEdificationsAreaAlgorithm(QgsProcessingAlgorithm):
         )
         idsToDelete = []
         for feature in selected_features.getFeatures():
-            polygonSink.addFeature(feature, QgsFeatureSink.FastInsert)
+            polygonSink.addFeature(feature, QgsFeatureSink.Flag.FastInsert)
             idsToDelete.append(feature["featid"])
             if multiStepFeedback.isCanceled():
                 return

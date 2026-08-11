@@ -102,12 +102,12 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
         self.mappingType = mappingType
         self.geometryHandler = GeometryHandler()
         self.geomWkbToStringTypeMap = {
-            QgsWkbTypes.Point: "POINT",
-            QgsWkbTypes.MultiPoint: "POINT",
-            QgsWkbTypes.LineString: "LINESTRING",
-            QgsWkbTypes.MultiLineString: "LINESTRING",
-            QgsWkbTypes.Polygon: "POLYGON",
-            QgsWkbTypes.MultiPolygon: "POLYGON",
+            QgsWkbTypes.Type.Point: "POINT",
+            QgsWkbTypes.Type.MultiPoint: "POINT",
+            QgsWkbTypes.Type.LineString: "LINESTRING",
+            QgsWkbTypes.Type.MultiLineString: "LINESTRING",
+            QgsWkbTypes.Type.Polygon: "POLYGON",
+            QgsWkbTypes.Type.MultiPolygon: "POLYGON",
         }
 
     def buildFileDict(self, mappingPath: str) -> dict:

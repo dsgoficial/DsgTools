@@ -54,7 +54,9 @@ class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUT_LAYERS, self.tr("Input Layers"), QgsProcessing.TypeVector
+                self.INPUT_LAYERS,
+                self.tr("Input Layers"),
+                QgsProcessing.SourceType.TypeVector,
             )
         )
         self.addParameter(
@@ -82,7 +84,7 @@ class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):
         ):
             if feedback.isCanceled():
                 break
-            if relation.strength() != QgsRelation.Association:
+            if relation.strength() != QgsRelation.RelationStrength.Association:
                 continue
             originalLyr = relation.referencingLayer()
             joinnedLyr = relation.referencedLayer()

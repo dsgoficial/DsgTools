@@ -54,7 +54,8 @@ def createVrt(inventario, vrt):
         if Override_CRS:
             raster.setCrs(
                 QgsCoordinateReferenceSystem(
-                    int(CRS.split(":")[-1]), QgsCoordinateReferenceSystem.EpsgCrsId
+                    int(CRS.split(":")[-1]),
+                    QgsCoordinateReferenceSystem.CrsType.EpsgCrsId,
                 )
             )
 

@@ -135,7 +135,7 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
             db_name,
             user,
             password,
-            sslmode=QgsDataSourceUri.SslDisable,
+            sslmode=QgsDataSourceUri.SslMode.SslDisable,
         )
         serverDict = self.connectToServerDict(
             server_ip, port, db_name, user, password, table_name

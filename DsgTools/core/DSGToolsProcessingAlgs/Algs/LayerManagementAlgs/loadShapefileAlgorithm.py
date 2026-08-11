@@ -49,7 +49,7 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFile(
                 self.FOLDER_SHAPEFILES,
                 self.tr("Folder with Shapefiles"),
-                behavior=QgsProcessingParameterFile.Folder,
+                behavior=QgsProcessingParameterFile.Behavior.Folder,
             )
         )
 

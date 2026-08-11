@@ -56,7 +56,7 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
                 self.X_MIN,
                 self.tr("Min x coordinates"),
                 defaultValue=0.005,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
 
@@ -65,7 +65,7 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
                 self.Y_MIN,
                 self.tr("Min y coordinates"),
                 defaultValue=0.005,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
 
@@ -74,7 +74,7 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
                 self.X_MAX,
                 self.tr("Max x coordinates"),
                 defaultValue=0.005,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
 
@@ -83,7 +83,7 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
                 self.Y_MAX,
                 self.tr("Max y coordinates"),
                 defaultValue=0.005,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
 
@@ -93,7 +93,7 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Number of subdivisions on x"),
                 defaultValue=2,
                 minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
             )
         )
 
@@ -103,7 +103,7 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Number of subdivisions on y"),
                 defaultValue=2,
                 minValue=1,
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
             )
         )
 
@@ -136,7 +136,7 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             QgsFields(),
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             crs,
         )
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
@@ -153,7 +153,7 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
         )
         list(
             map(
-                lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
+                lambda x: output_sink.addFeature(x, QgsFeatureSink.Flag.FastInsert),
                 grid.getFeatures(),
             )
         )

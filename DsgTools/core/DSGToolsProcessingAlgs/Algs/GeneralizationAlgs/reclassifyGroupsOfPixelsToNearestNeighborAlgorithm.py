@@ -92,7 +92,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.NODATA_VALUE,
                 self.tr("NODATA pixel value"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=-9999,
             )
         )
@@ -570,7 +570,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                     self.RECLASSIFIED_POLYGONS,
                     context,
                     polygonsNotOnEdge.fields(),
-                    QgsWkbTypes.Polygon,
+                    QgsWkbTypes.Type.Polygon,
                     inputRaster.crs(),
                 )
                 if polygons_sink is not None:
@@ -1130,7 +1130,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             units = crs.mapUnits()
             areaUnit = QgsUnitTypes.distanceToAreaUnit(units)
             conversion_factor = QgsUnitTypes.fromUnitToUnitFactor(
-                areaUnit, QgsUnitTypes.AreaSquareMeters
+                areaUnit, QgsUnitTypes.AreaUnit.AreaSquareMeters
             )
             pixel_area = pixel_width * pixel_height * conversion_factor
 

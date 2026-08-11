@@ -59,7 +59,7 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFile(
                 self.INPUT_FOLDER,
                 self.tr("Input folder"),
-                behavior=QgsProcessingParameterFile.Folder,
+                behavior=QgsProcessingParameterFile.Behavior.Folder,
             )
         )
         self.addParameter(
@@ -132,7 +132,7 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             sinkFields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             QgsCoordinateReferenceSystem.fromEpsgId(4326),
         )
 
@@ -145,7 +145,7 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
             destination_folder=copyFolder,
         )
 
-        output_sink.addFeatures(featList, QgsFeatureSink.FastInsert)
+        output_sink.addFeatures(featList, QgsFeatureSink.Flag.FastInsert)
 
         return {"OUTPUT": self.output_dest_id}
 
@@ -156,7 +156,7 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
         actions = processed_layer.actions()
         field = '[% "fileName" %]'
         action = QgsAction(
-            QgsAction.GenericPython,
+            QgsAction.ActionType.GenericPython,
             "Load Layer",
             f"from pathlib import Path\np=Path(r'{field}')\nlyr = QgsVectorLayer(str(p), p.stem, 'ogr')\nif lyr.isValid(): qgis.utils.iface.addVectorLayer(str(p), p.stem, 'ogr')\nelse: qgis.utils.iface.addRasterLayer(str(p), p.stem)",
         )

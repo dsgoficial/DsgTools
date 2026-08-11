@@ -156,7 +156,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                         newFeature["reason"] = flagText.format(text=flag["text"])
                         newFeature.setGeometry(g)
                         layerMap[g.type()].addFeature(
-                            newFeature, QgsFeatureSink.FastInsert
+                            newFeature, QgsFeatureSink.Flag.FastInsert
                         )
         return (ptLayer, lLayer, polLayer)
 
@@ -184,7 +184,12 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         flagFields = self.getFlagFields()
         crs = QgsProject.instance().crs()
         pointFlags, ptId = self.parameterAsSink(
-            parameters, self.POINT_FLAGS, context, flagFields, QgsWkbTypes.Point, crs
+            parameters,
+            self.POINT_FLAGS,
+            context,
+            flagFields,
+            QgsWkbTypes.Type.Point,
+            crs,
         )
         if not pointFlags:
             raise QgsProcessingException(
@@ -195,7 +200,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
             self.LINE_FLAGS,
             context,
             flagFields,
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             crs,
         )
         if not lineFlags:
@@ -207,7 +212,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
             self.POLYGON_FLAGS,
             context,
             flagFields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             crs,
         )
         if not polygonFlags:

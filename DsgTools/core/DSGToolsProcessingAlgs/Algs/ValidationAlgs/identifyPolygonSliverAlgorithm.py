@@ -59,7 +59,7 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
                 self.tr("Polygons to be checked"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
             )
         )
         self.addParameter(
@@ -77,7 +77,7 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
                 self.RATIO_TOL,
                 self.tr("Tolerance area-perimeter ratio"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=10,
             )
         )

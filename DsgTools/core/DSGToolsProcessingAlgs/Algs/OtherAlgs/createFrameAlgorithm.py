@@ -106,7 +106,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             self.XSUBDIVISIONS,
             self.tr("Number of subdivisions on x-axis"),
             minValue=1,
-            type=QgsProcessingParameterNumber.Integer,
+            type=QgsProcessingParameterNumber.Type.Integer,
             optional=True,
         )
         param.setFlags(
@@ -119,7 +119,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             self.YSUBDIVISIONS,
             self.tr("Number of subdivisions on y-axis"),
             minValue=1,
-            type=QgsProcessingParameterNumber.Integer,
+            type=QgsProcessingParameterNumber.Type.Integer,
             optional=True,
         )
         param.setFlags(
@@ -201,7 +201,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField("inom", QMetaType.Type.QString))
         fields.append(QgsField("mi", QMetaType.Type.QString))
         (output_sink, output_sink_id) = self.parameterAsSink(
-            parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, crs
+            parameters, self.OUTPUT, context, fields, QgsWkbTypes.Type.Polygon, crs
         )
 
         featureList = []
@@ -238,7 +238,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         for feat in featureList:
             if feedback.isCanceled():
                 break
-            output_sink.addFeature(feat, QgsFeatureSink.FastInsert)
+            output_sink.addFeature(feat, QgsFeatureSink.Flag.FastInsert)
 
         return {"OUTPUT": output_sink_id}
 

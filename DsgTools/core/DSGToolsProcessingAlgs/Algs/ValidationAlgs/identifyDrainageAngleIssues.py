@@ -46,7 +46,7 @@ class IdentifyDrainageAngleIssues(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input"),
                 [
-                    QgsProcessing.TypeVectorLine,
+                    QgsProcessing.SourceType.TypeVectorLine,
                 ],
             )
         )
@@ -58,7 +58,7 @@ class IdentifyDrainageAngleIssues(ValidationAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         lines = self.parameterAsVectorLayer(parameters, "INPUT", context)
-        self.prepareFlagSink(parameters, lines, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(parameters, lines, QgsWkbTypes.Type.Point, context)
 
         # Dictionary that stores azimuths entering and exiting the point
         pointInAndOutDictionary = {}

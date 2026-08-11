@@ -183,8 +183,8 @@ class CloseLinesTool(QgsMapTool):
         # Parâmetro de entrada: geometry ( QgsGeometry ), tolerance ( float )
 
         if not geometry.wkbType() in (
-            QgsWkbTypes.LineString,
-            QgsWkbTypes.MultiLineString,
+            QgsWkbTypes.Type.LineString,
+            QgsWkbTypes.Type.MultiLineString,
         ):
             return False
         if geometry.isNull() or geometry.isEmpty():
@@ -205,8 +205,8 @@ class CloseLinesTool(QgsMapTool):
 
     def snapLastPointToFirstPoint(self, geometry: QgsGeometry):
         if not geometry.wkbType() in (
-            QgsWkbTypes.LineString,
-            QgsWkbTypes.MultiLineString,
+            QgsWkbTypes.Type.LineString,
+            QgsWkbTypes.Type.MultiLineString,
         ):
             return geometry
         if geometry.isMultipart():
@@ -235,8 +235,8 @@ class CloseLinesTool(QgsMapTool):
     def splitLine(self, layer, feature) -> Set[QgsFeature]:
         geometry = feature.geometry()
         if not geometry.wkbType() in (
-            QgsWkbTypes.LineString,
-            QgsWkbTypes.MultiLineString,
+            QgsWkbTypes.Type.LineString,
+            QgsWkbTypes.Type.MultiLineString,
         ):
             return feature, None
         if geometry.isMultipart():

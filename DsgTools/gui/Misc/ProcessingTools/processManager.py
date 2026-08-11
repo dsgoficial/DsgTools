@@ -228,12 +228,12 @@ class ProcessManager(QObject):
             actions = layer.actions()
             field = '[% "fileName" %]'
             actions.addAction(
-                QgsAction.GenericPython,
+                QgsAction.ActionType.GenericPython,
                 "Load Vector Layer",
                 "qgis.utils.iface.addVectorLayer(r'%s', 'File', 'ogr')" % field,
             )
             actions.addAction(
-                QgsAction.GenericPython,
+                QgsAction.ActionType.GenericPython,
                 "Load Raster Layer",
                 "qgis.utils.iface.addRasterLayer(r'%s', 'File')" % field,
             )

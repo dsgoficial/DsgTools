@@ -79,7 +79,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.WATER_BODY,
                 self.tr("Water body (polygon layer)"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
         self.addParameter(
@@ -117,14 +117,14 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.ISLAND,
                 self.tr("Island (polygon layer)"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.ISLAND_POINT,
                 self.tr("Island (point layer)"),
-                [QgsProcessing.TypeVectorPoint],
+                [QgsProcessing.SourceType.TypeVectorPoint],
             )
         )
         param = QgsProcessingParameterDistance(
@@ -139,7 +139,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.DRAINAGE_LINES,
                 self.tr("Drainage lines"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         param = QgsProcessingParameterDistance(
@@ -157,7 +157,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                     "Select field from Drainage Lines to classify outside polygons"
                 ),
                 parentLayerParameterName=self.DRAINAGE_LINES,
-                type=QgsProcessingParameterField.Any,
+                type=QgsProcessingParameterField.DataType.Any,
             )
         )
         self.addParameter(
@@ -176,7 +176,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS_LAYER,
                 self.tr("Reference layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -184,7 +184,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POINT_CONSTRAINT_LAYER_LIST,
                 self.tr("Point constraint layers"),
-                QgsProcessing.TypeVectorPoint,
+                QgsProcessing.SourceType.TypeVectorPoint,
                 optional=True,
             )
         )
@@ -192,7 +192,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.LINE_CONSTRAINT_LAYER_LIST,
                 self.tr("Line constraint layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -200,7 +200,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POLYGON_CONSTRAINT_LAYER_LIST,
                 self.tr("Polygon constraint layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
                 optional=True,
             )
         )
@@ -208,14 +208,14 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.DAM,
                 self.tr("Dam lines"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT_POLYGON,
                 self.tr("Output Removed Polygons"),
-                type=QgsProcessing.TypeVectorPolygon,
+                type=QgsProcessing.SourceType.TypeVectorPolygon,
             )
         )
 
@@ -908,14 +908,14 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT_POLYGON,
             context,
             polygon_fields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             empty_spaces.crs(),
         )
         for feature in empty_spaces.getFeatures():
             new_feature = QgsFeature(polygon_fields)
             new_feature.setGeometry(feature.geometry())
             new_feature.setAttribute("layer", feature["layer"])
-            polygon_output_sink.addFeature(new_feature, QgsFeatureSink.FastInsert)
+            polygon_output_sink.addFeature(new_feature, QgsFeatureSink.Flag.FastInsert)
 
         self.sink_dict = {
             empty_spaces.id(): polygon_output_sink,
@@ -943,7 +943,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             if feedback is not None and feedback.isCanceled():
                 return
             newFeat = self.createNewFeature(lyr.fields(), feat)
-            sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
             if feedback is not None:
                 feedback.setProgress(current * stepSize)
 

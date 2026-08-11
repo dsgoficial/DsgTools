@@ -68,7 +68,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             QgsProcessingParameterVectorLayer(
                 self.INPUT_DRAINAGES,
                 self.tr("Input Drainages layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 defaultValue="elemnat_trecho_drenagem_l",
             )
         )
@@ -77,7 +77,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             QgsProcessingParameterVectorLayer(
                 self.WATER_BODY_LAYER,
                 self.tr("Water body layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
                 defaultValue="cobter_massa_dagua_a",
             )
@@ -113,7 +113,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             QgsProcessingParameterVectorLayer(
                 self.SINK_AND_SPILLWAY_LAYER,
                 self.tr("Water sink and spillway layer"),
-                [QgsProcessing.TypeVectorPoint],
+                [QgsProcessing.SourceType.TypeVectorPoint],
                 optional=True,
             )
         )
@@ -141,7 +141,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 self.tr(
                     "Geographic Boundary (this layer only filters the output dangles)"
                 ),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
                 defaultValue="aux_moldura_a",
             )
@@ -233,19 +233,23 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         (self.pointFlagSink, self.point_flag_id) = self.prepareAndReturnFlagSink(
-            parameters, inputDrainagesLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
+            parameters,
+            inputDrainagesLyr,
+            QgsWkbTypes.Type.Point,
+            context,
+            self.POINT_FLAGS,
         )
         (self.lineFlagSink, self.line_flag_id) = self.prepareAndReturnFlagSink(
             parameters,
             inputDrainagesLyr,
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             context,
             self.LINE_FLAGS,
         )
         (self.polygonFlagSink, self.polygon_flag_id) = self.prepareAndReturnFlagSink(
             parameters,
             inputDrainagesLyr,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             context,
             self.POLYGON_FLAGS,
         )

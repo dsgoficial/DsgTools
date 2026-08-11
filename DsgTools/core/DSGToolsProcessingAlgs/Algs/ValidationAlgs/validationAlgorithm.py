@@ -105,7 +105,7 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
             newFeat.setGeometry(geom)
         else:
             newFeat.setGeometry(flagGeom)
-        flagSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+        flagSink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
     def getFlagsFromOutput(self, output):
         if "FLAGS" not in output:
@@ -115,7 +115,7 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
     def flagFeaturesFromProcessOutput(self, output):
         if "FLAGS" in output:
             for feat in output["FLAGS"].getFeatures():
-                self.flagSink.addFeature(feat, QgsFeatureSink.FastInsert)
+                self.flagSink.addFeature(feat, QgsFeatureSink.Flag.FastInsert)
 
     def getLayerFromProject(self, layerName):
         """

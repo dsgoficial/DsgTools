@@ -7,7 +7,7 @@ def generateQml(filename, attrs, codelists):
     xmlWriter = QXmlStreamWriter()
     xmlFile = QFile(filename)
 
-    if xmlFile.open(QIODevice.WriteOnly) == False:
+    if xmlFile.open(QIODevice.OpenModeFlag.WriteOnly) == False:
         QMessageBox.warning(
             0,
             QCoreApplication.translate("QmlCreator", "Error!"),

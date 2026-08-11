@@ -140,13 +140,23 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
         dictLyrsReviewed, crs = self.dictNameLyrCrs(groupR)
 
         point_flag_sink, point_flag_id = self.sinkLyr(
-            parameters, self.POINT_FLAG, context, fields, QgsWkbTypes.Point, crs
+            parameters, self.POINT_FLAG, context, fields, QgsWkbTypes.Type.Point, crs
         )
         line_flag_sink, line_flag_id = self.sinkLyr(
-            parameters, self.LINE_FLAG, context, fields, QgsWkbTypes.LineString, crs
+            parameters,
+            self.LINE_FLAG,
+            context,
+            fields,
+            QgsWkbTypes.Type.LineString,
+            crs,
         )
         poly_flag_sink, poly_flag_id = self.sinkLyr(
-            parameters, self.POLYGON_FLAG, context, fields, QgsWkbTypes.Polygon, crs
+            parameters,
+            self.POLYGON_FLAG,
+            context,
+            fields,
+            QgsWkbTypes.Type.Polygon,
+            crs,
         )
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(
@@ -325,11 +335,11 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
         newFeat["type_change"] = type_change
         newFeat["update"] = flagMsg
         if lyrPoint:
-            point_flag_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            point_flag_sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
         elif lyrLine:
-            line_flag_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            line_flag_sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
         elif lyrPolygon:
-            poly_flag_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            poly_flag_sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
     def fieldsFlag(self, attributeGroup):
         fields = QgsFields()

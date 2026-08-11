@@ -52,7 +52,7 @@ class SetLineOrientation(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT, self.tr("Input"), [QgsProcessing.TypeVectorLine]
+                self.INPUT, self.tr("Input"), [QgsProcessing.SourceType.TypeVectorLine]
             )
         )
 

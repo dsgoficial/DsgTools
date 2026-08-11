@@ -127,7 +127,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT_TILES,
                 self.tr("ET-CQDG Tiles Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -142,7 +142,7 @@ class ETCQDGSegmentationEvaluatorFromRaster(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.SEGMENTATION_RASTER,
                 self.tr("Inferred Masks (Experiment Results)"),
-                QgsProcessing.TypeRaster,
+                QgsProcessing.SourceType.TypeRaster,
             )
         )
 

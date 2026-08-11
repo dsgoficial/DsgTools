@@ -55,7 +55,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
@@ -68,7 +68,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.REFERENCE_LAYER,
                 self.tr("Reference layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
         param = QgsProcessingParameterDistance(

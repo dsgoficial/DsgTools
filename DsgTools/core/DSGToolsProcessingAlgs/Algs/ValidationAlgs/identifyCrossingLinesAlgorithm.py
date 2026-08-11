@@ -52,14 +52,16 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input lines"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Input lines"),
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.COMPARE_INPUT,
                 self.tr("Compare lines"),
-                QgsProcessing.TypeVectorAnyGeometry,
+                QgsProcessing.SourceType.TypeVectorAnyGeometry,
             )
         )
         self.addParameter(
@@ -75,7 +77,7 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         self.algRunner = AlgRunner()
         input = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         compareList = self.parameterAsLayerList(parameters, self.COMPARE_INPUT, context)
-        self.prepareFlagSink(parameters, input, QgsWkbTypes.MultiPoint, context)
+        self.prepareFlagSink(parameters, input, QgsWkbTypes.Type.MultiPoint, context)
         nFeats = input.featureCount()
         if input is None or nFeats == 0 or compareList == 0:
             return {self.FLAGS: self.flag_id}
@@ -96,7 +98,7 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         for current, feat in enumerate(pointLyr.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 return {self.FLAGS: self.flag_id}
-            self.flagSink.addFeature(feat, QgsFeatureSink.FastInsert)
+            self.flagSink.addFeature(feat, QgsFeatureSink.Flag.FastInsert)
             multiStepFeedback.setProgress(current * stepSize)
         return {self.FLAGS: self.flag_id}
 

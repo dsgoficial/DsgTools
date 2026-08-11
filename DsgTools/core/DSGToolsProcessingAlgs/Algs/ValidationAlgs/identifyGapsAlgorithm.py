@@ -51,7 +51,7 @@ class IdentifyGapsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input Polygon Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -93,7 +93,7 @@ class IdentifyGapsAlgorithm(ValidationAlgorithm):
                 self.invalidSourceError(parameters, self.INPUT)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Polygon, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Type.Polygon, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)

@@ -47,7 +47,9 @@ class IdentifySmallPolygonsAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorPolygon]
+                self.INPUT,
+                self.tr("Input layer"),
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -61,7 +63,7 @@ class IdentifySmallPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
                 self.tr("Area tolerance"),
-                QgsProcessingParameterNumber.Double,
+                QgsProcessingParameterNumber.Type.Double,
                 minValue=0,
                 defaultValue=625,
             )

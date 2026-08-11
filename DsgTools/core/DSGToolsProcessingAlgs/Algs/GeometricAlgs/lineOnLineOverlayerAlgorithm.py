@@ -58,7 +58,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
                 self.tr("Input line layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -67,7 +67,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.REFERENCE_LINES,
                 self.tr("Reference line layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
             )
         )
 
@@ -76,7 +76,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.SNAP_TOLERANCE,
                 self.tr("Snap tolerance for vertex insertion"),
-                QgsProcessingParameterNumber.Double,
+                QgsProcessingParameterNumber.Type.Double,
                 defaultValue=0.001,
                 minValue=0.0,
                 optional=True,
@@ -171,7 +171,7 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT_MODIFIED_REFERENCES,
             context,
             outputFields,
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             input_line_source.sourceCrs(),
         )
         current_step += 1
@@ -308,11 +308,11 @@ class LineOnLineOverlayerAlgorithm(QgsProcessingAlgorithm):
 
         # Function to output split line features with filtered attributes
         def outputSplitLineFeature(feat):
-            split_lines_sink.addFeature(feat, QgsFeatureSink.FastInsert)
+            split_lines_sink.addFeature(feat, QgsFeatureSink.Flag.FastInsert)
 
         # Function to output modified reference line features
         def outputModifiedReferenceFeature(feat):
-            modified_refs_sink.addFeature(feat, QgsFeatureSink.FastInsert)
+            modified_refs_sink.addFeature(feat, QgsFeatureSink.Flag.FastInsert)
 
         # Write split input lines to output
         list(map(outputSplitLineFeature, cleaned_split_lines.getFeatures()))

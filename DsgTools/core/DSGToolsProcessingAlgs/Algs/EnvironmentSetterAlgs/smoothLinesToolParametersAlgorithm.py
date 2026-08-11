@@ -47,7 +47,7 @@ class SmoothLinesToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
                 self.NUMBER_SMOOTHING_ITERATIONS,
                 self.tr("Smoothing Iterations"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=2,
             )
         )
@@ -57,7 +57,7 @@ class SmoothLinesToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
                 self.tr("Fraction of line to create new vertices"),
                 minValue=0,
                 maxValue=1,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=0.30,
             )
         )

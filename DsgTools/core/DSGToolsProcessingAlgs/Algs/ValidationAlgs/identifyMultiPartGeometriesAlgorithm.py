@@ -48,7 +48,7 @@ class IdentifyMultiPartGeometriesAlgorithm(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input layer"),
                 [
-                    QgsProcessing.TypeVectorAnyGeometry,
+                    QgsProcessing.SourceType.TypeVectorAnyGeometry,
                 ],
             )
         )

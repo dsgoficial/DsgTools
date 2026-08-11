@@ -60,8 +60,8 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
                 self.INPUT_LINE_POLYGON,
                 self.tr("Input layer"),
                 [
-                    QgsProcessing.TypeVectorLine,
-                    QgsProcessing.TypeVectorPolygon,
+                    QgsProcessing.SourceType.TypeVectorLine,
+                    QgsProcessing.SourceType.TypeVectorPolygon,
                 ],
             )
         )
@@ -70,7 +70,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_FRAME,
                 self.tr("Input frame"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -126,7 +126,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
             self.POINT_FLAGS,
             context,
             fields,
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             inputLinePolyLyr.sourceCrs(),
         )
 
@@ -135,7 +135,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
             self.LINE_FLAGS,
             context,
             fields,
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             inputLinePolyLyr.sourceCrs(),
         )
 
@@ -374,7 +374,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
             newFeat = QgsFeature(fields)
             newFeat.setGeometry(vtxFlag)
             newFeat["flag"] = self.tr("Polygon is incorrectly connected.")
-            point_flag_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            point_flag_sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
     def linesBuffFrame(
         self,
@@ -460,7 +460,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
             if lenIdSet == 1:
                 newFeat.setGeometry(line)
                 newFeat["Flag"] = self.tr("Polygons not correctly connected.")
-                sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+                sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
             elif lenIdSet == 2:
                 [id1, id2] = list(dictLinePoly[bbGeomWkt])
                 feat1 = dictExplodeLinePoly[id1]
@@ -475,11 +475,11 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
                     newFeat["Flag"] = self.tr(
                         "Polygons do not have matching attributes {0}."
                     ).format(msg[: len(msg) - 2])
-                    sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+                    sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
             else:
                 newFeat.setGeometry(line)
                 newFeat["Flag"] = self.tr("More than 2 polygons connected.")
-                sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+                sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
             feed.setProgress(current * stepSize)
         return listLines
@@ -586,7 +586,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
                 geomVertFlag = dictVertInFrame[wktSpecifVert][0].geometry()
                 newFeat.setGeometry(geomVertFlag)
                 newFeat["Flag"] = self.tr("No connection at the frame")
-                sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+                sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
             elif len(dictVertInFrame[wktSpecifVert]) == 2:
                 [vertFeatOne, vertFeatTwo] = dictVertInFrame[wktSpecifVert]
                 dictAttrFeat = defaultdict(set)
@@ -605,12 +605,12 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
                 newFeat["Flag"] = self.tr("Attributes {0} are different.").format(
                     ", ".join(diffAttrs)
                 )
-                sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+                sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
             else:
                 geomVertFlag = dictVertInFrame[wktSpecifVert][0].geometry()
                 newFeat.setGeometry(geomVertFlag)
                 newFeat["Flag"] = self.tr("Three or more roads connected.")
-                sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+                sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
             feed.setProgress(current * stepSize)
 

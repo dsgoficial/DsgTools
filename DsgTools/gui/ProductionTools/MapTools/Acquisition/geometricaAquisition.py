@@ -274,7 +274,7 @@ class GeometricaAcquisition(QgsMapTool):
         rubberBand.setFillColor(QColor(255, 0, 0, 40))
         rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
-        rubberBand.setIcon(QgsRubberBand.ICON_X)
+        rubberBand.setIcon(QgsRubberBand.IconType.ICON_X)
         return rubberBand
 
     def setAllowedStyleSnapRubberBand(self):

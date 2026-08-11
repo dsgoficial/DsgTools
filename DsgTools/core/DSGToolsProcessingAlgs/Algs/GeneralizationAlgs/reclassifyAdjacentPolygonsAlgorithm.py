@@ -85,7 +85,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_VEGETATION,
                 self.tr("Vegetation Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 defaultValue="cobter_vegetacao_a",
             )
         )
@@ -93,7 +93,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_WATER,
                 self.tr("Water Body Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 defaultValue="cobter_massa_dagua_a",
             )
         )
@@ -101,7 +101,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_BUILT_UP,
                 self.tr("Built-up Area Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 defaultValue="cobter_area_edificada_a",
             )
         )
@@ -109,7 +109,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_FRAME,
                 self.tr("Map Frame"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 defaultValue="aux_moldura_a",
             )
         )
@@ -119,7 +119,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                 self.tr("Class label field on vegetation layer"),
                 "tipo",
                 self.INPUT_VEGETATION,
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
                 allowMultiple=False,
             )
         )
@@ -127,7 +127,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.WATER_CLASS_VALUE,
                 self.tr("Class value for water bodies"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=1,
             )
         )
@@ -135,7 +135,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.BUILT_UP_CLASS_VALUE,
                 self.tr("Class value for built-up areas"),
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=2,
             )
         )
@@ -143,7 +143,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.MIN_AREA,
                 self.tr("Default minimum area (m2)"),
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=62500,
                 minValue=0,
             )
@@ -577,7 +577,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             newFeats.append(newFeat)
 
         if newFeats:
-            lyr.addFeatures(newFeats, QgsFeatureSink.FastInsert)
+            lyr.addFeatures(newFeats, QgsFeatureSink.Flag.FastInsert)
 
         lyr.endEditCommand()
         feedback.pushInfo(

@@ -38,12 +38,14 @@ class GeneralizeRoundaboutsAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_LAYER,
                 self.tr("Highway layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.ESCALA, self.tr("Scale"), type=QgsProcessingParameterNumber.Double
+                self.ESCALA,
+                self.tr("Scale"),
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
         self.addParameter(

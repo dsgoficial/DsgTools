@@ -226,7 +226,7 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
         serverInfo.insert(0, self.selector.serverName)
         return {dbname: serverInfo for dbname in dbList}
 
-    def exec_(self):
+    def exec(self):
         """
         Executes selector dialog and updates selected databases, if any database is selected.
         :return: (int) execution code.

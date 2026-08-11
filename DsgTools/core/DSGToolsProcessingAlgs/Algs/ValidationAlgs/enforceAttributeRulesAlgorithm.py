@@ -138,7 +138,7 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
             self.POINT_FLAGS,
             context,
             self.flagFields,
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             crs,
         )
 
@@ -152,7 +152,7 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
             self.LINE_FLAGS,
             context,
             self.flagFields,
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             crs,
         )
 
@@ -166,7 +166,7 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
             self.POLYGON_FLAGS,
             context,
             self.flagFields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             crs,
         )
 
@@ -236,7 +236,9 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
                 newFeature = QgsFeature(self.flagFields)
                 newFeature["reason"] = flagText
                 newFeature.setGeometry(geom)
-                layerMap[geom.type()].addFeature(newFeature, QgsFeatureSink.FastInsert)
+                layerMap[geom.type()].addFeature(
+                    newFeature, QgsFeatureSink.Flag.FastInsert
+                )
         self.logResult(attrRulesMap, feedback)
         return (ptLayer, lLayer, polLayer)
 

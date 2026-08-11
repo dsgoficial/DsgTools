@@ -47,7 +47,7 @@ class ExtractMiddleVertexOnLineAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
                 self.tr("Input Line Layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -73,7 +73,7 @@ class ExtractMiddleVertexOnLineAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             outputFields,
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             inputSource.sourceCrs(),
         )
         if output_sink is None:

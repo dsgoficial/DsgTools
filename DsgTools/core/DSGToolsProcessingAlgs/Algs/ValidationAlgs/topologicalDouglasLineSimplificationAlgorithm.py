@@ -60,7 +60,7 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
                 self.tr("Linestring Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
             )
         )
         self.addParameter(
@@ -74,7 +74,7 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
                 self.tr("Douglas Deucker threshold"),
                 minValue=0,
                 defaultValue=2,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
         param = QgsProcessingParameterNumber(
@@ -82,7 +82,7 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
             self.tr("Snap radius"),
             minValue=0,
             defaultValue=1,
-            type=QgsProcessingParameterNumber.Double,
+            type=QgsProcessingParameterNumber.Type.Double,
         )
         param.setMetadata({"widget_wrapper": {"decimals": 8}})
         self.addParameter(param)
@@ -91,7 +91,7 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic Bounds Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -121,7 +121,7 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         self.prepareFlagSink(
-            parameters, inputLyrList[0], QgsWkbTypes.MultiLineString, context
+            parameters, inputLyrList[0], QgsWkbTypes.Type.MultiLineString, context
         )
 
         if geographicBoundsLyr is None:
@@ -166,7 +166,7 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
             inputLyrList,
-            geomType=QgsWkbTypes.MultiLineString,
+            geomType=QgsWkbTypes.Type.MultiLineString,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
         )
@@ -235,7 +235,7 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
         auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
             inputLyrList,
-            geomType=QgsWkbTypes.MultiLineString,
+            geomType=QgsWkbTypes.Type.MultiLineString,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
         )

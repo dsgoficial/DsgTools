@@ -55,7 +55,9 @@ class RaiseFlagsAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input"), [QgsProcessing.TypeVectorAnyGeometry]
+                self.INPUT,
+                self.tr("Input"),
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(

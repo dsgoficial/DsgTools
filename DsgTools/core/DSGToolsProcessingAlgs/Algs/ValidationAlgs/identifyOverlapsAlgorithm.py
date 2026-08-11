@@ -54,8 +54,8 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input layer"),
                 [
-                    QgsProcessing.TypeVectorLine,
-                    QgsProcessing.TypeVectorPolygon,
+                    QgsProcessing.SourceType.TypeVectorLine,
+                    QgsProcessing.SourceType.TypeVectorPolygon,
                 ],
             )
         )

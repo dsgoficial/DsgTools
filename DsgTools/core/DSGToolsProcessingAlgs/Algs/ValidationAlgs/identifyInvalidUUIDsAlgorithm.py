@@ -57,7 +57,7 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
                 self.tr("Input layer(s)"),
-                QgsProcessing.TypeVectorAnyGeometry,
+                QgsProcessing.SourceType.TypeVectorAnyGeometry,
             )
         )
 
@@ -183,7 +183,7 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
         return {self.OUTPUT: output_dest_id}
 
     def getFlagWkbType(self):
-        return QgsWkbTypes.Point
+        return QgsWkbTypes.Type.Point
 
     def getFlagFields(self):
         sinkFields = QgsFields()

@@ -48,7 +48,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_POINT,
                 self.tr("Point Input Layer"),
-                [QgsProcessing.TypeVectorPoint],
+                [QgsProcessing.SourceType.TypeVectorPoint],
             )
         )
 
@@ -74,7 +74,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
                 self.tr("Non-eliminated buildings (nearby high priority)"),
-                QgsProcessing.TypeVectorPoint,
+                QgsProcessing.SourceType.TypeVectorPoint,
             )
         )
 
@@ -289,7 +289,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             fields,
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             pointLayer.sourceCrs(),
         )
         idsToFlag = set()
@@ -309,7 +309,7 @@ class GeneralizeEdificationsAlgorithm(QgsProcessingAlgorithm):
                         continue
                     newFeat[fieldName] = feat[fieldName]
                 newFeat.setGeometry(feat.geometry())
-                sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+                sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
         multiStepFeedback.setProgressText(
             self.tr("Feature addition to sink complete...")
         )

@@ -69,7 +69,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_POLYGONS,
                 self.tr("Polygon Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
             )
         )
         self.addParameter(
@@ -81,7 +81,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.CONSTRAINT_LINE_LAYERS,
                 self.tr("Line Constraint Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -89,7 +89,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.CONSTRAINT_POLYGON_LAYERS,
                 self.tr("Polygon Constraint Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
                 optional=True,
             )
         )
@@ -97,7 +97,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic Boundary"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -163,7 +163,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             self.OUTPUT_CENTER_POINTS,
             context,
             outputSinkFields,
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             singleInputPolygonBoundariesLayer.sourceCrs(),
         )
         (output_boundaries_sink, output_boundaries_sink_id) = self.parameterAsSink(
@@ -171,7 +171,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             self.OUTPUT_BOUNDARIES,
             context,
             QgsFields(),
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             singleInputPolygonBoundariesLayer.sourceCrs(),
         )
         if singleInputPolygonBoundariesLayer.featureCount() == 0:
@@ -463,7 +463,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
                     continue
                 newFeat[field.name()] = feat[field.name()]
             newFeat.setGeometry(feat.geometry())
-            output_center_point_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            output_center_point_sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
         count = 0
         for feat in final_result_lyr.getFeatures():

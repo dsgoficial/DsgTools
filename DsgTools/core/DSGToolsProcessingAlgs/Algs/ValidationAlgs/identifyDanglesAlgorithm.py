@@ -67,7 +67,9 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorLine]
+                self.INPUT,
+                self.tr("Input layer"),
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
@@ -89,7 +91,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 self.TOLERANCE,
                 self.tr("Search radius"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=0.0001,
             )
         )
@@ -97,7 +99,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.LINEFILTERLAYERS,
                 self.tr("Linestring Filter Layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -105,7 +107,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POLYGONFILTERLAYERS,
                 self.tr("Polygon Filter Layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
                 optional=True,
             )
         )
@@ -121,7 +123,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 self.tr(
                     "Geographic Boundary (this layer only filters the output dangles)"
                 ),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -138,7 +140,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         self.layerHandler = LayerHandler()
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Type.Point, context)
         if inputLyr is None:
             return {self.FLAGS: self.flag_id}
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
@@ -360,7 +362,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         if not lineLyrs:
             return None
         return self.layerHandler.createAndPopulateUnifiedVectorLayer(
-            lineLyrs, QgsWkbTypes.MultiLineString, onlySelected=onlySelected
+            lineLyrs, QgsWkbTypes.Type.MultiLineString, onlySelected=onlySelected
         )
 
     def makeBoundaries(self, lyr, context, feedback):

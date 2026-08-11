@@ -73,7 +73,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.NETWORK_LAYER,
                 self.tr("Network layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
@@ -89,14 +89,14 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS_LAYER,
                 self.tr("Reference layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.WATER_BODY_LAYER,
                 self.tr("Water body layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )
@@ -132,7 +132,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.SINK_AND_SPILLWAY_LAYER,
                 self.tr("Water sink and spillway layer"),
-                [QgsProcessing.TypeVectorPoint],
+                [QgsProcessing.SourceType.TypeVectorPoint],
                 optional=True,
             )
         )
@@ -270,7 +270,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             self.POINT_FLAGS,
             context,
             self.getFlagFields(),
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             networkLayer.sourceCrs(),
         )
         (self.line_flags_sink, self.line_flags_sink_id) = self.parameterAsSink(
@@ -278,7 +278,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             self.LINE_FLAGS,
             context,
             self.getFlagFields(),
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             networkLayer.sourceCrs(),
         )
         (self.polygon_flags_sink, self.polygon_flags_sink_id) = self.parameterAsSink(
@@ -286,7 +286,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             self.POLYGON_FLAGS,
             context,
             self.getFlagFields(),
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             networkLayer.sourceCrs(),
         )
         nSteps = (

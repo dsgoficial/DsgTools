@@ -58,7 +58,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
                 self.tr("Input Polygon Layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=False,
             )
         )
@@ -69,7 +69,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Grid size on x-axis"),
                 defaultValue=0.005,
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
 
@@ -79,7 +79,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Grid size on y-axis"),
                 defaultValue=0.005,
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
             )
         )
 
@@ -88,7 +88,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             self.RELATED_TASK_ID,
             self.tr("Related task id"),
             optional=True,
-            type=QgsProcessingParameterNumber.Integer,
+            type=QgsProcessingParameterNumber.Type.Integer,
         )
         paramRelatedTask.setFlags(
             paramRelatedTask.flags()
@@ -100,7 +100,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             self.UNIT_WORK_ID,
             self.tr("Work unit id"),
             optional=True,
-            type=QgsProcessingParameterNumber.Integer,
+            type=QgsProcessingParameterNumber.Type.Integer,
         )
         paramUnitWork.setFlags(
             paramUnitWork.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
@@ -111,7 +111,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             self.STEP_ID,
             self.tr("Step id"),
             optional=True,
-            type=QgsProcessingParameterNumber.Integer,
+            type=QgsProcessingParameterNumber.Type.Integer,
         )
         paramStep.setFlags(
             paramStep.flags() | QgsProcessingParameterDefinition.Flag.FlagAdvanced
@@ -143,7 +143,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             fields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             inputSource.sourceCrs(),
         )
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
@@ -177,7 +177,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(4)
         list(
             map(
-                lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
+                lambda x: output_sink.addFeature(x, QgsFeatureSink.Flag.FastInsert),
                 sortedFeatures,
             )
         )

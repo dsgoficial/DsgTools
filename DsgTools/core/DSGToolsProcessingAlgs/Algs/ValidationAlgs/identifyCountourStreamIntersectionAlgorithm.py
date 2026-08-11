@@ -52,14 +52,14 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 "INPUT_STREAM",
                 self.tr("Drainage layer"),
-                types=[QgsProcessing.TypeVectorLine],
+                types=[QgsProcessing.SourceType.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 "INPUT_COUNTOUR_LINES",
                 self.tr("Contour levels layer"),
-                types=[QgsProcessing.TypeVectorLine],
+                types=[QgsProcessing.SourceType.TypeVectorLine],
             )
         )
 
@@ -87,7 +87,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             self.POINT_FLAGS,
             context,
             streamLayerInput.fields(),
-            QgsWkbTypes.Point,
+            QgsWkbTypes.Type.Point,
             streamLayerInput.sourceCrs(),
         )
 
@@ -96,7 +96,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             self.LINE_FLAGS,
             context,
             streamLayerInput.fields(),
-            QgsWkbTypes.LineString,
+            QgsWkbTypes.Type.LineString,
             streamLayerInput.sourceCrs(),
         )
 
@@ -151,7 +151,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
                 context,
                 outputPointsSet,
                 streamLayerInput,
-                QgsWkbTypes.Point,
+                QgsWkbTypes.Type.Point,
                 point_flag_sink,
             )
         if outputLinesSet != set():
@@ -160,7 +160,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
                 context,
                 outputLinesSet,
                 streamLayerInput,
-                QgsWkbTypes.LineString,
+                QgsWkbTypes.Type.LineString,
                 line_flag_sink,
             )
         return {
@@ -224,13 +224,16 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
                 return
             countourGeom = idDict[riverFeat["AUTO_2"]].geometry()
             intersection = countourGeom.intersection(riverGeom)
-            if intersection.isEmpty() or intersection.wkbType() == QgsWkbTypes.Point:
+            if (
+                intersection.isEmpty()
+                or intersection.wkbType() == QgsWkbTypes.Type.Point
+            ):
                 return
-            if intersection.wkbType() == QgsWkbTypes.MultiPoint:
+            if intersection.wkbType() == QgsWkbTypes.Type.MultiPoint:
                 outputPointsSet.add(intersection)
             if intersection.wkbType() in [
-                QgsWkbTypes.LineString,
-                QgsWkbTypes.MultiLineString,
+                QgsWkbTypes.Type.LineString,
+                QgsWkbTypes.Type.MultiLineString,
             ]:
                 outputLinesSet.add(intersection)
 
@@ -260,7 +263,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             newFeat.setGeometry(geom)
             newFeat.setFields(newFields)
             newFeat["id"] = idcounter
-            sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+            sink.addFeature(newFeat, QgsFeatureSink.Flag.FastInsert)
 
     def name(self):
         """

@@ -121,7 +121,9 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
         # Add the input vector layer parameter
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorPolygon]
+                self.INPUT,
+                self.tr("Input layer"),
+                [QgsProcessing.SourceType.TypeVectorPolygon],
             )
         )
 
@@ -165,7 +167,7 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.OVERLAP_X,
                 self.tr("X overlap (map units for fixed size, % for grid)"),
-                QgsProcessingParameterNumber.Double,
+                QgsProcessingParameterNumber.Type.Double,
                 0.0,  # Default value (no overlap)
                 True,  # Optional
                 0.0,  # Minimum value
@@ -178,7 +180,7 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.OVERLAP_Y,
                 self.tr("Y overlap (map units for fixed size, % for grid)"),
-                QgsProcessingParameterNumber.Double,
+                QgsProcessingParameterNumber.Type.Double,
                 0.0,  # Default value (no overlap)
                 True,  # Optional
                 0.0,  # Minimum value
@@ -233,7 +235,7 @@ class PolygonTilerAlgorithm(QgsProcessingAlgorithm):
             self.OUTPUT,
             context,
             self.fields,
-            QgsWkbTypes.Polygon,
+            QgsWkbTypes.Type.Polygon,
             source.sourceCrs(),
         )
 

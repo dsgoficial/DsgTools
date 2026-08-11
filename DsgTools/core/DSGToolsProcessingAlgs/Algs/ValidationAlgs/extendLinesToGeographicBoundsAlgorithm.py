@@ -52,7 +52,7 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
@@ -65,7 +65,7 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.GEOGRAPHIC_BOUNDS_LAYER,
                 self.tr("Geographic bounds"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=False,
             )
         )

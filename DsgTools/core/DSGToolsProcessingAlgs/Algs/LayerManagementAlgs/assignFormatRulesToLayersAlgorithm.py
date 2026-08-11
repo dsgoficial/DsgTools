@@ -68,7 +68,7 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFile(
                 self.FILE,
                 description=self.tr("JSON File with rules"),
-                behavior=QgsProcessingParameterFile.File,
+                behavior=QgsProcessingParameterFile.Behavior.File,
                 fileFilter="JSON (*.json)",
                 optional=True,
             )

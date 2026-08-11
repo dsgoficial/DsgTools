@@ -70,7 +70,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input contour layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 defaultValue="elemnat_curva_nivel_l",
             )
         )
@@ -85,7 +85,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.tr("Contour value field"),
                 "cota",
                 "INPUT",
-                QgsProcessingParameterField.Any,
+                QgsProcessingParameterField.DataType.Any,
             )
         )
         self.addParameter(
@@ -101,7 +101,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_SPOT_ELEVATION,
                 self.tr("Input spot elevation layer"),
-                [QgsProcessing.TypeVectorPoint],
+                [QgsProcessing.SourceType.TypeVectorPoint],
                 optional=True,
             )
         )
@@ -111,7 +111,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.tr("Spot elevation height value field"),
                 "cota",
                 self.INPUT_SPOT_ELEVATION,
-                QgsProcessingParameterField.Numeric,
+                QgsProcessingParameterField.DataType.Numeric,
                 optional=True,
             )
         )
@@ -124,7 +124,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS,
                 self.tr("Geographic bounds layer"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=False,
                 defaultValue="aux_moldura_a",
             )
@@ -200,13 +200,13 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.tr("Spot elevation height attribute must be selected.")
             )
         point_flagSink, point_flag_sink_id = self.prepareAndReturnFlagSink(
-            parameters, inputLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
+            parameters, inputLyr, QgsWkbTypes.Type.Point, context, self.POINT_FLAGS
         )
         line_flagSink, line_flag_sink_id = self.prepareAndReturnFlagSink(
-            parameters, inputLyr, QgsWkbTypes.LineString, context, self.LINE_FLAGS
+            parameters, inputLyr, QgsWkbTypes.Type.LineString, context, self.LINE_FLAGS
         )
         polygon_flagSink, polygon_flag_sink_id = self.prepareAndReturnFlagSink(
-            parameters, inputLyr, QgsWkbTypes.Polygon, context, self.POLYGON_FLAGS
+            parameters, inputLyr, QgsWkbTypes.Type.Polygon, context, self.POLYGON_FLAGS
         )
 
         sinkDict = {

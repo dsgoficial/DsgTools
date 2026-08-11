@@ -58,7 +58,7 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT_DRAINAGES,
                 self.tr("Input Drainages layer"),
-                [QgsProcessing.TypeVectorLine],
+                [QgsProcessing.SourceType.TypeVectorLine],
                 defaultValue="elemnat_trecho_drenagem_l",
             )
         )
@@ -68,7 +68,7 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
                 self.tr("Attribute that indicates the relationship with polygon"),
                 "situacao_em_poligono",
                 parentLayerParameterName=self.INPUT_DRAINAGES,
-                type=QgsProcessingParameterField.Any,
+                type=QgsProcessingParameterField.DataType.Any,
                 allowMultiple=False,
             )
         )
@@ -86,7 +86,7 @@ class FixDrainageVersusWaterBodyAttributeAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.WATER_BODY,
                 self.tr("Water body"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 defaultValue="cobter_massa_dagua_a",
             )
         )

@@ -59,7 +59,7 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT,
                 self.tr("Input layers to be snapped"),
-                QgsProcessing.TypeVectorAnyGeometry,
+                QgsProcessing.SourceType.TypeVectorAnyGeometry,
             )
         )
         self.addParameter(
@@ -73,7 +73,7 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POINT_ANCHOR_LAYERS,
                 self.tr("Point anchor layers"),
-                QgsProcessing.TypeVectorPoint,
+                QgsProcessing.SourceType.TypeVectorPoint,
                 optional=True,
             )
         )
@@ -82,7 +82,7 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.LINE_ANCHOR_LAYERS,
                 self.tr("Line anchor layers"),
-                QgsProcessing.TypeVectorLine,
+                QgsProcessing.SourceType.TypeVectorLine,
                 optional=True,
             )
         )
@@ -91,7 +91,7 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.POLYGON_ANCHOR_LAYERS,
                 self.tr("Polygon anchor layers"),
-                QgsProcessing.TypeVectorPolygon,
+                QgsProcessing.SourceType.TypeVectorPolygon,
                 optional=True,
             )
         )
@@ -133,7 +133,7 @@ class AnchoredSnapperAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic Boundary"),
-                [QgsProcessing.TypeVectorPolygon],
+                [QgsProcessing.SourceType.TypeVectorPolygon],
                 optional=True,
             )
         )

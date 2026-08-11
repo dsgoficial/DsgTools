@@ -49,7 +49,7 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
+                [QgsProcessing.SourceType.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
@@ -87,7 +87,7 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         ignoreClosed = self.parameterAsBool(parameters, self.IGNORE_CLOSED, context)
         fixInput = self.parameterAsBool(parameters, self.TYPE, context)
         self.prepareFlagSink(
-            parameters, inputLyr, QgsWkbTypes.Point, context, addFeatId=True
+            parameters, inputLyr, QgsWkbTypes.Type.Point, context, addFeatId=True
         )
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)

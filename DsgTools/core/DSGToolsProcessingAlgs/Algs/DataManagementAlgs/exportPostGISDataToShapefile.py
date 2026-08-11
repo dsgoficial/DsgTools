@@ -111,7 +111,7 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
             QgsProcessingParameterFile(
                 self.TEMPLATE_SHAPEFILES_FOLDER,
                 self.tr("Template Shapefiles Folder"),
-                behavior=QgsProcessingParameterFile.Folder,
+                behavior=QgsProcessingParameterFile.Behavior.Folder,
             )
         )
 
@@ -135,7 +135,7 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
                 self.GEOGRAPHIC_BOUNDS_NAME_FIELD,
                 self.tr("MI"),
                 parentLayerParameterName=self.GEOGRAPHIC_BOUNDS,
-                type=QgsProcessingParameterField.Any,
+                type=QgsProcessingParameterField.DataType.Any,
             )
         )
         self.addParameter(
@@ -322,7 +322,7 @@ class ExportPostGISDataToShapefile(AbstractDatabaseAlgorithm):
                     list(
                         map(
                             lambda x: self.flagSinkDict[geomType].addFeature(
-                                self.buildFlagFeat(x), QgsFeatureSink.FastInsert
+                                self.buildFlagFeat(x), QgsFeatureSink.Flag.FastInsert
                             ),
                             featDictList,
                         )

@@ -54,7 +54,7 @@ class SetFreeHandToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
                 self.FREE_HAND_TOLERANCE,
                 self.tr("Free hand tolerance"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=2,
             )
         )
@@ -63,7 +63,7 @@ class SetFreeHandToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
                 self.FREE_HAND_SMOOTH_ITERATIONS,
                 self.tr("Free hand smooth iterations"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=3,
             )
         )
@@ -72,7 +72,7 @@ class SetFreeHandToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
                 self.FREE_HAND_SMOOTH_OFFSET,
                 self.tr("Free hand smooth offset"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=0.25,
             )
         )
@@ -81,7 +81,7 @@ class SetFreeHandToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
                 self.ALG_ITERATIONS,
                 self.tr("Free hand algorithm iterations"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=2,
             )
         )
@@ -90,7 +90,7 @@ class SetFreeHandToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
                 self.UNDO_POINTS,
                 self.tr("Number of points removed on undo action"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
+                type=QgsProcessingParameterNumber.Type.Integer,
                 defaultValue=50,
             )
         )
@@ -99,7 +99,7 @@ class SetFreeHandToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
                 self.FREE_HAND_FINAL_SIMPLIFY_TOLERANCE,
                 self.tr("Free hand tolerance"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Type.Double,
                 defaultValue=1,
             )
         )
