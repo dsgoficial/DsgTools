@@ -43,7 +43,7 @@ class LoadNonSpatialLayersFromPostgreSQLAlgorithm(QgsProcessingAlgorithm):
     PORT = "PORT"
     DATABASE = "DATABASE"
     USER = "USER"
-    PASSWORD = "PASSWORD"
+    PASSWORD = "PASSWORD"  # nosec B105
     LAYER_LIST = "LAYER_LIST"
     LOAD_TO_CANVAS = "LOAD_TO_CANVAS"
     UNIQUE_LOAD = "UNIQUE_LOAD"
