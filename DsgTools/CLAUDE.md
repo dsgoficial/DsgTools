@@ -50,6 +50,18 @@ DsgTools/
 - `.github/workflows/release.yml` — Deploy para repositório de plugins OSGeo via `qgis-plugin-ci`.
 - Triggers: push to master, PR to master/dev, release publication.
 
+## CHANGELOG
+
+Arquivo: `CHANGELOG.md` na raiz do repo — fonte da verdade. O `changelog=` do `DsgTools/metadata.txt` só recebe cópia na hora do release (via `qgis-plugin-ci`, `changelog_include = True` no `setup.cfg`); não editar `metadata.txt` manualmente.
+
+- Formato do cabeçalho de versão: `## <versão> - <data ou "dev">`.
+- Versão em desenvolvimento (ainda não lançada) leva `- dev` no lugar da data. Só vira `YYYY-MM-DD` no dia do release — troca `dev` pela data do lançamento naquele momento, não antes.
+- Dentro de cada versão, até três subseções, nesta ordem, só as que tiverem conteúdo: `Novas Funcionalidades:`, `Melhorias:`, `Correções de bug:`.
+- Cada item é um bullet `- Texto;` (termina em ponto e vírgula), em português, descrevendo o efeito pra quem usa o plugin (não a implementação).
+- Itens novos são adicionados **sequencialmente ao final** da subseção correspondente da versão `dev` do topo, à medida que o trabalho vai sendo feito — não abre versão nova a cada commit/PR, só na hora de lançar.
+- Ao lançar uma versão: troca o `- dev` pela data do release na entrada do topo, e abre uma nova `## <próxima versão> - dev` acima dela pros próximos commits.
+- Mudanças puramente internas (lint, formatação, refactor sem efeito observável, testes) não entram no changelog — só o que afeta quem usa o plugin.
+
 ## Migração QGIS 4.0 (Branch `qgis4`)
 
 A migração principal é Qt5 → Qt6. O QGIS 4.0 não quebra APIs além do Qt6.
