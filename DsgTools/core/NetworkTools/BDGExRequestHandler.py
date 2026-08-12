@@ -24,11 +24,11 @@
  ***************************************************************************/
 """
 
-import urllib.request, urllib.error, urllib.parse
 from xml.dom.minidom import parseString, Element
 
-from qgis.core import Qgis
-from qgis.PyQt.QtCore import QSettings, QObject
+from qgis.core import Qgis, QgsBlockingNetworkRequest
+from qgis.PyQt.QtCore import QObject, QUrl
+from qgis.PyQt.QtNetwork import QNetworkRequest
 
 from DsgTools.core.Utils.utils import MessageRaiser
 
@@ -56,56 +56,6 @@ class BDGExRequestHandler(QObject):
 
     def __del__(self):
         pass
-
-    def setUrllibProxy(self, url):
-        """
-        Sets the proxy
-        """
-        (
-            enabled,
-            host,
-            port,
-            user,
-            password,
-            type,
-            urlsList,
-        ) = self.getProxyConfiguration()
-        if enabled == "false" or type != "HttpProxy":
-            return
-        for address in urlsList:
-            if address in url:
-                proxy = urllib.request.ProxyHandler({})
-                opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
-                urllib.request.install_opener(opener)
-                return
-        proxyStr = "http://" + user + ":" + password + "@" + host + ":" + port
-        proxy = urllib.request.ProxyHandler({"http": proxyStr, "https": proxyStr})
-        opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
-        urllib.request.install_opener(opener)
-
-    def getProxyConfiguration(self):
-        """
-        Gets the proxy configuration from QSettings
-        """
-        settings = QSettings()
-        settings.beginGroup("proxy")
-        enabled = settings.value("proxyEnabled")
-        host = settings.value("proxyHost")
-        port = settings.value("proxyPort")
-        user = settings.value("proxyUser")
-        password = settings.value("proxyPassword")
-        type = settings.value("proxyType")
-        excludedUrls = list()
-        if settings.value("proxyExcludedUrls"):
-            excludedUrls = settings.value("proxyExcludedUrls")
-        if settings.value("noProxyUrls"):
-            excludedUrls += settings.value("noProxyUrls")
-        # try:
-        #     urlsList = excludedUrls.split('|')
-        # except:
-        #     urlsList = []
-        settings.endGroup()
-        return (enabled, host, port, user, password, type, excludedUrls)
 
     def get_url_string(self, service, layerList, serviceType):
         """
@@ -154,21 +104,32 @@ class BDGExRequestHandler(QObject):
 
     def requestGetCapabilitiesXML(self, url):
         """
-        Gets url capabilities
+        Gets url capabilities using QGIS's own network stack (QgsBlockingNetworkRequest).
+        This respects QGIS's proxy configuration automatically and, unlike raw urllib,
+        validates TLS certificates against the OS trust store (same as the system
+        browser) instead of the bundled Python's own CA bundle -- avoids false
+        CERTIFICATE_VERIFY_FAILED errors on networks with SSL-inspecting proxies
+        whose root CA is trusted at the OS level but not by urllib/ssl.
         """
-        self.setUrllibProxy(url)
-        getCapa = urllib.request.Request(url, headers={"User-Agent": "Magic Browser"})
-        try:
-            resp = urllib.request.urlopen(getCapa)
-        except Exception as e:
+        request = QNetworkRequest(QUrl(url))
+        request.setRawHeader(b"User-Agent", b"Magic Browser")
+        blockingRequest = QgsBlockingNetworkRequest()
+        errorCode = blockingRequest.get(request, forceRefresh=True)
+        if errorCode != QgsBlockingNetworkRequest.ErrorCode.NoError:
             title = self.tr("BDGEx layers (DSGTools)")
             msg = self.tr(
                 "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
             )
+            MessageRaiser().logMessage(
+                self.tr(
+                    "BDGEx GetCapabilities request failed for {url}: {error}"
+                ).format(url=url, error=blockingRequest.errorMessage()),
+                Qgis.MessageLevel.Critical,
+            )
             MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             return ""
 
-        response = resp.read()
+        response = bytes(blockingRequest.reply().content())
 
         # Verificar se a resposta não está vazia
         if not response:
@@ -197,6 +158,12 @@ class BDGExRequestHandler(QObject):
             title = self.tr("BDGEx layers (DSGTools)")
             msg = self.tr(
                 "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
+            )
+            MessageRaiser().logMessage(
+                self.tr(
+                    "BDGEx GetCapabilities XML parse failed for {url}: {error}"
+                ).format(url=url, error=e),
+                Qgis.MessageLevel.Critical,
             )
             MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             return ""

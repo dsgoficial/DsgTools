@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## 5.3.0 - dev
+## 5.3.1 - dev
+
+Correções de bug:
+
+- Corrige falha ao carregar camadas do BDGEx (mapcache, índice de cartas e camadas auxiliares), que exibia a mensagem "Unable to provide requested layer" mesmo com BDGEx e internet acessíveis em redes com proxy de inspeção SSL: requisições passam a usar a stack de rede do próprio QGIS, que valida certificados pelo repositório de confiança do sistema operacional;
 
 ## 5.2.0 - 2026-08-11
 
