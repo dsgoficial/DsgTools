@@ -1,10 +1,13 @@
 # CHANGELOG
 
-## 5.3.1 - dev
+## 5.3.4 - dev
 
 Correções de bug:
 
 - Corrige falha ao carregar camadas do BDGEx (mapcache, índice de cartas e camadas auxiliares), que exibia a mensagem "Unable to provide requested layer" mesmo com BDGEx e internet acessíveis em redes com proxy de inspeção SSL: requisições passam a usar a stack de rede do próprio QGIS, que valida certificados pelo repositório de confiança do sistema operacional;
+- Corrige erro ao desconstruir polígonos (Unbuild Polygons/Center Point and Boundaries) quando havia trechos com geometria nula entre as linhas de entrada;
+- Corrige travamento da barra Center Point and Boundaries ao gerar centroides com camadas de linha de restrição volumosas: apenas os trechos próximos ao polígono desenhado passam a ser processados, em vez da camada de restrição inteira a cada clique;
+- Corrige erro "Incorrect parameter value for LAYERS" na barra Center Point and Boundaries ao gerar centroides pela segunda vez em diante (mesclando com a camada "Centroides" já existente);
 
 ## 5.2.0 - 2026-08-11
 

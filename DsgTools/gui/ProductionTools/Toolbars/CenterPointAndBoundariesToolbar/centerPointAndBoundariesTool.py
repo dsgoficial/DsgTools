@@ -36,6 +36,7 @@ from qgis.core import (
     QgsVectorLayer,
     QgsGeometry,
     QgsProcessingContext,
+    QgsReferencedRectangle,
 )
 from qgis.gui import QgisInterface
 from qgis.PyQt import uic
@@ -107,13 +108,14 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         )
         context = QgsProcessingContext()
         context.setProject(QgsProject.instance())
+        constraintLyrList = self.getNearbyConstraintLayers(geom, context)
         outputCenterPointsLyr, _ = self.algRunner.runUnbuildPolygons(
             inputPolygonList=[lyr],
-            lineConstraintLayerList=list(self.lineLayerDict.values()),
+            lineConstraintLayerList=constraintLyrList,
             context=context,
         )
         outputCenterPointsLyr = (
-            self.runMerge(outputLyr, outputCenterPointsLyr)
+            self.runMerge(outputLyr, outputCenterPointsLyr, context)
             if outputLyr is not None
             else outputCenterPointsLyr
         )
@@ -124,6 +126,26 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         if outputLyr is not None:
             QgsProject.instance().removeMapLayer(outputLyr.id())
 
+    def getNearbyConstraintLayers(
+        self, geom: QgsGeometry, context: QgsProcessingContext
+    ) -> list:
+        # Avoids reprocessing constraint layers in full on every click, which
+        # hangs the UI when they hold a large volume of features.
+        extent = geom.boundingBox()
+        margin = max(extent.width(), extent.height()) * 0.1 or 1.0
+        extent.grow(margin)
+        referencedExtent = QgsReferencedRectangle(extent, QgsProject.instance().crs())
+        nearbyLyrList = []
+        for constraintLyr in self.lineLayerDict.values():
+            nearbyLyr = self.algRunner.runExtractByExtent(
+                inputLayer=constraintLyr,
+                extent=referencedExtent,
+                context=context,
+                clip=False,
+            )
+            nearbyLyrList.append(nearbyLyr)
+        return nearbyLyrList
+
     def findNode(self):
         rootNode = QgsProject.instance().layerTreeRoot()
         groupName = "DSGTools_Output"
@@ -131,10 +153,11 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         groupNode = groupNode if groupNode else rootNode.insertGroup(0, groupName)
         return groupNode
 
-    def runMerge(self, existente, novo):
+    def runMerge(self, existente, novo, context):
         merge = runProcessing(
             "native:mergevectorlayers",
             {"LAYERS": [existente, novo], "OUTPUT": "TEMPORARY_OUTPUT"},
+            context=context,
         )
         return merge["OUTPUT"]
 

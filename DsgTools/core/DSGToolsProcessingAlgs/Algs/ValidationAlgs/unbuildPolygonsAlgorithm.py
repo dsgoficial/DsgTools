@@ -652,7 +652,12 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             if feedback is not None and feedback.isCanceled():
                 break
             geom = feat.geometry()
-            startPoint, endPoint = geom.asPolyline()[0], geom.asPolyline()[-1]
+            if geom is None or geom.isNull() or geom.isEmpty():
+                continue
+            polyline = geom.asPolyline()
+            if not polyline:
+                continue
+            startPoint, endPoint = polyline[0], polyline[-1]
             if not G.has_edge(startPoint, endPoint):
                 G.add_edge(
                     startPoint, endPoint, layerIdSet=set(), featid=feat["featid"]
