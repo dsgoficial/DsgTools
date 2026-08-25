@@ -42,6 +42,7 @@ from qgis.core import (
     QgsGeometry,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterString,
+    QgsProcessingParameterBoolean,
     QgsSpatialIndex,
     QgsDistanceArea,
 )
@@ -57,6 +58,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
     BUILT_UP_CLASS_VALUE = "BUILT_UP_CLASS_VALUE"
     MIN_AREA = "MIN_AREA"
     GENERALIZATION_RULES = "GENERALIZATION_RULES"
+    COMMIT_OUTPUT_FEATURES = "COMMIT_OUTPUT_FEATURES"
 
     DEFAULT_RULES = json.dumps(
         {
@@ -164,6 +166,14 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             )
         )
 
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.COMMIT_OUTPUT_FEATURES,
+                self.tr("Commit changes to the input layers"),
+                defaultValue=False,
+            )
+        )
+
     def shortHelpString(self):
         return self.tr(
             "Reclassifies small polygons in a land cover dataset to the class "
@@ -211,6 +221,9 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         defaultMinArea = self.parameterAsDouble(parameters, self.MIN_AREA, context)
         rulesJson = self.parameterAsString(
             parameters, self.GENERALIZATION_RULES, context
+        )
+        commitChanges = self.parameterAsBool(
+            parameters, self.COMMIT_OUTPUT_FEATURES, context
         )
 
         nonGrowingClasses, classToGroup, sizeThresholds = self.parseGeneralizationRules(
@@ -431,6 +444,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             builtUpLyr=builtUpLyr,
             waterClasses=waterClasses,
             builtUpClasses=builtUpClasses,
+            commitChanges=commitChanges,
             feedback=multiStepFeedback,
         )
 
@@ -475,6 +489,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         waterClasses,
         builtUpClasses,
         feedback,
+        commitChanges=False,
     ):
         """Splits the processed cache layer by class value and writes back
         to each original layer. Preserves original attributes by matching
@@ -513,6 +528,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                 classFieldName,
                 label,
                 feedback,
+                commitChanges=commitChanges,
             )
 
     def _writeBackToSingleLayer(
@@ -522,6 +538,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         classFieldName,
         label,
         feedback,
+        commitChanges=False,
     ):
         """Write result features back to a single layer, preserving
         original attributes where possible by matching via centroid."""
@@ -550,6 +567,11 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             # "id" fields that are text (UUID) need regeneration
             if name == "id" and field.type() in (10,):  # QVariant.String
                 pkIdxSet.add(i)
+        # Provider primary keys (e.g. the integer "fid" of a GeoPackage) must
+        # never be copied from the neighbour feature: several output features
+        # may match the same original, which breaks the uniqueness constraint
+        # on commit. Leave them unset so the provider assigns a new value.
+        providerPkIdxSet = set(lyr.dataProvider().pkAttributeIndexes())
 
         # Add result features, copying attributes from best-matching original
         newFeats = []
@@ -566,6 +588,8 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                 if nearest:
                     origFeat = origDict[nearest[0]]
                     for i in range(lyr.fields().count()):
+                        if i in providerPkIdxSet:
+                            continue
                         newFeat.setAttribute(i, origFeat.attribute(i))
 
             # Override class field with the result value
@@ -580,8 +604,15 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             lyr.addFeatures(newFeats, QgsFeatureSink.Flag.FastInsert)
 
         lyr.endEditCommand()
+        if commitChanges:
+            if not lyr.commitChanges():
+                raise QgsProcessingException(
+                    self.tr("Unable to commit changes on layer %s: %s")
+                    % (label, "; ".join(lyr.commitErrors()))
+                )
         feedback.pushInfo(
-            self.tr("  %s: %d features written.") % (label, len(newFeats))
+            self.tr("  %s: %d features written%s.")
+            % (label, len(newFeats), " and committed" if commitChanges else "")
         )
 
     def parseGeneralizationRules(self, rulesJson, defaultMinArea, feedback):
