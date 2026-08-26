@@ -134,7 +134,10 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
             return {self.FLAGS: self.flag_id}
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        feedbackTotal = 5
+        # 7, e nao 5: o corpo percorre setCurrentStep(0) ate setCurrentStep(6).
+        # Declarar menos passos do que se percorre faz o QgsProcessingMultiStepFeedback
+        # reportar progresso acima de 100 por cento.
+        feedbackTotal = 7
         algRunner = AlgRunner()
         multiStepFeedback = QgsProcessingMultiStepFeedback(feedbackTotal, feedback)
         multiStepFeedback.setCurrentStep(0)
