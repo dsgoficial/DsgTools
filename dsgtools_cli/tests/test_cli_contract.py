@@ -385,3 +385,105 @@ def test_run_sem_contrato_avisa_e_segue(cache_isolado, monkeypatch, capsys):
     assert cli.main(["run", "gridzonegenerator"]) == 1
     err = capsys.readouterr().err
     assert "AVISO" in err and "Algorithm not found!" in err
+
+
+# --------------------------------------------------------------------------
+# Tipagem dos tokens KEY=VALUE pelo contrato
+# --------------------------------------------------------------------------
+TIPOS = {
+    "parameters": {
+        "LINEFILTERLAYERS": _param("multilayer", optional=True),
+        "TEXT": _param("string"),
+        "SELECTED": _param("boolean"),
+        "GEOGRAPHIC_BOUNDARY": _param("vector", optional=True),
+        "TOLERANCE": _param("number"),
+    }
+}
+
+
+def test_multilayer_vazio_vira_lista():
+    """`LINEFILTERLAYERS=[]` seguia como a STRING "[]", e o qgis_process a tratava
+    como caminho: "File [] could not be found"."""
+    assert cli.apply_contract_types({"LINEFILTERLAYERS": "[]"}, TIPOS) == {"LINEFILTERLAYERS": []}
+
+
+def test_multilayer_com_itens_vira_lista():
+    entrada = {"LINEFILTERLAYERS": '["a.gpkg","b.gpkg"]'}
+    assert cli.apply_contract_types(entrada, TIPOS)["LINEFILTERLAYERS"] == ["a.gpkg", "b.gpkg"]
+
+
+def test_string_com_cara_de_lista_continua_string():
+    """Ha algoritmo que recebe JSON como TEXTO (TEXT, PARAMETER_DICT, VALUE_MAP).
+    Coagir pela aparencia do valor, e nao pelo tipo, quebraria esses."""
+    assert cli.apply_contract_types({"TEXT": "[]"}, TIPOS) == {"TEXT": "[]"}
+    assert cli.apply_contract_types({"TEXT": "{}"}, TIPOS) == {"TEXT": "{}"}
+
+
+def test_multilayer_com_texto_que_nao_e_json_continua_string():
+    """`[a.gpkg]` nao e JSON valido. Adivinhar seria pior que deixar string."""
+    assert cli.apply_contract_types({"LINEFILTERLAYERS": "[a.gpkg]"}, TIPOS) == {
+        "LINEFILTERLAYERS": "[a.gpkg]"
+    }
+
+
+def test_booleano_vira_booleano():
+    assert cli.apply_contract_types({"SELECTED": "false"}, TIPOS) == {"SELECTED": False}
+    assert cli.apply_contract_types({"SELECTED": "TRUE"}, TIPOS) == {"SELECTED": True}
+
+
+def test_null_em_camada_opcional_vira_none():
+    assert cli.apply_contract_types({"GEOGRAPHIC_BOUNDARY": "null"}, TIPOS) == {
+        "GEOGRAPHIC_BOUNDARY": None
+    }
+
+
+def test_null_em_parametro_de_texto_continua_string():
+    assert cli.apply_contract_types({"TEXT": "null"}, TIPOS) == {"TEXT": "null"}
+
+
+def test_parametro_fora_do_contrato_passa_intacto():
+    assert cli.apply_contract_types({"NAO_EXISTE": "[]"}, TIPOS) == {"NAO_EXISTE": "[]"}
+
+
+def test_null_em_obrigatorio_reprova_como_ausente():
+    """Tipar antes de validar e o que faz `TOLERANCE=null` virar erro de ausente,
+    em vez de seguir como a string "null" ate o qgis_process."""
+    entrada = cli.apply_contract_types({"TOLERANCE": "null"}, TIPOS)
+    erros = cli.validate_inputs(entrada, TIPOS)
+    assert any("TOLERANCE" in e["message"] for e in erros)
+
+
+def test_coerce_so_mexe_em_numero():
+    assert cli._coerce("7") == 7
+    assert cli._coerce("0.0001") == 0.0001
+    assert cli._coerce("007") == "007"
+    assert cli._coerce("[]") == "[]"
+    assert cli._coerce("false") == "false"
+
+
+def test_exemplo_curado_sobrevive_ao_shell():
+    """O CLI tem que saber imprimir um exemplo que o shell consegue separar.
+
+    O valor que ja traz aspas duplas (JSON com strings dentro) precisa sair entre
+    aspas simples. Com aspas duplas por fora, o shell fecha o token na primeira
+    aspa de dentro, e o exemplo publicado quebra ao ser copiado.
+    """
+    import shlex
+
+    anotacoes = json.loads((CLI_DIR / "annotations.json").read_text(encoding="utf-8"))
+    quebrados = []
+    for alg, anotacao in anotacoes.items():
+        if not isinstance(anotacao, dict):
+            continue  # chaves de metadado do arquivo, que nao sao anotacao
+        exemplo = anotacao.get("example") or {}
+        if not exemplo:
+            continue
+        linha = cli._example_args(exemplo)
+        try:
+            tokens = shlex.split(linha)
+        except ValueError:
+            quebrados.append((alg, "aspas nao fecham"))
+            continue
+        if len(tokens) != len(exemplo) or not all("=" in tok for tok in tokens):
+            quebrados.append((alg, linha))
+    assert not quebrados, f"exemplo que o shell nao separa: {quebrados}"

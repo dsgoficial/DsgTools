@@ -553,11 +553,22 @@ def render_describe(help_data, annotation):
 
 
 def _example_args(example):
-    """Transforma o exemplo curado ({'KEY': valor}) em tokens KEY=VALUE prontos."""
+    """Transforma o exemplo curado ({'KEY': valor}) em tokens KEY=VALUE prontos.
+
+    O valor que ja traz aspas duplas (um JSON com strings dentro, por exemplo)
+    tem de sair entre aspas SIMPLES. Com aspas duplas por fora, o shell fecha o
+    token na primeira aspa de dentro, e o exemplo publicado quebra ao ser
+    copiado. Aspas simples valem tanto no shell POSIX quanto no PowerShell.
+    """
     tokens = []
     for key, value in example.items():
         text = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
-        tokens.append(f'"{key}={text}"' if " " in text else f"{key}={text}")
+        if '"' in text:
+            tokens.append(f"'{key}={text}'")
+        elif " " in text:
+            tokens.append(f'"{key}={text}"')
+        else:
+            tokens.append(f"{key}={text}")
     return " ".join(tokens)
 
 
@@ -753,6 +764,7 @@ def cmd_describe(args):
 
 _INT_RE = re.compile(r"^-?[1-9][0-9]*$|^0$")
 _FLOAT_RE = re.compile(r"^-?[0-9]+\.[0-9]+$")
+_BOOL_LITERALS = {"true": True, "false": False}
 
 
 def _coerce(value):
@@ -762,12 +774,48 @@ def _coerce(value):
     notacao exponencial ou hex) e floats decimais simples — assim nao corrompe
     strings numericas como '007', '1_000', 'inf' ou identificadores. Para forcar
     um valor numerico a permanecer string, use --params/--stdin (o JSON preserva os tipos).
+
+    O resto da conversao (lista, booleano, null) depende do TIPO do parametro, e
+    por isso mora em `apply_contract_types`, que roda depois com o contrato na mao.
     """
     if _INT_RE.match(value):
         return int(value)
     if _FLOAT_RE.match(value):
         return float(value)
     return value
+
+
+def apply_contract_types(inputs, help_data):
+    """Converte string para o tipo que o contrato do parametro pede.
+
+    O token 'KEY=VALUE' chega sempre como texto, e o tipo certo so da para saber
+    com o contrato. Sem esta passagem, `LINEFILTERLAYERS=[]` seguia como a STRING
+    "[]", que o qgis_process trata como caminho de arquivo e reprova com
+    "File [] could not be found" — o CLI publicava no `describe` um exemplo que
+    ele mesmo nao sabia reler.
+
+    A conversao e por TIPO, nunca pela cara do valor: `TEXT=[]` num parametro
+    `string` continua a string "[]", porque ha algoritmo que recebe JSON como
+    texto (TEXT, PARAMETER_DICT, VALUE_MAP). Coagir pela aparencia quebraria esses.
+    """
+    params = (help_data or {}).get("parameters", {})
+    for name, value in list(inputs.items()):
+        if not isinstance(value, str):
+            continue
+        param = params.get(name)
+        if not param:
+            continue
+        tipo = param.get("raw_definition", {}).get("parameter_type")
+        if tipo == "multilayer" and value[:1] in "[{":
+            try:
+                inputs[name] = json.loads(value)
+            except json.JSONDecodeError:
+                pass  # `[a.gpkg]` nao e JSON: adivinhar seria pior que deixar string
+        elif tipo == "boolean" and value.lower() in _BOOL_LITERALS:
+            inputs[name] = _BOOL_LITERALS[value.lower()]
+        elif tipo != "string" and value == "null":
+            inputs[name] = None
+    return inputs
 
 
 def _unwrap_inputs(data):
@@ -860,6 +908,9 @@ def cmd_run(args):
                 file=sys.stderr,
             )
         else:
+            # Tipa ANTES de validar: `null` num obrigatorio tem que reprovar como
+            # ausente, e `[]` num multilayer tem que chegar como lista, nao texto.
+            apply_contract_types(inputs, help_data)
             errors = validate_inputs(inputs, help_data)
             if errors:
                 sys.stderr.write(format_validation_errors(alg, errors, help_data))
