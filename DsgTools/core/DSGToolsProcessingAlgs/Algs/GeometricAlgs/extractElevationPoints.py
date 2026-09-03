@@ -1881,7 +1881,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         context,
         feedback=None,
     ):
-        featSet = set()
+        featList = []
         npRasterCopy = np.array(npRaster)
         if contourHeightInterval is not None:
             npRasterCopy = rasterHandler.maskContourIntervalMultiples(
@@ -1919,7 +1919,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 feedback=None,
             )
             if filteredFeatureList != []:
-                featSet |= self.filterFeaturesByBuffer(
+                featList += self.filterFeaturesByBuffer(
                     filteredFeatureList, distance / 10, cotaMaisAlta=True
                 )
                 break
@@ -1929,7 +1929,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 npRasterCopy
             )
             if maxCoordinatesArray.size == 0:
-                return list(featSet)
+                return self.sortFeaturesStably(featList)
             maxFeatList = (
                 rasterHandler.createFeatureListWithPixelValuesFromPixelCoordinatesArray(
                     maxCoordinatesArray,
@@ -1944,7 +1944,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             if feedback is not None and feedback.isCanceled():
                 break
         candidatesPointLyr = LayerHandler().createMemoryLayerWithFeatures(
-            featList=list(featSet),
+            featList=self.sortFeaturesStably(featList),
             fields=fields,
             crs=crs,
             wkbType=QgsWkbTypes.Type.Point,
@@ -1971,7 +1971,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         context,
         feedback=None,
     ):
-        featSet = set()
+        featList = []
         npRasterCopy = np.array(npRaster)
         if contourHeightInterval is not None:
             npRasterCopy = rasterHandler.maskContourIntervalMultiples(
@@ -1979,7 +1979,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             )
         minCoordinatesArray = rasterHandler.getMinCoordinatesFromNpArray(npRasterCopy)
         if len(minCoordinatesArray) == 0:
-            return list(featSet)
+            return self.sortFeaturesStably(featList)
         if feedback is not None:
             feedback.pushInfo(
                 self.tr("Creating min feature list from pixel coordinates array...")
@@ -2011,7 +2011,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 feedback=None,
             )
             if filteredFeatureList != []:
-                featSet |= set(filteredFeatureList)
+                featList += filteredFeatureList
                 break
             npRasterCopy[npRasterCopy == cota] = np.nan
             minCoordinatesArray = rasterHandler.getMinCoordinatesFromNpArray(
@@ -2073,7 +2073,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep = 0
             multiStepFeedback.setCurrentStep(currentStep)
         candidatesPointLyr = LayerHandler().createMemoryLayerWithFeatures(
-            featList=inputPointList,
+            featList=self.sortFeaturesStably(inputPointList),
             fields=fields,
             crs=referenceLyr.crs(),
             wkbType=QgsWkbTypes.Type.Point,
@@ -2117,10 +2117,45 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
         )
 
+    @staticmethod
+    def stableFeatureKey(feat):
+        """
+        Chave de ordenação estável de um ponto cotado, na mesma ordem cartográfica
+        que o filtro por distância já usava: primeiro o marcado como cota mais
+        alta, depois a cota decrescente, e por fim a posição (norte para sul,
+        oeste para leste), arredondada.
+
+        Existe porque a ordem de um `set` de QgsFeature é a ordem de identidade
+        do objeto, que muda a cada processo. Quem escolhe sob o teto de densidade
+        precisa ordenar por VALOR, ou a mesma entrada dá saídas diferentes.
+        """
+
+        def numberOrDefault(value, default):
+            try:
+                return float(value)
+            except (TypeError, ValueError):
+                return default
+
+        index = feat.fieldNameIndex("cota_mais_alta")
+        cotaMaisAlta = numberOrDefault(feat[index], 2.0) if index >= 0 else 2.0
+        index = feat.fieldNameIndex("cota")
+        cota = (
+            numberOrDefault(feat[index], float("-inf")) if index >= 0 else float("-inf")
+        )
+        geom = feat.geometry()
+        if geom is None or geom.isNull() or geom.isEmpty():
+            return (cotaMaisAlta, -cota, 0.0, 0.0)
+        point = geom.centroid().asPoint()
+        return (cotaMaisAlta, -cota, -round(point.y(), 8), round(point.x(), 8))
+
+    def sortFeaturesStably(self, featList):
+        """Ordena por `stableFeatureKey`. Ordem de saída não sai de `set`."""
+        return sorted(featList, key=self.stableFeatureKey)
+
     def filterFeaturesByBuffer(
         self, filterFeatList: List, distance, cotaMaisAlta=False
     ):
-        outputSet = set()
+        outputList = []
         exclusionGeom = None
         for feat in filterFeatList:
             geom = feat.geometry()
@@ -2133,8 +2168,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             exclusionGeom = (
                 buffer if exclusionGeom is None else exclusionGeom.combine(buffer)
             )
-            outputSet.add(feat)
-        return outputSet
+            outputList.append(feat)
+        return outputList
 
     def filterFeaturesByDistanceAndExclusionLayer(
         self,
@@ -2196,7 +2231,11 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        outputSet, exclusionSet = set(), set()
+        # A iteração abaixo já sai ordenada pelo `request`, e a saída preserva essa
+        # ordem: era um `set`, e a ordem dele é a identidade do objeto, que muda a
+        # cada processo. Quem recebe esta lista a usa como ordem de inserção na
+        # camada, e é por ela que o teto de densidade corta.
+        outputList, exclusionSet = [], set()
         stepSize = 100 / nFeats
         request = QgsFeatureRequest()
         orderByClause1 = QgsFeatureRequest.OrderByClause(
@@ -2217,7 +2256,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 if multiStepFeedback is not None:
                     multiStepFeedback.setProgress(current * stepSize)
                 continue
-            outputSet.add(feat)
+            outputList.append(feat)
             geom = feat.geometry()
             buffer = geom.buffer(
                 distance, 10, Qgis.EndCapStyle.Round, Qgis.JoinStyle.Round, -1
@@ -2233,7 +2272,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 exclusionSet.add(candidateFeat["featid"])
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
-        return list(outputSet)
+        return outputList
 
     def filterPointsAgainstGrid(
         self,
@@ -2248,7 +2287,11 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             if feedback is not None
             else None
         )
-        outputSet = set()
+        # O corte por célula é um `islice`, então ele fica com o que vier primeiro:
+        # a ordem TEM que ser de valor, e não a de um `set` ou a de inserção numa
+        # camada de memória que já veio de um `set`. Ordena-se por cota
+        # decrescente e posição, que é a ordem do próprio filtro por distância.
+        outputList, seenKeys = [], set()
         for currentStep, feat in enumerate(gridLyr.getFeatures()):
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
@@ -2259,17 +2302,24 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             geomWkb = geom.asWkb()
             if gridDict[geomWkb] >= maxPointsPerGridUnit:
                 continue
-            gridFeats = [
+            gridFeats = self.sortFeaturesStably(
                 f for f in pointLyr.getFeatures(bbox) if f.geometry().intersects(geom)
-            ]
+            )
             if gridFeats == []:
                 continue
-            selectedGridFeatsSet = set(
+            selectedGridFeats = list(
                 islice(gridFeats, maxPointsPerGridUnit - gridDict[geomWkb])
             )
-            gridDict[geomWkb] += len(selectedGridFeatsSet)
-            outputSet |= selectedGridFeatsSet
-        return list(outputSet)
+            gridDict[geomWkb] += len(selectedGridFeats)
+            for selectedFeat in selectedGridFeats:
+                key = self.stableFeatureKey(selectedFeat)
+                # o ponto na divisa de duas células vinha duas vezes: são objetos
+                # diferentes, então o `set` de antes não os unia
+                if key in seenKeys:
+                    continue
+                seenKeys.add(key)
+                outputList.append(selectedFeat)
+        return self.sortFeaturesStably(outputList)
 
     def updateExclusionLyr(
         self,
