@@ -5,9 +5,11 @@
 Melhorias:
 
 - Generalização de curvas de nível (Generalize Contour Lines) passa a atender também as escalas 1:2.000, 1:5.000 e 1:10.000, para a carta cadastral: o perímetro mínimo da curva fechada segue os 12 mm na escala de saída, o que dá 24 m, 60 m e 120 m no terreno. As escalas novas foram apensadas ao fim da lista (índices 4, 5 e 6), então todo modelo, chamada de linha de comando e fluxo do SAP que já grava o índice do enum continua valendo;
+- Extração de pontos cotados (Extract Spot Elevation) passa a atender também as escalas 1:2.000, 1:5.000 e 1:10.000, com as mesmas réguas de sempre, lineares no denominador da escala: distância entre pontos de 20 mm, comprimento mínimo de curva de 8 mm e grade de áreas planas de 20 mm na carta. As escalas novas foram apensadas ao fim da lista (índices 4, 5 e 6), pelo mesmo motivo;
 
 Correções de bug:
 
+- Corrige a grade de áreas planas na extração de pontos cotados, que rodava com o espaçamento da grade geral (5.000 m em 1:25.000, em vez dos 500 m da régua de áreas planas): a célula grande demais quase nunca fica disjunta das curvas de nível, então o critério de área plana rendia quase nenhum ponto;
 - Corrige falha ao carregar camadas do BDGEx (mapcache, índice de cartas e camadas auxiliares), que exibia a mensagem "Unable to provide requested layer" mesmo com BDGEx e internet acessíveis em redes com proxy de inspeção SSL: requisições passam a usar a stack de rede do próprio QGIS, que valida certificados pelo repositório de confiança do sistema operacional;
 - Corrige erro ao desconstruir polígonos (Unbuild Polygons/Center Point and Boundaries) quando havia trechos com geometria nula entre as linhas de entrada;
 - Corrige travamento da barra Center Point and Boundaries ao gerar centroides com camadas de linha de restrição volumosas: apenas os trechos próximos ao polígono desenhado passam a ser processados, em vez da camada de restrição inteira a cada clique;

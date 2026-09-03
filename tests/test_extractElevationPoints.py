@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 
+import math
 import sys
 import unittest
 
@@ -178,6 +179,114 @@ class DropContourIntervalMultiplesTestCase(unittest.TestCase):
         self.assertEqual([f["cota"] for f in kept], [None, 105])
 
 
+class ScaleTableTestCase(unittest.TestCase):
+    """
+    As réguas por escala saem de uma lista única de denominadores, e o enum SCALE
+    é gravado pelo ÍNDICE em modelo .model3, em chamada de linha de comando e no
+    fluxo do SAP. Daí as duas metades deste caso:
+
+    1. os índices 0 a 3 têm que continuar valendo EXATAMENTE o que valiam, então
+       os valores antigos entram aqui como literais, e não como a fórmula (que
+       acompanharia em silêncio uma troca do multiplicador);
+    2. os índices 4 a 6, as escalas grandes apensadas, seguem a fórmula linear no
+       denominador.
+    """
+
+    LEGACY_LABELS = ["1:25.000", "1:50.000", "1:100.000", "1:250.000"]
+    NEW_LABELS = ["1:2.000", "1:5.000", "1:10.000"]
+
+    # valores literais lidos do código anterior às escalas grandes
+    LEGACY_VALUES = {
+        "distances": [500.0, 1000.0, 2000.0, 5000.0],
+        "minContourLenghts": [200.0, 400.0, 800.0, 2000.0],
+        "gridSpacingDict": [5000, 10000, 20000, 40000],
+        "contourBufferLengths": [1.6e-4, 3.2e-4, 6.4e-4, 1.6e-3],
+        "planeGridSpacingDict": [500.0, 1000.0, 2000.0, 5000.0],
+    }
+
+    NEW_DENOMINATORS = [2_000, 5_000, 10_000]
+    # metros no terreno por unidade de denominador (o que a carta impressa mede)
+    FACTORS = {
+        "distances": 20e-3,
+        "minContourLenghts": 8e-3,
+        "gridSpacingDict": 0.2,
+        "contourBufferLengths": 6.4e-9,
+        "planeGridSpacingDict": 20e-3,
+    }
+
+    def setUp(self):
+        self.alg = ExtractElevationPoints()
+        self.alg.initAlgorithm()
+
+    def assertClose(self, got, expected, msg):
+        self.assertTrue(
+            math.isclose(got, expected, rel_tol=1e-12),
+            f"{msg}: esperado {expected}, veio {got}",
+        )
+
+    def test_sete_escalas_com_as_grandes_no_fim(self):
+        self.assertEqual(self.alg.scales, self.LEGACY_LABELS + self.NEW_LABELS)
+
+    def test_indices_antigos_mantem_os_valores_antigos(self):
+        """
+        Reprova qualquer intercalação por ordem de grandeza: se 1:2.000 entrasse
+        no índice 0, todo dicionário mudaria de sentido aqui.
+        """
+        for name, values in self.LEGACY_VALUES.items():
+            table = getattr(self.alg, name)
+            for index, expected in enumerate(values):
+                self.assertClose(table[index], expected, f"{name}[{index}]")
+
+    def test_escalas_novas_sao_lineares_no_denominador(self):
+        for name, factor in self.FACTORS.items():
+            table = getattr(self.alg, name)
+            for offset, denominator in enumerate(self.NEW_DENOMINATORS):
+                index = len(self.LEGACY_LABELS) + offset
+                self.assertClose(table[index], factor * denominator, f"{name}[{index}]")
+
+    def test_toda_regua_cobre_as_sete_escalas(self):
+        """Régua com quatro entradas estouraria em KeyError na escala nova."""
+        for name in self.FACTORS:
+            self.assertEqual(
+                sorted(getattr(self.alg, name)), list(range(len(self.alg.scales)))
+            )
+
+    def test_cada_regua_sai_do_seu_proprio_dicionario(self):
+        """
+        Regressão: a grade de áreas planas era alimentada pelo `gridSpacingDict`,
+        de modo que o `planeGridSpacingDict` era calculado e nunca usado. Em
+        1:25.000 a grade de áreas planas rodava com 5.000 m em vez de 500 m, e em
+        1:5.000 com 1.000 m em vez de 100 m: célula grande demais quase nunca fica
+        disjunta das curvas, então o critério de área plana rendia quase nada.
+        """
+        for index in range(len(self.alg.scales)):
+            self.alg.setScaleDependentParameters(index)
+            self.assertEqual(self.alg.bufferDist, self.alg.distances[index])
+            self.assertEqual(
+                self.alg.minContourLength, self.alg.minContourLenghts[index]
+            )
+            self.assertEqual(self.alg.gridSpacing, self.alg.gridSpacingDict[index])
+            self.assertEqual(
+                self.alg.planeGridSpacing, self.alg.planeGridSpacingDict[index]
+            )
+            self.assertEqual(
+                self.alg.contourBufferLength, self.alg.contourBufferLengths[index]
+            )
+        # as duas grades são réguas diferentes, e confundi-las é o defeito acima
+        self.alg.setScaleDependentParameters(0)
+        self.assertEqual(self.alg.gridSpacing, 5000)
+        self.assertEqual(self.alg.planeGridSpacing, 500)
+
+    def test_o_espacamento_de_1_250000_nao_segue_a_formula(self):
+        """
+        Exceção deliberada e a única: a produção fixou 40 km em 1:250.000, e não os
+        50 km de 0,2 vez o denominador. Se alguém "consertar" a fórmula, a saída de
+        uma escala em uso muda, e este caso reprova.
+        """
+        self.assertEqual(self.alg.gridSpacingDict[3], 40_000)
+        self.assertNotEqual(self.alg.gridSpacingDict[3], 0.2 * 250_000)
+
+
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
     filterString = "test_" if filterString is None else filterString
@@ -189,6 +298,7 @@ def run_all(filterString=None):
         CreateFeatureWithPixelValueTestCase,
         MaskContourIntervalMultiplesTestCase,
         DropContourIntervalMultiplesTestCase,
+        ScaleTableTestCase,
     ):
         suite.addTests(loader.loadTestsFromTestCase(testCase))
     unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)

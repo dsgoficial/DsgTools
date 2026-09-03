@@ -82,6 +82,36 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
     ONLY_HILLTOPS = "ONLY_HILLTOPS"
     OUTPUT = "OUTPUT"
 
+    # Denominadores das escalas de saída, na ordem do enum SCALE. Toda régua por
+    # escala do algoritmo sai desta lista, para que não haja deriva entre elas.
+    #
+    # Escala nova entra SEMPRE no fim, nunca em ordem de grandeza: o enum do
+    # Processing é gravado pelo ÍNDICE nos modelos .model3, na linha de comando e
+    # nos fluxos do SAP, então um índice que mude de sentido quebra em silêncio o
+    # que já está gravado. Os índices 0 a 3 são os quatro originais.
+    #
+    # A mesma lista existe no generalizeContourLinesAlgorithm, e os índices têm
+    # de casar: os dois algoritmos rodam em sequência sobre a mesma carta.
+    SCALE_DENOMINATORS = [
+        25_000,
+        50_000,
+        100_000,
+        250_000,
+        2_000,
+        5_000,
+        10_000,
+    ]
+
+    # O espaçamento da grade é 0,2 vez o denominador em toda escala, menos em
+    # 1:250.000, que a produção fixou em 40 km e não nos 50 km da fórmula. O valor
+    # antigo fica de pé: alterá-lo mudaria a saída de uma escala em uso.
+    GRID_SPACING_OVERRIDES = {3: 40_000}
+
+    @staticmethod
+    def scaleLabel(denominator):
+        """Rótulo da escala no formato "1:25.000", com ponto de milhar."""
+        return "1:{0:,}".format(denominator).replace(",", ".")
+
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterRasterLayer(
@@ -137,44 +167,31 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             )
         )
 
-        self.scales = [
-            "1:25.000",
-            "1:50.000",
-            "1:100.000",
-            "1:250.000",
-        ]
+        self.scales = [self.scaleLabel(d) for d in self.SCALE_DENOMINATORS]
 
+        # Todas as réguas abaixo são comprimentos no terreno, lineares no
+        # denominador da escala: 20 mm, 8 mm e 6,4e-6 mm na carta impressa.
         self.distances = {
-            0: 20e-3 * 25_000,
-            1: 20e-3 * 50_000,
-            2: 20e-3 * 100_000,
-            3: 20e-3 * 250_000,
+            index: 20e-3 * denominator
+            for index, denominator in enumerate(self.SCALE_DENOMINATORS)
         }
 
         self.minContourLenghts = {
-            0: 8e-3 * 25_000,
-            1: 8e-3 * 50_000,
-            2: 8e-3 * 100_000,
-            3: 8e-3 * 250_000,
+            index: 8e-3 * denominator
+            for index, denominator in enumerate(self.SCALE_DENOMINATORS)
         }
         self.gridSpacingDict = {
-            0: 5000,
-            1: 10000,
-            2: 20000,
-            3: 40000,
+            index: self.GRID_SPACING_OVERRIDES.get(index, 0.2 * denominator)
+            for index, denominator in enumerate(self.SCALE_DENOMINATORS)
         }
         self.contourBufferLengths = {
-            0: 6.4e-9 * 25_000,
-            1: 6.4e-9 * 50_000,
-            2: 6.4e-9 * 100_000,
-            3: 6.4e-9 * 250_000,
+            index: 6.4e-9 * denominator
+            for index, denominator in enumerate(self.SCALE_DENOMINATORS)
         }
 
         self.planeGridSpacingDict = {
-            0: 20e-3 * 25_000,
-            1: 20e-3 * 50_000,
-            2: 20e-3 * 100_000,
-            3: 20e-3 * 250_000,
+            index: 20e-3 * denominator
+            for index, denominator in enumerate(self.SCALE_DENOMINATORS)
         }
 
         self.addParameter(
@@ -273,6 +290,20 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             )
         )
 
+    def setScaleDependentParameters(self, scale):
+        """
+        Traz para atributos as réguas do índice de escala escolhido.
+
+        Separado do processAlgorithm para ser observável por teste: é aqui que se
+        decide qual dicionário alimenta cada régua, e a grade de áreas planas já
+        saiu do dicionário errado uma vez.
+        """
+        self.bufferDist = self.distances[scale]
+        self.minContourLength = self.minContourLenghts[scale]
+        self.gridSpacing = self.gridSpacingDict[scale]
+        self.planeGridSpacing = self.planeGridSpacingDict[scale]
+        self.contourBufferLength = self.contourBufferLengths[scale]
+
     def processAlgorithm(self, parameters, context, feedback):
         self.algRunner = AlgRunner()
         inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT_DEM, context)
@@ -330,11 +361,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
 
         self.outputCrs = QgsCoordinateReferenceSystem("EPSG:4674")
 
-        self.bufferDist = self.distances[scale]
-        self.minContourLength = self.minContourLenghts[scale]
-        self.gridSpacing = self.gridSpacingDict[scale]
-        self.planeGridSpacing = self.gridSpacingDict[scale]
-        self.contourBufferLength = self.contourBufferLengths[scale]
+        self.setScaleDependentParameters(scale)
 
         fields = QgsFields()
         fields.append(QgsField("cota", QMetaType.Type.Int))
