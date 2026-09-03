@@ -41,9 +41,31 @@ ALG = "dsgtools:generalizecontourlines"
 
 SCALE_25K = 0
 SCALE_50K = 1
+SCALE_2K = 4
+SCALE_5K = 5
+SCALE_10K = 6
 
-# 12 mm de perímetro na escala: 300 m em 1:25.000, 600 m em 1:50.000.
-MIN_PERIMETER = {SCALE_25K: 300, SCALE_50K: 600}
+# 12 mm de perímetro na escala, em metros no terreno.
+MIN_PERIMETER = {
+    SCALE_25K: 300,
+    SCALE_50K: 600,
+    SCALE_2K: 24,
+    SCALE_5K: 60,
+    SCALE_10K: 120,
+}
+
+# As escalas grandes foram apensadas ao fim, e não intercaladas por ordem de
+# grandeza: o índice do enum é o que fica gravado no .model3, na linha de comando
+# e no fluxo do SAP. Este é o contrato publicado, índice a índice.
+SCALE_OPTIONS = {
+    "0": "1:25.000",
+    "1": "1:50.000",
+    "2": "1:100.000",
+    "3": "1:250.000",
+    "4": "1:2.000",
+    "5": "1:5.000",
+    "6": "1:10.000",
+}
 
 
 def runAlgGeometries(tmp_path, contours, scale, contourInterval=10):
@@ -98,6 +120,35 @@ def _run(tmp_path, contours, scale, contourInterval=10):
 
 
 @needs_qgis
+class TestScaleContract:
+    def test_o_indice_de_cada_escala_e_o_publicado(self):
+        """
+        O enum se grava pelo ÍNDICE, então reordenar a lista muda em silêncio o
+        sentido de todo modelo, chamada de CLI e fluxo do SAP já gravado. O contrato
+        é lido ao vivo do algoritmo (`--refresh-cache`), e não do cache em disco.
+        """
+        proc = subprocess.run(
+            [
+                sys.executable,
+                str(CLI_PY),
+                "describe",
+                ALG,
+                "--json",
+                "--refresh-cache",
+            ],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        assert (
+            proc.returncode == 0
+        ), f"CLI falhou (exit {proc.returncode}):\n{proc.stderr}"
+        params = {p["name"]: p for p in json.loads(proc.stdout)["parameters"]}
+        assert params["SCALE"]["options"] == SCALE_OPTIONS
+
+
+@needs_qgis
 class TestGeneralizeContourLines:
     def test_curvas_fechadas_grandes_sobrevivem_em_crs_geografico(self, tmp_path):
         """
@@ -136,6 +187,30 @@ class TestGeneralizeContourLines:
         """
         assert len(runAlg(tmp_path, "anel_intermediario", SCALE_25K)) == 2
         assert runAlg(tmp_path, "anel_intermediario", SCALE_50K) == []
+
+    def test_o_minimo_das_escalas_grandes_acompanha_a_escala(self, tmp_path):
+        """
+        Anel de 40 m de perímetro: acima dos 24 m de 1:2.000 e abaixo dos 60 m de
+        1:5.000. Sem as escalas grandes o índice 4 nem existia, e o CLI reprovava
+        a chamada como enum fora da faixa.
+        """
+        assert len(runAlg(tmp_path, "anel_40m", SCALE_2K)) == 2
+        assert runAlg(tmp_path, "anel_40m", SCALE_5K) == []
+
+    def test_o_minimo_de_1_5000_fica_entre_o_de_1_2000_e_o_de_1_10000(self, tmp_path):
+        """Anel de 90 m: sobrevive aos 60 m de 1:5.000 e some nos 120 m de 1:10.000."""
+        assert len(runAlg(tmp_path, "anel_90m", SCALE_5K)) == 2
+        assert runAlg(tmp_path, "anel_90m", SCALE_10K) == []
+
+    def test_anel_descartado_em_1_25000_sobrevive_em_1_10000(self, tmp_path):
+        """
+        O mesmo anel de ~139 m que 1:25.000 descarta (mínimo de 300 m) é
+        representável em 1:10.000, cujo mínimo é de 120 m. É o caso que motiva as
+        escalas grandes: a carta cadastral guarda a feição que a topográfica joga
+        fora.
+        """
+        assert runAlg(tmp_path, "anel_minusculo", SCALE_25K) == []
+        assert len(runAlg(tmp_path, "anel_minusculo", SCALE_10K)) == 2
 
     def test_curva_mestra_e_marcada_a_cada_cinco(self, tmp_path):
         """

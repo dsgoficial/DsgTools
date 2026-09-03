@@ -56,6 +56,31 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
     # a cada 5 curvas sai uma mestra
     INDEX_CONTOUR_FACTOR = 5
 
+    # Denominadores das escalas de saída, na ordem do enum SCALE. Toda régua por
+    # escala do algoritmo sai desta lista, para que não haja deriva entre elas.
+    #
+    # Escala nova entra SEMPRE no fim, nunca em ordem de grandeza: o enum do
+    # Processing é gravado pelo ÍNDICE nos modelos .model3, na linha de comando e
+    # nos fluxos do SAP, então um índice que mude de sentido quebra em silêncio o
+    # que já está gravado. Os índices 0 a 3 são os quatro originais.
+    #
+    # A mesma lista existe no extractElevationPoints, e os índices têm de casar:
+    # os dois algoritmos rodam em sequência sobre a mesma carta.
+    SCALE_DENOMINATORS = [
+        25_000,
+        50_000,
+        100_000,
+        250_000,
+        2_000,
+        5_000,
+        10_000,
+    ]
+
+    @staticmethod
+    def scaleLabel(denominator):
+        """Rótulo da escala no formato "1:25.000", com ponto de milhar."""
+        return "1:{0:,}".format(denominator).replace(",", ".")
+
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
@@ -94,19 +119,13 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        self.scales = [
-            "1:25.000",
-            "1:50.000",
-            "1:100.000",
-            "1:250.000",
-        ]
+        self.scales = [self.scaleLabel(d) for d in self.SCALE_DENOMINATORS]
         # Uma curva fechada menor que 12 mm de perímetro na escala de saída não é
-        # representável, então é descartada. Em metros no terreno.
+        # representável, então é descartada. Em metros no terreno: 300 m em
+        # 1:25.000, 24 m em 1:2.000.
         self.minClosedPerimeters = {
-            0: 12e-3 * 25_000,
-            1: 12e-3 * 50_000,
-            2: 12e-3 * 100_000,
-            3: 12e-3 * 250_000,
+            index: 12e-3 * denominator
+            for index, denominator in enumerate(self.SCALE_DENOMINATORS)
         }
 
         self.addParameter(
@@ -662,6 +681,7 @@ class GeneralizeContourLinesAlgorithm(QgsProcessingAlgorithm):
             "depression attribution over to the output\n"
             "- Scale: output scale, which sets the minimum perimeter for closed "
             "contours (12 mm at scale: 300 m at 1:25.000, 600 m at 1:50.000, "
-            "1200 m at 1:100.000, 3000 m at 1:250.000)\n"
+            "1200 m at 1:100.000, 3000 m at 1:250.000, 24 m at 1:2.000, "
+            "60 m at 1:5.000, 120 m at 1:10.000)\n"
             "- Frame layer: Polygon layer used to clip the output"
         )

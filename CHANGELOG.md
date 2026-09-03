@@ -2,6 +2,10 @@
 
 ## 5.3.4 - dev
 
+Melhorias:
+
+- Generalização de curvas de nível (Generalize Contour Lines) passa a atender também as escalas 1:2.000, 1:5.000 e 1:10.000, para a carta cadastral: o perímetro mínimo da curva fechada segue os 12 mm na escala de saída, o que dá 24 m, 60 m e 120 m no terreno. As escalas novas foram apensadas ao fim da lista (índices 4, 5 e 6), então todo modelo, chamada de linha de comando e fluxo do SAP que já grava o índice do enum continua valendo;
+
 Correções de bug:
 
 - Corrige falha ao carregar camadas do BDGEx (mapcache, índice de cartas e camadas auxiliares), que exibia a mensagem "Unable to provide requested layer" mesmo com BDGEx e internet acessíveis em redes com proxy de inspeção SSL: requisições passam a usar a stack de rede do próprio QGIS, que valida certificados pelo repositório de confiança do sistema operacional;
