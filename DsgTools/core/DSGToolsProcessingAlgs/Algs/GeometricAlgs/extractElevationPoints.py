@@ -82,6 +82,11 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
     ONLY_HILLTOPS = "ONLY_HILLTOPS"
     OUTPUT = "OUTPUT"
 
+    # Sentinela de "sem dado" dos recortes de raster que o algoritmo faz. Nunca
+    # pode sair como cota: é altitude inventada, e o -9999 ainda ganha de
+    # qualquer cota real na busca do MÍNIMO.
+    NODATA_VALUE = -9999
+
     # Denominadores das escalas de saída, na ordem do enum SCALE. Toda régua por
     # escala do algoritmo sai desta lista, para que não haja deriva entre elas.
     #
@@ -572,6 +577,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             featList = self.dropContourIntervalMultiples(
                 featList, contourHeightInterval, feedback=multiStepFeedback
             )
+            featList = self.dropNodataElevations(featList, feedback=multiStepFeedback)
+            featList = self.dropPointsOutsideBoundary(
+                featList, feat.geometry(), feedback=multiStepFeedback
+            )
             self.sink.addFeatures(featList, QgsFeatureSink.Flag.FastInsert)
         return {
             "OUTPUT": self.sink_id,
@@ -608,6 +617,67 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                     "interval ({1}). This happens where the terrain offers no nearby "
                     "elevation that is not a contour value, such as a flat plateau."
                 ).format(droppedCount, interval)
+            )
+        return keptFeatList
+
+    def dropNodataElevations(self, featList, feedback=None):
+        """
+        Descarta o ponto cuja cota é o sentinela de sem-dado do recorte.
+
+        O algoritmo recorta o MDE com `nodata=NODATA_VALUE`, e o candidato menor
+        que a célula do MDE gera um recorte sem pixel algum. O conserto de fundo
+        está no rasterHandler, que passa a ler o nodata declarado na banda e a
+        tratá-lo como NaN, mas esta é a única escrita no sink: é aqui que a
+        garantia vale para todos os caminhos de geração, inclusive o MDE que já
+        traga o sentinela gravado como valor.
+        """
+        keptFeatList, droppedCount = [], 0
+        for feat in featList:
+            cota = feat["cota"]
+            if cota is not None and int(cota) == self.NODATA_VALUE:
+                droppedCount += 1
+                continue
+            keptFeatList.append(feat)
+        if droppedCount > 0 and feedback is not None:
+            feedback.pushWarning(
+                self.tr(
+                    "{0} spot elevation(s) discarded for having no valid DEM pixel "
+                    "in the sampled window (the elevation came out as the nodata "
+                    "value {1}). This happens where the candidate is smaller than "
+                    "the DEM cell."
+                ).format(droppedCount, self.NODATA_VALUE)
+            )
+        return keptFeatList
+
+    def dropPointsOutsideBoundary(self, featList, boundaryGeometry, feedback=None):
+        """
+        Descarta o ponto que caiu fora da moldura.
+
+        As grades de amostragem são montadas sobre o `extent()` da moldura, que é
+        um retângulo em lon/lat. A moldura de uma carta é retângulo em UTM, e
+        retângulo em UTM não é retângulo em lon/lat, então as células de canto
+        sobram para fora do polígono e produzem ponto fora da folha. O corte
+        final é pela GEOMETRIA da moldura, nunca pelo extent.
+        """
+        if (
+            boundaryGeometry is None
+            or boundaryGeometry.isNull()
+            or boundaryGeometry.isEmpty()
+        ):
+            return featList
+        keptFeatList, droppedCount = [], 0
+        for feat in featList:
+            geom = feat.geometry()
+            if geom.isNull() or geom.isEmpty() or not boundaryGeometry.intersects(geom):
+                droppedCount += 1
+                continue
+            keptFeatList.append(feat)
+        if droppedCount > 0 and feedback is not None:
+            feedback.pushWarning(
+                self.tr(
+                    "{0} spot elevation(s) discarded for falling outside the "
+                    "geographic boundary polygon."
+                ).format(droppedCount)
             )
         return keptFeatList
 
@@ -669,7 +739,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             mask=geographicBoundsLyr,
             context=context,
             feedback=feedback,
-            nodata=-9999,
+            nodata=self.NODATA_VALUE,
             outputRaster=QgsProcessingUtils.generateTempFilename(
                 f"clip_{str(uuid4().hex)}.tif"
             ),
@@ -2462,7 +2532,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 rasterLyr,
                 mask=localHilltopLyr,
                 context=context,
-                nodata=-9999,
+                nodata=self.NODATA_VALUE,
                 outputRaster=QgsProcessingUtils.generateTempFilename(
                     f"local_clip_{str(uuid4().hex)}.tif"
                 ),
@@ -2599,7 +2669,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 rasterLyr,
                 mask=localHilltopLyr,
                 context=context,
-                nodata=-9999,
+                nodata=self.NODATA_VALUE,
                 outputRaster=QgsProcessingUtils.generateTempFilename(
                     f"local_clip_{str(uuid4().hex)}.tif"
                 ),
@@ -2753,7 +2823,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 rasterLyr,
                 mask=localGridLyr,
                 context=context,
-                nodata=-9999,
+                nodata=self.NODATA_VALUE,
                 outputRaster=QgsProcessingUtils.generateTempFilename(
                     f"local_clip_{str(uuid4().hex)}.tif"
                 ),
@@ -2767,6 +2837,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 inputRaster=clippedRasterLyr,
                 fields=fields,
                 fieldName="cota",
+                defaultAtributeMap=dict(self.defaultAttrMap),
                 contourHeightInterval=contourHeightInterval,
             )
             if not newFeatList:
