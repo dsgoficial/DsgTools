@@ -26,11 +26,19 @@ import shutil
 import sys
 import tempfile
 import unittest
+from collections import defaultdict
 
 import numpy as np
 from osgeo import gdal
 from qgis.PyQt.QtCore import QVariant
-from qgis.core import QgsFeature, QgsField, QgsFields, QgsGeometry, QgsPointXY
+from qgis.core import (
+    QgsFeature,
+    QgsField,
+    QgsFields,
+    QgsGeometry,
+    QgsPointXY,
+    QgsVectorLayer,
+)
 
 from DsgTools.core.GeometricTools.affine import Affine
 from DsgTools.core.GeometricTools.rasterHandler import (
@@ -409,6 +417,118 @@ class DropPointsOutsideBoundaryTestCase(unittest.TestCase):
         self.assertEqual(kept, [])
 
 
+class DeterminismTestCase(unittest.TestCase):
+    """
+    A mesma entrada tem que dar SEMPRE a mesma saída.
+
+    O corte por célula do teto de densidade é um `islice`, que fica com o que vier
+    primeiro, e a lista que ele percorre vinha de um `set` de QgsFeature. A ordem
+    de um set desses é a ordem de identidade do objeto, que muda a cada processo:
+    três execuções da mesma carta deram 59, 59 e 61 pontos, com só 39 comuns às
+    três. A ordem passa a sair do VALOR (cota decrescente, depois posição).
+    """
+
+    CRS = "EPSG:31981"
+
+    def setUp(self):
+        self.alg = ExtractElevationPoints()
+
+    def pointLayer(self, pontos):
+        lyr = QgsVectorLayer(f"Point?crs={self.CRS}", "candidatos", "memory")
+        provider = lyr.dataProvider()
+        provider.addAttributes(edgvFields().toList())
+        lyr.updateFields()
+        feats = []
+        for x, y, cota in pontos:
+            feat = QgsFeature(lyr.fields())
+            feat["cota"] = cota
+            feat["cota_mais_alta"] = 2
+            feat.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(x, y)))
+            feats.append(feat)
+        provider.addFeatures(feats)
+        lyr.updateExtents()
+        return lyr
+
+    def gridLayer(self, wkts):
+        lyr = QgsVectorLayer(f"Polygon?crs={self.CRS}", "grade", "memory")
+        feats = []
+        for wkt in wkts:
+            feat = QgsFeature()
+            feat.setGeometry(QgsGeometry.fromWkt(wkt))
+            feats.append(feat)
+        lyr.dataProvider().addFeatures(feats)
+        lyr.updateExtents()
+        return lyr
+
+    def runFilter(self, pontos, wkts, teto):
+        saida = self.alg.filterPointsAgainstGrid(
+            pointLyr=self.pointLayer(pontos),
+            gridLyr=self.gridLayer(wkts),
+            gridDict=defaultdict(int),
+            maxPointsPerGridUnit=teto,
+            feedback=None,
+        )
+        return [
+            (
+                f["cota"],
+                round(f.geometry().asPoint().x(), 6),
+                round(f.geometry().asPoint().y(), 6),
+            )
+            for f in saida
+        ]
+
+    UMA_CELULA = ["Polygon ((0 0, 100 0, 100 100, 0 100, 0 0))"]
+    CINCO_PONTOS = [
+        (10.0, 10.0, 101),
+        (20.0, 20.0, 105),
+        (30.0, 30.0, 103),
+        (40.0, 40.0, 107),
+        (50.0, 50.0, 99),
+    ]
+
+    def test_a_chave_ordena_por_cota_decrescente_e_posicao(self):
+        lyr = self.pointLayer(self.CINCO_PONTOS)
+        ordenados = self.alg.sortFeaturesStably(lyr.getFeatures())
+        self.assertEqual([f["cota"] for f in ordenados], [107, 105, 103, 101, 99])
+
+    def test_a_mesma_entrada_da_a_mesma_saida(self):
+        primeira = self.runFilter(self.CINCO_PONTOS, self.UMA_CELULA, 3)
+        segunda = self.runFilter(self.CINCO_PONTOS, self.UMA_CELULA, 3)
+        self.assertEqual(primeira, segunda)
+
+    def test_entrada_embaralhada_da_a_mesma_saida(self):
+        """
+        Reprova o código anterior: o `islice` ficava com os TRÊS PRIMEIROS da ordem
+        de inserção, então inverter a entrada trocava os pontos escolhidos.
+        """
+        direta = self.runFilter(self.CINCO_PONTOS, self.UMA_CELULA, 3)
+        invertida = self.runFilter(
+            list(reversed(self.CINCO_PONTOS)), self.UMA_CELULA, 3
+        )
+        embaralhada = self.runFilter(
+            [self.CINCO_PONTOS[i] for i in (2, 4, 0, 3, 1)], self.UMA_CELULA, 3
+        )
+        self.assertEqual(direta, invertida)
+        self.assertEqual(direta, embaralhada)
+
+    def test_o_teto_fica_com_as_maiores_cotas(self):
+        """A ordem é defensável na carta: sob teto, sobrevive a cota mais alta."""
+        saida = self.runFilter(self.CINCO_PONTOS, self.UMA_CELULA, 3)
+        self.assertEqual([cota for cota, _x, _y in saida], [107, 105, 103])
+
+    def test_ponto_na_divisa_de_duas_celulas_sai_uma_vez(self):
+        """
+        Duas células vizinhas colhem o mesmo ponto da divisa, em objetos
+        diferentes, então o `set` de antes não os unia.
+        """
+        celulas = [
+            "Polygon ((0 0, 50 0, 50 100, 0 100, 0 0))",
+            "Polygon ((50 0, 100 0, 100 100, 50 100, 50 0))",
+        ]
+        saida = self.runFilter([(50.0, 10.0, 101)], celulas, 5)
+        self.assertEqual(saida, [(101, 50.0, 10.0)])
+
+
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
     filterString = "test_" if filterString is None else filterString
@@ -423,6 +543,7 @@ def run_all(filterString=None):
         RasterNodataTestCase,
         DropNodataElevationsTestCase,
         DropPointsOutsideBoundaryTestCase,
+        DeterminismTestCase,
     ):
         suite.addTests(loader.loadTestsFromTestCase(testCase))
     unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)
