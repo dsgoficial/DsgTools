@@ -52,6 +52,18 @@ from qgis.core import (
 def readAsNumpy(
     inputRaster: Union[str, QgsRasterLayer], dtype=None, nodataValue=None
 ) -> Tuple[Dataset, np.array]:
+    """
+    Lê a primeira banda do raster como array, com o nodata virando NaN.
+
+    Quando o chamador não informa o `nodataValue`, vale o que o próprio raster
+    declara na banda. Sem isso o sentinela do recorte entra na conta como
+    altitude: no MÁXIMO só quando a janela inteira é vazia, mas no MÍNIMO sempre
+    que houver um pixel sem dado na janela, porque -9999 ganha de qualquer cota.
+
+    NaN só existe em ponto flutuante. Se o chamador pediu um `dtype` inteiro, o
+    pedido dele prevalece e nada é mascarado; sem `dtype` pedido, o array é
+    promovido a float para caber o NaN.
+    """
     inputRaster = (
         inputRaster.dataProvider().dataSourceUri()
         if isinstance(inputRaster, QgsRasterLayer)
@@ -65,13 +77,21 @@ def readAsNumpy(
                 "RasterHandler", "Could not open raster: {}"
             ).format(inputRaster)
         )
+    band = ds.GetRasterBand(1)
     npArray = (
-        np.array(ds.GetRasterBand(1).ReadAsArray().transpose())
+        np.array(band.ReadAsArray().transpose())
         if dtype is None
-        else np.array(ds.GetRasterBand(1).ReadAsArray().transpose(), dtype=dtype)
+        else np.array(band.ReadAsArray().transpose(), dtype=dtype)
     )
-    if nodataValue is not None:
-        npArray[npArray == nodataValue] = np.nan
+    if nodataValue is None:
+        nodataValue = band.GetNoDataValue()
+    if nodataValue is None:
+        return ds, npArray
+    if not np.issubdtype(npArray.dtype, np.floating):
+        if dtype is not None:
+            return ds, npArray
+        npArray = npArray.astype(float)
+    npArray[npArray == nodataValue] = np.nan
     return ds, npArray
 
 
@@ -80,11 +100,23 @@ def getCoordinateTransform(ds: Dataset) -> Affine:
 
 
 def getMaxCoordinatesFromNpArray(npArray: np.array) -> np.array:
-    return np.argwhere(npArray == npArray[~np.isnan(npArray)].max())
+    """
+    Coordenadas do maior valor válido. Array sem pixel válido devolve lista
+    vazia, e não exceção: o recorte que não pegou pixel algum é caso corriqueiro
+    quando o candidato é menor que a célula do MDE.
+    """
+    validValues = npArray[~np.isnan(npArray)]
+    if validValues.size == 0:
+        return np.empty((0, npArray.ndim), dtype=int)
+    return np.argwhere(npArray == validValues.max())
 
 
 def getMinCoordinatesFromNpArray(npArray: np.array) -> np.array:
-    return np.argwhere(npArray == npArray[~np.isnan(npArray)].min())
+    """Como o getMaxCoordinatesFromNpArray, para o menor valor válido."""
+    validValues = npArray[~np.isnan(npArray)]
+    if validValues.size == 0:
+        return np.empty((0, npArray.ndim), dtype=int)
+    return np.argwhere(npArray == validValues.min())
 
 
 def maskContourIntervalMultiples(
@@ -366,6 +398,8 @@ def createMaxPointFeatFromRasterLayer(
     if contourHeightInterval is not None:
         npRaster = maskContourIntervalMultiples(npRaster, contourHeightInterval)
     pixelCoordinates = getMaxCoordinatesFromNpArray(npRaster)
+    if pixelCoordinates.size == 0:
+        return None
     pixelCoordinates = (
         tuple(pixelCoordinates.reshape(1, -1)[0])
         if pixelCoordinates.shape[0] == 1
