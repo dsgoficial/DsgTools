@@ -27,10 +27,8 @@ from ...dsgEnums import DsgEnums
 class SpatialiteSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
         sql = (
-            "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from public_complex_schema where complex = "
-            + "'"
-            + complex
-            + "'"
+            "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from public_complex_schema where complex = '%s'"
+            % self._el(complex)
         )
         return sql
 
@@ -39,60 +37,37 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return sql
 
     def getComplexData(self, complex_schema, complex):
-        sql = "SELECT id, nome from " + complex_schema + "_" + complex
+        sql = "SELECT id, nome from %s" % self._qi(complex_schema + "_" + complex)
         return sql
 
     def getAssociatedFeaturesData(
         self, aggregated_schema, aggregated_class, column_name, complex_uuid
     ):
+        table = self._qi(aggregated_schema + "_" + aggregated_class)
+        col = self._qi(column_name)
+        uuid_val = self._el(complex_uuid)
         if aggregated_schema == "complexos":
-            sql = (
-                "SELECT id from "
-                + aggregated_schema
-                + "_"
-                + aggregated_class
-                + " where "
-                + column_name
-                + "="
-                + "'"
-                + complex_uuid
-                + "'"
-            )
+            sql = "SELECT id from %s where %s='%s'" % (table, col, uuid_val)
         else:
-            sql = (
-                "SELECT OGC_FID from "
-                + aggregated_schema
-                + "_"
-                + aggregated_class
-                + " where "
-                + column_name
-                + "="
-                + "'"
-                + complex_uuid
-                + "'"
-            )
+            sql = "SELECT OGC_FID from %s where %s='%s'" % (table, col, uuid_val)
         return sql
 
     def getLinkColumn(self, complexClass, aggregatedClass):
         if self.isComplexClass(aggregatedClass):
             sql = (
-                "SELECT column_name from public_complex_schema where complex = '"
-                + complexClass
-                + "'"
-                + " and aggregated_class = "
-                + "'"
-                + aggregatedClass[10:]
-                + "'"
+                "SELECT column_name from public_complex_schema where complex = '%s' and aggregated_class = '%s'"
+                % (
+                    self._el(complexClass),
+                    self._el(aggregatedClass[10:]),
+                )
             )
         else:
             sql = (
-                "SELECT column_name from public_complex_schema where complex = '"
-                + complexClass
-                + "'"
-                + " and aggregated_class = "
-                + "'"
-                + aggregatedClass
-                + "'"
+                "SELECT column_name from public_complex_schema where complex = '%s' and aggregated_class = '%s'"
+                % (
+                    self._el(complexClass),
+                    self._el(aggregatedClass),
+                )
             )
         return sql
 
@@ -105,15 +80,10 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return sql
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
-        sql = (
-            "UPDATE "
-            + aggregated_class
-            + " SET "
-            + link_column
-            + "=NULL WHERE id = "
-            + "'"
-            + uuid
-            + "'"
+        sql = "UPDATE %s SET %s=NULL WHERE id = '%s'" % (
+            self._qi(aggregated_class),
+            self._qi(link_column),
+            self._el(uuid),
         )
         return sql
 
@@ -131,14 +101,13 @@ class SpatialiteSqlGenerator(SqlGenerator):
 
     def insertFrameIntoTable(self, wkt):
         sql = (
-            "INSERT INTO public_aux_moldura_a(GEOMETRY) VALUES(GeomFromText("
-            + wkt
-            + "))"
+            "INSERT INTO public_aux_moldura_a(GEOMETRY) VALUES(GeomFromText('%s'))"
+            % self._el(wkt)
         )
         return sql
 
     def getElementCountFromLayer(self, layer):
-        sql = "SELECT count(*) FROM " + layer
+        sql = "SELECT count(*) FROM %s" % self._qi(layer)
         return sql
 
     def createRole(self, mydict):
@@ -178,8 +147,8 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return None
 
     def getFeaturesWithSQL(self, layer, attrList):
-        ls = ",".join(attrList)
-        sql = "SELECT %s FROM %s" % (ls, layer)
+        ls = ",".join(self._qi(a) for a in attrList)
+        sql = "SELECT %s FROM %s" % (ls, self._qi(layer))
         return sql
 
     def getStructure(self, edgvVersion):
@@ -199,13 +168,16 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return sql
 
     def getAggregatorFromId(self, className, id):
-        sql = "SELECT id from %s where id ='%s'" % (className, id)
+        sql = "SELECT id from %s where id ='%s'" % (self._qi(className), self._el(id))
         return sql
 
     def getAggregatorFromComplexSchema(self, aggregated, aggregationColumn):
         sql = (
             "SELECT complex from public_complex_schema where aggregated_class = '%s' and aggregationColumn = '%s'"
-            % (aggregated, aggregationColumn)
+            % (
+                self._el(aggregated),
+                self._el(aggregationColumn),
+            )
         )
         return sql
 
@@ -222,8 +194,8 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return None
 
     def makeRelationDict(self, table, in_clause):
-        sql = "select code, code_name from dominios_%s where code in %s" % (
-            table,
+        sql = "select code, code_name from %s where code in %s" % (
+            self._qi("dominios_" + table),
             in_clause,
         )
         return sql
@@ -265,7 +237,12 @@ class SpatialiteSqlGenerator(SqlGenerator):
 
     def insertFrame(self, scale, mi, inom, frame, srid, geoSrid, paramDict=dict()):
         sql = """INSERT INTO public_aux_moldura_a (mi,inom,escala,GEOMETRY) VALUES ('{0}','{1}','{2}',Transform(ST_GeomFromText('{3}',{4}), {5}))""".format(
-            mi, inom, scale, frame, geoSrid, srid
+            self._el(mi),
+            self._el(inom),
+            self._el(scale),
+            self._el(frame),
+            geoSrid,
+            srid,
         )
         return sql
 
@@ -274,8 +251,8 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return self.getElementCountFromLayer(layer)
 
     def getFullTablesName(self, name):
-        sql = "SELECT f_table_name as name FROM geometry_columns WHERE f_table_name LIKE '%{0}%' ORDER BY name".format(
-            name
+        sql = "SELECT f_table_name as name FROM geometry_columns WHERE f_table_name LIKE '%%{0}%%' ORDER BY name".format(
+            self._el(name)
         )
         return sql
 
@@ -290,7 +267,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
 
     def getQmlRecords(self, layerList):
         sql = """select layername, domainqml from public_domain_qml where layername in ('{0}')""".format(
-            "','".join(layerList)
+            "','".join(self._el(l) for l in layerList)
         )
         return sql
 
@@ -318,7 +295,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
         :param table: (str) table name.
         :return: (list-of-str) list of attribute names.
         """
-        return """PRAGMA table_info('{0}');""".format(table)
+        return """PRAGMA table_info('{0}');""".format(self._el(table))
 
     def getImplementationVersion(self):
         sql = """select dbimplversion from public_db_metadata limit 1"""

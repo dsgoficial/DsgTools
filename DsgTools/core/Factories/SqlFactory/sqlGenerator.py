@@ -25,6 +25,16 @@ from ...dsgEnums import DsgEnums
 
 
 class SqlGenerator(object):
+    @staticmethod
+    def _qi(name):
+        """Quote a SQL identifier (table, schema, column, role name)."""
+        return '"' + str(name).replace('"', '""') + '"'
+
+    @staticmethod
+    def _el(value):
+        """Escape a SQL string literal value (escapes single quotes)."""
+        return str(value).replace("'", "''")
+
     def getComplexLinks(self, complex):
         return None
 

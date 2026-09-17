@@ -31,9 +31,8 @@ DB_ENCODING = "utf-8"
 class PostGISSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
         sql = (
-            "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = '"
-            + complex
-            + "'"
+            "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = '%s'"
+            % self._el(complex)
         )
         return sql
 
@@ -42,35 +41,30 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getComplexData(self, complex_schema, complex):
-        sql = "SELECT id, nome from " + complex_schema + "." + complex
+        sql = "SELECT id, nome from %s.%s" % (
+            self._qi(complex_schema),
+            self._qi(complex),
+        )
         return sql
 
     def getAssociatedFeaturesData(
         self, aggregated_schema, aggregated_class, column_name, complex_uuid
     ):
-        sql = (
-            "SELECT id from only "
-            + aggregated_schema
-            + "."
-            + aggregated_class
-            + " where "
-            + column_name
-            + "="
-            + "'"
-            + complex_uuid
-            + "'"
+        sql = "SELECT id from only %s.%s where %s='%s'" % (
+            self._qi(aggregated_schema),
+            self._qi(aggregated_class),
+            self._qi(column_name),
+            self._el(complex_uuid),
         )
         return sql
 
     def getLinkColumn(self, complexClass, aggregatedClass):
         sql = (
-            "SELECT column_name from complex_schema where complex = '"
-            + complexClass
-            + "'"
-            + " and aggregated_class = "
-            + "'"
-            + aggregatedClass
-            + "'"
+            "SELECT column_name from complex_schema where complex = '%s' and aggregated_class = '%s'"
+            % (
+                self._el(complexClass),
+                self._el(aggregatedClass),
+            )
         )
         return sql
 
@@ -102,15 +96,10 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
-        sql = (
-            "UPDATE complexos."
-            + aggregated_class
-            + " SET "
-            + link_column
-            + "=NULL WHERE id = "
-            + "'"
-            + uuid
-            + "'"
+        sql = "UPDATE complexos.%s SET %s=NULL WHERE id = '%s'" % (
+            self._qi(aggregated_class),
+            self._qi(link_column),
+            self._el(uuid),
         )
         return sql
 
@@ -120,9 +109,8 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def allowConnections(self, name):
         sql = (
-            "ALTER DATABASE "
-            + name
-            + " SET search_path = public, topology, cb, cc, complexos, ct;"
+            "ALTER DATABASE %s SET search_path = public, topology, cb, cc, complexos, ct;"
+            % self._qi(name)
         )
         return sql
 
@@ -144,7 +132,10 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def insertFrameIntoTable(self, wkt):
-        sql = "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText(" + wkt + "))"
+        sql = (
+            "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText('%s'))"
+            % self._el(wkt)
+        )
         return sql
 
     def getElementCountFromLayer(self, table):
@@ -163,7 +154,12 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getElementCountFromLayerWithInh(self, layer):
-        sql = "SELECT count(*) FROM " + layer
+        parts = str(layer).split(".")
+        if len(parts) == 2:
+            quoted = "%s.%s" % (self._qi(parts[0]), self._qi(parts[1]))
+        else:
+            quoted = self._qi(layer)
+        sql = "SELECT count(*) FROM %s" % quoted
         return sql
 
     def getDatabasesFromServer(self):
@@ -263,16 +259,16 @@ class PostGISSqlGenerator(SqlGenerator):
                     END
                 $BODY$ LANGUAGE plpgsql;#
             """
-        sql += "SELECT droprole('" + role + "')#"
-        sql += "DROP ROLE IF EXISTS " + role
+        sql += "SELECT droprole('%s')#" % self._el(role)
+        sql += "DROP ROLE IF EXISTS %s" % self._qi(role)
         return sql
 
     def grantRole(self, user, role):
-        sql = "GRANT " + role + " TO " + user
+        sql = "GRANT %s TO %s" % (self._qi(role), self._qi(user))
         return sql
 
     def revokeRole(self, user, role):
-        sql = "REVOKE " + role + " FROM " + user
+        sql = "REVOKE %s FROM %s" % (self._qi(role), self._qi(user))
         return sql
 
     def getRoles(self):
@@ -280,13 +276,12 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getUserRelatedRoles(self, username):
-        sql = (
-            """select rolname, usename from
-                    (select * from pg_roles as r where r.rolcanlogin = \'f\' and r.rolname<>\'postgres\') as listaRoles left join
-                    (select * from pg_auth_members as m join pg_user as u on m.member = u.usesysid and u.usename=\'%s\')
-                    as euTenho on euTenho.roleid=listaRoles.oid  where rolname in (select split_part(unnest(nspacl)::text, \'=\', 1) from pg_namespace where nspname = \'pg_catalog\')
-                """
-            % username
+        sql = """select rolname, usename from
+                    (select * from pg_roles as r where r.rolcanlogin = 'f' and r.rolname<>'postgres') as listaRoles left join
+                    (select * from pg_auth_members as m join pg_user as u on m.member = u.usesysid and u.usename='%s')
+                    as euTenho on euTenho.roleid=listaRoles.oid  where rolname in (select split_part(unnest(nspacl)::text, '=', 1) from pg_namespace where nspname = 'pg_catalog')
+                """ % self._el(
+            username
         )
         return sql
 
@@ -297,22 +292,25 @@ class PostGISSqlGenerator(SqlGenerator):
     def createUser(self, user, password, isSuperuser):
         if isSuperuser:
             sql = (
-                "CREATE ROLE "
-                + user
-                + " WITH SUPERUSER CREATEDB CREATEROLE REPLICATION LOGIN PASSWORD '"
-                + password
-                + "';"
+                "CREATE ROLE %s WITH SUPERUSER CREATEDB CREATEROLE REPLICATION LOGIN PASSWORD '%s';"
+                % (
+                    self._qi(user),
+                    self._el(password),
+                )
             )
         else:
-            sql = "CREATE ROLE " + user + " WITH LOGIN PASSWORD '" + password + "';"
+            sql = "CREATE ROLE %s WITH LOGIN PASSWORD '%s';" % (
+                self._qi(user),
+                self._el(password),
+            )
         return sql
 
     def removeUser(self, user):
-        sql = "DROP ROLE " + user
+        sql = "DROP ROLE %s" % self._qi(user)
         return sql
 
     def alterUserPass(self, user, newPass):
-        sql = "ALTER ROLE " + user + " WITH PASSWORD '" + newPass + "'"
+        sql = "ALTER ROLE %s WITH PASSWORD '%s'" % (self._qi(user), self._el(newPass))
         return sql
 
     def validateWithDomain(self, schemaList):
@@ -362,8 +360,13 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getFeaturesWithSQL(self, layer, attrList):
-        ls = ",".join(attrList)
-        sql = "SELECT %s FROM ONLY %s" % (ls, layer)
+        ls = ",".join(self._qi(a) for a in attrList)
+        parts = str(layer).split(".")
+        if len(parts) == 2:
+            quoted_layer = "%s.%s" % (self._qi(parts[0]), self._qi(parts[1]))
+        else:
+            quoted_layer = self._qi(layer)
+        sql = "SELECT %s FROM ONLY %s" % (ls, quoted_layer)
         return sql
 
     def getStructure(self, edgvVersion):
@@ -381,13 +384,21 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getAggregatorFromId(self, className, id):
-        sql = "SELECT id from %s where id ='%s'" % (className, id)
+        parts = str(className).split(".")
+        if len(parts) == 2:
+            quoted_class = "%s.%s" % (self._qi(parts[0]), self._qi(parts[1]))
+        else:
+            quoted_class = self._qi(className)
+        sql = "SELECT id from %s where id ='%s'" % (quoted_class, self._el(id))
         return sql
 
     def getAggregatorFromComplexSchema(self, aggregated, aggregationColumn):
         sql = (
             "SELECT complex from public.complex_schema where aggregated_class = '%s' and aggregationColumn = '%s'"
-            % (aggregated, aggregationColumn)
+            % (
+                self._el(aggregated),
+                self._el(aggregationColumn),
+            )
         )
         return sql
 
@@ -420,12 +431,15 @@ class PostGISSqlGenerator(SqlGenerator):
     def getRolePrivileges(self, role, dbname):
         sql = (
             "SELECT * FROM information_schema.role_table_grants where grantee = '%s' and table_catalog = '%s' ORDER BY table_name"
-            % (role, dbname)
+            % (
+                self._el(role),
+                self._el(dbname),
+            )
         )
         return sql
 
     def isSuperUser(self, user):
-        sql = "SELECT rolsuper FROM pg_roles WHERE rolname = '%s'" % user
+        sql = "SELECT rolsuper FROM pg_roles WHERE rolname = '%s'" % self._el(user)
         return sql
 
     def getInvalidGeom(self, tableSchema, tableName, geometryColumn, keyColumn):
@@ -506,21 +520,25 @@ class PostGISSqlGenerator(SqlGenerator):
     def validationStatus(self, processName):
         sql = (
             "SELECT status FROM validation.process_history where process_name = '%s' ORDER BY finished DESC LIMIT 1; "
-            % processName
+            % self._el(processName)
         )
         return sql
 
     def validationStatusText(self, processName):
         sql = (
             "SELECT sta.status FROM validation.process_history as hist left join validation.status as sta on sta.id = hist.status where hist.process_name = '%s' ORDER BY hist.finished DESC LIMIT 1 "
-            % processName
+            % self._el(processName)
         )
         return sql
 
     def setValidationStatusQuery(self, processName, log, status):
         sql = (
             "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)"
-            % (processName, log, status)
+            % (
+                self._el(processName),
+                self._el(log),
+                status,
+            )
         )
         return sql
 
@@ -545,15 +563,15 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """INSERT INTO validation.{0} (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values
         ('{1}','{2}',{3},'{4}',ST_Transform(ST_SetSRID(ST_Multi('{5}'),{6}),{7}), {8}, '{9}');""".format(
             tableName,
-            processName,
-            layer,
+            self._el(processName),
+            self._el(layer),
             str(feat_id),
-            reason,
-            geom,
+            self._el(reason),
+            self._el(geom),
             srid,
             flagSRID,
             dimension,
-            geometryColumn,
+            self._el(geometryColumn),
         )
         return sql
 
@@ -567,10 +585,10 @@ class PostGISSqlGenerator(SqlGenerator):
         else:
             clauseList = []
             if processName:
-                processClause = """process_name = '{0}'""".format(processName)
+                processClause = """process_name = '%s'""" % self._el(processName)
                 clauseList.append(processClause)
             if className:
-                classClause = """layer = '{0}'""".format(className)
+                classClause = """layer = '%s'""" % self._el(className)
                 clauseList.append(classClause)
             if flagId:
                 try:
@@ -730,7 +748,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getDimension(self, geom):
-        sql = "select ST_Dimension('%s')" % geom
+        sql = "select ST_Dimension('%s')" % self._el(geom)
         return sql
 
     def getMulti(self, cl):
@@ -886,7 +904,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getFlagsByProcess(self, processName):
         sql = (
             """select layer, feat_id, geometry_column from validation.aux_flags_validacao where process_name = '%s'"""
-            % processName
+            % self._el(processName)
         )
         return sql
 
@@ -1012,14 +1030,16 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def setEarthCoverageDict(self, earthDict):
         if earthDict:
-            sql = "update validation.settings set earthcoverage = '%s'" % earthDict
+            sql = "update validation.settings set earthcoverage = '%s'" % self._el(
+                earthDict
+            )
         else:
             sql = "update validation.settings set earthcoverage = NULL"
         return sql
 
     def makeRelationDict(self, table, codes):
         sql = """select code, code_name from dominios.%s where code in %s""" % (
-            table,
+            self._qi(table),
             codes,
         )
         return sql

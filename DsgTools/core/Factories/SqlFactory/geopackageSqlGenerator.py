@@ -55,8 +55,8 @@ class GeopackageSqlGenerator(SpatialiteSqlGenerator):
         return sql
 
     def getFullTablesName(self, name):
-        sql = "SELECT table_name as name FROM gpkg_geometry_columns WHERE table_name LIKE '%{0}%' ORDER BY name".format(
-            name
+        sql = "SELECT table_name as name FROM gpkg_geometry_columns WHERE table_name LIKE '%%{0}%%' ORDER BY name".format(
+            self._el(name)
         )
         return sql
 
