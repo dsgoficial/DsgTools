@@ -20,7 +20,6 @@
  ***************************************************************************/
 """
 
-
 from functools import partial
 
 from qgis.core import Qgis, QgsProject, QgsVectorLayer
