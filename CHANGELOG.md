@@ -13,6 +13,9 @@ Melhorias:
 
 Correções de bug:
 
+- Corrige as camadas do BDGEx em máquina com proxy autenticado no QGIS: as requisições passam a usar a pilha de rede do próprio QGIS (QgsBlockingNetworkRequest) em vez de montar o proxy à mão com urllib. O código antigo lia usuário e senha do QGIS3.ini, que ficam VAZIOS quando as credenciais estão no cofre de autenticação (authcfg), montava um proxy sem credencial e tomava HTTP 407. Junto saem dois defeitos do mesmo trecho: a comparação `enabled == "false"`, que só acertava o estado desligado se o QSettings devolvesse string e não booleano, e o `install_opener`, que é global ao processo e nunca era desfeito, então um proxy quebrado grudava na sessão até reiniciar o QGIS;
+- Corrige o menu do BDGEx em máquina com proxy configurado no sistema e o proxy do QGIS em branco. Nessa configuração o QGIS não alcança nenhum host que o sistema manda contatar diretamente, o BDGEx incluído, e a conexão morre antes de abrir com "The proxy type is invalid for this operation". O GetCapabilities passa a ser refeito com gerente de rede próprio e proxy resolvido a mão, só depois que o caminho normal falha, então máquina sadia não é tocada. O DESENHO da camada não tem conserto no plugin, porque a renderização acontece no provedor WMS, em outra thread: sem configuração ela entra sem erro nenhum e a tela fica em branco. A correção é preencher o proxy em Configurações, Opções, Rede, seja roteando o BDGEx pelo proxy, seja excluindo o host do BDGEx ali para ele ir direto, e o plugin passa a avisar isso na barra de mensagens em vez de falhar calado;
+- As URLs dos três serviços do BDGEx passam a https, para onde o servidor redireciona de qualquer forma (302 em todo endpoint), e as falhas que antes eram mudas passam a nomear a causa no log;
 - Corrige bugs no algoritmo de suavização nurbfit;
 
 ## 4.20.0 - 2026-01-12
