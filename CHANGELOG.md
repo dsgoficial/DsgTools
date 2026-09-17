@@ -2,6 +2,21 @@
 
 ## 5.3.0 - dev
 
+## 5.2.1 - 2026-09-17
+
+Correções de bug:
+
+- Corrige a grade de áreas planas na extração de pontos cotados, que rodava com o espaçamento da grade geral (5.000 m em 1:25.000, em vez dos 500 m da régua de áreas planas): a célula grande demais quase nunca fica disjunta das curvas de nível, então o critério de área plana rendia quase nenhum ponto;
+- Corrige ponto cotado saindo com a cota do nodata (-9999) na extração de pontos cotados: a leitura do raster passa a tratar como sem-dado o valor que a banda declara, o candidato sem pixel válido deixa de gerar ponto, e a escrita no sink descarta qualquer cota igual ao sentinela. Atingia o máximo quando a janela recortada saía vazia (candidato menor que a célula do MDE) e o mínimo sempre que houvesse um pixel sem dado na janela;
+- Corrige os pontos cotados de área plana saindo com sete atributos nulos na extração de pontos cotados (cota_mais_alta, cota_comprovada, ancora_horizontal, ancora_vertical, suprimir_simbologia e visivel): a chamada que amostra o máximo da célula não recebia o mapa de atributos padrão que todas as outras passam;
+- Corrige a seleção de pontos cotados sob o teto de densidade, que passa a ser determinista: a mesma entrada dava saídas diferentes a cada execução, porque o corte por célula percorria uma lista vinda de um conjunto (set) de feições, cuja ordem é a da identidade do objeto e muda a cada processo. A ordem agora sai do valor, com a cota mais alta primeiro e a posição desempatando;
+- Corrige ponto cotado fora da moldura na extração de pontos cotados: as grades de amostragem são montadas sobre o extent da moldura, e o extent de uma moldura em UTM não é retângulo em lon/lat, então as células de canto sobravam para fora. A saída passa a ser cortada pela geometria do polígono, e não pelo extent;
+- Corrige falha ao carregar camadas do BDGEx (mapcache, índice de cartas e camadas auxiliares), que exibia a mensagem "Unable to provide requested layer" mesmo com BDGEx e internet acessíveis: as requisições passam a usar a stack de rede do próprio QGIS, que honra o proxy configurado em Opções, Rede;
+- Corrige o menu do BDGEx em máquina com proxy configurado no sistema e o proxy do QGIS em branco. Nessa configuração o QGIS não alcança nenhum host que o sistema manda contatar diretamente, o BDGEx incluído, e a conexão morre antes de abrir com "The proxy type is invalid for this operation". O GetCapabilities passa a ser refeito com gerente de rede próprio e proxy resolvido a mão, só depois que o caminho normal falha, então máquina sadia não é tocada. O DESENHO da camada não tem conserto no plugin, porque a renderização acontece no provedor WMS, em outra thread: sem configuração ela entra sem erro nenhum e a tela fica em branco. A correção é preencher o proxy em Configurações, Opções, Rede, seja roteando o BDGEx pelo proxy, seja excluindo o host do BDGEx ali para ele ir direto, e o plugin passa a avisar isso na barra de mensagens em vez de falhar calado. As URLs dos três serviços passam a https, para onde o BDGEx redireciona de qualquer forma;
+- Corrige erro ao desconstruir polígonos (Unbuild Polygons/Center Point and Boundaries) quando havia trechos com geometria nula entre as linhas de entrada;
+- Corrige travamento da barra Center Point and Boundaries ao gerar centroides com camadas de linha de restrição volumosas: apenas os trechos próximos ao polígono desenhado passam a ser processados, em vez da camada de restrição inteira a cada clique;
+- Corrige erro "Incorrect parameter value for LAYERS" na barra Center Point and Boundaries ao gerar centroides pela segunda vez em diante (mesclando com a camada "Centroides" já existente);
+
 ## 5.2.0 - 2026-08-11
 
 Novas Funcionalidades:
