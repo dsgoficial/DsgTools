@@ -96,6 +96,13 @@ class PrepareRasterFilesForPackagingForBDGEx(QgsProcessingAlgorithm):
                 zip_ref.extractall(output_path)
 
     def extract_metadata(self, xml_content):
+        # Reject DOCTYPE declarations before parsing to avoid XXE / entity
+        # expansion attacks, since xml.etree.ElementTree itself performs no
+        # such sanitization.
+        if re.search(r"<!DOCTYPE", xml_content, re.IGNORECASE):
+            raise QgsProcessingException(
+                self.tr("DOCTYPE declarations are not allowed in metadata XML files.")
+            )
         # Parse XML
         root = ElementTree.fromstring(xml_content)
 
