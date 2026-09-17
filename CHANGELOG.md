@@ -1,11 +1,13 @@
 # CHANGELOG
 
-## 5.3.4 - dev
+## 5.3.5 - dev
 
 Melhorias:
 
 - Generalização de curvas de nível (Generalize Contour Lines) passa a atender também as escalas 1:2.000, 1:5.000 e 1:10.000, para a carta cadastral: o perímetro mínimo da curva fechada segue os 12 mm na escala de saída, o que dá 24 m, 60 m e 120 m no terreno. As escalas novas foram apensadas ao fim da lista (índices 4, 5 e 6), então todo modelo, chamada de linha de comando e fluxo do SAP que já grava o índice do enum continua valendo;
 - Extração de pontos cotados (Extract Spot Elevation) passa a atender também as escalas 1:2.000, 1:5.000 e 1:10.000, com as mesmas réguas de sempre, lineares no denominador da escala: distância entre pontos de 20 mm, comprimento mínimo de curva de 8 mm e grade de áreas planas de 20 mm na carta. As escalas novas foram apensadas ao fim da lista (índices 4, 5 e 6), pelo mesmo motivo;
+
+## 5.2.1 - 2026-09-17
 
 Correções de bug:
 
