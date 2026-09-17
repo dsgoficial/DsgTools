@@ -31,8 +31,8 @@ from qgis.PyQt.QtCore import QObject, QUrl
 from qgis.PyQt.QtNetwork import QNetworkRequest
 
 from DsgTools.core.NetworkTools.bdgexNetworkFallback import (
+    adviseProxyConfiguration,
     fetchWithOwnManager,
-    installProxyFactoryOnce,
 )
 from DsgTools.core.Utils.utils import MessageRaiser
 
@@ -108,12 +108,15 @@ class BDGExRequestHandler(QObject):
 
     def requestGetCapabilitiesXML(self, url):
         """
-        Gets url capabilities using QGIS's own network stack (QgsBlockingNetworkRequest).
-        This respects QGIS's proxy configuration automatically and, unlike raw urllib,
-        validates TLS certificates against the OS trust store (same as the system
-        browser) instead of the bundled Python's own CA bundle -- avoids false
-        CERTIFICATE_VERIFY_FAILED errors on networks with SSL-inspecting proxies
-        whose root CA is trusted at the OS level but not by urllib/ssl.
+        Gets url capabilities using QGIS's own network stack
+        (QgsBlockingNetworkRequest), which honours the proxy configured under
+        Settings > Options > Network and validates TLS against the OS trust
+        store.
+
+        On machines where that stack cannot resolve the proxy the request is
+        retried with a private network manager. See bdgexNetworkFallback for
+        the measured failure and, importantly, for what the retry does NOT
+        cover: layer rendering.
         """
         request = QNetworkRequest(QUrl(url))
         request.setRawHeader(b"User-Agent", b"Magic Browser")
@@ -146,10 +149,10 @@ class BDGExRequestHandler(QObject):
                     title, msg, Qgis.MessageLevel.Warning, 5
                 )
                 return ""
-            # O retry passou onde o QGIS falhou: esta máquina tem o defeito,
-            # então instala o contorno para o provedor WMS também achar o
-            # caminho.
-            installProxyFactoryOnce()
+            # O retry passou onde o QGIS falhou: esta máquina tem o defeito.
+            # O menu vai montar, mas a camada não desenha sem o proxy nas
+            # Opções, e quem renderiza está fora do alcance do plugin.
+            adviseProxyConfiguration(self.tr)
         else:
             response = bytes(blockingRequest.reply().content())
 
