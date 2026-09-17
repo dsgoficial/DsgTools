@@ -30,6 +30,10 @@ from qgis.core import Qgis, QgsBlockingNetworkRequest
 from qgis.PyQt.QtCore import QObject, QUrl
 from qgis.PyQt.QtNetwork import QNetworkRequest
 
+from DsgTools.core.NetworkTools.bdgexNetworkFallback import (
+    fetchWithOwnManager,
+    installProxyFactoryOnce,
+)
 from DsgTools.core.Utils.utils import MessageRaiser
 
 
@@ -41,15 +45,15 @@ class BDGExRequestHandler(QObject):
         super(BDGExRequestHandler, self).__init__()
         self.availableServicesDict = {
             "mapcache": {
-                "url": "http://bdgex.eb.mil.br/mapcache",
+                "url": "https://bdgex.eb.mil.br/mapcache",
                 "services": {"WMS": dict()},
             },
             "mapindex": {
-                "url": "http://bdgex.eb.mil.br/cgi-bin/mapaindice",
+                "url": "https://bdgex.eb.mil.br/cgi-bin/mapaindice",
                 "services": {"WMS": dict(), "WFS": dict()},
             },
             "auxlayers": {
-                "url": "http://bdgex.eb.mil.br/cgi-bin/geoportal",
+                "url": "https://bdgex.eb.mil.br/cgi-bin/geoportal",
                 "services": {"WMS": dict(), "WFS": dict()},
             },
         }
@@ -116,20 +120,38 @@ class BDGExRequestHandler(QObject):
         blockingRequest = QgsBlockingNetworkRequest()
         errorCode = blockingRequest.get(request, forceRefresh=True)
         if errorCode != QgsBlockingNetworkRequest.ErrorCode.NoError:
-            title = self.tr("BDGEx layers (DSGTools)")
-            msg = self.tr(
-                "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
-            )
+            firstError = blockingRequest.errorMessage()
             MessageRaiser().logMessage(
                 self.tr(
                     "BDGEx GetCapabilities request failed for {url}: {error}"
-                ).format(url=url, error=blockingRequest.errorMessage()),
+                ).format(url=url, error=firstError),
                 Qgis.MessageLevel.Critical,
             )
-            MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
-            return ""
-
-        response = bytes(blockingRequest.reply().content())
+            # Há rede em que a pilha do QGIS não resolve o proxy e o socket
+            # morre antes de abrir. Refaz com gerente próprio, com o proxy
+            # resolvido a mão, e só então desiste.
+            response, fallbackError = fetchWithOwnManager(url)
+            if not response:
+                MessageRaiser().logMessage(
+                    self.tr(
+                        "BDGEx GetCapabilities retry also failed for {url}: {error}"
+                    ).format(url=url, error=fallbackError),
+                    Qgis.MessageLevel.Critical,
+                )
+                title = self.tr("BDGEx layers (DSGTools)")
+                msg = self.tr(
+                    "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
+                )
+                MessageRaiser().raiseIfaceMessage(
+                    title, msg, Qgis.MessageLevel.Warning, 5
+                )
+                return ""
+            # O retry passou onde o QGIS falhou: esta máquina tem o defeito,
+            # então instala o contorno para o provedor WMS também achar o
+            # caminho.
+            installProxyFactoryOnce()
+        else:
+            response = bytes(blockingRequest.reply().content())
 
         # Verificar se a resposta não está vazia
         if not response:
@@ -148,6 +170,12 @@ class BDGExRequestHandler(QObject):
             title = self.tr("BDGEx layers (DSGTools)")
             msg = self.tr(
                 "Unable to provide requested layer. Please check if: 1) BDGEx is online or 2) Your network has internet connection or 3) your proxy configuration."
+            )
+            MessageRaiser().logMessage(
+                self.tr(
+                    "BDGEx GetCapabilities returned HTML, not XML, for {url}: {head}"
+                ).format(url=url, head=response_str[:200]),
+                Qgis.MessageLevel.Critical,
             )
             MessageRaiser().raiseIfaceMessage(title, msg, Qgis.MessageLevel.Warning, 5)
             return ""
