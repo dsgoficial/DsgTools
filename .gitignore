@@ -83,3 +83,8 @@ DsgTools/core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellChecker/data/
 *.xsd
 *.gpkg-shm
 *.gpkg-wal
+
+# qgis-plugin-ci build artifacts
+# =========================
+DsgTools/resources_rc.py
+/*.zip

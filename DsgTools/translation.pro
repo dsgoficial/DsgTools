@@ -761,4 +761,4 @@
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 
-RESOURCES += resources.qrc
+RESOURCES += resources.qrc.src
