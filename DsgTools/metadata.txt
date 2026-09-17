@@ -54,6 +54,9 @@ changelog=
 			- Corrige o menu do BDGEx em máquina com proxy configurado no sistema e o proxy do QGIS em branco. Nessa configuração o QGIS não alcança nenhum host que o sistema manda contatar diretamente, o BDGEx incluído, e a conexão morre antes de abrir com "The proxy type is invalid for this operation". O GetCapabilities passa a ser refeito com gerente de rede próprio e proxy resolvido a mão, só depois que o caminho normal falha, então máquina sadia não é tocada. O DESENHO da camada não tem conserto no plugin, porque a renderização acontece no provedor WMS, em outra thread: sem configuração ela entra sem erro nenhum e a tela fica em branco. A correção é preencher o proxy em Configurações, Opções, Rede, seja roteando o BDGEx pelo proxy, seja excluindo o host do BDGEx ali para ele ir direto, e o plugin passa a avisar isso na barra de mensagens em vez de falhar calado;
 			- As URLs dos três serviços do BDGEx passam a https, para onde o servidor redireciona de qualquer forma (302 em todo endpoint), e as falhas que antes eram mudas passam a nomear a causa no log;
 			- Corrige bugs no algoritmo de suavização nurbfit;
+			- Corrige vulnerabilidade de XXE na leitura de metadados XML do preparo de pacotes raster para o BDGEx e injeção de SQL na definição do SRID de bancos Geopackage;
+			- Corrige potenciais injeções de SQL nos geradores de SQL do PostGIS, Spatialite e Geopackage e no gerenciamento de complexos: identificadores e valores literais passam a ser escapados antes de entrar na query;
+			- Remove script morto que rodava eval() sobre resposta de rede não confiável (reverse_geocode.py, sem uso em nenhum fluxo do plugin);
     4.20.1:
 		Correção de bugs:
 			- Corrige import da netwokx;
