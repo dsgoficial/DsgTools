@@ -20,7 +20,6 @@
  ***************************************************************************/
 """
 
-
 from functools import partial
 
 from qgis.core import Qgis, QgsProject, QgsVectorLayer
@@ -28,6 +27,7 @@ from qgis.PyQt.QtCore import QObject
 
 from DsgTools.core.Utils.utils import MessageRaiser
 from DsgTools.core.NetworkTools.BDGExRequestHandler import BDGExRequestHandler
+from DsgTools.core.NetworkTools.bdgexNetworkFallback import removeProxyFactory
 
 
 class BDGExGuiManager(QObject):
@@ -369,4 +369,6 @@ class BDGExGuiManager(QObject):
                 parentMenu.addSeparator()
 
     def unload(self):
-        pass
+        # Tira da pilha de rede do QGIS o contorno de proxy, se a sessao
+        # chegou a instalar um.
+        removeProxyFactory()
