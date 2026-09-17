@@ -338,7 +338,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         self.bufferDist = self.distances[scale]
         self.minContourLength = self.minContourLenghts[scale]
         self.gridSpacing = self.gridSpacingDict[scale]
-        self.planeGridSpacing = self.gridSpacingDict[scale]
+        self.planeGridSpacing = self.planeGridSpacingDict[scale]
         self.contourBufferLength = self.contourBufferLengths[scale]
 
         fields = QgsFields()
