@@ -44,7 +44,7 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
     PORT = "PORT"
     DBNAME = "DBNAME"
     USER = "USER"
-    PASSWORD = "PASSWORD"
+    PASSWORD = "PASSWORD"  # nosec B105
     OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
