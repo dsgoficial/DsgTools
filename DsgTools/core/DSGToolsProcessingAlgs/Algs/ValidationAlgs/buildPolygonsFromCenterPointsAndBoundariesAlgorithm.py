@@ -327,6 +327,25 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         currentStep += 1
         if checkUnusedBoundaries:
             multiStepFeedback.setCurrentStep(currentStep)
+            # The flag polygons also consume boundaries. They are rebuilt in
+            # memory from flagDict instead of being read back through
+            # self.flag_id: when FLAGS is a file, that id is the path of a sink
+            # that is still open, and loading it fails with "Incorrect
+            # parameter value for LAYERS".
+            (
+                flag_polygon_sink,
+                flag_polygon_sink_id,
+            ) = QgsProcessingUtils.createFeatureSink(
+                "memory:",
+                context,
+                self.getFlagFields(),
+                QgsWkbTypes.Type.Polygon,
+                inputCenterPointLyr.sourceCrs(),
+            )
+            for flagGeom, flagText in flagDict.items():
+                self.flagFeature(
+                    flagGeom, flagText, fromWkb=True, sink=flag_polygon_sink
+                )
             self.checkUnusedBoundariesAndWriteOutput(
                 context,
                 boundaryLineLyr,
@@ -334,6 +353,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 sink_id,
                 unused_boundary_flag_sink,
                 multiStepFeedback,
+                flag_polygon_sink_id=flag_polygon_sink_id,
             )
             currentStep += 1
         if checkInvalidOnOutput:
@@ -362,6 +382,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         output_polygon_sink_id,
         unused_boundary_flag_sink,
         feedback,
+        flag_polygon_sink_id=None,
     ):
         if boundaryLineLyr is None:
             return
@@ -391,7 +412,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback.setCurrentStep(currentStep)
         allPolygonsLyr = self.algRunner.runMergeVectorLayers(
-            [builtPolygonsLyr, self.flag_id],
+            [builtPolygonsLyr]
+            + ([flag_polygon_sink_id] if flag_polygon_sink_id is not None else []),
             context=context,
         )
         currentStep += 1
