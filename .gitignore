@@ -86,5 +86,4 @@ DsgTools/core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellChecker/data/
 
 # qgis-plugin-ci build artifacts
 # =========================
-DsgTools/resources_rc.py
 /*.zip
