@@ -7,6 +7,10 @@ Melhorias:
 - Generalização de curvas de nível (Generalize Contour Lines) passa a atender também as escalas 1:2.000, 1:5.000 e 1:10.000, para a carta cadastral: o perímetro mínimo da curva fechada segue os 12 mm na escala de saída, o que dá 24 m, 60 m e 120 m no terreno. As escalas novas foram apensadas ao fim da lista (índices 4, 5 e 6), então todo modelo, chamada de linha de comando e fluxo do SAP que já grava o índice do enum continua valendo;
 - Extração de pontos cotados (Extract Spot Elevation) passa a atender também as escalas 1:2.000, 1:5.000 e 1:10.000, com as mesmas réguas de sempre, lineares no denominador da escala: distância entre pontos de 20 mm, comprimento mínimo de curva de 8 mm e grade de áreas planas de 20 mm na carta. As escalas novas foram apensadas ao fim da lista (índices 4, 5 e 6), pelo mesmo motivo;
 
+Correções de bug:
+
+- Corrige a construção de polígonos por centroide e fronteira (Build Polygons From Center Points and Boundaries), que abortava com "Incorrect parameter value for LAYERS" quando a checagem de fronteiras não utilizadas estava ligada e a saída de flags ia para arquivo: a checagem relia a camada de flags pelo caminho de um arquivo que o próprio algoritmo ainda não tinha fechado. Os polígonos de flag passam a ser montados em memória para a checagem. Na interface o defeito não aparecia, porque a saída padrão das flags é temporária; aparecia na linha de comando (qgis_process e dsgtools_cli) e em modelo com saída gravada em arquivo;
+
 ## 5.2.1 - 2026-09-17
 
 Correções de bug:
