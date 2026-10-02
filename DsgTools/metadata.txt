@@ -33,10 +33,6 @@ about=DSGTools with the following features:
 	-EDGV code list viewer to aid attributes queries using our EDGV databases.
 	-Tool to reclassify features (move them to another layer) with predefined attributes.
 	-Tool for preparing files for packaging in BDGEx.
-	Requirements for LINUX (Ubuntu/Debian):
-
-	Install the following packages as follows:
-	sudo apt-get install libqt5sql5-sqlite
 
 # End of mandatory metadata
 
