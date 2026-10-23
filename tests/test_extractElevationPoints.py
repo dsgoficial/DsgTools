@@ -50,6 +50,10 @@ from DsgTools.core.GeometricTools.rasterHandler import (
     findNearbyNonMultiplePixel,
     maskContourIntervalMultiples,
     readAsNumpy,
+    elevationDecimals,
+    elevationValue,
+    isContourIntervalMultiple,
+    roundElevations,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractElevationPoints import (
     ExtractElevationPoints,
@@ -638,6 +642,99 @@ class ScaleTableTestCase(unittest.TestCase):
         self.assertNotEqual(self.alg.gridSpacingDict[3], 0.2 * 250_000)
 
 
+class CotaDecimalTestCase(unittest.TestCase):
+    """
+    Com equidistância abaixo de 2 m (a curva de 1 m da carta 1:2.000) toda cota
+    inteira é múltipla da equidistância, e o algoritmo descartava todos os
+    candidatos: a folha 1:2.000 do Beira-Rio saiu com zero ponto cotado. A cota
+    passa a ter uma casa decimal nesse caso, e só a cota exatamente igual à de
+    uma curva é descartada. Com 2 m ou mais nada muda.
+    """
+
+    def setUp(self):
+        self.tmpDir = tempfile.mkdtemp(prefix="dsgtools_cota_decimal_")
+        self.fields = cotaFields()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpDir, ignore_errors=True)
+
+    def test_casas_decimais_pela_equidistancia(self):
+        self.assertEqual(elevationDecimals(None), 0)
+        self.assertEqual(elevationDecimals(10), 0)
+        self.assertEqual(elevationDecimals(2), 0)
+        self.assertEqual(elevationDecimals(1), 1)
+        self.assertEqual(elevationDecimals(0.5), 1)
+        self.assertEqual(elevationDecimals(0), 0)
+
+    def test_arredondamento_inteiro_com_intervalo_largo_e_decimal_com_1_m(self):
+        arr = np.array([[23.44, 23.46], [np.nan, 22.96]])
+        largo = roundElevations(arr, 10)
+        self.assertEqual(largo[0, 0], 23.0)
+        self.assertTrue(np.isnan(largo[1, 0]))
+        fino = roundElevations(arr, 1)
+        self.assertAlmostEqual(fino[0, 0], 23.4)
+        self.assertAlmostEqual(fino[0, 1], 23.5)
+        self.assertAlmostEqual(fino[1, 1], 23.0)
+        self.assertTrue(np.isnan(fino[1, 0]))
+
+    def test_multiplo_com_1_m_e_so_a_cota_redonda(self):
+        self.assertTrue(isContourIntervalMultiple(23.0, 1))
+        self.assertFalse(isContourIntervalMultiple(23.4, 1))
+        self.assertTrue(isContourIntervalMultiple(20, 10))
+        self.assertFalse(isContourIntervalMultiple(23, 10))
+
+    def test_mascara_com_1_m_poupa_a_cota_decimal(self):
+        out = maskContourIntervalMultiples(np.array([[23.0, 23.4], [24.0, 24.7]]), 1)
+        self.assertTrue(np.isnan(out[0, 0]))
+        self.assertTrue(np.isnan(out[1, 0]))
+        self.assertAlmostEqual(out[0, 1], 23.4)
+        self.assertAlmostEqual(out[1, 1], 24.7)
+
+    def test_vizinho_decimal_substitui_a_cota_redonda(self):
+        npRaster = np.array([[23.0, 23.0, 23.0], [23.0, 23.0, 23.4], [23.0, 23.0, 23.0]])
+        self.assertEqual(findNearbyNonMultiplePixel((1, 1), npRaster, 1), (1, 2))
+
+    def test_valor_gravado_inteiro_ou_com_uma_casa(self):
+        self.assertEqual(elevationValue(23.0), 23)
+        self.assertIsInstance(elevationValue(23.0), int)
+        self.assertEqual(elevationValue(23.4), 23.4)
+
+    def test_descarte_final_com_1_m_mantem_a_cota_decimal(self):
+        fields = QgsFields()
+        fields.append(QgsField("cota", QVariant.Double))
+        feats = []
+        for cota in (23.0, 23.4, 24.0, 24.7):
+            feat = QgsFeature(fields)
+            feat["cota"] = cota
+            feats.append(feat)
+        kept = ExtractElevationPoints().dropContourIntervalMultiples(feats, 1)
+        self.assertEqual([f["cota"] for f in kept], [23.4, 24.7])
+
+    def test_maximo_do_raster_sai_com_uma_casa_a_1_m(self):
+        """Pior caso real: o topo em 23,4 m sumia, porque 23 é múltiplo de 1."""
+        path = writeRaster(
+            os.path.join(self.tmpDir, "topo.tif"),
+            np.array([[21.2, 22.1], [23.4, 22.8]], dtype=float),
+        )
+        fields = QgsFields()
+        fields.append(QgsField("cota", QVariant.Double))
+        feat = createMaxPointFeatFromRasterLayer(
+            inputRaster=path, fields=fields, fieldName="cota", contourHeightInterval=1
+        )
+        self.assertIsNotNone(feat)
+        self.assertAlmostEqual(feat["cota"], 23.4)
+
+    def test_intervalo_largo_segue_inteiro(self):
+        path = writeRaster(
+            os.path.join(self.tmpDir, "topo10.tif"),
+            np.array([[21.2, 22.1], [23.4, 22.8]], dtype=float),
+        )
+        feat = createMaxPointFeatFromRasterLayer(
+            inputRaster=path, fields=self.fields, fieldName="cota", contourHeightInterval=10
+        )
+        self.assertEqual(feat["cota"], 23)
+
+
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
     filterString = "test_" if filterString is None else filterString
@@ -654,6 +751,7 @@ def run_all(filterString=None):
         DropPointsOutsideBoundaryTestCase,
         DeterminismTestCase,
         ScaleTableTestCase,
+        CotaDecimalTestCase,
     ):
         suite.addTests(loader.loadTestsFromTestCase(testCase))
     unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)

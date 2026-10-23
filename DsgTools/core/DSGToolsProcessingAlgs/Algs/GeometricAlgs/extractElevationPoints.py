@@ -369,7 +369,15 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         self.setScaleDependentParameters(scale)
 
         fields = QgsFields()
-        fields.append(QgsField("cota", QMetaType.Type.Int))
+        self.contourHeightInterval = contourHeightInterval
+        fields.append(
+            QgsField(
+                "cota",
+                QMetaType.Type.Double
+                if rasterHandler.elevationDecimals(contourHeightInterval) > 0
+                else QMetaType.Type.Int,
+            )
+        )
         fields.append(QgsField("cota_mais_alta", QMetaType.Type.Int))
         fields.append(QgsField("cota_comprovada", QMetaType.Type.Int))
         fields.append(QgsField("ancora_horizontal", QMetaType.Type.Int))
@@ -600,13 +608,15 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         utilizável. Esta é a única escrita no sink, então é aqui que a garantia
         vale para todos os caminhos de geração.
         """
-        interval = int(contourHeightInterval)
-        if interval <= 0:
+        if not rasterHandler.contourIntervalIsActive(contourHeightInterval):
             return featList
+        interval = contourHeightInterval
         keptFeatList, droppedCount = [], 0
         for feat in featList:
             cota = feat["cota"]
-            if cota is not None and int(cota) % interval == 0:
+            if cota is not None and rasterHandler.isContourIntervalMultiple(
+                cota, contourHeightInterval
+            ):
                 droppedCount += 1
                 continue
             keptFeatList.append(feat)
@@ -1353,9 +1363,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
         ds, npRaster = rasterHandler.readAsNumpy(clippedRasterLyr)
         transform = rasterHandler.getCoordinateTransform(ds)
-        nanIndexes = np.isnan(npRaster)
-        npRaster = (np.rint(npRaster)).astype(float)
-        npRaster[nanIndexes] = np.nan
+        npRaster = rasterHandler.roundElevations(
+            npRaster, getattr(self, "contourHeightInterval", None)
+        )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -1394,9 +1404,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
             npRaster=npRaster,
         )
-        nanIndexes = np.isnan(maskedNpRaster)
-        maskedNpRaster = (np.rint(maskedNpRaster)).astype(float)
-        maskedNpRaster[nanIndexes] = np.nan
+        maskedNpRaster = rasterHandler.roundElevations(
+            maskedNpRaster, getattr(self, "contourHeightInterval", None)
+        )
         return npRaster, maskedNpRaster, transform, maskLyr
 
     def getRangeOfNumberOfPoints(self, featList):

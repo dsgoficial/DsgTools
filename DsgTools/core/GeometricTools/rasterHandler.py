@@ -119,15 +119,70 @@ def getMinCoordinatesFromNpArray(npArray: np.array) -> np.array:
     return np.argwhere(npArray == validValues.min())
 
 
+def elevationDecimals(contourHeightInterval: float = None) -> int:
+    """
+    Casas decimais da cota do ponto cotado.
+
+    Com equidistância de 2 m ou mais a cota é inteira, como sempre foi. Abaixo
+    disso (a curva de 1 m da carta 1:2.000) toda cota inteira coincide com uma
+    curva e seria descartada como múltipla da equidistância, então a cota passa a
+    ter uma casa decimal, e só a cota exatamente igual à de uma curva é múltipla.
+    """
+    if contourHeightInterval is None:
+        return 0
+    return 1 if 0 < contourHeightInterval < 2 else 0
+
+
+def roundElevations(npRaster: np.array, contourHeightInterval: float = None) -> np.array:
+    """Arredonda o MDE na precisão da cota (ver elevationDecimals), preservando o NaN."""
+    nanIndexes = np.isnan(npRaster)
+    decimals = elevationDecimals(contourHeightInterval)
+    rounded = (
+        np.round(npRaster, decimals) if decimals > 0 else np.rint(npRaster)
+    ).astype(float)
+    rounded[nanIndexes] = np.nan
+    return rounded
+
+
+def elevationValue(value: float):
+    """Cota gravada na feição: inteira quando o valor arredondado é inteiro, senão uma casa."""
+    value = float(value)
+    return int(value) if value.is_integer() else round(value, 1)
+
+
+def isContourIntervalMultiple(values, contourHeightInterval: float):
+    """
+    Diz se a cota é múltipla da equidistância.
+
+    Com cota inteira vale a regra de sempre (parte inteira módulo intervalo
+    inteiro). Com cota de uma casa, é múltipla só a cota que é múltiplo exato do
+    intervalo: 23,0 com intervalo de 1 m é, 23,4 não é.
+    """
+    if elevationDecimals(contourHeightInterval) == 0:
+        return np.asarray(values).astype(int) % int(contourHeightInterval) == 0
+    ratio = np.asarray(values, dtype=float) / contourHeightInterval
+    return np.isclose(ratio, np.round(ratio), rtol=0, atol=1e-6)
+
+
+def contourIntervalIsActive(contourHeightInterval: float) -> bool:
+    """A regra dos múltiplos vale com intervalo positivo; o inteiro 0 a desliga, como antes."""
+    if contourHeightInterval is None:
+        return False
+    if elevationDecimals(contourHeightInterval) == 0:
+        return int(contourHeightInterval) > 0
+    return contourHeightInterval > 0
+
+
 def maskContourIntervalMultiples(
     npRaster: np.array, contourHeightInterval: float
 ) -> np.array:
-    interval = int(contourHeightInterval)
-    if interval <= 0:
+    if not contourIntervalIsActive(contourHeightInterval):
         return npRaster
     nonNanMask = ~np.isnan(npRaster)
     multipleMask = np.zeros_like(npRaster, dtype=bool)
-    multipleMask[nonNanMask] = npRaster[nonNanMask].astype(int) % interval == 0
+    multipleMask[nonNanMask] = isContourIntervalMultiple(
+        npRaster[nonNanMask], contourHeightInterval
+    )
     if np.all(multipleMask | ~nonNanMask):
         return npRaster
     result = np.array(npRaster)
@@ -151,14 +206,13 @@ def findNearbyNonMultiplePixel(
     múltiplo original produziria exatamente a cota que não se quer gerar.
     """
     row, col = pixelCoordinates
-    interval = int(contourHeightInterval)
-    if interval <= 0:
+    if not contourIntervalIsActive(contourHeightInterval):
         return pixelCoordinates
     try:
         value = npRaster[row, col]
     except (IndexError, ValueError):
         return pixelCoordinates
-    if np.isnan(value) or int(value) % interval != 0:
+    if np.isnan(value) or not isContourIntervalMultiple(value, contourHeightInterval):
         return pixelCoordinates
     rows, cols = npRaster.shape
     for radius in range(1, maxSearchRadius + 1):
@@ -171,7 +225,9 @@ def findNearbyNonMultiplePixel(
                 nr, nc = row + dr, col + dc
                 if 0 <= nr < rows and 0 <= nc < cols:
                     v = npRaster[nr, nc]
-                    if not np.isnan(v) and int(v) % interval != 0:
+                    if not np.isnan(v) and not isContourIntervalMultiple(
+                        v, contourHeightInterval
+                    ):
                         dist = dr * dr + dc * dc
                         if dist < bestDist:
                             bestDist = dist
@@ -205,7 +261,7 @@ def createFeatureWithPixelValueFromPixelCoordinates(
         return None
     if np.isnan(value):
         return None
-    newFeat[fieldName] = int(value)
+    newFeat[fieldName] = elevationValue(value)
     if defaultAtributeMap is None:
         return newFeat
     for attr, value in defaultAtributeMap.items():
@@ -294,7 +350,7 @@ def createFeatureWithPixelValueFromTerrainCoordinates(
     if np.isnan(value):
         return None
     newFeat.setGeometry(QgsGeometry(QgsPoint(*terrainCoordinates)))
-    newFeat[fieldName] = int(value)
+    newFeat[fieldName] = elevationValue(value)
     if defaultAtributeMap is None:
         return newFeat
     for attr, value in defaultAtributeMap.items():
@@ -388,9 +444,7 @@ def createMaxPointFeatFromRasterLayer(
 ) -> QgsFeature:
     ds, npRaster = readAsNumpy(inputRaster)
     transform = getCoordinateTransform(ds)
-    nanIndexes = np.isnan(npRaster)
-    npRaster = (np.rint(npRaster)).astype(float)
-    npRaster[nanIndexes] = np.nan
+    npRaster = roundElevations(npRaster, contourHeightInterval)
     if maxValue is not None:
         npRaster[npRaster >= maxValue] = np.nan
     if minValue is not None:
@@ -424,9 +478,7 @@ def createMaxPointFeatListFromRasterLayer(
 ) -> List[QgsFeature]:
     ds, npRaster = readAsNumpy(inputRaster)
     transform = getCoordinateTransform(ds)
-    nanIndexes = np.isnan(npRaster)
-    npRaster = (np.rint(npRaster)).astype(float)
-    npRaster[nanIndexes] = np.nan
+    npRaster = roundElevations(npRaster, contourHeightInterval)
     if contourHeightInterval is not None:
         npRaster = maskContourIntervalMultiples(npRaster, contourHeightInterval)
     pixelCoordinates = getMaxCoordinatesFromNpArray(npRaster)
@@ -449,9 +501,7 @@ def createMinPointFeatFromRasterLayer(
 ) -> QgsFeature:
     ds, npRaster = readAsNumpy(inputRaster)
     transform = getCoordinateTransform(ds)
-    nanIndexes = np.isnan(npRaster)
-    npRaster = (np.rint(npRaster)).astype(float)
-    npRaster[nanIndexes] = np.nan
+    npRaster = roundElevations(npRaster, contourHeightInterval)
     if contourHeightInterval is not None:
         npRaster = maskContourIntervalMultiples(npRaster, contourHeightInterval)
     pixelCoordinates = getMinCoordinatesFromNpArray(npRaster)
