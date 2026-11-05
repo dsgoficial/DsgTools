@@ -590,19 +590,26 @@ class PostGISSqlGenerator(SqlGenerator):
         )
 
     def getInvalidGeom(self, tableSchema, tableName, geometryColumn, keyColumn):
-        return """select  distinct f."{3}" as "{3}",(reason(ST_IsValidDetail(f."{2}",0))), (location(ST_IsValidDetail(f."{2}",0))) as "{2}" from (select "{3}", "{2}" from only "{0}"."{1}"  where ST_IsValid("{2}") = 'f') as f""".format(
-            tableSchema, tableName, geometryColumn, keyColumn
+        return pgsql.SQL(
+            """select  distinct f.{3} as {3},(reason(ST_IsValidDetail(f.{2},0))), (location(ST_IsValidDetail(f.{2},0))) as {2} from (select {3}, {2} from only {0}.{1}  where ST_IsValid({2}) = 'f') as f"""
+        ).format(
+            self._ident(tableSchema),
+            self._ident(tableName),
+            self._ident(geometryColumn),
+            self._ident(keyColumn),
         )
 
     def getNonSimpleGeom(self, tableSchema, tableName):
-        return """select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only "{0}"."{1}"  where ST_IsSimple(geom) = 'f') as f""".format(
-            tableSchema, tableName
-        )
+        return pgsql.SQL(
+            """select  f.id as id,(reason(ST_IsValidDetail(f.geom,0))), (location(ST_IsValidDetail(f.geom,0))) as geom from (select id, geom from only {0}.{1}  where ST_IsSimple(geom) = 'f') as f"""
+        ).format(self._ident(tableSchema), self._ident(tableName))
 
     def checkValidationStructure(self):
         return "select count(*) from information_schema.columns where table_name = 'aux_flags_validacao'"
 
     def createValidationStructure(self, srid):
+        # Texto partido por '#' no PostgisDb: o srid entra só como número.
+        srid = str(self._num(srid).wrapped)
         sql = """CREATE SCHEMA IF NOT EXISTS validation#
         CREATE TABLE validation.aux_flags_validacao (
             id serial NOT NULL,
@@ -664,29 +671,19 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def validationStatus(self, processName):
-        sql = (
-            "SELECT status FROM validation.process_history where process_name = '%s' ORDER BY finished DESC LIMIT 1; "
-            % self._el(processName)
-        )
-        return sql
+        return pgsql.SQL(
+            "SELECT status FROM validation.process_history where process_name = {0} ORDER BY finished DESC LIMIT 1; "
+        ).format(self._lit(processName))
 
     def validationStatusText(self, processName):
-        sql = (
-            "SELECT sta.status FROM validation.process_history as hist left join validation.status as sta on sta.id = hist.status where hist.process_name = '%s' ORDER BY hist.finished DESC LIMIT 1 "
-            % self._el(processName)
-        )
-        return sql
+        return pgsql.SQL(
+            "SELECT sta.status FROM validation.process_history as hist left join validation.status as sta on sta.id = hist.status where hist.process_name = {0} ORDER BY hist.finished DESC LIMIT 1 "
+        ).format(self._lit(processName))
 
     def setValidationStatusQuery(self, processName, log, status):
-        sql = (
-            "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)"
-            % (
-                self._el(processName),
-                self._el(log),
-                status,
-            )
-        )
-        return sql
+        return pgsql.SQL(
+            "INSERT INTO validation.process_history (process_name, log, status) values ({0},{1},{2})"
+        ).format(self._lit(processName), self._lit(log), self._num(status))
 
     def insertFlagIntoDb(
         self,
@@ -706,43 +703,47 @@ class PostGISSqlGenerator(SqlGenerator):
             tableName = "aux_flags_validacao_l"
         elif dimension == 2:
             tableName = "aux_flags_validacao_a"
-        sql = """INSERT INTO validation.{0} (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values
-        ('{1}','{2}',{3},'{4}',ST_Transform(ST_SetSRID(ST_Multi('{5}'),{6}),{7}), {8}, '{9}');""".format(
-            tableName,
-            self._el(processName),
-            self._el(layer),
-            str(feat_id),
-            self._el(reason),
-            self._el(geom),
-            srid,
-            flagSRID,
-            dimension,
-            self._el(geometryColumn),
+        return pgsql.SQL(
+            """INSERT INTO validation.{0} (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values
+        ({1},{2},{3},{4},ST_Transform(ST_SetSRID(ST_Multi({5}),{6}),{7}), {8}, {9});"""
+        ).format(
+            pgsql.Identifier(tableName),
+            self._lit(processName),
+            self._lit(layer),
+            self._num(feat_id),
+            self._lit(reason),
+            self._lit(geom),
+            self._num(srid),
+            self._num(flagSRID),
+            self._num(dimension),
+            self._lit(geometryColumn),
         )
-        return sql
 
     def getRunningProc(self):
         sql = "SELECT process_name, status FROM validation.process_history ORDER BY finished DESC LIMIT 1;"
         return sql
 
     def deleteFlags(self, processName=None, className=None, flagId=None):
+        # Texto partido por '#' no PostgisDb: valores por _el, sem '#'.
         if not processName and not className and not flagId:
             whereClause = ""
         else:
             clauseList = []
             if processName:
+                self._semSeparador(processName)
                 processClause = """process_name = '%s'""" % self._el(processName)
                 clauseList.append(processClause)
             if className:
+                self._semSeparador(className)
                 classClause = """layer = '%s'""" % self._el(className)
                 clauseList.append(classClause)
             if flagId:
                 try:
                     for row in flagId:
-                        flagClauseRow = """id = {0} """.format(row)
+                        flagClauseRow = """id = {0} """.format(self._num(row).wrapped)
                         clauseList.append(flagClauseRow)
                 except TypeError:
-                    flagClause = """id = {0} """.format(flagId)
+                    flagClause = """id = {0} """.format(self._num(flagId).wrapped)
                     clauseList.append(flagClause)
             whereClause = """where {0}""".format(" AND ".join(clauseList))
         sql = """
@@ -776,304 +777,295 @@ class PostGISSqlGenerator(SqlGenerator):
         bGeomColumn,
     ):
         # TODO: Add SRIDS
-        class_a = '"' + '"."'.join(class_a.replace('"', "").split(".")) + '"'
-        class_b = '"' + '"."'.join(class_b.replace('"', "").split(".")) + '"'
+        # A função espacial e a necessidade eram SQL colado: só passam os
+        # valores que a regra pode ter (ST_<nome> e 't' ou 'f').
+        if not _FUNCAO_ST.match(str(predicate_function)):
+            raise ValueError(
+                "função espacial inválida: {0!r}".format(predicate_function)
+            )
+        if necessity not in ("'f'", "'t'"):
+            raise ValueError("necessidade inválida: {0!r}".format(necessity))
+        args = dict(
+            pred=pgsql.SQL(predicate_function),
+            nec=pgsql.SQL(necessity),
+            ca=self._qualified(class_a),
+            cb=self._qualified(class_b),
+            ak=self._ident(aKeyColumn),
+            bk=self._ident(bKeyColumn),
+            ag=self._ident(aGeomColumn),
+            bg=self._ident(bGeomColumn),
+        )
+        if min_card is not None:
+            args["minc"] = self._num(min_card)
+        if max_card is not None and max_card != "*":
+            args["maxc"] = self._num(max_card)
+        sameClass = class_a.replace('"', "") == class_b.replace('"', "")
 
         # checking if the rule checks the layer with itself
-        if class_a != class_b:
-            sameClassRestriction = ""
+        if not sameClass:
+            args["same"] = pgsql.SQL("")
         else:
-            sameClassRestriction = " WHERE a.{0} <> b.{1} ".format(
-                aKeyColumn, bKeyColumn
-            )
+            args["same"] = pgsql.SQL(" WHERE a.{ak} <> b.{bk} ").format(**args)
 
         if predicate_function == "ST_Disjoint":
             if necessity == "'f'":
-                sql = """SELECT DISTINCT foo.id, foo.geom FROM
-                (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) = 'f' THEN 1 ELSE 0 END) count, a.{6} geom
-                    FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
+                tpl = """SELECT DISTINCT foo.id, foo.geom FROM
+                (SELECT a.{ak} id, SUM(CASE WHEN {pred}(a.{ag},b.{bg}) = 'f' THEN 1 ELSE 0 END) count, a.{ag} geom
+                    FROM {ca} as a,{cb} as b {same} GROUP BY a.{ak}, a.{ag}) as foo
                 WHERE foo.count > 0
-                """.format(
-                    predicate_function,
-                    class_a,
-                    class_b,
-                    sameClassRestriction,
-                    aKeyColumn,
-                    bKeyColumn,
-                    aGeomColumn,
-                    bGeomColumn,
-                )
+                """
             elif necessity == "'t'":
-                sql = """SELECT DISTINCT foo.id, foo.geom FROM
-                (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) = 'f' THEN 1 ELSE 0 END) count, a.{6} geom
-                    FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
+                tpl = """SELECT DISTINCT foo.id, foo.geom FROM
+                (SELECT a.{ak} id, SUM(CASE WHEN {pred}(a.{ag},b.{bg}) = 'f' THEN 1 ELSE 0 END) count, a.{ag} geom
+                    FROM {ca} as a,{cb} as b {same} GROUP BY a.{ak}, a.{ag}) as foo
                 WHERE foo.count = 0
-                """.format(
-                    predicate_function,
-                    class_a,
-                    class_b,
-                    sameClassRestriction,
-                    aKeyColumn,
-                    bKeyColumn,
-                    aGeomColumn,
-                    bGeomColumn,
-                )
+                """
         else:
             if necessity == "'f'":  # must (be)
                 if max_card == "*":
-                    sql = """SELECT DISTINCT foo.id, foo.geom FROM
-                    (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) THEN 1 ELSE 0 END) count, a.{6} geom
-                        FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
-                    WHERE foo.count < {8}
-                    """.format(
-                        predicate_function,
-                        class_a,
-                        class_b,
-                        sameClassRestriction,
-                        aKeyColumn,
-                        bKeyColumn,
-                        aGeomColumn,
-                        bGeomColumn,
-                        min_card,
-                    )
+                    tpl = """SELECT DISTINCT foo.id, foo.geom FROM
+                    (SELECT a.{ak} id, SUM(CASE WHEN {pred}(a.{ag},b.{bg}) THEN 1 ELSE 0 END) count, a.{ag} geom
+                        FROM {ca} as a,{cb} as b {same} GROUP BY a.{ak}, a.{ag}) as foo
+                    WHERE foo.count < {minc}
+                    """
                 elif min_card is None and max_card is None:
-                    sql = """SELECT DISTINCT foo.id, foo.geom FROM
-                    (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) THEN 1 ELSE 0 END) count, a.{6} geom
-                        FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
+                    tpl = """SELECT DISTINCT foo.id, foo.geom FROM
+                    (SELECT a.{ak} id, SUM(CASE WHEN {pred}(a.{ag},b.{bg}) THEN 1 ELSE 0 END) count, a.{ag} geom
+                        FROM {ca} as a,{cb} as b {same} GROUP BY a.{ak}, a.{ag}) as foo
                     WHERE foo.count != 0;
-                    """.format(
-                        predicate_function,
-                        class_a,
-                        class_b,
-                        sameClassRestriction,
-                        aKeyColumn,
-                        bKeyColumn,
-                        aGeomColumn,
-                        bGeomColumn,
-                        min_card,
-                    )
+                    """
                 else:
-                    sql = """SELECT DISTINCT foo.id, foo.geom FROM
-                    (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) THEN 1 ELSE 0 END) count, a.{6} geom
-                        FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
-                    WHERE foo.count < {8} OR foo.count > {9}
-                    """.format(
-                        predicate_function,
-                        class_a,
-                        class_b,
-                        sameClassRestriction,
-                        aKeyColumn,
-                        bKeyColumn,
-                        aGeomColumn,
-                        bGeomColumn,
-                        min_card,
-                        max_card,
-                    )
+                    tpl = """SELECT DISTINCT foo.id, foo.geom FROM
+                    (SELECT a.{ak} id, SUM(CASE WHEN {pred}(a.{ag},b.{bg}) THEN 1 ELSE 0 END) count, a.{ag} geom
+                        FROM {ca} as a,{cb} as b {same} GROUP BY a.{ak}, a.{ag}) as foo
+                    WHERE foo.count < {minc} OR foo.count > {maxc}
+                    """
             elif necessity == "'t'":  # must not (be)
-                if class_a != class_b:
-                    sameClassRestriction = ""
+                if not sameClass:
+                    args["same"] = pgsql.SQL("")
                 else:
-                    sameClassRestriction = " AND a.{0} <> b.{1} ".format(
-                        aKeyColumn, bKeyColumn
-                    )
+                    args["same"] = pgsql.SQL(" AND a.{ak} <> b.{bk} ").format(**args)
 
-                sql = """SELECT DISTINCT a.{5} id, (ST_Dump(ST_Intersection(a.{7}, b.{8}))).geom as geom
-                FROM {0} as a, {1} as b
-                    WHERE {2}(a.{7},b.{8}) = {3} {4}
-                """.format(
-                    class_a,
-                    class_b,
-                    predicate_function,
-                    necessity,
-                    sameClassRestriction,
-                    aKeyColumn,
-                    bKeyColumn,
-                    aGeomColumn,
-                    bGeomColumn,
-                )
-        return sql
+                tpl = """SELECT DISTINCT a.{ak} id, (ST_Dump(ST_Intersection(a.{ag}, b.{bg}))).geom as geom
+                FROM {ca} as a, {cb} as b
+                    WHERE {pred}(a.{ag},b.{bg}) = {nec} {same}
+                """
+        return pgsql.SQL(tpl).format(**args)
 
     def getDimension(self, geom):
-        sql = "select ST_Dimension('%s')" % self._el(geom)
-        return sql
+        return pgsql.SQL("select ST_Dimension({0})").format(self._lit(geom))
 
     def getMulti(self, cl):
         # TODO: get pk
-        cl = '"' + '"."'.join(cl.replace('"', "").split(".")) + '"'
-        sql = """select id from only {0} where ST_NumGeometries(geom) > 1""".format(cl)
-        return sql
+        return pgsql.SQL(
+            "select id from only {0} where ST_NumGeometries(geom) > 1"
+        ).format(self._qualified(cl))
 
     def getDuplicatedGeom(self, schema, cl, geometryColumn, keyColumn):
-        sql = """select * from (
-        SELECT "{3}",
-        ROW_NUMBER() OVER(PARTITION BY "{2}" ORDER BY "{3}" asc) AS Row,
-        geom FROM ONLY "{0}"."{1}"
+        return pgsql.SQL(
+            """select * from (
+        SELECT {3},
+        ROW_NUMBER() OVER(PARTITION BY {2} ORDER BY {3} asc) AS Row,
+        geom FROM ONLY {0}.{1}
         ) dups
         where
-        dups.Row > 1""".format(
-            schema, cl, geometryColumn, keyColumn
+        dups.Row > 1"""
+        ).format(
+            self._ident(schema),
+            self._ident(cl),
+            self._ident(geometryColumn),
+            self._ident(keyColumn),
         )
-        return sql
 
     def getSmallAreas(self, schema, cl, areaTolerance, geometryColumn, keyColumn):
-        sql = """select  foo2."{4}", foo2."{3}" from (
-        select "{4}", "{3}", ST_Area("{3}") as area from "{0}"."{1}"
-        ) as foo2 where foo2.area < {2} order by foo2."{4}" """.format(
-            schema, cl, areaTolerance, geometryColumn, keyColumn
+        return pgsql.SQL(
+            """select  foo2.{4}, foo2.{3} from (
+        select {4}, {3}, ST_Area({3}) as area from {0}.{1}
+        ) as foo2 where foo2.area < {2} order by foo2.{4} """
+        ).format(
+            self._ident(schema),
+            self._ident(cl),
+            self._num(areaTolerance),
+            self._ident(geometryColumn),
+            self._ident(keyColumn),
         )
-        return sql
 
     def getSmallLines(self, schema, cl, areaTolerance, geometryColumn, keyColumn):
-        sql = """select  foo2."{4}", foo2."{3}" from (
-        select "{4}", "{3}", ST_Length("{3}") as len from "{0}"."{1}"
-        ) as foo2 where len < {2} order by foo2."{4}" """.format(
-            schema, cl, areaTolerance, geometryColumn, keyColumn
+        return pgsql.SQL(
+            """select  foo2.{4}, foo2.{3} from (
+        select {4}, {3}, ST_Length({3}) as len from {0}.{1}
+        ) as foo2 where len < {2} order by foo2.{4} """
+        ).format(
+            self._ident(schema),
+            self._ident(cl),
+            self._num(areaTolerance),
+            self._ident(geometryColumn),
+            self._ident(keyColumn),
         )
-        return sql
 
     def prepareVertexNearEdgesStruct(
         self, tableSchema, tableName, geometryColumn, keyColumn, geomType
     ):
+        # Texto partido por '#' no PostgisDb: nomes por _qi, sem '#'.
+        self._semSeparador(tableSchema, tableName, geometryColumn, keyColumn)
+        q = [self._qi(v) for v in (tableSchema, tableName, geometryColumn, keyColumn)]
         if "POLYGON" in geomType:
             sql = """drop table if exists seg#
             create temp table seg as (
-            SELECT segments."{3}" as "{3}", ST_MakeLine(sp,ep) as "{2}"
+            SELECT segments.{3} as {3}, ST_MakeLine(sp,ep) as {2}
             FROM
             (SELECT
-                ST_PointN("{2}", generate_series(1, ST_NPoints("{2}")-1)) as sp,
-                ST_PointN("{2}", generate_series(2, ST_NPoints("{2}")  )) as ep,
-                linestrings."{3}" as "{3}"
+                ST_PointN({2}, generate_series(1, ST_NPoints({2})-1)) as sp,
+                ST_PointN({2}, generate_series(2, ST_NPoints({2})  )) as ep,
+                linestrings.{3} as {3}
                 FROM
-                (SELECT "{3}" as "{3}", (ST_Dump(ST_Boundary("{2}"))).geom
-                FROM only "{0}"."{1}"
+                (SELECT {3} as {3}, (ST_Dump(ST_Boundary({2}))).geom
+                FROM only {0}.{1}
                 ) AS linestrings
                 ) AS segments)#
             drop table if exists pontos#
-            create temp table pontos as select "{3}" as "{3}", (ST_DumpPoints("{2}")).geom as "{2}" from only "{0}"."{1}"#
-            create index pontos_gist on pontos using gist ("{2}")#
-            create index seg_gist on seg using gist ("{2}")""".format(
-                tableSchema, tableName, geometryColumn, keyColumn
-            )
+            create temp table pontos as select {3} as {3}, (ST_DumpPoints({2})).geom as {2} from only {0}.{1}#
+            create index pontos_gist on pontos using gist ({2})#
+            create index seg_gist on seg using gist ({2})""".format(*q)
         else:
             sql = """drop table if exists seg#
             create temp table seg as (
-            SELECT segments."{3}" as "{3}", ST_MakeLine(sp,ep) as "{2}"
+            SELECT segments.{3} as {3}, ST_MakeLine(sp,ep) as {2}
             FROM
             (SELECT
-                ST_PointN("{2}", generate_series(1, ST_NPoints("{2}")-1)) as sp,
-                ST_PointN("{2}", generate_series(2, ST_NPoints("{2}")  )) as ep,
-                linestrings."{3}" as "{3}"
+                ST_PointN({2}, generate_series(1, ST_NPoints({2})-1)) as sp,
+                ST_PointN({2}, generate_series(2, ST_NPoints({2})  )) as ep,
+                linestrings.{3} as {3}
                 FROM
-                (SELECT "{3}" as "{3}", (ST_Dump("{2}")).geom
-                FROM only "{0}"."{1}"
+                (SELECT {3} as {3}, (ST_Dump({2})).geom
+                FROM only {0}.{1}
                 ) AS linestrings
                 ) AS segments)#
             drop table if exists pontos#
-            create temp table pontos as select "{3}" as "{3}", (ST_DumpPoints("{2}")).geom as "{2}" from only "{0}"."{1}"#
-            create index pontos_gist on pontos using gist ("{2}")#
-            create index seg_gist on seg using gist ("{2}")""".format(
-                tableSchema, tableName, geometryColumn, keyColumn
-            )
+            create temp table pontos as select {3} as {3}, (ST_DumpPoints({2})).geom as {2} from only {0}.{1}#
+            create index pontos_gist on pontos using gist ({2})#
+            create index seg_gist on seg using gist ({2})""".format(*q)
         return sql
 
     def getVertexNearEdgesStruct(self, epsg, tol, geometryColumn, keyColumn):
-        sql = """select pontos."{3}", ST_SetSRID(pontos."{2}",{0}) as "{2}" from pontos, seg where ST_DWithin(seg."{2}", pontos."{2}", {1}) and ST_Distance(seg."{2}", pontos."{2}") > 0""".format(
-            epsg, tol, geometryColumn, keyColumn
+        return pgsql.SQL(
+            """select pontos.{3}, ST_SetSRID(pontos.{2},{0}) as {2} from pontos, seg where ST_DWithin(seg.{2}, pontos.{2}, {1}) and ST_Distance(seg.{2}, pontos.{2}) > 0"""
+        ).format(
+            self._num(epsg),
+            self._num(tol),
+            self._ident(geometryColumn),
+            self._ident(keyColumn),
         )
-        return sql
 
     def deleteFeatures(self, schema, table, idList, keyColumn):
-        sql = """DELETE FROM "{0}"."{1}"
-        WHERE "{3}" in ({2})""".format(
-            schema, table, ",".join(idList), keyColumn
+        return pgsql.SQL(
+            """DELETE FROM {0}.{1}
+        WHERE {3} in ({2})"""
+        ).format(
+            self._ident(schema),
+            self._ident(table),
+            pgsql.SQL(",").join([self._val(i) for i in idList]),
+            self._ident(keyColumn),
         )
-        return sql
 
     def deleteFeaturesNotIn(self, schema, table, idList):
-        sql = """DELETE FROM "{0}"."{1}"
-        WHERE id not in ({2})""".format(
-            schema, table, ",".join(map(str, idList))
+        return pgsql.SQL(
+            """DELETE FROM {0}.{1}
+        WHERE id not in ({2})"""
+        ).format(
+            self._ident(schema),
+            self._ident(table),
+            pgsql.SQL(",").join([self._val(i) for i in idList]),
         )
-        return sql
 
     def getNotSimple(self, tableSchema, tableName, geometryColumn, keyColumn):
-        sql = """select foo."{3}" as "{3}", ST_MULTI(st_startpoint(foo."{2}")) as "{2}" from (
-        select "{3}" as "{3}", (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid("{2}"),ST_SRID("{2}"))))).geom as "{2}" from "{0}"."{1}"
-        where ST_IsSimple("{2}") = 'f') as foo where st_equals(st_startpoint(foo."{2}"),st_endpoint(foo."{2}"))""".format(
-            tableSchema, tableName, geometryColumn, keyColumn
+        return pgsql.SQL(
+            """select foo.{3} as {3}, ST_MULTI(st_startpoint(foo.{2})) as {2} from (
+        select {3} as {3}, (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid({2}),ST_SRID({2}))))).geom as {2} from {0}.{1}
+        where ST_IsSimple({2}) = 'f') as foo where st_equals(st_startpoint(foo.{2}),st_endpoint(foo.{2}))"""
+        ).format(
+            self._ident(tableSchema),
+            self._ident(tableName),
+            self._ident(geometryColumn),
+            self._ident(keyColumn),
         )
-        return sql
 
     def getOutofBoundsAngles(
         self, tableSchema, tableName, angle, geometryColumn, geomType, keyColumn
     ):
+        args = (
+            self._ident(tableSchema),
+            self._ident(tableName),
+            self._num(angle),
+            self._ident(geometryColumn),
+            self._ident(keyColumn),
+        )
         if "LINESTRING" in geomType:
-            sql = """
-            WITH result AS (SELECT points."{4}", points.anchor, (degrees
+            tpl = """
+            WITH result AS (SELECT points.{4}, points.anchor, (degrees
                                         (
                                             ST_Azimuth(points.anchor, points.pt1) - ST_Azimuth(points.anchor, points.pt2)
                                         )::decimal + 360) % 360 as angle
                         FROM
                         (SELECT
-                              ST_PointN("{3}", generate_series(1, ST_NPoints("{3}")-2)) as pt1,
-                              ST_PointN("{3}", generate_series(2, ST_NPoints("{3}")-1)) as anchor,
-                              ST_PointN("{3}", generate_series(3, ST_NPoints("{3}"))) as pt2,
-                              linestrings."{4}" as "{4}"
+                              ST_PointN({3}, generate_series(1, ST_NPoints({3})-2)) as pt1,
+                              ST_PointN({3}, generate_series(2, ST_NPoints({3})-1)) as anchor,
+                              ST_PointN({3}, generate_series(3, ST_NPoints({3}))) as pt2,
+                              linestrings.{4} as {4}
                             FROM
-                              (SELECT "{4}" as "{4}", (ST_Dump("{3}")).geom as "{3}"
-                               FROM only "{0}"."{1}"
-                               ) AS linestrings WHERE ST_NPoints(linestrings."{3}") > 2 ) as points)
-            select distinct "{4}", anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(
-                tableSchema, tableName, angle, geometryColumn, keyColumn
-            )
+                              (SELECT {4} as {4}, (ST_Dump({3})).geom as {3}
+                               FROM only {0}.{1}
+                               ) AS linestrings WHERE ST_NPoints(linestrings.{3}) > 2 ) as points)
+            select distinct {4}, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))"""
         elif "POLYGON" in geomType:
-            sql = """
-            WITH result AS (SELECT points."{4}", points.anchor, (degrees
+            tpl = """
+            WITH result AS (SELECT points.{4}, points.anchor, (degrees
                                         (
                                             ST_Azimuth(points.anchor, points.pt1) - ST_Azimuth(points.anchor, points.pt2)
                                         )::decimal + 360) % 360 as angle
                         FROM
                         (SELECT
-                              ST_PointN("{3}", generate_series(1, ST_NPoints("{3}")-1)) as pt1,
-                              ST_PointN("{3}", generate_series(1, ST_NPoints("{3}")-1) %  (ST_NPoints("{3}")-1)+1) as anchor,
-                              ST_PointN("{3}", generate_series(2, ST_NPoints("{3}")) %  (ST_NPoints("{3}")-1)+1) as pt2,
-                              linestrings."{4}" as "{4}"
+                              ST_PointN({3}, generate_series(1, ST_NPoints({3})-1)) as pt1,
+                              ST_PointN({3}, generate_series(1, ST_NPoints({3})-1) %  (ST_NPoints({3})-1)+1) as anchor,
+                              ST_PointN({3}, generate_series(2, ST_NPoints({3})) %  (ST_NPoints({3})-1)+1) as pt2,
+                              linestrings.{4} as {4}
                             FROM
-                              (SELECT "{4}" as "{4}", (ST_Dump(ST_Boundary(ST_ForceRHR((ST_Dump("{3}")).geom)))).geom as "{3}"
-                               FROM only "{0}"."{1}"
-                               ) AS linestrings WHERE ST_NPoints(linestrings."{3}") > 2 ) as points)
-            select distinct "{4}", anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(
-                tableSchema, tableName, angle, geometryColumn, keyColumn
-            )
-        return sql
+                              (SELECT {4} as {4}, (ST_Dump(ST_Boundary(ST_ForceRHR((ST_Dump({3})).geom)))).geom as {3}
+                               FROM only {0}.{1}
+                               ) AS linestrings WHERE ST_NPoints(linestrings.{3}) > 2 ) as points)
+            select distinct {4}, anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))"""
+        return pgsql.SQL(tpl).format(*args)
 
     def getFlagsByProcess(self, processName):
-        sql = (
-            """select layer, feat_id, geometry_column from validation.aux_flags_validacao where process_name = '%s'"""
-            % self._el(processName)
-        )
-        return sql
+        return pgsql.SQL(
+            """select layer, feat_id, geometry_column from validation.aux_flags_validacao where process_name = {0}"""
+        ).format(self._lit(processName))
 
     def forceValidity(
         self, tableSchema, tableName, idList, srid, keyColumn, geometryColumn
     ):
-        sql = """update "{0}"."{1}" set "{5}" = ST_Multi(result."{5}") from (
-        select distinct parts."{4}", ST_Union(parts."{5}") as "{5}" from "{0}"."{1}" as source,
-                                        (select "{4}" as "{4}", ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid("{5}"), {3}))).geom)) as "{5}" from
-                                        "{0}"."{1}"  where "{4}" in ({2})) as parts where ST_GeometryType(parts."{5}") = ST_GeometryType(source."{5}") group by parts."{4}"
-        ) as result where  result."{4}" = "{0}"."{1}"."{4}" """.format(
-            tableSchema, tableName, ",".join(idList), srid, keyColumn, geometryColumn
+        return pgsql.SQL(
+            """update {0}.{1} set {5} = ST_Multi(result.{5}) from (
+        select distinct parts.{4}, ST_Union(parts.{5}) as {5} from {0}.{1} as source,
+                                        (select {4} as {4}, ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid({5}), {3}))).geom)) as {5} from
+                                        {0}.{1}  where {4} in ({2})) as parts where ST_GeometryType(parts.{5}) = ST_GeometryType(source.{5}) group by parts.{4}
+        ) as result where  result.{4} = {0}.{1}.{4} """
+        ).format(
+            self._ident(tableSchema),
+            self._ident(tableName),
+            pgsql.SQL(",").join([self._val(i) for i in idList]),
+            self._num(srid),
+            self._ident(keyColumn),
+            self._ident(geometryColumn),
         )
-        return sql
 
     def getTableExtent(self, tableSchema, tableName):
         # TODO: put geometry column
-        sql = """
-        SELECT ST_XMin(ST_Extent(geom)), ST_XMax(ST_Extent(geom)), ST_YMin(ST_Extent(geom)), ST_YMax(ST_Extent(geom)) AS extent FROM "{0}"."{1}"
-        """.format(
-            tableSchema, tableName
-        )
-        return sql
+        return pgsql.SQL(
+            """
+        SELECT ST_XMin(ST_Extent(geom)), ST_XMax(ST_Extent(geom)), ST_YMin(ST_Extent(geom)), ST_YMax(ST_Extent(geom)) AS extent FROM {0}.{1}
+        """
+        ).format(self._ident(tableSchema), self._ident(tableName))
 
     def getOrphanGeomTablesWithElements(self, loading=False):
         # TODO: Avaliate if deprecated
@@ -1122,19 +1114,25 @@ class PostGISSqlGenerator(SqlGenerator):
     def updateOriginalTable(self, tableSchema, tableName, result, epsg):
         # TODO: Put original id
         sqls = []
+        srid = self._num(epsg)
         for key in list(result.keys()):
-            geoms = []
-            for wkb in result[key]:
-                geoms.append("ST_SetSRID(ST_Multi('{0}'), {1})".format(wkb, epsg))
-            array = ",".join(geoms)
-            union = "ST_Union(ARRAY[{}])".format(array)
-
-            sql = """
-            UPDATE "{0}"."{1}" SET geom = ST_Multi({2}) WHERE id = {3}
-            """.format(
-                tableSchema, tableName, union, key
+            geoms = [
+                pgsql.SQL("ST_SetSRID(ST_Multi({0}), {1})").format(self._lit(wkb), srid)
+                for wkb in result[key]
+            ]
+            union = pgsql.SQL("ST_Union(ARRAY[{0}])").format(pgsql.SQL(",").join(geoms))
+            sqls.append(
+                pgsql.SQL(
+                    """
+            UPDATE {0}.{1} SET geom = ST_Multi({2}) WHERE id = {3}
+            """
+                ).format(
+                    self._ident(tableSchema),
+                    self._ident(tableName),
+                    union,
+                    self._val(key),
+                )
             )
-            sqls.append(sql)
         return sqls
 
     def getOrphanTableElementCount(self, orphan):
@@ -1158,72 +1156,75 @@ class PostGISSqlGenerator(SqlGenerator):
         ).format(self._ident(table), inClause)
 
     def getWhoAmI(self, cl, id):
-        sql = "select p.relname from {0} as c, pg_class as p where c.tableoid = p.oid and c.id = {1}".format(
-            cl, id
-        )
-        return sql
+        return pgsql.SQL(
+            "select p.relname from {0} as c, pg_class as p where c.tableoid = p.oid and c.id = {1}"
+        ).format(self._parseSqlName(cl), self._val(id))
 
     def snapLinesToFrame(
         self, cl, frameTable, tol, geometryColumn, keyColumn, frameGeometryColumn
     ):
+        # Texto partido por '#' no PostgisDb: nomes por _qi, sem '#'.
         schema, table = cl.split(".")
         frameSchema, frameTable = frameTable.split(".")
+        self._semSeparador(
+            schema, table, frameSchema, frameTable, geometryColumn, keyColumn,
+            frameGeometryColumn,
+        )
         sql = """
-        update "{0}"."{1}" as classe set "{5}" = ST_Multi(agrupado."{5}")
+        update {0}.{1} as classe set {5} = ST_Multi(agrupado.{5})
         from
             (
-                select simplelines."{6}" as "{6}", ST_Union(simplelines.newline) as "{5}"
+                select simplelines.{6} as {6}, ST_Union(simplelines.newline) as {5}
                 from
                 (
-                    select short."{6}", St_SetPoint((ST_Dump(short."{5}")).geom, 0,
+                    select short.{6}, St_SetPoint((ST_Dump(short.{5})).geom, 0,
                     ST_EndPoint(from_start)) as newline
                     from
-                    (   select a."{6}" as "{6}", a."{5}" as "{5}",
-                        ST_ShortestLine(st_startpoint((ST_Dump(a."{5}")).geom),
-                        ST_Boundary(m."{7}")) as from_start
-                        from "{0}"."{1}" a, "{3}"."{4}" m
+                    (   select a.{6} as {6}, a.{5} as {5},
+                        ST_ShortestLine(st_startpoint((ST_Dump(a.{5})).geom),
+                        ST_Boundary(m.{7})) as from_start
+                        from {0}.{1} a, {3}.{4} m
                     ) as short
                     where ST_Length(from_start) < {2}
-                ) as simplelines group by simplelines."{6}"
+                ) as simplelines group by simplelines.{6}
             ) as agrupado
-        where classe."{6}" = agrupado."{6}"#
-        update "{0}"."{1}" as classe set "{5}" = ST_Multi(agrupado."{5}")
+        where classe.{6} = agrupado.{6}#
+        update {0}.{1} as classe set {5} = ST_Multi(agrupado.{5})
         from
             (
-                select simplelines."{6}" as "{6}", ST_Union(simplelines.newline) as "{5}"
+                select simplelines.{6} as {6}, ST_Union(simplelines.newline) as {5}
                 from
                 (
-                    select short."{6}", St_SetPoint((ST_Dump(short."{5}")).geom,
+                    select short.{6}, St_SetPoint((ST_Dump(short.{5})).geom,
                     short.index - 1, ST_EndPoint(from_start)) as newline
                     from
-                    (   select a."{6}" as "{6}", a."{5}" as "{5}",
-                        ST_ShortestLine(st_endpoint((ST_Dump(a."{5}")).geom),
-                        ST_Boundary(m."{7}")) as from_start,
-                        ST_NPoints((ST_Dump(a."{5}")).geom) as index
-                        from "{0}"."{1}" a, "{3}"."{4}" m
+                    (   select a.{6} as {6}, a.{5} as {5},
+                        ST_ShortestLine(st_endpoint((ST_Dump(a.{5})).geom),
+                        ST_Boundary(m.{7})) as from_start,
+                        ST_NPoints((ST_Dump(a.{5})).geom) as index
+                        from {0}.{1} a, {3}.{4} m
                     ) as short
                     where ST_Length(from_start) < {2}
-                ) as simplelines group by simplelines."{6}"
+                ) as simplelines group by simplelines.{6}
             ) as agrupado
-        where classe."{6}" = agrupado."{6}"
+        where classe.{6} = agrupado.{6}
         """.format(
-            schema,
-            table,
-            str(tol),
-            frameSchema,
-            frameTable,
-            geometryColumn,
-            keyColumn,
-            frameGeometryColumn,
+            self._qi(schema),
+            self._qi(table),
+            str(self._num(tol).wrapped),
+            self._qi(frameSchema),
+            self._qi(frameTable),
+            self._qi(geometryColumn),
+            self._qi(keyColumn),
+            self._qi(frameGeometryColumn),
         )
         return sql
 
     def densifyFrame(
         self, cl, frameTable, snapTolerance, geometryColumn, frameGeometryColumn
     ):
-        cl = '"' + '"."'.join(cl.replace('"', "").split(".")) + '"'
-        frameTable = '"' + '"."'.join(frameTable.replace('"', "").split(".")) + '"'
-        sql = """
+        return pgsql.SQL(
+            """
         update {2} m set {4} = st_multi(st_snap(m.{4},
         foo.vertices, {1}))
         from
@@ -1231,65 +1232,86 @@ class PostGISSqlGenerator(SqlGenerator):
             select st_union(st_boundary(a.{3})) as vertices from
         {0} a
         ) as foo
-        """.format(
-            cl, snapTolerance, frameTable, geometryColumn, frameGeometryColumn
+        """
+        ).format(
+            self._qualified(cl),
+            self._num(snapTolerance),
+            self._qualified(frameTable),
+            self._ident(geometryColumn),
+            self._ident(frameGeometryColumn),
         )
-        return sql
 
     def snapToGrid(self, cl, precision, srid, geometryColumn):
         schema, table = cl.split(".")
-        sql = 'update "{0}"."{1}" set "{4}" = ST_SetSRID(ST_SnapToGrid("{4}",{2}),{3})'.format(
-            schema, table, precision, srid, geometryColumn
+        return pgsql.SQL(
+            "update {0}.{1} set {4} = ST_SetSRID(ST_SnapToGrid({4},{2}),{3})"
+        ).format(
+            self._ident(schema),
+            self._ident(table),
+            self._num(precision),
+            self._num(srid),
+            self._ident(geometryColumn),
         )
-        return sql
 
     def makeRecursiveSnapFunction(self, geometryColumn, keyColumn):
+        """
+        As colunas ficam dentro de literais do corpo plpgsql: entram por _qi e
+        com a aspa simples dobrada. A tabela, que chega em tempo de execução,
+        passa por ::regclass, que só aceita um nome de tabela existente (antes
+        era concatenada crua no EXECUTE).
+        """
+        for nome in (geometryColumn, keyColumn):
+            if "$BODY$" in str(nome):
+                raise ValueError("nome de coluna inválido: {0!r}".format(nome))
+        geom = self._el(self._qi(geometryColumn))
+        key = self._el(self._qi(keyColumn))
         sql = """
         CREATE OR REPLACE FUNCTION dsgsnap(tabela text, snap float) RETURNS void AS
         $BODY$
             DECLARE
             id int;
             BEGIN
-                FOR id in execute('select "{1}" from '||tabela)
+                FOR id in execute('select {1} from '||tabela::regclass::text)
                 LOOP
                     EXECUTE
-                'update '||tabela||' as classe set "{0}" = st_multi(res."{0}")
+                'update '||tabela::regclass::text||' as classe set {0} = st_multi(res.{0})
                 from
                     (
-                        select st_snap(a."{0}", st_collect(b."{0}"), '||snap||') as "{0}", a."{1}" as "{1}"
-                        from '||tabela||' a, '||tabela||' b
-                        where a."{1}" != b."{1}" and st_isempty(a."{0}") = FALSE and a."{1}" = '||id||'
-                        group by a."{1}", a."{0}"
+                        select st_snap(a.{0}, st_collect(b.{0}), '||snap||') as {0}, a.{1} as {1}
+                        from '||tabela::regclass::text||' a, '||tabela::regclass::text||' b
+                        where a.{1} != b.{1} and st_isempty(a.{0}) = FALSE and a.{1} = '||id||'
+                        group by a.{1}, a.{0}
                     ) as res
-                where res."{1}" = classe."{1}" ';
+                where res.{1} = classe.{1} ';
                 END LOOP;
                 RETURN;
             END
         $BODY$
         LANGUAGE plpgsql;
         """.format(
-            geometryColumn, keyColumn
+            geom, key
         )
         return sql
 
     def executeRecursiveSnap(self, cl, tol):
-        sql = "SELECT dsgsnap('{0}', {1})".format(cl, str(tol))
-        return sql
+        return pgsql.SQL("SELECT dsgsnap({0}, {1})").format(
+            self._lit(cl), self._num(tol)
+        )
 
     def createTempTable(self, layerName):
+        # Texto partido por '#' no PostgisDb: nomes por _qi, sem '#'.
         schema, tableName = layerName.split(".")
+        self._semSeparador(schema, tableName)
         sql = """
-        DROP TABLE IF EXISTS "{0}"."{1}_temp"#
-        CREATE TABLE "{0}"."{1}_temp" as (select * from "{0}"."{1}" where 1=2)
+        DROP TABLE IF EXISTS {0}.{1}#
+        CREATE TABLE {0}.{1} as (select * from {0}.{2} where 1=2)
         """.format(
-            schema, tableName
+            self._qi(schema), self._qi(tableName + "_temp"), self._qi(tableName)
         )
         return sql
 
     def dropTempTable(self, tableName):
-        tableName = '"' + '"."'.join(tableName.replace('"', "").split(".")) + '"'
-        sql = """DROP TABLE IF EXISTS {0}""".format(tableName)
-        return sql
+        return pgsql.SQL("DROP TABLE IF EXISTS {0}").format(self._qualified(tableName))
 
     def populateTempTable(self, tableName, attributes, prepareValues):
         tableName = '"' + '"."'.join(tableName.split("."))
@@ -1301,11 +1323,13 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def createSpatialIndex(self, tableName, geomColumnName="geom"):
-        tableName = '"' + '"."'.join(tableName.replace('"', "").split("."))
-        sql = 'create index "{0}_temp_gist" on {1}_temp" using gist ({2})'.format(
-            tableName.split(".")[-1].replace('"', ""), tableName, geomColumnName
+        partes = tableName.replace('"', "").split(".")
+        tabela = partes[:-1] + [partes[-1] + "_temp"]
+        return pgsql.SQL("create index {0} on {1} using gist ({2})").format(
+            self._ident(partes[-1] + "_temp_gist"),
+            pgsql.SQL(".").join([self._ident(p) for p in tabela]),
+            self._ident(geomColumnName),
         )
-        return sql
 
     def getStyles(self):
         sql = "select description, f_table_schema, f_table_name, stylename from public.layer_styles where f_table_catalog = current_database()"
@@ -1650,17 +1674,15 @@ class PostGISSqlGenerator(SqlGenerator):
         )
 
     def deleteFeatureFlagsFromDb(self, layer, feat_id, processName):
-        sql = "DELETE FROM validation.aux_flags_validacao WHERE process_name = '{0}' AND layer = '{1}' AND feat_id = {2}".format(
-            processName, layer, feat_id
-        )
-        return sql
+        return pgsql.SQL(
+            "DELETE FROM validation.aux_flags_validacao WHERE process_name = {0} AND layer = {1} AND feat_id = {2}"
+        ).format(self._lit(processName), self._lit(layer), self._num(feat_id))
 
     def removeEmptyGeomtriesFromDb(self, layer, geometryColumn):
         schema, table = layer.split(".")
-        sql = """DELETE FROM "{0}"."{1}" WHERE st_isempty("{2}") = TRUE""".format(
-            schema, table, geometryColumn
+        return pgsql.SQL("DELETE FROM {0}.{1} WHERE st_isempty({2}) = TRUE").format(
+            self._ident(schema), self._ident(table), self._ident(geometryColumn)
         )
-        return sql
 
     def getDomainTables(self):
         sql = """select distinct table_name from information_schema.columns where table_schema = 'dominios' order by table_name asc"""
@@ -1933,44 +1955,48 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def createCoverageTempTable(self, srid):
-        sql = """
+        return pgsql.SQL(
+            """
         DROP TABLE IF EXISTS validation.coverage_temp;
         CREATE TABLE validation.coverage_temp (
             id serial NOT NULL,
             featid bigint NOT NULL,
             classname varchar(200) NOT NULL,
-            geom geometry(MULTIPOLYGON, {}) NOT NULL,
+            geom geometry(MULTIPOLYGON, {0}) NOT NULL,
             CONSTRAINT coverage_pk PRIMARY KEY (id)
         )
-        """.format(
-            srid
-        )
-        return sql
+        """
+        ).format(self._num(srid))
 
     def checkCoverageForGapsWithFrame(self, frameTable, geomColumn):
         frameSchema, frameTable = frameTable.split(".")
-        sql = """
+        return pgsql.SQL(
+            """
         select (ST_Dump(ST_SymDifference(a.geom, b.geom))).geom from
-        (select ST_Union({0}) as geom from "{1}"."{2}") as a,
+        (select ST_Union({0}) as geom from {1}.{2}) as a,
         (select ST_Union(geom) as geom from validation.coverage_temp) as b
-        """.format(
-            geomColumn, frameSchema, frameTable
+        """
+        ).format(
+            self._ident(geomColumn), self._ident(frameSchema), self._ident(frameTable)
         )
-        return sql
 
     def checkCoverageForOverlaps(
         self, table="validation.coverage_temp", geomColumn="geom", keyColumn="id"
     ):
         tableSchema, tableName = table.split(".")
-        sql = """
+        return pgsql.SQL(
+            """
         select (ST_Dump(foo.geom)).geom as geom from (
-        select (ST_GeoTableSummary('{0}', '{1}', '{2}', '{3}', 10, 'S3')).geom
+        select (ST_GeoTableSummary({0}, {1}, {2}, {3}, 10, 'S3')).geom
         ) as foo
         where ST_IsEmpty(foo.geom) = 'f'
-        """.format(
-            tableSchema, tableName, geomColumn, keyColumn
+        """
+        ).format(
+            self._lit(tableSchema),
+            self._lit(tableName),
+            self._lit(geomColumn),
+            self._lit(keyColumn),
         )
-        return sql
 
     def getProcessOrClassFlags(self, filterType=None):
         """
@@ -2001,20 +2027,25 @@ class PostGISSqlGenerator(SqlGenerator):
         Returns process or classes that raised flags filtered by
         chosen element in comboBox
         """
-        sql = ""
         # problemas com o Enum.
         if "process" in filterType.lower():
             filterTypeEnum = 0
         elif filterType:
             filterTypeEnum = 1
-        sql = """
+        sql = pgsql.SQL(
+            """
         SELECT * FROM validation.aux_flags_validacao;
             """
-        whereClause = ""
+        )
+        whereClause = pgsql.SQL("")
         if filterTypeEnum == DsgEnums.ProcessName:
-            whereClause = " WHERE process_name = '{0}';".format(filteredElement)
+            whereClause = pgsql.SQL(" WHERE process_name = {0};").format(
+                self._lit(filteredElement)
+            )
         elif filterType == DsgEnums.ClassName:
-            whereClause = " WHERE layer = '{0}';".format(filteredElement)
+            whereClause = pgsql.SQL(" WHERE layer = {0};").format(
+                self._lit(filteredElement)
+            )
         if filteredElement and filteredElement != "":
             sql = sql + whereClause
         return sql
@@ -2024,20 +2055,26 @@ class PostGISSqlGenerator(SqlGenerator):
         Returns the query for creating and populating a view table of flags raised in
         validation processes based on users settings.
         """
-        sql = """
+        sql = pgsql.SQL(
+            """
         CREATE OR REPLACE VIEW validation.filtered_flags AS
         SELECT * FROM validation.aux_flags_validacao
         """
-        whereClause = ""
+        )
+        whereClause = pgsql.SQL("")
         # problemas com o Enum.
         if "process" in filterType.lower():
             filterTypeEnum = 0
         elif filterType:
             filterTypeEnum = 1
         if filterTypeEnum == DsgEnums.ProcessName:
-            whereClause = " WHERE process_name = '{0}';".format(filteredElement)
+            whereClause = pgsql.SQL(" WHERE process_name = {0};").format(
+                self._lit(filteredElement)
+            )
         elif filterTypeEnum == DsgEnums.ClassName:
-            whereClause = " WHERE layer = '{0}';".format(filteredElement)
+            whereClause = pgsql.SQL(" WHERE layer = {0};").format(
+                self._lit(filteredElement)
+            )
         if filteredElement and filteredElement != "":
             sql = sql + whereClause
         return sql
@@ -2046,15 +2083,19 @@ class PostGISSqlGenerator(SqlGenerator):
         self, table="validation.coverage_temp", geomColumn="geom", keyColumn="id"
     ):
         tableSchema, tableName = table.split(".")
-        sql = """
+        return pgsql.SQL(
+            """
         select (ST_Dump(foo.geom)).geom as geom from (
-        select (ST_GeoTableSummary('{0}', '{1}', '{2}', '{3}', 10, 'S4')).geom
+        select (ST_GeoTableSummary({0}, {1}, {2}, {3}, 10, 'S4')).geom
         ) as foo
         where ST_IsEmpty(foo.geom) = 'f'
-        """.format(
-            tableSchema, tableName, geomColumn, keyColumn
+        """
+        ).format(
+            self._lit(tableSchema),
+            self._lit(tableName),
+            self._lit(geomColumn),
+            self._lit(keyColumn),
         )
-        return sql
 
     def createValidationHistoryViewTableQuery(self, idListString=None):
         """
@@ -2063,6 +2104,8 @@ class PostGISSqlGenerator(SqlGenerator):
         If the optional parameter idListString is given, the list will
         be filtered to a list of given IDs (format: "(int)(id_1, id_2, ...)").
         This method uses the data on compact_process_history.
+        O idListString só passa no formato (1, 2, 3); outro texto levanta
+        ValueError em vez de seguir como SQL.
         """
         sql = """
         CREATE OR REPLACE VIEW validation.process_history_view AS
@@ -2072,6 +2115,8 @@ class PostGISSqlGenerator(SqlGenerator):
         ORDER BY t.finished DESC;
         """
         if idListString:
+            if not _LISTA_DE_IDS.match(str(idListString)):
+                raise ValueError("lista de ids inválida: {0!r}".format(idListString))
             sql = sql.replace(
                 "ORDER BY t.finished DESC;",
                 "WHERE t.id in {0} ORDER BY t.finished DESC;",
@@ -2099,10 +2144,12 @@ class PostGISSqlGenerator(SqlGenerator):
     def getValidationHistoryQuery(self, idListString=None):
         """
         Returns the query of all validation processes available informations.
-        :param idListString:
+        :param idListString: só no formato (1, 2, 3).
         """
         sql = """SELECT * FROM validation.process_history;"""
         if idListString:
+            if not _LISTA_DE_IDS.match(str(idListString)):
+                raise ValueError("lista de ids inválida: {0!r}".format(idListString))
             sql = sql.replace(";", " WHERE id IN {};".format(idListString))
         return sql
 
@@ -2128,25 +2175,24 @@ class PostGISSqlGenerator(SqlGenerator):
         Returns the query for compact validation history table population.
         :param logList: either a list of logs or a log line [id, process_name, log_text, status, finished_timestamp]
         """
-        sql = ""
-        if isinstance(logList, list):
-            for log in logList:
-                sql += """INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".format(
-                    log[0],
-                    log[1],
-                    log[2].replace(r"\n", "\n"),
-                    log[3],
-                    log[4].toPyDateTime(),
-                )
-        elif logList:
-            sql += """INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".format(
-                logList[0],
-                logList[1],
-                logList[2].replace(r"\n", "\n"),
-                logList[3],
-                logList[4].toPyDateTime(),
+        tpl = pgsql.SQL(
+            "INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, {1}, {2}, {3}, {4});\n"
+        )
+
+        def linha(log):
+            return tpl.format(
+                self._num(log[0]),
+                self._lit(log[1]),
+                self._lit(log[2].replace(r"\n", "\n")),
+                self._num(log[3]),
+                self._lit(log[4].toPyDateTime()),
             )
-        return sql
+
+        if isinstance(logList, list):
+            return pgsql.SQL("").join([linha(log) for log in logList])
+        elif logList:
+            return linha(logList)
+        return ""
 
     def getAttrListWithFilter(self):
         sql = """select distinct table_name from information_schema.columns where table_schema = 'dominios' and column_name = 'filter'"""
