@@ -21,8 +21,20 @@ de cada módulo: assim o resultado é observável e vira código de saída (0 = 
 Testes que executam Processing (`processing.run`) dependem do provider do DSGTools
 registrado, o que é feito aqui. Já a execução dos algoritmos por linha de comando
 tem caminho próprio: veja `dsgtools_cli/`.
+
+Uma única QgsApplication por processo. A aplicação é criada por
+`qgis.testing.start_app()`, o mesmo que os módulos de teste chamam ao serem
+importados. O `start_app()` só reconhece a aplicação que ele próprio criou (guarda
+na global `QGISAPP` do `qgis.testing`, não consulta `QgsApplication.instance()`),
+então, se o runner criasse a sua com `QgsApplication([], False)`, cada módulo que
+chama `start_app()` criaria uma segunda, com `initQgis()` de novo e um
+`exitQgis()` registrado no `atexit`. O Qt admite um só objeto de aplicação, e as
+duas finalizações sobre o mesmo estado global corrompem o heap na saída
+(0xC0000374 e 0xC0000409 no Windows), depois do veredito impresso, o que fazia o
+código de saída mentir mesmo com todos os testes passando.
 """
 import os
+import shutil
 import sys
 import unittest
 from pathlib import Path
@@ -66,10 +78,12 @@ def main():
     sys.path.insert(0, str(REPO_ROOT))
 
     from qgis.core import QgsApplication
+    from qgis.testing import start_app
 
     QgsApplication.setPrefixPath(qgisPrefixPath(), True)
-    app = QgsApplication([], False)
-    app.initQgis()
+    # cleanup=False: quem finaliza é o `finally` abaixo, uma vez só; com True o
+    # start_app registraria outro exitQgis() no atexit
+    app = start_app(cleanup=False)
     try:
         sys.path.append(os.path.join(app.prefixPath(), "python", "plugins"))
         from processing.core.Processing import Processing
@@ -86,6 +100,14 @@ def main():
         QgsApplication.processingRegistry().addProvider(provider)
 
         module = __import__(moduleName, fromlist=["__name__"])
+        if QgsApplication.instance() is not app:
+            # algum import criou outra QgsApplication por fora do start_app(); a
+            # saída pode cair, e então o veredito impresso é o que vale
+            print(
+                "AVISO: há uma segunda QgsApplication no processo; o código de saída "
+                "pode não refletir o veredito",
+                file=sys.stderr,
+            )
         suite = unittest.TestLoader().loadTestsFromModule(module)
         if pattern is not None:
             suite = filterSuite(suite, pattern)
@@ -96,6 +118,10 @@ def main():
         return 0 if result.wasSuccessful() else 1
     finally:
         app.exitQgis()
+        # o perfil descartável que o start_app() criou na pasta temporária
+        perfil = os.environ.get("QGIS_CUSTOM_CONFIG_PATH")
+        if perfil and Path(perfil).name.startswith("QGIS-PythonTestConfigPath-"):
+            shutil.rmtree(perfil, ignore_errors=True)
 
 
 if __name__ == "__main__":
