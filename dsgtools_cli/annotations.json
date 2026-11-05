@@ -2522,37 +2522,6 @@
       "OUTPUT": "TEMPORARY_OUTPUT"
     }
   },
-  "dsgtools:runfmesap": {
-    "description": "Dispara a execução de um workspace FME no servidor SAP via API REST, aguarda a conclusão do job e retorna o log de flags gerados. Aceita os parâmetros via arquivo JSON ou texto JSON direto.",
-    "constraints": [
-      "Requer conectividade de rede com o servidor FME Manager informado.",
-      "O arquivo JSON ou texto JSON deve conter as chaves 'server' e 'workspace_id'.",
-      "O algoritmo aguarda indefinidamente (até 150 tentativas com intervalo de 3 s) pela conclusão do job."
-    ],
-    "example": {
-      "FILE": "C:/fme/parametros_workspace.json",
-      "TEXT": "[]",
-      "OUTPUT": "OUTPUT"
-    }
-  },
-  "dsgtools:runremotefme": {
-    "description": "Executa remotamente um workspace FME via FME Manager (v1 ou v2), aguardando a conclusão do job e reportando o número de flags por camada de saída no log do processamento.",
-    "constraints": [
-      "Requer conectividade de rede com o servidor FME Manager.",
-      "O parâmetro FME_MANAGER deve conter ao menos 'server' e 'workspace_id' válidos.",
-      "O algoritmo aguarda em loop (3 s de intervalo) até o status 2 (sucesso) ou 3 (erro) ser retornado."
-    ],
-    "example": {
-      "FME_MANAGER": {
-        "server": "http://fme.exercito.eb.br",
-        "workspace_id": 42,
-        "version": "v2",
-        "parameters": {},
-        "use_ssl": false,
-        "use_proxy": false
-      }
-    }
-  },
   "dsgtools:selectbyde9im": {
     "description": "Seleciona feições na camada de entrada que satisfazem uma relação espacial DE-9IM com feições da camada de intersecção, modificando a seleção da camada in-place. Permite quatro modos de seleção (nova, adicionar, dentro, remover).",
     "constraints": [

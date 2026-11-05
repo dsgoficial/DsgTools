@@ -24,13 +24,12 @@
 import os
 import json
 import re
-import requests
 from xml.dom.minidom import parse, parseString
 
 from qgis.utils import iface
 from qgis.core import Qgis, QgsMessageLog, QgsExpression
 from qgis.gui import QgsGui
-from qgis.PyQt.QtCore import QCoreApplication, QMetaType, QObject, QSettings
+from qgis.PyQt.QtCore import QCoreApplication, QMetaType, QObject
 from qgis.PyQt.QtWidgets import QAction, QToolBar, QMessageBox, QTreeWidgetItem
 from qgis.PyQt.QtGui import QColor
 
@@ -275,46 +274,6 @@ class Utils(object):
                 return False
         except:
             return False
-
-    def get_proxy_config(self):
-        """Get proxy config from QSettings and builds proxy parameters
-        :return: dictionary of transfer protocols mapped to addresses, also authentication if set in QSettings
-        :rtype: (dict, requests.auth.HTTPProxyAuth) or (dict, None)
-        """
-        enabled, host, port, user, password = self.get_proxy_from_qsettings()
-
-        proxy_dict = {}
-        if enabled and host:
-            port_str = str(port) if port else ""
-            for protocol in ["http", "https", "ftp"]:
-                proxy_dict[protocol] = "{}://{}:{}".format(protocol, host, port_str)
-
-        auth = (
-            requests.auth.HTTPProxyAuth(user, password)
-            if enabled and user and password
-            else None
-        )
-
-        return proxy_dict, auth
-
-    @staticmethod
-    def get_proxy_from_qsettings():
-        """Gets the proxy configuration from QSettings
-        :return: Proxy settings: flag specifying if proxy is enabled, host, port, user and password
-        :rtype: tuple(str)
-        """
-        settings = QSettings()
-        settings.beginGroup("proxy")
-        enabled = (
-            str(settings.value("proxyEnabled")).lower() == "true"
-        )  # to be compatible with QGIS 2 and 3
-        # proxy_type = settings.value("proxyType")
-        host = settings.value("proxyHost")
-        port = settings.value("proxyPort")
-        user = settings.value("proxyUser")
-        password = settings.value("proxyPassword")
-        settings.endGroup()
-        return enabled, host, port, user, password
 
     def qgisMapTools(self):
         """

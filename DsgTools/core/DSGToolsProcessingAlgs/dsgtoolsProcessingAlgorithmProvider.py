@@ -342,13 +342,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm imp
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ruleStatisticsAlgorithm import (
     RuleStatisticsAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runFMESAPAlgorithm import (
-    RunFMESAPAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import (
-    ParameterFMEManagerType,
-    RunRemoteFMEAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.selectFeaturesOnCurrentCanvas import (
     SelectFeaturesOnCurrentCanvas,
 )
@@ -683,7 +676,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyDuplicatedPolygonsBetweenLayersAlgorithm(),
             IdentifyDuplicatedLinesBetweenLayersAlgorithm(),
             IdentifyDuplicatedPointsBetweenLayersAlgorithm(),
-            RunRemoteFMEAlgorithm(),
             CreateFrameAlgorithm(),
             FileInventoryAlgorithm(),
             RaiseFlagsAlgorithm(),
@@ -723,7 +715,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyTerrainModelErrorsAlgorithm(),
             CreateFramesWithConstraintAlgorithm(),
             IdentifyAnglesInInvalidRangeAlgorithm(),
-            RunFMESAPAlgorithm(),
             EnforceAttributeRulesAlgorithm(),
             IdentifyPolygonSliverAlgorithm(),
             IdentifyZAnglesBetweenFeaturesAlgorithm(),
@@ -856,10 +847,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         QgsApplication.instance().processingRegistry().addParameterType(
             self.parameterTypeSnapHierarchy
         )
-        self.parameterTypeFMEManager = ParameterFMEManagerType()
-        QgsApplication.instance().processingRegistry().addParameterType(
-            self.parameterTypeFMEManager
-        )
         self.parameterSpatialRulesSetType = ParameterSpatialRulesSetType()
         QgsApplication.instance().processingRegistry().addParameterType(
             self.parameterSpatialRulesSetType
@@ -897,7 +884,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             return
         for attr in (
             "parameterTypeSnapHierarchy",
-            "parameterTypeFMEManager",
             "parameterSpatialRulesSetType",
             "parameterDistanceBetweenLayersType",
             "parameterDbConversionType",
