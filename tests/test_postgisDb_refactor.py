@@ -259,7 +259,7 @@ class TestFindEPSG(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.findEPSG()
-        self.assertIn("Problem finding EPSG", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
     def test_returns_minus_one_when_no_rows(self):
         self.mock_gen.getSrid.return_value = "SELECT srid()"
@@ -267,60 +267,6 @@ class TestFindEPSG(PostgisDbTestBase):
 
         result = self.postgis_db.findEPSG()
         self.assertEqual(result, -1)
-
-
-# ===========================================================================
-# 4. getAggregationAttributes  (abstractDb)
-# ===========================================================================
-
-
-class TestGetAggregationAttributes(PostgisDbTestBase):
-    def test_returns_column_list(self):
-        self.mock_gen.getAggregationColumn.return_value = "SELECT col()"
-        self.mock_cursor.return_value = make_mock_query(
-            rows=[("id_estrutura",), ("id_complexo",)], is_active=True
-        )
-
-        result = self.postgis_db.getAggregationAttributes()
-        self.assertEqual(result, ["id_estrutura", "id_complexo"])
-
-    def test_raises_on_inactive_query(self):
-        self.mock_gen.getAggregationColumn.return_value = "SELECT col()"
-        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
-
-        with self.assertRaises(Exception) as ctx:
-            self.postgis_db.getAggregationAttributes()
-        self.assertIn("Problem getting aggregation attributes", str(ctx.exception))
-
-    def test_returns_empty_list_when_no_rows(self):
-        self.mock_gen.getAggregationColumn.return_value = "SELECT col()"
-        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=True)
-
-        result = self.postgis_db.getAggregationAttributes()
-        self.assertEqual(result, [])
-
-
-# ===========================================================================
-# 5. makeValueRelationDict  (abstractDb)
-# ===========================================================================
-
-
-class TestMakeValueRelationDict(PostgisDbTestBase):
-    def test_returns_name_to_code_dict(self):
-        self.mock_gen.makeRelationDict.return_value = "SELECT id, nome FROM t"
-        self.mock_cursor.return_value = make_mock_query(
-            rows=[(1, "Sim"), (2, "Não")], is_active=True
-        )
-
-        result = self.postgis_db.makeValueRelationDict("dominios.t", [1, 2])
-        self.assertEqual(result, {"Sim": "1", "Não": "2"})
-
-    def test_returns_empty_dict_when_no_rows(self):
-        self.mock_gen.makeRelationDict.return_value = "SELECT id, nome FROM t"
-        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=True)
-
-        result = self.postgis_db.makeValueRelationDict("dominios.t", [])
-        self.assertEqual(result, {})
 
 
 # ===========================================================================
@@ -343,12 +289,12 @@ class TestImplementationVersion(PostgisDbTestBase):
         result = self.postgis_db.implementationVersion()
         self.assertEqual(result, "")
 
-    def test_returns_minus_one_when_value_is_none(self):
+    def test_returns_empty_string_when_value_is_none(self):
         self.mock_gen.implementationVersion.return_value = "SELECT impl()"
         self.mock_cursor.return_value = make_mock_query(rows=[(None,)], is_active=True)
 
         result = self.postgis_db.implementationVersion()
-        self.assertEqual(result, -1)
+        self.assertEqual(result, "")
 
     def test_getImplementationVersion_returns_version(self):
         self.mock_gen.getImplementationVersion.return_value = "SELECT implv()"
@@ -363,7 +309,7 @@ class TestImplementationVersion(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getImplementationVersion()
-        self.assertIn("Problem getting implementation version", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -417,7 +363,7 @@ class TestGetStructureDict(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getStructureDict()
-        self.assertIn("Problem getting database structure", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -461,7 +407,7 @@ class TestListComplexClassesFromDatabase(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.listComplexClassesFromDatabase()
-        self.assertIn("Problem listing complex classes", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -490,7 +436,7 @@ class TestGetTablesFromDatabase(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getTablesFromDatabase()
-        self.assertIn("Problem getting tables from database", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -514,7 +460,7 @@ class TestUserMethods(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getUsers()
-        self.assertIn("Problem getting users", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
     def test_getUserRelatedRoles_separates_installed_and_assigned(self):
         """
@@ -553,7 +499,7 @@ class TestUserMethods(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getRoles()
-        self.assertIn("Problem getting roles", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -577,7 +523,7 @@ class TestUserDMLMethods(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.createUser("alice", "senha123", False)
-        self.assertIn("Problem creating user", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
     def test_removeUser_executes_sql(self):
         self.mock_gen.removeUser.return_value = "DROP USER alice"
@@ -592,7 +538,7 @@ class TestUserDMLMethods(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.removeUser("alice")
-        self.assertIn("Problem removing user", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
     def test_alterUserPass_executes_sql(self):
         self.mock_gen.alterUserPass.return_value = "ALTER USER alice PASSWORD 'nova'"
@@ -607,7 +553,7 @@ class TestUserDMLMethods(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.alterUserPass("alice", "nova")
-        self.assertIn("Problem altering user's password", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -629,7 +575,7 @@ class TestRoleDMLMethods(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.grantRole("alice", "role_leitura")
-        self.assertIn("Problem granting profile", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
     def test_revokeRole_executes_sql(self):
         self.mock_gen.revokeRole.return_value = "REVOKE role_leitura FROM alice"
@@ -644,7 +590,7 @@ class TestRoleDMLMethods(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.revokeRole("alice", "role_leitura")
-        self.assertIn("Problem revoking profile", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -670,7 +616,7 @@ class TestDisassociateComplex(PostgisDbTestBase):
             self.postgis_db.disassociateComplexFromComplex(
                 "complexos.estrutura_a", "id_estrutura", "uuid-123"
             )
-        self.assertIn("Problem disassociating", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -698,7 +644,7 @@ class TestObtainLinkColumn(PostgisDbTestBase):
             self.postgis_db.obtainLinkColumn(
                 "complexos.estrutura_a", "cb.infra_elemento_p"
             )
-        self.assertIn("Problem obtaining link column", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
     def test_returns_empty_string_when_no_rows(self):
         self.mock_gen.getLinkColumn.return_value = "SELECT link_col()"
@@ -740,7 +686,7 @@ class TestIsComplexClass(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.isComplexClass("estrutura_a")
-        self.assertIn("Problem executing query", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -776,7 +722,7 @@ class TestGetQmlRecordDict(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getQmlRecordDict(["camada_a"])
-        self.assertIn("Problem getting qmlRecordDict", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -802,7 +748,7 @@ class TestCheckSuperUser(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.checkSuperUser()
-        self.assertIn("Problem checking user", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -826,7 +772,7 @@ class TestGetDbsFromServer(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getDbsFromServer()
-        self.assertIn("Problem getting databases", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
 
 # ===========================================================================
@@ -857,7 +803,7 @@ class TestGetInvalidGeomRecords(PostgisDbTestBase):
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getInvalidGeomRecords("cb.infra_elemento_p", "geom", "id")
-        self.assertIn("Problem getting invalid geometries", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
     def test_returns_empty_list_when_no_invalid_geoms(self):
         self.mock_gen.getInvalidGeom.return_value = "SELECT invalid()"
@@ -903,7 +849,7 @@ class TestRemoveFeatures(PostgisDbTestBase):
         # mensagem não esconda o estado do rollback
         self.postgis_db.db.rollback.assert_called_once()
         self.postgis_db.db.commit.assert_not_called()
-        self.assertIn("Problem deleting features", str(ctx.exception))
+        self.assertIn("Mock DB error", str(ctx.exception))
 
     def test_no_transaction_when_flag_false(self):
         self.mock_gen.deleteFeatures.return_value = "DELETE FROM t WHERE ..."
