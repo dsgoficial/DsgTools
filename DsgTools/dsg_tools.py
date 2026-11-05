@@ -73,8 +73,9 @@ class DsgTools(object):
         self.menu = "&DSGTools"
         self.provider = None
         self.dsgTools = None
-        # proteção contra recurso remoto em projeto de terceiro (CDCiber 4.3/4.4)
+        # proteção para projeto de terceiro (CDCiber 4.3/4.4/4.6.2)
         self.networkGuard = None
+        self.layerInspector = None
         # When the plugin is loaded in headless mode (e.g. through the
         # qgis_process command line tool), QGIS instantiates it with iface=None
         # and never calls initGui(). Building GUI elements here would crash with
@@ -155,13 +156,19 @@ class DsgTools(object):
         Proteção para projeto de terceiro (CDCiber 2026). Configuração em
         core/Security/securitySettings.py.
         """
-        from .core.Security import NetworkGuard
+        from .core.Security import LayerInspector, NetworkGuard
 
         if self.networkGuard is None:
             self.networkGuard = NetworkGuard(self.iface)
             self.networkGuard.install()
+        if self.layerInspector is None:
+            self.layerInspector = LayerInspector(self.iface, self.networkGuard)
+            self.layerInspector.install()
 
     def unloadSecurity(self):
+        if self.layerInspector is not None:
+            self.layerInspector.uninstall()
+            self.layerInspector = None
         if self.networkGuard is not None:
             self.networkGuard.uninstall()
             self.networkGuard = None

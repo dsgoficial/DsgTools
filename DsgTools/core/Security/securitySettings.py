@@ -26,6 +26,10 @@ Chaves em QgsSettings, sob `dsgtools/security/`:
 - `allowedHosts`: lista de destinos permitidos para recurso de projeto,
   cada um `host` (qualquer porta), `host:porta` ou `.dominio` (o domínio e
   os subdomínios). Padrão: vazia.
+- `inspectLayers`: inspeção das camadas ao carregar (padrão: true).
+- `uiMaxDepth`: profundidade máxima de aninhamento de elementos no .ui
+  local (padrão: 256).
+- `uiMaxBytes`: tamanho máximo do .ui local em bytes (padrão: 5 MiB).
 """
 from qgis.core import Qgis, QgsMessageLog, QgsSettings
 
@@ -38,6 +42,8 @@ MODO_DESLIGADO = "off"
 MODOS = (MODO_BLOQUEAR, MODO_AVISAR, MODO_DESLIGADO)
 
 PADRAO_MODO = MODO_BLOQUEAR
+PADRAO_UI_PROFUNDIDADE = 256
+PADRAO_UI_BYTES = 5 * 1024 * 1024
 
 # Esquemas que saem para a rede pelo QgsNetworkAccessManager.
 ESQUEMAS_REMOTOS = ("http", "https", "ftp")
@@ -75,6 +81,35 @@ def lerHostsPermitidos(settings=None):
     else:
         itens = str(valor).replace(";", ",").split(",")
     return [i.strip().lower() for i in itens if i and i.strip()]
+
+
+def _bool(valor, padrao):
+    if valor is None:
+        return padrao
+    if isinstance(valor, bool):
+        return valor
+    return str(valor).strip().lower() not in ("0", "false", "no", "nao", "não", "off", "")
+
+
+def _int(valor, padrao):
+    try:
+        n = int(valor)
+        return n if n > 0 else padrao
+    except (TypeError, ValueError):
+        return padrao
+
+
+def lerInspecaoLigada(settings=None):
+    s = settings or QgsSettings()
+    return _bool(s.value(PREFIXO + "inspectLayers", True), True)
+
+
+def lerTetosUi(settings=None):
+    s = settings or QgsSettings()
+    return (
+        _int(s.value(PREFIXO + "uiMaxDepth", PADRAO_UI_PROFUNDIDADE), PADRAO_UI_PROFUNDIDADE),
+        _int(s.value(PREFIXO + "uiMaxBytes", PADRAO_UI_BYTES), PADRAO_UI_BYTES),
+    )
 
 
 def hostPermitido(host, porta, esquema, permitidos):
