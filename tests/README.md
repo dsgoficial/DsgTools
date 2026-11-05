@@ -74,15 +74,23 @@ seguiu, e só voltaram a ser visíveis quando passaram a ser executados de novo:
   (`4590dd0a`, migração de QSql para psycopg2), porque substituíam `QSqlDatabase` e
   `QSqlQuery`, que o `PostgisDb` não usa mais. Os mocks agora ficam na camada atual:
   o `PsycopgDbAdapter` é substituído por um `MagicMock` com spec, e cada consulta
-  recebe um `MockCursor` pelo `db.cursor()`. Com as afirmações intactas, 41 passam e
-  26 falham por contrato que o código atual deixou de cumprir (o código de produção
-  não foi tocado):
-  - 20 testes `*_raises_*`: a exceção sobe, mas sem o contexto
-    `Problem ...: ` que a versão QSql punha; o `_execute` repassa só o texto do
-    psycopg2.
-  - 5 testes de `getAggregationAttributes` e `makeValueRelationDict`, métodos
-    removidos como código morto em `ac0a7e48`.
-  - `implementationVersion` com valor NULL devolve `""`, e o teste espera `-1`.
+  recebe um `MockCursor` pelo `db.cursor()`. As afirmações seguem o contrato atual:
+  a exceção sobe com o erro do driver, sem o prefixo `Problem ...: ` da versão QSql;
+  `implementationVersion` devolve `""` para NULL; e saíram os testes de
+  `getAggregationAttributes` e `makeValueRelationDict`, removidos como código morto em
+  `ac0a7e48`. Os 62 testes passam.
+- Quebrados também na base `d6448e6f` (rodada de 2026-11-05 no QGIS 4.2.1), com as
+  mesmas falhas:
+  - `test_CustomButtonSetup`, `test_DsgToolsProcessingModel`, `test_ExternalFilesHandler`
+    e `test_OtherAlgorithms` não carregam: importam módulos ou nomes que não existem
+    mais (`CustomFeatureToolBox`, `DSGToolsProcessingAlgs.Models`, a classe
+    `ExternalFilesHandler`, `DsgTools.tests.algorithmsTestBase`).
+  - `test_ValidationAlgorithms`: 19 falhas e 2 erros, e o módulo grava nos GPKG de
+    `testing_datasets/` e `expected_outputs/`; restaure-os com
+    `git checkout -- tests/testing_datasets tests/expected_outputs` depois de rodá-lo.
+  - `test_identifyGapsAndOverlapsEdgeXor`: os 5 testes de cobertura leem a camada de
+    saída depois que o contexto do Processing a destruiu (`wrapped C/C++ object ...
+    has been deleted`).
 - Os demais módulos ainda usam `unittest.makeSuite` em `run_all()`. Não afeta o
   `run_local.py`, mas quebra em Python 3.13 por outros caminhos.
 
