@@ -2,6 +2,12 @@
 
 ## 5.3.5 - dev
 
+Segurança (tratamento da avaliação do CDCiber, 2026, DIEx nº 2457-E4/DSG):
+
+- Corrige a composição de SQL na contagem de feições (getElementCountFromLayer e getElementCountFromLayerV2 do gerador PostGIS): o nome de schema e de tabela passa a ser composto pelo driver (psycopg2.sql.Identifier), e um nome com ponto e vírgula, aspas ou parêntese deixa de virar comando. Antes, um nome de camada preparado executava SQL arbitrário com os privilégios da conexão, inclusive apagar feições com a conta de operador;
+- Corrige a listagem de camadas com feições (getLayersWithElementsV2), que depois da primeira tabela ilegível deixava a transação abortada e descartava em silêncio todas as tabelas seguintes;
+- Remove a integração com o FME (Run Remote FME Workspace, Run FME SAP Workspace, o widget FME Manager e as funções de proxy que só ela usava). Ela verificava o certificado HTTPS só se a caixa "SSL" fosse marcada, desligada por padrão, e enviava a credencial do proxy num cabeçalho que podia chegar ao servidor de destino. A conversão de modelagens já roda no Processing desde a 4.18.0 (Convert Databases). Quem chamar dsgtools:runremotefme ou dsgtools:runfmesap, em modelo ou workflow, recebe algoritmo inexistente;
+
 Melhorias:
 
 - Generalização de curvas de nível (Generalize Contour Lines) passa a atender também as escalas 1:2.000, 1:5.000 e 1:10.000, para a carta cadastral: o perímetro mínimo da curva fechada segue os 12 mm na escala de saída, o que dá 24 m, 60 m e 120 m no terreno. As escalas novas foram apensadas ao fim da lista (índices 4, 5 e 6), então todo modelo, chamada de linha de comando e fluxo do SAP que já grava o índice do enum continua valendo;
