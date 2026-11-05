@@ -1720,6 +1720,9 @@ class PostgisDb(AbstractDb):
             try:
                 row = self._fetch_one(sql)
             except Exception:
+                # Sem o rollback a transação fica abortada e todas as tabelas
+                # seguintes falham também, sumindo da lista sem erro visível.
+                self.db.rollback()
                 QgsMessageLog.logMessage(
                     self.tr("Unable to read table {schema}.{table}").format(
                         schema=schema, table=lyr

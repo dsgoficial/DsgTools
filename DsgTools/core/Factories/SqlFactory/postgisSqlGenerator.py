@@ -22,6 +22,7 @@
 """
 from builtins import str
 from builtins import map
+from psycopg2 import sql as pgsql
 from .sqlGenerator import SqlGenerator
 from ...dsgEnums import DsgEnums
 
@@ -138,20 +139,41 @@ class PostGISSqlGenerator(SqlGenerator):
         )
         return sql
 
+    @staticmethod
+    def _qualifiedIdentifier(schema, table):
+        """
+        Compõe schema.tabela pelo driver (psycopg2.sql.Identifier), que escapa
+        aspas e mantém o nome inteiro como UM identificador. Aspas externas por
+        format() não bastam: um nome com aspa dupla fechava o identificador e o
+        resto virava SQL (avaliação do CDCiber, 2026, achado 4.1).
+        """
+        if schema:
+            return pgsql.SQL("{}.{}").format(
+                pgsql.Identifier(str(schema)), pgsql.Identifier(str(table))
+            )
+        return pgsql.Identifier(str(table))
+
     def getElementCountFromLayer(self, table):
-        sql = "SELECT count(id) FROM ONLY {0} limit 1".format(table)
-        return sql
+        """
+        Conta as feições de uma tabela, sem herança.
+        table: 'schema.tabela' (o formato de getTableSchema) ou só 'tabela'.
+        Devolve um psycopg2.sql.Composed, que o PostgisDb executa pelo cursor.
+        """
+        parts = str(table).split(".", 1)
+        schema, name = (parts[0], parts[1]) if len(parts) == 2 else (None, parts[0])
+        return pgsql.SQL("SELECT count(*) FROM ONLY {}").format(
+            self._qualifiedIdentifier(schema, name)
+        )
 
     def getElementCountFromLayerV2(self, schema, table, useInheritance):
-        if useInheritance == False:
-            sql = """SELECT count(a) FROM ( SELECT * FROM ONLY "{0}"."{1}" ) as a""".format(
-                schema, table
-            )
-        else:
-            sql = """SELECT count(a) FROM ( SELECT * FROM "{0}"."{1}" ) as a""".format(
-                schema, table
-            )
-        return sql
+        """
+        Conta as feições de schema.tabela, com ou sem as tabelas filhas.
+        Devolve um psycopg2.sql.Composed, que o PostgisDb executa pelo cursor.
+        """
+        only = pgsql.SQL("") if useInheritance else pgsql.SQL("ONLY ")
+        return pgsql.SQL("SELECT count(*) FROM {}{}").format(
+            only, self._qualifiedIdentifier(schema, table)
+        )
 
     def getElementCountFromLayerWithInh(self, layer):
         parts = str(layer).split(".")
