@@ -11,6 +11,9 @@
 |dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|5.3.0|
 
 ------------------------------------
+
+> **DSGTools 4.x descontinuado.** A linha 4.x, para QGIS 3, saiu de uso em novembro de 2026 e não recebe mais correções, inclusive de segurança. As falhas apontadas pela avaliação de segurança do CDCiber (2026) foram corrigidas só no DSGTools 5.x, que roda no QGIS 4. Use o DSGTools 5.x.
+
 # Complemento DSGTools
 
 O DSGTools é um complemento para o QGIS (http://qgis.org/pt_BR/site/) que permite aos usuários a criação e utilização de produtos cartográficos de acordo com as especificações da ET-EDGV. O DSGTools visa atender não apenas o Exército Brasileiro, mas também produtores e usuários de geoinformação da sociedade.
