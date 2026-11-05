@@ -22,14 +22,150 @@
 """
 from builtins import str
 from builtins import map
+import re
 from psycopg2 import sql as pgsql
 from .sqlGenerator import SqlGenerator
 from ...dsgEnums import DsgEnums
 
 DB_ENCODING = "utf-8"
 
+# Um elemento de nome qualificado como o PostgreSQL o escreve: entre aspas
+# duplas (aspas internas dobradas) ou sem aspas, no formato de identificador.
+_NOME_SQL = re.compile(
+    r'\s*(?:"((?:[^"]|"")+)"|([A-Za-z_\u0080-￿][A-Za-z0-9_$\u0080-￿]*))\s*'
+)
+_FUNCAO_ST = re.compile(r"^ST_[A-Za-z0-9_]+$")
+_LISTA_DE_IDS = re.compile(r"^\(\s*-?\d+(\s*,\s*-?\d+)*\s*\)$")
+
 
 class PostGISSqlGenerator(SqlGenerator):
+    """
+    Gerador de SQL do PostGIS.
+
+    Regra de composição (avaliação do CDCiber, 2026, achado 4.1): nome de
+    schema, tabela, coluna, papel, usuário ou banco entra como
+    psycopg2.sql.Identifier, e valor entra como psycopg2.sql.Literal ou como
+    número convertido. Os métodos devolvem psycopg2.sql.Composed, que o
+    PostgisDb executa pelo cursor; o psycopg2 faz o escape com a conexão viva
+    (inclusive com standard_conforming_strings desligado, caso em que o
+    escape manual por aspas simples dobradas não basta).
+
+    Ficam em texto, com _qi/_el, só os métodos cujo consumidor manipula o
+    texto: os que o PostgisDb parte em comandos por '#', o filtro de URI do
+    QGIS e o DROP DATABASE executado por QSqlQuery no postgisDbThread.
+    """
+
+    # ------------------------------------------------------------------
+    # Composição segura
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _ident(name):
+        """Um nome cru (como está no catálogo) vira UM identificador."""
+        return pgsql.Identifier(str(name))
+
+    @staticmethod
+    def _lit(value):
+        """Um valor vira UM literal de texto, escapado pelo driver."""
+        return pgsql.Literal(str(value))
+
+    @staticmethod
+    def _num(value):
+        """
+        Número para o SQL. Aceita int, float ou texto numérico; o resto
+        levanta ValueError, em vez de entrar no comando.
+        """
+        if isinstance(value, bool):
+            raise ValueError("valor numérico inválido: {0!r}".format(value))
+        if isinstance(value, (int, float)):
+            return pgsql.Literal(value)
+        texto = str(value).strip()
+        try:
+            return pgsql.Literal(int(texto))
+        except ValueError:
+            pass
+        try:
+            numero = float(texto)
+        except ValueError:
+            raise ValueError("valor numérico inválido: {0!r}".format(value))
+        if numero != numero or numero in (float("inf"), float("-inf")):
+            raise ValueError("valor numérico inválido: {0!r}".format(value))
+        return pgsql.Literal(numero)
+
+    @classmethod
+    def _val(cls, value):
+        """Chave de feição: número quando é número, senão literal de texto."""
+        try:
+            return cls._num(value)
+        except ValueError:
+            return cls._lit(value)
+
+    @classmethod
+    def _literalList(cls, values):
+        """
+        Conteúdo de um IN (...): um literal por valor. Lista vazia vira ''
+        como no texto antigo ("','".join([]) entre aspas).
+        """
+        values = list(values)
+        if not values:
+            return pgsql.Literal("")
+        return pgsql.SQL(", ").join([cls._lit(v) for v in values])
+
+    @classmethod
+    def _qualified(cls, name):
+        """
+        'schema.tabela' como o código antigo tratava: tira as aspas, parte
+        no ponto e põe cada parte entre aspas, agora pelo driver.
+        """
+        partes = str(name).replace('"', "").split(".")
+        return pgsql.SQL(".").join([cls._ident(p) for p in partes])
+
+    @staticmethod
+    def _parseSqlName(text, maxParts=3):
+        """
+        Lê um nome já escrito em SQL (como o devolvido por
+        pg_get_constraintdef: dominios.tabela, "Esquema"."Tabela") e o
+        recompõe por Identifier. Parte sem aspas é dobrada para minúsculas,
+        como o PostgreSQL faz; qualquer outra coisa além do nome levanta
+        ValueError, em vez de seguir como SQL.
+        """
+        texto = str(text)
+        pos = 0
+        partes = []
+        while True:
+            m = _NOME_SQL.match(texto, pos)
+            if not m:
+                raise ValueError("nome SQL inválido: {0!r}".format(texto))
+            if m.group(1) is not None:
+                partes.append(m.group(1).replace('""', '"'))
+            else:
+                partes.append(
+                    "".join(c.lower() if "A" <= c <= "Z" else c for c in m.group(2))
+                )
+            pos = m.end()
+            if pos == len(texto):
+                break
+            if texto[pos] != ".":
+                raise ValueError("nome SQL inválido: {0!r}".format(texto))
+            pos += 1
+        if len(partes) > maxParts:
+            raise ValueError("nome SQL inválido: {0!r}".format(texto))
+        return pgsql.SQL(".").join([pgsql.Identifier(p) for p in partes])
+
+    @staticmethod
+    def _semSeparador(*values):
+        """
+        Para os comandos que o PostgisDb parte por '#': um valor com '#'
+        quebraria o comando no meio, então é recusado.
+        """
+        for value in values:
+            if "#" in str(value):
+                raise ValueError(
+                    "nome ou valor com '#' não pode entrar neste comando: {0!r}".format(
+                        value
+                    )
+                )
+
     def getComplexLinks(self, complex):
         sql = (
             "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = '%s'"
@@ -192,148 +328,150 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """DROP DATABASE "{0}" """.format(name)
         return sql
 
-    def createRole(self, roleName, mydict):
-        sql = """CREATE ROLE "{0}" with NOLOGIN REPLICATION;\n""".format(roleName)
+    def createRoleStatements(self, roleName, mydict):
+        """
+        Comandos do perfil, um Composed por comando, na ordem do texto
+        antigo. O PostgisDb executa um a um: antes ele partia o texto por ';',
+        e um nome de schema ou tabela com ';' (vindo do JSON do perfil)
+        virava outro comando mesmo entre aspas.
+        """
+        role = self._ident(roleName)
+        stmts = [pgsql.SQL("CREATE ROLE {0} with NOLOGIN REPLICATION").format(role)]
         for db in list(mydict.keys()):
             for schema in list(mydict[db].keys()):
+                sch = self._ident(schema)
                 for cat in list(mydict[db][schema].keys()):
                     for tableName in list(mydict[db][schema][cat].keys()):
-                        table = '''"{0}"."{1}"'''.format(schema, tableName)
+                        table = pgsql.SQL("{0}.{1}").format(sch, self._ident(tableName))
                         read = mydict[db][schema][cat][tableName]["read"]
                         write = mydict[db][schema][cat][tableName]["write"]
                         if write == "2":
-                            sql += """GRANT ALL ON {0} TO "{1}";\n""".format(
-                                table, roleName
+                            stmts.append(
+                                pgsql.SQL("GRANT ALL ON {0} TO {1}").format(table, role)
                             )
                         elif read == "2":
-                            sql += """GRANT SELECT ON {0} TO "{1}";\n""".format(
-                                table, roleName
+                            stmts.append(
+                                pgsql.SQL("GRANT SELECT ON {0} TO {1}").format(
+                                    table, role
+                                )
                             )
-                sql += """GRANT ALL ON SCHEMA "{0}" TO "{1}";\n""".format(
-                    schema, roleName
-                )
-                sql += """REVOKE CREATE ON SCHEMA "{0}" FROM "{1}";\n""".format(
-                    schema, roleName
-                )
-                sql += """GRANT USAGE ON SCHEMA "{0}" TO "{1}";\n""".format(
-                    schema, roleName
-                )
-                sql += """GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA "{0}" TO "{1}";\n""".format(
-                    schema, roleName
-                )
-                sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA "{0}" TO "{1}";\n""".format(
-                    schema, roleName
-                )
+                for tpl in (
+                    "GRANT ALL ON SCHEMA {0} TO {1}",
+                    "REVOKE CREATE ON SCHEMA {0} FROM {1}",
+                    "GRANT USAGE ON SCHEMA {0} TO {1}",
+                    "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA {0} TO {1}",
+                    "GRANT USAGE ON ALL SEQUENCES IN SCHEMA {0} TO {1}",
+                ):
+                    stmts.append(pgsql.SQL(tpl).format(sch, role))
 
         # not needed anymore due to our generic approach
-        # sql += """GRANT SELECT ON db_metadata TO "{0}";\n""".format(roleName)
-        sql += """GRANT SELECT ON public.geometry_columns TO "{0}";\n""".format(
-            roleName
-        )
-        sql += """GRANT ALL ON ALL TABLES IN SCHEMA information_schema TO "{0}";\n""".format(
-            roleName
-        )
-        sql += """GRANT ALL ON ALL TABLES IN SCHEMA pg_catalog TO "{0}";\n""".format(
-            roleName
-        )
-        sql += """GRANT ALL ON SCHEMA information_schema TO "{0}";\n""".format(roleName)
-        sql += """GRANT ALL ON SCHEMA pg_catalog TO "{0}";\n""".format(roleName)
-        sql += """REVOKE CREATE ON SCHEMA information_schema FROM "{0}";\n""".format(
-            roleName
-        )
-        sql += """REVOKE CREATE ON SCHEMA pg_catalog FROM "{0}";\n""".format(roleName)
-        sql += """GRANT USAGE ON SCHEMA information_schema TO "{0}";\n""".format(
-            roleName
-        )
-        sql += """GRANT USAGE ON SCHEMA pg_catalog TO "{0}";\n""".format(roleName)
-        sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA information_schema TO "{0}";\n""".format(
-            roleName
-        )
-        sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA pg_catalog TO "{0}" """.format(
-            roleName
-        )
-        return sql
+        # GRANT SELECT ON db_metadata TO <role>
+        for tpl in (
+            "GRANT SELECT ON public.geometry_columns TO {0}",
+            "GRANT ALL ON ALL TABLES IN SCHEMA information_schema TO {0}",
+            "GRANT ALL ON ALL TABLES IN SCHEMA pg_catalog TO {0}",
+            "GRANT ALL ON SCHEMA information_schema TO {0}",
+            "GRANT ALL ON SCHEMA pg_catalog TO {0}",
+            "REVOKE CREATE ON SCHEMA information_schema FROM {0}",
+            "REVOKE CREATE ON SCHEMA pg_catalog FROM {0}",
+            "GRANT USAGE ON SCHEMA information_schema TO {0}",
+            "GRANT USAGE ON SCHEMA pg_catalog TO {0}",
+            "GRANT USAGE ON ALL SEQUENCES IN SCHEMA information_schema TO {0}",
+            "GRANT USAGE ON ALL SEQUENCES IN SCHEMA pg_catalog TO {0}",
+        ):
+            stmts.append(pgsql.SQL(tpl).format(role))
+        return stmts
+
+    def createRole(self, roleName, mydict):
+        """O perfil inteiro num Composed só, comandos separados por ';'."""
+        return pgsql.SQL(";\n").join(self.createRoleStatements(roleName, mydict))
 
     def dropRole(self, role):
-        sql = """CREATE OR REPLACE FUNCTION droprole(name text) RETURNS void AS $BODY$
+        """
+        Lista de comandos, que o PostgisDb executa um a um (antes ele partia
+        um texto por '#'). Dentro da função droprole o nome do papel e o do
+        schema entram por quote_ident: concatenados crus no EXECUTE, um nome
+        de papel com ';' virava comando dentro da função.
+        """
+        funcao = pgsql.SQL(
+            """CREATE OR REPLACE FUNCTION droprole(name text) RETURNS void AS $BODY$
                     DECLARE
                         s text;
                     BEGIN
-                        FOR s in SELECT DISTINCT 'REVOKE ALL ON ALL TABLES IN SCHEMA ' || table_schema || ' FROM ' || name from information_schema.columns
+                        FOR s in SELECT DISTINCT 'REVOKE ALL ON ALL TABLES IN SCHEMA ' || quote_ident(table_schema) || ' FROM ' || quote_ident(name) from information_schema.columns
                         LOOP
                             EXECUTE s;
                         END LOOP;
-                        FOR s in SELECT DISTINCT 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA ' || table_schema || ' FROM ' || name from information_schema.columns
+                        FOR s in SELECT DISTINCT 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA ' || quote_ident(table_schema) || ' FROM ' || quote_ident(name) from information_schema.columns
                         LOOP
                             EXECUTE s;
                         END LOOP;
-                        FOR s in SELECT DISTINCT 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA ' || table_schema || ' FROM ' || name from information_schema.columns
+                        FOR s in SELECT DISTINCT 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA ' || quote_ident(table_schema) || ' FROM ' || quote_ident(name) from information_schema.columns
                         LOOP
                             EXECUTE s;
                         END LOOP;
-                        FOR s in SELECT DISTINCT 'REVOKE ALL ON SCHEMA ' || table_schema || ' FROM ' || name from information_schema.columns
+                        FOR s in SELECT DISTINCT 'REVOKE ALL ON SCHEMA ' || quote_ident(table_schema) || ' FROM ' || quote_ident(name) from information_schema.columns
                         LOOP
                             EXECUTE s;
                         END LOOP;
-                        EXECUTE 'REVOKE ALL ON db_metadata FROM '|| name;
+                        EXECUTE 'REVOKE ALL ON db_metadata FROM '|| quote_ident(name);
                         RETURN;
 
                     END
-                $BODY$ LANGUAGE plpgsql;#
+                $BODY$ LANGUAGE plpgsql;
             """
-        sql += "SELECT droprole('%s')#" % self._el(role)
-        sql += "DROP ROLE IF EXISTS %s" % self._qi(role)
-        return sql
+        )
+        return [
+            funcao,
+            pgsql.SQL("SELECT droprole({0})").format(self._lit(role)),
+            pgsql.SQL("DROP ROLE IF EXISTS {0}").format(self._ident(role)),
+        ]
 
     def grantRole(self, user, role):
-        sql = "GRANT %s TO %s" % (self._qi(role), self._qi(user))
-        return sql
+        return pgsql.SQL("GRANT {0} TO {1}").format(self._ident(role), self._ident(user))
 
     def revokeRole(self, user, role):
-        sql = "REVOKE %s FROM %s" % (self._qi(role), self._qi(user))
-        return sql
+        return pgsql.SQL("REVOKE {0} FROM {1}").format(
+            self._ident(role), self._ident(user)
+        )
 
     def getRoles(self):
         sql = "SELECT rolname FROM pg_roles WHERE rolname <> 'postgres' AND rolcanlogin = 'f' AND rolname in (select split_part(unnest(nspacl)::text, '=', 1) from pg_namespace where nspname = 'pg_catalog')"
         return sql
 
     def getUserRelatedRoles(self, username):
-        sql = """select rolname, usename from
+        return pgsql.SQL(
+            """select rolname, usename from
                     (select * from pg_roles as r where r.rolcanlogin = 'f' and r.rolname<>'postgres') as listaRoles left join
-                    (select * from pg_auth_members as m join pg_user as u on m.member = u.usesysid and u.usename='%s')
+                    (select * from pg_auth_members as m join pg_user as u on m.member = u.usesysid and u.usename={0})
                     as euTenho on euTenho.roleid=listaRoles.oid  where rolname in (select split_part(unnest(nspacl)::text, '=', 1) from pg_namespace where nspname = 'pg_catalog')
-                """ % self._el(
-            username
-        )
-        return sql
+                """
+        ).format(self._lit(username))
 
     def getUsers(self):
         sql = "SELECT usename FROM pg_user WHERE usename <> 'postgres'"
         return sql
 
     def createUser(self, user, password, isSuperuser):
+        """
+        A senha entra como literal composto pelo driver, o mesmo escape do
+        parâmetro %s do psycopg2 (CREATE ROLE não aceita parâmetro do
+        servidor). O escape manual por aspas simples dobradas falha com
+        standard_conforming_strings desligado.
+        """
         if isSuperuser:
-            sql = (
-                "CREATE ROLE %s WITH SUPERUSER CREATEDB CREATEROLE REPLICATION LOGIN PASSWORD '%s';"
-                % (
-                    self._qi(user),
-                    self._el(password),
-                )
-            )
+            tpl = "CREATE ROLE {0} WITH SUPERUSER CREATEDB CREATEROLE REPLICATION LOGIN PASSWORD {1};"
         else:
-            sql = "CREATE ROLE %s WITH LOGIN PASSWORD '%s';" % (
-                self._qi(user),
-                self._el(password),
-            )
-        return sql
+            tpl = "CREATE ROLE {0} WITH LOGIN PASSWORD {1};"
+        return pgsql.SQL(tpl).format(self._ident(user), self._lit(password))
 
     def removeUser(self, user):
-        sql = "DROP ROLE %s" % self._qi(user)
-        return sql
+        return pgsql.SQL("DROP ROLE {0}").format(self._ident(user))
 
     def alterUserPass(self, user, newPass):
-        sql = "ALTER ROLE %s WITH PASSWORD '%s'" % (self._qi(user), self._el(newPass))
-        return sql
+        return pgsql.SQL("ALTER ROLE {0} WITH PASSWORD {1}").format(
+            self._ident(user), self._lit(newPass)
+        )
 
     def validateWithDomain(self, schemaList):
         schemas = "'" + "','".join(schemaList) + "'"
@@ -451,18 +589,14 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getRolePrivileges(self, role, dbname):
-        sql = (
-            "SELECT * FROM information_schema.role_table_grants where grantee = '%s' and table_catalog = '%s' ORDER BY table_name"
-            % (
-                self._el(role),
-                self._el(dbname),
-            )
-        )
-        return sql
+        return pgsql.SQL(
+            "SELECT * FROM information_schema.role_table_grants where grantee = {0} and table_catalog = {1} ORDER BY table_name"
+        ).format(self._lit(role), self._lit(dbname))
 
     def isSuperUser(self, user):
-        sql = "SELECT rolsuper FROM pg_roles WHERE rolname = '%s'" % self._el(user)
-        return sql
+        return pgsql.SQL("SELECT rolsuper FROM pg_roles WHERE rolname = {0}").format(
+            self._lit(user)
+        )
 
     def getInvalidGeom(self, tableSchema, tableName, geometryColumn, keyColumn):
         return """select  distinct f."{3}" as "{3}",(reason(ST_IsValidDetail(f."{2}",0))), (location(ST_IsValidDetail(f."{2}",0))) as "{2}" from (select "{3}", "{2}" from only "{0}"."{1}"  where ST_IsValid("{2}") = 'f') as f""".format(
@@ -1533,8 +1667,13 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def reasignAndDropUser(self, user):
-        sql = """REASSIGN OWNED BY {0} to postgres; DROP USER {0};""".format(user)
-        return sql
+        """
+        O nome ia cru e sem aspas: além da injeção, um usuário com maiúsculas
+        caía em outro papel, o do nome dobrado para minúsculas.
+        """
+        return pgsql.SQL("REASSIGN OWNED BY {0} to postgres; DROP USER {0};").format(
+            self._ident(user)
+        )
 
     def deleteFeatureFlagsFromDb(self, layer, feat_id, processName):
         sql = "DELETE FROM validation.aux_flags_validacao WHERE process_name = '{0}' AND layer = '{1}' AND feat_id = {2}".format(

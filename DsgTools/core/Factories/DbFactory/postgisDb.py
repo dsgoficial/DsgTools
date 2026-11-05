@@ -672,11 +672,12 @@ class PostgisDb(AbstractDb):
         uuid = str(uuid4()).replace("-", "_")
         role += "_" + uuid
 
-        sql = self.gen.createRole(role, roleDict)
-        split = sql.split(";")
+        # Um comando por item: partir o texto por ";" quebrava o comando no
+        # meio de um nome com ";" e o resto virava SQL (CDCiber 4.1).
+        split = self.gen.createRoleStatements(role, roleDict)
 
         if permissionManager:
-            self._execute(sql)
+            self._execute(self.gen.createRole(role, roleDict))
             return role
 
         # try to revoke the permissions
@@ -703,8 +704,8 @@ class PostgisDb(AbstractDb):
         Deletes a role from 'this' database
         role: role name
         """
-        sql = self.gen.dropRole(role)
-        split = sql.split("#")
+        # O gerador devolve a lista de comandos (antes, um texto partido por "#").
+        split = self.gen.dropRole(role)
 
         for inner in split:
             try:
