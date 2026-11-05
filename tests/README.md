@@ -70,8 +70,45 @@ seguiu, e só voltaram a ser visíveis quando passaram a ser executados de novo:
   `Could not open raster: mock_raster.tif`. O mock de `QgsRasterLayer` devolve um
   nome de arquivo que `readAsNumpy` tenta abrir de verdade no GDAL; ou o mock passa a
   cobrir a leitura, ou o teste precisa de um raster real pequeno em disco.
+- `test_postgisDb_refactor.py`: os 67 testes davam erro desde 2026-04-10
+  (`4590dd0a`, migração de QSql para psycopg2), porque substituíam `QSqlDatabase` e
+  `QSqlQuery`, que o `PostgisDb` não usa mais. Os mocks agora ficam na camada atual:
+  o `PsycopgDbAdapter` é substituído por um `MagicMock` com spec, e cada consulta
+  recebe um `MockCursor` pelo `db.cursor()`. Com as afirmações intactas, 41 passam e
+  26 falham por contrato que o código atual deixou de cumprir (o código de produção
+  não foi tocado):
+  - 20 testes `*_raises_*`: a exceção sobe, mas sem o contexto
+    `Problem ...: ` que a versão QSql punha; o `_execute` repassa só o texto do
+    psycopg2.
+  - 5 testes de `getAggregationAttributes` e `makeValueRelationDict`, métodos
+    removidos como código morto em `ac0a7e48`.
+  - `implementationVersion` com valor NULL devolve `""`, e o teste espera `-1`.
 - Os demais módulos ainda usam `unittest.makeSuite` em `run_all()`. Não afeta o
   `run_local.py`, mas quebra em Python 3.13 por outros caminhos.
+
+### O código de saída do `run_local.py`
+
+Até 2026-11-05 o QGIS 4.2.1 caía na saída do runner no Windows (0xC0000374, heap
+corrompido, ou 0xC0000409) depois de imprimir o veredito, mesmo com todos os testes
+passando. A causa era haver duas `QgsApplication` no processo: o runner criava a
+sua, e cada módulo que chama `qgis.testing.start_app()` no import criava outra,
+porque o `start_app()` só enxerga a aplicação que ele próprio criou, e registrava um
+segundo `exitQgis()` no `atexit`. Agora o runner cria a aplicação pelo próprio
+`start_app(cleanup=False)`, os módulos recebem a mesma instância, e o runner faz o
+único `exitQgis()`.
+
+Consequências para quem lê o resultado:
+
+- `0` é tudo passou e `1` é alguma falha ou erro. Qualquer outro código (negativo no
+  Windows) é queda do processo e não vale como veredito; leia o `OK`/`FAILED` impresso
+  e investigue a queda.
+- Se um módulo criar uma `QgsApplication` por fora do `start_app()`, o runner avisa
+  em stderr (`AVISO: há uma segunda QgsApplication`). A saída pode voltar a cair, e
+  então vale o veredito impresso. Medido: a segunda aplicação sozinha, sem o
+  `exitQgis()` extra no `atexit`, saiu com `0`; a queda apareceu com as duas
+  finalizações.
+- Os testes rodam num perfil descartável do QGIS, criado pelo `start_app()` na pasta
+  temporária e apagado no fim, e não no perfil do usuário.
 
 ## Escrevendo testes de flags
 
