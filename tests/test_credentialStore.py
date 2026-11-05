@@ -540,6 +540,170 @@ class CredentialStoreTest(unittest.TestCase):
         )
         self.assertIsNone(DbConverter.userPasswordFromHost(None, PG_HOST, "outro"))
 
+    # (i) and (j): layer URIs and the saved project ------------------------
+    def createTestTables(self, temporaryUser=None, temporaryPassword=None):
+        import psycopg2
+
+        conn = psycopg2.connect(
+            host=PG_HOST,
+            port=int(PG_PORT),
+            dbname="postgres",
+            user=PG_USER,
+            password=PG_PASSWORD,
+            connect_timeout=5,
+        )
+        conn.autocommit = True
+        with conn.cursor() as cur:
+            cur.execute("CREATE EXTENSION IF NOT EXISTS postgis")
+            cur.execute("DROP SCHEMA IF EXISTS cred_teste CASCADE")
+            cur.execute("DROP SCHEMA IF EXISTS dominios CASCADE")
+            cur.execute("CREATE SCHEMA cred_teste")
+            cur.execute(
+                "CREATE TABLE cred_teste.ponto (id serial PRIMARY KEY, nome text, "
+                "geom geometry(Point, 4326))"
+            )
+            cur.execute(
+                "INSERT INTO cred_teste.ponto (nome, geom) VALUES "
+                "('a', ST_SetSRID(ST_MakePoint(-43, -22), 4326))"
+            )
+            cur.execute("CREATE SCHEMA dominios")
+            cur.execute(
+                "CREATE TABLE dominios.situacao (code integer PRIMARY KEY, code_name text)"
+            )
+            cur.execute("INSERT INTO dominios.situacao VALUES (1, 'x')")
+            if temporaryUser:
+                cur.execute("DROP ROLE IF EXISTS " + temporaryUser)
+                cur.execute(
+                    "CREATE ROLE " + temporaryUser + " LOGIN PASSWORD %s",
+                    (temporaryPassword,),
+                )
+                for schema in ("cred_teste", "dominios"):
+                    cur.execute(
+                        "GRANT USAGE ON SCHEMA {0} TO {1}".format(schema, temporaryUser)
+                    )
+                    cur.execute(
+                        "GRANT SELECT ON ALL TABLES IN SCHEMA {0} TO {1}".format(
+                            schema, temporaryUser
+                        )
+                    )
+        conn.close()
+
+    def loadTestLayers(self, db):
+        from qgis.core import QgsLayerTreeGroup
+        from DsgTools.core.Factories.LayerLoaderFactory.postgisLayerLoader import (
+            PostGISLayerLoader,
+        )
+
+        class _Canvas:
+            def layers(self):
+                return []
+
+        class _Iface:
+            # the loader only asks the canvas which layers are already there
+            def mapCanvas(self):
+                return _Canvas()
+
+        loader = PostGISLayerLoader(_Iface(), db, False)
+        layers = [
+            # self.uri path (buildUri)
+            loader.loadQgsVectorLayer(("cred_teste", "ponto")),
+            # hand built URIs
+            loader.loadQgsVectorLayer(("cred_teste", "ponto"), nonSpatial=True),
+            loader.loadDomain("situacao", QgsLayerTreeGroup("dominios")),
+        ]
+        for layer in layers:
+            self.assertIsNotNone(layer)
+            self.assertTrue(layer.isValid(), layer.name())
+            self.assertEqual(layer.featureCount(), 1)
+        # loadDomain only puts the layer in a tree group; registered here so
+        # that its URI is also written to the .qgs
+        from qgis.core import QgsProject
+
+        QgsProject.instance().addMapLayer(layers[2], False)
+        self.assertEqual(len(QgsProject.instance().mapLayers()), 3)
+        return layers
+
+    def writeProject(self):
+        from qgis.core import QgsProject
+
+        path = os.path.join(tempfile.mkdtemp(prefix="dsgtools_cred_qgs_"), "p.qgs")
+        self.assertTrue(QgsProject.instance().write(path))
+        with open(path, "rb") as handle:
+            return path, handle.read().decode("utf-8", errors="replace")
+
+    def test_i_layers_from_authcfg_server_keep_password_out_of_the_qgs(self):
+        self.requirePostgis()
+        from qgis.core import QgsProject
+
+        QgsProject.instance().clear()
+        self.createTestTables()
+        self.saveServer("srvI", PG_HOST, PG_PORT, PG_USER, PG_PASSWORD)
+        authcfg = _value(SERVERS + "/srvI/authcfg")
+        from DsgTools.core.Factories.DbFactory.postgisDb import PostgisDb
+
+        host, port, user, password = PostgisDb().getServerConfiguration("srvI")
+        db = PostgisDb()
+        db.connectDatabaseWithParameters(host, port, "postgres", user, password)
+        before = sorted(QgsApplication.authManager().configIds())
+
+        layers = self.loadTestLayers(db)
+
+        # the messages never echo a source: it may hold the password
+        for layer in layers:
+            self.assertTrue(
+                "authcfg=" + str(authcfg) in layer.source(), "sem authcfg na fonte"
+            )
+            self.assertTrue(PG_PASSWORD not in layer.source(), "senha na fonte")
+        path, text = self.writeProject()
+        self.assertTrue("authcfg=" + str(authcfg) in text, "sem authcfg no .qgs")
+        self.assertTrue(PG_PASSWORD not in text, "senha no .qgs")
+        self.assertEqual(sorted(QgsApplication.authManager().configIds()), before)
+
+        # the saved project opens again with valid layers, through the authcfg
+        QgsProject.instance().clear()
+        self.assertTrue(QgsProject.instance().read(path))
+        reopened = list(QgsProject.instance().mapLayers().values())
+        self.assertEqual(len(reopened), 3)
+        for layer in reopened:
+            self.assertTrue(layer.isValid(), layer.name())
+            self.assertEqual(layer.featureCount(), 1)
+        QgsProject.instance().clear()
+
+    def test_j_temporary_credential_without_authcfg_stays_in_the_uri(self):
+        """
+        Residual risk, kept on purpose: a credential passed straight to
+        connect (the temporary SAP user) has no authcfg, and none is created,
+        so the URI and the .qgs keep its password, as before. It also proves
+        that the .qgs check of (i) does catch a password when there is one.
+        """
+        self.requirePostgis()
+        from qgis.core import QgsProject
+
+        QgsProject.instance().clear()
+        temporaryUser = "sap_temp_" + secrets.token_hex(3)
+        temporaryPassword = "sap-" + secrets.token_hex(10)
+        self.createTestTables(temporaryUser, temporaryPassword)
+        # a DSGTools server on the same host, other user: must not be used
+        self.saveServer("srvJ", PG_HOST, PG_PORT, PG_USER, PG_PASSWORD)
+        before = sorted(QgsApplication.authManager().configIds())
+        from DsgTools.core.Factories.DbFactory.postgisDb import PostgisDb
+
+        db = PostgisDb()
+        db.connectDatabaseWithParameters(
+            PG_HOST, PG_PORT, "postgres", temporaryUser, temporaryPassword
+        )
+
+        layers = self.loadTestLayers(db)
+
+        # the messages never echo a source: it may hold the password
+        for layer in layers:
+            self.assertTrue("authcfg=" not in layer.source(), "authcfg inesperado")
+        path, text = self.writeProject()
+        self.assertTrue(temporaryPassword in text, "a regua do .qgs nao achou a senha")
+        self.assertTrue(PG_PASSWORD not in text, "senha do servidor no .qgs")
+        self.assertEqual(sorted(QgsApplication.authManager().configIds()), before)
+        QgsProject.instance().clear()
+
 
 if __name__ == "__main__":
     unittest.main()
