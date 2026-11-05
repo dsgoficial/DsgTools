@@ -28,16 +28,24 @@ independente da camada de execução de SQL.
 
 Estratégia de mock
 ------------------
-- self.postgis_db.db  → MagicMock que simula QSqlDatabase / psycopg2 conn
+- self.postgis_db.db  → MagicMock com a interface do PsycopgDbAdapter
+                        (pgConnectionAdapter.py), via patch() na classe
 - self.postgis_db.gen → MagicMock que retorna strings SQL previsíveis
-- QSqlQuery           → substituído por MockQuery via patch()
+- self.mock_cursor    → o db.cursor() do adaptador; cada consulta do PostgisDb
+                        (_execute, _fetch_one, _fetch_all) pede um cursor, e o
+                        teste devolve um MockCursor com as linhas ou a falha
 
 O mesmo conjunto de testes deve passar **antes** (QSql) e **depois**
 (psycopg2) do refactor, pois testa comportamento, não implementação.
+Os cenários são os mesmos da versão QSql: "consulta inativa" (isActive()
+falso) e "exec() falhou" viram um cursor cujo execute() levanta
+psycopg2.Error, que é como o psycopg2 sinaliza a mesma falha.
 """
 
 import unittest
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
+
+import psycopg2
 
 from qgis.testing import start_app
 
@@ -46,7 +54,10 @@ start_app()
 # ---------------------------------------------------------------------------
 # Importações do plugin (precisam de QGIS no path)
 # ---------------------------------------------------------------------------
-from DsgTools.core.Factories.DbFactory.postgisDb import PostgisDb
+from DsgTools.core.Factories.DbFactory.postgisDb import PostgisDb  # noqa: E402
+from DsgTools.core.Factories.DbFactory.pgConnectionAdapter import (  # noqa: E402
+    PsycopgDbAdapter,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -54,55 +65,50 @@ from DsgTools.core.Factories.DbFactory.postgisDb import PostgisDb
 # ---------------------------------------------------------------------------
 
 
-class MockQuery:
+class MockCursor:
     """
-    Simula a interface de QSqlQuery para permitir testes sem banco real.
+    Simula o cursor psycopg2 que o PsycopgDbAdapter.cursor() devolve, para
+    permitir testes sem banco real.
 
     Parâmetros
     ----------
     rows : list of tuple, opcional
-        Linhas retornadas pelas chamadas a next() / value().
+        Linhas devolvidas por fetchall() / fetchone() depois do execute().
     is_active : bool
-        Valor retornado por isActive().
+        Falso simula a consulta que o QSqlQuery deixava inativa: execute()
+        levanta psycopg2.Error.
     exec_success : bool
-        Valor retornado por exec().
+        Falso simula o exec() que falhava: execute() levanta psycopg2.Error.
     exec_rows : list of tuple, opcional
-        Linhas disponíveis após exec() (quando exec() "popula" resultados).
+        Linhas disponíveis após o execute() (equivale a rows; mantido para
+        os cenários escritos na versão QSql).
     """
 
     def __init__(self, rows=None, is_active=True, exec_success=True, exec_rows=None):
-        self._rows = list(rows) if rows else []
-        self._exec_rows = list(exec_rows) if exec_rows else []
-        self._idx = -1
-        self._is_active = is_active
-        self._exec_success = exec_success
+        self._rows = list(exec_rows) if exec_rows else (list(rows) if rows else [])
+        self._fails = not (is_active and exec_success)
+        self.executed = []
+        self.rowcount = -1
 
-    def isActive(self):
-        return self._is_active
+    def execute(self, sql, params=None):
+        self.executed.append((sql, params))
+        if self._fails:
+            raise psycopg2.Error("Mock DB error")
+        self.rowcount = len(self._rows)
 
-    def next(self):
-        self._idx += 1
-        return self._idx < len(self._rows)
+    def fetchall(self):
+        return list(self._rows)
 
-    def value(self, col):
-        return self._rows[self._idx][col]
+    def fetchone(self):
+        return self._rows[0] if self._rows else None
 
-    def exec(self, sql=None):
-        if self._exec_rows:
-            self._rows = list(self._exec_rows)
-            self._idx = -1
-        return self._exec_success
-
-    def lastError(self):
-        m = MagicMock()
-        m.text.return_value = "Mock DB error"
-        m.databaseText.return_value = "Mock DB error"
-        return m
+    def close(self):
+        pass
 
 
 def make_mock_query(rows=None, is_active=True, exec_success=True, exec_rows=None):
-    """Factory que retorna uma instância de MockQuery."""
-    return MockQuery(
+    """Factory que retorna uma instância de MockCursor."""
+    return MockCursor(
         rows=rows,
         is_active=is_active,
         exec_success=exec_success,
@@ -120,8 +126,10 @@ class PostgisDbTestBase(unittest.TestCase):
     Configura um PostgisDb com todas as dependências de banco mockadas.
 
     Após setUp:
-    - self.postgis_db.db  → MagicMock (simula QSqlDatabase / psycopg2 conn)
+    - self.postgis_db.db  → MagicMock com a interface do PsycopgDbAdapter
     - self.postgis_db.gen → MagicMock (simula SqlGenerator)
+    - self.mock_cursor    → self.postgis_db.db.cursor, que os testes alimentam
+                            com MockCursor (return_value ou side_effect)
     """
 
     @classmethod
@@ -129,7 +137,9 @@ class PostgisDbTestBase(unittest.TestCase):
         pass
 
     def setUp(self):
-        patcher_db = patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlDatabase")
+        patcher_db = patch(
+            "DsgTools.core.Factories.DbFactory.postgisDb.PsycopgDbAdapter"
+        )
         patcher_gen = patch(
             "DsgTools.core.Factories.DbFactory.postgisDb.SqlGeneratorFactory"
         )
@@ -140,11 +150,14 @@ class PostgisDbTestBase(unittest.TestCase):
         self.addCleanup(patcher_db.stop)
         self.addCleanup(patcher_gen.stop)
 
-        # Instância retornada por QSqlDatabase(...)
-        self.mock_db_instance = MagicMock()
+        # Instância retornada por PsycopgDbAdapter(); o spec faz o teste falhar
+        # se o PostgisDb chamar no adaptador um método que ele não tem
+        self.mock_db_instance = MagicMock(spec=PsycopgDbAdapter)
         self.mock_db_instance.isOpen.return_value = True
         self.mock_db_instance.open.return_value = True
         self.mock_db_class.return_value = self.mock_db_instance
+        self.mock_cursor = self.mock_db_instance.cursor
+        self.mock_cursor.return_value = make_mock_query()
 
         # Instância retornada por SqlGeneratorFactory().createSqlGenerator(...)
         self.mock_gen = MagicMock()
@@ -205,26 +218,23 @@ class TestConnectionMethods(PostgisDbTestBase):
 
 
 class TestGetDatabaseVersion(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_returns_version_string(self, MockQSqlQuery):
+    def test_returns_version_string(self):
         self.mock_gen.getEDGVVersion.return_value = "SELECT version()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[("3.0",)], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[("3.0",)], is_active=True)
 
         result = self.postgis_db.getDatabaseVersion()
         self.assertEqual(result, "3.0")
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_returns_non_edgv_when_query_inactive(self, MockQSqlQuery):
+    def test_returns_non_edgv_when_query_inactive(self):
         self.mock_gen.getEDGVVersion.return_value = "SELECT version()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         result = self.postgis_db.getDatabaseVersion()
         self.assertEqual(result, "Non_EDGV")
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_returns_minus_one_when_no_rows(self, MockQSqlQuery):
+    def test_returns_minus_one_when_no_rows(self):
         self.mock_gen.getEDGVVersion.return_value = "SELECT version()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=True)
 
         result = self.postgis_db.getDatabaseVersion()
         self.assertEqual(result, "-1")
@@ -236,27 +246,24 @@ class TestGetDatabaseVersion(PostgisDbTestBase):
 
 
 class TestFindEPSG(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_srid(self, MockQSqlQuery):
+    def test_returns_srid(self):
         self.mock_gen.getSrid.return_value = "SELECT srid()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[(4674,)], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[(4674,)], is_active=True)
 
         result = self.postgis_db.findEPSG()
         self.assertEqual(result, 4674)
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_raises_on_inactive_query(self, MockQSqlQuery):
+    def test_raises_on_inactive_query(self):
         self.mock_gen.getSrid.return_value = "SELECT srid()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.findEPSG()
         self.assertIn("Problem finding EPSG", str(ctx.exception))
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_minus_one_when_no_rows(self, MockQSqlQuery):
+    def test_returns_minus_one_when_no_rows(self):
         self.mock_gen.getSrid.return_value = "SELECT srid()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=True)
 
         result = self.postgis_db.findEPSG()
         self.assertEqual(result, -1)
@@ -268,29 +275,26 @@ class TestFindEPSG(PostgisDbTestBase):
 
 
 class TestGetAggregationAttributes(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_column_list(self, MockQSqlQuery):
+    def test_returns_column_list(self):
         self.mock_gen.getAggregationColumn.return_value = "SELECT col()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[("id_estrutura",), ("id_complexo",)], is_active=True
         )
 
         result = self.postgis_db.getAggregationAttributes()
         self.assertEqual(result, ["id_estrutura", "id_complexo"])
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_raises_on_inactive_query(self, MockQSqlQuery):
+    def test_raises_on_inactive_query(self):
         self.mock_gen.getAggregationColumn.return_value = "SELECT col()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getAggregationAttributes()
         self.assertIn("Problem getting aggregation attributes", str(ctx.exception))
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_empty_list_when_no_rows(self, MockQSqlQuery):
+    def test_returns_empty_list_when_no_rows(self):
         self.mock_gen.getAggregationColumn.return_value = "SELECT col()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=True)
 
         result = self.postgis_db.getAggregationAttributes()
         self.assertEqual(result, [])
@@ -302,20 +306,18 @@ class TestGetAggregationAttributes(PostgisDbTestBase):
 
 
 class TestMakeValueRelationDict(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_name_to_code_dict(self, MockQSqlQuery):
+    def test_returns_name_to_code_dict(self):
         self.mock_gen.makeRelationDict.return_value = "SELECT id, nome FROM t"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[(1, "Sim"), (2, "Não")], is_active=True
         )
 
         result = self.postgis_db.makeValueRelationDict("dominios.t", [1, 2])
         self.assertEqual(result, {"Sim": "1", "Não": "2"})
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_empty_dict_when_no_rows(self, MockQSqlQuery):
+    def test_returns_empty_dict_when_no_rows(self):
         self.mock_gen.makeRelationDict.return_value = "SELECT id, nome FROM t"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=True)
 
         result = self.postgis_db.makeValueRelationDict("dominios.t", [])
         self.assertEqual(result, {})
@@ -327,42 +329,37 @@ class TestMakeValueRelationDict(PostgisDbTestBase):
 
 
 class TestImplementationVersion(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_version(self, MockQSqlQuery):
+    def test_returns_version(self):
         self.mock_gen.implementationVersion.return_value = "SELECT impl()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[("5.0",)], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[("5.0",)], is_active=True)
 
         result = self.postgis_db.implementationVersion()
         self.assertEqual(result, "5.0")
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_empty_string_when_inactive(self, MockQSqlQuery):
+    def test_returns_empty_string_when_inactive(self):
         self.mock_gen.implementationVersion.return_value = "SELECT impl()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         result = self.postgis_db.implementationVersion()
         self.assertEqual(result, "")
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_minus_one_when_value_is_none(self, MockQSqlQuery):
+    def test_returns_minus_one_when_value_is_none(self):
         self.mock_gen.implementationVersion.return_value = "SELECT impl()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[(None,)], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[(None,)], is_active=True)
 
         result = self.postgis_db.implementationVersion()
         self.assertEqual(result, -1)
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_getImplementationVersion_returns_version(self, MockQSqlQuery):
+    def test_getImplementationVersion_returns_version(self):
         self.mock_gen.getImplementationVersion.return_value = "SELECT implv()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[("5.1",)], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[("5.1",)], is_active=True)
 
         result = self.postgis_db.getImplementationVersion()
         self.assertEqual(result, "5.1")
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_getImplementationVersion_raises_on_inactive(self, MockQSqlQuery):
+    def test_getImplementationVersion_raises_on_inactive(self):
         self.mock_gen.getImplementationVersion.return_value = "SELECT implv()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getImplementationVersion()
@@ -375,7 +372,7 @@ class TestImplementationVersion(PostgisDbTestBase):
 
 
 class TestGetStructureDict(PostgisDbTestBase):
-    def _setup_version(self, MockQSqlQuery, version, struct_rows):
+    def _setup_version(self, version, struct_rows):
         """Configura getDatabaseVersion e getStructure com um único side_effect."""
         call_count = [0]
 
@@ -388,15 +385,13 @@ class TestGetStructureDict(PostgisDbTestBase):
                 # getStructure call
                 return make_mock_query(rows=struct_rows, is_active=True)
 
-        MockQSqlQuery.side_effect = query_factory
+        self.mock_cursor.side_effect = query_factory
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_returns_populated_dict(self, MockQSqlQuery):
+    def test_returns_populated_dict(self):
         self.mock_gen.getEDGVVersion.return_value = "SELECT version()"
         self.mock_gen.getStructure.return_value = "SELECT struct()"
 
         self._setup_version(
-            MockQSqlQuery,
             version="3.0",
             struct_rows=[
                 ("cb", "infra_via_deslocamento_l", "id"),
@@ -407,8 +402,7 @@ class TestGetStructureDict(PostgisDbTestBase):
         result = self.postgis_db.getStructureDict()
         self.assertIn("cb.infra_via_deslocamento_l", result)
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_raises_on_inactive_struct_query(self, MockQSqlQuery):
+    def test_raises_on_inactive_struct_query(self):
         call_count = [0]
 
         def query_factory(*args, **kwargs):
@@ -417,7 +411,7 @@ class TestGetStructureDict(PostgisDbTestBase):
                 return make_mock_query(rows=[("3.0",)], is_active=True)
             return make_mock_query(rows=[], is_active=False)
 
-        MockQSqlQuery.side_effect = query_factory
+        self.mock_cursor.side_effect = query_factory
         self.mock_gen.getEDGVVersion.return_value = "SELECT version()"
         self.mock_gen.getStructure.return_value = "SELECT struct()"
 
@@ -432,10 +426,9 @@ class TestGetStructureDict(PostgisDbTestBase):
 
 
 class TestListComplexClassesFromDatabase(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_returns_only_complexos_schema(self, MockQSqlQuery):
+    def test_returns_only_complexos_schema(self):
         self.mock_gen.getTablesFromDatabase.return_value = "SELECT tables()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[
                 ("cb", "infra_via_l"),
                 ("complexos", "pto_ref_geod_topo_p"),
@@ -449,10 +442,9 @@ class TestListComplexClassesFromDatabase(PostgisDbTestBase):
         self.assertIn("complexos.complexo_portuario_a", result)
         self.assertNotIn("cb.infra_via_l", result)
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_result_is_sorted(self, MockQSqlQuery):
+    def test_result_is_sorted(self):
         self.mock_gen.getTablesFromDatabase.return_value = "SELECT tables()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[
                 ("complexos", "z_ultimo"),
                 ("complexos", "a_primeiro"),
@@ -463,10 +455,9 @@ class TestListComplexClassesFromDatabase(PostgisDbTestBase):
         result = self.postgis_db.listComplexClassesFromDatabase()
         self.assertEqual(result, sorted(result))
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_raises_on_inactive_query(self, MockQSqlQuery):
+    def test_raises_on_inactive_query(self):
         self.mock_gen.getTablesFromDatabase.return_value = "SELECT tables()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.listComplexClassesFromDatabase()
@@ -479,10 +470,9 @@ class TestListComplexClassesFromDatabase(PostgisDbTestBase):
 
 
 class TestGetTablesFromDatabase(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_returns_schema_dot_table_list(self, MockQSqlQuery):
+    def test_returns_schema_dot_table_list(self):
         self.mock_gen.getTablesFromDatabase.return_value = "SELECT tables()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[
                 ("cb", "infra_via_l"),
                 ("complexos", "estrutura_a"),
@@ -494,10 +484,9 @@ class TestGetTablesFromDatabase(PostgisDbTestBase):
         self.assertIn("cb.infra_via_l", result)
         self.assertIn("complexos.estrutura_a", result)
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_raises_on_inactive_query(self, MockQSqlQuery):
+    def test_raises_on_inactive_query(self):
         self.mock_gen.getTablesFromDatabase.return_value = "SELECT tables()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getTablesFromDatabase()
@@ -510,33 +499,30 @@ class TestGetTablesFromDatabase(PostgisDbTestBase):
 
 
 class TestUserMethods(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_getUsers_returns_sorted_list(self, MockQSqlQuery):
+    def test_getUsers_returns_sorted_list(self):
         self.mock_gen.getUsers.return_value = "SELECT users()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[("zebra",), ("alice",), ("bob",)], is_active=True
         )
 
         result = self.postgis_db.getUsers()
         self.assertEqual(result, ["alice", "bob", "zebra"])
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_getUsers_raises_on_inactive(self, MockQSqlQuery):
+    def test_getUsers_raises_on_inactive(self):
         self.mock_gen.getUsers.return_value = "SELECT users()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getUsers()
         self.assertIn("Problem getting users", str(ctx.exception))
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_getUserRelatedRoles_separates_installed_and_assigned(self, MockQSqlQuery):
+    def test_getUserRelatedRoles_separates_installed_and_assigned(self):
         """
         Regra: rolname com usename vazio → installed; com usename → assigned.
         """
         self.mock_gen.getUserRelatedRoles.return_value = "SELECT roles()"
         # (rolname, usename)
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[
                 ("role_leitura", None),
                 ("role_edicao", None),
@@ -552,20 +538,18 @@ class TestUserMethods(PostgisDbTestBase):
         self.assertEqual(installed, sorted(installed))
         self.assertEqual(assigned, sorted(assigned))
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_getRoles_returns_sorted_list(self, MockQSqlQuery):
+    def test_getRoles_returns_sorted_list(self):
         self.mock_gen.getRoles.return_value = "SELECT roles()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[("role_z",), ("role_a",)], is_active=True
         )
 
         result = self.postgis_db.getRoles()
         self.assertEqual(result, ["role_a", "role_z"])
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_getRoles_raises_on_inactive(self, MockQSqlQuery):
+    def test_getRoles_raises_on_inactive(self):
         self.mock_gen.getRoles.return_value = "SELECT roles()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getRoles()
@@ -578,54 +562,48 @@ class TestUserMethods(PostgisDbTestBase):
 
 
 class TestUserDMLMethods(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_createUser_executes_sql(self, MockQSqlQuery):
+    def test_createUser_executes_sql(self):
         self.mock_gen.createUser.return_value = "CREATE USER alice"
         mock_query = make_mock_query(exec_success=True)
-        MockQSqlQuery.return_value = mock_query
+        self.mock_cursor.return_value = mock_query
 
         # Não deve levantar exceção
         self.postgis_db.createUser("alice", "senha123", False)
         self.mock_gen.createUser.assert_called_once_with("alice", "senha123", False)
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_createUser_raises_on_exec_failure(self, MockQSqlQuery):
+    def test_createUser_raises_on_exec_failure(self):
         self.mock_gen.createUser.return_value = "CREATE USER alice"
-        MockQSqlQuery.return_value = make_mock_query(exec_success=False)
+        self.mock_cursor.return_value = make_mock_query(exec_success=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.createUser("alice", "senha123", False)
         self.assertIn("Problem creating user", str(ctx.exception))
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_removeUser_executes_sql(self, MockQSqlQuery):
+    def test_removeUser_executes_sql(self):
         self.mock_gen.removeUser.return_value = "DROP USER alice"
-        MockQSqlQuery.return_value = make_mock_query(exec_success=True)
+        self.mock_cursor.return_value = make_mock_query(exec_success=True)
 
         self.postgis_db.removeUser("alice")
         self.mock_gen.removeUser.assert_called_once_with("alice")
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_removeUser_raises_on_exec_failure(self, MockQSqlQuery):
+    def test_removeUser_raises_on_exec_failure(self):
         self.mock_gen.removeUser.return_value = "DROP USER alice"
-        MockQSqlQuery.return_value = make_mock_query(exec_success=False)
+        self.mock_cursor.return_value = make_mock_query(exec_success=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.removeUser("alice")
         self.assertIn("Problem removing user", str(ctx.exception))
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_alterUserPass_executes_sql(self, MockQSqlQuery):
+    def test_alterUserPass_executes_sql(self):
         self.mock_gen.alterUserPass.return_value = "ALTER USER alice PASSWORD 'nova'"
-        MockQSqlQuery.return_value = make_mock_query(exec_success=True)
+        self.mock_cursor.return_value = make_mock_query(exec_success=True)
 
         self.postgis_db.alterUserPass("alice", "nova")
         self.mock_gen.alterUserPass.assert_called_once_with("alice", "nova")
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_alterUserPass_raises_on_failure(self, MockQSqlQuery):
+    def test_alterUserPass_raises_on_failure(self):
         self.mock_gen.alterUserPass.return_value = "ALTER USER alice PASSWORD 'nova'"
-        MockQSqlQuery.return_value = make_mock_query(exec_success=False)
+        self.mock_cursor.return_value = make_mock_query(exec_success=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.alterUserPass("alice", "nova")
@@ -638,35 +616,31 @@ class TestUserDMLMethods(PostgisDbTestBase):
 
 
 class TestRoleDMLMethods(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_grantRole_executes_sql(self, MockQSqlQuery):
+    def test_grantRole_executes_sql(self):
         self.mock_gen.grantRole.return_value = "GRANT role_leitura TO alice"
-        MockQSqlQuery.return_value = make_mock_query(exec_success=True)
+        self.mock_cursor.return_value = make_mock_query(exec_success=True)
 
         self.postgis_db.grantRole("alice", "role_leitura")
         self.mock_gen.grantRole.assert_called_once_with("alice", "role_leitura")
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_grantRole_raises_on_failure(self, MockQSqlQuery):
+    def test_grantRole_raises_on_failure(self):
         self.mock_gen.grantRole.return_value = "GRANT ..."
-        MockQSqlQuery.return_value = make_mock_query(exec_success=False)
+        self.mock_cursor.return_value = make_mock_query(exec_success=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.grantRole("alice", "role_leitura")
         self.assertIn("Problem granting profile", str(ctx.exception))
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_revokeRole_executes_sql(self, MockQSqlQuery):
+    def test_revokeRole_executes_sql(self):
         self.mock_gen.revokeRole.return_value = "REVOKE role_leitura FROM alice"
-        MockQSqlQuery.return_value = make_mock_query(exec_success=True)
+        self.mock_cursor.return_value = make_mock_query(exec_success=True)
 
         self.postgis_db.revokeRole("alice", "role_leitura")
         self.mock_gen.revokeRole.assert_called_once_with("alice", "role_leitura")
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_revokeRole_raises_on_failure(self, MockQSqlQuery):
+    def test_revokeRole_raises_on_failure(self):
         self.mock_gen.revokeRole.return_value = "REVOKE ..."
-        MockQSqlQuery.return_value = make_mock_query(exec_success=False)
+        self.mock_cursor.return_value = make_mock_query(exec_success=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.revokeRole("alice", "role_leitura")
@@ -679,20 +653,18 @@ class TestRoleDMLMethods(PostgisDbTestBase):
 
 
 class TestDisassociateComplex(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_executes_sql_successfully(self, MockQSqlQuery):
+    def test_executes_sql_successfully(self):
         self.mock_gen.disassociateComplexFromComplex.return_value = "UPDATE ..."
-        MockQSqlQuery.return_value = make_mock_query(exec_success=True)
+        self.mock_cursor.return_value = make_mock_query(exec_success=True)
 
         self.postgis_db.disassociateComplexFromComplex(
             "complexos.estrutura_a", "id_estrutura", "uuid-123"
         )
         self.mock_gen.disassociateComplexFromComplex.assert_called_once()
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_raises_on_exec_failure(self, MockQSqlQuery):
+    def test_raises_on_exec_failure(self):
         self.mock_gen.disassociateComplexFromComplex.return_value = "UPDATE ..."
-        MockQSqlQuery.return_value = make_mock_query(exec_success=False)
+        self.mock_cursor.return_value = make_mock_query(exec_success=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.disassociateComplexFromComplex(
@@ -707,10 +679,9 @@ class TestDisassociateComplex(PostgisDbTestBase):
 
 
 class TestObtainLinkColumn(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_column_name(self, MockQSqlQuery):
+    def test_returns_column_name(self):
         self.mock_gen.getLinkColumn.return_value = "SELECT link_col()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[("id_estrutura_a",)], is_active=True
         )
 
@@ -719,10 +690,9 @@ class TestObtainLinkColumn(PostgisDbTestBase):
         )
         self.assertEqual(result, "id_estrutura_a")
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_raises_on_inactive_query(self, MockQSqlQuery):
+    def test_raises_on_inactive_query(self):
         self.mock_gen.getLinkColumn.return_value = "SELECT link_col()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.obtainLinkColumn(
@@ -730,10 +700,9 @@ class TestObtainLinkColumn(PostgisDbTestBase):
             )
         self.assertIn("Problem obtaining link column", str(ctx.exception))
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_empty_string_when_no_rows(self, MockQSqlQuery):
+    def test_returns_empty_string_when_no_rows(self):
         self.mock_gen.getLinkColumn.return_value = "SELECT link_col()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=True)
 
         result = self.postgis_db.obtainLinkColumn(
             "complexos.estrutura_a", "cb.infra_elemento_p"
@@ -747,30 +716,27 @@ class TestObtainLinkColumn(PostgisDbTestBase):
 
 
 class TestIsComplexClass(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_true_when_class_found(self, MockQSqlQuery):
+    def test_returns_true_when_class_found(self):
         self.mock_gen.getComplexTablesFromDatabase.return_value = "SELECT complex()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[("estrutura_a",), ("complexo_portuario_a",)], is_active=True
         )
 
         result = self.postgis_db.isComplexClass("estrutura_a")
         self.assertTrue(result)
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_false_when_class_not_found(self, MockQSqlQuery):
+    def test_returns_false_when_class_not_found(self):
         self.mock_gen.getComplexTablesFromDatabase.return_value = "SELECT complex()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[("estrutura_a",)], is_active=True
         )
 
         result = self.postgis_db.isComplexClass("inexistente_a")
         self.assertFalse(result)
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_raises_on_inactive_query(self, MockQSqlQuery):
+    def test_raises_on_inactive_query(self):
         self.mock_gen.getComplexTablesFromDatabase.return_value = "SELECT complex()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.isComplexClass("estrutura_a")
@@ -783,10 +749,9 @@ class TestIsComplexClass(PostgisDbTestBase):
 
 
 class TestGetQmlRecordDict(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_dict_for_list_input(self, MockQSqlQuery):
+    def test_returns_dict_for_list_input(self):
         self.mock_gen.getQmlRecords.return_value = "SELECT qml()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[("camada_a", "<qml_content_a/>"), ("camada_l", "<qml_content_l/>")],
             is_active=True,
         )
@@ -796,20 +761,18 @@ class TestGetQmlRecordDict(PostgisDbTestBase):
         self.assertIn("camada_a", result)
         self.assertEqual(result["camada_a"], "<qml_content_a/>")
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_single_value_for_str_input(self, MockQSqlQuery):
+    def test_returns_single_value_for_str_input(self):
         self.mock_gen.getQmlRecords.return_value = "SELECT qml()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[("camada_a", "<qml_single/>")], is_active=True
         )
 
         result = self.postgis_db.getQmlRecordDict("camada_a")
         self.assertEqual(result, "<qml_single/>")
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_raises_on_inactive_query(self, MockQSqlQuery):
+    def test_raises_on_inactive_query(self):
         self.mock_gen.getQmlRecords.return_value = "SELECT qml()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getQmlRecordDict(["camada_a"])
@@ -822,22 +785,20 @@ class TestGetQmlRecordDict(PostgisDbTestBase):
 
 
 class TestCheckSuperUser(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_returns_true_for_superuser(self, MockQSqlQuery):
+    def test_returns_true_for_superuser(self):
         self.mock_gen.isSuperUser.return_value = "SELECT is_super()"
         self.postgis_db.db.userName.return_value = "postgres"
 
         mock_q = make_mock_query(exec_rows=[(True,)], exec_success=True)
-        MockQSqlQuery.return_value = mock_q
+        self.mock_cursor.return_value = mock_q
 
         result = self.postgis_db.checkSuperUser()
         self.assertTrue(result)
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_raises_on_exec_failure(self, MockQSqlQuery):
+    def test_raises_on_exec_failure(self):
         self.mock_gen.isSuperUser.return_value = "SELECT is_super()"
         self.postgis_db.db.userName.return_value = "alice"
-        MockQSqlQuery.return_value = make_mock_query(exec_success=False)
+        self.mock_cursor.return_value = make_mock_query(exec_success=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.checkSuperUser()
@@ -850,20 +811,18 @@ class TestCheckSuperUser(PostgisDbTestBase):
 
 
 class TestGetDbsFromServer(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_returns_database_list(self, MockQSqlQuery):
+    def test_returns_database_list(self):
         self.mock_gen.getDatabasesFromServer.return_value = "SELECT dbs()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[("postgres",), ("edgv_213_prod",), ("edgv_3_homol",)], is_active=True
         )
 
         result = self.postgis_db.getDbsFromServer()
         self.assertEqual(result, ["postgres", "edgv_213_prod", "edgv_3_homol"])
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_raises_on_inactive_query(self, MockQSqlQuery):
+    def test_raises_on_inactive_query(self):
         self.mock_gen.getDatabasesFromServer.return_value = "SELECT dbs()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getDbsFromServer()
@@ -876,10 +835,9 @@ class TestGetDbsFromServer(PostgisDbTestBase):
 
 
 class TestGetInvalidGeomRecords(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_returns_list_of_tuples(self, MockQSqlQuery):
+    def test_returns_list_of_tuples(self):
         self.mock_gen.getInvalidGeom.return_value = "SELECT invalid()"
-        MockQSqlQuery.return_value = make_mock_query(
+        self.mock_cursor.return_value = make_mock_query(
             rows=[
                 (1, "Self-intersection", "0101..."),
                 (2, "Ring not closed", "0101..."),
@@ -893,19 +851,17 @@ class TestGetInvalidGeomRecords(PostgisDbTestBase):
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0], (1, "Self-intersection", "0101..."))
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_raises_on_inactive_query(self, MockQSqlQuery):
+    def test_raises_on_inactive_query(self):
         self.mock_gen.getInvalidGeom.return_value = "SELECT invalid()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=False)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=False)
 
         with self.assertRaises(Exception) as ctx:
             self.postgis_db.getInvalidGeomRecords("cb.infra_elemento_p", "geom", "id")
         self.assertIn("Problem getting invalid geometries", str(ctx.exception))
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_returns_empty_list_when_no_invalid_geoms(self, MockQSqlQuery):
+    def test_returns_empty_list_when_no_invalid_geoms(self):
         self.mock_gen.getInvalidGeom.return_value = "SELECT invalid()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=True)
 
         result = self.postgis_db.getInvalidGeomRecords(
             "cb.infra_elemento_p", "geom", "id"
@@ -919,10 +875,9 @@ class TestGetInvalidGeomRecords(PostgisDbTestBase):
 
 
 class TestRemoveFeatures(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_commits_on_success(self, MockQSqlQuery):
+    def test_commits_on_success(self):
         self.mock_gen.deleteFeatures.return_value = "DELETE FROM t WHERE ..."
-        MockQSqlQuery.return_value = make_mock_query(exec_success=True)
+        self.mock_cursor.return_value = make_mock_query(exec_success=True)
 
         processList = [{"id": 1}, {"id": 2}]
         count = self.postgis_db.removeFeatures(
@@ -934,10 +889,9 @@ class TestRemoveFeatures(PostgisDbTestBase):
         self.postgis_db.db.commit.assert_called_once()
         self.postgis_db.db.rollback.assert_not_called()
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_rollback_and_raises_on_failure(self, MockQSqlQuery):
+    def test_rollback_and_raises_on_failure(self):
         self.mock_gen.deleteFeatures.return_value = "DELETE FROM t WHERE ..."
-        MockQSqlQuery.return_value = make_mock_query(exec_success=False)
+        self.mock_cursor.return_value = make_mock_query(exec_success=False)
 
         processList = [{"id": 1}]
         with self.assertRaises(Exception) as ctx:
@@ -945,14 +899,15 @@ class TestRemoveFeatures(PostgisDbTestBase):
                 "cb.infra_via_l", processList, "id", useTransaction=True
             )
 
-        self.assertIn("Problem deleting features", str(ctx.exception))
+        # a transação é conferida antes da mensagem, para que uma falha na
+        # mensagem não esconda o estado do rollback
         self.postgis_db.db.rollback.assert_called_once()
         self.postgis_db.db.commit.assert_not_called()
+        self.assertIn("Problem deleting features", str(ctx.exception))
 
-    @patch("DsgTools.core.Factories.DbFactory.postgisDb.QSqlQuery")
-    def test_no_transaction_when_flag_false(self, MockQSqlQuery):
+    def test_no_transaction_when_flag_false(self):
         self.mock_gen.deleteFeatures.return_value = "DELETE FROM t WHERE ..."
-        MockQSqlQuery.return_value = make_mock_query(exec_success=True)
+        self.mock_cursor.return_value = make_mock_query(exec_success=True)
 
         self.postgis_db.removeFeatures(
             "cb.infra_via_l", [{"id": 1}], "id", useTransaction=False
@@ -967,8 +922,7 @@ class TestRemoveFeatures(PostgisDbTestBase):
 
 
 class TestGetLayersWithElementsV2(PostgisDbTestBase):
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_returns_layers_with_elements(self, MockQSqlQuery):
+    def test_returns_layers_with_elements(self):
         self.mock_gen.getElementCountFromLayerV2.return_value = "SELECT count()"
 
         call_count = [0]
@@ -981,21 +935,20 @@ class TestGetLayersWithElementsV2(PostgisDbTestBase):
             else:
                 return make_mock_query(rows=[(0,)], is_active=True)
 
-        MockQSqlQuery.side_effect = query_factory
+        self.mock_cursor.side_effect = query_factory
 
         result = self.postgis_db.getLayersWithElementsV2(["cb.camada_a", "cb.camada_l"])
         # Somente camada_a (count > 0) deve aparecer
         self.assertIn("camada_a", result)
         self.assertNotIn("camada_l", result)
 
-    @patch("DsgTools.core.Factories.DbFactory.abstractDb.QSqlQuery")
-    def test_skips_layer_when_query_returns_no_rows(self, MockQSqlQuery):
+    def test_skips_layer_when_query_returns_no_rows(self):
         """
         Quando next() retorna False (sem linhas), a camada deve ser ignorada
         silenciosamente (sem exception), conforme lógica original.
         """
         self.mock_gen.getElementCountFromLayerV2.return_value = "SELECT count()"
-        MockQSqlQuery.return_value = make_mock_query(rows=[], is_active=True)
+        self.mock_cursor.return_value = make_mock_query(rows=[], is_active=True)
 
         result = self.postgis_db.getLayersWithElementsV2(["cb.camada_a"])
         self.assertEqual(result, [])
