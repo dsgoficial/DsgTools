@@ -25,6 +25,8 @@ from qgis.PyQt.QtWidgets import QMessageBox, QDialog, QLineEdit
 from qgis.PyQt import uic
 import os
 
+from DsgTools.core.Utils import credentialStore
+
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "ui_serverConfigurator.ui")
 )
@@ -46,6 +48,8 @@ class ServerConfigurator(QDialog, FORM_CLASS):
         self.iface = iface
         self.isEdit = 0
         self.oldName = ""
+        self.passwordStored = False
+        self.passwordLoadFailed = False
 
         self.passwordEdit.setEchoMode(QLineEdit.EchoMode.Password)
 
@@ -62,6 +66,16 @@ class ServerConfigurator(QDialog, FORM_CLASS):
             password = self.passwordEdit.text()
             if not self.storeServerConfiguration(name, host, port, user, password):
                 return
+            if password and not self.passwordStored:
+                QMessageBox.warning(
+                    self,
+                    self.tr("Warning!"),
+                    self.tr(
+                        "Server stored without the password: the QGIS authentication "
+                        "database is not available (master password not set). "
+                        "The password will be asked when connecting."
+                    ),
+                )
             QMessageBox.warning(self, self.tr("Info!"), self.tr("Server stored."))
             self.done(1)
         else:
@@ -104,11 +118,7 @@ class ServerConfigurator(QDialog, FORM_CLASS):
             return 0
 
         settings = QSettings()
-        if self.isEdit:
-            settings.beginGroup("PostgreSQL/servers/" + self.oldName)
-            settings.remove("")
-            settings.endGroup()
-        else:
+        if not self.isEdit:
             if settings.contains("PostgreSQL/servers/" + name + "/host"):
                 QMessageBox.warning(
                     self,
@@ -117,16 +127,18 @@ class ServerConfigurator(QDialog, FORM_CLASS):
                 )
                 self.servEdit.setStyleSheet("background-color: rgb(255, 150, 150)")
                 return 0
-        settings.beginGroup("PostgreSQL/servers/" + name)
-        settings.setValue("host", host)
-        settings.setValue("port", port)
-        settings.setValue("username", user)
-        settings.setValue("password", password)
-        if isDefault:
-            settings.setValue("isDefault", True)
-        else:
-            settings.setValue("isDefault", False)
-        settings.endGroup()
+        # the password goes to the QGIS authentication database and QSettings
+        # keeps only the authcfg reference (CDCiber 4.2)
+        _, self.passwordStored = credentialStore.saveServer(
+            name,
+            host,
+            port,
+            user,
+            password,
+            isDefault=isDefault,
+            previousName=self.oldName if self.isEdit else None,
+            keepCredentialWhenEmpty=self.passwordLoadFailed,
+        )
         return 1
 
     def setServerConfiguration(self, name):
@@ -135,13 +147,12 @@ class ServerConfigurator(QDialog, FORM_CLASS):
         """
         self.isEdit = 1
         self.oldName = name
-        settings = QSettings()
-        settings.beginGroup("PostgreSQL/servers/" + name)
-        host = settings.value("host")
-        port = settings.value("port")
-        user = settings.value("username")
-        password = settings.value("password")
-        settings.endGroup()
+        host, port, user, password = credentialStore.readServer(name)
+        # a stored password that could not be read (master password refused)
+        # must survive an edit that leaves the field empty
+        self.passwordLoadFailed = not password and credentialStore.hasStoredPassword(
+            "PostgreSQL/servers/" + name
+        )
 
         self.servEdit.setText(name)
         self.hostEdit.setText(host)

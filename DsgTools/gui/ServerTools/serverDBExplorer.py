@@ -31,6 +31,7 @@ from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox
 
 # DSGTools imports
 from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.Utils import credentialStore
 from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.core.dsgEnums import DsgEnums
 
@@ -62,32 +63,16 @@ class ServerDBExplorer(QtWidgets.QDialog, FORM_CLASS):
         """
         Stores database connection in the QSettings
         """
-        (host, port, user, password) = self.getServerConfiguration(server)
         connection = server + "_" + database
-        settings = QSettings()
-        if not settings.contains("PostgreSQL/connections/" + connection + "/database"):
-            settings.beginGroup("PostgreSQL/connections/" + connection)
-            settings.setValue("database", database)
-            settings.setValue("host", host)
-            settings.setValue("port", port)
-            settings.setValue("username", user)
-            settings.setValue("password", password)
-            settings.endGroup()
-            return True
-        return False
+        # the connection points to the server credential by authcfg and never
+        # receives a password (CDCiber 4.2)
+        return credentialStore.saveConnectionFromServer(connection, server, database)
 
     def getServerConfiguration(self, name):
         """
         Gets server configuration from QSetting by its name
         """
-        settings = QSettings()
-        settings.beginGroup("PostgreSQL/servers/" + name)
-        host = settings.value("host")
-        port = settings.value("port")
-        user = settings.value("username")
-        password = settings.value("password")
-        settings.endGroup()
-        return (host, port, user, password)
+        return credentialStore.readServer(name)
 
     def storeConnectionConfiguration(self, server, database):
         """
@@ -97,16 +82,11 @@ class ServerDBExplorer(QtWidgets.QDialog, FORM_CLASS):
         """
         name = self.connectionEdit.text()
 
-        (host, port, user, password) = self.getServerConfiguration(server)
         settings = QSettings()
         if not settings.contains("PostgreSQL/servers/" + name + "/host"):
-            settings.beginGroup("PostgreSQL/connections/" + name)
-            settings.setValue("database", database)
-            settings.setValue("host", host)
-            settings.setValue("port", port)
-            settings.setValue("username", user)
-            settings.setValue("password", password)
-            settings.endGroup()
+            credentialStore.saveConnectionFromServer(
+                name, server, database, overwrite=True
+            )
 
     def populateListWithDatabasesFromServer(self):
         """

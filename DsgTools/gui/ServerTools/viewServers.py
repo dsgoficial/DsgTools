@@ -39,6 +39,7 @@ from qgis.core import QgsMessageLog, Qgis
 
 from ...core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.dsgEnums import DsgEnums
+from DsgTools.core.Utils import credentialStore
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "ui_viewServers.ui")
@@ -53,11 +54,50 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         super(ViewServers, self).__init__(parent)
         self.setupUi(self)
         self.abstractDbFactory = DbFactory()
+        self._defaultConnection = None
         self.initGui()
-        connection, host, port, user, password = self.getDefaultConnectionParameters()
+        # this dialog is built when the plugin starts: nothing is decrypted
+        # here, so QGIS does not ask for the master password on startup
+        connection, host, port, user, hasPassword = self._defaultServerSummary()
         self.defaultConnectionDict = self.setDefaultConnectionParameters(
-            connection, host, port, user, password
+            connection, host, port, user, hasPassword
         )
+
+    def showEvent(self, event):
+        """
+        The first time the server tools are shown in a session, the legacy
+        clear text passwords are migrated to the QGIS authentication database
+        (CDCiber 4.2).
+        """
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
+        try:
+            migrated = credentialStore.migrateOncePerSession()
+        finally:
+            QApplication.restoreOverrideCursor()
+        if migrated:
+            self.populateTable()
+        super(ViewServers, self).showEvent(event)
+
+    def _defaultServerSummary(self):
+        """
+        Default server without decrypting its password.
+        :return: (tuple) (connection, host, port, user, hasPassword)
+        """
+        for connection in self.getServers():
+            if credentialStore.isDefaultServer(connection):
+                host, port, user, _, _ = self.getServerConfiguration(
+                    connection, withPassword=False
+                )
+                return (
+                    connection,
+                    host,
+                    port,
+                    user,
+                    credentialStore.hasStoredPassword(
+                        "PostgreSQL/servers/" + connection
+                    ),
+                )
+        return (None, None, None, None, None)
 
     def initGui(self):
         """
@@ -75,49 +115,47 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         self.tableWidget.setRowCount(len(currentConnections))
         for i, connection in enumerate(currentConnections):
             self.tableWidget.setItem(i, 0, QTableWidgetItem(connection))
-            (host, port, user, password, isDefault) = self.getServerConfiguration(
-                connection
+            (host, port, user, _, isDefault) = self.getServerConfiguration(
+                connection, withPassword=False
             )
             self.tableWidget.setItem(i, 1, QTableWidgetItem(host))
             self.tableWidget.setItem(i, 2, QTableWidgetItem(port))
             self.tableWidget.setItem(i, 3, QTableWidgetItem(user))
-            if not password or len(password) == 0:
+            if not credentialStore.hasStoredPassword(
+                "PostgreSQL/servers/" + connection
+            ):
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr("Not Saved")))
             else:
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr("Saved")))
             radio = QRadioButton(self.tableWidget)
             radio.setAutoExclusive(True)
-            if isDefault:
+            if credentialStore.isDefaultServer(connection):
                 radio.setChecked(True)
             self.tableWidget.setCellWidget(i, 5, radio)
 
     def setDefaultConnectionParameters(self, connection, host, port, user, password):
+        """
+        Keeps the default server without its password in memory; password may
+        be the password or just a flag telling that one is stored.
+        """
         defaultConnectionDict = dict()
         if host and port and user and password:
             defaultConnectionDict["host"] = host
             defaultConnectionDict["port"] = port
             defaultConnectionDict["user"] = user
-            defaultConnectionDict["password"] = password
+            self._defaultConnection = connection
             # set all connection on QSettings to not default and this connetion to default
-            settings = QSettings()
-            settings.beginGroup("PostgreSQL/servers")
-            connections = settings.childGroups()
-            settings.endGroup()
-            for conn in connections:
-                settings.beginGroup("PostgreSQL/servers/{0}".format(conn))
-                settings.setValue("isDefault", conn == connection)
-                settings.endGroup()
+            credentialStore.setDefaultServer(connection)
         else:
             defaultConnectionDict = dict()
         return defaultConnectionDict
 
     def getDefaultConnectionParameters(self):
-        currentConnections = self.getServers()
-        for i, connection in enumerate(currentConnections):
-            (host, port, user, password, isDefault) = self.getServerConfiguration(
-                connection
-            )
-            if isDefault == True or isDefault == "true":
+        for connection in self.getServers():
+            if credentialStore.isDefaultServer(connection):
+                (host, port, user, password, _) = self.getServerConfiguration(
+                    connection
+                )
                 return (connection, host, port, user, password)
         return (None, None, None, None, None)
 
@@ -130,16 +168,19 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         self.tableWidget.setRowCount(len(currentConnections))
         for i, connection in enumerate(currentConnections):
             if self.tableWidget.cellWidget(i, 5).isChecked():
-                (host, port, user, password, isDefault) = self.getServerConfiguration(
-                    connection
+                (host, port, user, _, isDefault) = self.getServerConfiguration(
+                    connection, withPassword=False
                 )
-                dlg = ServerConfigurator(self)
-                dlg.setServerConfiguration(connection)
-                dlg.storeServerConfiguration(
-                    connection, host, port, user, password, isDefault=True
-                )
+                # only the default flag changes: the credential is not rewritten
+                credentialStore.setDefaultServer(connection)
                 self.defaultConnectionDict = self.setDefaultConnectionParameters(
-                    connection, host, port, user, password
+                    connection,
+                    host,
+                    port,
+                    user,
+                    credentialStore.hasStoredPassword(
+                        "PostgreSQL/servers/" + connection
+                    ),
                 )
                 self.defaultChanged.emit()
                 self.done(0)
@@ -225,30 +266,24 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         settings.endGroup()
         return currentConnections
 
-    def getServerConfiguration(self, name):
+    def getServerConfiguration(self, name, withPassword=True):
         """
         Gets server configuration
         name: server name
+        withPassword: when False the password is not read (nothing is decrypted)
         """
-        settings = QSettings()
-        settings.beginGroup("PostgreSQL/servers/" + name)
-        host = settings.value("host")
-        port = settings.value("port")
-        user = settings.value("username")
-        password = settings.value("password")
-        isDefault = settings.value("isDefault")
-        settings.endGroup()
-
+        host, port, user, password = credentialStore.readServer(
+            name, withPassword=withPassword
+        )
+        isDefault = QSettings().value("PostgreSQL/servers/" + name + "/isDefault")
         return (host, port, user, password, isDefault)
 
     def removeServerConfiguration(self, name):
         """
-        Removes a server from QSettings
+        Removes a server from QSettings and its credential from the QGIS
+        authentication database
         """
-        settings = QSettings()
-        settings.beginGroup("PostgreSQL/servers/" + name)
-        settings.remove("")
-        settings.endGroup()
+        credentialStore.removeServer(name)
 
     def testServer(self, name):
         """
@@ -296,7 +331,12 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         Gets selection's connection parameters.
         :return: (dict) connection paramters map.
         """
-        return self.defaultConnectionDict
+        if not self.defaultConnectionDict:
+            return dict()
+        parameters = dict(self.defaultConnectionDict)
+        # the password is read when asked for, never kept in the dialog
+        parameters["password"] = self.getServerConfiguration(self._defaultConnection)[3]
+        return parameters
 
 
 class ViewServersStatic(ViewServers):
@@ -339,26 +379,37 @@ class ViewServersStatic(ViewServers):
         """
         currentConnections = self.getServers()
         self.tableWidget.setRowCount(len(currentConnections))
-        connParam = self.connectionParameters()
+        selected = self._selectedConnectionName()
         for i, connection in enumerate(currentConnections):
             self.tableWidget.setItem(i, 0, QTableWidgetItem(connection))
-            (host, port, user, password, isDefault) = self.getServerConfiguration(
-                connection
+            (host, port, user, _, isDefault) = self.getServerConfiguration(
+                connection, withPassword=False
             )
             self.tableWidget.setItem(i, 1, QTableWidgetItem(host))
             self.tableWidget.setItem(i, 2, QTableWidgetItem(port))
             self.tableWidget.setItem(i, 3, QTableWidgetItem(user))
-            if not password or len(password) == 0:
+            if not credentialStore.hasStoredPassword(
+                "PostgreSQL/servers/" + connection
+            ):
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr("Not Saved")))
             else:
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr("Saved")))
             radio = QRadioButton(self.tableWidget)
             radio.setAutoExclusive(True)
-            if (not connParam and isDefault) or (
-                connParam and connParam["connection"] == connection
-            ):
+            if selected is not None and selected == connection:
                 radio.setChecked(True)
             self.tableWidget.setCellWidget(i, 5, radio)
+
+    def _selectedConnectionName(self):
+        """
+        Selected server (or the default one) without reading its password.
+        """
+        if self._connParameters:
+            return self._connParameters["connection"]
+        for connection in self.getServers():
+            if credentialStore.isDefaultServer(connection):
+                return connection
+        return None
 
     def on_closeButton_clicked(self):
         """
@@ -367,13 +418,12 @@ class ViewServersStatic(ViewServers):
         currentConnections = self.getServers()
         for i, connection in enumerate(currentConnections):
             if self.tableWidget.cellWidget(i, 5).isChecked():
-                host, port, user, password, _ = self.getServerConfiguration(connection)
+                # the password is read only when connectionParameters() is asked
                 self._connParameters = {
                     "connection": self.tableWidget.item(i, 0).text(),
                     "host": self.tableWidget.item(i, 1).text(),
                     "port": self.tableWidget.item(i, 2).text(),
                     "user": self.tableWidget.item(i, 3).text(),
-                    "password": password,
                 }
                 self.defaultChanged.emit()
                 self.done(0)
@@ -388,13 +438,16 @@ class ViewServersStatic(ViewServers):
         :return: (dict) connection paramters map.
         """
         if self._connParameters:
-            return self._connParameters
-        connection, host, port, user, password = [None] * 5
-        for i, connection in enumerate(self.getServers()):
-            (host, port, user, password, isDefault) = self.getServerConfiguration(
-                connection
-            )
-            if isDefault == True or isDefault == "true":
+            parameters = dict(self._connParameters)
+            parameters["password"] = self.getServerConfiguration(
+                parameters["connection"]
+            )[3]
+            return parameters
+        for connection in self.getServers():
+            if credentialStore.isDefaultServer(connection):
+                (host, port, user, password, _) = self.getServerConfiguration(
+                    connection
+                )
                 return {
                     "connection": connection,
                     "host": host,
@@ -430,13 +483,11 @@ class ViewServersStatic(ViewServers):
             isDefault = hostname == self.tableWidget.item(i, 0).text()
             self.tableWidget.cellWidget(i, 5).setChecked(isDefault)
             if isDefault:
-                host, port, user, password, _ = self.getServerConfiguration(connection)
                 self._connParameters = {
                     "connection": self.tableWidget.item(i, 0).text(),
                     "host": self.tableWidget.item(i, 1).text(),
                     "port": self.tableWidget.item(i, 2).text(),
                     "user": self.tableWidget.item(i, 3).text(),
-                    "password": password,
                 }
                 self.defaultChanged.emit()
                 self.done(0)

@@ -38,6 +38,7 @@ from .....core.Factories.DbFactory.abstractDb import AbstractDb
 from .....core.Factories.DbFactory.dbFactory import DbFactory
 from ....CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 from DsgTools.core.dsgEnums import DsgEnums
+from DsgTools.core.Utils import credentialStore
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "exploreServerWidget.ui")
@@ -70,20 +71,14 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         settings.endGroup()
         return currentConnections
 
-    def getServerConfiguration(self, name):
+    def getServerConfiguration(self, name, withPassword=True):
         """
-        Gets server configuration
+        Gets server configuration (password from the QGIS authentication
+        database; a legacy clear text password is still read and migrated)
         name: server name
+        withPassword: when False the password is not read (nothing is decrypted)
         """
-        settings = QSettings()
-        settings.beginGroup("PostgreSQL/servers/" + name)
-        host = settings.value("host")
-        port = settings.value("port")
-        user = settings.value("username")
-        password = settings.value("password")
-        settings.endGroup()
-
-        return (host, port, user, password)
+        return credentialStore.readServer(name, withPassword=withPassword)
 
     def browseServer(self, dbList, host, port, user, password):
         """
@@ -199,7 +194,10 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.serversCombo.addItem(self.tr("Select Server"))
         currentConnections = self.getServers()
         for connection in currentConnections:
-            (host, port, user, password) = self.getServerConfiguration(connection)
+            # listing servers never decrypts a password
+            (host, port, user, _) = self.getServerConfiguration(
+                connection, withPassword=False
+            )
             self.serversCombo.addItem(
                 "{3} ({0}@{1}:{2})".format(user, host, port, connection)
             )
