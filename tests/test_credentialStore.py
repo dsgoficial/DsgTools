@@ -669,6 +669,30 @@ class CredentialStoreTest(unittest.TestCase):
             self.assertEqual(layer.featureCount(), 1)
         QgsProject.instance().clear()
 
+    def test_i2_getURIV2_from_authcfg_server_keeps_password_out(self):
+        """
+        getURIV2 (usado pelo getLayerDict) monta a URI pelo authcfg da conexão,
+        e a camada abre válida por ele; a senha não aparece na fonte.
+        """
+        self.requirePostgis()
+        from qgis.core import QgsVectorLayer
+
+        self.createTestTables()
+        self.saveServer("srvI2", PG_HOST, PG_PORT, PG_USER, PG_PASSWORD)
+        authcfg = _value(SERVERS + "/srvI2/authcfg")
+        from DsgTools.core.Factories.DbFactory.postgisDb import PostgisDb
+
+        host, port, user, password = PostgisDb().getServerConfiguration("srvI2")
+        db = PostgisDb()
+        db.connectDatabaseWithParameters(host, port, "postgres", user, password)
+        uri = db.getURIV2("cred_teste", "ponto", "geom")
+        source = uri.uri(False)
+        self.assertTrue("authcfg=" + str(authcfg) in source, "sem authcfg na URI")
+        self.assertTrue(PG_PASSWORD not in source, "senha na URI")
+        layer = QgsVectorLayer(source, "ponto", "postgres")
+        self.assertTrue(layer.isValid(), "camada pelo authcfg não abriu")
+        self.assertEqual(layer.featureCount(), 1)
+
     def test_j_temporary_credential_without_authcfg_stays_in_the_uri(self):
         """
         Residual risk, kept on purpose: a credential passed straight to

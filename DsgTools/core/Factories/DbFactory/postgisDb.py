@@ -399,6 +399,27 @@ class PostgisDb(AbstractDb):
             self.db.password(),
         )
 
+    def _setUriConnection(self, uri, host, port, database, user, password):
+        """
+        Liga a URI ao banco pelo authcfg quando a credencial da conexão está
+        guardada nele; só sem authcfg (usuário temporário do SAP) a senha vai
+        na URI, como no carregador de camadas (CDCiber 4.2). Quem serializa a
+        URI deve usar uri(False), que não reexpande o authcfg em senha.
+        """
+        authcfg = self.getAuthConfigId()
+        if authcfg:
+            uri.setConnection(
+                str(host),
+                str(port),
+                str(database),
+                str(user),
+                "",
+                QgsDataSourceUri.SslMode.SslPrefer,
+                authcfg,
+            )
+        else:
+            uri.setConnection(str(host), str(port), str(database), str(user), str(password))
+
     @ensure_connected
     def getStructureDict(self):
         """
@@ -1247,7 +1268,7 @@ class PostgisDb(AbstractDb):
             sql = self.gen.loadLayerFromDatabaseUsingInh(table)
 
         uri = QgsDataSourceUri()
-        uri.setConnection(str(host), str(port), str(database), str(user), str(password))
+        self._setUriConnection(uri, host, port, database, user, password)
         id = self.getPrimaryKeyColumn(table)
         uri.setDataSource(schema, layer_name, geomColumn, sql, id)
         uri.disableSelectAtId(True)
@@ -1265,7 +1286,7 @@ class PostgisDb(AbstractDb):
         password = self.db.password()
 
         uri = QgsDataSourceUri()
-        uri.setConnection(str(host), str(port), str(database), str(user), str(password))
+        self._setUriConnection(uri, host, port, database, user, password)
         id = self.getPrimaryKeyColumn("{0}.{1}".format(tableSchema, tableName))
         uri.setDataSource(tableSchema, tableName, geometryColumnm, sql, id)
 
@@ -3250,7 +3271,7 @@ class PostgisDb(AbstractDb):
                 "",
             )
             lyr = QgsVectorLayer(
-                uri.uri(), inputDict[key]["lyrName"], "postgres", False
+                uri.uri(False), inputDict[key]["lyrName"], "postgres", False
             )
             outputKey = "{0}.{1} ({2})".format(
                 inputDict[key]["tableSchema"],
