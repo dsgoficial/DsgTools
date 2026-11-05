@@ -205,6 +205,58 @@ def authcfgReferences(authcfg, ignore=None):
     return references
 
 
+def authcfgForCredentials(host, port, user, password):
+    """
+    Finds the authcfg of a DSGTools server or of a QGIS connection that holds
+    exactly this credential (same host and port in settings, same user and
+    password in the authentication database). It never creates an authcfg
+    and never asks for the master password: when the authentication
+    database is locked it returns "" and the caller keeps today's behaviour.
+    :return: (str) authcfg id or "".
+    """
+    authManager = _authManager()
+    if not password or authManager is None or not authManager.masterPasswordIsSet():
+        return ""
+    candidates = []
+    settings = QSettings()
+    for group in (SERVERS_GROUP, CONNECTIONS_GROUP):
+        settings.beginGroup(group)
+        names = settings.childGroups()
+        settings.endGroup()
+        for name in names:
+            path = "{0}/{1}".format(group, name)
+            authcfg = _str(settings.value(path + "/" + AUTHCFG_KEY))
+            settingsUser = _str(settings.value(path + "/username"))
+            if (
+                authcfg
+                and authcfg not in candidates
+                and _str(settings.value(path + "/host")) == _str(host)
+                and _str(settings.value(path + "/port")) == _str(port)
+                and settingsUser in ("", _str(user))
+            ):
+                candidates.append(authcfg)
+    for authcfg in candidates:
+        storedUser, storedPassword = loadCredentials(authcfg)
+        if storedPassword == password and _str(storedUser) == _str(user):
+            return authcfg
+    return ""
+
+
+def uriCredentials(uri):
+    """
+    User and password of a QgsDataSourceUri, resolving authcfg=<id> through
+    the authentication database (a layer or connection URI that uses authcfg
+    has no password of its own).
+    :return: (tuple) (user, password)
+    """
+    authcfg = uri.authConfigId()
+    if authcfg:
+        user, password = loadCredentials(authcfg)
+        if password is not None:
+            return (user or uri.username(), password)
+    return (uri.username(), uri.password())
+
+
 # ---------------------------------------------------------------------------
 # connection test
 # ---------------------------------------------------------------------------

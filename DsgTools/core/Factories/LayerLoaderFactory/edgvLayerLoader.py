@@ -292,8 +292,9 @@ class EDGVLayerLoader(QObject):
         :return: (QgsVectorLayer) vector layer.
         """
         try:
-            # self.provider is added on children classes
-            return QgsVectorLayer(self.uri.uri(), layer, self.provider)
+            # self.provider is added on children classes; uri(False) keeps
+            # authcfg instead of expanding it into the password (CDCiber 4.2)
+            return QgsVectorLayer(self.uri.uri(False), layer, self.provider)
         except:
             return None
 
@@ -306,7 +307,7 @@ class EDGVLayerLoader(QObject):
         try:
             # self.provider is added on children classes]
             schema, table = self.abstractDb.getTableSchema(layer)
-            return QgsVectorLayer(self.uri.uri(), table, self.provider)
+            return QgsVectorLayer(self.uri.uri(False), table, self.provider)
         except:
             return None
 

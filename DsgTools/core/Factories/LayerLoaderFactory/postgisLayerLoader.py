@@ -86,12 +86,41 @@ class PostGISLayerLoader(EDGVLayerLoader):
         self.database = self.abstractDb.db.databaseName()
         self.user = self.abstractDb.db.userName()
         self.password = self.abstractDb.db.password()
+        # when the credential lives in the QGIS authentication database the
+        # layer source (and so the .qgs) gets authcfg, never the password
+        # (CDCiber 4.2). A credential without authcfg (e.g. the temporary SAP
+        # user) keeps the password in the URI, as before.
+        getAuthConfigId = getattr(self.abstractDb, "getAuthConfigId", None)
+        self.authcfg = getAuthConfigId() if getAuthConfigId else ""
+
+    def connectionString(self):
+        """
+        Connection part of the layer URIs built by hand.
+        """
+        if self.authcfg:
+            return "dbname='{0}' host={1} port={2} user='{3}' authcfg={4}".format(
+                self.database, self.host, self.port, self.user, self.authcfg
+            )
+        return "dbname='{0}' host={1} port={2} user='{3}' password='{4}'".format(
+            self.database, self.host, self.port, self.user, self.password
+        )
 
     def buildUri(self):
         """
         Builds the database uri
         :return:
         """
+        if self.authcfg:
+            self.uri.setConnection(
+                str(self.host),
+                str(self.port),
+                str(self.database),
+                str(self.user),
+                "",
+                QgsDataSourceUri.SslMode.SslPrefer,
+                self.authcfg,
+            )
+            return
         self.uri.setConnection(
             str(self.host),
             str(self.port),
@@ -275,7 +304,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
             ),
         )
 
-        vlayer = QgsVectorLayer(self.uri.uri(), tableName, self.provider)
+        # uri(False): uri() expands authcfg back into user and password
+        vlayer = QgsVectorLayer(self.uri.uri(False), tableName, self.provider)
         QgsProject.instance().addMapLayer(vlayer, addToLegend=False)
         crs = QgsCoordinateReferenceSystem(
             int(srid), QgsCoordinateReferenceSystem.CrsType.EpsgCrsId
@@ -323,12 +353,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
             pkName,
             joinLyrFieldName,
         ) = self.abstractDb.getEditTable(schema, tableName)
-        uri = """dbname='{database}' host={host} port={port} user='{user}' password='{password}' key={primary_key} table=\"{schema}\".\"{table}\" sql=""".format(
-            database=self.database,
-            host=self.host,
-            port=self.port,
-            user=self.user,
-            password=self.password,
+        uri = """{connection} key={primary_key} table=\"{schema}\".\"{table}\" sql=""".format(
+            connection=self.connectionString(),
             primary_key=pkName,
             schema=editLyrSchema,
             table=editLyrTableName,
@@ -342,16 +368,9 @@ class PostGISLayerLoader(EDGVLayerLoader):
         :return:
         """
         # TODO: Avaliar se o table = deve ser diferente
-        uri = (
-            "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql="
-            % (
-                self.database,
-                self.host,
-                self.port,
-                self.user,
-                self.password,
-                domainTableName,
-            )
+        uri = '%s key=code table="dominios"."%s" sql=' % (
+            self.connectionString(),
+            domainTableName,
         )
         domLayer = QgsVectorLayer(uri, domainTableName, self.provider)
         domainGroup.addLayer(domLayer)
@@ -553,19 +572,16 @@ class PostGISLayerLoader(EDGVLayerLoader):
             )
         )
         if nonSpatial:
-            uri = """dbname='{dbname}' host={host} port={port} user='{user}' password='{password}' key={pk} checkPrimaryKeyUnicity='0' table="{table_schema}"."{table_name}" sql=""".format(
-                dbname=self.database,
-                host=self.host,
-                port=self.port,
-                user=self.user,
-                password=self.password,
+            uri = """{connection} key={pk} checkPrimaryKeyUnicity='0' table="{table_schema}"."{table_name}" sql=""".format(
+                connection=self.connectionString(),
                 pk=pkColumn,
                 table_schema=schema,
                 table_name=tableName,
             )
         else:
             self.setDataSource(schema, tableName, geomColumn, "", pkColumn=pkColumn)
-            uri = self.uri.uri()
+            # uri(False): uri() expands authcfg back into user and password
+            uri = self.uri.uri(False)
         lyr = QgsVectorLayer(uri, tableName, self.provider)
         QgsProject.instance().addMapLayer(lyr, addToLegend=addToCanvas)
         return lyr

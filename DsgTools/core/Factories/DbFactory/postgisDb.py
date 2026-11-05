@@ -383,6 +383,22 @@ class PostgisDb(AbstractDb):
 
         return credentialStore.readServer(name)
 
+    def getAuthConfigId(self):
+        """
+        authcfg that holds exactly the credential of this connection, or ""
+        when there is none (e.g. a temporary user passed straight to connect).
+        Never creates an authcfg nor asks for the master password, so layer
+        URIs can carry authcfg instead of the password (CDCiber 4.2)
+        """
+        from DsgTools.core.Utils import credentialStore
+
+        return credentialStore.authcfgForCredentials(
+            self.db.hostName(),
+            self.db.port(),
+            self.db.userName(),
+            self.db.password(),
+        )
+
     @ensure_connected
     def getStructureDict(self):
         """
