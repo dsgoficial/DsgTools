@@ -156,13 +156,17 @@ class AbstractDatabaseAlgorithm(QgsProcessingAlgorithm):
                 )
             )
         uri = QgsDataSourceUri(conn.uri())
+        # a connection with authcfg has no password in its URI (CDCiber 4.2)
+        from DsgTools.core.Utils.credentialStore import uriCredentials
+
+        user, password = uriCredentials(uri)
         abstractDb = DbFactory().createDbFactory(DsgEnums.DriverPostGIS)
         abstractDb.connectDatabaseWithParameters(
             uri.host(),
             int(uri.port()),
             uri.database(),
-            uri.username(),
-            uri.password(),
+            user,
+            password,
         )
         return abstractDb
 

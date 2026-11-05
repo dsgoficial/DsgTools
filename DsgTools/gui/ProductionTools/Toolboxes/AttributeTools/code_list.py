@@ -29,6 +29,8 @@ from qgis.PyQt.QtWidgets import QTableWidgetItem, QDockWidget
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.core import QgsVectorLayer, QgsProject
 
+from DsgTools.core.Utils.credentialStore import uriCredentials
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), "code_list.ui"))
 
 
@@ -259,8 +261,10 @@ class CodeList(QDockWidget, FORM_CLASS):
                     db.setHostName(uri.host())
                     db.setPort(int(uri.port()))
                     db.setDatabaseName(uri.database())
-                    db.setUserName(uri.username())
-                    db.setPassword(uri.password())
+                    # a layer with authcfg has no password in its URI (CDCiber 4.2)
+                    user, password = uriCredentials(uri)
+                    db.setUserName(user)
+                    db.setPassword(password)
                     sql = "select code, code_name from dominios.{field} order by code"
                 if not db.open():
                     db.close()
@@ -339,8 +343,10 @@ class CodeList(QDockWidget, FORM_CLASS):
                     db.setHostName(uri.host())
                     db.setPort(int(uri.port()))
                     db.setDatabaseName(uri.database())
-                    db.setUserName(uri.username())
-                    db.setPassword(uri.password())
+                    # a layer with authcfg has no password in its URI (CDCiber 4.2)
+                    user, password = uriCredentials(uri)
+                    db.setUserName(user)
+                    db.setPassword(password)
                     sql = "select code, code_name from dominios.{field} order by code".format(
                         field=field
                     )
