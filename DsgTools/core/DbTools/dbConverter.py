@@ -23,7 +23,7 @@
 import os, collections
 import time
 
-from qgis.PyQt.QtCore import pyqtSignal, QSettings
+from qgis.PyQt.QtCore import pyqtSignal
 from qgis.core import (
     QgsFeatureRequest,
     QgsProject,
@@ -239,18 +239,15 @@ class DbConverter(QgsTask):
         """
         Gets the password of an user to a server from its name.
         """
-        settings = QSettings()
-        settings.beginGroup("PostgreSQL/servers")
-        connections = settings.childGroups()
-        settings.endGroup()
-        for connection in connections:
-            settings.beginGroup("PostgreSQL/servers/{0}".format(connection))
-            host = settings.value("host")
-            user = settings.value("username")
-            password = settings.value("password")
-            settings.endGroup()
+        from DsgTools.core.Utils import credentialStore
+
+        for connection in credentialStore.serverNames():
+            # only the matching server has its password read (and decrypted)
+            host, _, user, _ = credentialStore.readServer(
+                connection, withPassword=False
+            )
             if host == hostname and username == user:
-                return password
+                return credentialStore.readServer(connection)[3]
         return None
 
     def connectToPostgis(self, parameters):

@@ -22,7 +22,6 @@
 """
 
 from qgis.core import Qgis
-from qgis.PyQt.QtCore import QSettings
 from qgis.core import (
     Qgis,
     QgsMessageLog,
@@ -356,49 +355,33 @@ class PostgisDb(AbstractDb):
         """
         Stores a connection into QSettings
         """
-        (host, port, user, password) = self.getServerConfiguration(server)
+        # the connection points to the server credential by authcfg and never
+        # receives a password (CDCiber 4.2)
+        from DsgTools.core.Utils import credentialStore
+
         database = self.db.databaseName()
         connection = server + "_" + database
-        settings = QSettings()
-        if not settings.contains("PostgreSQL/connections/" + connection + "/database"):
-            settings.beginGroup("PostgreSQL/connections/" + connection)
-            settings.setValue("database", database)
-            settings.setValue("host", host)
-            settings.setValue("port", port)
-            settings.setValue("username", user)
-            settings.setValue("password", password)
-            settings.endGroup()
-            return True
-        return False
+        return credentialStore.saveConnectionFromServer(connection, server, database)
 
     def getConnectionFromQSettings(self, conName):
         """
-        Gets a connection from QSettings
+        Gets a connection from QSettings (password from authcfg; a legacy
+        clear text password is still read and migrated)
         conName: connection name stored
         """
-        settings = QSettings()
-        settings.beginGroup("PostgreSQL/connections/" + conName)
-        host = settings.value("host")
-        port = settings.value("port")
-        database = settings.value("database")
-        user = settings.value("username")
-        password = settings.value("password")
-        settings.endGroup()
-        return (host, port, database, user, password)
+        from DsgTools.core.Utils import credentialStore
+
+        return credentialStore.readConnection(conName)
 
     def getServerConfiguration(self, name):
         """
-        Gets a server configuration from QSettings
+        Gets a server configuration from QSettings (password from authcfg; a
+        legacy clear text password is still read and migrated)
         name: server name
         """
-        settings = QSettings()
-        settings.beginGroup("PostgreSQL/servers/" + name)
-        host = settings.value("host")
-        port = settings.value("port")
-        user = settings.value("username")
-        password = settings.value("password")
-        settings.endGroup()
-        return (host, port, user, password)
+        from DsgTools.core.Utils import credentialStore
+
+        return credentialStore.readServer(name)
 
     @ensure_connected
     def getStructureDict(self):
