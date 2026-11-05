@@ -2469,8 +2469,10 @@ class PostgisDb(AbstractDb):
         threading=False,
     ):
         tableDictList = self.getParentGeomTables(getDictList=True, showViews=False)
+        # Nome da view escrito em SQL com o escape de identificador: com aspas
+        # fixas, uma aspa no nome fechava o identificador (CDCiber 4.1).
         viewList = [
-            '''"{0}"."{1}"'''.format(i["tableSchema"], i["tableName"])
+            "{0}.{1}".format(self.gen._qi(i["tableSchema"]), self.gen._qi(i["tableName"]))
             for i in list(self.getGeomColumnDictV2(showViews=True).values())
             if i["tableType"] == "VIEW"
         ]

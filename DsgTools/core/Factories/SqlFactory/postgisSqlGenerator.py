@@ -167,78 +167,67 @@ class PostGISSqlGenerator(SqlGenerator):
                 )
 
     def getComplexLinks(self, complex):
-        sql = (
-            "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = '%s'"
-            % self._el(complex)
-        )
-        return sql
+        return pgsql.SQL(
+            "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = {0}"
+        ).format(self._lit(complex))
 
     def getComplexTablesFromDatabase(self):
         sql = "select distinct table_name from information_schema.columns where table_schema = 'complexos'  ORDER BY table_name"
         return sql
 
     def getComplexData(self, complex_schema, complex):
-        sql = "SELECT id, nome from %s.%s" % (
-            self._qi(complex_schema),
-            self._qi(complex),
+        return pgsql.SQL("SELECT id, nome from {0}.{1}").format(
+            self._ident(complex_schema), self._ident(complex)
         )
-        return sql
 
     def getAssociatedFeaturesData(
         self, aggregated_schema, aggregated_class, column_name, complex_uuid
     ):
-        sql = "SELECT id from only %s.%s where %s='%s'" % (
-            self._qi(aggregated_schema),
-            self._qi(aggregated_class),
-            self._qi(column_name),
-            self._el(complex_uuid),
+        return pgsql.SQL("SELECT id from only {0}.{1} where {2}={3}").format(
+            self._ident(aggregated_schema),
+            self._ident(aggregated_class),
+            self._ident(column_name),
+            self._lit(complex_uuid),
         )
-        return sql
 
     def getLinkColumn(self, complexClass, aggregatedClass):
-        sql = (
-            "SELECT column_name from complex_schema where complex = '%s' and aggregated_class = '%s'"
-            % (
-                self._el(complexClass),
-                self._el(aggregatedClass),
-            )
-        )
-        return sql
+        return pgsql.SQL(
+            "SELECT column_name from complex_schema where complex = {0} and aggregated_class = {1}"
+        ).format(self._lit(complexClass), self._lit(aggregatedClass))
 
     def getSrid(self, parameters=dict()):
         if parameters == dict():
-            sql = "SELECT DISTINCT srid from geometry_columns WHERE f_table_schema <> 'tiger' and f_table_schema <> 'topology' LIMIT 1"
-        else:
-            whereClauseList = []
-            if "tableSchema" in list(parameters.keys()):
-                whereClauseList.append(
-                    """f_table_schema = '{0}'""".format(parameters["tableSchema"])
+            return "SELECT DISTINCT srid from geometry_columns WHERE f_table_schema <> 'tiger' and f_table_schema <> 'topology' LIMIT 1"
+        whereClauseList = []
+        if "tableSchema" in list(parameters.keys()):
+            whereClauseList.append(
+                pgsql.SQL("f_table_schema = {0}").format(
+                    self._lit(parameters["tableSchema"])
                 )
-            if "tableName" in list(parameters.keys()):
-                whereClauseList.append(
-                    """f_table_name = '{0}'""".format(parameters["tableName"])
-                )
-            if "geometryColumn" in list(parameters.keys()):
-                whereClauseList.append(
-                    """f_geometry_column = '{0}'""".format(parameters["geometryColumn"])
-                )
-            whereClause = " AND ".join(whereClauseList)
-            sql = """SELECT DISTINCT srid from geometry_columns WHERE {0} LIMIT 1""".format(
-                whereClause
             )
-        return sql
+        if "tableName" in list(parameters.keys()):
+            whereClauseList.append(
+                pgsql.SQL("f_table_name = {0}").format(self._lit(parameters["tableName"]))
+            )
+        if "geometryColumn" in list(parameters.keys()):
+            whereClauseList.append(
+                pgsql.SQL("f_geometry_column = {0}").format(
+                    self._lit(parameters["geometryColumn"])
+                )
+            )
+        whereClause = pgsql.SQL(" AND ").join(whereClauseList)
+        return pgsql.SQL(
+            "SELECT DISTINCT srid from geometry_columns WHERE {0} LIMIT 1"
+        ).format(whereClause)
 
     def getTablesFromDatabase(self):
         sql = "select distinct table_schema, table_name from information_schema.columns where (table_schema <> 'dominios' and table_schema <> 'topology')"
         return sql
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, uuid):
-        sql = "UPDATE complexos.%s SET %s=NULL WHERE id = '%s'" % (
-            self._qi(aggregated_class),
-            self._qi(link_column),
-            self._el(uuid),
+        return pgsql.SQL("UPDATE complexos.{0} SET {1}=NULL WHERE id = {2}").format(
+            self._ident(aggregated_class), self._ident(link_column), self._lit(uuid)
         )
-        return sql
 
     def getTemplates(self):
         sql = "SELECT datname FROM pg_database WHERE datistemplate = true;"
@@ -250,13 +239,19 @@ class PostGISSqlGenerator(SqlGenerator):
         ).format(self._ident(name))
 
     def loadLayerFromDatabase(self, layer_name, pkColumn="id"):
+        """
+        Fica em texto: é o filtro do QgsDataSourceUri, não vai ao cursor. A
+        tabela já perdia as aspas antes de ser citada; a coluna passa por _qi.
+        """
         layer_name = '"."'.join(layer_name.replace('"', "").split("."))
-        sql = """{1} in (SELECT {1} FROM ONLY "{0}")""".format(layer_name, pkColumn)
+        pk = self._qi(pkColumn)
+        sql = """{1} in (SELECT {1} FROM ONLY "{0}")""".format(layer_name, pk)
         return sql
 
     def loadLayerFromDatabaseUsingInh(self, layer_name, pkColumn="id"):
         layer_name = '"."'.join(layer_name.replace('"', "").split("."))
-        sql = """{1} in (SELECT {1} FROM ONLY "{0}")""".format(layer_name, pkColumn)
+        pk = self._qi(pkColumn)
+        sql = """{1} in (SELECT {1} FROM ONLY "{0}")""".format(layer_name, pk)
         return sql
 
     def getCreateDatabase(self, name, dropIfExists=False):
@@ -267,11 +262,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def insertFrameIntoTable(self, wkt):
-        sql = (
-            "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText('%s'))"
-            % self._el(wkt)
-        )
-        return sql
+        return pgsql.SQL(
+            "INSERT INTO aux_moldura_a(geom) VALUES(ST_GeomFromText({0}))"
+        ).format(self._lit(wkt))
 
     @staticmethod
     def _qualifiedIdentifier(schema, table):
@@ -312,11 +305,12 @@ class PostGISSqlGenerator(SqlGenerator):
     def getElementCountFromLayerWithInh(self, layer):
         parts = str(layer).split(".")
         if len(parts) == 2:
-            quoted = "%s.%s" % (self._qi(parts[0]), self._qi(parts[1]))
+            quoted = pgsql.SQL("{0}.{1}").format(
+                self._ident(parts[0]), self._ident(parts[1])
+            )
         else:
-            quoted = self._qi(layer)
-        sql = "SELECT count(*) FROM %s" % quoted
-        return sql
+            quoted = self._ident(layer)
+        return pgsql.SQL("SELECT count(*) FROM {0}").format(quoted)
 
     def getDatabasesFromServer(self):
         sql = "SELECT datname FROM pg_database where datname <> 'postgres' and datname <> 'template' and datname <> 'template0' and datname <> 'template_postgis' and datistemplate = 'f'"
@@ -476,60 +470,57 @@ class PostGISSqlGenerator(SqlGenerator):
         )
 
     def validateWithDomain(self, schemaList):
-        schemas = "'" + "','".join(schemaList) + "'"
-        sql = (
+        """
+        A consulta devolve, na 6ª coluna, um SELECT que o PostgisDb executa.
+        Coluna e tabela de domínio entram nele por quote_ident: concatenadas
+        cruas, um nome de coluna no banco virava SQL na segunda execução.
+        """
+        return pgsql.SQL(
             """SELECT
                 tc.table_schema,tc.table_name, kcu.column_name,
                 ccu.table_name AS foreign_table_name,
                 ccu.column_name AS foreign_column_name,
-                'SELECT ' || ccu.column_name || ' FROM dominios.' || ccu.table_name || ' ORDER BY ' || ccu.column_name || ' ASC'
+                'SELECT ' || quote_ident(ccu.column_name) || ' FROM dominios.' || quote_ident(ccu.table_name) || ' ORDER BY ' || quote_ident(ccu.column_name) || ' ASC'
                     FROM
                         information_schema.table_constraints AS tc
                         JOIN information_schema.key_column_usage AS kcu
                         ON tc.constraint_name = kcu.constraint_name
                         JOIN information_schema.constraint_column_usage AS ccu
                             ON ccu.constraint_name = tc.constraint_name
-                WHERE constraint_type = 'FOREIGN KEY' and tc.constraint_schema in (%s)"""
-            % schemas
-        )
-        return sql
+                WHERE constraint_type = 'FOREIGN KEY' and tc.constraint_schema in ({0})"""
+        ).format(self._literalList(schemaList))
 
     def getTableDomains(self, tableList):
-        schemas = "'" + "','".join(tableList) + "'"
-        sql = (
+        return pgsql.SQL(
             """SELECT
                 tc.table_schema,tc.table_name, kcu.column_name,
                 ccu.table_name AS foreign_table_name,
                 ccu.column_name AS foreign_column_name,
-                'SELECT ' || ccu.column_name || ' FROM dominios.' || ccu.table_name || ' ORDER BY ' || ccu.column_name || ' ASC'
+                'SELECT ' || quote_ident(ccu.column_name) || ' FROM dominios.' || quote_ident(ccu.table_name) || ' ORDER BY ' || quote_ident(ccu.column_name) || ' ASC'
                     FROM
                         information_schema.table_constraints AS tc
                         JOIN information_schema.key_column_usage AS kcu
                         ON tc.constraint_name = kcu.constraint_name
                         JOIN information_schema.constraint_column_usage AS ccu
                             ON ccu.constraint_name = tc.constraint_name
-                WHERE constraint_type = 'FOREIGN KEY' and tc.constraint_schema in (%s)"""
-            % schemas
-        )
-        return sql
+                WHERE constraint_type = 'FOREIGN KEY' and tc.constraint_schema in ({0})"""
+        ).format(self._literalList(tableList))
 
     def getNotNullFields(self, schemaList):
-        schemas = "'" + "','".join(schemaList) + "'"
-        sql = (
-            "select table_schema, table_name, column_name from information_schema.columns where is_nullable = 'NO' and column_name not in ('id','geom') and table_schema in (%s)"
-            % schemas
-        )
-        return sql
+        return pgsql.SQL(
+            "select table_schema, table_name, column_name from information_schema.columns where is_nullable = 'NO' and column_name not in ('id','geom') and table_schema in ({0})"
+        ).format(self._literalList(schemaList))
 
     def getFeaturesWithSQL(self, layer, attrList):
-        ls = ",".join(self._qi(a) for a in attrList)
+        ls = pgsql.SQL(",").join([self._ident(a) for a in attrList])
         parts = str(layer).split(".")
         if len(parts) == 2:
-            quoted_layer = "%s.%s" % (self._qi(parts[0]), self._qi(parts[1]))
+            quoted_layer = pgsql.SQL("{0}.{1}").format(
+                self._ident(parts[0]), self._ident(parts[1])
+            )
         else:
-            quoted_layer = self._qi(layer)
-        sql = "SELECT %s FROM ONLY %s" % (ls, quoted_layer)
-        return sql
+            quoted_layer = self._ident(layer)
+        return pgsql.SQL("SELECT {0} FROM ONLY {1}").format(ls, quoted_layer)
 
     def getStructure(self, edgvVersion):
         sql = ""
@@ -548,21 +539,19 @@ class PostGISSqlGenerator(SqlGenerator):
     def getAggregatorFromId(self, className, id):
         parts = str(className).split(".")
         if len(parts) == 2:
-            quoted_class = "%s.%s" % (self._qi(parts[0]), self._qi(parts[1]))
+            quoted_class = pgsql.SQL("{0}.{1}").format(
+                self._ident(parts[0]), self._ident(parts[1])
+            )
         else:
-            quoted_class = self._qi(className)
-        sql = "SELECT id from %s where id ='%s'" % (quoted_class, self._el(id))
-        return sql
+            quoted_class = self._ident(className)
+        return pgsql.SQL("SELECT id from {0} where id ={1}").format(
+            quoted_class, self._lit(id)
+        )
 
     def getAggregatorFromComplexSchema(self, aggregated, aggregationColumn):
-        sql = (
-            "SELECT complex from public.complex_schema where aggregated_class = '%s' and aggregationColumn = '%s'"
-            % (
-                self._el(aggregated),
-                self._el(aggregationColumn),
-            )
-        )
-        return sql
+        return pgsql.SQL(
+            "SELECT complex from public.complex_schema where aggregated_class = {0} and aggregationColumn = {1}"
+        ).format(self._lit(aggregated), self._lit(aggregationColumn))
 
     def createCustomSort(self):
         sql = """CREATE OR REPLACE FUNCTION
@@ -1149,16 +1138,24 @@ class PostGISSqlGenerator(SqlGenerator):
         return sqls
 
     def getOrphanTableElementCount(self, orphan):
-        orphan = '"' + '"."'.join(orphan.replace('"', "").split(".")) + '"'
-        sql = "select id from %s limit 1" % orphan
-        return sql
+        return pgsql.SQL("select id from {0} limit 1").format(self._qualified(orphan))
 
     def makeRelationDict(self, table, codes):
-        sql = """select code, code_name from dominios.%s where code in %s""" % (
-            self._qi(table),
-            codes,
-        )
-        return sql
+        """
+        codes: lista de códigos, ou o texto '(1,2,3)' que o código antigo
+        recebia. Outro texto levanta ValueError em vez de seguir como SQL.
+        """
+        if isinstance(codes, (list, tuple, set)):
+            inClause = pgsql.SQL("({0})").format(
+                pgsql.SQL(", ").join([self._val(c) for c in codes])
+            )
+        elif _LISTA_DE_IDS.match(str(codes)):
+            inClause = pgsql.SQL(str(codes))
+        else:
+            raise ValueError("lista de códigos inválida: {0!r}".format(codes))
+        return pgsql.SQL(
+            "select code, code_name from dominios.{0} where code in {1}"
+        ).format(self._ident(table), inClause)
 
     def getWhoAmI(self, cl, id):
         sql = "select p.relname from {0} as c, pg_class as p where c.tableoid = p.oid and c.id = {1}".format(
@@ -1354,44 +1351,32 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getStyle(self, styleName, table_name):
-        sql = """SELECT styleqml from public.layer_styles where f_table_name = '{0}' and (stylename = '{1}' or stylename like '{1}/%')and f_table_catalog = current_database()""".format(
-            table_name, styleName
+        return pgsql.SQL(
+            "SELECT styleqml from public.layer_styles where f_table_name = {0} and (stylename = {1} or stylename like {2})and f_table_catalog = current_database()"
+        ).format(
+            self._lit(table_name),
+            self._lit(styleName),
+            self._lit("{0}/%".format(styleName)),
         )
-        return sql
 
     def updateStyle(self, styleName, table_name, parsedQml, tableSchema):
-        sql = """UPDATE public.layer_styles SET styleqml = '{0}', update_time = now() where f_table_name = '{1}' and description = '{2}'""".format(
-            parsedQml.replace("'", "''"), table_name, styleName
-        )
-        return sql
+        return pgsql.SQL(
+            "UPDATE public.layer_styles SET styleqml = {0}, update_time = now() where f_table_name = {1} and description = {2}"
+        ).format(self._lit(parsedQml), self._lit(table_name), self._lit(styleName))
 
     def getTableSchemaFromDb(self, table):
-        sql = """select distinct table_schema from information_schema.columns where table_name = '{0}' and table_schema not in ('validation','views')""".format(
-            table
-        )
-        return sql
+        return pgsql.SQL(
+            "select distinct table_schema from information_schema.columns where table_name = {0} and table_schema not in ('validation','views')"
+        ).format(self._lit(table))
 
     def getAllStylesFromDb(self):
         sql = """SELECT DISTINCT f_table_catalog, description, f_table_name, update_time from public.layer_styles order by f_table_catalog, description, f_table_name asc """
         return sql
 
     def deleteStyle(self, styleName):
-        sql = """delete from public.layer_styles where description = '{0}'""".format(
-            styleName
+        return pgsql.SQL("delete from public.layer_styles where description = {0}").format(
+            self._lit(styleName)
         )
-        return sql
-
-    # Atentar que a coluna consrc foi descontinuada no pg 12+ (issue #521)
-    # def getConstraints(self, schemaList):
-    #     sql = """select sch.nspname, cl.relname, c.conname, c.consrc from
-    #         (
-    #             select * from pg_constraint where contype = 'c'
-    #         ) as c join (
-    #             select oid, nspname from pg_namespace where nspname in ({0})
-    #         ) as sch on sch.oid = c.connamespace
-    #         left join pg_class as cl on c.conrelid = cl.oid
-    #         """.format(','.schemaList)
-    #     return sql
 
     def getGeometricSchemas(self):
         sql = "select distinct f_table_schema from public.geometry_columns"
@@ -1401,13 +1386,23 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "select srid, f_geometry_column, type, f_table_schema, f_table_name from public.geometry_columns"
         return sql
 
+    def _layerFilterClause(self, layerFilter, subquery):
+        """
+        O texto antigo montava '{text}' com '","'.join(layerFilter): um
+        literal só, que com mais de uma camada não casa com nenhuma. A
+        semântica é mantida (o literal único), agora escapado pelo driver.
+        """
+        if layerFilter:
+            return self._lit('","'.join(layerFilter))
+        return pgsql.SQL(subquery)
+
     def getGeomTablesDomains(self, layerFilter=None):
-        inClause = (
-            """'{text}'""".format(text='","'.join(layerFilter))
-            if layerFilter
-            else """select f_table_name from public.geometry_columns where f_table_schema <> 'views'"""
+        inClause = self._layerFilterClause(
+            layerFilter,
+            "select f_table_name from public.geometry_columns where f_table_schema <> 'views'",
         )
-        sql = """select distinct case
+        return pgsql.SQL(
+            """select distinct case
             when split_part(conrelid::regclass::text,'.',2) = '' then replace(split_part(conrelid::regclass::text,'.',1),'"','')
             else replace(split_part(conrelid::regclass::text,'.',2),'"','')
             end as cl, pg_get_constraintdef(oid) FROM
@@ -1415,18 +1410,16 @@ class PostGISSqlGenerator(SqlGenerator):
             when replace(split_part(conrelid::regclass::text,'.',2),'"','') = '' then replace(split_part(conrelid::regclass::text,'.',1),'"','')
             else replace(split_part(conrelid::regclass::text,'.',2),'"','')
         end in ({in_clause})
-        """.format(
-            in_clause=inClause
-        )
-        return sql
+        """
+        ).format(in_clause=inClause)
 
     def getGeomTableConstraints(self, layerFilter=None):
-        inClause = (
-            """'{text}'""".format(text='","'.join(layerFilter))
-            if layerFilter
-            else """select f_table_name from public.geometry_columns where f_table_schema <> 'views'"""
+        inClause = self._layerFilterClause(
+            layerFilter,
+            "select f_table_name from public.geometry_columns where f_table_schema <> 'views'",
         )
-        sql = """select distinct case
+        return pgsql.SQL(
+            """select distinct case
             when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
             else split_part(conrelid::regclass::text,'.',2)
             end as cl, pg_get_constraintdef(oid) FROM
@@ -1435,34 +1428,30 @@ class PostGISSqlGenerator(SqlGenerator):
             else split_part(conrelid::regclass::text,'.',2)
         end in ({in_clause})
         order by cl
-        """.format(
-            in_clause=inClause
-        )
-        return sql
+        """
+        ).format(in_clause=inClause)
 
     def getMultiColumns(self, schemaList):
-        sql = """select row_to_json(a) from (
+        return pgsql.SQL(
+            """select row_to_json(a) from (
                 select t.table_name, array_agg(t.column_name::text) as attributes from
                 (select table_name, column_name from information_schema.columns
                 where data_type = 'ARRAY' and table_schema in ({0})
                 ) as t group by t.table_name
             ) as a
-        """.format(
-            "'" + "','".join(schemaList) + "'"
-        )
-        return sql
+        """
+        ).format(self._literalList(schemaList))
 
     def getMultiColumnsFromTableList(self, tableList):
-        sql = """select row_to_json(a) from (
+        return pgsql.SQL(
+            """select row_to_json(a) from (
                 select t.table_name, array_agg(t.column_name::text) as attributes from
                 (select table_name, column_name from information_schema.columns
                 where data_type = 'ARRAY' and table_name in ({0})
                 ) as t group by t.table_name
             ) as a
-        """.format(
-            "'" + "','".join(tableList) + "'"
-        )
-        return sql
+        """
+        ).format(self._literalList(tableList))
 
     def getGeomByPrimitive(self):
         sql = """select row_to_json(a) from (select type as geomtype, array_agg(f_table_name) as classlist from public.geometry_columns where f_table_schema not in ('views','topology') group by type) as a"""
@@ -1477,73 +1466,76 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getGeomColumnTupleList(self, showViews=False, filterList=None):
-        filterLayersClause = (
-            " f_table_name in ({table_name_list})".format(
-                table_name_list=",".join(filterList)
+        whereStrList = []
+        if filterList:
+            whereStrList.append(
+                pgsql.SQL(" f_table_name in ({0})").format(self._literalList(filterList))
             )
-            if filterList
-            else """"""
-        )
-        showViewsClause = """ table_type = 'BASE TABLE'""" if not showViews else """"""
-        whereStrList = list(
-            filter(lambda x: x != "", [filterLayersClause, showViewsClause])
-        )
+        if not showViews:
+            whereStrList.append(pgsql.SQL(" table_type = 'BASE TABLE'"))
         whereClause = (
-            "" if whereStrList == [] else f"WHERE {' AND '.join(whereStrList)}"
+            pgsql.SQL("")
+            if whereStrList == []
+            else pgsql.SQL("WHERE ") + pgsql.SQL(" AND ").join(whereStrList)
         )
-
-        sql = f"""select f_table_schema, f_table_name, f_geometry_column, type, table_type from (select distinct f_table_schema, f_table_name, f_geometry_column, type, f_table_schema || '.' || f_table_name as jc  from public.geometry_columns as gc) as inn
+        return pgsql.SQL(
+            """select f_table_schema, f_table_name, f_geometry_column, type, table_type from (select distinct f_table_schema, f_table_name, f_geometry_column, type, f_table_schema || '.' || f_table_name as jc  from public.geometry_columns as gc) as inn
             left join (select table_schema || '.' || table_name as jc, table_type from information_schema.tables) as infs on inn.jc = infs.jc
-            {whereClause}"""
-        return sql
+            {0}"""
+        ).format(whereClause)
 
     def getNotNullDict(self, layerFilter=None):
-        tableNameClause = (
-            """'{text}'""".format(text='","'.join(layerFilter))
-            if layerFilter
-            else """select distinct f_table_name from public.geometry_columns """
+        tableNameClause = self._layerFilterClause(
+            layerFilter, "select distinct f_table_name from public.geometry_columns "
         )
-        sql = """select row_to_json(row(table_name, table_schema,  array_agg(column_name::text)))
+        return pgsql.SQL(
+            """select row_to_json(row(table_name, table_schema,  array_agg(column_name::text)))
                     from information_schema.columns
                     where table_name in ({table_name_clause})
                         and is_nullable = 'NO' and data_type = 'smallint'
                     group by table_name, table_schema
-            """.format(
-            table_name_clause=tableNameClause
-        )
-        return sql
+            """
+        ).format(table_name_clause=tableNameClause)
 
     def getTableMetadataDict(self, layerFilter=None):
-        sql = """select row_to_json(a) from (
+        filterClause = self._layerFilterClause(
+            layerFilter,
+            "select f_table_name from public.geometry_columns where f_table_schema <> 'views'",
+        )
+        return pgsql.SQL(
+            """select row_to_json(a) from (
 	                select table_schema, table_name, column_name as attr_name, is_nullable::boolean as nullable, data_type as column_type, gc.f_geometry_column as geometry_column, gc.type as geometry_type
 					    from information_schema.columns as c
 					left join public.geometry_columns as gc
 						on c.table_name = gc.f_table_name and c.table_schema = gc.f_table_schema ) as a
 	            where a.table_name in ({filter})
-        """.format(
-            filter="""'{text}'""".format(text='","'.join(layerFilter))
-            if layerFilter
-            else """select f_table_name from public.geometry_columns where f_table_schema <> 'views'"""
-        )
-        return sql
+        """
+        ).format(filter=filterClause)
 
     def getDomainDict(self, domainTable):
-        sql = """select row_to_json(row(code, code_name)) from {0}""".format(
-            domainTable
+        """domainTable: nome já escrito em SQL (vem de pg_get_constraintdef)."""
+        return pgsql.SQL("select row_to_json(row(code, code_name)) from {0}").format(
+            self._parseSqlName(domainTable)
         )
-        return sql
 
     def getDomainCodeDict(self, domainTable):
-        sql = """select row_to_json(a) from (select * from {0}) as a""".format(
-            domainTable
+        """domainTable: nome já escrito em SQL (vem de pg_get_constraintdef)."""
+        return pgsql.SQL("select row_to_json(a) from (select * from {0}) as a").format(
+            self._parseSqlName(domainTable)
         )
-        return sql
 
     def getDomainCodeDictWithColumns(self, domainTable, refPk, otherKey):
-        sql = """select row_to_json(a) from (select {pk}, {fk} from {table}) as a""".format(
-            table=domainTable, pk=refPk, fk=otherKey
+        """
+        domainTable e refPk vêm de pg_get_constraintdef (já escritos em SQL);
+        otherKey é o nome cru de uma coluna.
+        """
+        return pgsql.SQL(
+            "select row_to_json(a) from (select {pk}, {fk} from {table}) as a"
+        ).format(
+            table=self._parseSqlName(domainTable),
+            pk=self._parseSqlName(refPk, maxParts=1),
+            fk=self._ident(otherKey),
         )
-        return sql
 
     def getGeomStructDict(self):
         sql = """select row_to_json(a) from (
@@ -1584,33 +1576,26 @@ class PostGISSqlGenerator(SqlGenerator):
         else:
             geomType = paramDict["geomType"]
 
+        campos = dict(
+            schema=self._ident(tableSchema),
+            table=self._ident(tableName),
+            mi_col=self._ident(miAttr),
+            inom_col=self._ident(inomAttr),
+            geom_col=self._ident(geometryColumn),
+            mi=self._lit(mi),
+            inom=self._lit(inom),
+            geo_srid=self._num(geoSrid),
+            srid=self._num(srid),
+        )
         if geomType == "MULTIPOLYGON":
-            sql = """INSERT INTO "{5}"."{6}" ({7},{8},{9}) VALUES ('{0}','{1}',ST_Transform(ST_Multi(ST_GeomFromWKB({2},{3})), {4}))""".format(
-                mi,
-                inom,
-                frame,
-                geoSrid,
-                srid,
-                tableSchema,
-                tableName,
-                miAttr,
-                inomAttr,
-                geometryColumn,
-            )
+            # frame é a geometria que o próprio código gera (QgsGeometry.asWkb),
+            # não texto de usuário nem do banco; entra como antes.
+            campos["frame"] = pgsql.SQL(str(frame))
+            tpl = "INSERT INTO {schema}.{table} ({mi_col},{inom_col},{geom_col}) VALUES ({mi},{inom},ST_Transform(ST_Multi(ST_GeomFromWKB({frame},{geo_srid})), {srid}))"
         else:
-            sql = """INSERT INTO "{5}"."{6}" ({7},{8},{9}) VALUES ('{0}','{1}',ST_Transform((ST_SetSRID( (ST_Dump('{2}')).geom,{3})), {4}))""".format(
-                mi,
-                inom,
-                frame,
-                geoSrid,
-                srid,
-                tableSchema,
-                tableName,
-                miAttr,
-                inomAttr,
-                geometryColumn,
-            )
-        return sql
+            campos["frame"] = self._lit(frame)
+            tpl = "INSERT INTO {schema}.{table} ({mi_col},{inom_col},{geom_col}) VALUES ({mi},{inom},ST_Transform((ST_SetSRID( (ST_Dump({frame})).geom,{geo_srid})), {srid}))"
+        return pgsql.SQL(tpl).format(**campos)
 
     def createFromTemplate(self, dbName, templateName):
         return pgsql.SQL("CREATE DATABASE {0} with template = {1};").format(
@@ -1618,10 +1603,12 @@ class PostGISSqlGenerator(SqlGenerator):
         )
 
     def updateDbSRID(self, tableDict, srid):
-        sql = """select UpdateGeometrySRID('{0}', '{1}', '{2}',{3})""".format(
-            tableDict["tableSchema"], tableDict["tableName"], tableDict["geom"], srid
+        return pgsql.SQL("select UpdateGeometrySRID({0}, {1}, {2},{3})").format(
+            self._lit(tableDict["tableSchema"]),
+            self._lit(tableDict["tableName"]),
+            self._lit(tableDict["geom"]),
+            self._num(srid),
         )
-        return sql
 
     def setDbAsTemplate(self, dbName, setTemplate=True):
         flag = "t" if setTemplate else "f"
@@ -1685,24 +1672,20 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getGeometricTableListFromSchema(self, schema):
         if isinstance(schema, list):
-            sql = """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema in ('{0}') and f_table_name in (
-                select distinct table_name from information_schema.tables where table_type <> 'VIEW'
-                )
-                 order by f_table_name asc;""".format(
-                "','".join(schema)
-            )
+            schemaClause = pgsql.SQL("in ({0})").format(self._literalList(schema))
         else:
-            sql = """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema = '{0}' and f_table_name in (
+            schemaClause = pgsql.SQL("= {0}").format(self._lit(schema))
+        return pgsql.SQL(
+            """select distinct f_table_schema, f_table_name from public.geometry_columns where f_table_schema {0} and f_table_name in (
                 select distinct table_name from information_schema.tables where table_type <> 'VIEW'
                 )
-                 order by f_table_name asc;""".format(
-                schema
-            )
-        return sql
+                 order by f_table_name asc;"""
+        ).format(schemaClause)
 
     def getParentGeomTables(self, schemaList):
         schemaList = [i for i in schemaList if i not in ["validation", "views"]]
-        sql = """select pgnsp.nspname, pgcl2.n as tb from pg_class as pgcl
+        return pgsql.SQL(
+            """select pgnsp.nspname, pgcl2.n as tb from pg_class as pgcl
                 left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
                 left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
                 left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
@@ -1710,18 +1693,16 @@ class PostGISSqlGenerator(SqlGenerator):
                             join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
                             left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid)
                 as pgcl2 on pgcl2.oid = pginh.inhrelid
-                where pgnsp.nspname in ('{0}') and pgatt.attname IS NULL and pgcl.relkind = 'r'
+                where pgnsp.nspname in ({0}) and pgatt.attname IS NULL and pgcl.relkind = 'r'
             union
             select distinct gc.f_table_schema,p.relname as tb from pg_class as p
                 left join pg_inherits as inh  on inh.inhrelid = p.oid
                 left join geometry_columns as gc on gc.f_table_name = p.relname
                 where (inh.inhrelid IS NULL) and
-                gc.f_table_schema in ('{0}')
+                gc.f_table_schema in ({0})
 
-            order by tb""".format(
-            "','".join(schemaList)
-        )
-        return sql
+            order by tb"""
+        ).format(self._literalList(schemaList))
 
     def getInheritanceDict(self):
         sql = """select row_to_json(a) from (select pgc.relname parentname, array_agg(pgc1.relname) childname
@@ -1735,30 +1716,35 @@ class PostGISSqlGenerator(SqlGenerator):
     def getGeomTables(
         self, schemaList, dbPrimitiveList=[], excludeViews=True, geomColumn=False
     ):
-        primitiveClause = ""
-        viewClause = ""
+        primitiveClause = pgsql.SQL("")
+        viewClause = pgsql.SQL("")
         if dbPrimitiveList != []:
-            primitiveClause = """and type in ('{0}')""".format(
-                "','".join(dbPrimitiveList)
+            primitiveClause = pgsql.SQL("and type in ({0})").format(
+                self._literalList(dbPrimitiveList)
             )
         if excludeViews:
-            viewClause = """and f_table_name in (select table_name from information_schema.tables where table_type <> 'VIEW')"""
+            viewClause = pgsql.SQL(
+                "and f_table_name in (select table_name from information_schema.tables where table_type <> 'VIEW')"
+            )
         selectClause = "f_table_schema, f_table_name"
         if geomColumn:
             selectClause += ",f_geometry_column"
-        sql = """select distinct {0} from public.geometry_columns where f_table_schema in ('{1}') {2} {3} order by f_table_name""".format(
-            selectClause, "','".join(schemaList), primitiveClause, viewClause
+        return pgsql.SQL(
+            "select distinct {0} from public.geometry_columns where f_table_schema in ({1}) {2} {3} order by f_table_name"
+        ).format(
+            pgsql.SQL(selectClause),
+            self._literalList(schemaList),
+            primitiveClause,
+            viewClause,
         )
-        return sql
 
     def getAttributeListFromTable(self, schema, tableName):
-        sql = """select distinct column_name from information_schema.columns where table_schema = '{0}' and table_name = '{1}' and column_name not in (
-        select f_geometry_column from public.geometry_columns where f_table_schema = '{0}' and f_table_name = '{1}'
+        return pgsql.SQL(
+            """select distinct column_name from information_schema.columns where table_schema = {0} and table_name = {1} and column_name not in (
+        select f_geometry_column from public.geometry_columns where f_table_schema = {0} and f_table_name = {1}
         )
-        and column_name not like 'id%' order by column_name """.format(
-            schema, tableName
-        )
-        return sql
+        and column_name not like 'id%' order by column_name """
+        ).format(self._lit(schema), self._lit(tableName))
 
     def getAttributeDictFromDb(self):
         sql = """select row_to_json(a) from (select distinct table_schema, table_name, array_agg(column_name::text) as attributelist from information_schema.columns where table_schema not in ('views','validation')
@@ -1772,15 +1758,14 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getAttributeInfoFromTable(self, schema, tableName):
-        sql = """ select row_to_json(a) from (select distinct column_name, data_type, is_nullable, column_default from information_schema.columns
-        where table_schema = '{0}' and table_name = '{1}' and column_name not in (
-        select f_geometry_column from public.geometry_columns where f_table_schema = '{0}' and f_table_name = '{1}'
+        return pgsql.SQL(
+            """ select row_to_json(a) from (select distinct column_name, data_type, is_nullable, column_default from information_schema.columns
+        where table_schema = {0} and table_name = {1} and column_name not in (
+        select f_geometry_column from public.geometry_columns where f_table_schema = {0} and f_table_name = {1}
         )
         and column_name not like 'id%' order by column_name ) as a
-        """.format(
-            schema, tableName
-        )
-        return sql
+        """
+        ).format(self._lit(schema), self._lit(tableName))
 
     def getAttrTypeDictFromDb(self):
         sql = """ select row_to_json(a) from (
@@ -1798,28 +1783,15 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getAllDomainValues(self, domainTable):
-        sql = """ select code from dominios.{0}""".format(domainTable)
-        return sql
-
-    # Atentar que a coluna consrc foi descontinuada no pg 12+ (issue #521)
-    # def getConstraintDict(self, domainList):
-    #     sql = """select row_to_json(result) from (
-    #     select a.tn as tablename, array_agg(row_to_json(row(a.conname::text, a.consrc::text))) from (select sch.nspname as sch, cl.relname as tn, c.conname as conname, c.consrc as consrc from
-    #             (
-    #                 select * from pg_constraint where contype = 'c'
-    #             ) as c join (
-    #                 select oid, nspname from pg_namespace where nspname in ('{0}')
-    #             ) as sch on sch.oid = c.connamespace
-    #             left join pg_class as cl on c.conrelid = cl.oid) as a where a.tn in (select f_table_name from public.geometry_columns) group by a.tn order by a.tn
-    #     ) as result
-    #     """.format("""','""".join(domainList))
-    #     return sql
+        """domainTable: nome cru da tabela em dominios (vem do catálogo)."""
+        return pgsql.SQL(" select code from dominios.{0}").format(
+            self._ident(domainTable)
+        )
 
     def getDefaultFromDb(self, schema, tableName, attrName):
-        sql = """select column_default from information_schema.columns where table_schema = '{0}' and table_name = '{1}' and column_name = '{2}';""".format(
-            schema, tableName, attrName
-        )
-        return sql
+        return pgsql.SQL(
+            "select column_default from information_schema.columns where table_schema = {0} and table_name = {1} and column_name = {2};"
+        ).format(self._lit(schema), self._lit(tableName), self._lit(attrName))
 
     def upgradePostgis(self, updateDict):
         """
@@ -1883,28 +1855,30 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def checkIfTableExists(self, schema, tableName):
-        sql = """select table_name from information_schema.tables where table_schema = '{0}' and table_name = '{1}' limit 1""".format(
-            schema, tableName
-        )
-        return sql
+        return pgsql.SQL(
+            "select table_name from information_schema.tables where table_schema = {0} and table_name = {1} limit 1"
+        ).format(self._lit(schema), self._lit(tableName))
 
     def getPrimaryKeyColumn(self, tableName):
+        """
+        O nome vai como texto para o cast ::regclass, que só lê um nome. A
+        montagem do texto é a de antes; muda só o literal, agora escapado.
+        """
         if "." in tableName:
             tableSchema, tableName = (
                 tableName.replace("'", "").replace('"', "").split(".")
             )
             tableName = '''"{0}"."{1}"'''.format(tableSchema, tableName)
-        sql = """
+        return pgsql.SQL(
+            """
         SELECT a.attname, format_type(a.atttypid, a.atttypmod) AS data_type
         FROM   pg_index i
         JOIN   pg_attribute a ON a.attrelid = i.indrelid
                              AND a.attnum = ANY(i.indkey)
-        WHERE  i.indrelid = '{}'::regclass
+        WHERE  i.indrelid = {0}::regclass
         AND    i.indisprimary;
-        """.format(
-            tableName
-        )
-        return sql
+        """
+        ).format(self._lit(tableName))
 
     def getGeometryTablesCount(self):
         sql = """select count(*) from public.geometry_columns"""
@@ -1920,33 +1894,39 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getAttributesFromTable(self, tableSchema, tableName, typeFilter=None):
         whereClause = (
-            """"""
+            pgsql.SQL("")
             if not typeFilter
-            else """ and data_type in ('{0}') """.format("','".join(typeFilter))
+            else pgsql.SQL(" and data_type in ({0}) ").format(
+                self._literalList(typeFilter)
+            )
         )
-        sql = """select column_name, data_type from information_schema.columns where
-            table_schema = '{0}' and table_name = '{1}' {2} order by column_name """.format(
-            tableSchema, tableName, whereClause
-        )
-        return sql
+        return pgsql.SQL(
+            """select column_name, data_type from information_schema.columns where
+            table_schema = {0} and table_name = {1} {2} order by column_name """
+        ).format(self._lit(tableSchema), self._lit(tableName), whereClause)
 
     def getViewDefinition(self, viewName):
-        sql = """select pg_get_viewdef('{0}')""".format(viewName)
-        return sql
+        return pgsql.SQL("select pg_get_viewdef({0})").format(self._lit(viewName))
 
     def dropView(self, viewName):
         if '"' in viewName:
-            sql = """DROP VIEW {0} """.format(viewName)
+            # já escrito em SQL: lido como nome, nunca colado como texto
+            view = self._parseSqlName(viewName)
         elif "." in viewName:
             schema, name = viewName.split(".")
-            sql = """DROP VIEW "{0}"."{1}" """.format(schema, name)
+            view = pgsql.SQL("{0}.{1}").format(self._ident(schema), self._ident(name))
         else:
-            sql = """DROP VIEW "{0}" """.format(viewName)
-        return sql
+            view = self._ident(viewName)
+        return pgsql.SQL("DROP VIEW {0} ").format(view)
 
     def createViewStatement(self, viewName, viewDef):
-        sql = """ CREATE OR REPLACE VIEW {0} AS {1}""".format(viewName, viewDef)
-        return sql
+        """
+        viewName é lido como nome SQL. viewDef é SQL por contrato: a
+        definição que o próprio PostgreSQL devolve em pg_get_viewdef.
+        """
+        return pgsql.SQL(" CREATE OR REPLACE VIEW {0} AS {1}").format(
+            self._parseSqlName(viewName), pgsql.SQL(viewDef)
+        )
 
     def checkPostGISAddonsInstallation(self):
         sql = """SELECT COUNT(*) FROM pg_proc WHERE proname = 'st_geotablesummary' """
@@ -2099,10 +2079,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getQmlRecords(self, layerList):
-        sql = """select layername, domainqml from public.domain_qml where layername in ('{0}')""".format(
-            "','".join(layerList)
-        )
-        return sql
+        return pgsql.SQL(
+            "select layername, domainqml from public.domain_qml where layername in ({0})"
+        ).format(self._literalList(layerList))
 
     def getImplementationVersion(self):
         sql = """select dbimplversion from public.db_metadata limit 1"""
@@ -2174,12 +2153,10 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getFilterJsonList(self, domainName):
-        sql = (
-            """select row_to_json(a) from (select * from dominios.{0}) as a """.format(
-                domainName
-            )
+        """domainName: nome cru da tabela em dominios (vem do catálogo)."""
+        return pgsql.SQL("select row_to_json(a) from (select * from dominios.{0}) as a ").format(
+            self._ident(domainName)
         )
-        return sql
 
     def databaseInfo(self):
         """
