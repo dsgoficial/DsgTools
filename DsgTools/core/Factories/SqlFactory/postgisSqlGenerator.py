@@ -245,11 +245,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def allowConnections(self, name):
-        sql = (
-            "ALTER DATABASE %s SET search_path = public, topology, cb, cc, complexos, ct;"
-            % self._qi(name)
-        )
-        return sql
+        return pgsql.SQL(
+            "ALTER DATABASE {0} SET search_path = public, topology, cb, cc, complexos, ct;"
+        ).format(self._ident(name))
 
     def loadLayerFromDatabase(self, layer_name, pkColumn="id"):
         layer_name = '"."'.join(layer_name.replace('"', "").split("."))
@@ -262,10 +260,10 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getCreateDatabase(self, name, dropIfExists=False):
-        sql = ""
+        db = self._ident(name)
+        sql = pgsql.SQL("CREATE DATABASE {0};").format(db)
         if dropIfExists:
-            sql += """DROP DATABASE IF EXISTS "{0}";""".format(name)
-        sql += """CREATE DATABASE "{0}";""".format(name)
+            sql = pgsql.SQL("DROP DATABASE IF EXISTS {0};").format(db) + sql
         return sql
 
     def insertFrameIntoTable(self, wkt):
@@ -325,8 +323,12 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def dropDatabase(self, name):
-        sql = """DROP DATABASE "{0}" """.format(name)
-        return sql
+        """
+        Fica em texto porque o postgisDbThread executa por QSqlQuery, que não
+        aceita Composed. O _qi dobra a aspa dupla: um banco chamado
+        'alvo"--' derrubava o banco 'alvo' com aspas fixas no format().
+        """
+        return "DROP DATABASE %s " % self._qi(name)
 
     def createRoleStatements(self, roleName, mydict):
         """
@@ -1611,10 +1613,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def createFromTemplate(self, dbName, templateName):
-        sql = """CREATE DATABASE "{0}" with template = "{1}";""".format(
-            dbName, templateName
+        return pgsql.SQL("CREATE DATABASE {0} with template = {1};").format(
+            self._ident(dbName), self._ident(templateName)
         )
-        return sql
 
     def updateDbSRID(self, tableDict, srid):
         sql = """select UpdateGeometrySRID('{0}', '{1}', '{2}',{3})""".format(
@@ -1623,44 +1624,30 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def setDbAsTemplate(self, dbName, setTemplate=True):
-        if setTemplate:
-            sql = """UPDATE pg_database set datistemplate = 't' where datname = '{0}';""".format(
-                dbName
-            )
-        else:
-            sql = """UPDATE pg_database set datistemplate = 'f' where datname = '{0}';""".format(
-                dbName
-            )
-        return sql
+        flag = "t" if setTemplate else "f"
+        return pgsql.SQL(
+            "UPDATE pg_database set datistemplate = {0} where datname = {1};"
+        ).format(pgsql.Literal(flag), self._lit(dbName))
 
     def checkTemplate(self):
         sql = """select datname from pg_database where datistemplate = 't'"""
         return sql
 
     def checkIfTemplate(self, dbName):
-        sql = """select datistemplate from pg_database where datname = '{0}'""".format(
-            dbName
-        )
-        return sql
+        return pgsql.SQL(
+            "select datistemplate from pg_database where datname = {0}"
+        ).format(self._lit(dbName))
 
     def alterSearchPath(self, dbName, version):
         if version == "2.1.3":
-            sql = "ALTER DATABASE \"{0}\" SET search_path = \"$user\", public, topology,'cb','complexos','dominios';".format(
-                dbName
-            )
+            tpl = "ALTER DATABASE {0} SET search_path = \"$user\", public, topology,'cb','complexos','dominios';"
         elif version == "2.1.3 Pro":
-            sql = "ALTER DATABASE \"{0}\" SET search_path = \"$user\", public, topology,'edgv','dominios';".format(
-                dbName
-            )
+            tpl = "ALTER DATABASE {0} SET search_path = \"$user\", public, topology,'edgv','dominios';"
         elif version in ("3.0", "3.0 Pro", "3.0 Orto", "3.0 Topo"):
-            sql = "ALTER DATABASE \"{0}\" SET search_path = \"$user\", public, topology, pg_catalog, 'edgv' ,'dominios';".format(
-                dbName
-            )
+            tpl = "ALTER DATABASE {0} SET search_path = \"$user\", public, topology, pg_catalog, 'edgv' ,'dominios';"
         elif version == "FTer_2a_Ed":
-            sql = "ALTER DATABASE \"{0}\" SET search_path = \"$user\", public, topology,'pe','ge','complexos','dominios';".format(
-                dbName
-            )
-        return sql
+            tpl = "ALTER DATABASE {0} SET search_path = \"$user\", public, topology,'pe','ge','complexos','dominios';"
+        return pgsql.SQL(tpl).format(self._ident(dbName))
 
     def getUsersFromServer(self):
         sql = """SELECT usename, usesuper FROM pg_user WHERE usename <> 'postgres' order by usename"""
@@ -1835,12 +1822,18 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def upgradePostgis(self, updateDict):
-        sql = ""
-        for key in updateDict:
-            sql += """ALTER EXTENSION {0} UPDATE TO "{1}";""".format(
-                key, updateDict[key]["defaultVersion"]
+        """
+        updateDict vem de pg_available_extensions (nome e versão da
+        extensão). O nome ia cru e a versão entre aspas fixas.
+        """
+        partes = [
+            pgsql.SQL("ALTER EXTENSION {0} UPDATE TO {1};").format(
+                self._parseSqlName(key, maxParts=1),
+                self._ident(updateDict[key]["defaultVersion"]),
             )
-        return sql
+            for key in updateDict
+        ]
+        return pgsql.SQL("").join(partes)
 
     def getPostgisVersion(self):
         sql = """SELECT name, default_version,installed_version FROM pg_available_extensions WHERE name in ('postgis', 'postgis_topology')"""
@@ -1918,13 +1911,12 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def dropAllConections(self, dbName):
-        sql = """SELECT pg_terminate_backend(pg_stat_activity.pid)
+        return pgsql.SQL(
+            """SELECT pg_terminate_backend(pg_stat_activity.pid)
                 FROM pg_stat_activity
-                WHERE pg_stat_activity.datname = '{0}'
-                AND pid <> pg_backend_pid();""".format(
-            dbName
-        )
-        return sql
+                WHERE pg_stat_activity.datname = {0}
+                AND pid <> pg_backend_pid();"""
+        ).format(self._lit(dbName))
 
     def getAttributesFromTable(self, tableSchema, tableName, typeFilter=None):
         whereClause = (
