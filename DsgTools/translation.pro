@@ -144,8 +144,6 @@
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/raiseFlagsAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/ruleStatisticsAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runFMESAPAlgorithm.py \
-                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/selectFeaturesOnCurrentCanvas.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py \
                      core/DSGToolsProcessingAlgs/Algs/OtherAlgs/stringCsvToFirstLayerWithElementsAlgorithm.py \
@@ -411,7 +409,6 @@
                      gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.py \
                      gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py \
                      gui/CustomWidgets/OrderedPropertyWidgets/orderedValidationProcessesWidget.py \
-                     gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py \
                      gui/CustomWidgets/SelectionWidgets/__init__.py \
                      gui/CustomWidgets/SelectionWidgets/customCheckableComboBox.py \
                      gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.py \
@@ -462,7 +459,6 @@
                      gui/ProcessingUI/distanceBetweenLayersWrapper.py \
                      gui/ProcessingUI/enforceAttributeRulesWrapper.py \
                      gui/ProcessingUI/enforceSpatialRuleWrapper.py \
-                     gui/ProcessingUI/fmeManagerWrapper.py \
                      gui/ProcessingUI/fontWidgetWrapper.py \
                      gui/ProcessingUI/smallObjectsOnLayersWrapper.py \
                      gui/ProcessingUI/snapHierarchyWrapper.py \
@@ -601,7 +597,6 @@
                      gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.ui \
                      gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui \
                      gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.ui \
-                     gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui \
                      gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.ui \
                      gui/CustomWidgets/SelectionWidgets/customSelector.ui \
                      gui/CustomWidgets/SelectionWidgets/customTableSelector.ui \

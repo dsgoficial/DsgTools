@@ -631,9 +631,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     snapHierarchyParameterName = QCoreApplication.translate(
         "Processing", "Snap Hierarchy"
     )
-    fmeManagerParameterName = QCoreApplication.translate(
-        "Processing", "FME Manager Parameters"
-    )
 
     def __init__(self):
         super(DSGToolsProcessingAlgorithmProvider, self).__init__()
