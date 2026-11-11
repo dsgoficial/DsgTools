@@ -43,6 +43,7 @@ password.
 """
 
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 from qgis.core import (
     Qgis,
@@ -60,6 +61,7 @@ AUTH_METHOD = "Basic"
 AUTH_NAME_PREFIX = "DSGTools - "
 SERVER_TEST_DATABASE = "postgres"
 TEST_TIMEOUT_SECONDS = 3
+MAX_PARALLEL_TESTS = 8
 RETRY_INTERVAL_SECONDS = 300
 LOG_TAG = "DSGTools Plugin"
 
@@ -740,6 +742,46 @@ def migrateConnection(name, testFunction=None, force=False):
     )
 
 
+def _pretestedServers(force):
+    """
+    Tests in parallel the connection of every server that still has a
+    clear text password, so a sweep waits for the slowest server and not
+    for the sum of the timeouts of the unreachable ones. Only DSGTools
+    servers are tested here; connections keep their own (sequential) test.
+    :return: test function with the signature of testConnection.
+    """
+    targets = set()
+    for server in serverNames():
+        path = "{0}/{1}".format(SERVERS_GROUP, server)
+        values = _readGroup(path, ["host", "port", "username", LEGACY_PASSWORD_KEY])
+        legacy = _str(values[LEGACY_PASSWORD_KEY])
+        if legacy and _canTry(path, force):
+            targets.add(
+                (
+                    _str(values["host"]),
+                    _str(values["port"]),
+                    SERVER_TEST_DATABASE,
+                    _str(values["username"]),
+                    legacy,
+                )
+            )
+    if len(targets) < 2:
+        return testConnection
+    results = {}
+    with ThreadPoolExecutor(max_workers=min(MAX_PARALLEL_TESTS, len(targets))) as pool:
+        futures = {target: pool.submit(testConnection, *target) for target in targets}
+        for target, future in futures.items():
+            results[target] = future.result()
+
+    def tester(host, port, database, user, password):
+        key = (_str(host), _str(port), _str(database), _str(user), _str(password))
+        if key in results:
+            return results[key]
+        return testConnection(host, port, database, user, password)
+
+    return tester
+
+
 def migrateAll(testFunction=None, force=False):
     """
     Migrates every legacy password of DSGTools servers and of the connections
@@ -747,6 +789,8 @@ def migrateAll(testFunction=None, force=False):
     :return: (dict) {settings path: status}
     """
     report = {}
+    if testFunction is None:
+        testFunction = _pretestedServers(force)
     for server in serverNames():
         report["{0}/{1}".format(SERVERS_GROUP, server)] = migrateServer(
             server, testFunction=testFunction, force=force

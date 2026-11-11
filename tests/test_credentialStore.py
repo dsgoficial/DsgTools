@@ -808,6 +808,51 @@ class CredentialStoreTest(unittest.TestCase):
         finally:
             authManager.setMasterPassword(MASTER_PASSWORD, True)
 
+    # (m) -----------------------------------------------------------------
+    def test_m_sweep_tests_unreachable_legacy_servers_in_parallel(self):
+        """
+        The sweep of the server manager waits for the slowest server, not for
+        the sum of the timeouts of the unreachable ones.
+        """
+        import threading
+        import time
+
+        store = _credentialStore()
+        for i in range(4):
+            _writeLegacy(
+                SERVERS,
+                "srvM{0}".format(i),
+                "127.0.0.1",
+                str(40000 + i),
+                "operador",
+                ARTIFICIAL_PASSWORD,
+            )
+        calls = []
+        lock = threading.Lock()
+
+        def slowTest(host, port, database, user, password, timeout=3):
+            with lock:
+                calls.append(str(port))
+            time.sleep(1.0)
+            return (False, "OperationalError: sem resposta")
+
+        original = store.testConnection
+        store.testConnection = slowTest
+        try:
+            start = time.time()
+            report = store.migrateAll()
+            elapsed = time.time() - start
+        finally:
+            store.testConnection = original
+        self.assertEqual(sorted(calls), ["40000", "40001", "40002", "40003"])
+        self.assertLess(elapsed, 2.5, "os testes de conexao rodaram em sequencia")
+        for i in range(4):
+            path = SERVERS + "/srvM{0}".format(i)
+            self.assertEqual(report[path], store.UNREACHABLE)
+            self.assertEqual(_value(path + "/password"), ARTIFICIAL_PASSWORD)
+            self.assertFalse(QSettings().contains(path + "/authcfg"))
+        self.assertEqual(QgsApplication.authManager().configIds(), [])
+
 
 if __name__ == "__main__":
     unittest.main()
