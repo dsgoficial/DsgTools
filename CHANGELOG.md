@@ -2,6 +2,11 @@
 
 ## 4.20.3 - dev
 
+Correção de Bugs:
+
+- Corrige erro `ModuleNotFoundError: No module named 'resources_rc'` ao carregar o plugin no QGIS 3.x (introduzido na 4.20.2);
+- Corrige ícones em branco: recursos Qt (resources.py) passam a ser registrados na inicialização do plugin;
+
 ## 4.20.2 - 2026-09-17
 
 Novas Funcionalidades:
