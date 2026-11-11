@@ -2,31 +2,24 @@
 
 ## 5.3.5 - dev
 
-Segurança (tratamento da avaliação do CDCiber, 2026, DIEx nº 2457-E4/DSG):
+Novas Funcionalidades:
 
-- Corrige a composição de SQL na contagem de feições (getElementCountFromLayer e getElementCountFromLayerV2 do gerador PostGIS): o nome de schema e de tabela passa a ser composto pelo driver (psycopg2.sql.Identifier), e um nome com ponto e vírgula, aspas ou parêntese deixa de virar comando. Antes, um nome de camada preparado executava SQL arbitrário com os privilégios da conexão, inclusive apagar feições com a conta de operador;
-- Corrige a listagem de camadas com feições (getLayersWithElementsV2), que depois da primeira tabela ilegível deixava a transação abortada e descartava em silêncio todas as tabelas seguintes;
-- Remove a integração com o FME (Run Remote FME Workspace, Run FME SAP Workspace, o widget FME Manager e as funções de proxy que só ela usava). Ela verificava o certificado HTTPS só se a caixa "SSL" fosse marcada, desligada por padrão, e enviava a credencial do proxy num cabeçalho que podia chegar ao servidor de destino. A conversão de modelagens já roda no Processing desde a 4.18.0 (Convert Databases). Quem chamar dsgtools:runremotefme ou dsgtools:runfmesap, em modelo ou workflow, recebe algoritmo inexistente;
-- Revisa o gerador SQL PostGIS inteiro: os 114 métodos que montavam comando com nome ou valor vindo de fora passam a compor identificadores por psycopg2.sql.Identifier e valores por psycopg2.sql.Literal (113 corrigidos; populateTempTable, sem chamador, fica como está). O escape antigo de literal (aspas simples dobradas) falhava quando standard_conforming_strings está desligado no papel ou no banco: uma senha com barra invertida e aspas criava papel na criação e na troca de senha de usuário. Também deixam de executar comando os nomes de banco, schema, tabela, estilo e domínio vindos do próprio banco (CREATE/DROP DATABASE, listagens, busca de schema, SRID, chave primária, filtros de domínio). Para nomes minúsculos o SQL gerado é o mesmo de antes;
-- A senha de servidor e de conexão deixa de ser gravada em texto claro: o configurador de servidores guarda usuário e senha no gerenciador de autenticação do QGIS (QgsAuthManager, método Basic) e grava só a referência authcfg. As entradas antigas com senha migram sozinhas, e só depois de a conexão ser testada com a credencial guardada; se o teste falha, nada é apagado e a migração tenta de novo. Sem senha mestra, a senha não é salva e é pedida ao conectar;
-- As camadas PostGIS carregadas a partir de servidor com authcfg levam o authcfg na fonte, e não a senha, então o projeto salvo (.qgs) não contém mais a senha. A credencial passada direto ao conectar, como a do usuário temporário do SAP, continua na fonte da camada, porque expira e é revogada ao fim da atividade;
-- Guarda de rede para projeto de terceiro: símbolos SVG, imagens, figuras e formulários de edição referenciados pelo projeto só são buscados em destinos permitidos, inclusive depois de redirecionamento e quando o endereço sai de expressão com env(). Os provedores de dados (WMS, WMTS, XYZ, WFS, BDGEx) não passam pela guarda. Configuração em dsgtools/security/ (resourceMode: block, warn ou off, padrão block; allowedHosts: lista de host ou host:porta);
-- Inspeção de camadas ao carregar: formulário de edição remoto, com XML inválido, acima de 256 níveis de aninhamento ou de 5 MiB passa a usar o formulário gerado pelo QGIS, porque um .ui com milhares de níveis derruba o QGIS por estouro de pilha; símbolos SVG remotos são sinalizados na barra de mensagens;
-- Linha 4.x (QGIS 3) descontinuada: não recebe estas nem outras correções;
-
-Testes:
-
-- tests/run_local.py cria uma única QgsApplication pelo start_app: antes havia duas, e o processo caía na saída mesmo com todos os testes passando, o que fazia o código de saída mentir;
-- test_postgisDb_refactor volta a rodar sobre a camada psycopg2 (estava quebrado desde a migração de abril de 2026);
-- Testes novos de segurança: test_sqlInjectionCount, test_fmeRemovido, test_postgisSqlGeneratorSafety, test_credentialStore, test_networkGuard e test_layerInspector. Os de banco rodam contra um PostgreSQL descartável indicado pelas variáveis DSGTOOLS_TEST_PG_*, e são pulados sem ele;
+- A senha de servidor e de conexão passa a ser guardada no gerenciador de autenticação do QGIS, cifrada pela senha mestra: o configurador de servidores grava só a referência (authcfg). As entradas antigas, que guardavam a senha nas configurações do QGIS, migram sozinhas, e só depois de a conexão ser testada com a credencial guardada; se o teste falha, nada é apagado e a migração tenta de novo. Sem senha mestra, a senha não é salva e é pedida ao conectar;
+- Proteção ao abrir projeto de terceiro: símbolos SVG, imagens, figuras de prancha e formulários de edição que o projeto aponta na rede só são buscados em destinos permitidos, inclusive depois de redirecionamento e quando o endereço sai de expressão. Os provedores de dados (WMS, WMTS, XYZ, WFS, BDGEx), o próprio QGIS e os outros plugins não passam pela proteção. Configuração em dsgtools/security/ (resourceMode: block, warn ou off, padrão block; allowedHosts: lista de host, host:porta ou .domínio);
+- Inspeção de camadas ao carregar: formulário de edição remoto de destino não permitido, com XML inválido, acima de 256 níveis de aninhamento ou de 5 MiB passa a usar o formulário gerado pelo QGIS, e símbolos SVG ou imagens remotos são sinalizados na barra de mensagens;
 
 Melhorias:
 
+- As camadas PostGIS carregadas a partir de servidor com a credencial guardada levam o authcfg na fonte, e não a senha, então o projeto salvo (.qgs) deixa de conter a senha. A credencial passada direto ao conectar, como a do usuário temporário do SAP, continua na fonte da camada, porque expira e é revogada ao fim da atividade;
+- Os comandos SQL do PostGIS passam a ser compostos pelo driver do banco, o que aceita nome de banco, schema, tabela, estilo, usuário e senha com aspas, barra invertida, ponto e vírgula ou letra maiúscula. Para nomes minúsculos simples o SQL gerado é o mesmo de antes;
+- Remove a integração com o FME (Run Remote FME Workspace, Run FME SAP Workspace e o widget FME Manager). A conversão de modelagens roda no Processing desde a 4.18.0 (Convert Databases). Quem chamar dsgtools:runremotefme ou dsgtools:runfmesap, em modelo ou workflow, recebe algoritmo inexistente;
 - Generalização de curvas de nível (Generalize Contour Lines) passa a atender também as escalas 1:2.000, 1:5.000 e 1:10.000, para a carta cadastral: o perímetro mínimo da curva fechada segue os 12 mm na escala de saída, o que dá 24 m, 60 m e 120 m no terreno. As escalas novas foram apensadas ao fim da lista (índices 4, 5 e 6), então todo modelo, chamada de linha de comando e fluxo do SAP que já grava o índice do enum continua valendo;
 - Extração de pontos cotados (Extract Spot Elevation) passa a atender também as escalas 1:2.000, 1:5.000 e 1:10.000, com as mesmas réguas de sempre, lineares no denominador da escala: distância entre pontos de 20 mm, comprimento mínimo de curva de 8 mm e grade de áreas planas de 20 mm na carta. As escalas novas foram apensadas ao fim da lista (índices 4, 5 e 6), pelo mesmo motivo;
+- Linha 4.x (QGIS 3) descontinuada: não recebe mais correções;
 
 Correções de bug:
 
+- Corrige a listagem de camadas com feições ao carregar camadas, que depois da primeira tabela sem permissão de leitura descartava em silêncio todas as tabelas seguintes;
 - Corrige a construção de polígonos por centroide e fronteira (Build Polygons From Center Points and Boundaries), que abortava com "Incorrect parameter value for LAYERS" quando a checagem de fronteiras não utilizadas estava ligada e a saída de flags ia para arquivo: a checagem relia a camada de flags pelo caminho de um arquivo que o próprio algoritmo ainda não tinha fechado. Os polígonos de flag passam a ser montados em memória para a checagem. Na interface o defeito não aparecia, porque a saída padrão das flags é temporária; aparecia na linha de comando (qgis_process e dsgtools_cli) e em modelo com saída gravada em arquivo;
 
 ## 5.2.1 - 2026-09-17
