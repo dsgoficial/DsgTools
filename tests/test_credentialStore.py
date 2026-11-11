@@ -853,6 +853,39 @@ class CredentialStoreTest(unittest.TestCase):
             self.assertFalse(QSettings().contains(path + "/authcfg"))
         self.assertEqual(QgsApplication.authManager().configIds(), [])
 
+    # (n) -----------------------------------------------------------------
+    def test_n_flag_layer_source_keeps_authcfg(self):
+        """
+        Raise Flags builds the flag layer from the source of the input layer:
+        the authcfg must stay as authcfg, not be expanded to user and password.
+        """
+        store = _credentialStore()
+        authcfg = store.storeCredentials("operador", ARTIFICIAL_PASSWORD, "srvN")
+        self.assertTrue(authcfg)
+        source = (
+            "dbname='banco' host=127.0.0.1 port={0} authcfg={1} "
+            'key=\'id\' table="edgv"."entrada_p" (geom)'
+        ).format(_closedPort(), authcfg)
+
+        class Provider:
+            def dataSourceUri(self):
+                return source
+
+        class Layer:
+            def dataProvider(self):
+                return Provider()
+
+        from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm import (
+            RaiseFlagsAlgorithm,
+        )
+
+        output = RaiseFlagsAlgorithm().getOutputFromInput(
+            Layer(), "validation", "flags_p", "geom"
+        )
+        self.assertIn("authcfg=" + authcfg, output.source())
+        self.assertNotIn(ARTIFICIAL_PASSWORD, output.source())
+        self.assertIn('"validation"."flags_p"', output.source())
+
 
 if __name__ == "__main__":
     unittest.main()

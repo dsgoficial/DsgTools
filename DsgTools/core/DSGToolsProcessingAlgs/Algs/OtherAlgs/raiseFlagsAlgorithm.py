@@ -158,7 +158,9 @@ class RaiseFlagsAlgorithm(QgsProcessingAlgorithm):
         lyrUri = inputLyr.dataProvider().dataSourceUri()
         uri = QgsDataSourceUri(lyrUri)
         uri.setDataSource(tableSchema, tableName, geometryColumn)
-        outputLyr = QgsVectorLayer(uri.uri(), tableName, "postgres")
+        # uri(False): keeps authcfg=<id> instead of expanding it to user and
+        # password in the source of the flag layer
+        outputLyr = QgsVectorLayer(uri.uri(False), tableName, "postgres")
         return outputLyr
 
     def name(self):
