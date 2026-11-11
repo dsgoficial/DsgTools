@@ -34,7 +34,7 @@ from . import resources
 currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(currentPath))
 
-from qgis.core import QgsApplication
+from qgis.core import Qgis, QgsApplication, QgsMessageLog
 
 from .core.DSGToolsProcessingAlgs.dsgtoolsProcessingAlgorithmProvider import (
     DSGToolsProcessingAlgorithmProvider,
@@ -136,7 +136,25 @@ class DsgTools(object):
         """
         from .gui.guiManager import GuiManager
 
-        self.initSecurity()
+        try:
+            self.initSecurity()
+        except Exception as e:
+            # a proteção não pode impedir o plugin de carregar
+            self.unloadSecurity()
+            QgsMessageLog.logMessage(
+                "Proteção para projeto de terceiro não instalada: {0!r}".format(e),
+                "DSGTools Segurança",
+                Qgis.MessageLevel.Critical,
+            )
+        try:
+            self._initGuiElements(GuiManager)
+        except Exception:
+            # o QGIS não chama unload() quando o initGui falha: sem isto o
+            # filtro de rede ficaria instalado sem dono
+            self.unloadSecurity()
+            raise
+
+    def _initGuiElements(self, GuiManager):
         self.dsgTools = QMenu(self.iface.mainWindow())
         self.dsgTools.setObjectName("DsgTools")
         self.dsgTools.setTitle(self.tr("DSGTools"))

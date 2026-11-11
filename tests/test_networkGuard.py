@@ -556,5 +556,53 @@ class TestNetworkGuard(unittest.TestCase):
         self.assertTrue(self.alvo.com(token), self.resumo(token))
 
 
+class TestPluginSecurityInit(unittest.TestCase):
+    """O initGui do plugin diante de falha na proteção e de falha na interface."""
+
+    def plugin(self):
+        from DsgTools.dsg_tools import DsgTools
+
+        return DsgTools(None)
+
+    def test_falha_na_protecao_nao_impede_o_plugin_de_carregar(self):
+        plugin = self.plugin()
+        if not hasattr(plugin, "_initGuiElements"):
+            self.fail("initGui sem a separação entre proteção e interface")
+        montou = []
+
+        def quebra():
+            raise RuntimeError("falha artificial na proteção")
+
+        plugin.initSecurity = quebra
+        plugin._initGuiElements = lambda gerente: montou.append(gerente)
+        plugin.initGui()
+        self.assertEqual(len(montou), 1)
+        self.assertIsNone(plugin.networkGuard)
+        self.assertIsNone(plugin.layerInspector)
+
+    def test_falha_na_interface_desinstala_a_guarda(self):
+        # O QGIS não chama unload() quando o initGui levanta exceção.
+        plugin = self.plugin()
+        if not hasattr(plugin, "_initGuiElements"):
+            self.fail("initGui sem a separação entre proteção e interface")
+        visto = {}
+
+        def quebra(gerente):
+            visto["guarda"] = plugin.networkGuard
+            visto["instalada"] = plugin.networkGuard.idRequisicao is not None
+            raise RuntimeError("falha artificial na interface")
+
+        plugin._initGuiElements = quebra
+        try:
+            with self.assertRaises(RuntimeError):
+                plugin.initGui()
+            self.assertTrue(visto.get("instalada"))
+            self.assertIsNone(visto["guarda"].idRequisicao)
+            self.assertIsNone(plugin.networkGuard)
+            self.assertIsNone(plugin.layerInspector)
+        finally:
+            plugin.unloadSecurity()
+
+
 if __name__ == "__main__":
     unittest.main()
