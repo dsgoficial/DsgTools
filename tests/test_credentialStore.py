@@ -728,6 +728,47 @@ class CredentialStoreTest(unittest.TestCase):
         self.assertEqual(sorted(QgsApplication.authManager().configIds()), before)
         QgsProject.instance().clear()
 
+    # (k) -----------------------------------------------------------------
+    def test_k_server_without_password_reads_as_empty_string(self):
+        """
+        A server saved without password (trust, .pgpass, PGPASSWORD) reads as
+        an empty password. None used to reach the layer source as the text
+        password='None' and to break the edit dialog.
+        """
+        store = _credentialStore()
+        self.saveServer("srvK", "127.0.0.1", "5432", "operador", "")
+        self.assertEqual(
+            store.readServer("srvK"), ("127.0.0.1", "5432", "operador", "")
+        )
+        # legacy entry with an empty password key, as the old code wrote it
+        _writeLegacy(SERVERS, "srvKlegado", "127.0.0.1", "5432", "operador", "")
+        self.assertEqual(store.readServer("srvKlegado")[3], "")
+
+        from qgis.core import QgsDataSourceUri
+
+        from DsgTools.core.Factories.DbFactory.postgisDb import PostgisDb
+
+        db = PostgisDb()
+        host, port, user, password = db.getServerConfiguration("srvK")
+        db.db.setHostName(host)
+        db.db.setPort(int(port))
+        db.db.setDatabaseName("banco")
+        db.db.setUserName(user)
+        db.db.setPassword(password)
+        uri = QgsDataSourceUri()
+        db._setUriConnection(uri, host, port, "banco", user, db.db.password())
+        self.assertNotIn("None", uri.uri(False))
+        self.assertNotIn("password", uri.uri(False))
+        self.assertNotIn("None", db.makeOgrConn())
+        # the adapter never keeps None, whoever sets it
+        db.db.setPassword(None)
+        self.assertEqual(db.db.password(), "")
+
+        dlg = self.configurator()
+        dlg.setServerConfiguration("srvK")
+        self.assertEqual(dlg.passwordEdit.text(), "")
+        self.assertFalse(dlg.passwordLoadFailed)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -344,7 +344,11 @@ def _resolve(path, settingsUser, withPassword, migrate, migrateFunction):
                     Qgis.MessageLevel.Warning,
                 )
         return (settingsUser, legacy)
-    return (settingsUser, None)
+    # no password stored (trust, .pgpass, PGPASSWORD): an empty string, as
+    # before the authcfg change. None would reach the layer URI as the text
+    # "None" and break the widgets that receive it
+    return (settingsUser, "")
+
 
 
 def readServer(name, withPassword=True, migrate=True):

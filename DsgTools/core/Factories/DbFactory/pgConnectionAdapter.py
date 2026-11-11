@@ -104,7 +104,8 @@ class PsycopgDbAdapter:
         self._user = user
 
     def setPassword(self, password: str):
-        self._password = password
+        # never None: the password is concatenated into layer and OGR URIs
+        self._password = "" if password is None else password
 
     # ------------------------------------------------------------------
     # Getters  (mirror QSqlDatabase)
