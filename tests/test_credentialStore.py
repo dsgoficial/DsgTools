@@ -769,6 +769,45 @@ class CredentialStoreTest(unittest.TestCase):
         self.assertEqual(dlg.passwordEdit.text(), "")
         self.assertFalse(dlg.passwordLoadFailed)
 
+    # (l) -----------------------------------------------------------------
+    def test_l_editing_a_legacy_server_without_master_password_keeps_it(self):
+        """
+        Editing a server that still has the clear text password while the
+        authentication database refuses to store it must not lose the
+        password: the entry stays as it was and migrates later.
+        """
+        port = _closedPort()
+        _writeLegacy(SERVERS, "srvL", "127.0.0.1", port, "operador", ARTIFICIAL_PASSWORD)
+        authManager = QgsApplication.authManager()
+        authManager.clearMasterPassword()
+        self.assertFalse(authManager.masterPasswordIsSet())
+        try:
+            dlg = self.configurator()
+            dlg.isEdit = 1
+            dlg.oldName = "srvL"
+            self.assertTrue(
+                dlg.storeServerConfiguration(
+                    "srvL", "127.0.0.1", port, "operador2", ARTIFICIAL_PASSWORD
+                )
+            )
+            self.assertEqual(_value(SERVERS + "/srvL/password"), ARTIFICIAL_PASSWORD)
+            self.assertEqual(_value(SERVERS + "/srvL/username"), "operador2")
+            self.assertFalse(QSettings().contains(SERVERS + "/srvL/authcfg"))
+            self.assertTrue(dlg.passwordStored)
+            # a password that was never in clear text still does not go there
+            dlg = self.configurator()
+            dlg.isEdit = 1
+            dlg.oldName = "srvL"
+            newPassword = ARTIFICIAL_PASSWORD + "-novo"
+            dlg.storeServerConfiguration(
+                "srvL", "127.0.0.1", port, "operador2", newPassword
+            )
+            self.assertFalse(QSettings().contains(SERVERS + "/srvL/password"))
+            self.assertFalse(dlg.passwordStored)
+            self.assertNotIn(newPassword, _iniText())
+        finally:
+            authManager.setMasterPassword(MASTER_PASSWORD, True)
+
 
 if __name__ == "__main__":
     unittest.main()

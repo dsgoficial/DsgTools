@@ -350,7 +350,6 @@ def _resolve(path, settingsUser, withPassword, migrate, migrateFunction):
     return (settingsUser, "")
 
 
-
 def readServer(name, withPassword=True, migrate=True):
     """
     Reads a DSGTools server. Password comes from authcfg first; a legacy
@@ -404,6 +403,12 @@ def saveServer(
             oldAuthcfg = _str(
                 settings.value("{0}/{1}/{2}".format(SERVERS_GROUP, name, AUTHCFG_KEY))
             )
+    # clear text password of the entry being replaced (not migrated yet)
+    legacy = _str(
+        settings.value(
+            "{0}/{1}/{2}".format(SERVERS_GROUP, previousName or name, LEGACY_PASSWORD_KEY)
+        )
+    )
     authcfg = ""
     passwordStored = False
     if password:
@@ -424,8 +429,16 @@ def saveServer(
         settings.beginGroup("{0}/{1}".format(SERVERS_GROUP, previousName))
         settings.remove("")
         settings.endGroup()
+    legacyKept = bool(password) and not passwordStored and legacy == password
     settings.beginGroup("{0}/{1}".format(SERVERS_GROUP, name))
-    settings.remove(LEGACY_PASSWORD_KEY)
+    if legacyKept:
+        # the authentication database refused the credential and the entry
+        # still had this same password in clear text: it stays as it was
+        # (nothing new is written in clear text) and the migration tries
+        # again later. Dropping it here would lose the password
+        settings.setValue(LEGACY_PASSWORD_KEY, legacy)
+    else:
+        settings.remove(LEGACY_PASSWORD_KEY)
     settings.setValue("host", host)
     settings.setValue("port", port)
     settings.setValue("username", user)
@@ -439,7 +452,7 @@ def saveServer(
 
     if oldAuthcfg and oldAuthcfg != authcfg:
         _removeIfUnreferenced(oldAuthcfg)
-    return (True, passwordStored)
+    return (True, passwordStored or legacyKept)
 
 
 def setDefaultServer(name):
