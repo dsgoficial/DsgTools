@@ -20,3 +20,9 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# Fora do pacote publicado (o qgis-plugin-ci empacota por git archive)
+DsgTools/CLAUDE.md export-ignore
+DsgTools/Makefile export-ignore
+DsgTools/plugin_upload.py export-ignore
+DsgTools/pylintrc export-ignore
