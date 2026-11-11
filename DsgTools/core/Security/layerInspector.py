@@ -23,7 +23,8 @@ projeto, antes de o operador abrir qualquer formulário:
 - sinaliza símbolo SVG ou imagem com caminho remoto, inclusive pela
   propriedade data-defined (Name/File) com expressão que monta URL ou lê
   `env()`. A barreira de rede é a NetworkGuard; aqui é o aviso;
-- formulário .ui remoto: troca o layout para o gerado pelo QGIS;
+- formulário .ui remoto: troca o layout para o gerado pelo QGIS, salvo
+  quando o destino está em `dsgtools/security/allowedHosts`;
 - formulário .ui local: mede profundidade de aninhamento e tamanho com o
   expat em modo incremental (sem recursão e sem montar árvore). Acima do
   teto, com XML inválido ou com DOCTYPE, troca para o gerado. No QGIS 4.2.1
@@ -261,7 +262,14 @@ class LayerInspector:
         if _ehRemoto(uiForm):
             if self.networkGuard is not None:
                 self.networkGuard.registrarRecursoDeProjeto(uiForm)
-            motivo = f"formulário remoto ({_semQuery(uiForm)})"
+            url = QUrl(str(uiForm))
+            if cfg.hostPermitido(url.host(), url.port(), url.scheme().lower(), cfg.lerHostsPermitidos()):
+                # Destino declarado confiável em allowedHosts: o formulário fica,
+                # e a guarda de rede ainda barra o redirecionamento para fora.
+                return []
+            motivo = (
+                f"formulário remoto ({_semQuery(uiForm)}), destino fora de {cfg.PREFIXO}allowedHosts"
+            )
         else:
             caminho = _caminhoLocal(uiForm)
             if not os.path.exists(caminho):

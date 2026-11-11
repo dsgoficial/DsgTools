@@ -44,7 +44,13 @@ except ImportError:  # código anterior à correção
     LayerInspector = avaliarFormularioUi = None
 
 TAG = "DSGTools Segurança"
-CHAVES = ("dsgtools/security/inspectLayers", "dsgtools/security/uiMaxDepth", "dsgtools/security/uiMaxBytes")
+CHAVE_HOSTS = "dsgtools/security/allowedHosts"
+CHAVES = (
+    "dsgtools/security/inspectLayers",
+    "dsgtools/security/uiMaxDepth",
+    "dsgtools/security/uiMaxBytes",
+    CHAVE_HOSTS,
+)
 RAIZ_PLUGIN = Path(__file__).resolve().parent.parent / "DsgTools"
 CABECALHO = '<?xml version="1.0" encoding="UTF-8"?>\n<ui version="4.0"><class>Form</class>\n'
 UI_FILE = Qgis.AttributeFormLayout.UiFile
@@ -188,6 +194,21 @@ class TestLayerInspector(unittest.TestCase):
         camada = comFormulario(camadaMemoria("form_remoto"), "http://127.0.0.1:9/form_remoto.ui")
         self.assertEqual(self.carregar(camada), GERADO)
         self.assertTrue([m for m in self.log if "form_remoto" in m and "formulário remoto" in m], self.log)
+
+    def test_ui_remoto_de_destino_permitido_e_mantido(self):
+        # O destino que o administrador pôs em allowedHosts é confiável: o
+        # formulário fica. Outro destino, com a mesma lista, continua trocado.
+        QgsSettings().setValue(CHAVE_HOSTS, ["127.0.0.1:9"])
+        try:
+            permitido = comFormulario(camadaMemoria("form_permitido"), "http://127.0.0.1:9/form_permitido.ui")
+            self.assertEqual(self.carregar(permitido), UI_FILE)
+            self.assertEqual(permitido.editFormConfig().uiForm(), "http://127.0.0.1:9/form_permitido.ui")
+            outro = comFormulario(camadaMemoria("form_outro"), "http://127.0.0.1:10/form_outro.ui")
+            self.assertEqual(self.carregar(outro), GERADO)
+            self.assertFalse([m for m in self.log if "form_permitido" in m], self.log)
+            self.assertTrue([m for m in self.log if "form_outro" in m and "allowedHosts" in m], self.log)
+        finally:
+            QgsSettings().remove(CHAVE_HOSTS)
 
     def test_ui_benigno_e_mantido_e_abre(self):
         camada = comFormulario(camadaMemoria("benigno"), self.arquivos["benigno"])
