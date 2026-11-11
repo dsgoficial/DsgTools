@@ -32,9 +32,14 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsMapRendererSequentialJob,
     QgsMapSettings,
+    QgsLayoutFrame,
+    QgsLayoutItemHtml,
     QgsLayoutItemPicture,
+    QgsLayoutObject,
     QgsMarkerSymbol,
     QgsNetworkAccessManager,
+    QgsNetworkContentFetcher,
+    QgsNetworkContentFetcherTask,
     QgsPrintLayout,
     QgsProject,
     QgsProperty,
@@ -46,7 +51,7 @@ from qgis.core import (
     QgsSymbolLayer,
     QgsVectorLayer,
 )
-from qgis.PyQt.QtCore import QCoreApplication, QSize, QUrl
+from qgis.PyQt.QtCore import QCoreApplication, QRectF, QSize, QUrl
 from qgis.PyQt.QtNetwork import QNetworkRequest
 from qgis.testing import start_app
 
@@ -246,6 +251,22 @@ def montarMolde(pasta):
         figura = QgsLayoutItemPicture(prancha)
         figura.setPicturePath(f"{base}/figura_prancha.png")
         prancha.addLayoutItem(figura)
+        # Figura cujo endereço sai de expressão: não passa pelo QgsPathResolver
+        # e é buscada na leitura do projeto, antes do layoutAdded.
+        figuraExp = QgsLayoutItemPicture(prancha)
+        figuraExp.dataDefinedProperties().setProperty(
+            QgsLayoutObject.DataDefinedProperty.PictureSource,
+            QgsProperty.fromExpression(f"'{base}/figura_expressao?v=' || env('DSGTEST_SEGREDO')"),
+        )
+        prancha.addLayoutItem(figuraExp)
+        # Quadro HTML por URL (também QgsNetworkContentFetcher).
+        quadro = QgsLayoutItemHtml(prancha)
+        quadro.setContentMode(QgsLayoutItemHtml.ContentMode.Url)
+        quadro.setUrl(QUrl(f"{base}/quadro_prancha.html"))
+        prancha.addMultiFrame(quadro)
+        moldura = QgsLayoutFrame(prancha, quadro)
+        moldura.attemptSetSceneRect(QRectF(10, 10, 50, 50))
+        quadro.addFrame(moldura)
         projeto.layoutManager().addLayout(prancha)
         arq = os.path.join(pasta, "molde.qgs")
         assert projeto.write(arq), "não gravou o projeto de molde"
@@ -260,6 +281,8 @@ def montarMolde(pasta):
         "form_remoto.ui",
         "formulario?id=7",
         "figura_prancha.png",
+        "figura_expressao",
+        "quadro_prancha.html",
         "env(",
     ):
         assert trecho in texto, f"o projeto de molde não guardou {trecho!r}"
@@ -358,6 +381,8 @@ class TestNetworkGuard(unittest.TestCase):
         self.assertTrue([c for c in alvo if c.endswith("/form_remoto.ui")], self.resumo(token))
         self.assertTrue([c for c in alvo if "/formulario?id=7" in c], self.resumo(token))
         self.assertTrue([c for c in alvo if c.endswith("/figura_prancha.png")], self.resumo(token))
+        self.assertTrue([c for c in alvo if "/figura_expressao" in c and SEGREDO in c], self.resumo(token))
+        self.assertTrue([c for c in alvo if c.endswith("/quadro_prancha.html")], self.resumo(token))
         self.assertTrue(self.redir.com(token), self.resumo(token))
 
     def test_sem_destino_permitido_nenhum_recurso_sai(self):
@@ -367,7 +392,7 @@ class TestNetworkGuard(unittest.TestCase):
         self.assertEqual(self.alvo.com(token), [], self.resumo(token))
         self.assertEqual(self.redir.com(token), [], self.resumo(token))
         self.assertIsNotNone(guarda, "pacote DsgTools.core.Security ausente")
-        self.assertGreaterEqual(guarda.bloqueios, 6)
+        self.assertGreaterEqual(guarda.bloqueios, 8)
         bloqueios = [m for m in self.log if "bloqueada" in m and token in m]
         for trecho in (
             "/svg_remoto.svg",
@@ -376,6 +401,8 @@ class TestNetworkGuard(unittest.TestCase):
             "/formulario",
             "/svg_redirecionado.svg",
             "/figura_prancha.png",
+            "/figura_expressao",
+            "/quadro_prancha.html",
         ):
             self.assertTrue([m for m in bloqueios if trecho in m], f"{trecho} sem registro: {self.resumo(token)}")
         # O log não guarda a query, onde a expressão pôs o valor de env().
@@ -412,6 +439,8 @@ class TestNetworkGuard(unittest.TestCase):
         self.assertTrue([c for c in alvo if c.endswith("/form_remoto.ui")], self.resumo(token))
         self.assertTrue([c for c in alvo if "/formulario?id=7" in c], self.resumo(token))
         self.assertTrue([c for c in alvo if c.endswith("/figura_prancha.png")], self.resumo(token))
+        self.assertTrue([c for c in alvo if "/figura_expressao" in c], self.resumo(token))
+        self.assertTrue([c for c in alvo if c.endswith("/quadro_prancha.html")], self.resumo(token))
 
     def test_modo_warn_avisa_sem_barrar(self):
         self.configurar("warn", [])
@@ -446,6 +475,76 @@ class TestNetworkGuard(unittest.TestCase):
         self.assertTrue(self.alvo.com(f"/{token}/sap_simulado"), self.resumo(token))
         resposta.deleteLater()
         self.assertFalse([m for m in self.log if token in m], self.resumo(token))
+
+    def traficoAlheio(self, token):
+        """
+        Buscas que NÃO são recurso de projeto, pelos mesmos canais dos
+        recursos: QgsNetworkContentFetcher (feed de notícias, checagem de
+        versão, plugins), tarefa com redirecionamento e GET a um .ui.
+        Devolve os caminhos que tinham de chegar ao alvo.
+        """
+        base = f"http://127.0.0.1:{self.alvo.porta}/{token}"
+        buscador = QgsNetworkContentFetcher()
+        feito = []
+        buscador.finished.connect(lambda: feito.append(1))
+        buscador.fetchContent(QUrl(f"{base}/noticia.png"))
+        tarefa = QgsNetworkContentFetcherTask(
+            QUrl(f"http://127.0.0.1:{self.redir.porta}/{token}/plugin_redirecionado.json")
+        )
+        QgsApplication.taskManager().addTask(tarefa)
+        bloqueante = QgsBlockingNetworkRequest()
+        bloqueante.get(QNetworkRequest(QUrl(f"{base}/dialogo_de_plugin.ui")))
+        fim = time.time() + 6
+        esperados = [
+            f"/{token}/noticia.png",
+            f"/{token}/plugin_redirecionado.json",
+            f"/{token}/dialogo_de_plugin.ui",
+        ]
+        while time.time() < fim and not all(e in self.alvo.caminhos for e in esperados):
+            espera(0.1)
+        return esperados
+
+    def test_trafego_que_nao_e_de_projeto_nao_e_barrado(self):
+        # A guarda barra os recursos do projeto aberto e deixa passar, pelos
+        # mesmos canais, o que o projeto não aponta.
+        self.configurar("block", [])
+        guarda = self.instalarGuarda()
+        token = self.abrirProjeto()
+        self.assertEqual(self.alvo.com(token), [], self.resumo(token))
+        self.assertIsNotNone(guarda, "pacote DsgTools.core.Security ausente")
+        for rotulo, preparar in (
+            ("com o projeto de terceiro aberto", lambda: None),
+            ("depois de fechar o projeto", QgsProject.instance().clear),
+        ):
+            preparar()
+            espera(0.3)
+            antes = guarda.bloqueios
+            alheio = "a" + uuid.uuid4().hex[:10]
+            for caminho in self.traficoAlheio(alheio):
+                self.assertIn(caminho, self.alvo.caminhos, f"{rotulo}: {self.resumo(alheio)}")
+            self.assertEqual(guarda.bloqueios, antes, f"{rotulo}: {self.resumo(alheio)}")
+            self.assertFalse([m for m in self.log if alheio in m], f"{rotulo}: {self.resumo(alheio)}")
+
+    def test_figura_de_prancha_barrada_depois_da_leitura(self):
+        # Reavaliar a figura com o projeto já aberto (abrir o compositor, atlas)
+        # busca de novo; a de expressão só é reconhecida pelo caminho avaliado.
+        self.configurar("block", [])
+        guarda = self.instalarGuarda()
+        token = self.abrirProjeto()
+        self.assertIsNotNone(guarda, "pacote DsgTools.core.Security ausente")
+        antes = guarda.bloqueios
+        figuras = [
+            item
+            for prancha in QgsProject.instance().layoutManager().layouts()
+            for item in prancha.items()
+            if isinstance(item, QgsLayoutItemPicture)
+        ]
+        self.assertEqual(len(figuras), 2)
+        for figura in figuras:
+            figura.refreshPicture()
+        espera(1.5)
+        self.assertEqual(self.alvo.com(token), [], self.resumo(token))
+        self.assertGreaterEqual(guarda.bloqueios, antes + 2, self.resumo(token))
 
     def test_desinstalar_remove_o_filtro(self):
         self.configurar("block", [])
