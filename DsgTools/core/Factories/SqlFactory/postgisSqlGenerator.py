@@ -52,7 +52,7 @@ class PostGISSqlGenerator(SqlGenerator):
 
     Ficam em texto, com _qi/_el, só os métodos cujo consumidor manipula o
     texto: os que o PostgisDb parte em comandos por '#', o filtro de URI do
-    QGIS e o DROP DATABASE executado por QSqlQuery no postgisDbThread.
+    QGIS e o DROP DATABASE.
     """
 
     # ------------------------------------------------------------------
@@ -318,8 +318,7 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def dropDatabase(self, name):
         """
-        Fica em texto porque o postgisDbThread executa por QSqlQuery, que não
-        aceita Composed. O _qi dobra a aspa dupla: um banco chamado
+        Fica em texto. O _qi dobra a aspa dupla: um banco chamado
         'alvo"--' derrubava o banco 'alvo' com aspas fixas no format().
         """
         return "DROP DATABASE %s " % self._qi(name)
@@ -1639,10 +1638,6 @@ class PostGISSqlGenerator(SqlGenerator):
         return pgsql.SQL(
             "UPDATE pg_database set datistemplate = {0} where datname = {1};"
         ).format(pgsql.Literal(flag), self._lit(dbName))
-
-    def checkTemplate(self):
-        sql = """select datname from pg_database where datistemplate = 't'"""
-        return sql
 
     def checkIfTemplate(self, dbName):
         return pgsql.SQL(

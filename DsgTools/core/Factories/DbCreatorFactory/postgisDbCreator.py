@@ -39,32 +39,43 @@ class PostgisDbCreator(DbCreator):
         newDb.connectDatabaseWithParameters(host, port, dbName, user, password)
         return newDb
 
-    def checkAndCreateTemplate(self, version):
+    def createEdgvDb(self, dbName, srid, version):
         """
-        checks and create an edgv template
+        Creates an EDGV database straight from the creation sql shipped with
+        the plugin, already at the requested srid.
+
+        No template database is kept on the server: a template outlives the
+        plugin version that built it, and a server holding an old one kept
+        handing out the old model (issue #857).
         """
-        if version:
-            hasTemplate = self.abstractDb.checkTemplate(version)
-            if hasTemplate:
-                templateName = self.abstractDb.getTemplateName(version)
-                templateDb = self.instantiateNewDb(templateName)
-                mustUpdateTemplate = templateDb.checkTemplateImplementationVersion()
-                if mustUpdateTemplate:
-                    templateName = templateDb.db.databaseName()
-                    templateDb.__del__()
-                    self.abstractDb.dropDatabase(templateName, dropTemplate=True)
-                    hasTemplate = False
-            if not hasTemplate:
-                self.abstractDb.createTemplateDatabase(version)
-                templateName = self.abstractDb.getTemplateName(version)
-                templateDb = self.instantiateNewDb(templateName)
-                templateDb.setStructureFromSql(version, 4674)
+        self.abstractDb.createDatabase(dbName)
+        newDb = self.instantiateNewDb(dbName)
+        try:
+            newDb.setStructureFromSql(version, int(srid))
+        except Exception:
+            # the structure is rolled back: do not leave an empty database
+            # behind. Dropped as its owner, since dropDatabase() demands a
+            # superuser and the creation may have failed for the lack of one.
+            newDb.closeDatabase()
+            try:
+                self.abstractDb._execute_autocommit(
+                    self.abstractDb.gen.dropDatabase(dbName)
+                )
+            except Exception:
+                pass
+            raise
+        return newDb
 
     def createDb(self, dbName, srid, paramDict=dict(), parentWidget=None):
         """
         dbName: new database name
         srid: coordinate system of database
-        paramDict = {'templateDb': database to be used as template. Default is edgv}
+        paramDict = {
+            'templateDb': existing database to be copied (batch creation),
+            'isTemplateEdgv': True to create an EDGV database from its sql,
+            'version': EDGV version, when isTemplateEdgv,
+            'templateName': existing database to be copied, when not isTemplateEdgv
+        }
         """
         # 0. if 'templateDb' in paramDict.keys: use createFromTemplate then end createDb
         if "templateDb" in list(paramDict.keys()):
@@ -72,18 +83,15 @@ class PostgisDbCreator(DbCreator):
                 dbName, templateName=paramDict["templateDb"], parentWidget=parentWidget
             )
             return self.instantiateNewDb(dbName)
-        else:
-            # 1. test if edgv template is created
-            # 2. if edgv template is not created, create it
-            if paramDict["isTemplateEdgv"]:
-                self.checkAndCreateTemplate(paramDict["version"])
-            # 3. create db from template
-            self.abstractDb.createDbFromTemplate(
-                dbName,
-                templateName=paramDict["templateName"],
-                parentWidget=parentWidget,
-            )
-            newDb = self.instantiateNewDb(dbName)
-            newDb.updateDbSRID(srid, parentWidget=parentWidget)
-            newDb.checkAndCreateStyleTable()
-            return newDb
+        if paramDict["isTemplateEdgv"]:
+            return self.createEdgvDb(dbName, srid, paramDict["version"])
+        # copy of an existing database chosen by the user
+        self.abstractDb.createDbFromTemplate(
+            dbName,
+            templateName=paramDict["templateName"],
+            parentWidget=parentWidget,
+        )
+        newDb = self.instantiateNewDb(dbName)
+        newDb.updateDbSRID(srid, parentWidget=parentWidget)
+        newDb.checkAndCreateStyleTable()
+        return newDb

@@ -975,18 +975,6 @@ class PostgisDb(AbstractDb):
         row = self._fetch_one(self.gen.isSuperUser(self.db.userName()))
         return row[0] if row else False
 
-    def checkTemplateImplementationVersion(self, edgvVersion=None):
-        """
-        Returns True if templateSql version is larger than installed template
-        Works when abstractDb is connected to the template
-        """
-        if not edgvVersion:
-            edgvVersion = self.getDatabaseVersion()
-        templateName = self.getTemplateName(edgvVersion)
-        fileImplementationVersion = self.getImplementationVersionFromFile(edgvVersion)
-        templateImplementationVersion = self.getImplementationVersion()
-        return templateImplementationVersion < fileImplementationVersion
-
     @ensure_connected
     def dropDatabase(self, candidateName, dropTemplate=False):
         """
@@ -2530,58 +2518,15 @@ class PostgisDb(AbstractDb):
             self.db.close()
 
     @ensure_connected
-    def checkTemplate(self, version=None):
-        if not version:
-            version = self.getDatabaseVersion()
-        dbName = self.getTemplateName(version)
-        for row in self._fetch_all(self.gen.checkTemplate()):
-            if row[0] == dbName:
-                return True
-        return False
-
-    @ensure_connected
-    def createTemplateDatabase(self, version):
-        """
-        version: edgv version
-        creates an empty database with the name of a template
-        """
-        dbName = self.getTemplateName(version)
-        try:
-            self.dropDatabase(dbName)
-        except:
-            pass
-        self.createDatabase(dbName)
-
-    @ensure_connected
     def createDatabase(self, dbName):
         """
         Creates a database with a given name
         """
         self._execute_autocommit(self.gen.getCreateDatabase(dbName))
 
-    def getTemplateName(self, version):
-        if version == "2.1.3":
-            return "template_edgv_213"
-        elif version == "2.1.3 Pro" or version == "EDGV 2.1.3 Pro":
-            return "template_edgv_213_pro"
-        elif version == "FTer_2a_Ed":
-            return "template_edgv_fter_2a_ed"
-        elif version in ("3.0", "EDGV 3.0"):
-            return "template_edgv_3"
-        elif version in ("EDGV 3.0 Pro", "3.0 Pro"):
-            return "template_edgv_3_pro"
-        elif version in ("EDGV 3.0 Topo", "3.0 Topo"):
-            return "template_edgv_3_topo"
-        elif version in ("EDGV 3.0 Orto", "3.0 Orto"):
-            return "template_edgv_3_orto"
-
     @ensure_connected
     @transactional()
-    def setDbAsTemplate(
-        self, version=None, dbName=None, setTemplate=True, useTransaction=True
-    ):
-        if not dbName:
-            dbName = self.getTemplateName(version)
+    def setDbAsTemplate(self, dbName, setTemplate=True, useTransaction=True):
         sql = self.gen.setDbAsTemplate(dbName, setTemplate)
         try:
             self._execute(sql)
@@ -2696,33 +2641,28 @@ class PostgisDb(AbstractDb):
         commands = sql.split("#")
         return commands
 
-    def getImplementationVersionFromFile(self, edgvVersion):
-        edgvPath = self.getCreationSqlPath(edgvVersion)
-        commands = self.getCommandsFromFile(edgvPath)
-        searchString = (
-            "INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ("
-        )
-        for command in commands:
-            if searchString in command:
-                return (
-                    command.split(searchString)[-1]
-                    .split(",")[1]
-                    .replace(")", "")
-                    .replace("'", "")
-                )
-
     @ensure_connected
     @transactional()
     def setStructureFromSql(
         self, version, epsg, useTransaction=True, closeAfterUsage=True
     ):
+        """
+        Builds the EDGV structure of the given version on this (empty)
+        database, at the given epsg, from the creation sql shipped with the
+        plugin.
+        """
         edgvPath = self.getCreationSqlPath(version)
-        commands = [i for i in self.getCommandsFromFile(edgvPath, epsg=epsg) if i != ""]
+        commands = [
+            command.strip()
+            for command in self.getCommandsFromFile(edgvPath, epsg=epsg)
+            if command.strip()
+        ]
         try:
-            for command in commands:
-                command = command.strip()
-                if command:
-                    self._execute(command)
+            # one round trip for the whole model (thousands of commands):
+            # sent one by one, the creation time grows with the network latency.
+            # The separator starts on its own line so that a command ending in
+            # a line comment does not swallow it
+            self._execute("\n;\n".join(commands))
         except Exception as e:
             raise Exception(
                 self.tr("Error on database creation! ")
@@ -2730,8 +2670,8 @@ class PostgisDb(AbstractDb):
                 + self.tr(" Db will be dropped.")
             )
         self.alterSearchPath(version, useTransaction=useTransaction)
-        self.setDbAsTemplate(version=version, useTransaction=useTransaction)
-        self.createStyleTable(useTransaction=useTransaction)
+        # EDGV 2.1.3 Pro creates its own layer_styles: only create it if missing
+        self.checkAndCreateStyleTable(useTransaction=useTransaction)
         # this close is to allow creation from template
         if closeAfterUsage:
             self.db.close()

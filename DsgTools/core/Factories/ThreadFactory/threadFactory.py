@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 from builtins import object
-from .postgisDbThread import PostgisDbThread
 from .dpiThread import DpiThread
 from .inventoryThread import InventoryThread
 
@@ -33,9 +32,7 @@ class ThreadFactory(object):
         :param name:
         :return:
         """
-        if name == "pgdb":
-            return PostgisDbThread()
-        elif name == "dpi":
+        if name == "dpi":
             return DpiThread()
         elif name == "inventory":
             return InventoryThread()

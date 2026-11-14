@@ -73,8 +73,8 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
             'driverName' : string with the name of the driver,
             'factoryParam' : string with the factory parameter,
             'templateInfo' : {
-                'templateName' : name of the template, if it is an edgv database, serverAbstractDb returns the name,
-                'version' : version of the template,
+                'templateName' : name of the database to be copied, when it is not an edgv database,
+                'version' : edgv version, when it is an edgv database,
                 'isTemplateEdgv' : True if is edgv, else False,
                 'tableSchema' : optional parameter in case of creating frame,
                 'tableName' : optional parameter in case of creating frame,

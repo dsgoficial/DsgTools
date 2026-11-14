@@ -205,10 +205,6 @@ class DatabaseParameterWidget(QtWidgets.QWidget, FORM_CLASS):
     def getTemplateParameters(self):
         if self.edgvTemplateRadioButton.isChecked():
             paramDict = dict()
-            if self.serverAbstractDb:
-                paramDict["templateName"] = self.serverAbstractDb.getTemplateName(
-                    self.versionComboBox.currentText()
-                )
             paramDict["version"] = self.versionComboBox.currentText()
             paramDict["isTemplateEdgv"] = True
             return paramDict

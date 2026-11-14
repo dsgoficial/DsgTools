@@ -181,12 +181,11 @@ class DbConverter(QgsTask):
             # filling missing parameters as required by dbCreator
             parameters["srid"] = conversionStepMap["crs"].split(":")[-1]
             parameters["isTemplateEdgv"] = True
-            parameters["version"], parameters["templateName"] = {
-                "EDGV 2.1.3": ("2.1.3", "template_edgv_213"),
-                "EDGV 2.1.3 F Ter": ("FTer_2a_Ed", "template_edgv_fter_2a_ed"),
-                "EDGV 2.1.3 Pro": ("2.1.3 Pro", "template_edgv_213_pro"),
-                "EDGV 3.0": ("3.0", "template_edgv_3")
-                # "EDGV 3.0 Pro" : ("3.0", 'template_edgv_3_pro')
+            parameters["version"] = {
+                "EDGV 2.1.3": "2.1.3",
+                "EDGV 2.1.3 F Ter": "FTer_2a_Ed",
+                "EDGV 2.1.3 Pro": "2.1.3 Pro",
+                "EDGV 3.0": "3.0",
             }[conversionStepMap["edgv"]]
             if "path" in parameters:
                 parameters["db"] = os.path.basename(
