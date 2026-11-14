@@ -7,10 +7,10 @@ SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
 	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 3.0 Orto',
-	 dbimplversion varchar(50) NOT NULL DEFAULT '2.5.2',
+	 dbimplversion varchar(50) NOT NULL DEFAULT '2.5.4',
 	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 3.0 Orto')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Orto','2.5.2')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Orto','2.5.4')#
 
 CREATE TABLE dominios.sigla_uf (
 	 code smallint NOT NULL,
@@ -2227,7 +2227,7 @@ ALTER TABLE edgv.infra_via_deslocamento_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.infra_via_deslocamento_l
-	 ADD CONSTRAINT infra_via_deslocamento_l_material_construcao_elemento_viario_check
+	 ADD CONSTRAINT infra_via_deslocamento_l_material_construcao_ele_f3bda3e2_check
 	 CHECK (material_construcao_elemento_viario = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.infra_via_deslocamento_l ALTER COLUMN material_construcao_elemento_viario SET DEFAULT 9999#
@@ -2365,6 +2365,50 @@ ALTER TABLE edgv.llp_localidade_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.llp_localidade_p ALTER COLUMN visivel SET DEFAULT 9999#
+
+CREATE TABLE edgv.llp_localidade_a(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 nome varchar(255),
+	 tipo smallint NOT NULL,
+	 populacao integer,
+	 texto_edicao varchar(255),
+	 label_x real,
+	 label_y real,
+	 justificativa_txt smallint NOT NULL,
+	 visivel smallint NOT NULL,
+	 observacao varchar(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT llp_localidade_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX llp_localidade_a_geom ON edgv.llp_localidade_a USING gist (geom)#
+
+ALTER TABLE edgv.llp_localidade_a OWNER TO postgres#
+
+ALTER TABLE edgv.llp_localidade_a
+	 ADD CONSTRAINT llp_localidade_a_tipo_fk FOREIGN KEY (tipo)
+	 REFERENCES dominios.tipo_localidade (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_localidade_a
+	 ADD CONSTRAINT llp_localidade_a_tipo_check
+	 CHECK (tipo = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT, 9999 :: SMALLINT]))#
+
+ALTER TABLE edgv.llp_localidade_a ALTER COLUMN tipo SET DEFAULT 9999#
+
+ALTER TABLE edgv.llp_localidade_a
+	 ADD CONSTRAINT llp_localidade_a_justificativa_txt_fk FOREIGN KEY (justificativa_txt)
+	 REFERENCES dominios.justificativa (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_localidade_a ALTER COLUMN justificativa_txt SET DEFAULT 9999#
+
+ALTER TABLE edgv.llp_localidade_a
+	 ADD CONSTRAINT llp_localidade_a_visivel_fk FOREIGN KEY (visivel)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_localidade_a ALTER COLUMN visivel SET DEFAULT 9999#
 
 CREATE TABLE edgv.llp_nome_local_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -2567,6 +2611,7 @@ CREATE TABLE edgv.llp_limite_legal_l(
 	 tipo smallint NOT NULL,
 	 geometria_aproximada smallint NOT NULL,
 	 texto_edicao varchar(255),
+	 visivel smallint NOT NULL,
 	 sobreposto smallint NOT NULL,
 	 exibir_rotulo_aproximado smallint NOT NULL,
 	 observacao varchar(255),
@@ -2591,6 +2636,13 @@ ALTER TABLE edgv.llp_limite_legal_l
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.llp_limite_legal_l ALTER COLUMN geometria_aproximada SET DEFAULT 9999#
+
+ALTER TABLE edgv.llp_limite_legal_l
+	 ADD CONSTRAINT llp_limite_legal_l_visivel_fk FOREIGN KEY (visivel)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_limite_legal_l ALTER COLUMN visivel SET DEFAULT 9999#
 
 ALTER TABLE edgv.llp_limite_legal_l
 	 ADD CONSTRAINT llp_limite_legal_l_sobreposto_fk FOREIGN KEY (sobreposto)

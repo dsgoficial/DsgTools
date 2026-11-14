@@ -7,10 +7,10 @@ SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
 	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 3.0 Topo',
-	 dbimplversion varchar(50) NOT NULL DEFAULT '1.4.4',
+	 dbimplversion varchar(50) NOT NULL DEFAULT '1.4.6',
 	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 3.0 Topo')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Topo','1.4.4')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Topo','1.4.6')#
 
 CREATE TABLE dominios.sigla_uf (
 	 code smallint NOT NULL,
@@ -943,8 +943,8 @@ CREATE TABLE dominios.tipo_elemento_hidrografico (
 	 CONSTRAINT tipo_elemento_hidrografico_pk PRIMARY KEY (code)
 )#
 
-INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (1,'Poço dágua (1)')#
-INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (2,'Poço artesiano (2)')#
+INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (1,'Poço dágua - permanente (1)')#
+INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (2,'Poço artesiano - permanente (2)')#
 INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (3,'Olho dágua - permanente (3)')#
 INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (4,'Olho dágua - intermitente (4)')#
 INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (6,'Foz marítima (6)')#
@@ -959,6 +959,8 @@ INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (16,'Ban
 INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (17,'Banco de areia cordão arenoso (17)')#
 INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (18,'Recife contiguo (18)')#
 INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (19,'Recife afastado (19)')#
+INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (20,'Poço dágua - temporário (20)')#
+INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (21,'Poço artesiano - temporário (21)')#
 INSERT INTO dominios.tipo_elemento_hidrografico (code,code_name) VALUES (9999,'A SER PREENCHIDO (9999)')#
 
 ALTER TABLE dominios.tipo_elemento_hidrografico OWNER TO postgres#
@@ -1658,7 +1660,7 @@ ALTER TABLE edgv.constr_deposito_p
 
 ALTER TABLE edgv.constr_deposito_p
 	 ADD CONSTRAINT constr_deposito_p_material_construcao_check
-	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 9999 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.constr_deposito_p ALTER COLUMN material_construcao SET DEFAULT 9999#
 
@@ -1801,7 +1803,7 @@ ALTER TABLE edgv.constr_edificacao_p
 
 ALTER TABLE edgv.constr_edificacao_p
 	 ADD CONSTRAINT constr_edificacao_p_material_construcao_check
-	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 9999 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.constr_edificacao_p ALTER COLUMN material_construcao SET DEFAULT 9999#
 
@@ -2888,7 +2890,7 @@ ALTER TABLE edgv.infra_barragem_a
 
 ALTER TABLE edgv.infra_barragem_a
 	 ADD CONSTRAINT infra_barragem_a_material_construcao_check
-	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 23 :: SMALLINT, 9999 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 23 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.infra_barragem_a ALTER COLUMN material_construcao SET DEFAULT 9999#
 
@@ -3598,7 +3600,7 @@ ALTER TABLE edgv.infra_pista_pouso_l
 
 ALTER TABLE edgv.infra_pista_pouso_l
 	 ADD CONSTRAINT infra_pista_pouso_l_revestimento_check
-	 CHECK (revestimento = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (revestimento = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.infra_pista_pouso_l ALTER COLUMN revestimento SET DEFAULT 9999#
 
@@ -3678,7 +3680,7 @@ ALTER TABLE edgv.infra_pista_pouso_p
 
 ALTER TABLE edgv.infra_pista_pouso_p
 	 ADD CONSTRAINT infra_pista_pouso_p_revestimento_check
-	 CHECK (revestimento = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT, 9999 :: SMALLINT, 9999 :: SMALLINT]))#
+	 CHECK (revestimento = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 9999 :: SMALLINT]))#
 
 ALTER TABLE edgv.infra_pista_pouso_p ALTER COLUMN revestimento SET DEFAULT 9999#
 
@@ -4132,6 +4134,50 @@ ALTER TABLE edgv.llp_localidade_p
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
 ALTER TABLE edgv.llp_localidade_p ALTER COLUMN visivel SET DEFAULT 9999#
+
+CREATE TABLE edgv.llp_localidade_a(
+	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	 nome varchar(255),
+	 tipo smallint NOT NULL,
+	 populacao integer,
+	 texto_edicao varchar(255),
+	 label_x real,
+	 label_y real,
+	 justificativa_txt smallint NOT NULL,
+	 visivel smallint NOT NULL,
+	 observacao varchar(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT llp_localidade_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX llp_localidade_a_geom ON edgv.llp_localidade_a USING gist (geom)#
+
+ALTER TABLE edgv.llp_localidade_a OWNER TO postgres#
+
+ALTER TABLE edgv.llp_localidade_a
+	 ADD CONSTRAINT llp_localidade_a_tipo_fk FOREIGN KEY (tipo)
+	 REFERENCES dominios.tipo_localidade (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_localidade_a
+	 ADD CONSTRAINT llp_localidade_a_tipo_check
+	 CHECK (tipo = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 9999 :: SMALLINT]))#
+
+ALTER TABLE edgv.llp_localidade_a ALTER COLUMN tipo SET DEFAULT 9999#
+
+ALTER TABLE edgv.llp_localidade_a
+	 ADD CONSTRAINT llp_localidade_a_justificativa_txt_fk FOREIGN KEY (justificativa_txt)
+	 REFERENCES dominios.justificativa (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_localidade_a ALTER COLUMN justificativa_txt SET DEFAULT 9999#
+
+ALTER TABLE edgv.llp_localidade_a
+	 ADD CONSTRAINT llp_localidade_a_visivel_fk FOREIGN KEY (visivel)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.llp_localidade_a ALTER COLUMN visivel SET DEFAULT 9999#
 
 CREATE TABLE edgv.llp_ponto_controle_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
