@@ -36,6 +36,10 @@ from .abstractDb import AbstractDb
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 from DsgTools.core.dsgEnums import DsgEnums
+from DsgTools.core.Utils.templateVersion import (
+    isTemplateOutdated,
+    parseMetadataFromSql,
+)
 
 from osgeo import ogr
 from uuid import uuid4
@@ -1096,15 +1100,23 @@ class PostgisDb(AbstractDb):
 
     def checkTemplateImplementationVersion(self, edgvVersion=None):
         """
-        Returns True if templateSql version is larger than installed template
+        Returns True if the installed template must be rebuilt from the
+        creation sql shipped with the plugin (see isTemplateOutdated).
         Works when abstractDb is connected to the template
         """
+        templateEdgvVersion = self.getDatabaseVersion()
         if not edgvVersion:
-            edgvVersion = self.getDatabaseVersion()
-        templateName = self.getTemplateName(edgvVersion)
-        fileImplementationVersion = self.getImplementationVersionFromFile(edgvVersion)
+            edgvVersion = templateEdgvVersion
+        fileEdgvVersion, fileImplementationVersion = self.getMetadataFromFile(
+            edgvVersion
+        )
         templateImplementationVersion = self.getImplementationVersion()
-        return templateImplementationVersion < fileImplementationVersion
+        return isTemplateOutdated(
+            templateEdgvVersion,
+            templateImplementationVersion,
+            fileEdgvVersion,
+            fileImplementationVersion,
+        )
 
     def dropDatabase(self, candidateName, dropTemplate=False):
         """
@@ -3660,20 +3672,20 @@ class PostgisDb(AbstractDb):
         commands = sql.split("#")
         return commands
 
-    def getImplementationVersionFromFile(self, edgvVersion):
+    def getMetadataFromFile(self, edgvVersion):
+        """
+        Gets the (edgvversion, dbimplversion) pair the creation sql of the
+        given version inserts into db_metadata. (None, None) if there is no
+        creation sql for it or the sql inserts no metadata.
+        """
         edgvPath = self.getCreationSqlPath(edgvVersion)
-        commands = self.getCommandsFromFile(edgvPath)
-        searchString = (
-            "INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ("
-        )
-        for command in commands:
-            if searchString in command:
-                return (
-                    command.split(searchString)[-1]
-                    .split(",")[1]
-                    .replace(")", "")
-                    .replace("'", "")
-                )
+        if not edgvPath or not os.path.isfile(edgvPath):
+            return None, None
+        with codecs.open(edgvPath, encoding="utf-8", mode="r") as sqlFile:
+            return parseMetadataFromSql(sqlFile.read())
+
+    def getImplementationVersionFromFile(self, edgvVersion):
+        return self.getMetadataFromFile(edgvVersion)[1]
 
     def setStructureFromSql(
         self, version, epsg, useTransaction=True, closeAfterUsage=True

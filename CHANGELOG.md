@@ -2,6 +2,10 @@
 
 ## 4.20.4 - dev
 
+Correção de Bugs:
+
+- Corrige a criação de banco EDGV a partir de template antigo que ficou no servidor (issue #857). O plugin só refazia o template quando a versão de implementação dele era MENOR que a do SQL embarcado, e a EDGV 3.0 passou de `3.0 / 4` para `EDGV 3.0 / 1.1` com renumeração de domínios: como `4` não é menor que `1.1.6`, o servidor que já tinha o `template_edgv_3` antigo seguia criando banco com 143 domínios e a numeração antiga, enquanto o servidor novo criava com 146. Agora o template é refeito quando o rótulo `edgvversion` dele difere do rótulo do SQL embarcado, e dentro do mesmo rótulo a versão é comparada número a número, não como texto (`1.4.10` passa a ser mais novo que `1.4.4`). Banco já criado pelo template antigo não é alterado: os códigos de domínio dele seguem a numeração antiga e precisam de conversão;
+
 ## 4.20.3 - 2026-11-11
 
 Correção de Bugs:
