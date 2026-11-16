@@ -1,6 +1,8 @@
 # CHANGELOG
 
-## 4.20.4 - dev
+## 4.20.5 - dev
+
+## 4.20.4 - 2026-11-16
 
 Correção de Bugs:
 
