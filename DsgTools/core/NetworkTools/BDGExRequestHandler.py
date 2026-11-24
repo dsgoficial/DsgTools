@@ -43,18 +43,22 @@ class BDGExRequestHandler(QObject):
         Constructor
         """
         super(BDGExRequestHandler, self).__init__()
+        # O BDGEx novo (app-bdgex) substitui o bdgex.eb.mil.br e serve tudo
+        # por um único mapcache: os índices de produtos passaram a ser camadas
+        # dele (Indice_*), e os serviços cgi-bin/mapaindice e cgi-bin/geoportal
+        # (WMS e WFS) não existem mais.
+        # O mapcache_legado é o host antigo, mantido só para as camadas que o
+        # novo anuncia mas não entrega: em 2026-11-24 rapideye e landsat7
+        # devolviam erro 500, e curva_nivel100 vinha só com os rótulos, sem as
+        # linhas. Sai daqui quando o novo passar a servi-las.
         self.availableServicesDict = {
             "mapcache": {
-                "url": "https://bdgex.eb.mil.br/mapcache",
+                "url": "https://app-bdgex.eb.mil.br/mapcache",
                 "services": {"WMS": dict()},
             },
-            "mapindex": {
-                "url": "https://bdgex.eb.mil.br/cgi-bin/mapaindice",
-                "services": {"WMS": dict(), "WFS": dict()},
-            },
-            "auxlayers": {
-                "url": "https://bdgex.eb.mil.br/cgi-bin/geoportal",
-                "services": {"WMS": dict(), "WFS": dict()},
+            "mapcache_legado": {
+                "url": "https://bdgex.eb.mil.br/mapcache",
+                "services": {"WMS": dict()},
             },
         }
 
